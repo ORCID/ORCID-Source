@@ -71,11 +71,15 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Employments;
 import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Works;
@@ -126,6 +130,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
+    //Now on, for any new test, PLAESE USER THIS ORCID ID
+    private final String ORCID = "0000-0000-0000-0003";
+    
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
@@ -142,7 +149,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Collections.reverse(DATA_FILES);
         removeDBUnitData(DATA_FILES);
     }
-
+    
     @Test    
     public void testViewActitivies() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
@@ -354,6 +361,59 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void viewWorksTest() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewWorks(ORCID);
+        assertNotNull(r);
+        Works works = (Works)r.getEntity();
+        assertNotNull(works);
+        assertNotNull(works.getWorkGroup());
+        assertEquals(4, works.getWorkGroup().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        
+        for(WorkGroup workGroup : works.getWorkGroup()) {
+            assertNotNull(workGroup.getIdentifiers());
+            assertNotNull(workGroup.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, workGroup.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(workGroup.getWorkSummary());
+            assertEquals(1, workGroup.getWorkSummary().size());
+            WorkSummary summary = workGroup.getWorkSummary().get(0);
+            assertNotNull(summary.getTitle());
+            assertNotNull(summary.getTitle().getTitle());
+            switch(workGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
+            case "1":
+                assertEquals("PUBLIC", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(11), summary.getPutCode());
+                found1 = true;
+                break;
+            case "2":
+                assertEquals("LIMITED", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(12), summary.getPutCode());
+                found2 = true;
+                break;
+            case "3":
+                assertEquals("PRIVATE", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(13), summary.getPutCode());
+                found3 = true;
+                break;
+            case "4":
+                assertEquals("SELF LIMITED", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(14), summary.getPutCode());
+                found4 = true;
+                break;
+            default:
+                fail("Invalid external id found: " + workGroup.getIdentifiers().getExternalIdentifier().get(0).getValue());
+            }
+            
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);        
+    }
+    
+    @Test
     public void testCleanEmptyFieldsOnWorks() {
         Work work = new Work();
         work.setWorkCitation(new Citation("", CitationType.FORMATTED_UNSPECIFIED));
@@ -431,10 +491,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testCreateWorksWithBulkAllOK() {
-        String orcid = "0000-0000-0000-0003";
+    public void testCreateWorksWithBulkAllOK() {        
         Long time = System.currentTimeMillis();
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
 
         WorkBulk bulk = new WorkBulk();
         for (int i = 0; i < 5; i++) {
@@ -456,7 +515,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             bulk.getBulk().add(work);
         }
 
-        Response response = serviceDelegator.createWorks(orcid, bulk);
+        Response response = serviceDelegator.createWorks(ORCID, bulk);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         bulk = (WorkBulk) response.getEntity();
@@ -473,13 +532,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
             assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
 
-            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
+            Response r = serviceDelegator.viewWork(ORCID, w.getPutCode());
             assertNotNull(r);
             assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
             assertEquals("Bulk work " + i + " " + time, ((Work) r.getEntity()).getWorkTitle().getTitle().getContent());
 
             // Delete the work
-            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
+            r = serviceDelegator.deleteWork(ORCID, w.getPutCode());
             assertNotNull(r);
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
         }
@@ -675,6 +734,60 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    @Test
+    public void testViewFundings() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewFundings(ORCID);
+        assertNotNull(r);
+        Fundings fundings = (Fundings) r.getEntity();
+        assertNotNull(fundings);
+        assertNotNull(fundings.getFundingGroup());
+        assertEquals(4, fundings.getFundingGroup().size());
+        
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        
+        for(FundingGroup fundingGroup : fundings.getFundingGroup()) {
+            assertNotNull(fundingGroup.getIdentifiers());
+            assertNotNull(fundingGroup.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, fundingGroup.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(fundingGroup.getFundingSummary());
+            assertEquals(1, fundingGroup.getFundingSummary().size());
+            FundingSummary summary = fundingGroup.getFundingSummary().get(0);
+            assertNotNull(summary.getTitle());
+            assertNotNull(summary.getTitle().getTitle());
+            switch(fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
+            case "1":
+                assertEquals("PUBLIC", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(10), summary.getPutCode());
+                found1 = true;
+                break;
+            case "2":
+                assertEquals("LIMITED", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(11), summary.getPutCode());
+                found2 = true;
+                break;
+            case "3":
+                assertEquals("PRIVATE", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(12), summary.getPutCode());
+                found3 = true;
+                break;
+            case "4":
+                assertEquals("SELF LIMITED", summary.getTitle().getTitle().getContent());
+                assertEquals(Long.valueOf(13), summary.getPutCode());
+                found4 = true;
+                break;
+            default:
+                fail("Invalid external id found: " + fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue());
+            }
+            
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+    }
+    
     @Test
     public void testAddFunding() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -900,6 +1013,39 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void testViewEducations() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewEducations(ORCID);
+        assertNotNull(r);        
+        Educations educations = (Educations) r.getEntity();
+        assertNotNull(educations);
+        assertNotNull(educations.getSummaries());
+        assertEquals(4, educations.getSummaries().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(EducationSummary summary : educations.getSummaries()) {
+            if(Long.valueOf(20).equals(summary.getPutCode())) {
+                assertEquals("PUBLIC Department", summary.getDepartmentName());
+                found1 = true;
+            } else if(Long.valueOf(21).equals(summary.getPutCode())) {
+                assertEquals("LIMITED Department", summary.getDepartmentName());
+                found2 = true;
+            } else if(Long.valueOf(22).equals(summary.getPutCode())) {
+                assertEquals("PRIVATE Department", summary.getDepartmentName());
+                found3 = true;
+            } else if(Long.valueOf(25).equals(summary.getPutCode())) {
+                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                found4 = true;
+            } else {
+                fail("Invalid education found: " + summary.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+    }
+    
+    @Test
     public void testAddEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4442");
@@ -1106,6 +1252,39 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void testViewEmployments() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewEmployments(ORCID);
+        assertNotNull(r);        
+        Employments employments = (Employments) r.getEntity();
+        assertNotNull(employments);
+        assertNotNull(employments.getSummaries());
+        assertEquals(4, employments.getSummaries().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(EmploymentSummary summary : employments.getSummaries()) {
+            if(Long.valueOf(17).equals(summary.getPutCode())) {
+                assertEquals("PUBLIC Department", summary.getDepartmentName());
+                found1 = true;
+            } else if(Long.valueOf(18).equals(summary.getPutCode())) {
+                assertEquals("LIMITED Department", summary.getDepartmentName());
+                found2 = true;
+            } else if(Long.valueOf(19).equals(summary.getPutCode())) {
+                assertEquals("PRIVATE Department", summary.getDepartmentName());
+                found3 = true;
+            } else if(Long.valueOf(23).equals(summary.getPutCode())) {
+                assertEquals("SELF LIMITED Department", summary.getDepartmentName());
+                found4 = true;
+            } else {
+                fail("Invalid education found: " + summary.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+    }
+    
+    @Test
     public void testAddEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4447");
@@ -1115,9 +1294,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertNotNull(summary.getEmployments().getSummaries().get(0));
-        assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());
-
-        
+        assertEquals(Long.valueOf(13), summary.getEmployments().getSummaries().get(0).getPutCode());        
 
         response = serviceDelegator.createEmployment("4444-4444-4444-4447", getEmployment());
         assertNotNull(response);
@@ -1214,7 +1391,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
         fail();
     }
-
     
     @Test
     public void testUpdateEmploymentLeavingVisibilityNullTest() {
@@ -1233,8 +1409,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         employment = (Employment) response.getEntity();
         assertNotNull(employment);
         assertEquals(Visibility.PRIVATE, employment.getVisibility());        
-    }
-    
+    }    
     
     @Test(expected = NoResultException.class)
     public void testDeleteEmployment() {
@@ -1354,6 +1529,55 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("public", peerReview.getVisibility().value());
     }
 
+    @Test
+    public void testViewPeerReviews() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewPeerReviews(ORCID);
+        assertNotNull(r);
+        PeerReviews peerReviews = (PeerReviews) r.getEntity();
+        assertNotNull(peerReviews);
+        assertNotNull(peerReviews.getPeerReviewGroup());
+        assertEquals(4, peerReviews.getPeerReviewGroup().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary summary = group.getPeerReviewSummary().get(0);
+            switch(group.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
+            case "issn:0000009":
+                assertEquals("issn:0000009", summary.getGroupId());
+                assertEquals(Long.valueOf(9), summary.getPutCode());
+                found1 = true;
+                break;
+            case "issn:0000010":
+                assertEquals("issn:0000010", summary.getGroupId());
+                assertEquals(Long.valueOf(10), summary.getPutCode());
+                found2 = true;
+                break;
+            case "issn:0000011":
+                assertEquals("issn:0000011", summary.getGroupId());
+                assertEquals(Long.valueOf(11), summary.getPutCode());
+                found3 = true;
+                break;
+            case "issn:0000012":
+                assertEquals("issn:0000012", summary.getGroupId());
+                assertEquals(Long.valueOf(12), summary.getPutCode());
+                found4 = true;
+                break;
+            default:
+                fail("Invalid group id found: " + group.getIdentifiers().getExternalIdentifier().get(0).getValue());
+                break;
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+    }
+    
     @Test
     public void testUpdatePeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
@@ -3000,24 +3224,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
                 ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
                 ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
-        //Try to view anything on the user
-        String orcid = "0000-0000-0000-0003";
-        Response r = serviceDelegator.viewActivities(orcid);
+        //Try to view anything on the user        
+        Response r = serviceDelegator.viewActivities(ORCID);
         ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
-        testActivities(as, orcid);
+        testActivities(as, ORCID);
         
         //Get only public address
-        r = serviceDelegator.viewAddresses(orcid);
+        r = serviceDelegator.viewAddresses(ORCID);
         Addresses addresses = (Addresses) r.getEntity();
         assertNotNull(addresses);
         assertEquals(1, addresses.getAddress().size());
         assertEquals(Long.valueOf(9L), addresses.getAddress().get(0).getPutCode());
         
         //View public address works
-        serviceDelegator.viewAddress(orcid, 9L);
+        serviceDelegator.viewAddress(ORCID, 9L);
         try {
             //Limited fail
-            serviceDelegator.viewAddress(orcid, 10L);
+            serviceDelegator.viewAddress(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3026,12 +3249,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         //Public works
-        serviceDelegator.viewEducation(orcid, 20L);
-        serviceDelegator.viewEducationSummary(orcid, 20L);
+        serviceDelegator.viewEducation(ORCID, 20L);
+        serviceDelegator.viewEducationSummary(ORCID, 20L);
         
         try {
             //Limited fail
-            serviceDelegator.viewEducation(orcid, 21L);
+            serviceDelegator.viewEducation(ORCID, 21L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3041,7 +3264,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         try {
             //Limited fail
-            serviceDelegator.viewEducationSummary(orcid, 21L);
+            serviceDelegator.viewEducationSummary(ORCID, 21L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3051,7 +3274,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         try {
             //Private fail
-            serviceDelegator.viewEducation(orcid, 22L);
+            serviceDelegator.viewEducation(ORCID, 22L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3061,7 +3284,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         try {
             //Private fail
-            serviceDelegator.viewEducationSummary(orcid, 22L);
+            serviceDelegator.viewEducationSummary(ORCID, 22L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3069,19 +3292,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
 
-        r = serviceDelegator.viewEmails(orcid);
+        r = serviceDelegator.viewEmails(ORCID);
         Emails emails = (Emails) r.getEntity();
         assertNotNull(emails);
         assertEquals(1, emails.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
                 
         //Public works
-        serviceDelegator.viewEmployment(orcid, 17L);
-        serviceDelegator.viewEmploymentSummary(orcid, 17L);
+        serviceDelegator.viewEmployment(ORCID, 17L);
+        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
                         
         try {
             //Limited fail
-            serviceDelegator.viewEmployment(orcid, 18L);
+            serviceDelegator.viewEmployment(ORCID, 18L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3090,7 +3313,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 18L);
+            serviceDelegator.viewEmploymentSummary(ORCID, 18L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3100,7 +3323,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         try {
             //Private fail
-            serviceDelegator.viewEmployment(orcid, 19L);
+            serviceDelegator.viewEmployment(ORCID, 19L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3109,7 +3332,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 19L);
+            serviceDelegator.viewEmploymentSummary(ORCID, 19L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3117,18 +3340,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        r = serviceDelegator.viewExternalIdentifiers(orcid);
+        r = serviceDelegator.viewExternalIdentifiers(ORCID);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(extIds);
         assertEquals(1, extIds.getExternalIdentifiers().size());
         assertEquals(Long.valueOf(13L), extIds.getExternalIdentifiers().get(0).getPutCode());
         
         //Public works
-        serviceDelegator.viewExternalIdentifier(orcid, 13L);
+        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         
         //Limited fails
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 14L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3138,7 +3361,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fails
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 15L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3147,12 +3370,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         //Public works
-        serviceDelegator.viewFunding(orcid, 10L);
-        serviceDelegator.viewFundingSummary(orcid, 10L);
+        serviceDelegator.viewFunding(ORCID, 10L);
+        serviceDelegator.viewFundingSummary(ORCID, 10L);
         
         //Limited fail
         try {
-            serviceDelegator.viewFunding(orcid, 11L);
+            serviceDelegator.viewFunding(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3161,7 +3384,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, 11L);
+            serviceDelegator.viewFundingSummary(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3171,7 +3394,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewFunding(orcid, 12L);
+            serviceDelegator.viewFunding(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3180,7 +3403,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, 12L);
+            serviceDelegator.viewFundingSummary(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3188,18 +3411,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        r = serviceDelegator.viewKeywords(orcid);
+        r = serviceDelegator.viewKeywords(ORCID);
         Keywords k = (Keywords) r.getEntity();
         assertNotNull(k);
         assertEquals(1, k.getKeywords().size());
         assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
         
         //Public works 
-        serviceDelegator.viewKeyword(orcid, 9L);
+        serviceDelegator.viewKeyword(ORCID, 9L);
         
         //Limited fail
         try {
-            serviceDelegator.viewKeyword(orcid, 10L);
+            serviceDelegator.viewKeyword(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3209,7 +3432,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewKeyword(orcid, 11L);
+            serviceDelegator.viewKeyword(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3217,18 +3440,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        r = serviceDelegator.viewOtherNames(orcid);
+        r = serviceDelegator.viewOtherNames(ORCID);
         OtherNames o = (OtherNames) r.getEntity();
         assertNotNull(o);
         assertEquals(1, o.getOtherNames().size());
         assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
         
         //Public work
-        serviceDelegator.viewOtherName(orcid, 13L);
+        serviceDelegator.viewOtherName(ORCID, 13L);
         
         //Limited fail
         try {
-            serviceDelegator.viewOtherName(orcid, 14L);
+            serviceDelegator.viewOtherName(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3238,7 +3461,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewOtherName(orcid, 15L);
+            serviceDelegator.viewOtherName(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3247,12 +3470,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
                                 
         //Public works
-        serviceDelegator.viewPeerReview(orcid, 9L);
-        serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+        serviceDelegator.viewPeerReview(ORCID, 9L);
+        serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
         
         //Limited fail
         try {
-            serviceDelegator.viewPeerReview(orcid, 10L);
+            serviceDelegator.viewPeerReview(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3261,7 +3484,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 10L);
+            serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3271,7 +3494,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewPeerReview(orcid, 11L);
+            serviceDelegator.viewPeerReview(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3280,7 +3503,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 11L);
+            serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3288,18 +3511,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        r = serviceDelegator.viewResearcherUrls(orcid);
+        r = serviceDelegator.viewResearcherUrls(ORCID);
         ResearcherUrls rUrls = (ResearcherUrls) r.getEntity();
         assertNotNull(rUrls);
         assertEquals(1, rUrls.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
         
         //Public works
-        serviceDelegator.viewResearcherUrl(orcid, 13L);
+        serviceDelegator.viewResearcherUrl(ORCID, 13L);
         
         //Limited fail
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 14L);
+            serviceDelegator.viewResearcherUrl(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3309,7 +3532,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 15L);
+            serviceDelegator.viewResearcherUrl(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3318,12 +3541,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         //Public work
-        serviceDelegator.viewWork(orcid, 11L);
-        serviceDelegator.viewWorkSummary(orcid, 11L);
+        serviceDelegator.viewWork(ORCID, 11L);
+        serviceDelegator.viewWorkSummary(ORCID, 11L);
         
         //Limited fail
         try {
-            serviceDelegator.viewWork(orcid, 12L);
+            serviceDelegator.viewWork(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3332,7 +3555,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewWorkSummary(orcid, 12L);
+            serviceDelegator.viewWorkSummary(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3342,7 +3565,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 
         //Private fail
         try {
-            serviceDelegator.viewWork(orcid, 13L);
+            serviceDelegator.viewWork(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3351,7 +3574,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewWorkSummary(orcid, 13L);
+            serviceDelegator.viewWorkSummary(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("The activity is not public", ou.getMessage());
@@ -3360,7 +3583,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         //View public bio works
-        serviceDelegator.viewBiography(orcid);
+        serviceDelegator.viewBiography(ORCID);
         
         //View limited bio fails
         try {
@@ -3372,7 +3595,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        r = serviceDelegator.viewPersonalDetails(orcid);
+        r = serviceDelegator.viewPersonalDetails(ORCID);
         PersonalDetails _003details = (PersonalDetails) r.getEntity();
         assertNotNull(_003details);
         assertEquals("Biography for 0000-0000-0000-0003", _003details.getBiography().getContent());
@@ -3382,15 +3605,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, _003details.getOtherNames().getOtherNames().size());
         assertEquals(Long.valueOf(13), _003details.getOtherNames().getOtherNames().get(0).getPutCode());
         
-        r = serviceDelegator.viewPerson(orcid);
+        r = serviceDelegator.viewPerson(ORCID);
         Person p = (Person) r.getEntity();
-        testPerson(p, orcid);                              
+        testPerson(p, ORCID);                              
     }
     
     @Test
-    public void testReadPublicScope_Activities() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_Activities() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         
         //Check that lists returns only PUBLIC elements
         /**
@@ -3398,28 +3620,26 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
          * */        
         try {
             //Check you get only public activities
-            Response r = serviceDelegator.viewActivities(orcid);
+            Response r = serviceDelegator.viewActivities(ORCID);
             ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
-            testActivities(as, orcid);
+            testActivities(as, ORCID);
         } catch(Exception e) {
             fail();
         }
     }
     
     @Test
-    public void testReadPublicScope_Record() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response response = serviceDelegator.viewRecord(orcid);
+    public void testReadPublicScope_Record() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response response = serviceDelegator.viewRecord(ORCID);
         assertNotNull(response);
         Record record = (Record) response.getEntity();
-        testPerson(record.getPerson(), orcid);
-        testActivities(record.getActivitiesSummary(), orcid);
+        testPerson(record.getPerson(), ORCID);
+        testActivities(record.getActivitiesSummary(), ORCID);
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());        
         assertNotNull(record.getPreferences());
-        assertEquals(Locale.EN, record.getPreferences().getLocale());
-        assertNotNull(record.getLastModifiedDate());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());        
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
@@ -3432,8 +3652,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(record.getOrcidIdentifier());
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());   
-    }
-    
+    }    
     
     private void testActivities(ActivitiesSummary as, String orcid) {
         //This is more an utility that will work only for 0000-0000-0000-0003
@@ -3460,20 +3679,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Educations() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEducation(orcid, 20L);
+    public void testReadPublicScope_Educations() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(r);
         assertEquals(Education.class.getName(), r.getEntity().getClass().getName());
         
-        r = serviceDelegator.viewEducationSummary(orcid, 20L);
+        r = serviceDelegator.viewEducationSummary(ORCID, 20L);
         assertNotNull(r);
         assertEquals(EducationSummary.class.getName(), r.getEntity().getClass().getName());        
         
         //Limited fails
         try {
-            serviceDelegator.viewEducation(orcid, 21L);
+            serviceDelegator.viewEducation(ORCID, 21L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3482,7 +3700,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEducationSummary(orcid, 21L);
+            serviceDelegator.viewEducationSummary(ORCID, 21L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3492,7 +3710,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fails
         try {
-            serviceDelegator.viewEducation(orcid, 22L);
+            serviceDelegator.viewEducation(ORCID, 22L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3501,7 +3719,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEducationSummary(orcid, 22L);
+            serviceDelegator.viewEducationSummary(ORCID, 22L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3511,20 +3729,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Employments() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmployment(orcid, 17L);
+    public void testReadPublicScope_Employments() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(r);
         assertEquals(Employment.class.getName(), r.getEntity().getClass().getName());
         
-        r = serviceDelegator.viewEmploymentSummary(orcid, 17L);
+        r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
         assertNotNull(r);
         assertEquals(EmploymentSummary.class.getName(), r.getEntity().getClass().getName());        
         
         //Limited fails
         try {
-            serviceDelegator.viewEmployment(orcid, 18L);
+            serviceDelegator.viewEmployment(ORCID, 18L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3533,7 +3750,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 18L);
+            serviceDelegator.viewEmploymentSummary(ORCID, 18L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3543,7 +3760,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fails
         try {
-            serviceDelegator.viewEmployment(orcid, 19L);
+            serviceDelegator.viewEmployment(ORCID, 19L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3552,7 +3769,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 19L);
+            serviceDelegator.viewEmploymentSummary(ORCID, 19L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3562,21 +3779,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Funding() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_Funding() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewFunding(orcid, 10L);
+        Response r = serviceDelegator.viewFunding(ORCID, 10L);
         assertNotNull(r);
         assertEquals(Funding.class.getName(), r.getEntity().getClass().getName());
         
-        r = serviceDelegator.viewFundingSummary(orcid, 10L);
+        r = serviceDelegator.viewFundingSummary(ORCID, 10L);
         assertNotNull(r);
         assertEquals(FundingSummary.class.getName(), r.getEntity().getClass().getName());        
                 
         //Limited fail
         try {
-            serviceDelegator.viewFunding(orcid, 11L);
+            serviceDelegator.viewFunding(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3585,7 +3801,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, 11L);
+            serviceDelegator.viewFundingSummary(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3595,7 +3811,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewFunding(orcid, 12L);
+            serviceDelegator.viewFunding(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3603,13 +3819,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
     }
-    
-    
+        
     @Test
-    public void testViewPersonalDetails() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewPersonalDetails(orcid);
+    public void testViewPersonalDetails() {       
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.PERSON_READ_LIMITED);
+        Response response = serviceDelegator.viewPersonalDetails(ORCID);
         assertNotNull(response);
         PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
         assertNotNull(personalDetails);
@@ -3665,10 +3879,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }        
     
     @Test
-    public void testViewRecord() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewRecord(orcid);
+    public void testViewRecord() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewRecord(ORCID);
         assertNotNull(response);
         Record record = (Record) response.getEntity();
         assertNotNull(record);
@@ -3676,7 +3889,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(OrcidType.USER, record.getOrcidType());        
         assertNotNull(record.getPreferences());
         assertEquals(Locale.EN, record.getPreferences().getLocale());
-        assertNotNull(record.getLastModifiedDate());
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
@@ -4181,22 +4393,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }      
     
     @Test
-    public void testReadPublicScope_PeerReview() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_PeerReview() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewPeerReview(orcid, 9L);
+        Response r = serviceDelegator.viewPeerReview(ORCID, 9L);
         assertNotNull(r);
         assertEquals(PeerReview.class.getName(), r.getEntity().getClass().getName());
         
-        r = serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+        r = serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
         assertNotNull(r);
         assertEquals(PeerReviewSummary.class.getName(), r.getEntity().getClass().getName());        
-        
-        
+                
         //Limited fail
         try {
-            serviceDelegator.viewPeerReview(orcid, 10L);
+            serviceDelegator.viewPeerReview(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4205,7 +4415,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 10L);
+            serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4215,7 +4425,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewPeerReview(orcid, 11L);
+            serviceDelegator.viewPeerReview(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4224,7 +4434,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 11L);
+            serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4234,22 +4444,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Works() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_Works() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewWork(orcid, 11L);
+        Response r = serviceDelegator.viewWork(ORCID, 11L);
         assertNotNull(r);
         assertEquals(Work.class.getName(), r.getEntity().getClass().getName());
         
-        r = serviceDelegator.viewWorkSummary(orcid, 11L);
+        r = serviceDelegator.viewWorkSummary(ORCID, 11L);
         assertNotNull(r);
         assertEquals(WorkSummary.class.getName(), r.getEntity().getClass().getName());        
-        
-        
+                
         //Limited fail
         try {
-            serviceDelegator.viewWork(orcid, 12L);
+            serviceDelegator.viewWork(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4258,7 +4466,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewWorkSummary(orcid, 12L);
+            serviceDelegator.viewWorkSummary(ORCID, 12L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4268,7 +4476,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewWork(orcid, 13L);
+            serviceDelegator.viewWork(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4277,7 +4485,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewWork(orcid, 13L);
+            serviceDelegator.viewWork(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4287,11 +4495,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_OtherNames() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_OtherNames() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewOtherNames(orcid);
+        Response r = serviceDelegator.viewOtherNames(ORCID);
         assertNotNull(r);
         assertEquals(OtherNames.class.getName(), r.getEntity().getClass().getName());
         OtherNames o = (OtherNames) r.getEntity();
@@ -4300,13 +4507,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, o.getOtherNames().size());
         assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
         
-        r = serviceDelegator.viewOtherName(orcid, 13L);
+        r = serviceDelegator.viewOtherName(ORCID, 13L);
         assertNotNull(r);
         assertEquals(OtherName.class.getName(), r.getEntity().getClass().getName());
         
         //Limited fail
         try {
-            serviceDelegator.viewOtherName(orcid, 14L);
+            serviceDelegator.viewOtherName(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4316,7 +4523,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewOtherName(orcid, 15L);
+            serviceDelegator.viewOtherName(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4326,11 +4533,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Keywords() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_Keywords() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewKeywords(orcid);
+        Response r = serviceDelegator.viewKeywords(ORCID);
         assertNotNull(r);
         assertEquals(Keywords.class.getName(), r.getEntity().getClass().getName());
         Keywords k = (Keywords) r.getEntity();
@@ -4339,13 +4545,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, k.getKeywords().size());
         assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
         
-        r = serviceDelegator.viewKeyword(orcid, 9L);
+        r = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(r);
         assertEquals(Keyword.class.getName(), r.getEntity().getClass().getName());
         
         //Limited fail
         try {
-            serviceDelegator.viewKeyword(orcid, 10L);
+            serviceDelegator.viewKeyword(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4355,7 +4561,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewKeyword(orcid, 11L);
+            serviceDelegator.viewKeyword(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4365,11 +4571,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Address() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_Address() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewAddresses(orcid);
+        Response r = serviceDelegator.viewAddresses(ORCID);
         assertNotNull(r);
         assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
         Addresses a = (Addresses) r.getEntity();
@@ -4378,13 +4583,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, a.getAddress().size());
         assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
         
-        r = serviceDelegator.viewAddress(orcid, 9L);
+        r = serviceDelegator.viewAddress(ORCID, 9L);
         assertNotNull(r);
         assertEquals(Address.class.getName(), r.getEntity().getClass().getName());
         
         //Limited fail
         try {
-            serviceDelegator.viewAddress(orcid, 10L);
+            serviceDelegator.viewAddress(ORCID, 10L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4394,7 +4599,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewAddress(orcid, 11L);
+            serviceDelegator.viewAddress(ORCID, 11L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4404,11 +4609,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_ExternalIdentifiers() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_ExternalIdentifiers() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewExternalIdentifiers(orcid);
+        Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
         assertNotNull(r);
         assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
@@ -4417,13 +4621,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, p.getExternalIdentifiers().size());
         assertEquals(Long.valueOf(13), p.getExternalIdentifiers().get(0).getPutCode());
         
-        r = serviceDelegator.viewExternalIdentifier(orcid, 13L);
+        r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         assertNotNull(r);
         assertEquals(PersonExternalIdentifier.class.getName(), r.getEntity().getClass().getName());
         
         //Limited fail
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 14L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4433,7 +4637,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 15L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4443,10 +4647,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Emails() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewEmails(orcid);
+    public void testReadPublicScope_Emails() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmails(ORCID);
         assertNotNull(r);
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
@@ -4457,11 +4660,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_ResearcherUrls() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+    public void testReadPublicScope_ResearcherUrls() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works
-        Response r = serviceDelegator.viewResearcherUrls(orcid);
+        Response r = serviceDelegator.viewResearcherUrls(ORCID);
         assertNotNull(r);
         assertEquals(ResearcherUrls.class.getName(), r.getEntity().getClass().getName());
         ResearcherUrls ru = (ResearcherUrls) r.getEntity();
@@ -4470,13 +4672,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         
-        r = serviceDelegator.viewResearcherUrl(orcid, 13L);
+        r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(r);
         assertEquals(ResearcherUrl.class.getName(), r.getEntity().getClass().getName());
         
         //Limited fail
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 14L);
+            serviceDelegator.viewResearcherUrl(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4486,7 +4688,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         //Private fail
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 15L);
+            serviceDelegator.viewResearcherUrl(ORCID, 15L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4496,17 +4698,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Biography() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewBiography(orcid);
+    public void testReadPublicScope_Biography() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewBiography(ORCID);
         assertNotNull(r);
         assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
         
         try {
             //Bio for 0000-0000-0000-0002 should be limited
-            orcid = "0000-0000-0000-0002";
-            r = serviceDelegator.viewBiography(orcid);
+            String otherOrcid = "0000-0000-0000-0002";
+            r = serviceDelegator.viewBiography(otherOrcid);
             fail();
         } catch (OrcidUnauthorizedException e) {
             
@@ -4514,10 +4715,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
         
     @Test
-    public void testReadPublicScope_PersonalDetails() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewPersonalDetails(orcid);
+    public void testReadPublicScope_PersonalDetails() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewPersonalDetails(ORCID);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         PersonalDetails p = (PersonalDetails) r.getEntity();
@@ -4529,9 +4729,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(13), p.getOtherNames().getOtherNames().get(0).getPutCode());
         assertEquals("Other Name PUBLIC", p.getOtherNames().getOtherNames().get(0).getContent());
         
-        orcid = "0000-0000-0000-0002";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        r = serviceDelegator.viewPersonalDetails(orcid);
+        String otherOrcid = "0000-0000-0000-0002";
+        SecurityContextTestUtils.setUpSecurityContext(otherOrcid, ScopePathType.READ_PUBLIC);
+        r = serviceDelegator.viewPersonalDetails(otherOrcid);
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         p = (PersonalDetails) r.getEntity();
@@ -4541,14 +4741,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testReadPublicScope_Person() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        Response r = serviceDelegator.viewPerson(orcid);
+    public void testReadPublicScope_Person() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewPerson(ORCID);
         assertNotNull(r);
         assertEquals(Person.class.getName(), r.getEntity().getClass().getName());
         Person p = (Person) r.getEntity();
-        testPerson(p, orcid);
+        testPerson(p, ORCID);
     }
     
     private void testPerson(Person p, String orcid) {
@@ -4720,8 +4919,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.deletePeerReview(orcid, putCode);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
-    
-    
+        
     @Test
     public void testAddFundingWithInvalidExtIdTypeFail() {
         String orcid = "4444-4444-4444-4499";
@@ -4766,58 +4964,56 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testOrcidProfileCreate_CANT_AddOnClaimedAccounts() {
-        // 0000-0000-0000-0001 MUST BE CLAIMED
-        String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
 
         // Test can't create
         try {
-            serviceDelegator.createAddress(orcid, getAddress());
+            serviceDelegator.createAddress(ORCID, getAddress());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createEducation(orcid, getEducation());
+            serviceDelegator.createEducation(ORCID, getEducation());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createEmployment(orcid, getEmployment());
+            serviceDelegator.createEmployment(ORCID, getEmployment());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createExternalIdentifier(orcid, getPersonExternalIdentifier());
+            serviceDelegator.createExternalIdentifier(ORCID, getPersonExternalIdentifier());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createFunding(orcid, getFunding());
+            serviceDelegator.createFunding(ORCID, getFunding());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createKeyword(orcid, getKeyword());
+            serviceDelegator.createKeyword(ORCID, getKeyword());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createOtherName(orcid, getOtherName());
+            serviceDelegator.createOtherName(ORCID, getOtherName());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createPeerReview(orcid, getPeerReview());
+            serviceDelegator.createPeerReview(ORCID, getPeerReview());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createResearcherUrl(orcid, getResearcherUrl());
+            serviceDelegator.createResearcherUrl(ORCID, getResearcherUrl());
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createWork(orcid, getWork("work # 1 " + System.currentTimeMillis()));
+            serviceDelegator.createWork(ORCID, getWork("work # 1 " + System.currentTimeMillis()));
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }        
@@ -4829,136 +5025,160 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test 
-    public void testOrcidProfileCreate_CANT_ViewOnClaimedAccounts() {
-        String orcid = "0000-0000-0000-0003";
+    public void testOrcidProfileCreate_CANT_ViewOnClaimedAccounts() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
-            serviceDelegator.viewActivities(orcid);
+            serviceDelegator.viewActivities(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewAddress(orcid, 9L);
+            serviceDelegator.viewAddress(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewAddresses(orcid);
+            serviceDelegator.viewAddresses(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewBiography(orcid);
+            serviceDelegator.viewBiography(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewEducation(orcid, 20L);
+            serviceDelegator.viewEducation(ORCID, 20L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewEducationSummary(orcid, 20L);
+            serviceDelegator.viewEducationSummary(ORCID, 20L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewEmails(orcid);
+            serviceDelegator.viewEducations(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewEmployment(orcid, 17L);
+            serviceDelegator.viewEmails(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 17L);
+            serviceDelegator.viewEmployment(ORCID, 17L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 13L);
+            serviceDelegator.viewEmploymentSummary(ORCID, 17L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewExternalIdentifiers(orcid);
+            serviceDelegator.viewEmployments(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewFunding(orcid, 10L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewFundingSummary(orcid, 10L);
+            serviceDelegator.viewExternalIdentifiers(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewKeyword(orcid, 9L);
+            serviceDelegator.viewFunding(ORCID, 10L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewKeywords(orcid);
+            serviceDelegator.viewFundingSummary(ORCID, 10L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewOtherName(orcid, 13L);
+            serviceDelegator.viewFundings(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewOtherNames(orcid);
+            serviceDelegator.viewKeyword(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewPeerReview(orcid, 9L);
+            serviceDelegator.viewKeywords(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+            serviceDelegator.viewOtherName(ORCID, 13L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewPerson(orcid);
+            serviceDelegator.viewOtherNames(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewPersonalDetails(orcid);
+            serviceDelegator.viewPeerReview(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 13L);
+            serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewResearcherUrls(orcid);
+            serviceDelegator.viewPeerReviews(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewWork(orcid, 11L);
+            serviceDelegator.viewPerson(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewWorkSummary(orcid, 11L);
+            serviceDelegator.viewPersonalDetails(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.viewRecord(orcid);
+            serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewResearcherUrls(ORCID);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewWork(ORCID, 11L);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewWorkSummary(ORCID, 11L);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewWorks(ORCID);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewRecord(ORCID);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
@@ -4975,184 +5195,182 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test 
-    public void testOrcidProfileCreate_CANT_DeleteOnClaimedAccounts() {
-        String orcid = "0000-0000-0000-0003";
+    public void testOrcidProfileCreate_CANT_DeleteOnClaimedAccounts() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
-            serviceDelegator.deleteAddress(orcid, 9L);
+            serviceDelegator.deleteAddress(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteAffiliation(orcid, 20L);
+            serviceDelegator.deleteAffiliation(ORCID, 20L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteExternalIdentifier(orcid, 13L);
+            serviceDelegator.deleteExternalIdentifier(ORCID, 13L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteFunding(orcid, 10L);
+            serviceDelegator.deleteFunding(ORCID, 10L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteKeyword(orcid, 9L);
+            serviceDelegator.deleteKeyword(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteOtherName(orcid, 13L);
+            serviceDelegator.deleteOtherName(ORCID, 13L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deletePeerReview(orcid, 9L);
+            serviceDelegator.deletePeerReview(ORCID, 9L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteResearcherUrl(orcid, 13L);
+            serviceDelegator.deleteResearcherUrl(ORCID, 13L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.deleteWork(orcid, 11L);
+            serviceDelegator.deleteWork(ORCID, 11L);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
     }
     
     @Test 
-    public void testOrcidProfileCreate_CANT_UpdateOnClaimedAccounts() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewAddress(orcid, 9L);
+    public void testOrcidProfileCreate_CANT_UpdateOnClaimedAccounts() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewAddress(ORCID, 9L);
         assertNotNull(response);
         Address a = (Address) response.getEntity();
         assertNotNull(a);        
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateAddress(orcid, a.getPutCode(), a);
+            serviceDelegator.updateAddress(ORCID, a.getPutCode(), a);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewEducation(orcid, 20L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewEducation(ORCID, 20L);
         assertNotNull(response);
         Education edu = (Education) response.getEntity();
         assertNotNull(edu);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateEducation(orcid, edu.getPutCode(), edu);
+            serviceDelegator.updateEducation(ORCID, edu.getPutCode(), edu);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
                 
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewEmployment(orcid, 17L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(response);
         Employment emp = (Employment) response.getEntity();
         assertNotNull(emp);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateEmployment(orcid, emp.getPutCode(), emp);
+            serviceDelegator.updateEmployment(ORCID, emp.getPutCode(), emp);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewExternalIdentifier(orcid, 13L); 
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewExternalIdentifier(ORCID, 13L); 
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateExternalIdentifier(orcid, extId.getPutCode(), extId);
+            serviceDelegator.updateExternalIdentifier(ORCID, extId.getPutCode(), extId);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewFunding(orcid, 10L); 
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewFunding(ORCID, 10L); 
         assertNotNull(response);
         Funding f = (Funding) response.getEntity();
         assertNotNull(f);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateFunding(orcid, f.getPutCode(), f);
+            serviceDelegator.updateFunding(ORCID, f.getPutCode(), f);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewKeyword(orcid, 9L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(response);
         Keyword k = (Keyword) response.getEntity();
         assertNotNull(k);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateKeyword(orcid, k.getPutCode(), k);
+            serviceDelegator.updateKeyword(ORCID, k.getPutCode(), k);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewOtherName(orcid, 13L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewOtherName(ORCID, 13L);
         assertNotNull(response);
         OtherName o = (OtherName) response.getEntity();
         assertNotNull(o);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateOtherName(orcid, o.getPutCode(), o);
+            serviceDelegator.updateOtherName(ORCID, o.getPutCode(), o);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewPeerReview(orcid, 9L); 
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewPeerReview(ORCID, 9L); 
         assertNotNull(response);
         PeerReview p = (PeerReview) response.getEntity();
         assertNotNull(p);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updatePeerReview(orcid, p.getPutCode(), p);
+            serviceDelegator.updatePeerReview(ORCID, p.getPutCode(), p);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewResearcherUrl(orcid, 13L);
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(response);
         ResearcherUrl r = (ResearcherUrl) response.getEntity();
         assertNotNull(r);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateResearcherUrl(orcid, r.getPutCode(), r);
+            serviceDelegator.updateResearcherUrl(ORCID, r.getPutCode(), r);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
         
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
-        response = serviceDelegator.viewWork(orcid, 11L); 
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewWork(ORCID, 11L); 
         assertNotNull(response);
         Work w = (Work) response.getEntity();
         assertNotNull(w);
         try {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
-            serviceDelegator.updateWork(orcid, w.getPutCode(), w);
+            serviceDelegator.updateWork(ORCID, w.getPutCode(), w);
             fail();
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkBulk;
 
@@ -144,4 +145,15 @@ public interface WorkManager {
      * @return the list of works that belongs to this user
      * */
     List<WorkSummary> getWorksSummaryList(String orcid, long lastModified);
+    
+    /**
+     * Generate a grouped list of works with the given list of works
+     * 
+     * @param works
+     *          The list of works to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return Works element with the WorkSummary elements grouped                  
+     * */
+    Works groupWorks(List<WorkSummary> works, boolean justPublic);
 }

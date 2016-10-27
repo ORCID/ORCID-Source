@@ -55,16 +55,22 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Filterable;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Employments;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
@@ -245,6 +251,19 @@ public class MemberV2ApiServiceDelegatorImpl
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
+    
+    @Override
+    public Response viewWorks(String orcid) {        
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
+        List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
+        Works works = workManager.groupWorks(worksList, false);
+        works = visibilityFilter.filter(works, orcid);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
+        ActivityUtils.cleanEmptyFields(works);
+        ActivityUtils.setPathToWorks(works, orcid);
+        sourceUtils.setSourceName(works);
+        return Response.ok(works).build();
+    }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {        
@@ -306,7 +325,19 @@ public class MemberV2ApiServiceDelegatorImpl
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
-
+    
+    @Override
+    public Response viewFundings(String orcid) {        
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);        
+        List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);        
+        fundings = visibilityFilter.filter(fundings, orcid);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
+        ActivityUtils.setPathToFundings(fundings, orcid);
+        sourceUtils.setSourceName(fundings);
+        return Response.ok(fundings).build();
+    }
+    
     @Override    
     public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
@@ -357,6 +388,27 @@ public class MemberV2ApiServiceDelegatorImpl
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
+    
+    @Override
+    public Response viewEducations(String orcid) {        
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
+        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+
+        Educations educations = new Educations();
+        for(EducationSummary summary : educationsList) {
+            try {
+                checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, summary);
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary); 
+                educations.getSummaries().add(summary);
+            } catch(Exception e) {
+                //Just ignore this element
+            }            
+        }
+
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
+        return Response.ok(educations).build();
+    }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
@@ -400,6 +452,27 @@ public class MemberV2ApiServiceDelegatorImpl
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
+    }
+    
+    @Override
+    public Response viewEmployments(String orcid) {        
+        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
+        List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+
+        Employments employments = new Employments();
+        for(EmploymentSummary summary : employmentsList) {
+            try {
+                checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, summary);
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary); 
+                employments.getSummaries().add(summary);
+            } catch(Exception e) {
+                //Just ignore this element
+            }            
+        }
+
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
+        return Response.ok(employments).build();
     }
 
     @Override
@@ -453,6 +526,18 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.ok(p).build();
     }
 
+    @Override
+    public Response viewPeerReviews(String orcid) {        
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
+        List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));        
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);        
+        peerReviews = visibilityFilter.filter(peerReviews, orcid);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
+        sourceUtils.setSourceName(peerReviews);
+        return Response.ok(peerReviews).build();
+    }
+    
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary ps = peerReviewManager.getPeerReviewSummary(orcid, putCode);        
@@ -966,7 +1051,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(requiredScope, orcid);
             orcidSecurityManager.checkVisibility(element, orcid);
         } catch(AccessControlException | OrcidUnauthorizedException e) {
-            //If the user have the READ_PUBLIC scope, check that the work is public
+            //If the user have the READ_PUBLIC scope, check that the element is public
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 orcidSecurityManager.checkIsPublic(element);
             } else {

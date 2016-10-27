@@ -20,7 +20,9 @@
 <script type="text/ng-template" id="edit-aka">	
 	<!-- Other Names -->	
 	<div class="lightbox-container" id="aka-popover">
-		<div class="edit-record edit-aka">
+		<div class="edit-record	<#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-aka">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -30,25 +32,24 @@
 				</div>			
 			</div>
 
+			<#if RequestParameters['bulkEdit']??>				
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right custom-control-title"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div style="position: relative">							
-									<div ng-include="'bulk-edit'"></div>
-								</div>							
-							</div>		
-						</#if>
-				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
-
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>
+						<div class="scroll-area">
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
@@ -57,7 +58,7 @@
 									</div>									    
 									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null">{{orcidId}}</span></div>
 								</div>							
-								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
+								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">																															
 									<ul class="record-settings pull-right">
 										<li>
 											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-aka-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-aka-move-up-'+$index)"></div>											
@@ -71,7 +72,7 @@
 											<div class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)" ng-mouseover="commonSrvc.showTooltip('tooltip-aka-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-aka-delete-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-aka-delete-'+$index" message="common.modals.delete" />
 										</li>
-										<li>											
+										<li>
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
 				             					questionClick="toggleClickPrivacyHelp($index)"
 				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -108,7 +109,9 @@
 <script type="text/ng-template" id="edit-country">
 	<!-- Country -->
 	<div class="lightbox-container" id="country-popover">
-		<div class="edit-record edit-country">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-country">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -118,24 +121,25 @@
 				</div>			
 			</div>
 
+			<#if RequestParameters['bulkEdit']??>
+				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div style="position: relative">							
-									<div ng-include="'bulk-edit'"></div>
-								</div>							
-							</div>		
-						</#if>
-				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
@@ -204,7 +208,9 @@
 <script type="text/ng-template" id="edit-keyword">
 	<!-- Keywords -->
 	<div class="lightbox-container" id="keyword-popover">
-		<div class="edit-record edit-keyword">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-keyword">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -214,24 +220,25 @@
 				</div>			
 			</div>
 
+			<#if RequestParameters['bulkEdit']??>
+				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div style="position: relative">							
-									<div ng-include="'bulk-edit'"></div>
-								</div>							
-							</div>		
-						</#if>
-				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
 									<div class="aka">										
@@ -291,7 +298,9 @@
 
 <script type="text/ng-template" id="edit-websites">
 	<div class="lightbox-container" id="websites-popover">
-		<div class="edit-record edit-websites">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-websites">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -301,24 +310,25 @@
 				</div>			
 			</div>
 
+			<#if RequestParameters['bulkEdit']??>
+				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div style="position: relative">							
-									<div ng-include="'bulk-edit'"></div>
-								</div>							
-							</div>		
-						</#if>
-				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites">
 								<div class="col-md-6">
 									<div class="aka">										
@@ -386,7 +396,9 @@
 
 <script type="text/ng-template" id="edit-external-identifiers">
 	<div class="lightbox-container" id="extids-popover">
-		<div class="edit-record edit-external-identifiers">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-external-identifiers">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -395,25 +407,26 @@
 					</h1>
 				</div>			
 			</div>
+			
+			<#if RequestParameters['bulkEdit']??>
+				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div style="position: relative">							
-									<div ng-include="'bulk-edit'"></div>
-								</div>							
-							</div>		
-						</#if>
-				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 								<div class="col-md-6">
 									<div class="aka">										
@@ -474,17 +487,26 @@
 <script type="text/ng-template" id="bulk-edit">					
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
-			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit"/></span>
-			<div style="position: static;">
+			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit_privacy"/></span>
+			<div class="bulk-privacy-bar">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
 		        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 		            publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
                 	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
                 	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-                	elementId="bulkEdit"
-				/>
+                	elementId="bulkEdit" />		
+
 			</div>
+			<div class="bulk-help popover-help-container">
+            	<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="bulk-help" class="popover bottom">
+                	<div class="arrow"></div>
+                    <div class="popover-content">
+                    	<p><@orcid.msg "groups.common.bulk_edit_privacy_help" /></p>
+                    </div>
+               </div>
+            </div>
 		</div>			
 	</div>
 </script>

@@ -20,18 +20,22 @@ import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
+import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT;
+import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENTS;
 import static org.orcid.core.api.OrcidApiConstants.EMPLOYMENT_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIERS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING;
+import static org.orcid.core.api.OrcidApiConstants.FUNDINGS;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.OTHER_NAMES;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
+import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEWS;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
@@ -42,6 +46,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
+import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,10 +65,14 @@ import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Employment;
 import org.orcid.jaxb.model.record_rc3.Funding;
@@ -154,6 +163,14 @@ public class PublicV2ApiServiceImplV2_0_rc3 {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WORKS)
+    @ApiOperation(value = "Fetch all works", response = Works.class)
+    public Response viewWorks(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewWorks(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDING + PUTCODE)
     @ApiOperation(value = "Fetch a Funding", response = Funding.class)
     public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
@@ -170,6 +187,14 @@ public class PublicV2ApiServiceImplV2_0_rc3 {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDINGS)
+    @ApiOperation(value = "Fetch all fundings", response = Fundings.class)    
+    public Response viewFundings(@PathParam("orcid") String orcid) {        
+        return serviceDelegator.viewFundings(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATION + PUTCODE)
     @ApiOperation(value = "Fetch an Education", response = Education.class)
     public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
@@ -184,6 +209,14 @@ public class PublicV2ApiServiceImplV2_0_rc3 {
         return serviceDelegator.viewEducationSummary(orcid, putCode);
     }
 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EDUCATIONS)
+    @ApiOperation(value = "Fetch all educations", response = Educations.class)    
+    public Response viewEducations(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewEducations(orcid);
+    }
+    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENT + PUTCODE)
@@ -204,6 +237,14 @@ public class PublicV2ApiServiceImplV2_0_rc3 {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EMPLOYMENTS)
+    @ApiOperation(value = "Fetch all employments", response = Fundings.class)    
+    public Response viewEmployments(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewEmployments(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEW + PUTCODE)
     @ApiOperation(value = "Fetch a Peer Review", response = PeerReview.class)
     public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
@@ -218,6 +259,14 @@ public class PublicV2ApiServiceImplV2_0_rc3 {
         return serviceDelegator.viewPeerReviewSummary(orcid, putCode);
     }
 
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PEER_REVIEWS)
+    @ApiOperation(value = "Fetch all peer reviews", response = PeerReviews.class)    
+    public Response viewPeerReviews(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewPeerReviews(orcid);
+    }
+    
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)

@@ -16,8 +16,11 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc3;
 
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
@@ -28,12 +31,16 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.CitationType;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
@@ -57,7 +64,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class WorksTest extends BlackBoxBaseRC3 {
     @Resource(name = "memberV2ApiClient_rc3")
-    private MemberV2ApiClientImpl memberV2ApiClient;
+    private MemberV2ApiClientImpl memberV2ApiClient;        
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
@@ -118,6 +125,153 @@ public class WorksTest extends BlackBoxBaseRC3 {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
         
+    @Test
+    public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        String accessTokenForClient1 = getAccessToken();
+        String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
+        work1.setPutCode(null);
+        work1.setVisibility(Visibility.PUBLIC);
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title1 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
+        title1.setTitle(new Title("Work # 1" + time));
+        work1.setWorkTitle(title1);
+        ExternalID wExtId1 = new ExternalID();
+        wExtId1.setValue("Work Id " + time);
+        wExtId1.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId1.setRelationship(Relationship.SELF);
+        wExtId1.setUrl(new Url("http://orcid.org/work#1"));
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
+
+        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
+        work2.setPutCode(null);
+        work2.setVisibility(Visibility.PUBLIC);
+        org.orcid.jaxb.model.record_rc3.WorkTitle title2 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
+        title2.setTitle(new Title("Work # 2" + time));
+        work2.setWorkTitle(title2);
+        work2.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId2 = new ExternalID();
+        wExtId2.setValue("Work Id " + time);
+        wExtId2.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId2.setRelationship(Relationship.PART_OF);
+        wExtId2.setUrl(new Url("http://orcid.org/work#2"));
+        work2.getExternalIdentifiers().getExternalIdentifier().clear();
+        work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
+        
+        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
+        work3.setPutCode(null);
+        work3.setVisibility(Visibility.PUBLIC);
+        org.orcid.jaxb.model.record_rc3.WorkTitle title3 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
+        title3.setTitle(new Title("Work # 3" + time));
+        work3.setWorkTitle(title3);        
+        work3.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId3 = new ExternalID();
+        wExtId3.setValue("Work Id " + time);
+        wExtId3.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId3.setRelationship(Relationship.SELF);
+        wExtId3.setUrl(new Url("http://orcid.org/work#3"));
+        work3.getExternalIdentifiers().getExternalIdentifier().clear();
+        work3.getExternalIdentifiers().getExternalIdentifier().add(wExtId3);
+        
+        //Add the three works
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work1, accessTokenForClient1);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient1);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work3, accessTokenForClient2);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), accessTokenForClient1);
+        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
+        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertFalse(activities.getWorks().getWorkGroup().isEmpty());
+        
+        WorkGroup work1Group = null; 
+        WorkGroup work2Group = null;
+        WorkGroup work3Group = null;
+        
+        boolean work1found = false;
+        boolean work2found = false;
+        boolean work3found = false;
+                                
+        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
+            if(group.getIdentifiers().getExternalIdentifier() == null || group.getIdentifiers().getExternalIdentifier().isEmpty()) {
+                for(WorkSummary summary : group.getWorkSummary()) {
+                    String title = summary.getTitle().getTitle().getContent(); 
+                    if (("Work # 2" + time).equals(title)) {
+                        work2found = true;
+                        work2Group = group;
+                    }
+                }
+            } else {
+                for(ExternalID id : group.getIdentifiers().getExternalIdentifier()) {
+                    //If it is the ID is the one we are looking for
+                    if(id.getValue().equals("Work Id " + time)) {                    
+                        for(WorkSummary summary : group.getWorkSummary()) {
+                            String title = summary.getTitle().getTitle().getContent(); 
+                            if(("Work # 1" + time).equals(title)) {
+                                work1found = true;
+                                work1Group = group;
+                            } else if(("Work # 3" + time).equals(title)) {
+                                work3found = true;
+                                work3Group = group;
+                            }
+                        }
+                    }
+                }
+            }            
+        }
+        
+        assertTrue(work1found && work2found && work3found);
+        //Check that work # 1 and Work # 3 are in the same work
+        assertEquals(work1Group, work3Group);
+        //Check that work # 2 is not in the same group than group # 1
+        assertThat(work2Group, not(work1Group));
+    }
+    
+    @Test
+    public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
+        long time = System.currentTimeMillis();
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
+        workToCreate.setPutCode(null);
+        workToCreate.setVisibility(Visibility.PUBLIC);
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
+        wExtId.setRelationship(Relationship.SELF);
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
+        String accessToken = getAccessToken();
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc3/" + this.getUser1OrcidId() + "/work/\\d+"));
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Work gotWork = getResponse.getEntity(Work.class);
+        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        gotWork.getWorkTitle().getTitle().setContent("updated title");
+        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
+        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
+        assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
     @Test
     public void testCreateBulkWork() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();        

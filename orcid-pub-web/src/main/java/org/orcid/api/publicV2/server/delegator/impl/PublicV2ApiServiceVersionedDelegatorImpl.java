@@ -59,6 +59,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     @Override
+    public Response viewWorks(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewWorks(orcid));
+    }
+    
+    @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         // DO not downgrade non-orcid schema responses (this is citeproc);
@@ -81,6 +87,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     @Override
+    public Response viewFundings(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewFundings(orcid));
+    }
+    
+    @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         return downgradeResponse(publicV2ApiServiceDelegator.viewFundingSummary(orcid, putCode));
@@ -92,6 +104,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return downgradeResponse(publicV2ApiServiceDelegator.viewEducation(orcid, putCode));
     }
 
+    @Override
+    public Response viewEducations(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEducations(orcid));
+    }
+    
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid);
@@ -105,6 +123,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     @Override
+    public Response viewEmployments(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewEmployments(orcid));
+    }
+    
+    @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         return downgradeResponse(publicV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode));
@@ -116,6 +140,12 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
     }
 
+    @Override
+    public Response viewPeerReviews(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReviews(orcid));
+    }
+    
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid);

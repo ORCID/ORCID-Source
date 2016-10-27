@@ -21,8 +21,10 @@ import java.net.URISyntaxException;
 
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.listener.exception.DeprecatedRecordException;
+import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,15 +61,25 @@ public class Orcid12APIClient {
      * @return
      * @throws LockedRecordException 
      */
-    public OrcidProfile fetchPublicProfile(String orcid) throws LockedRecordException {
+    public OrcidMessage fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri);
+        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
         ClientResponse response = webResource.path(orcid + "/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-        if (response.getStatus() != 200) {
-            if (response.getStatus() == 409)
-                throw new LockedRecordException();
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+        
+        if (response.getStatus() != 200) {             
+            switch(response.getStatus()) {
+            case 301:
+                OrcidDeprecated orcidDeprecated = response.getEntity(OrcidDeprecated.class);
+                throw new DeprecatedRecordException(orcidDeprecated);
+            case 409:
+                OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
+                throw new LockedRecordException(orcidMessage);
+            default:
+                LOG.error("Unable to fetch public record " + orcid + " on API 1.2 HTTP error code: " + response.getStatus());
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+            }            
         }
-        OrcidMessage output = response.getEntity(OrcidMessage.class);
-        return output.getOrcidProfile();
+        
+        return response.getEntity(OrcidMessage.class);        
     }
 }

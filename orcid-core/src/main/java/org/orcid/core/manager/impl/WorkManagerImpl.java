@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,14 +42,20 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.activities.ActivitiesGroup;
+import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.GroupAble;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
 import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkBulk;
@@ -467,6 +474,54 @@ public class WorkManagerImpl implements WorkManager {
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+    }
+    
+    /**
+     * Generate a grouped list of works with the given list of works
+     * 
+     * @param works
+     *          The list of works to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return Works element with the WorkSummary elements grouped                  
+     * */
+    @Override
+    public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        Works result = new Works();
+        // Group all works
+        for (WorkSummary work : works) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+                // If it is just public and the work is not public, just ignore
+                // it
+            } else {
+                groupGenerator.group(work);
+            }
+        }
+
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+
+        for (ActivitiesGroup group : groups) {
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
+            Set<GroupableActivity> activities = group.getActivities();
+            WorkGroup workGroup = new WorkGroup();
+            // Fill the work groups with the external identifiers
+            for (GroupAble extId : externalIdentifiers) {
+                ExternalID workExtId = (ExternalID) extId;
+                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+            }
+
+            // Fill the work group with the list of activities
+            for (GroupableActivity activity : activities) {
+                WorkSummary workSummary = (WorkSummary) activity;
+                workGroup.getWorkSummary().add(workSummary);
+            }
+
+            // Sort the works
+            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
+            result.getWorkGroup().add(workGroup);
+        }
+        return result;
     }
 
     private Item createItem(WorkEntity workEntity) {

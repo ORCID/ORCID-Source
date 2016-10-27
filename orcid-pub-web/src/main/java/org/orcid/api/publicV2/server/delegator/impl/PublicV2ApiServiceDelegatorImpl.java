@@ -19,6 +19,7 @@ package org.orcid.api.publicV2.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -50,16 +51,22 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Employments;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
@@ -207,14 +214,26 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModifiedTime(orcid);
         Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         orcidSecurityManager.checkIsPublic(w);
-        ActivityUtils.cleanEmptyFields(w);        
+        ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewWorks(String orcid) {
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        List<WorkSummary> works = workManager.getWorksSummaryList(orcid, lastModifiedTime);
+        Works publicWorks = workManager.groupWorks(works, true);
+        publicWorks = visibilityFilter.filter(publicWorks, orcid);
+        ActivityUtils.cleanEmptyFields(publicWorks);
+        ActivityUtils.setPathToWorks(publicWorks, orcid);
+        sourceUtils.setSourceName(publicWorks);
+        return Response.ok(publicWorks).build();
     }
     
     @Override
@@ -266,6 +285,17 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewFundings(String orcid) {        
+        List<FundingSummary> fundings = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        Fundings publicFundings = profileFundingManager.groupFundings(fundings, true);
+        publicFundings = visibilityFilter.filter(publicFundings, orcid);        
+        ActivityUtils.setPathToFundings(publicFundings, orcid);
+        sourceUtils.setSourceName(publicFundings);
+        return Response.ok(publicFundings).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(fs);
@@ -286,6 +316,22 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewEducations(String orcid) {        
+        List<EducationSummary> educations = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
+        Educations publicEducations = new Educations();
+        for(EducationSummary summary : educations) {
+            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary);
+                publicEducations.getSummaries().add(summary);
+            }
+        }
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
+        return Response.ok(publicEducations).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducationSummary(String orcid, Long putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(es);
@@ -304,6 +350,22 @@ public class PublicV2ApiServiceDelegatorImpl
         return Response.ok(e).build();
     }
 
+    @Override
+    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewEmployments(String orcid) {        
+        List<EmploymentSummary> employments = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        Employments publicEmployments = new Employments();
+        for(EmploymentSummary summary : employments) {
+            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary);
+                publicEmployments.getSummaries().add(summary);
+            }
+        }
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
+        return Response.ok(publicEmployments).build();
+    }
+    
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
@@ -323,6 +385,17 @@ public class PublicV2ApiServiceDelegatorImpl
         return Response.ok(peerReview).build();
     }
 
+    @Override
+    @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewPeerReviews(String orcid) {
+        List<PeerReviewSummary> peerReviews = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        PeerReviews publicPeerReviews = peerReviewManager.groupPeerReviews(peerReviews, true);
+        publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
+        ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
+        sourceUtils.setSourceName(publicPeerReviews);
+        return Response.ok(publicPeerReviews).build();
+    }
+    
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {

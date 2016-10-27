@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -39,6 +42,8 @@ import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 import org.orcid.jaxb.model.record_rc3.Funding;
@@ -159,6 +164,175 @@ public class ProfileFundingManagerTest extends BaseTest {
         
         assertNotNull(f);
         assertEquals(Long.valueOf(0), f.getDisplayIndex());
+    }
+    
+    @Test
+    public void testGroupFundings() {
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Funding 1 + Funding 4
+         * Group 2: Funding 2 + Funding 5
+         * Group 3: Funding 3
+         * Group 4: Funding 6
+         * */
+        FundingSummary s1 = getFundingSummary("Funding 1", "ext-id-1", Visibility.PUBLIC);
+        FundingSummary s2 = getFundingSummary("Funding 2", "ext-id-2", Visibility.LIMITED);
+        FundingSummary s3 = getFundingSummary("Funding 3", "ext-id-3", Visibility.PRIVATE);
+        FundingSummary s4 = getFundingSummary("Funding 4", "ext-id-1", Visibility.PRIVATE);
+        FundingSummary s5 = getFundingSummary("Funding 5", "ext-id-2", Visibility.PUBLIC);
+        FundingSummary s6 = getFundingSummary("Funding 6", "ext-id-4", Visibility.PRIVATE);
+        
+        List<FundingSummary> fundingList1 = Arrays.asList(s1, s2, s3, s4, s5, s6); 
+        
+        Fundings fundings1 = profileFundingManager.groupFundings(fundingList1, false);
+        assertNotNull(fundings1);
+        assertEquals(4, fundings1.getFundingGroup().size());
+        //Group 1 have all with ext-id-1
+        assertEquals(2, fundings1.getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(1, fundings1.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", fundings1.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 2 have all with ext-id-2
+        assertEquals(2, fundings1.getFundingGroup().get(1).getFundingSummary().size());
+        assertEquals(1, fundings1.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", fundings1.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 3 have ext-id-3
+        assertEquals(1, fundings1.getFundingGroup().get(2).getFundingSummary().size());
+        assertEquals(1, fundings1.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-3", fundings1.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 4 have ext-id-4
+        assertEquals(1, fundings1.getFundingGroup().get(3).getFundingSummary().size());
+        assertEquals(1, fundings1.getFundingGroup().get(3).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-4", fundings1.getFundingGroup().get(3).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        FundingSummary s7 = getFundingSummary("Funding 7", "ext-id-4", Visibility.PRIVATE);
+        //Add ext-id-3 to work 7, so, it join group 3 and group 4 in a single group
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue("ext-id-3"); 
+        s7.getExternalIdentifiers().getExternalIdentifier().add(extId);
+        
+        /**
+         * Now, they should be grouped as
+         * 
+         * Group 1: Funding 1 + Funding 4
+         * Group 2: Funding 2 + Funding 5
+         * Group 3: Funding 3 + Funding 6 + Funding 7
+         * */
+        List<FundingSummary> fundingsList2 = Arrays.asList(s1, s2, s3, s4, s5, s6, s7);
+        
+        Fundings fundings2 = profileFundingManager.groupFundings(fundingsList2, false);
+        assertNotNull(fundings2);
+        assertEquals(3, fundings2.getFundingGroup().size());
+        //Group 1 have all with ext-id-1
+        assertEquals(2, fundings2.getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(1, fundings2.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", fundings2.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 2 have all with ext-id-2
+        assertEquals(2, fundings2.getFundingGroup().get(1).getFundingSummary().size());
+        assertEquals(1, fundings2.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", fundings2.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 3 have all with ext-id-3 and ext-id-4
+        assertEquals(3, fundings2.getFundingGroup().get(2).getFundingSummary().size());
+        assertEquals(2, fundings2.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertThat(fundings2.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
+        assertThat(fundings2.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
+    }
+    
+    @Test
+    public void testGroupFundings_groupOnlyPublicFundings1() {
+        FundingSummary s1 = getFundingSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
+        FundingSummary s2 = getFundingSummary("Limited 1", "ext-id-2", Visibility.LIMITED);
+        FundingSummary s3 = getFundingSummary("Private 1", "ext-id-3", Visibility.PRIVATE);
+        FundingSummary s4 = getFundingSummary("Public 2", "ext-id-4", Visibility.PUBLIC);
+        FundingSummary s5 = getFundingSummary("Limited 2", "ext-id-5", Visibility.LIMITED);
+        FundingSummary s6 = getFundingSummary("Private 2", "ext-id-6", Visibility.PRIVATE);
+        FundingSummary s7 = getFundingSummary("Public 3", "ext-id-7", Visibility.PUBLIC);
+        FundingSummary s8 = getFundingSummary("Limited 3", "ext-id-8", Visibility.LIMITED);
+        FundingSummary s9 = getFundingSummary("Private 3", "ext-id-9", Visibility.PRIVATE);
+        
+        List<FundingSummary> fundingList = Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Public 1
+         * Group 2: Public 2
+         * Group 3: Public 3
+         * */
+        Fundings fundings = profileFundingManager.groupFundings(fundingList, true);
+        assertNotNull(fundings);
+        assertEquals(3, fundings.getFundingGroup().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals("ext-id-1", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 1", fundings.getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(1, fundings.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, fundings.getFundingGroup().get(1).getFundingSummary().size());
+        assertEquals("ext-id-4", fundings.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 2", fundings.getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(1, fundings.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, fundings.getFundingGroup().get(2).getFundingSummary().size());
+        assertEquals("ext-id-7", fundings.getFundingGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 3", fundings.getFundingGroup().get(2).getFundingSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testGroupFundings_groupOnlyPublicFundings2() {
+        FundingSummary s1 = getFundingSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
+        FundingSummary s2 = getFundingSummary("Limited 1", "ext-id-1", Visibility.LIMITED);
+        FundingSummary s3 = getFundingSummary("Private 1", "ext-id-1", Visibility.PRIVATE);
+        FundingSummary s4 = getFundingSummary("Public 2", "ext-id-1", Visibility.PUBLIC);
+        FundingSummary s5 = getFundingSummary("Limited 2", "ext-id-1", Visibility.LIMITED);
+        FundingSummary s6 = getFundingSummary("Private 2", "ext-id-1", Visibility.PRIVATE);
+        FundingSummary s7 = getFundingSummary("Public 3", "ext-id-2", Visibility.PUBLIC);
+        FundingSummary s8 = getFundingSummary("Limited 3", "ext-id-2", Visibility.LIMITED);
+        FundingSummary s9 = getFundingSummary("Private 3", "ext-id-2", Visibility.PRIVATE);        
+        
+        List<FundingSummary> fundingList = Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Public 1 + Public 2
+         * Group 2: Public 3
+         * */
+        Fundings fundings = profileFundingManager.groupFundings(fundingList, true);
+        assertNotNull(fundings);
+        assertEquals(2, fundings.getFundingGroup().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(2, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        assertThat(fundings.getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Public 1"), is("Public 2")));
+        assertThat(fundings.getFundingGroup().get(0).getFundingSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Public 1"), is("Public 2")));
+        assertEquals(1, fundings.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", fundings.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, fundings.getFundingGroup().get(1).getFundingSummary().size());
+        assertEquals("Public 3", fundings.getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    private FundingSummary getFundingSummary(String titleValue, String extIdValue, Visibility visibility) {
+        FundingSummary summary = new FundingSummary();
+        FundingTitle fundingTitle = new FundingTitle();
+        fundingTitle.setTitle(new Title(titleValue));
+        summary.setTitle(fundingTitle);        
+        summary.setVisibility(visibility);        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue(extIdValue);               
+        extIds.getExternalIdentifier().add(extId);
+        summary.setExternalIdentifiers(extIds);
+        return summary;
     }
     
     private Funding getFunding(String grantNumber) {
