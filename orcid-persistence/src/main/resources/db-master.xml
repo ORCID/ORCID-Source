@@ -213,4 +213,5 @@
     <include file="/db/updates/federated-idp-name.xml" />	
     <include file="/db/updates/fix-null-relationship-on-funding-ext-ids.xml" />
     <include file="/db/updates/identifier-type-pdb.xml" />
+    <include file="/db/updates/fix_empty_work_external_ids.xml" />
 </databaseChangeLog>
