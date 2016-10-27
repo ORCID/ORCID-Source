@@ -3964,6 +3964,10 @@ this.w3cLatexCharMap = {
       if (id.toLowerCase().startsWith('zbmath.org/?q=an')) return 'http://' + id;
       return 'http://zbmath.org/?q=' + encodeURIComponent('an:' + id ) + '&format=complete';
    };
+   
+   typeMap['kuid'] = function (id) {
+       return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
+   };
 
    exports.getLink = function(id, type) {
       if (id == null) return null;

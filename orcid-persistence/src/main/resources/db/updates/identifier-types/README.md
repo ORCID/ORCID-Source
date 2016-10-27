@@ -8,7 +8,8 @@ There are five steps:
 - Add the user entered id link translation (optional)
 - Update the test
 
-Add the database row using a liquibase script in this directory.  See identifier-type.pdb.xml for an example
+Add the database row using a liquibase script in this directory.  
+Example: See identifier-type.pdb.xml
 
 Update orcid-persistence/src/main/resources/db-master.xml.  
 Example: `<include file="/db/updates/identifier-type-pdb.xml" />`
