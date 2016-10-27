@@ -240,7 +240,7 @@
 							        </div>			        
 							    </div>
 							    
-							    <div class="form-group">
+							    <div class="form-group clear-fix">
 							        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
 							        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 							            <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="" ng-model="registrationForm.passwordConfirm.value" ng-change="serverValidate('PasswordConfirm')"/>
