@@ -29,6 +29,7 @@
 		<sql>update empty_work_identifiers set fixed_external_ids_json = (regexp_replace(fixed_external_ids_json::text, '{"relationship":"SELF","url":{"value":""},"workExternalIdentifierType":".*","workExternalIdentifierId":null}', ''))::json;</sql>
 		<sql>update empty_work_identifiers set fixed_external_ids_json = (regexp_replace(fixed_external_ids_json::text, '{"relationship":"SELF","url":null,"workExternalIdentifierType":".*","workExternalIdentifierId":null}', ''))::json;</sql>
 		<sql>update work as w set external_ids_json=ewi.fixed_external_ids_json, last_modified=now() from empty_work_identifiers as ewi where w.work_id = ewi.work_id and w.orcid = ewi.orcid;</sql>
+		<sql>update profile set last_modified=now(), indexing_status='REINDEX' where orcid in (select distinct(orcid) from empty_work_identifiers);</sql>
 		<sql>drop table if exists empty_work_identifiers;</sql>
 	</changeSet>
 	
