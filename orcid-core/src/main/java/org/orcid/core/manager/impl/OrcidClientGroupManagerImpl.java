@@ -633,6 +633,8 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String description = orcidClient.getShortDescription();
         String website = orcidClient.getWebsite();
         String idp = orcidClient.getIdp();
+        //TODO!!!!!
+        Boolean allowAutoDeprecate = orcidClient.getAllowAutoDeprecate();
         
         ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, createScopes(clientType),
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
