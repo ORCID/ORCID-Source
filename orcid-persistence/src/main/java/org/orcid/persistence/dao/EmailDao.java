@@ -47,7 +47,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     @SuppressWarnings("rawtypes")
     List findIdByCaseInsensitiveEmail(List<String> emails);
     
-    void addSourceToEmail(String email, String sourceId);
+    void addSourceToEmail(String sourceId, String email);
     
     boolean verifyEmail(String email);
     
