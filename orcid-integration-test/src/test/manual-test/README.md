@@ -420,55 +420,56 @@ https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&sc
 Check that you are sent to https://developers.google.com/oauthplayground with the error 'access_denied'
 
 ##Refresh tokens
+
 118. Generate a new token with the same scopes and expiration as the 2.0 token and do not revoke the original token
 
-```
-curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
-```
+	```
+	curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
+	```
 
 119. Use the newly generated refreshed token to post the test work
 
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-```
+	```
+	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+	```
 
 120. Check that the original token still works by reading the record
 
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
-```
+	```
+	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+	```
 
 121. Generate a new token with a short lifespan, only /read-limited scope and revoke the original token    
 
-```
-curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=true' -d 'scope=/read-limited' -d 'expires_in=600' https://qa.orcid.org/oauth/token
-```
+	```
+	curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=true' -d 'scope=/read-limited' -d 'expires_in=600' https://qa.orcid.org/oauth/token
+	```
 
 122. Find and replace [refreshed2] in this document with the token you just generated
 
 123. Check the new token can't be used to post items by attempting to post the test work. A 403 Forbidden error with the message "Insufficient or wrong scope [/read-limited]" should be returned
 
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-```
+	```
+	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+	```
 
 124. Check the original token was revoked by attempting to post the test work. A 401 Unauthorized error with the message "Invalid access token...: should be returned
 
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-```
+	```
+	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+	```
 
 125. Check that the new token can be used to read the record. The full record should be returned
 
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
-```
+	```
+	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+	```
 
 126. Check that you can't generate a refresh token using a revoked token. You should get an error message "Parent token is disabled"
 
-```
-curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
-```
+	```
+	curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
+	```
 
 ##Privacy Check
 ###Public Record
@@ -752,29 +753,29 @@ This section checks that clients can only get access based on the allowed scopes
 
 
 173. Attempt to get an /read-limited token via 2 step OAuth. Check a 401 Unauthorized error is returned
-
-```
-curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-limited' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-```
+	
+	```
+	curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-limited' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
+	```
 
 174. Attempt to get an /activities/update token via 2 step. Check a 401 Unauthorized error is returned
 
-```
-curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+	```
+	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 
-```
+	```
 
 175. Attempt to get a /webhooks token with a basic client. Check a 401 Unauthorized error is returned
 
-```
-curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
-```
+	```
+	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+	```
 
 176. Attempt to get a /orcid-profile/create token with a non-institution client. Check a 401 Unauthorized error is returned
 
-```
-curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
-```
+	```
+	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+	```
 
 
 * Finally help out by improving these instructions!      
