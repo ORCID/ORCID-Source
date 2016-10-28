@@ -3,7 +3,7 @@ node {
     git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine (orcid-machine-personal-token)'
     properties([pipelineTriggers([[$class: 'GitHubPushTrigger']])])
     stage('FetchFreshCode') {
-        def MAVEN = tool ORCID_MAVEN
+        def MAVEN = tool 'ORCID_MAVEN'
         sh "${MAVEN}/bin/mvn clean install"
     }
     stage('BuildDependencies') {
