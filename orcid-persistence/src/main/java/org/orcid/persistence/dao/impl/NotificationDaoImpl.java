@@ -23,6 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.notification_rc3.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,9 +68,10 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public List<NotificationEntity> findNotificationAlertsByOrcid(String orcid) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery(
-                "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.profile.id = :orcid and n.clientSourceId = r.clientDetailsEntity.id and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
-                NotificationEntity.class);
+        TypedQuery<NotificationEntity> query = entityManager
+                .createQuery(
+                        "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.profile.id = :orcid and n.clientSourceId = r.clientDetailsEntity.id and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
+                        NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setMaxResults(3);
         return query.getResultList();
@@ -152,6 +154,16 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         Query query = entityManager.createNativeQuery("delete from notification where id = :id");
         query.setParameter("id", notificationId);
         query.executeUpdate();
+    }
+
+    @Override
+    public List<NotificationEntity> findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults) {
+        TypedQuery<NotificationEntity> query = entityManager.createQuery(
+                "from NotificationEntity where orcid = :orcid and clientSourceId = :client and notificationType = :notificationType", NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("client", client);
+        query.setParameter("notificationType", NotificationType.PERMISSION);
+        return query.getResultList();
     }
 
 }
