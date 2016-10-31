@@ -20,6 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +41,8 @@ import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
@@ -388,6 +393,177 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(workManager.checkSourceAndRemoveWork(orcid, putCode));         
     }
     
+    @Test
+    public void testGroupWorks() {
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Work 1 + Work 4
+         * Group 2: Work 2 + Work 5
+         * Group 3: Work 3
+         * Group 4: Work 6
+         * */
+        WorkSummary s1 = getWorkSummary("Work 1", "ext-id-1", Visibility.PUBLIC);
+        WorkSummary s2 = getWorkSummary("Work 2", "ext-id-2", Visibility.LIMITED);
+        WorkSummary s3 = getWorkSummary("Work 3", "ext-id-3", Visibility.PRIVATE);
+        WorkSummary s4 = getWorkSummary("Work 4", "ext-id-1", Visibility.PRIVATE);
+        WorkSummary s5 = getWorkSummary("Work 5", "ext-id-2", Visibility.PUBLIC);
+        WorkSummary s6 = getWorkSummary("Work 6", "ext-id-4", Visibility.PRIVATE);
+        
+        List<WorkSummary> workList1 = Arrays.asList(s1, s2, s3, s4, s5, s6); 
+        
+        Works works1 = workManager.groupWorks(workList1, false);
+        assertNotNull(works1);
+        assertEquals(4, works1.getWorkGroup().size());
+        //Group 1 have all with ext-id-1
+        assertEquals(2, works1.getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(1, works1.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", works1.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 2 have all with ext-id-2
+        assertEquals(2, works1.getWorkGroup().get(1).getWorkSummary().size());
+        assertEquals(1, works1.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", works1.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 3 have ext-id-3
+        assertEquals(1, works1.getWorkGroup().get(2).getWorkSummary().size());
+        assertEquals(1, works1.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-3", works1.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 4 have ext-id-4
+        assertEquals(1, works1.getWorkGroup().get(3).getWorkSummary().size());
+        assertEquals(1, works1.getWorkGroup().get(3).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-4", works1.getWorkGroup().get(3).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        WorkSummary s7 = getWorkSummary("Work 7", "ext-id-4", Visibility.PRIVATE);
+        //Add ext-id-3 to work 7, so, it join group 3 and group 4 in a single group
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue("ext-id-3"); 
+        s7.getExternalIdentifiers().getExternalIdentifier().add(extId);
+        
+        /**
+         * Now, they should be grouped as
+         * 
+         * Group 1: Work 1 + Work 4
+         * Group 2: Work 2 + Work 5
+         * Group 3: Work 3 + Work 6 + Work 7
+         * */
+        List<WorkSummary> workList2 = Arrays.asList(s1, s2, s3, s4, s5, s6, s7);
+        
+        Works works2 = workManager.groupWorks(workList2, false);
+        assertNotNull(works2);
+        assertEquals(3, works2.getWorkGroup().size());
+        //Group 1 have all with ext-id-1
+        assertEquals(2, works2.getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(1, works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 2 have all with ext-id-2
+        assertEquals(2, works2.getWorkGroup().get(1).getWorkSummary().size());
+        assertEquals(1, works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
+        //Group 3 have all with ext-id-3 and ext-id-4
+        assertEquals(3, works2.getWorkGroup().get(2).getWorkSummary().size());
+        assertEquals(2, works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertThat(works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
+        assertThat(works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
+    }
+    
+    @Test
+    public void testGroupWorks_groupOnlyPublicWorks1() {
+        WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
+        WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-2", Visibility.LIMITED);
+        WorkSummary s3 = getWorkSummary("Private 1", "ext-id-3", Visibility.PRIVATE);
+        WorkSummary s4 = getWorkSummary("Public 2", "ext-id-4", Visibility.PUBLIC);
+        WorkSummary s5 = getWorkSummary("Limited 2", "ext-id-5", Visibility.LIMITED);
+        WorkSummary s6 = getWorkSummary("Private 2", "ext-id-6", Visibility.PRIVATE);
+        WorkSummary s7 = getWorkSummary("Public 3", "ext-id-7", Visibility.PUBLIC);
+        WorkSummary s8 = getWorkSummary("Limited 3", "ext-id-8", Visibility.LIMITED);
+        WorkSummary s9 = getWorkSummary("Private 3", "ext-id-9", Visibility.PRIVATE);
+        
+        List<WorkSummary> workList = Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Public 1
+         * Group 2: Public 2
+         * Group 3: Public 3
+         * */
+        Works works = workManager.groupWorks(workList, true);
+        assertNotNull(works);
+        assertEquals(3, works.getWorkGroup().size());
+        assertEquals(1, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, works.getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals("ext-id-1", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 1", works.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(1, works.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, works.getWorkGroup().get(1).getWorkSummary().size());
+        assertEquals("ext-id-4", works.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 2", works.getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(1, works.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(1, works.getWorkGroup().get(2).getWorkSummary().size());
+        assertEquals("ext-id-7", works.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("Public 3", works.getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testGroupWorks_groupOnlyPublicWorks2() {
+        WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
+        WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-1", Visibility.LIMITED);
+        WorkSummary s3 = getWorkSummary("Private 1", "ext-id-1", Visibility.PRIVATE);
+        WorkSummary s4 = getWorkSummary("Public 2", "ext-id-1", Visibility.PUBLIC);
+        WorkSummary s5 = getWorkSummary("Limited 2", "ext-id-1", Visibility.LIMITED);
+        WorkSummary s6 = getWorkSummary("Private 2", "ext-id-1", Visibility.PRIVATE);
+        WorkSummary s7 = getWorkSummary("Public 3", "ext-id-2", Visibility.PUBLIC);
+        WorkSummary s8 = getWorkSummary("Limited 3", "ext-id-2", Visibility.LIMITED);
+        WorkSummary s9 = getWorkSummary("Private 3", "ext-id-2", Visibility.PRIVATE);        
+        
+        List<WorkSummary> workList = Arrays.asList(s1, s2, s3, s4, s5, s6, s7, s8, s9);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Public 1 + Public 2
+         * Group 2: Public 3
+         * */
+        Works works = workManager.groupWorks(workList, true);
+        assertNotNull(works);
+        assertEquals(2, works.getWorkGroup().size());
+        assertEquals(1, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(2, works.getWorkGroup().get(0).getWorkSummary().size());
+        assertThat(works.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(), anyOf(is("Public 1"), is("Public 2")));
+        assertThat(works.getWorkGroup().get(0).getWorkSummary().get(1).getTitle().getTitle().getContent(), anyOf(is("Public 1"), is("Public 2")));
+        assertEquals(1, works.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-2", works.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, works.getWorkGroup().get(1).getWorkSummary().size());
+        assertEquals("Public 3", works.getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
+        WorkSummary summary = new WorkSummary();
+        summary.setDisplayIndex("0");        
+        Title title = new Title(titleValue);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(title);
+        summary.setTitle(workTitle);
+        summary.setType(WorkType.ARTISTIC_PERFORMANCE);
+        summary.setVisibility(visibility);        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));        
+        extId.setValue(extIdValue);               
+        extIds.getExternalIdentifier().add(extId);
+        summary.setExternalIdentifiers(extIds);
+        return summary;
+    }
     
     private Work getWork(String extIdValue) {
         Work work = new Work();

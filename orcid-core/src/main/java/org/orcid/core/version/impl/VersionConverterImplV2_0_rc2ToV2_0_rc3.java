@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
@@ -58,8 +59,10 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverter {
@@ -140,7 +143,18 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
         mapperFactory.classMap(Person.class, org.orcid.jaxb.model.record_rc3.Person.class).byDefault().register();
         
         //Record
-        mapperFactory.classMap(Record.class, org.orcid.jaxb.model.record_rc3.Record.class).byDefault().register();
+        mapperFactory.classMap(Record.class, org.orcid.jaxb.model.record_rc3.Record.class).byDefault()
+        .customize(new CustomMapper<Record, org.orcid.jaxb.model.record_rc3.Record>(){
+            @Override
+            public void mapBtoA(org.orcid.jaxb.model.record_rc3.Record recordRc3, Record record,
+                    MappingContext context) {
+                if(recordRc3 != null && recordRc3.getHistory() != null && recordRc3.getHistory().getLastModifiedDate() != null) {
+                    org.orcid.jaxb.model.common_rc3.LastModifiedDate rc3LastModified = recordRc3.getHistory().getLastModifiedDate();
+                    record.setLastModifiedDate(new LastModifiedDate(rc3LastModified.getValue()));                               
+                }                
+            }
+            
+        }).register();
         
         mapper = mapperFactory.getMapperFacade();
     }

@@ -21,13 +21,21 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-    <display-name>ORCID - Tier 2 API</display-name>
+    <display-name>ORCID - Message listener</display-name>
 
     <!-- Initialise Spring when we start up -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    
+    <context-param>
+        <param-name>log4jExposeWebAppRoot</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    
     <!-- Tell Spring where to find the context file -->
     <context-param>
         <param-name>contextConfigLocation</param-name>

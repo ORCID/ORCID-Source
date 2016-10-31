@@ -550,18 +550,18 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             var scrollTop = angular.element('.fixed-area').scrollTop();
             
             if (elem === '-privacy'){
-                angular.element('.edit-record .popover-help-container').css({
-                    top: -145,
-                    left: 461
+                angular.element('.edit-record .bulk-privacy-bar .popover-help-container').css({
+                    top: -75,
+                    left: 512
                 });
             }else{
                 if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
-                angular.element('.edit-record .popover-help-container').css({
+                angular.element('.edit-record .record-settings .popover-help-container').css({
                     top: top - scrollTop - 160,
                     left: left + 25
                 });             
             }
-            angular.element('.edit-record .popover-help-container .arrow').css({                    
+            angular.element('.edit-record .record-settings .popover-help-container .arrow').css({                    
                 left: offsetArrow
             }); 
             commonSrvc.shownElement[elem] = true;

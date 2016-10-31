@@ -71,6 +71,60 @@ public class ActivityUtils {
     }
 
     /**
+     * Set the path attribute to every work inside the Works element.
+     * 
+     * @param Works
+     *            The works container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToWorks(Works works, String orcid) {
+        if(works != null && works.getWorkGroup() != null) {
+            for(WorkGroup group : works.getWorkGroup()) {
+                for(WorkSummary summary : group.getWorkSummary()) {
+                    setPathToActivity(summary, orcid);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set the path attribute to every funding inside the Fundings element.
+     * 
+     * @param Fundings
+     *            The fundings container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToFundings(Fundings fundings, String orcid) {
+        if(fundings != null && fundings.getFundingGroup() != null) {
+            for(FundingGroup group : fundings.getFundingGroup()) {
+                for(FundingSummary summary : group.getFundingSummary()) {
+                    setPathToActivity(summary, orcid);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set the path attribute to every peer review inside the PeerReviews element.
+     * 
+     * @param PeerReviews
+     *            The peer reviews container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToPeerReviews(PeerReviews peerReviews, String orcid) {
+        if(peerReviews != null && peerReviews.getPeerReviewGroup() != null) {
+            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+                for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
+                    setPathToActivity(summary, orcid);
+                }
+            }
+        }
+    }    
+    
+    /**
      * Set the path attribute to all activities in the summary object
      * 
      * @param ActivitiesSummary
@@ -131,6 +185,20 @@ public class ActivityUtils {
         if(summaries != null) {
             if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
                 for(WorkGroup group : summaries.getWorks().getWorkGroup()) {
+                    if(group.getWorkSummary() != null) {
+                        for(WorkSummary summary : group.getWorkSummary()) {
+                            cleanEmptyFields(summary);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public static void cleanEmptyFields(Works works) {
+        if(works != null) {
+            if(works.getWorkGroup() != null) {
+                for(WorkGroup group : works.getWorkGroup()) {
                     if(group.getWorkSummary() != null) {
                         for(WorkSummary summary : group.getWorkSummary()) {
                             cleanEmptyFields(summary);

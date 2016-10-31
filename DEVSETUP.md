@@ -55,7 +55,7 @@ We'll set up postgres using the default settings in
     
     psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-    psql -d postgres -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
+    psql -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
 * Exit postgres user prompt
@@ -235,7 +235,7 @@ http://www.springsource.org/downloads/sts-ggts
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
     ```
-    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
+    -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
     ```
 * Click Ok
 

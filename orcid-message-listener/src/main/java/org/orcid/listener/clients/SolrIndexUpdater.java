@@ -69,19 +69,6 @@ public class SolrIndexUpdater {
         }        
         this.persist(recordConv.convert(record, v12profileXML));
     }
-    
-    /** Converts the profile to a OrcidSolrDocument and persists it
-     * 
-     * @param profile
-     */
-    public void updateSolrIndex(OrcidProfile profile) {
-        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index");
-        if(!isSolrIndexingEnalbed) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }
-        this.persist(conv.convert(profile));
-    }
 
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {

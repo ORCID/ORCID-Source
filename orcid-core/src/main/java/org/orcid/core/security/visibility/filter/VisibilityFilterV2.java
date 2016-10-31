@@ -20,6 +20,9 @@ import java.util.Collection;
 
 import org.orcid.jaxb.model.common_rc3.Filterable;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Group;
 import org.orcid.jaxb.model.record_rc3.Person;
 import org.orcid.jaxb.model.record_rc3.PersonalDetails;
@@ -31,6 +34,12 @@ import org.orcid.jaxb.model.record_rc3.Record;
 public interface VisibilityFilterV2 {
 
     ActivitiesSummary filter(ActivitiesSummary activitiesSummary, String orcid);
+    
+    Works filter(Works works, String orcid);
+    
+    Fundings filter(Fundings fundings, String orcid);
+    
+    PeerReviews filter(PeerReviews peerReviews, String orcid);
     
     Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables, String orcid);
         

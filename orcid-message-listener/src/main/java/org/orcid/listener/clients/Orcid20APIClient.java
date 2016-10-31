@@ -20,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_rc3.OrcidError;
@@ -46,17 +45,14 @@ public class Orcid20APIClient {
     @Resource
     protected Client jerseyClient;
     
-    protected final URI baseUri;
-    
-    protected final String host;
+    protected final URI baseUri;        
 
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host_header_override}") String hostHeaderOverride) throws URISyntaxException {
-        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + hostHeaderOverride);
-        this.baseUri = new URI(baseUri);
-        this.host = hostHeaderOverride;
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri) throws URISyntaxException {
+        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri);
+        this.baseUri = new URI(baseUri);        
     }
-
+    
     /**
      * Fetches the profile from the ORCID public API v1.2
      * 
@@ -66,7 +62,7 @@ public class Orcid20APIClient {
     public Record fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri);  
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).header(HttpHeaders.HOST, host).get(ClientResponse.class);        
+        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);        
         if (response.getStatus() != 200) {  
             OrcidError orcidError = null;
             switch(response.getStatus()) {

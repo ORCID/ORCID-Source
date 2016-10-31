@@ -112,6 +112,13 @@
 											</xs:documentation>
 										</xs:annotation>
 									</xs:enumeration>
+									<xs:enumeration value="peer-review service">
+										<xs:annotation>
+											<xs:documentation>
+												-
+											</xs:documentation>
+										</xs:annotation>
+									</xs:enumeration>
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
