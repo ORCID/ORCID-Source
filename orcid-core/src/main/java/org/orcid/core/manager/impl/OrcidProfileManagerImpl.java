@@ -224,6 +224,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
 
+    @Resource
+    private JmsMessageSender messaging;
+    
     private int claimReminderAfterDays = 8;
 
     private int verifyReminderAfterDays = 7;
@@ -1846,10 +1849,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     static ExecutorService executorService = null;
     static Object executorServiceLock = new Object();
-    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
-
-    @Resource
-    JmsMessageSender messaging;
+    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();    
     
     /** Simple method to be called by scheduler.
      * Looks for profiles with REINDEX flag and adds LastModifiedMessages to the REINDEX queue
@@ -2001,12 +2001,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
                 
                 //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
-                if(messaging.isEnabled() && IndexingStatus.REINDEX.equals(indexingStatus)) {
-                    Date last = profileDao.retrieveLastModifiedDate(orcid);
-                    LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-                    LOG.info("Sending record " + orcid + " to the message queue");
-                    if (messaging.send(mess, JmsDestination.REINDEX)) {
-                        LOG.warn("Record " + orcid + " was sent to the message queue");
+                if(messaging.isEnabled()) {
+                    Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+                    LastModifiedMessage mess = new LastModifiedMessage(orcid, lastModifiedFromDb);
+                    JmsDestination jmsDestination = JmsDestination.REINDEX;
+                    if(IndexingStatus.PENDING.equals(indexingStatus)){
+                        jmsDestination = JmsDestination.UPDATED_ORCIDS;
+                    }
+                    if (messaging.send(mess, jmsDestination)) {
+                        LOG.info("Record " + orcid + " was sent to the message queue");
                     } else {
                         LOG.error("Record " + orcid + " couldnt been sent to the message queue");
                         // TODO: we need a better way to handle failures, but,
@@ -2014,7 +2017,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         // not pick it again since it have the same last
                         // modified date, and, we will try sending it again to
                         // the MQ later
-                        profileDao.updateIndexingStatus(orcid, IndexingStatus.REINDEX);
+                        profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                     }
                 }
             }
