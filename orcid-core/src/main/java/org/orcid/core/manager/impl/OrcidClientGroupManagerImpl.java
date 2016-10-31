@@ -535,6 +535,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientDetailsEntity.setClientWebsite(client.getWebsite());
         clientDetailsEntity.setPersistentTokensEnabled(client.isPersistentTokenEnabled());
         clientDetailsEntity.setAuthenticationProviderId(client.getIdp());
+        clientDetailsEntity.setAllowAutoDeprecate(client.getAllowAutoDeprecate());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
@@ -637,7 +638,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         Boolean allowAutoDeprecate = orcidClient.getAllowAutoDeprecate();
         
         ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, createScopes(clientType),
-                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, allowAutoDeprecate);
         return clientDetails;
     }
 
