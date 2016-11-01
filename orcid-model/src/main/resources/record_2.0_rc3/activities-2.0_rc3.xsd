@@ -56,36 +56,23 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-				<xs:element name="educations" minOccurs="0" maxOccurs="1">
+				
+				<xs:element name="educations" type="activities:educations" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of educations associated
-							with the researcher or
-							contributor
+							with the researcher or contributor
 						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="education:education-summary" />
-						</xs:sequence>
-					</xs:complexType>
+					</xs:annotation>					
 				</xs:element>
-				<xs:element name="employments" minOccurs="0" maxOccurs="1">
+												
+				<xs:element name="employments" type="activities:employments" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the list of employments associated
-							with the researcher or
-							contributor
+							with the researcher or contributor
 						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-							<xs:element maxOccurs="unbounded" minOccurs="0"
-								ref="employment:employment-summary" />
-						</xs:sequence>
-					</xs:complexType>
+					</xs:annotation>					
 				</xs:element>
+																				
 				<xs:element name="fundings" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the funding received by the
@@ -114,7 +101,6 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-
 				<xs:element name="works" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the Works published by the
@@ -131,6 +117,38 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="educations">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0"
+				ref="education:education-summary" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="educations">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="activities:educations" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="employments">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0"
+				ref="employment:employment-summary" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="employments">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="activities:employments" />
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 
@@ -166,5 +184,4 @@
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
-
 </xs:schema>
