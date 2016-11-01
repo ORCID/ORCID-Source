@@ -425,4 +425,13 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
         assertEquals("4444-4444-4444-4442", primaryRecord.getId());
     }
+    
+    @Test
+    public void testGetClaimedStatusByEmail() {
+        assertFalse(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0001@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0002@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("limited_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("private_0000-0000-0000-0003@test.orcid.org"));
+    }
 }
