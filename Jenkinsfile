@@ -1,7 +1,6 @@
 node {
     echo("> ${BRANCH_NAME} triggered")
     git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine (orcid-machine-personal-token)'
-    // properties([pipelineTriggers([[$class: 'GitHubPushTrigger']])])
     stage('FetchFreshCode') {
         def MAVEN = tool 'ORCID_MAVEN'
         sh "${MAVEN}/bin/mvn clean install -Dmaven.test.skip=true"
@@ -11,7 +10,7 @@ node {
         // build only modified files
     }    
     stage('ExecuteTests') {
-        echo "Lets build the core"
+        echo "Running unit test"
         def MAVEN = tool 'ORCID_MAVEN'
         sh "${MAVEN}/bin/mvn clean test"
     }
@@ -19,6 +18,6 @@ node {
         echo "Ready to send to server"
     }
     stage('IntegrationTests') {
-        echo "Ready to send to server"
+        echo "Running selenium blackbox test"
     }    
 }
