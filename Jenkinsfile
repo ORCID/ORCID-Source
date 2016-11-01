@@ -8,8 +8,17 @@ node {
     }
     stage('BuildDependencies') {
         echo "Lets build the core"
+        // build only modified files
+    }    
+    stage('ExecuteTests') {
+        echo "Lets build the core"
+        def MAVEN = tool 'ORCID_MAVEN'
+        sh "${MAVEN}/bin/mvn clean test"
     }
-    stage('Deploy') {
+    stage('DeployToTomcat') {
         echo "Ready to send to server"
     }
+    stage('IntegrationTests') {
+        echo "Ready to send to server"
+    }    
 }
