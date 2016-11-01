@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hsqldb.lib.StringUtil;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
@@ -214,6 +215,25 @@ public class EmailManagerImpl implements EmailManager {
         }
         
         return emailDao.verifySetCurrentAndPrimary(orcid, email);
+    }
+
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists, the owner is not claimed and the
+     *         client source of the record allows auto deprecating records
+     */
+    @Override
+    public boolean isAutoDeprecateEnableForEmail(String email) {
+        if(StringUtil.isEmpty(email)) {
+            return false;
+        }
+        return emailDao.isAutoDeprecateEnableForEmail(email);
     }
     
 }

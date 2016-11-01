@@ -206,4 +206,23 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("email", email);
         return query.executeUpdate() > 0;
     }
+
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists, the owner is not claimed and the
+     *         client source of the record allows auto deprecating records
+     */
+    @Override
+    public boolean isAutoDeprecateEnableForEmail(String email) {
+        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT (CASE WHEN (source_id IS NULL or source_id = '') THEN client_source_id ELSE source_id END) FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email=:email) AND claimed = false)");
+        query.setParameter("email", email);
+        Boolean result = (Boolean) query.getSingleResult();
+        return result == null ? false : result;
+    }
 }
