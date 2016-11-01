@@ -526,9 +526,26 @@ public class RegistrationController extends BaseController {
         if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
-        // validate email
+        String emailAddress = reg.getEmail().getValue();
+        
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-        // make sure there are no dups
+        // Validate the email address is ok        
+        if(!validateEmailAddress(emailAddress)) {
+            String[] codes = { "Email.personalInfoForm.email" };
+            String[] args = { emailAddress };
+            mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Not vaild"));
+        } else {
+            //Validate there are no duplicates 
+            //If email exists
+            if(emailManager.emailExists(emailAddress)) {
+                //If the email is not eligible for auto deprecate, we should show an email duplicated exception
+                if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                    //TODO: return an error message because the email is duplicated
+                }
+            }
+        }
+        
+        //TODO: Remove me!
         validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
