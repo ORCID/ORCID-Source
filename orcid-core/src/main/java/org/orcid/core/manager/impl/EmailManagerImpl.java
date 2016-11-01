@@ -26,7 +26,6 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hsqldb.lib.StringUtil;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
