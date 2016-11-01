@@ -1,23 +1,62 @@
 node {
-    echo("> ${BRANCH_NAME} triggered")
     git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine'
-    stage('FetchFreshCode') {
-        def MAVEN = tool 'ORCID_MAVEN'
+    def MAVEN = tool 'ORCID_MAVEN'
+    stage('Fetch Code') {
+        echo "triggered by modification on ${BRANCH_NAME}"
         sh "${MAVEN}/bin/mvn clean install -Dmaven.test.skip=true"
     }
-    stage('BuildDependencies') {
+    stage('Build Dependencies') {
         echo "Lets build the core"
-        // build only modified files
-    }    
-    stage('ExecuteTests') {
-        echo "Running unit test"
-        def MAVEN = tool 'ORCID_MAVEN'
-        sh "${MAVEN}/bin/mvn clean test"
+        // TODO if any module is required before next builds
+    }
+    stage('Build & Test') {
+        parallel activemq: {
+            sh "$MAVEN/bin/mvn -f orcid-activemq/pom.xml test"
+        },utils: {
+            sh "$MAVEN/bin/mvn -f orcid-utils/pom.xml test"
+        },core: {
+            sh "$MAVEN/bin/mvn -f orcid-core/pom.xml test"
+        },model: {
+            sh "$MAVEN/bin/mvn -f orcid-model/pom.xml test"
+        },persistence: {
+            sh "$MAVEN/bin/mvn -f orcid-persistence/pom.xml test"
+        },apicommon: {
+            sh "$MAVEN/bin/mvn -f orcid-api-common/pom.xml test"
+        },web: {
+            sh "$MAVEN/bin/mvn -f orcid-web/pom.xml test"
+            archive 'orcid-web/target/**/*.war'
+        },pubweb: {
+            sh "$MAVEN/bin/mvn -f orcid-pub-web/pom.xml test"
+        },apiweb: {
+            sh "$MAVEN/bin/mvn -f orcid-api-web/pom.xml test"
+        },solr: {
+            sh "$MAVEN/bin/mvn -f orcid-solr-web/pom.xml test"
+        },scheduler: {
+            sh "$MAVEN/bin/mvn -f orcid-scheduler-web/pom.xml test"
+        },internalapi: {
+            sh "$MAVEN/bin/mvn -f orcid-internal-api/pom.xml test"
+        },messagelistener: {
+            sh "$MAVEN/bin/mvn -f orcid-message-listener/pom.xml test"
+        }
+    }
+    stage('Save Tests Results') {
+        junit '**/target/surefire-reports/*.xml'
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
+        // cp *.war tomcat/webapps
+        //or
+        // mvn tomcat7:deploy 
     }
     stage('IntegrationTests') {
         echo "Running selenium blackbox test"
-    }    
+        // sh "export DISPLAY=:1.0"
+        // sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins &"
+        // stop Xvfb server
+        // mvn test -DfailIfNoTests=false -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite
+    }
+    stage('Clean & Free resources'){
+        // TODO check orphan process and MEM usage
+        echo "All done."
+    }
 }
