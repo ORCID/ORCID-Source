@@ -344,11 +344,13 @@
 	```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://pub.qa.orcid.org/v1.2/[new id]/orcid-profile' -L -i -k
     ```
-107. Check the email inbox used when creating the record, [DD][month][YYYY]api@mailinator.com, and follow the link to claim the record
+107. Check the email inbox used when creating the record, api_[DD][month][YYYY]api@mailinator.com, and follow the link to claim the record
 
 108. Complete the steps to claim the record
     * Password: [DD][month][YYYY]
     * Default privacy for new activities: Limited
+    
+109. Check that a pop-up comes up asking you to grant permission to the client that created the record. Click Deny
 
 109. Check the record is populated with personal information that is set to limited, and there is one work on the record
 
@@ -616,7 +618,7 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
     ```
 
-150. Read a single work with /read-public token 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+150. Read a single work with an access token for another record 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
