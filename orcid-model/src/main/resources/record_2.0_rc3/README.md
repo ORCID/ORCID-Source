@@ -91,7 +91,19 @@ The swagger interfaces to the API available at:
 ### Activities summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read activities summary | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/activities |
+| Read record summary     | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/record    |
+
+
+### Activities summary
+| Item                    | HTTP method | Scope                    | URL                                                      |
+|-------------------------|-------------|--------------------------|----------------------------------------------------------|
+| Read activities summary | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/activities|
+
+### Bulk activities
+| Action             | HTTP method | Scope                    | URL                                                                      |
+|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
+| Add works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
+| Read activities    | GET         | /read-limited 		      | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]s          |
 
 ### Individual activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
@@ -101,10 +113,10 @@ The swagger interfaces to the API available at:
 | Update an activity | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Delete an activity | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 
-### Bulk activities
-| Action             | HTTP method | Scope                    | URL                                                                      |
-|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Add works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
+###Biography summary
+| Item                    | HTTP method | Scope                    | URL                                                      |
+|-------------------------|-------------|--------------------------|----------------------------------------------------------|
+| Read biography summary  | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
 
 ### Biography details
 | Action             | HTTP method | Scope                    | URL                                                                      |
@@ -132,73 +144,89 @@ The swagger interfaces to the API available at:
 - keywords
 - other-names
 - researcher-urls
-- person *
 - personal-details *
 
-**Note:** email, person and personal-details sections are only for reading purposes
+**Note:** email and personal-details sections are only for reading purposes
 
 ## Examples
-### Read Record Items
-| Item               | v2.0 Scope               | v1.2 Scope (deprecated)                               | Example cURL Statement                                         |
-|--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
-| Activities summary | /read-limited            |  /orcid-profile/read-limited                          | ```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/activities'```|
-| Address	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/address'```|
-| Education          | /read-limited            | /orcid-profile/read-limited /affiliations/read-limited |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/education/14613'```|
-| Email     		| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/email'```|
-| Employment         | /read-limited            | /orcid-profile/read-limited /affiliations/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/employment/14612'```| 
-| External Identifiers	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/external-identifiers'```|
-| Funding            | /read-limited            | /orcid-profile/read-limited /funding/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/funding/2629'```|
-| Keywords     	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/keywords'```|
-| Other names     	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/other-names'```|
-| Peer review        | /read-limited            |  NONE  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/peer-review/1579'```|
-| Personal details	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/personal-details'```|
-| Person	| /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/person'```|
-| Researcher URL     | /read-limited            | /orcid-bio/read-limited   						|```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls'```|
-| Work               | /read-limited            | /orcid-profile/read-limited <br>/orcid-works/read-limited  |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/work/469271'```|
+
+### Read sections
+
+| Item               |Scope               | Example cURL Statement                                         |
+|--------------------|--------------------------|----------------------------------------------------------------|
+| Activities summary | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/activities'```|
+| Addresses			 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address'```|
+| Education items    | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/educations'```|
+| Emails     		 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/email'```|
+| Employment items   | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employments'```| 
+| External Identifiers	| /read-limited         |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers'```|
+| Funding summary    | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/fundings'```|
+| Keywords     		 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/keywords'```|
+| Other names     	 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/other-names'```|
+| Peer review summary| /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/peer-reviews'```|
+| Personal details	 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/personal-details'```|
+| Person			 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/person'```|
+| Researcher URLs    | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls'```|
+| Works              | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/works'```|
+
+
+### Read Individual Record Items
+| Item               |Scope               | Example cURL Statement                                         |
+|--------------------|--------------------------|----------------------------------------------------------------|
+| Address			 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/4556'```|
+| Education          | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/education/22423'```|
+| Employment         | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employment/22411'```| 
+| External Identifier| /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers/3193'```|
+| Funding            | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/funding/4413'```|
+| Keywords     		 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/keywords/4504'```|
+| Other names     	 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/other-names/15812'```|
+| Peer review        | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/peer-review/1374'```|
+| Researcher URL     | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls/41387'```|
+| Work               | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/work/733536'```|
 
 ### Add Record Items
-|Item    |v2.0 Scope       | v1.2 Scope (deprecated)| Example cURL Statement  |
-|---------|----------------|------------------------|-------------------------|
-| Address	|/person/update           | /orcid-bio/update   			|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/address```|
-| Education  |/activities/update  |/affiliations/create|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/education' ```|
-| Employment |  /activities/update  |/affiliations/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/employment' ```| 
-| External Identifiers	| /person/update            | /orcid-bio/external-identifiers/create	|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/external-identifiers```|
-| Funding  |/activities/update  |/funding/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/funding'```|
-| Keywords     	|/person/update            | /orcid-bio/update   		|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/keywords```|
-| Other names  |/person/update|  /orcid-bio/update |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/other-names'```|
-| Peer review  |/activities/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/peer-review'```|
-| Researcher URL  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls'```|
-| Work  |/activities/update|  /orcid-works/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/work'```|
-| Bulk works  |/activities/update|  /orcid-works/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/works'```|
+|Item    |Scope       | Example cURL Statement  |
+|---------|----------------|-------------------------|
+| Address	|/person/update           |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address```|
+| Education  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/education' ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employment' ```| 
+| External Identifiers	| /person/update            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers```|
+| Funding  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/funding'```|
+| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/keywords```|
+| Other names  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/other-names'```|
+| Peer review  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/peer-review'```|
+| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/work'```|
+| Bulk works  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/works'```|
 
 ### Update Record Items
-|Item  |v2.0 Scope  |v1.2 Scope (deprecated)| Example cURL Statement  |
-|------|----------------|-----------------------|---------------------|
-| Address	|/person/update            | /orcid-bio/update   			|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/address/[PUT-CODE]```|
-| Education  |/activities/update  |/affiliations/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/education/[PUT-CODE]' ```|
-| Employment |  /activities/update  |/affiliations/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/employment/[PUT-CODE]' ```|
-| External Identifiers	|/person/update            | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/external-identifiers/[PUT-CODE]```|
-| Funding  |/activities/update  |/funding/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/funding/[PUT-CODE]'```|
-| Keywords     	|/person/update            | /orcid-bio/update   		|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/keywords/[PUT-CODE]```|
-| Other names  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/other-names/[PUT-CODE]'```|
-| Peer review  |/activities/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/peer-review/[PUT-CODE]'```|
-| Researcher URL  |/person/update|  /orcid-bio/update |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
-| Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/work/[PUT-CODE]'```|
+|Item  |Scope  | Example cURL Statement  |
+|------|----------------|---------------------|
+| Address	|/person/update            ||```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/[PUT-CODE]```|
+| Education  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/education/[PUT-CODE]' ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
+| External Identifiers	|/person/update            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
+| Funding  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/funding-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/funding/[PUT-CODE]'```|
+| Keywords     	|/person/update            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/keyword.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/keywords/[PUT-CODE]```|
+| Other names  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/other-name.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/other-names/[PUT-CODE]'```|
+| Peer review  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
+| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/work/[PUT-CODE]'```|
 
 When updating a record item, include the put code as an attribute in the root element, ex: ```<education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc3.xsd ">```
 
 ### Delete Record Items
-|Item  |v2.0 Scope      |v1.2 Scope (deprecated)| Example cURL Statement  |
-|------|----------------|-----------------------|-------------------------|
-| Address	| /read-limited            | /orcid-bio/update   	|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/address/[PUT-CODE]```|
-| Education  |/activities/update  |/affiliations/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/education/[PUT-CODE]'  ```|
-| Employment |  /activities/update  |/affiliations/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/employment/[PUT-CODE]' ```|
-| External Identifiers	| /read-limited    | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/external-identifiers/[PUT-CODE]```|
-| Funding  |/activities/update  |/funding/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/funding/[PUT-CODE]'```|
-| Keywords     	| /read-limited            | /orcid-bio/update 	|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/keywords/[PUT-CODE]```|
-| Other names  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
-| Peer review  |/activities/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/peer-review/[PUT-CODE]'```|
-| Researcher URL  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
-| Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/work/[PUT-CODE]'```|
+|Item  | Scope      | Example cURL Statement  |
+|------|----------------|-------------------------|
+| Address	| /read-limited            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/[PUT-CODE]```|
+| Education  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/education/[PUT-CODE]'  ```|
+| Employment |  /activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
+| External Identifiers	| /read-limited    |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
+| Funding  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/funding/[PUT-CODE]'```|
+| Keywords     	| /read-limited            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/keywords/[PUT-CODE]```|
+| Other names  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Peer review  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/peer-review/[PUT-CODE]'```|
+| Researcher URL  |/person/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/researcher-urls/[PUT-CODE]'```|
+| Work  |/activities/update|```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/work/[PUT-CODE]'```|
 
 
