@@ -891,6 +891,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public void updateLocale(String orcid, Locale locale) {
         profileDao.updateLocale(orcid, locale);
     }
+
+    @Override
+    public boolean isProfileClaimedByEmail(String email) {
+        return profileDao.getClaimedStatusByEmail(email);
+    }
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

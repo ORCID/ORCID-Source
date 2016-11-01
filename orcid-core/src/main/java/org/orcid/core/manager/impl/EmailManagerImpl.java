@@ -230,7 +230,7 @@ public class EmailManagerImpl implements EmailManager {
      */
     @Override
     public boolean isAutoDeprecateEnableForEmail(String email) {
-        if(StringUtil.isEmpty(email)) {
+        if(PojoUtil.isEmpty(email)) {
             return false;
         }
         return emailDao.isAutoDeprecateEnableForEmail(email);

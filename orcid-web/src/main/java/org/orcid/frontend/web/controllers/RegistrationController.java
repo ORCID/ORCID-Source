@@ -535,19 +535,25 @@ public class RegistrationController extends BaseController {
             String[] args = { emailAddress };
             mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Not vaild"));
         } else {
-            //Validate there are no duplicates 
+            //Validate duplicates 
             //If email exists
             if(emailManager.emailExists(emailAddress)) {
-                //If the email is not eligible for auto deprecate, we should show an email duplicated exception
-                if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
-                    //TODO: return an error message because the email is duplicated
-                }
+                //If it is claimed, should return a duplicated exception
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                    
+                    String[] codes = { "orcid.frontend.verify.duplicate_email" };
+                    String[] args = { emailAddress };
+                    mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
+                } else {
+                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception
+                    if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
+                        String[] args = { emailAddress };
+                        mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                    } 
+                }                                
             }
         }
         
-        //TODO: Remove me!
-        validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
-
         for (ObjectError oe : mbr.getAllErrors()) {
             Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
