@@ -66,6 +66,6 @@ node {
         echo "All done."
     }
     stage('Notify Results'){
-        slackSend channel: '#tech-ci-notifications', color: '#36a64f', failOnError: true, message: "Build #$JOB_NAME-$BUILD_NUMBER completed: $BUILD_URL/testReport ", teamDomain: 'orcid'
+        slackSend channel: '#tech-ci-notifications', color: '#36a64f', failOnError: true, message: "Build #$JOB_NAME-$BUILD_NUMBER completed: ${BUILD_URL}testReport ", teamDomain: 'orcid'
     }
 }
