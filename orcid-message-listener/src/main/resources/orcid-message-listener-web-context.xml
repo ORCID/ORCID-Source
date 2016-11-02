@@ -62,8 +62,7 @@
 	<!-- so we can listen to queues -->
 	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
 		<property name="connectionFactory" ref="jmsConnectionFactory" />
-		<property name="concurrency" value="1" />
-		<!-- property name="concurrency" value="1-10"/ -->
+		<property name="concurrency" value="${org.orcid.listener.concurrency:1-2}" />		
 	</bean>
 
 	<!-- Default Destination Queue Definition -->
