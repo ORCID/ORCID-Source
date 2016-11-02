@@ -51,6 +51,7 @@ import org.orcid.core.manager.impl.ProfileEntityManagerImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -379,14 +380,21 @@ public class AdminControllerTest extends BaseControllerTest {
         
         OrcidProfile lockedProfile = new OrcidProfile();
         lockedProfile.setLocked(true);
+        lockedProfile.setOrcidIdentifier("some-id");
         
         OrcidProfile unlockedProfile = new OrcidProfile();
         unlockedProfile.setLocked(false);
+        unlockedProfile.setOrcidIdentifier("another-id");
 
         String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("emails"))).thenReturn(unlockedProfile);
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(lockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(lockedProfile);
@@ -433,19 +441,26 @@ public class AdminControllerTest extends BaseControllerTest {
         
         OrcidProfile lockedProfile = new OrcidProfile();
         lockedProfile.setLocked(true);
+        lockedProfile.setOrcidIdentifier("some-id");
         
         OrcidProfile unlockedProfile = new OrcidProfile();
         unlockedProfile.setLocked(false);
+        unlockedProfile.setOrcidIdentifier("another-id");
 
         String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("emails"))).thenReturn(lockedProfile);
+
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(unlockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(unlockedProfile);
         
-        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(lockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(lockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(lockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(lockedProfile);
@@ -490,19 +505,26 @@ public class AdminControllerTest extends BaseControllerTest {
         
         OrcidProfile reviewedProfile = new OrcidProfile();
         reviewedProfile.setReviewed(true);
+        reviewedProfile.setOrcidIdentifier("some-id");
         
         OrcidProfile unreviewedProfile = new OrcidProfile();
         unreviewedProfile.setReviewed(false);
+        unreviewedProfile.setOrcidIdentifier("another-id");
 
         String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("emails"))).thenReturn(unreviewedProfile);
+
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(reviewedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(reviewedProfile);
         
-        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(unreviewedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(unreviewedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(unreviewedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(unreviewedProfile);
@@ -547,16 +569,21 @@ public class AdminControllerTest extends BaseControllerTest {
         
         OrcidProfile reviewedProfile = new OrcidProfile();
         reviewedProfile.setReviewed(true);
+        reviewedProfile.setOrcidIdentifier("some-id");
         
         OrcidProfile unreviewedProfile = new OrcidProfile();
         unreviewedProfile.setReviewed(false);
+        unreviewedProfile.setOrcidIdentifier("another-id");
 
         String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("orcid"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.eq("ids"))).thenReturn(unreviewedProfile);
         
-        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(unreviewedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(unreviewedProfile);
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(reviewedProfile);
@@ -590,6 +617,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(results.get("unreviewSuccessfulList").contains("test"));
         assertTrue(results.get("unreviewSuccessfulList").contains("with"));
         
+        Mockito.verify(orcidProfileManager, Mockito.times(3)).retrieveOrcidProfileByEmail(Mockito.anyString());
         Mockito.verify(profileEntityManager, Mockito.times(4)).unreviewProfile(Mockito.anyString());
     }
 }

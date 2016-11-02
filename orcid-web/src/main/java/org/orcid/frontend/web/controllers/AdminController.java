@@ -754,16 +754,19 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcid = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                String identifier = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
                 if (profile == null) {
-                    notFoundIds.add(orcid);
+                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
+                } 
+                if (profile == null) {
+                    notFoundIds.add(identifier);
                 } else {
                     if (profile.isLocked()) {
-                        lockedIds.add(orcid);
+                        lockedIds.add(identifier);
                     } else {
-                        orcidProfileManager.lockProfile(orcid);
-                        successIds.add(orcid);
+                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath());
+                        successIds.add(identifier);
                     }
                 }
             }
@@ -791,16 +794,19 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcid = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                String identifier = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
                 if (profile == null) {
-                    notFoundIds.add(orcid);
+                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
+                }
+                if (profile == null) {
+                    notFoundIds.add(identifier);
                 } else {
                     if (!profile.isLocked()) {
-                        unlockedIds.add(orcid);
+                        unlockedIds.add(identifier);
                     } else {
-                        orcidProfileManager.unlockProfile(orcid);
-                        successIds.add(orcid);
+                        orcidProfileManager.unlockProfile(profile.getOrcidIdentifier().getPath());
+                        successIds.add(identifier);
                     }
                 }
             }
@@ -821,16 +827,19 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcid = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                String identifier = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
                 if (profile == null) {
-                    notFoundIds.add(orcid);
+                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
+                } 
+                if (profile == null) {
+                    notFoundIds.add(identifier);
                 } else {
                     if (!profile.isReviewed()) {
-                        unreviewedIds.add(orcid);
+                        unreviewedIds.add(identifier);
                     } else {
-                        profileEntityManager.unreviewProfile(orcid);
-                        successIds.add(orcid);
+                        profileEntityManager.unreviewProfile(profile.getOrcidIdentifier().getPath());
+                        successIds.add(identifier);
                     }
                 }
             }
@@ -851,16 +860,19 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcid = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                String identifier = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
                 if (profile == null) {
-                    notFoundIds.add(orcid);
+                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
+                } 
+                if (profile == null) {
+                    notFoundIds.add(identifier);
                 } else {
                     if (profile.isReviewed()) {
-                        reviewedIds.add(orcid);
+                        reviewedIds.add(identifier);
                     } else {
-                        profileEntityManager.reviewProfile(orcid);
-                        successIds.add(orcid);
+                        profileEntityManager.reviewProfile(profile.getOrcidIdentifier().getPath());
+                        successIds.add(identifier);
                     }
                 }
             }
