@@ -35,24 +35,26 @@ import org.springframework.stereotype.Component;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.config.ClientConfig;
 
 @Component
 public class Orcid20APIClient {
 
     Logger LOG = LoggerFactory.getLogger(Orcid20APIClient.class);
-    
     @Resource
     protected Client jerseyClient;
-    
-    protected final URI baseUri;        
+    protected final URI baseUri;
+    protected final String accessToken;
 
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri) throws URISyntaxException {
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri,
+            @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken) throws URISyntaxException {
         LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri);
-        this.baseUri = new URI(baseUri);        
+        this.baseUri = new URI(baseUri);
+        this.accessToken = accessToken;
     }
-    
+
     /**
      * Fetches the profile from the ORCID public API v1.2
      * 
@@ -60,12 +62,13 @@ public class Orcid20APIClient {
      * @return
      */
     public Record fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri);  
+        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);        
-        if (response.getStatus() != 200) {  
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        ClientResponse response = builder.get(ClientResponse.class);
+        if (response.getStatus() != 200) {
             OrcidError orcidError = null;
-            switch(response.getStatus()) {
+            switch (response.getStatus()) {
             case 301:
                 orcidError = response.getEntity(OrcidError.class);
                 throw new DeprecatedRecordException(orcidError);
@@ -75,8 +78,8 @@ public class Orcid20APIClient {
             default:
                 LOG.error("Unable to fetch public record " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-            }            
+            }
         }
         return response.getEntity(Record.class);
-    }        
+    }
 }
