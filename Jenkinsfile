@@ -24,7 +24,6 @@ node {
             sh "$MAVEN/bin/mvn -f orcid-api-common/pom.xml test"
         },web: {
             sh "$MAVEN/bin/mvn -f orcid-web/pom.xml test"
-            archive 'orcid-web/target/**/*.war'
         },pubweb: {
             sh "$MAVEN/bin/mvn -f orcid-pub-web/pom.xml test"
         },apiweb: {
@@ -40,7 +39,14 @@ node {
         }
     }
     stage('Save Tests Results') {
-        junit '**/target/surefire-reports/*.xml'
+        archive 'orcid-web/target/**/*.war'
+        archive 'orcid-pub-web/target/**/*.war'
+        archive 'orcid-api-web/target/**/*.war'
+        archive 'orcid-solr-web/target/**/*.war'
+        archive 'orcid-scheduler-web/target/**/*.war'
+        archive 'orcid-internal-api/target/**/*.war'
+        archive 'orcid-message-listener/target/**/*.war'
+        junit '**/target/surefire-reports/*.xml'        
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
@@ -58,5 +64,8 @@ node {
     stage('Clean & Free resources'){
         // TODO check orphan process and MEM usage
         echo "All done."
+    }
+    stage('Notify Results'){
+        slackSend channel: '#ci-2-alerts', color: '#36a64f', failOnError: true, message: "Build #$JOB_NAME-$BUILD_NUMBER completed: $BUILD_URL/testReport ", teamDomain: 'orcid'
     }
 }
