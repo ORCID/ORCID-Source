@@ -69,23 +69,20 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     public void onRemoval(RemovalNotification<String, LastModifiedMessage> removal) {
         if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
-            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue");
-            LOG.info("Processing " + m.getLastUpdated());
+            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue " + m.getLastUpdated());            
             
             try{
                 String orcid = m.getOrcid();
-                
-                OrcidMessage profile = fetchPublicProfile(orcid);
-                Record record = fetchPublicRecord(orcid);
-                
+                                                
                 // Phase #1: update S3 
                 if(dumpIndexingEnabled) {
-                    updateS3(orcid, profile, record);    
+                    updateS3_1_2_API(orcid);
+                    updateS3_2_0_API(orcid);
                 }
                 
                 // Phase # 2 - update solr
                 if(solrIndexingEnabled) {
-                    updateSolr(orcid, record, profile.toString());    
+                    updateSolr(orcid);    
                 } 
             } catch(LockedRecordException lre) {                
                 try {
@@ -153,7 +150,8 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         return null;
     }
     
-    private void updateS3(String orcid, OrcidMessage profile, Record record) {
+    private void updateS3_1_2_API(String orcid) throws Exception {
+        OrcidMessage profile = fetchPublicProfile(orcid);
         // Update API 1.2
         if(profile != null) {
             try {
@@ -162,8 +160,11 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 //Unable to update record in S3
                 LOG.error("Unable to update S3 bucket for 1.2 API", e);
             } 
-        }
-        
+        }                
+    }
+    
+    private void updateS3_2_0_API(String orcid) throws LockedRecordException {
+        Record record = fetchPublicRecord(orcid);
         // Update API 2.0
         if(record != null) {
             try {
@@ -175,12 +176,15 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         }
     }
         
-    private void updateSolr(String orcid,Record record, String v12profileXML) {
+    private void updateSolr(String orcid) throws Exception {
+        //TODO: why we need both? could it be just the OrcidMessage???
+        Record record = fetchPublicRecord(orcid);
+        OrcidMessage profile = fetchPublicProfile(orcid);
         Date lastModifiedFromprofile = record.getHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcid);
         // note this is slightly different from existing behaviour
         if (lastModifiedFromprofile.after(lastModifiedFromSolr))
-            solrIndexUpdater.updateSolrIndex(record,v12profileXML);
+            solrIndexUpdater.updateSolrIndex(record, profile.toString());
 
     }
 }
