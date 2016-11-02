@@ -17,22 +17,28 @@
 package org.orcid.core.manager.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.PasswordGenerationManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.pojo.ProfileDeprecationRequest;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 
 
 /**
@@ -59,6 +65,12 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource
     private PasswordGenerationManager passwordResetManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private AdminManager adminManager;
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;
@@ -99,14 +111,58 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Override
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
-        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
-        //Set source to the new email
-        String sourceId = minimalProfile.getOrcidIdentifier().getPath();
-        List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
-        for(Email email : emails)
-            emailManager.addSourceToEmail(email.getValue(), sourceId);
-        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
-        return minimalProfile;
+        String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        if(emailManager.emailExists(emailAddress)) {
+            //executeAutoDeprecateProcedure
+            //TODO
+        } else {
+            OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
+            //Set source to the new email
+            String sourceId = minimalProfile.getOrcidIdentifier().getPath();
+            List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
+            for(Email email : emails)
+                emailManager.addSourceToEmail(email.getValue(), sourceId);
+            LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
+            return minimalProfile;
+        }
+        
+        return null;
+    }
+    
+    
+    private void executeAutoDeprecateProcedure(String emailAddress) {
+        // If the email doesn't exists, just return
+        if(!emailManager.emailExists(emailAddress)) {
+            return;
+        }
+        
+        // Check the record is not claimed
+        if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
+            throw new InvalidRequestException("Email " + emailAddress + " already exists and is claimed, so, it can't be used again");
+        }
+        
+        // Check the auto deprecate is enabled for this email address
+        if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+            throw new InvalidRequestException("Autodeprecate is not enabled for " + emailAddress);
+        }
+        
+        // Delete email associated with this request
+        //TODO
+        // Create new record
+        //TODO
+        // Deprecate unclaimed record
+        ProfileDeprecationRequest result = new ProfileDeprecationRequest(); 
+        Map<String, String> emailMap = emailManager.findIdByEmail(emailAddress);
+        String deprecatedOrcid = emailMap == null ? null : emailMap.get(emailAddress);
+        if(PojoUtil.isEmpty(deprecatedOrcid)) {
+            throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
+        }
+                
+        adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);
+        
+        // Notify
+        //TODO
     }
 
 }

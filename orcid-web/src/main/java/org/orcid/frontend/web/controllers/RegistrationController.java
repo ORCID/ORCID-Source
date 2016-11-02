@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
@@ -197,6 +198,9 @@ public class RegistrationController extends BaseController {
     @Resource
     private ProfileEntityManager profileEntityManager;
 
+    @Resource
+    private AdminManager adminManager;
+    
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;    
     
@@ -549,7 +553,9 @@ public class RegistrationController extends BaseController {
                         String[] codes = { "orcid.frontend.verify.unclaimed_email" };
                         String[] args = { emailAddress };
                         mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
-                    } 
+                    } else {
+                        LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
+                    }
                 }                                
             }
         }
@@ -1120,5 +1126,4 @@ public class RegistrationController extends BaseController {
                 new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
         return profileToSave;
     }
-
 }
