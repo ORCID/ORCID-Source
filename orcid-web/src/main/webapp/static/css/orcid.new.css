@@ -6876,7 +6876,9 @@ a:hover .mozilla-badge{
 	margin-top: 30px;
 }
 
-
+.one-per-line {
+	height: 60px;
+}
 	
 
 /* Media Queries */
