@@ -1,43 +1,47 @@
 # ORCID API v2.0_rc3 Guide
 
 ## Current State (Release Candidate Stable)
-v2.0_r3 is in current development and should be avoided.
+As of 2016-11-01 changes to v2.0_rc3 will be avoided. Further model changes will be expressed in rc_4. A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
 
 ## XSDs and current state (all stable)
 - [activities-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/activities-2.0_rc3.xsd) 
-**stable**, developement ongoing
+**stable**
 - [address-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/address-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [bulk-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/bulk-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [common-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc3/common-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [education-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/education-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [email-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/email-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [employment-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/employment-2.0_rc3.xsd)
-**not stable**, developement ongoing
+**stable**
 - [error-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/error-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [external-identifier-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/external-identifier-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [funding-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/funding-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
+- [history-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/history-2.0_rc3.xsd)
+**stable**
 - [keyword-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/keyword-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [other-names-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/other-name-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [peer-review-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/peer-review-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [person-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/person-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
+- [person-external-identifier-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/person-external-identifier-2.0_rc3.xsd)
+**stable**
 - [personal-details-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/personal-details-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [researcher-url-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/researcher-url-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 - [work-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/work-2.0_rc3.xsd)
-**stable**, developement ongoing
+**stable**
 
 ##Changes:
 ###Post bulk works
@@ -45,6 +49,14 @@ v2.0_r3 is in current development and should be avoided.
 - Addition of endpoint /works for bulk posting works
 - Update to schema of bulk element in works
 - Update to schema of error section for returning errors with bulk added works
+
+###Read activities sections
+- Additional endpoints for reading a single activity section
+	- /educations
+	- /employments
+	- /fundings
+	- /peer-reviews
+	- /works
 
 ## Sample files:
 
@@ -97,7 +109,7 @@ The swagger interfaces to the API available at:
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
 | Read activities summary | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/activities|
-| Read activities section summary   | GET         | /read-limited 		      | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]s          |
+| Read activities sections  | GET         | /read-limited 		      | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]s          |
 | Add multiple works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
 
 ### Biography summary
@@ -108,7 +120,7 @@ The swagger interfaces to the API available at:
 
 ### Individual activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
-|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
+|-------------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add an activity    | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]            |
 | Read an activity   | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Update an activity | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
@@ -116,7 +128,7 @@ The swagger interfaces to the API available at:
 
 ### Individual biography items
 | Action             | HTTP method | Scope                    | URL                                                                      |
-|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
+|-------------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add  an item       | POST        | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]            	 |
 | Read an item       | GET         | /read-limited       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
 | Update an item     | PUT         | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
