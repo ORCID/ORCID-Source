@@ -88,22 +88,23 @@ The swagger interfaces to the API available at:
 - [member](https://api.orcid.org/v2.0_rc3/)
 - [public](https://pub.orcid.org/v2.0_rc3/)
 
-### Activities summary
+### Record summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
 | Read record summary     | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/record    |
-
 
 ### Activities summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
 | Read activities summary | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/activities|
+| Read activities section summary   | GET         | /read-limited 		      | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]s          |
+| Add multiple works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
 
-### Bulk activities
-| Action             | HTTP method | Scope                    | URL                                                                      |
-|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Add works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
-| Read activities    | GET         | /read-limited 		      | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]s          |
+### Biography summary
+| Item                    | HTTP method | Scope                    | URL                                                      |
+|-------------------------|-------------|--------------------------|----------------------------------------------------------|
+| Read biography summary  | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
+| Read biography sections | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
 
 ### Individual activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
@@ -113,18 +114,13 @@ The swagger interfaces to the API available at:
 | Update an activity | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Delete an activity | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 
-###Biography summary
-| Item                    | HTTP method | Scope                    | URL                                                      |
-|-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read biography summary  | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
-
-### Biography details
+### Individual biography items
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Add  section       | POST        | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]            		 |
-| Read section       | GET         | /read-limited       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
-| Update section     | PUT         | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
-| Delete section     | DELETE      | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
+| Add  an item       | POST        | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]            	 |
+| Read an item       | GET         | /read-limited       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
+| Update an item     | PUT         | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
+| Delete an item     | DELETE      | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]/[PUT-CODE]  	 |
 
 
 
@@ -202,7 +198,7 @@ The swagger interfaces to the API available at:
 ### Update Record Items
 |Item  |Scope  | Example cURL Statement  |
 |------|----------------|---------------------|
-| Address	|/person/update            ||```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/[PUT-CODE]```|
+| Address	|/person/update       |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/address.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/[PUT-CODE]```|
 | Education  |/activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/education-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/education/[PUT-CODE]' ```|
 | Employment |  /activities/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/employment-item-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/employment/[PUT-CODE]' ```|
 | External Identifiers	|/person/update            |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/external_identifier.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/external-identifiers/[PUT-CODE]```|
