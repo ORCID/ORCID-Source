@@ -746,14 +746,36 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
      */
-    @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
-    public @ResponseBody String lockAccount(@RequestBody String orcid) {
-        if (orcidProfileManager.lockProfile(orcid)) {
-            return getMessage("admin.lock_profile.success", orcid);
+    @RequestMapping(value = "/lock-accounts.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> lockAccounts(@RequestBody String orcidIds) {
+        Set<String> lockedIds = new HashSet<String>();
+        Set<String> successIds = new HashSet<String>();
+        Set<String> notFoundIds = new HashSet<String>();
+        if (StringUtils.isNotBlank(orcidIds)) {
+            StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String orcid = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(orcid);
+                } else {
+                    if (profile.isLocked()) {
+                        lockedIds.add(orcid);
+                    } else {
+                        orcidProfileManager.lockProfile(orcid);
+                        successIds.add(orcid);
+                    }
+                }
+            }
         }
-        return getMessage("admin.lock_profile.error.couldnt_lock_account", orcid);
-    }
 
+        Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("lockSuccessfulList", successIds);
+        resendIdMap.put("alreadyLockedList", lockedIds);
+        return resendIdMap;
+    }
+    
     /**
      * Function to unlock an account
      * 
@@ -761,28 +783,94 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to unlock
      * @return true if the account was unlocked, false otherwise
      */
-    @RequestMapping(value = "/unlock-account.json", method = RequestMethod.POST)
-    public @ResponseBody String unlockAccount(@RequestBody String orcid) {
-        if (orcidProfileManager.unlockProfile(orcid)) {
-            return getMessage("admin.unlock_profile.success", orcid);
+    @RequestMapping(value = "/unlock-accounts.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> unlockAccounts(@RequestBody String orcidIds) {
+        Set<String> unlockedIds = new HashSet<String>();
+        Set<String> successIds = new HashSet<String>();
+        Set<String> notFoundIds = new HashSet<String>();
+        if (StringUtils.isNotBlank(orcidIds)) {
+            StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String orcid = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(orcid);
+                } else {
+                    if (!profile.isLocked()) {
+                        unlockedIds.add(orcid);
+                    } else {
+                        orcidProfileManager.unlockProfile(orcid);
+                        successIds.add(orcid);
+                    }
+                }
+            }
         }
-        return getMessage("admin.unlock_profile.error.couldnt_unlock_account", orcid);
+
+        Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("unlockSuccessfulList", successIds);
+        resendIdMap.put("alreadyUnlockedList", unlockedIds);
+        return resendIdMap;
     }
 
-    @RequestMapping(value = "/unreview-account.json", method = RequestMethod.POST)
-    public @ResponseBody String unreviewAccount(@RequestBody String orcid) {
-        if (profileEntityManager.unreviewProfile(orcid)) {
-            return getMessage("admin.unreview_profile.success", orcid);
+    @RequestMapping(value = "/unreview-accounts.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> unreviewAccounts(@RequestBody String orcidIds) {
+        Set<String> unreviewedIds = new HashSet<String>();
+        Set<String> successIds = new HashSet<String>();
+        Set<String> notFoundIds = new HashSet<String>();
+        if (StringUtils.isNotBlank(orcidIds)) {
+            StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String orcid = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(orcid);
+                } else {
+                    if (!profile.isReviewed()) {
+                        unreviewedIds.add(orcid);
+                    } else {
+                        profileEntityManager.unreviewProfile(orcid);
+                        successIds.add(orcid);
+                    }
+                }
+            }
         }
-        return getMessage("admin.unreview_profile.error.couldnt_unreview_account", orcid);
+
+        Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("unreviewSuccessfulList", successIds);
+        resendIdMap.put("alreadyUnreviewedList", unreviewedIds);
+        return resendIdMap;
     }
 
-    @RequestMapping(value = "/review-account.json", method = RequestMethod.POST)
-    public @ResponseBody String reviewAccount(@RequestBody String orcid) {
-        if (profileEntityManager.reviewProfile(orcid)) {
-            return getMessage("admin.review_profile.success", orcid);
+    @RequestMapping(value = "/review-accounts.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> reviewAccounts(@RequestBody String orcidIds) {
+        Set<String> reviewedIds = new HashSet<String>();
+        Set<String> successIds = new HashSet<String>();
+        Set<String> notFoundIds = new HashSet<String>();
+        if (StringUtils.isNotBlank(orcidIds)) {
+            StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String orcid = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(orcid);
+                } else {
+                    if (profile.isReviewed()) {
+                        reviewedIds.add(orcid);
+                    } else {
+                        profileEntityManager.reviewProfile(orcid);
+                        successIds.add(orcid);
+                    }
+                }
+            }
         }
-        return getMessage("admin.review_profile.error.couldnt_review_account", orcid);
+
+        Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("reviewSuccessfulList", successIds);
+        resendIdMap.put("alreadyReviewedList", reviewedIds);
+        return resendIdMap;
     }
 
     @RequestMapping(value = "/check-account-to-review.json", method = RequestMethod.POST)

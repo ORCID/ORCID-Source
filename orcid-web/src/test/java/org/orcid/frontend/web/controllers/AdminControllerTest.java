@@ -39,10 +39,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
+import org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl;
+import org.orcid.core.manager.impl.ProfileEntityManagerImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -61,6 +66,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -364,4 +370,226 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
     }            
+    
+    @Test
+    public void testLockAccounts() {
+        OrcidProfileManager orcidProfileManager = Mockito.mock(OrcidProfileManager.class);
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidProfileManager", orcidProfileManager);
+        
+        OrcidProfile lockedProfile = new OrcidProfile();
+        lockedProfile.setLocked(true);
+        
+        OrcidProfile unlockedProfile = new OrcidProfile();
+        unlockedProfile.setLocked(false);
+
+        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(lockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(lockedProfile);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(unlockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(unlockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(unlockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(unlockedProfile);
+        
+        Mockito.when(orcidProfileManager.lockProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
+        
+        Mockito.when(orcidProfileManager.lockProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
+        
+        Mockito.when(orcidProfileManager.lockProfile("emails")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("to")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("test")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("with")).thenReturn(true);
+        
+        Map<String, Set<String>> results = adminController.lockAccounts(commaSeparatedValues);
+        assertEquals(2, results.get("notFoundList").size());
+        assertTrue(results.get("notFoundList").contains("some"));
+        assertTrue(results.get("notFoundList").contains("orcid"));
+        
+        assertEquals(2, results.get("alreadyLockedList").size());
+        assertTrue(results.get("alreadyLockedList").contains("ids"));
+        assertTrue(results.get("alreadyLockedList").contains("or"));
+        
+        assertEquals(4, results.get("lockSuccessfulList").size());
+        assertTrue(results.get("lockSuccessfulList").contains("emails"));
+        assertTrue(results.get("lockSuccessfulList").contains("to"));
+        assertTrue(results.get("lockSuccessfulList").contains("test"));
+        assertTrue(results.get("lockSuccessfulList").contains("with"));
+        
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString());
+    }
+    
+    @Test
+    public void testUnlockAccounts() {
+        OrcidProfileManager orcidProfileManager = Mockito.mock(OrcidProfileManager.class);
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidProfileManager", orcidProfileManager);
+        
+        OrcidProfile lockedProfile = new OrcidProfile();
+        lockedProfile.setLocked(true);
+        
+        OrcidProfile unlockedProfile = new OrcidProfile();
+        unlockedProfile.setLocked(false);
+
+        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(unlockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(unlockedProfile);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(lockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(lockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(lockedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(lockedProfile);
+        
+        Mockito.when(orcidProfileManager.lockProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
+        
+        Mockito.when(orcidProfileManager.lockProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
+        
+        Mockito.when(orcidProfileManager.lockProfile("emails")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("to")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("test")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("with")).thenReturn(true);
+        
+        Map<String, Set<String>> results = adminController.unlockAccounts(commaSeparatedValues);
+        assertEquals(2, results.get("notFoundList").size());
+        assertTrue(results.get("notFoundList").contains("some"));
+        assertTrue(results.get("notFoundList").contains("orcid"));
+        
+        assertEquals(2, results.get("alreadyUnlockedList").size());
+        assertTrue(results.get("alreadyUnlockedList").contains("ids"));
+        assertTrue(results.get("alreadyUnlockedList").contains("or"));
+        
+        assertEquals(4, results.get("unlockSuccessfulList").size());
+        assertTrue(results.get("unlockSuccessfulList").contains("emails"));
+        assertTrue(results.get("unlockSuccessfulList").contains("to"));
+        assertTrue(results.get("unlockSuccessfulList").contains("test"));
+        assertTrue(results.get("unlockSuccessfulList").contains("with"));
+        
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).unlockProfile(Mockito.anyString());
+    }
+    
+    @Test
+    public void testReviewAccounts() {
+        OrcidProfileManager orcidProfileManager = Mockito.mock(OrcidProfileManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidProfileManager", orcidProfileManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        
+        OrcidProfile reviewedProfile = new OrcidProfile();
+        reviewedProfile.setReviewed(true);
+        
+        OrcidProfile unreviewedProfile = new OrcidProfile();
+        unreviewedProfile.setReviewed(false);
+
+        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(reviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(reviewedProfile);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(unreviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(unreviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(unreviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(unreviewedProfile);
+        
+        Mockito.when(profileEntityManager.reviewProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        
+        Mockito.when(profileEntityManager.reviewProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        
+        Mockito.when(profileEntityManager.reviewProfile("emails")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("to")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
+        
+        Map<String, Set<String>> results = adminController.reviewAccounts(commaSeparatedValues);
+        assertEquals(2, results.get("notFoundList").size());
+        assertTrue(results.get("notFoundList").contains("some"));
+        assertTrue(results.get("notFoundList").contains("orcid"));
+        
+        assertEquals(2, results.get("alreadyReviewedList").size());
+        assertTrue(results.get("alreadyReviewedList").contains("ids"));
+        assertTrue(results.get("alreadyReviewedList").contains("or"));
+        
+        assertEquals(4, results.get("reviewSuccessfulList").size());
+        assertTrue(results.get("reviewSuccessfulList").contains("emails"));
+        assertTrue(results.get("reviewSuccessfulList").contains("to"));
+        assertTrue(results.get("reviewSuccessfulList").contains("test"));
+        assertTrue(results.get("reviewSuccessfulList").contains("with"));
+        
+        Mockito.verify(profileEntityManager, Mockito.times(4)).reviewProfile(Mockito.anyString());
+    }
+    
+    @Test
+    public void testUnreviewAccounts() {
+        OrcidProfileManager orcidProfileManager = Mockito.mock(OrcidProfileManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidProfileManager", orcidProfileManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        
+        OrcidProfile reviewedProfile = new OrcidProfile();
+        reviewedProfile.setReviewed(true);
+        
+        OrcidProfile unreviewedProfile = new OrcidProfile();
+        unreviewedProfile.setReviewed(false);
+
+        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("ids"))).thenReturn(unreviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("or"))).thenReturn(unreviewedProfile);
+        
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("emails"))).thenReturn(reviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("to"))).thenReturn(reviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(reviewedProfile);
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(reviewedProfile);
+        
+        Mockito.when(profileEntityManager.reviewProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        
+        Mockito.when(profileEntityManager.reviewProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        
+        Mockito.when(profileEntityManager.reviewProfile("emails")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("to")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
+        
+        Map<String, Set<String>> results = adminController.unreviewAccounts(commaSeparatedValues);
+        assertEquals(2, results.get("notFoundList").size());
+        assertTrue(results.get("notFoundList").contains("some"));
+        assertTrue(results.get("notFoundList").contains("orcid"));
+        
+        assertEquals(2, results.get("alreadyUnreviewedList").size());
+        assertTrue(results.get("alreadyUnreviewedList").contains("ids"));
+        assertTrue(results.get("alreadyUnreviewedList").contains("or"));
+        
+        assertEquals(4, results.get("unreviewSuccessfulList").size());
+        assertTrue(results.get("unreviewSuccessfulList").contains("emails"));
+        assertTrue(results.get("unreviewSuccessfulList").contains("to"));
+        assertTrue(results.get("unreviewSuccessfulList").contains("test"));
+        assertTrue(results.get("unreviewSuccessfulList").contains("with"));
+        
+        Mockito.verify(profileEntityManager, Mockito.times(4)).unreviewProfile(Mockito.anyString());
+    }
 }
