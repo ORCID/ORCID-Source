@@ -98,7 +98,18 @@ public class ReIndexListener {
             }
             return;
         }
-                
+             
+        if(profile != null) {
+            //Update solr
+            if(isSolrIndexingEnalbed) {
+                solrIndexUpdater.updateSolrIndex(record,profile.toString());
+            }
+            //Update 1.2 buckets
+            s3Updater.updateS3(orcid, profile); 
+            
+            profile = null;
+        }
+        
         //Fetch 2.0 record
         try {
             record = orcid20ApiClient.fetchPublicProfile(orcid);
@@ -106,18 +117,10 @@ public class ReIndexListener {
             LOG.warn("Unable to fetch record " + orcid + " from 2.0 API");            
         }
         
-        if(profile != null) {
-            //Update solr
-            if(isSolrIndexingEnalbed) {
-                solrIndexUpdater.updateSolrIndex(record,profile.toString());
-            }
-            //Update 1.2 buckets
-            s3Updater.updateS3(orcid, profile);               
-        }
-        
         if(record != null) {
             //Update 2.0 buckets          
             s3Updater.updateS3(orcid, record);
+            record = null;
         }                
     }        
 }
