@@ -57,8 +57,6 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     @Resource
     private Orcid20APIClient orcid20ApiClient;
     @Resource
-    private SolrIndexUpdater solrIndexUpdater;
-    @Resource
     private S3Updater s3Updater;
     @Resource
     private ExceptionHandler exceptionHandler;
@@ -78,12 +76,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 if(dumpIndexingEnabled) {
                     updateS3_1_2_API(orcid);
                     updateS3_2_0_API(orcid);
-                }
-                
-                // Phase # 2 - update solr
-                if(solrIndexingEnabled) {
-                    updateSolr(orcid);    
-                } 
+                }                
             } catch(LockedRecordException lre) {                
                 try {
                     exceptionHandler.handleLockedRecordException(m, lre.getOrcidMessage());
@@ -174,17 +167,5 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 LOG.error("Unable to update S3 bucket for 2.0 API", e);
             }
         }
-    }
-        
-    private void updateSolr(String orcid) throws Exception {
-        //TODO: why we need both? could it be just the OrcidMessage???
-        Record record = fetchPublicRecord(orcid);
-        OrcidMessage profile = fetchPublicProfile(orcid);
-        Date lastModifiedFromprofile = record.getHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcid);
-        // note this is slightly different from existing behaviour
-        if (lastModifiedFromprofile.after(lastModifiedFromSolr))
-            solrIndexUpdater.updateSolrIndex(record, profile.toString());
-
-    }
+    }        
 }
