@@ -195,15 +195,16 @@ public class S3Updater {
 
     private String toXML(Object object) throws JAXBException {
         StringWriter sw = new StringWriter();        
+        Marshaller marshaller = null;
         if (OrcidMessage.class.isAssignableFrom(object.getClass()) || OrcidDeprecated.class.isAssignableFrom(object.getClass())) {
-            Marshaller marshaller = jaxbContext_1_2_api.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(object, sw);               
+            marshaller = jaxbContext_1_2_api.createMarshaller();                          
         } else if (Record.class.isAssignableFrom(object.getClass()) || OrcidError.class.isAssignableFrom(object.getClass())) {
-            Marshaller marshaller = jaxbContext_2_0_api.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(object, sw);
-        }                 
+            marshaller = jaxbContext_2_0_api.createMarshaller();            
+        } else {
+            throw new IllegalArgumentException("Unable to unmarshall class " + object.getClass());
+        }                
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(object, sw);
         return sw.toString();
     }
     
