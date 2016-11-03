@@ -16,8 +16,6 @@
  */
 package org.orcid.listener.listeners.updated;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
@@ -26,7 +24,6 @@ import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
-import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.listener.common.ExceptionHandler;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -67,7 +64,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     public void onRemoval(RemovalNotification<String, LastModifiedMessage> removal) {
         if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
-            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue " + m.getLastUpdated());            
+            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause() );            
             
             try{
                 String orcid = m.getOrcid();
