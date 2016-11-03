@@ -37,6 +37,8 @@ node {
         },messagelistener: {
             sh "$MAVEN/bin/mvn -f orcid-message-listener/pom.xml test"
         }
+
+        slackSend channel: '#tech-ci-notifications', color: '#36a64f', failOnError: true, message: "${currentBuild.result} > Build #$JOB_NAME-$BUILD_NUMBER completed: ${BUILD_URL}testReport ", teamDomain: 'orcid'
     }
     stage('Save Tests Results') {
         archive 'orcid-web/target/**/*.war'
@@ -65,7 +67,7 @@ node {
         // TODO check orphan process and MEM usage
         echo "All done."
     }
-    stage('Notify Results'){
-        slackSend channel: '#tech-ci-notifications', color: '#36a64f', failOnError: true, message: "Build #$JOB_NAME-$BUILD_NUMBER completed: ${BUILD_URL}testReport ", teamDomain: 'orcid'
-    }
+    //stage('Notify Results'){
+        // slackSend channel: '#tech-ci-notifications', color: '#36a64f', failOnError: true, message: "Build #$JOB_NAME-$BUILD_NUMBER completed: ${BUILD_URL}testReport ", teamDomain: 'orcid'
+    //}
 }
