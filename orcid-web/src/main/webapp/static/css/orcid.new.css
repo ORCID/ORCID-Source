@@ -1014,6 +1014,7 @@ select {
 	color: #fff;
 }
 
+
 /*
     bold fonts
 */
@@ -1612,6 +1613,7 @@ a:hover {
 .no-icon.btn-update:hover {
 	background: none;
 }
+
 
 /* Workspace */
 
@@ -2609,6 +2611,10 @@ header overrides
 	border-top: 10px solid #A3CD39;	
 }
 
+.personal-account-login .bottomBuffer{
+		margin-bottom: 1.2em;
+	}
+	
 .oauth-login{
 	color: #494A4C;
 }

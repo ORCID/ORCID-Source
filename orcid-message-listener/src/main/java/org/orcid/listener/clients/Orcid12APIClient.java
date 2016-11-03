@@ -35,6 +35,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
@@ -44,14 +45,18 @@ public class Orcid12APIClient {
     Logger LOG = LoggerFactory.getLogger(Orcid12APIClient.class);
     protected final Client jerseyClient;
     protected final URI baseUri;
+    protected final String accessToken;
 
     @Autowired
-    public Orcid12APIClient(@Value("${org.orcid.message-listener.api12BaseURI}") String baseUri) throws URISyntaxException {
+    public Orcid12APIClient(@Value("${org.orcid.message-listener.api12BaseURI}") String baseUri,
+            @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken) throws URISyntaxException {
         LOG.info("Creating Orcid12APIClient with baseUri = " + baseUri);
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJaxbJsonProvider.class);
         jerseyClient = Client.create(config);
         this.baseUri = new URI(baseUri);
+        this.accessToken = accessToken;
+
     }
 
     /**
@@ -59,15 +64,16 @@ public class Orcid12APIClient {
      * 
      * @param orcid
      * @return
-     * @throws LockedRecordException 
+     * @throws LockedRecordException
      */
     public OrcidMessage fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri);
+        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/orcid-profile");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        ClientResponse response = webResource.path(orcid + "/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-        
-        if (response.getStatus() != 200) {             
-            switch(response.getStatus()) {
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        ClientResponse response = builder.get(ClientResponse.class);
+
+        if (response.getStatus() != 200) {
+            switch (response.getStatus()) {
             case 301:
                 OrcidDeprecated orcidDeprecated = response.getEntity(OrcidDeprecated.class);
                 throw new DeprecatedRecordException(orcidDeprecated);
@@ -77,9 +83,9 @@ public class Orcid12APIClient {
             default:
                 LOG.error("Unable to fetch public record " + orcid + " on API 1.2 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-            }            
+            }
         }
-        
-        return response.getEntity(OrcidMessage.class);        
+
+        return response.getEntity(OrcidMessage.class);
     }
 }
