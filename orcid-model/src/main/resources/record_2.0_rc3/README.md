@@ -57,6 +57,9 @@ As of 2016-11-01 changes to v2.0_rc3 will be avoided. Further model changes will
 	- /fundings
 	- /peer-reviews
 	- /works
+	
+### Work:citation value
+- Update the field for text citations from <work:citation> to <work:citation-value> (this removes confusion with the double use of the <work:citation> tag)
 
 ## Sample files:
 
@@ -118,7 +121,7 @@ The swagger interfaces to the API available at:
 | Read biography summary  | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
 | Read biography sections | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/person    |
 
-### Individual activities
+### Activities items
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |-------------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add an activity    | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]            |
@@ -126,7 +129,7 @@ The swagger interfaces to the API available at:
 | Update an activity | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Delete an activity | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 
-### Individual biography items
+### Biography items
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |-------------------------|-------------|--------------------------|--------------------------------------------------------------------------|
 | Add  an item       | POST        | /person/update       	  | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[SECTION]            	 |
@@ -178,7 +181,7 @@ The swagger interfaces to the API available at:
 | Works              | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/works'```|
 
 
-### Read Individual Record Items
+### Read Record Items
 | Item               |Scope               | Example cURL Statement                                         |
 |--------------------|--------------------------|----------------------------------------------------------------|
 | Address			 | /read-limited            |```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-9227-8514/address/4556'```|
