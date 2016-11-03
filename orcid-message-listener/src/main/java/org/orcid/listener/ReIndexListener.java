@@ -26,7 +26,6 @@ import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
-import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.listener.common.ExceptionHandler;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -54,9 +53,6 @@ public class ReIndexListener {
     
     @Resource
     private Orcid20APIClient orcid20ApiClient;
-    
-    @Resource
-    private SolrIndexUpdater solrIndexUpdater;
     
     @Resource
     private S3Updater s3Updater; 
@@ -98,7 +94,14 @@ public class ReIndexListener {
             }
             return;
         }
-                
+             
+        if(profile != null) {            
+            //Update 1.2 buckets
+            s3Updater.updateS3(orcid, profile); 
+            
+            profile = null;
+        }
+        
         //Fetch 2.0 record
         try {
             record = orcid20ApiClient.fetchPublicProfile(orcid);
@@ -106,18 +109,10 @@ public class ReIndexListener {
             LOG.warn("Unable to fetch record " + orcid + " from 2.0 API");            
         }
         
-        if(profile != null) {
-            //Update solr
-            if(isSolrIndexingEnalbed) {
-                solrIndexUpdater.updateSolrIndex(record,profile.toString());
-            }
-            //Update 1.2 buckets
-            s3Updater.updateS3(orcid, profile);               
-        }
-        
         if(record != null) {
             //Update 2.0 buckets          
             s3Updater.updateS3(orcid, record);
+            record = null;
         }                
-    }        
+    }         
 }
