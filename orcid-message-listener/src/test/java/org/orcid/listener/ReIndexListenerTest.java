@@ -38,6 +38,7 @@ import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.common.ExceptionHandler;
+import org.orcid.listener.common.LastModifiedMessageProcessor;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -55,6 +56,9 @@ public class ReIndexListenerTest {
     @Resource
     private ReIndexListener reIndexListener;
     
+    @Resource
+    private LastModifiedMessageProcessor processor;
+    
     @Mock
     private Orcid12APIClient mock_orcid12ApiClient;
     
@@ -69,11 +73,12 @@ public class ReIndexListenerTest {
     
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(reIndexListener, "orcid12ApiClient", mock_orcid12ApiClient);                
-        TargetProxyHelper.injectIntoProxy(reIndexListener, "orcid20ApiClient", mock_orcid20ApiClient);
-        TargetProxyHelper.injectIntoProxy(reIndexListener, "exceptionHandler", mock_exceptionHandler);
-        TargetProxyHelper.injectIntoProxy(reIndexListener, "s3Updater", mock_s3Updater);
+        MockitoAnnotations.initMocks(this);        
+        TargetProxyHelper.injectIntoProxy(processor, "orcid12ApiClient", mock_orcid12ApiClient);                
+        TargetProxyHelper.injectIntoProxy(processor, "orcid20ApiClient", mock_orcid20ApiClient);
+        TargetProxyHelper.injectIntoProxy(processor, "exceptionHandler", mock_exceptionHandler);
+        TargetProxyHelper.injectIntoProxy(processor, "s3Updater", mock_s3Updater);
+        TargetProxyHelper.injectIntoProxy(reIndexListener,"processor", processor);
     }
     
     @Test
