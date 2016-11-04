@@ -113,56 +113,65 @@ public class RegistrationManagerImpl implements RegistrationManager {
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
         String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
-        if(emailManager.emailExists(emailAddress)) {
-            //executeAutoDeprecateProcedure
-            //TODO
-        } else {
-            OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
-            //Set source to the new email
-            String sourceId = minimalProfile.getOrcidIdentifier().getPath();
-            List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
-            for(Email email : emails)
-                emailManager.addSourceToEmail(email.getValue(), sourceId);
-            LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
+        if (emailManager.emailExists(emailAddress)) {
+            checkAutoDeprecateIsEnabledForEmail(emailAddress);
+            String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
+            emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
+            OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);
+            String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
+            ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
+            adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
+            // TODO
+            //Notify
             return minimalProfile;
+        } else {
+            return createMinimalProfile(orcidProfile, usedCaptcha);
         }
-        
-        return null;
-    }
-    
-    
-    private void executeAutoDeprecateProcedure(String emailAddress) {
-        // If the email doesn't exists, just return
-        if(!emailManager.emailExists(emailAddress)) {
-            return;
-        }
-        
-        // Check the record is not claimed
-        if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
-            throw new InvalidRequestException("Email " + emailAddress + " already exists and is claimed, so, it can't be used again");
-        }
-        
-        // Check the auto deprecate is enabled for this email address
-        if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
-            throw new InvalidRequestException("Autodeprecate is not enabled for " + emailAddress);
-        }
-        
-        // Delete email associated with this request
-        //TODO
-        // Create new record
-        //TODO
-        // Deprecate unclaimed record
-        ProfileDeprecationRequest result = new ProfileDeprecationRequest(); 
-        Map<String, String> emailMap = emailManager.findIdByEmail(emailAddress);
-        String deprecatedOrcid = emailMap == null ? null : emailMap.get(emailAddress);
-        if(PojoUtil.isEmpty(deprecatedOrcid)) {
-            throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
-        }
-                
-        adminManager.deprecateProfile(result, deprecatedOrcid, primaryOrcid);
-        
-        // Notify
-        //TODO
     }
 
+    /**
+     * TODO
+     */
+    private OrcidProfile createMinimalProfile(OrcidProfile orcidProfile, boolean usedCaptcha) {
+        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
+        // Set source to the new email
+        String sourceId = minimalProfile.getOrcidIdentifier().getPath();
+        List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
+        for (Email email : emails)
+            emailManager.addSourceToEmail(email.getValue(), sourceId);
+        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
+        return minimalProfile;
+    }
+
+    /**
+     * TODO
+     */
+    private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) {
+        // If the email doesn't exists, just return
+        if (!emailManager.emailExists(emailAddress)) {
+            return;
+        }
+
+        // Check the record is not claimed
+        if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
+            throw new InvalidRequestException("Email " + emailAddress + " already exists and is claimed, so, it can't be used again");
+        }
+
+        // Check the auto deprecate is enabled for this email address
+        if (!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+            throw new InvalidRequestException("Autodeprecate is not enabled for " + emailAddress);
+        }
+    }
+
+    /**
+     * TODO
+     */
+    private String getOrcidIdFromEmail(String emailAddress) {
+        Map<String, String> emailMap = emailManager.findIdByEmail(emailAddress);
+        String unclaimedOrcid = emailMap == null ? null : emailMap.get(emailAddress);
+        if (PojoUtil.isEmpty(unclaimedOrcid)) {
+            throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
+        }
+        return unclaimedOrcid;
+    }
 }

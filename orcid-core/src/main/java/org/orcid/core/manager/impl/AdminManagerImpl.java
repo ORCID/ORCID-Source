@@ -71,7 +71,7 @@ public class AdminManagerImpl implements AdminManager {
     
     @Override    
     @Transactional
-    public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) throws Exception {        
+    public boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {        
         // Get deprecated profile
         ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);        
