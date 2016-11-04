@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,5 +99,7 @@ public interface NotificationManager {
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
+    
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String orcid, String deprecatedOrcid, Date deprecatedAccountCreatedDate, String clientId);
 
 }

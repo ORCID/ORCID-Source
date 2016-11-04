@@ -1087,4 +1087,13 @@ public class NotificationManagerImpl implements NotificationManager {
         
         return result;
     }
+
+    @Override
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String orcid, String deprecatedOrcid, Date deprecatedAccountCreatedDate, String clientId) {
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = getSubject("email.subject.deprecated_profile_primary", orcidProfile);
+        // TODO Auto-generated method stub
+        //
+    }
 }
