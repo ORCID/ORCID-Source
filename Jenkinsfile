@@ -15,31 +15,31 @@ node {
     }
     stage('Build & Test') {
         parallel activemq: {
-            do_maven("$MAVEN/bin/mvn -f orcid-activemq/pom.xml test")
+            do_maven("-f orcid-activemq/pom.xml test")
         },utils: {
-            do_maven("$MAVEN/bin/mvn -f orcid-utils/pom.xml test")
+            do_maven("-f orcid-utils/pom.xml test")
         },core: {
-            do_maven("$MAVEN/bin/mvn -f orcid-core/pom.xml test")
+            do_maven("-f orcid-core/pom.xml test")
         },model: {
-            do_maven("$MAVEN/bin/mvn -f orcid-model/pom.xml test")
+            do_maven("-f orcid-model/pom.xml test")
         },persistence: {
-            do_maven("$MAVEN/bin/mvn -f orcid-persistence/pom.xml test")
+            do_maven("-f orcid-persistence/pom.xml test")
         },apicommon: {
-            do_maven("$MAVEN/bin/mvn -f orcid-api-common/pom.xml test")
+            do_maven("-f orcid-api-common/pom.xml test")
         },web: {
-            do_maven("$MAVEN/bin/mvn -f orcid-web/pom.xml test")
+            do_maven("-f orcid-web/pom.xml test")
         },pubweb: {
-            do_maven("$MAVEN/bin/mvn -f orcid-pub-web/pom.xml test")
+            do_maven("-f orcid-pub-web/pom.xml test")
         },apiweb: {
-            do_maven("$MAVEN/bin/mvn -f orcid-api-web/pom.xml test")
+            do_maven("-f orcid-api-web/pom.xml test")
         },solr: {
-            do_maven("$MAVEN/bin/mvn -f orcid-solr-web/pom.xml test")
+            do_maven("-f orcid-solr-web/pom.xml test")
         },scheduler: {
-            do_maven("$MAVEN/bin/mvn -f orcid-scheduler-web/pom.xml test")
+            do_maven("-f orcid-scheduler-web/pom.xml test")
         },internalapi: {
-            do_maven("$MAVEN/bin/mvn -f orcid-internal-api/pom.xml test")
+            do_maven("-f orcid-internal-api/pom.xml test")
         },messagelistener: {
-            do_maven("$MAVEN/bin/mvn -f orcid-message-listener/pom.xml test")
+            do_maven("-f orcid-message-listener/pom.xml test")
         }
     }
     stage('Save Tests Results') {
@@ -90,6 +90,6 @@ def orcid_notify(message, level){
     if(level == 'SUCCESS'){
         color = "#36a64f"
     }
-    slackSend channel: '#ci-2-alerts', color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
+    slackSend channel: '#tech-ci-notifications', color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
 }
 
