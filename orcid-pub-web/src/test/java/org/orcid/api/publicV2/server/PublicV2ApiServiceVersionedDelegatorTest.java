@@ -56,7 +56,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", 
             "/data/OrgAffiliationEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
     
-    @Resource(name = "publicV2ApiServiceDelegatorRc3")
+    @Resource(name = "publicV2ApiServiceDelegatorRc4")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
     
     @Resource
