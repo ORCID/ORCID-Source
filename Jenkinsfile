@@ -15,43 +15,16 @@ node {
         // TODO if any module is required before next builds
     }
     stage('Build & Test') {
-        do_maven("clean install -Dmaven.test.skip=true")
-        parallel activemq: {
-            do_maven("-f orcid-activemq/pom.xml clean install test")
-        },utils: {
-            do_maven("-f orcid-utils/pom.xml clean install test")
-        },core: {
-            do_maven("-f orcid-core/pom.xml clean install test")
-        },model: {
-            do_maven("-f orcid-model/pom.xml clean install test")
-        },persistence: {
-            do_maven("-f orcid-persistence/pom.xml clean install test")
-        },apicommon: {
-            do_maven("-f orcid-api-common/pom.xml clean install test")
-        },web: {
-            do_maven("-f orcid-web/pom.xml clean install test")
-        },pubweb: {
-            do_maven("-f orcid-pub-web/pom.xml clean install test")
-        },apiweb: {
-            do_maven("-f orcid-api-web/pom.xml clean install test")
-        },solr: {
-            do_maven("-f orcid-solr-web/pom.xml clean install test")
-        },scheduler: {
-            do_maven("-f orcid-scheduler-web/pom.xml clean install test")
-        },internalapi: {
-            do_maven("-f orcid-internal-api/pom.xml clean install test")
-        },messagelistener: {
-            do_maven("-f orcid-message-listener/pom.xml clean install test")
-        }
+        do_maven("clean install test")
     }
     stage('Save Tests Results') {
-        archive 'orcid-web/target/**/*.war'
-        archive 'orcid-pub-web/target/**/*.war'
-        archive 'orcid-api-web/target/**/*.war'
-        archive 'orcid-solr-web/target/**/*.war'
-        archive 'orcid-scheduler-web/target/**/*.war'
-        archive 'orcid-internal-api/target/**/*.war'
-        archive 'orcid-message-listener/target/**/*.war'
+        //archive 'orcid-web/target/**/*.war'
+        //archive 'orcid-pub-web/target/**/*.war'
+        //archive 'orcid-api-web/target/**/*.war'
+        //archive 'orcid-solr-web/target/**/*.war'
+        //archive 'orcid-scheduler-web/target/**/*.war'
+        //archive 'orcid-internal-api/target/**/*.war'
+        //archive 'orcid-message-listener/target/**/*.war'
         junit '**/target/surefire-reports/*.xml'        
     }
     stage('DeployToTomcat') {
@@ -92,6 +65,6 @@ def orcid_notify(message, level){
     if(level == 'SUCCESS'){
         color = "#36a64f"
     }
-    slackSend channel: '#tech-ci-notifications', color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
+    slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
 }
 
