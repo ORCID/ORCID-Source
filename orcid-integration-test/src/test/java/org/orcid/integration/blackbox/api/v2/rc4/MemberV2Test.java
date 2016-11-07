@@ -14,14 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc1;
+package org.orcid.integration.blackbox.api.v2.rc4;
 
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.orcid.integration.blackbox.api.BBBUtil.noSpinners;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -35,37 +36,34 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
-import org.orcid.jaxb.model.common_rc1.Day;
-import org.orcid.jaxb.model.common_rc1.FuzzyDate;
-import org.orcid.jaxb.model.common_rc1.Month;
-import org.orcid.jaxb.model.common_rc1.Title;
-import org.orcid.jaxb.model.common_rc1.Url;
-import org.orcid.jaxb.model.common_rc1.Visibility;
-import org.orcid.jaxb.model.common_rc1.Year;
+import org.orcid.jaxb.model.common_rc4.Day;
+import org.orcid.jaxb.model.common_rc4.FuzzyDate;
+import org.orcid.jaxb.model.common_rc4.Month;
+import org.orcid.jaxb.model.common_rc4.Title;
+import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.Year;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc1.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc1.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc1.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc1.Identifier;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.Education;
-import org.orcid.jaxb.model.record_rc1.Employment;
-import org.orcid.jaxb.model.record_rc1.Funding;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc1.PeerReview;
-import org.orcid.jaxb.model.record_rc1.Relationship;
-import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -76,107 +74,32 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Will Simpson
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class) 
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MemberV2Test extends BlackBoxBaseRC1 {    
-    static List<GroupIdRecord> groupRecords = null;
-
+public class MemberV2Test extends BlackBoxBaseRC4 {    
+    static List<GroupIdRecord> groupRecords = null;           
+    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();  
         groupRecords = createGroupIds();
+        
+        // Remove remaining works using UI, because clients aren't allowed to
+        // delete works that they are not the source of.
+        signin();
+        noSpinners();
+        waitForAngular();
+        removeAllWorks();
     }
 
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }    
-    
-    @Test
-    public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        workToCreate.setPutCode(null);
-        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId.setRelationship(Relationship.PART_OF);
-        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
-        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        gotWork.getWorkTitle().getTitle().setContent("updated title");
-        
-        //Save the original visibility
-        Visibility originalVisibility = gotWork.getVisibility();
-        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
-        
-        //Verify you cant update the visibility
-        gotWork.setVisibility(updatedVisibility);              
-        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
-        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
-        OrcidError error = putResponse.getEntity(OrcidError.class);
-        assertNotNull(error);
-        assertEquals(Integer.valueOf(9035), error.getErrorCode());
-                        
-        //Set the visibility again to the initial one
-        gotWork.setVisibility(originalVisibility);
-        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
-        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
-        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
-        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-    }
-
-    @Test
-    public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        workToCreate.setPutCode(null);
-        workToCreate.setVisibility(Visibility.PUBLIC);
-        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId.setRelationship(Relationship.SELF);
-        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
-        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        gotWork.getWorkTitle().getTitle().setContent("updated title");
-        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
-        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
-        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
-        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-    }
+    }            
 
     @Test
     public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc4/samples/education-2.0_rc4.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -184,14 +107,12 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/education/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());
-        gotEducation.setDepartmentName("updated dept. name");
-        gotEducation.setRoleTitle("updated role title");
         
         //Save the original visibility
         Visibility originalVisibility = gotEducation.getVisibility();
@@ -207,6 +128,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
                         
         //Set the visibility again to the initial one
         gotEducation.setVisibility(originalVisibility);
+        
+        gotEducation.setDepartmentName("updated dept. name");
+        gotEducation.setRoleTitle("updated role title");
         putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEducation);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -220,7 +144,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void testUpdateEducationWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc4/samples/education-2.0_rc4.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -228,7 +152,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/education/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/education/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
@@ -250,7 +174,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void createViewUpdateAndDeleteEmployment() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc4/samples/employment-2.0_rc4.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -258,14 +182,12 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/employment/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/employment/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
-        gotEmployment.setDepartmentName("updated dept. name");
-        gotEmployment.setRoleTitle("updated role title");
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         
         //Save the original visibility
         Visibility originalVisibility = gotEmployment.getVisibility();
@@ -281,6 +203,10 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
                         
         //Set the visibility again to the initial one
         gotEmployment.setVisibility(originalVisibility);
+        
+        
+        gotEmployment.setDepartmentName("updated dept. name");
+        gotEmployment.setRoleTitle("updated role title");
         putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEmployment);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -294,7 +220,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void testUpdateEmploymentWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc4/samples/employment-2.0_rc4.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -302,12 +228,12 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/employment/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/employment/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
         gotEmployment.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
@@ -316,8 +242,8 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotAfterUpdateEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotAfterUpdateEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotAfterUpdateEmployment.getRoleTitle());
         ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(this.getUser1OrcidId(), gotEmployment.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -325,12 +251,12 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     @Test
     public void createViewUpdateAndDeleteFunding() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId = new ExternalID();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -339,17 +265,14 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/funding/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/funding/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
         assertEquals("common:title", gotFunding.getTitle().getTitle().getContent());
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         assertEquals("en", gotFunding.getTitle().getTranslatedTitle().getLanguageCode());
-        gotFunding.getTitle().getTitle().setContent("Updated title");
-        gotFunding.getTitle().getTranslatedTitle().setContent("Updated translated title");
-        gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
-                
+        
         //Save the original visibility
         Visibility originalVisibility = gotFunding.getVisibility();
         Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
@@ -364,6 +287,10 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
                         
         //Set the visibility again to the initial one
         gotFunding.setVisibility(originalVisibility);
+        
+        gotFunding.getTitle().getTitle().setContent("Updated title");
+        gotFunding.getTitle().getTranslatedTitle().setContent("Updated translated title");
+        gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
         putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotFunding);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -379,12 +306,12 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     @Test
     public void testUpdateFundingWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId = new ExternalID();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -393,7 +320,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/funding/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/funding/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Funding gotFunding = getResponse.getEntity(Funding.class);
@@ -419,13 +346,13 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     @Test
     public void createViewUpdateAndDeletePeerReview() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
@@ -434,21 +361,14 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/peer-review/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/peer-review/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
-        
-        //TODO: response does not contain full external identifier or disambig org.
-        //Issue is that upgrading makes subject external identifier fail
-        //https://www.diffchecker.com/g5laoiou
-        //Note that this test does not hit disambiguated orgs (which are optional and also not being upgraded)
-        
         assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
         assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
         assertEquals(groupRecords.get(0).getGroupId(), gotPeerReview.getGroupId());
-        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
-        
+
         //Save the original visibility
         Visibility originalVisibility = gotPeerReview.getVisibility();
         Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
@@ -462,7 +382,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(Integer.valueOf(9035), error.getErrorCode());
                         
         //Set the visibility again to the initial one
-        gotPeerReview.setVisibility(originalVisibility);
+        gotPeerReview.setVisibility(originalVisibility);        
+        gotPeerReview.getSubjectName().getTitle().setContent("updated title");
+
         putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -478,23 +400,23 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     @Test
     public void testUpdatePeerReviewWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
-        peerReviewToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
+        peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
 
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(this.getUser1OrcidId(), peerReviewToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/peer-review/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/peer-review/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
@@ -518,42 +440,42 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc4/samples/education-2.0_rc4.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
 
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc4/samples/employment-2.0_rc4.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
 
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId = new ExternalID();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
                 
-        Work work = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
         work.setPutCode(null);
         work.setVisibility(Visibility.PUBLIC);
         work.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
-        work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
+        work.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
 
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setVisibility(Visibility.PUBLIC);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
-        WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
-        pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID pExtId = new ExternalID();
+        pExtId.setValue("Work Id " + time);
+        pExtId.setType(WorkExternalIdentifierType.AGR.value());
         pExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);                
 
@@ -575,25 +497,24 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         funding.getTitle().getTitle().setContent("Funding # 2");
-        FundingExternalIdentifier fExtId3 = new FundingExternalIdentifier();
-        fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId3 = new ExternalID();
+        fExtId3.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId3.setValue("extId3Value" + time);
         fExtId3.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
-        funding.setVisibility(Visibility.PUBLIC);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createFundingXml(this.getUser1OrcidId(), funding, accessTokenForClient2);
         assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());        
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
         
         funding.getTitle().getTitle().setContent("Funding # 3");
-        FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();
-        fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId4 = new ExternalID();
+        fExtId4.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId4.setValue("extId4Value" + time);
         fExtId4.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
-        funding.setVisibility(Visibility.PUBLIC);
         // Add 3, with different ext ids
         postResponse = memberV2ApiClient.createFundingXml(this.getUser1OrcidId(), funding, accessTokenForClient1);
         assertNotNull(postResponse);
@@ -609,9 +530,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         work.getWorkTitle().getTitle().setContent("Work # 2");
-        WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
-        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
+        ExternalID wExtId2 = new ExternalID();
+        wExtId2.setType(WorkExternalIdentifierType.DOI.value());
+        wExtId2.setValue("doi-ext-id" + time);
         wExtId2.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         // Add 2, with the same ext ids +1
@@ -620,9 +541,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
         work.getWorkTitle().getTitle().setContent("Work # 3");
-        WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
-        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
+        ExternalID wExtId3 = new ExternalID();
+        wExtId3.setType(WorkExternalIdentifierType.EID.value());
+        wExtId3.setValue("eid-ext-id" + time);
         wExtId3.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
         work.getWorkExternalIdentifiers().getExternalIdentifier().add(wExtId3);
@@ -646,15 +567,13 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         peerReview.getCompletionDate().setMonth(new Month(2));
         peerReview.getCompletionDate().setYear(new Year(2016));
         peerReview.setUrl(new Url("http://peer_review/2"));
-        WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
-        pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + System.currentTimeMillis()));
+        ExternalID pExtId2 = new ExternalID();
+        pExtId2.setType(WorkExternalIdentifierType.DOI.value());
+        pExtId2.setValue("doi-ext-id" + System.currentTimeMillis());
         pExtId2.setRelationship(Relationship.SELF);
         
-        for(WorkExternalIdentifier wei : peerReview.getExternalIdentifiers().getExternalIdentifier()) {
-            WorkExternalIdentifierId id = wei.getWorkExternalIdentifierId();
-            id.setContent(id.getContent() + System.currentTimeMillis());
-            wei.setWorkExternalIdentifierId(id);
+        for(ExternalID wei : peerReview.getExternalIdentifiers().getExternalIdentifier()) {
+            wei.setValue(wei.getValue()+ System.currentTimeMillis());
         }
         
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId2);
@@ -669,9 +588,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         peerReview.getCompletionDate().setMonth(new Month(3));
         peerReview.getCompletionDate().setYear(new Year(2017));
         peerReview.setUrl(new Url("http://peer_review/3"));
-        WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
-        pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
+        ExternalID pExtId3 = new ExternalID();
+        pExtId3.setType(WorkExternalIdentifierType.EID.value());
+        pExtId3.setValue("eid-ext-id" + System.currentTimeMillis());
         pExtId3.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId3);
@@ -687,9 +606,9 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         peerReview.getCompletionDate().setYear(new Year(2018));
         peerReview.setUrl(new Url("http://peer_review/4"));
         
-        WorkExternalIdentifier pExtId4 = new WorkExternalIdentifier();
-        pExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
-        pExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
+        ExternalID pExtId4 = new ExternalID();
+        pExtId4.setType(WorkExternalIdentifierType.EID.value());
+        pExtId4.setValue("eid-ext-id" + System.currentTimeMillis());
         pExtId4.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId4);
@@ -735,8 +654,8 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertFalse(activities.getEmployments().getSummaries().isEmpty());        
         found = false;
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("affiliation:role-title")) {
-                assertEquals("affiliation:department-name", summary.getDepartmentName());
+            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("employment:role-title")) {
+                assertEquals("employment:department-name", summary.getDepartmentName());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
@@ -766,13 +685,15 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         found1 = found2 = found3 = false;
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
-                if(summary.getTitle().getTitle().getContent().equals("Current treatment of left main coronary artery disease")) {
+                if(summary.getTitle().getTitle().getContent().equals("common:title")) {
                     found1 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 2")) {
                     found2 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
                     found3 = true;
-                } 
+                } else {
+                    fail("Couldnt find work with title: " + summary.getTitle().getTitle().getContent());
+                }
             }
         }
         
@@ -801,7 +722,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     
     @Test
     public void testPeerReviewMustHaveAtLeastOneExtId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
@@ -813,149 +734,39 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
     }    
     
-    @Test
-    public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
-        long time = System.currentTimeMillis();
-        String accessTokenForClient1 = getAccessToken();
-        String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
-        
-        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        work1.setPutCode(null);
-        work1.setVisibility(Visibility.PUBLIC);
-        work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_rc1.WorkTitle title1 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
-        title1.setTitle(new Title("Work # 1" + time));
-        work1.setWorkTitle(title1);
-        WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
-        wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId1.setRelationship(Relationship.SELF);
-        wExtId1.setUrl(new Url("http://orcid.org/work#1"));
-        work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
-        work1.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId1);
-
-        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        work2.setPutCode(null);
-        work2.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc1.WorkTitle title2 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
-        title2.setTitle(new Title("Work # 2" + time));
-        work2.setWorkTitle(title2);
-        work2.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
-        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId2.setRelationship(Relationship.PART_OF);
-        wExtId2.setUrl(new Url("http://orcid.org/work#2"));
-        work2.getExternalIdentifiers().getWorkExternalIdentifier().clear();
-        work2.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId2);
-        
-        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        work3.setPutCode(null);
-        work3.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc1.WorkTitle title3 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
-        title3.setTitle(new Title("Work # 3" + time));
-        work3.setWorkTitle(title3);        
-        work3.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
-        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId3.setRelationship(Relationship.SELF);
-        wExtId3.setUrl(new Url("http://orcid.org/work#3"));
-        work3.getExternalIdentifiers().getWorkExternalIdentifier().clear();
-        work3.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId3);
-        
-        //Add the three works
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work1, accessTokenForClient1);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
-        postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient1);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
-        postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work3, accessTokenForClient2);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
-        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), accessTokenForClient1);
-        assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
-        ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
-        assertNotNull(activities);
-        assertFalse(activities.getWorks().getWorkGroup().isEmpty());
-        
-        WorkGroup work1Group = null; 
-        WorkGroup work2Group = null;
-        WorkGroup work3Group = null;
-        
-        boolean work1found = false;
-        boolean work2found = false;
-        boolean work3found = false;
-                                
-        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
-            if(group.getIdentifiers().getIdentifier() == null || group.getIdentifiers().getIdentifier().isEmpty()) {
-                for(WorkSummary summary : group.getWorkSummary()) {
-                    String title = summary.getTitle().getTitle().getContent(); 
-                    if (("Work # 2" + time).equals(title)) {
-                        work2found = true;
-                        work2Group = group;
-                    }
-                }
-            } else {
-                for(Identifier id : group.getIdentifiers().getIdentifier()) {
-                    //If it is the ID is the one we are looking for
-                    if(id.getExternalIdentifierId().equals("Work Id " + time)) {                    
-                        for(WorkSummary summary : group.getWorkSummary()) {
-                            String title = summary.getTitle().getTitle().getContent(); 
-                            if(("Work # 1" + time).equals(title)) {
-                                work1found = true;
-                                work1Group = group;
-                            } else if(("Work # 3" + time).equals(title)) {
-                                work3found = true;
-                                work3Group = group;
-                            }
-                        }
-                    }
-                }
-            }            
-        }
-        
-        assertTrue("Work1: " + work1found + " work2 " + work2found + " work3 " + work3found, work1found && work2found && work3found);
-        //Check that work # 1 and Work # 3 are in the same work
-        assertEquals(work1Group, work3Group);
-        //Check that work # 2 is not in the same group than group # 1
-        assertThat(work2Group, not(work1Group));
-    }
+    
     
     @Test
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE);        
+        List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE);
         String accessToken =  getAccessToken(scopes);
-        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_rc1.WorkTitle title1 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
+        org.orcid.jaxb.model.record_rc4.WorkTitle title1 = new org.orcid.jaxb.model.record_rc4.WorkTitle();
         title1.setTitle(new Title("Work # 1"));
         work1.setWorkTitle(title1);
-        WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
-        wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID wExtId1 = new ExternalID();
+        wExtId1.setValue("Work Id " + time);
+        wExtId1.setType(WorkExternalIdentifierType.AGR.value());
         wExtId1.setRelationship(Relationship.SELF);
         wExtId1.setUrl(new Url("http://orcid.org/work#1"));
-        work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
-        work1.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId1);        
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
+        
         
         //Add the work
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work1, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), postResponse.getStatus());
         
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID fExtId = new ExternalID();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -968,16 +779,15 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     
     @Test
     public void testAddPeerReviewWithInvalidGroupingId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId("Invalid group id " + System.currentTimeMillis());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
-        WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
-        pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + System.currentTimeMillis()));
-        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        ExternalID pExtId = new ExternalID();
+        pExtId.setValue("Work Id " + System.currentTimeMillis());
+        pExtId.setType(WorkExternalIdentifierType.AGR.value());
         pExtId.setRelationship(Relationship.SELF);
-        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
-        
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);        
         String accessToken = getAccessToken();
 
         //Pattern not valid
@@ -1005,8 +815,8 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     }        
     
     private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
-        // Remove all activities 
         String token = getAccessToken();
+        // Remove all activities        
         ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token);
         assertNotNull(activitiesResponse);
         ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
@@ -1067,26 +877,25 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         g2.setName("Group # 2");
         g2.setType("publisher");                
         
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token); 
         
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc4/group-id-record/", "");
         g1.setPutCode(Long.valueOf(r1LocationPutCode));
         groups.add(g1);
         
         ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc4/group-id-record/", "");
         g2.setPutCode(Long.valueOf(r2LocationPutCode));
         groups.add(g2);
         
         return groups;
     }
     
-    
-    private String getAccessToken() throws InterruptedException, JSONException {        
+    private String getAccessToken() throws InterruptedException, JSONException {                
         return getAccessToken(getScopes());
-    }    
+    }
     
     private List<String> getScopes() {
-        return getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED);        
+        return getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED);
     }
 }

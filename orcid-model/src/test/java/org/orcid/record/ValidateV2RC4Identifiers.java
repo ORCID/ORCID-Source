@@ -71,7 +71,7 @@ public class ValidateV2RC4Identifiers {
     
     @Test
     public void testFunding() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Funding funding = unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
+        Funding funding = unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
         assertEquals("funding:organization-defined-type",funding.getOrganizationDefinedType().getContent());
         assertNotNull(funding.getExternalIdentifiers());
         assertNotNull(funding.getExternalIdentifiers().getExternalIdentifier());
@@ -111,7 +111,7 @@ public class ValidateV2RC4Identifiers {
      */
     @Test
     public void testPerson() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Person person = unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);        
+        Person person = unmarshallFromPath("/record_2.0_rc4/samples/person-2.0_rc4.xml", Person.class);        
         assertEquals("credit-name",person.getName().getCreditName().getContent());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
         PersonExternalIdentifier id = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
@@ -146,7 +146,7 @@ public class ValidateV2RC4Identifiers {
      */
     @Test
     public void testWork() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Work work = unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);                
+        Work work = unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);                
         ExternalID id = work.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -156,7 +156,7 @@ public class ValidateV2RC4Identifiers {
         validator.validate(marshall(Work.class, work));
         validator.validate(marshallToDOM(Work.class, work));
         
-        work = unmarshallFromPath("/record_2.0_rc2/samples/work-full-2.0_rc2.xml", Work.class);                
+        work = unmarshallFromPath("/record_2.0_rc4/samples/work-full-2.0_rc4.xml", Work.class);                
         id = work.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -176,7 +176,7 @@ public class ValidateV2RC4Identifiers {
      */
     @Test
     public void testPeerReview() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        PeerReview peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
+        PeerReview peerReview = unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
         
         ExternalID id = peerReview.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("source-work-id",id.getType());
@@ -195,7 +195,7 @@ public class ValidateV2RC4Identifiers {
         validator.validate(marshallToDOM(PeerReview.class, peerReview)); 
         
         //do the full record too
-        peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-full-2.0_rc2.xml", PeerReview.class);
+        peerReview = unmarshallFromPath("/record_2.0_rc4/samples/peer-review-full-2.0_rc4.xml", PeerReview.class);
         id = peerReview.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("source-work-id",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -211,7 +211,7 @@ public class ValidateV2RC4Identifiers {
 
     @Test
     public void testActivities(){
-        ActivitiesSummary as = unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
+        ActivitiesSummary as = unmarshallFromPath("/record_2.0_rc4/samples/activities-2.0_rc4.xml", ActivitiesSummary.class);
         
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
@@ -246,7 +246,7 @@ public class ValidateV2RC4Identifiers {
     }
     @Test
     public void testRecord(){
-        Record record = unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
+        Record record = unmarshallFromPath("/record_2.0_rc4/samples/record-2.0_rc4.xml", Record.class);
         ActivitiesSummary as = record.getActivitiesSummary();
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
@@ -271,7 +271,7 @@ public class ValidateV2RC4Identifiers {
     }
 
     public void validateSampleXML(String name) throws SAXException, IOException {
-        Source source = getInputStream("/record_2.0_rc2/samples/" + name + "-2.0_rc2.xml");
+        Source source = getInputStream("/record_2.0_rc4/samples/" + name + "-2.0_rc4.xml");
         Validator validator = getValidator(name);
         validator.validate(source);
     }
@@ -284,7 +284,7 @@ public class ValidateV2RC4Identifiers {
 
     public Validator getValidator(String name) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        Schema schema = factory.newSchema(getClass().getResource("/record_2.0_rc2/" + name + "-2.0_rc2.xsd"));
+        Schema schema = factory.newSchema(getClass().getResource("/record_2.0_rc4/" + name + "-2.0_rc4.xsd"));
         Validator validator = schema.newValidator();
         return validator;
     }

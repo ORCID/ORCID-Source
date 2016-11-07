@@ -66,21 +66,21 @@ public class PersonTest extends BlackBoxBaseRC2 {
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);        
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
         saveEditAddressModal();
 
         openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName("other-name-1");
         createOtherName("other-name-2");
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
         
         openEditKeywordsModal();
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
         
         if(hasExternalIdentifiers()) {
@@ -99,12 +99,12 @@ public class PersonTest extends BlackBoxBaseRC2 {
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         } else {
-            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         }
         
         String accessToken = getAccessToken();
@@ -113,8 +113,8 @@ public class PersonTest extends BlackBoxBaseRC2 {
         
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);        
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
         saveExternalIdentifiersModal();
         allSet = true;
     }

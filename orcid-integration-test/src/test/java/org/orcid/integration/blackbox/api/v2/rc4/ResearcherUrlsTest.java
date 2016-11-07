@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc3;
+package org.orcid.integration.blackbox.api.v2.rc4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,13 +34,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -53,10 +53,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ResearcherUrlsTest extends BlackBoxBaseRC3 {
-    @Resource(name = "memberV2ApiClient_rc3")
+public class ResearcherUrlsTest extends BlackBoxBaseRC4 {
+    @Resource(name = "memberV2ApiClient_rc4")
     private MemberV2ApiClientImpl memberV2ApiClient;
-    @Resource(name = "publicV2ApiClient_rc3")
+    @Resource(name = "publicV2ApiClient_rc4")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
     private static String researcherUrl1 = "http://test.orcid.org/1/" + System.currentTimeMillis();
@@ -97,7 +97,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC3 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc3/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc4/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
 
         // Read
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);

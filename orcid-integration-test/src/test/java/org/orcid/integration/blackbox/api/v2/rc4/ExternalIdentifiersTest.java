@@ -14,13 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2;
+package org.orcid.integration.blackbox.api.v2.rc4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -30,12 +32,13 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -48,10 +51,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {    
-    @Resource(name = "memberV2ApiClient_rc2")
+public class ExternalIdentifiersTest extends BlackBoxBaseRC4 {    
+    @Resource(name = "memberV2ApiClient_rc4")
     private MemberV2ApiClientImpl memberV2ApiClient;
-    @Resource(name = "publicV2ApiClient_rc2")
+    @Resource(name = "publicV2ApiClient_rc4")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
     org.orcid.jaxb.model.common_rc4.Visibility currentUserVisibility = null;
@@ -112,7 +115,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     public void testCreateGetUpdateAndDeleteExternalIdentifier() throws InterruptedException, JSONException {        
         //Get access token
         String accessToken = getAccessToken();
-        assertNotNull(accessToken);
+        assertNotNull(accessToken);                
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
         Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);               
@@ -243,20 +246,52 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-        
+    
+    @SuppressWarnings({ "rawtypes", "deprecation" })
     private Long createExternalIdentifier(String name, org.orcid.jaxb.model.common_rc4.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
         //Change user visibility if needed
         if(!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility);
             currentUserVisibility = defaultUserVisibility;
         }
-        Long putCode = super.createExternalIdentifier(name);
+        
+        //Get the access token
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        
+        //Create the external identifier
+        PersonExternalIdentifier extId = getExternalIdentifier(name);                
+        ClientResponse response = memberV2ApiClient.createExternalIdentifier(getUser1OrcidId(), extId, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         createdPutCodes.add(putCode);
         return putCode;
     }
     
     public String getAccessToken() throws InterruptedException, JSONException {
         return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
+    }
+    
+    private PersonExternalIdentifier getExternalIdentifier(String value) {
+        PersonExternalIdentifier externalIdentifier = new PersonExternalIdentifier();
+        externalIdentifier.setType(value);
+        externalIdentifier.setValue(value);
+        externalIdentifier.setUrl(new Url("http://ext-id/" + value));        
+        externalIdentifier.setVisibility(Visibility.PUBLIC);
+        externalIdentifier.setRelationship(Relationship.SELF);
+        externalIdentifier.setSource(null);        
+        externalIdentifier.setPath(null);
+        externalIdentifier.setLastModifiedDate(null);
+        externalIdentifier.setCreatedDate(null);
+        externalIdentifier.setPutCode(null);
+        return externalIdentifier;
     }
     
 }
