@@ -100,7 +100,7 @@ public class EmailManagerImpl implements EmailManager {
     
     @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, String> findIdByEmail(String csvEmail) {
+    public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
         Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         List<String> emailList = new ArrayList<String>();
         String [] emails = csvEmail.split(",");

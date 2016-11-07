@@ -42,7 +42,7 @@ public interface EmailManager {
 
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
     
-    Map<String, String> findIdByEmail(String email);
+    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
     
     void addSourceToEmail(String email, String sourceId);
     
