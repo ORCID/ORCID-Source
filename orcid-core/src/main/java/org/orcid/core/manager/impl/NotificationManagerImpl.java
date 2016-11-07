@@ -1090,10 +1090,27 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String orcid, String deprecatedOrcid, Date deprecatedAccountCreatedDate, String clientId) {
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
+        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.deprecated_profile_primary", orcidProfile);
-        // TODO Auto-generated method stub
-        //
+        String subject = getSubject("email.subject.auto_deprecate", orcidProfile);
+        String baseUri = orcidUrlManager.getBaseUrl();
+        Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
+        
+        // Create map of template params
+        templateParams.put("primaryId", orcid);
+        templateParams.put("name", deriveEmailFriendlyName(orcidProfile));        
+        templateParams.put("baseUri", baseUri);        
+        templateParams.put("subject", subject);
+        templateParams.put("clientName", clientDetails.getClientName());
+        templateParams.put("deprecatedAccountCreationDate", deprecatedAccountCreationDate);
+        templateParams.put("deprecatedId", deprecatedOrcid);
+                
+        addMessageParams(templateParams, userLocale);
+        
+        //TODO
     }
 }
