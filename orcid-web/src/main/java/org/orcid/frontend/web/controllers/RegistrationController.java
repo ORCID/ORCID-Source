@@ -86,7 +86,6 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -1165,16 +1164,11 @@ public class RegistrationController extends BaseController {
     public void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
-        ProfileEntity profileEntity = emailEntity.getProfile();
-        profileEntity.setDeactivationDate(null);
+        String orcid = emailManager.findOrcidIdByEmail(email);
+        LOGGER.info("About to reactive record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
-        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
-        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
-        recordNameEntity.setGivenNames(reactivation.getGivenNames().getValue());
-        recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());
-        profileDao.merge(profileEntity);
-        logUserIn(request, response, profileEntity.getId(), password);
+        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
+        logUserIn(request, response, orcid, password);
     }
 
 }

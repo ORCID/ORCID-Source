@@ -31,6 +31,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean emailExists(String email);
 
     EmailEntity findCaseInsensitive(String email);
+    
+    String findOrcidIdByCaseInsenitiveEmail(String email);
 
     void updateEmail(String orcid, String email, boolean isCurrent, Visibility visibility);
 
@@ -62,4 +64,5 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common_rc3.Visibility visibility);
     
     boolean verifySetCurrentAndPrimary(String orcid, String email);
+
 }
