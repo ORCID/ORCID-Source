@@ -6,8 +6,6 @@ node {
     
     stage('Fetch Code') {
         echo "triggered by modification on ${BRANCH_NAME} ---------------------------------------------------------------------------"
-        // move maven install to next stages
-        //do_maven("clean install -Dmaven.test.skip=true")
     }
     
     stage('Build Dependencies') {
@@ -18,13 +16,6 @@ node {
         do_maven("clean install test")
     }
     stage('Save Tests Results') {
-        //archive 'orcid-web/target/**/*.war'
-        //archive 'orcid-pub-web/target/**/*.war'
-        //archive 'orcid-api-web/target/**/*.war'
-        //archive 'orcid-solr-web/target/**/*.war'
-        //archive 'orcid-scheduler-web/target/**/*.war'
-        //archive 'orcid-internal-api/target/**/*.war'
-        //archive 'orcid-message-listener/target/**/*.war'
         junit '**/target/surefire-reports/*.xml'        
     }
     stage('DeployToTomcat') {
@@ -35,6 +26,7 @@ node {
     }
     stage('IntegrationTests') {
         echo "Running selenium blackbox test"
+        // TODO implement virtual screens
         // sh "export DISPLAY=:1.0"
         // sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins &"
         // stop Xvfb server
