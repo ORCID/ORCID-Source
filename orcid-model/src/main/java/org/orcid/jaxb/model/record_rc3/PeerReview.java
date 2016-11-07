@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.common_rc3.VisibilityType;
 import io.swagger.annotations.ApiModelProperty;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type",  "completionDate",
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "role", "externalIdentifiers", "url", "type",  "completionDate",
         "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder, SourceAware {
@@ -73,10 +73,10 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
     protected Long putCode;
-    @XmlAttribute(name = "path")
-    protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlAttribute(name = "path")
+    protected String path;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
