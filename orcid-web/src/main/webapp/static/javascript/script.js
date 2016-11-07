@@ -3968,6 +3968,11 @@ this.w3cLatexCharMap = {
    typeMap['kuid'] = function (id) {
        return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
    };
+   
+   typeMap['lensid'] = function (id) {
+       if (id.toLowerCase().startsWith('www.lens.org')) return 'https://' + id;
+       return 'https://www.lens.org/' + encodeURIComponent(id);
+   };
 
    exports.getLink = function(id, type) {
       if (id == null) return null;
