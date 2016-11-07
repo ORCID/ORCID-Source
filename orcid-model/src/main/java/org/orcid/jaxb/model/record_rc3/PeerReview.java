@@ -73,10 +73,10 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlAttribute(name = "put-code")
     @ApiModelProperty(hidden = true) 
     protected Long putCode;
-    @XmlAttribute
-    protected Visibility visibility;
     @XmlAttribute(name = "path")
     protected String path;
+    @XmlAttribute
+    protected Visibility visibility;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
