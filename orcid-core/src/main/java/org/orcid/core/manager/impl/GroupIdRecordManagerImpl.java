@@ -30,12 +30,12 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.SourceClientId;
-import org.orcid.jaxb.model.common_rc3.SourceOrcid;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Source;
+import org.orcid.jaxb.model.common_rc4.SourceClientId;
+import org.orcid.jaxb.model.common_rc4.SourceOrcid;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -152,7 +152,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         } else {
             records.setTotal(0);
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(records);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(records);
         return records;
     }
 

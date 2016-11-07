@@ -28,10 +28,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -164,10 +164,10 @@ public class EmailManagerImpl implements EmailManager {
         } else {
             entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         }
-        List<org.orcid.jaxb.model.record_rc3.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.record_rc4.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(emails);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(emails);
         return emails;
     }
     
