@@ -254,8 +254,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
            statusCode = ((org.orcid.jaxb.model.error_rc1.OrcidError) orcidError).getResponseCode(); 
         } else if (org.orcid.jaxb.model.error_rc2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.error_rc2.OrcidError) orcidError).getResponseCode(); 
-        } else if (org.orcid.jaxb.model.error_rc3.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc3.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.error_rc4.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.error_rc4.OrcidError) orcidError).getResponseCode();
         }
         
         if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
