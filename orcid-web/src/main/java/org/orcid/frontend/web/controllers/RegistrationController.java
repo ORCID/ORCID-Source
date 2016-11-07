@@ -86,11 +86,13 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
@@ -661,7 +663,7 @@ public class RegistrationController extends BaseController {
             }
         }
     }
-
+    
     @RequestMapping(value = "/resend-claim", method = RequestMethod.GET)
     public ModelAndView viewResendClaimEmail(@RequestParam(value = "email", required = false) String email) {
         ModelAndView mav = new ModelAndView("resend_claim");
@@ -1063,12 +1065,16 @@ public class RegistrationController extends BaseController {
 
     public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave,
             boolean usedCaptchaVerification) {
+        profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
+        String orcidId = profileToSave.getOrcidIdentifier().getPath();
         String password = profileToSave.getPassword();
+        logUserIn(request, response, orcidId, password);
+    }
+
+    public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
         UsernamePasswordAuthenticationToken token = null;
         try {
-            profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
-            String orcidId = profileToSave.getOrcidIdentifier().getPath();
-            token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
+            token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -1081,7 +1087,6 @@ public class RegistrationController extends BaseController {
             SecurityContextHolder.getContext().setAuthentication(null);
             LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
         }
-
     }
 
     public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
@@ -1096,6 +1101,80 @@ public class RegistrationController extends BaseController {
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
         return profileToSave;
+    }
+    
+    @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)
+    public ModelAndView reactivation(HttpServletRequest request, @PathVariable("resetParams") String resetParams, RedirectAttributes redirectAttributes) {
+        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetParams);
+        ModelAndView mav = new ModelAndView("reactivation");
+        if (isTokenExpired(passwordResetToken)) {
+            mav.addObject("reactivationLinkExpired", true);
+        }
+        mav.addObject("resetParams", resetParams);
+        return mav;
+    }
+    
+    @RequestMapping(value = { "/reactivationConfirm.json", "/shibboleth/reactivationConfirm.json" }, method = RequestMethod.POST)
+    public @ResponseBody Object setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
+            throws UnsupportedEncodingException {
+        Redirect r = new Redirect();
+
+        // Strip any html code from names before validating them
+        if (!PojoUtil.isEmpty(reg.getFamilyNames())) {
+            reg.getFamilyNames().setValue(OrcidStringUtils.stripHtml(reg.getFamilyNames().getValue()));
+        }
+
+        if (!PojoUtil.isEmpty(reg.getGivenNames())) {
+            reg.getGivenNames().setValue(OrcidStringUtils.stripHtml(reg.getGivenNames().getValue()));
+        }
+
+        // make sure validation still passes
+        validateReactivationFields(request, reg);
+        if (reg.getErrors() != null && reg.getErrors().size() > 0) {
+            return reg;
+        }
+
+        if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
+            r.setUrl(getBaseUri() + "/register");
+            return r;
+        }
+
+        reactivateAndLogUserIn(request, response, reg);
+        if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
+            ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+        } else if ("shibboleth".equals(reg.getLinkType())) {
+            ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
+        }
+        String redirectUrl = calculateRedirectUrl(request, response);
+        r.setUrl(redirectUrl);
+        return r;
+    }
+    
+    public void validateReactivationFields(HttpServletRequest request, Registration reg) {
+        reg.setErrors(new ArrayList<String>());
+
+        registerGivenNameValidate(reg);
+        registerPasswordValidate(reg);
+        registerPasswordConfirmValidate(reg);
+
+        copyErrors(reg.getGivenNames(), reg);
+        copyErrors(reg.getPassword(), reg);
+        copyErrors(reg.getPasswordConfirm(), reg);
+    }
+
+    public void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
+        PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
+        String email = resetParams.getEmail();
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+        ProfileEntity profileEntity = emailEntity.getProfile();
+        profileEntity.setDeactivationDate(null);
+        String password = reactivation.getPassword().getValue();
+        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
+        recordNameEntity.setGivenNames(reactivation.getGivenNames().getValue());
+        recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());
+        profileDao.merge(profileEntity);
+        logUserIn(request, response, profileEntity.getId(), password);
     }
 
 }
