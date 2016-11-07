@@ -15,31 +15,31 @@ node {
     }
     stage('Build & Test') {
         parallel activemq: {
-            do_maven("-f orcid-activemq/pom.xml test")
+            do_maven("-f orcid-activemq/pom.xml clean install test")
         },utils: {
-            do_maven("-f orcid-utils/pom.xml test")
+            do_maven("-f orcid-utils/pom.xml clean install test")
         },core: {
-            do_maven("-f orcid-core/pom.xml test")
+            do_maven("-f orcid-core/pom.xml clean install test")
         },model: {
-            do_maven("-f orcid-model/pom.xml test")
+            do_maven("-f orcid-model/pom.xml clean install test")
         },persistence: {
-            do_maven("-f orcid-persistence/pom.xml test")
+            do_maven("-f orcid-persistence/pom.xml clean install test")
         },apicommon: {
-            do_maven("-f orcid-api-common/pom.xml test")
+            do_maven("-f orcid-api-common/pom.xml clean install test")
         },web: {
-            do_maven("-f orcid-web/pom.xml test")
+            do_maven("-f orcid-web/pom.xml clean install test")
         },pubweb: {
-            do_maven("-f orcid-pub-web/pom.xml test")
+            do_maven("-f orcid-pub-web/pom.xml clean install test")
         },apiweb: {
-            do_maven("-f orcid-api-web/pom.xml test")
+            do_maven("-f orcid-api-web/pom.xml clean install test")
         },solr: {
-            do_maven("-f orcid-solr-web/pom.xml test")
+            do_maven("-f orcid-solr-web/pom.xml clean install test")
         },scheduler: {
-            do_maven("-f orcid-scheduler-web/pom.xml test")
+            do_maven("-f orcid-scheduler-web/pom.xml clean install test")
         },internalapi: {
-            do_maven("-f orcid-internal-api/pom.xml test")
+            do_maven("-f orcid-internal-api/pom.xml clean install test")
         },messagelistener: {
-            do_maven("-f orcid-message-listener/pom.xml test")
+            do_maven("-f orcid-message-listener/pom.xml clean install test")
         }
     }
     stage('Save Tests Results') {
