@@ -6,7 +6,8 @@ node {
     
     stage('Fetch Code') {
         echo "triggered by modification on ${BRANCH_NAME} ---------------------------------------------------------------------------"
-        do_maven("clean install -Dmaven.test.skip=true")
+        // move maven install to next stages
+        //do_maven("clean install -Dmaven.test.skip=true")
     }
     
     stage('Build Dependencies') {
@@ -14,6 +15,7 @@ node {
         // TODO if any module is required before next builds
     }
     stage('Build & Test') {
+        do_maven("clean install -Dmaven.test.skip=true")
         parallel activemq: {
             do_maven("-f orcid-activemq/pom.xml clean install test")
         },utils: {
