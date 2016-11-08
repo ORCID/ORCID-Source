@@ -108,7 +108,7 @@ public class MarshallingTest {
         assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
 
         // Back the other way
-        String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH_RC3), "UTF-8");
+        String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH_RC4), "UTF-8");
         Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
         expected = pattern.matcher(expected).replaceAll("");
         Marshaller marshaller = context.createMarshaller();
