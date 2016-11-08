@@ -29,13 +29,13 @@ import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
 
-public class NotificationInstitutionalConnection extends Notification {
+public xclass NotificationInstitutionalConnection extends Notification {
 
     private final static long serialVersionUID = 1L;
     protected AuthorizationUrl authorizationUrl;
     protected XMLGregorianCalendar actionedDate;
     protected String subject;
-    protected String idpName;
+    xprotected String idpName;
 
     {
         notificationType = NotificationType.INSTITUTIONAL_CONNECTION;

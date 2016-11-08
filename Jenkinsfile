@@ -8,7 +8,6 @@ node {
     
     stage('Fetch Code') {
         echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
-        sh "ls -lth orcid-core/src/test/java/org/orcid/"
     }
     
     stage('Build Dependencies') {
