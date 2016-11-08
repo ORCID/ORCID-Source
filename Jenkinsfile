@@ -1,46 +1,22 @@
 node {
+
     git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine'
-    def MAVEN = tool 'ORCID_MAVEN'
+    
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
+    
     stage('Fetch Code') {
-        echo "triggered by modification on ${BRANCH_NAME}"
-        sh "${MAVEN}/bin/mvn clean install -Dmaven.test.skip=true"
+        echo "triggered by modification on ${BRANCH_NAME} ---------------------------------------------------------------------------"
     }
+    
     stage('Build Dependencies') {
         echo "Lets build the core"
         // TODO if any module is required before next builds
     }
     stage('Build & Test') {
-        parallel activemq: {
-            sh "$MAVEN/bin/mvn -f orcid-activemq/pom.xml test"
-        },utils: {
-            sh "$MAVEN/bin/mvn -f orcid-utils/pom.xml test"
-        },core: {
-            sh "$MAVEN/bin/mvn -f orcid-core/pom.xml test"
-        },model: {
-            sh "$MAVEN/bin/mvn -f orcid-model/pom.xml test"
-        },persistence: {
-            sh "$MAVEN/bin/mvn -f orcid-persistence/pom.xml test"
-        },apicommon: {
-            sh "$MAVEN/bin/mvn -f orcid-api-common/pom.xml test"
-        },web: {
-            sh "$MAVEN/bin/mvn -f orcid-web/pom.xml test"
-            archive 'orcid-web/target/**/*.war'
-        },pubweb: {
-            sh "$MAVEN/bin/mvn -f orcid-pub-web/pom.xml test"
-        },apiweb: {
-            sh "$MAVEN/bin/mvn -f orcid-api-web/pom.xml test"
-        },solr: {
-            sh "$MAVEN/bin/mvn -f orcid-solr-web/pom.xml test"
-        },scheduler: {
-            sh "$MAVEN/bin/mvn -f orcid-scheduler-web/pom.xml test"
-        },internalapi: {
-            sh "$MAVEN/bin/mvn -f orcid-internal-api/pom.xml test"
-        },messagelistener: {
-            sh "$MAVEN/bin/mvn -f orcid-message-listener/pom.xml test"
-        }
+        do_maven("clean install test")
     }
     stage('Save Tests Results') {
-        junit '**/target/surefire-reports/*.xml'
+        junit '**/target/surefire-reports/*.xml'        
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
@@ -50,6 +26,7 @@ node {
     }
     stage('IntegrationTests') {
         echo "Running selenium blackbox test"
+        // TODO implement virtual screens
         // sh "export DISPLAY=:1.0"
         // sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins &"
         // stop Xvfb server
@@ -58,5 +35,28 @@ node {
     stage('Clean & Free resources'){
         // TODO check orphan process and MEM usage
         echo "All done."
+        properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
+    }
+    stage('Notify Completed'){
+        orcid_notify("Pipeline #$BUILD_NUMBER completed [${JOB_URL}]", 'SUCCESS')
     }
 }
+
+def do_maven(mvn_task){
+    def MAVEN = tool 'ORCID_MAVEN'
+    try{
+        sh "$MAVEN/bin/mvn $mvn_task"
+    } catch(Exception err){
+        def err_msg = err.getCause()
+        orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]: $err_msg", 'ERROR')
+    }
+}
+
+def orcid_notify(message, level){
+    def color = "#d00000"
+    if(level == 'SUCCESS'){
+        color = "#36a64f"
+    }
+    slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
+}
+

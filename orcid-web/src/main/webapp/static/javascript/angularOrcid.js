@@ -8456,9 +8456,6 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
 	$scope.orcidToUnlock = '';
 	$scope.showLockModal = false;
 	$scope.showUnlockModal = false;
-	$scope.showLockPopover = false;
-	$scope.profileDetails = null;
-	$scope.message = '';
 	
 	$scope.toggleLockModal = function(){
         $scope.showLockModal = !$scope.showLockModal;
@@ -8470,76 +8467,17 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
         $('#unlock_modal').toggle();
     };
     
-    $scope.checkProfileToLock = function(){
+    $scope.lockAccount = function() {
     	$.ajax({
-            url: getBaseUri()+'/admin-actions/check-account-to-lock.json',
+            url: getBaseUri()+'/admin-actions/lock-accounts.json',
             type: 'POST',
             data: $scope.orcidToLock,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data){            	
-            	$scope.profileDetails=data;  
-            	if($scope.profileDetails.errors.length) {
-            		$scope.$apply();
-            	}
-            	else {
-            		$scope.showConfirmModal(true);
-            	}            		            
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error while loading info for the account to lock");
-        });
-    };
-    
-    $scope.checkProfileToUnlock = function(){
-    	$.ajax({
-            url: getBaseUri()+'/admin-actions/check-account-to-unlock.json',
-            type: 'POST',
-            data: $scope.orcidToUnlock,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data){            	
-            	$scope.profileDetails=data;  
-            	if($scope.profileDetails.errors.length) {
-            		$scope.$apply();
-            	}
-            	else {
-            		$scope.showConfirmModal(false);
-            	}            		            
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error while loading info for the account to lock");
-        });
-    };
-    
-    $scope.showConfirmModal = function(isLockAction) {
-    	$scope.showLockPopover = isLockAction;     	
-        $.colorbox({
-            html : $compile($('#confirm-modal').html())($scope),
-                scrolling: true,
-                onLoad: function() {
-                $('#cboxClose').remove();
-            },
-            scrolling: true
-        });
-        $scope.$apply();
-        $.colorbox.resize({width:"425px" , height:"285px"});
-    };
-    
-    $scope.lockAccount = function() {
-    	$.ajax({
-            url: getBaseUri()+'/admin-actions/lock-account.json',
-            type: 'POST',
-            data: $scope.profileDetails.orcid,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'text',
-            success: function(data){   
-            	$scope.message = data;            	
-            	$scope.orcidToLock = '';
-            	$scope.$apply();
-            	$scope.closeModal();
+            success: function(data){
+                $scope.result = data;
+                $scope.orcidToLock = '';
+                $scope.$apply();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -8549,16 +8487,15 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
     
     $scope.unlockAccount = function() {
     	$.ajax({
-            url: getBaseUri()+'/admin-actions/unlock-account.json',
+            url: getBaseUri()+'/admin-actions/unlock-accounts.json',
             type: 'POST',
-            data: $scope.profileDetails.orcid,
+            data: $scope.orcidToUnlock,
             contentType: 'application/json;charset=UTF-8',
-            dataType: 'text',
+            dataType: 'json',
             success: function(data){   
-            	$scope.message = data;            	
+            	$scope.result = data;            	
             	$scope.orcidToUnlock = '';
             	$scope.$apply();
-            	$scope.closeModal();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -8576,9 +8513,6 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
 	$scope.orcidToUnreview = '';
 	$scope.showReviewModal = false;
 	$scope.showUnreviewModal = false;
-	$scope.showReviewPopover = false;
-	$scope.profileDetails = null;
-	$scope.message = '';
 	
 	$scope.toggleReviewModal = function(){
         $scope.showReviewModal = !$scope.showReviewModal;
@@ -8590,76 +8524,17 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
         $('#unreview_modal').toggle();
     };
     
-    $scope.checkProfileToReview = function(){
+    $scope.reviewAccount = function() {
     	$.ajax({
-            url: getBaseUri()+'/admin-actions/check-account-to-review.json',
+            url: getBaseUri()+'/admin-actions/review-accounts.json',
             type: 'POST',
             data: $scope.orcidToReview,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data){            	
-            	$scope.profileDetails=data;  
-            	if($scope.profileDetails.errors.length) {
-            		$scope.$apply();
-            	}
-            	else {
-            		$scope.showConfirmModal(true);
-            	}            		            
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error while loading info for the account to review");
-        });
-    };
-    
-    $scope.checkProfileToUnreview = function(){
-    	$.ajax({
-            url: getBaseUri()+'/admin-actions/check-account-to-unreview.json',
-            type: 'POST',
-            data: $scope.orcidToUnreview,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data){            	
-            	$scope.profileDetails=data;  
-            	if($scope.profileDetails.errors.length) {
-            		$scope.$apply();
-            	}
-            	else {
-            		$scope.showConfirmModal(false);
-            	}            		            
-            }
-        }).fail(function(error) {
-            // something bad is happening!
-            console.log("Error while loading info for the account to unreview");
-        });
-    };
-    
-    $scope.showConfirmModal = function(isReviewAction) {
-    	$scope.showReviewPopover = isReviewAction;     	
-        $.colorbox({
-            html : $compile($('#review-confirm-modal').html())($scope),
-                scrolling: true,
-                onLoad: function() {
-                $('#cboxClose').remove();
-            },
-            scrolling: true
-        });
-        $scope.$apply();
-        $.colorbox.resize({width:"425px" , height:"285px"});
-    };
-    
-    $scope.reviewAccount = function() {
-    	$.ajax({
-            url: getBaseUri()+'/admin-actions/review-account.json',
-            type: 'POST',
-            data: $scope.profileDetails.orcid,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'text',
             success: function(data){   
-            	$scope.message = data;            	
+            	$scope.result = data;            	
             	$scope.orcidToReview = '';
             	$scope.$apply();
-            	$scope.closeModal();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -8669,16 +8544,15 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
     
     $scope.unreviewAccount = function() {
     	$.ajax({
-            url: getBaseUri()+'/admin-actions/unreview-account.json',
+            url: getBaseUri()+'/admin-actions/unreview-accounts.json',
             type: 'POST',
-            data: $scope.profileDetails.orcid,
+            data: $scope.orcidToUnreview,
             contentType: 'application/json;charset=UTF-8',
-            dataType: 'text',
+            dataType: 'json',
             success: function(data){   
-            	$scope.message = data;            	
+            	$scope.result = data;            	
             	$scope.orcidToUnreview = '';
             	$scope.$apply();
-            	$scope.closeModal();
             }
         }).fail(function(error) {
             // something bad is happening!

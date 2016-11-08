@@ -475,17 +475,24 @@
 				<a ng-show="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
 				<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
 			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
-		    	<div class="form-group">
-		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
-					<input type="text" id="orcid_to_lock" ng-enter="checkProfileToLock()" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
-					<div ng-show="profileDetails.errors.length">
-						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+			<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">
+				<div class="alert alert-success" ng-show="result.lockSuccessfulList.length || result.notFoundList.length || result.alreadyLockedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.lockSuccessfulList.length"><@spring.message "admin.profile_lock.lock_success"/>
+	    				<br>{{result.lockSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyLockedList.length"><br><@spring.message "admin.profile_lock.already_locked"/>
+	    				<br>{{result.alreadyLockedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_lock.not_found"/>
+	    				<br>{{result.notFoundList}}
 					</div>
-				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-lock-profile" ng-click="checkProfileToLock()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
+				</div>					    		
+		    	<div class="control-group">
+					<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
+					<div class="controls">
+						<textarea id="orcid_to_lock" ng-model="orcidToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
+					</div>
+					<span id="bottom-confirm-lock-profile" ng-click="lockAccount()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
 				</div>
 			</div>
 		</div>
@@ -497,17 +504,28 @@
 				<a ng-show="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
 				<a ng-hide="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
 			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="unlock_modal" style="display:none;">					    		
+			<div class="collapsible bottom-margin-small admin-modal" id="unlock_modal" style="display:none;">
+				<div class="alert alert-success" ng-show="result.unlockSuccessfulList.length || result.notFoundList.length || result.alreadyUnlockedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.unlockSuccessfulList.length"><@spring.message "admin.profile_unlock.unlock_success"/>
+	    				<br>{{result.unlockSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyUnlockedList.length"><br><@spring.message "admin.profile_unlock.already_unlocked"/>
+	    				<br>{{result.alreadyUnlockedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_unlock.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
+				</div>						    		
 		    	<div class="form-group">
 		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
-					<input type="text" id="orcid_to_unlock" ng-enter="checkProfileToUnlock()" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<label for="orcid_to_unlock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
+					<textarea id="orcid_to_unlock" ng-model="orcidToUnlock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
 					<div ng-show="profileDetails.errors.length">
 						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 					</div>
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-unlock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
+					<span id="bottom-confirm-unlock-profile" ng-click="unlockAccount()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
 				</div>
 			</div>
 		</div>
@@ -519,17 +537,28 @@
 				<a ng-show="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
 				<a ng-hide="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
 			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">					    		
+			<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">		
+				<div class="alert alert-success" ng-show="result.reviewSuccessfulList.length || result.notFoundList.length || result.alreadyReviewedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.reviewSuccessfulList.length"><@spring.message "admin.profile_review.review_success"/>
+	    				<br>{{result.reviewSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyReviewedList.length"><br><@spring.message "admin.profile_review.already_reviewed"/>
+	    				<br>{{result.alreadyReviewedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_review.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
+				</div>				    		
 		    	<div class="form-group">
 		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_review"><@orcid.msg 'common.orcidOrEmail' /></label>
-					<input type="text" id="orcid_to_lock" ng-enter="checkProfileToReview()" ng-model="orcidToReview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<label for="orcid_to_review"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
+					<textarea id="orcid_to_review" ng-model="orcidToReview" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" ></textarea>
 					<div ng-show="profileDetails.errors.length">
 						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 					</div>
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-review-profile" ng-click="checkProfileToReview()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
+					<span id="bottom-confirm-review-profile" ng-click="reviewAccount()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
 				</div>
 			</div>
 		</div>
@@ -541,17 +570,28 @@
 				<a ng-show="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
 				<a ng-hide="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
 			</p>
-			<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">					    		
+			<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">	
+				<div class="alert alert-success" ng-show="result.unreviewSuccessfulList.length || result.notFoundList.length || result.alreadyUnreviewedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.unreviewSuccessfulList.length"><@spring.message "admin.profile_unreview.unreview_success"/>
+	    				<br>{{result.unreviewSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyUnreviewedList.length"><br><@spring.message "admin.profile_unreview.already_unreviewed"/>
+	    				<br>{{result.alreadyUnreviewedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_unreview.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
+				</div>					    		
 		    	<div class="form-group">
 		    		<p ng-show="message != ''">{{message}}</p>
-					<label for="orcid_to_unreview"><@orcid.msg 'common.orcidOrEmail' /></label>
-					<input type="text" id="orcid_to_unreview" ng-enter="checkProfileToUnreview()" ng-model="orcidToUnreview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
+					<textarea id="orcid_to_unreview" ng-model="orcidToUnreview" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" ></textarea>
 					<div ng-show="profileDetails.errors.length">
 						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
 					</div>
 				</div>
 				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
+					<span id="bottom-confirm-unreview-profile" ng-click="unreviewAccount()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
 				</div>
 			</div>
 		</div>
