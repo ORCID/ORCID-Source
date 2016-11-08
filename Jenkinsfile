@@ -14,10 +14,8 @@ node {
         // TODO if any module is required before next builds
     }
     stage('Build & Test') {
-        do_maven("clean test")
-    }
-    stage('Save Tests Results') {
-        junit '**/target/surefire-reports/*.xml'        
+        do_maven("test")
+        junit '**/target/surefire-reports/*.xml'
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
