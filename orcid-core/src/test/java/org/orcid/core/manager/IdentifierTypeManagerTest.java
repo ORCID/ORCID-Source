@@ -72,7 +72,7 @@ public class IdentifierTypeManagerTest extends BaseTest{
     @Resource
     private IdentifierTypeManager idTypeMan;
     
-    private List<String> v2Ids = Arrays.asList(new String[]{"pdb","kuid"});
+    private List<String> v2Ids = Arrays.asList(new String[]{"pdb","kuid", "lensid"});
     
     @Before
     public void before() throws Exception {
