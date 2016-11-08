@@ -429,7 +429,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement : webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteOtherName(otherName)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteOtherName(otherName)']")));
             waitForAngular();
         }
     }
@@ -505,7 +505,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteKeyword(keyword)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteKeyword(keyword)']")));
             waitForAngular();
         }
     }
@@ -555,7 +555,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteCountry(country)']")));
             waitForAngular();
         }
     }        
@@ -606,7 +606,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteWebsite(website)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteWebsite(website)']")));
             waitForAngular();
         }
     }
@@ -667,7 +667,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
         }          
     }
     
