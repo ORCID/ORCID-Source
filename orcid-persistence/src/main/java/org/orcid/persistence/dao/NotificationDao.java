@@ -29,37 +29,41 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
  */
 public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
-    List<NotificationEntity> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
+	List<NotificationEntity> findByOrcid(String orcid, boolean includeArchived,
+			int firstResult, int maxResults);
 
-    NotificationEntity findLatestByOrcid(String orcid);
+	NotificationEntity findLatestByOrcid(String orcid);
 
-    List<NotificationEntity> findUnsentByOrcid(String orcid);
-    
-    List<NotificationEntity> findNotificationAlertsByOrcid(String orcid);
-    
-    int getUnreadCount(String orcid);
+	List<NotificationEntity> findUnsentByOrcid(String orcid);
 
-    List<String> findOrcidsWithNotificationsToSend();
+	List<NotificationEntity> findNotificationAlertsByOrcid(String orcid);
 
-    /**
-     * @param effectiveNow
-     *            Normally this would be the current date and time, but it is
-     *            useful to be able to pass in a different value for testing.
-     */
-    List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
+	int getUnreadCount(String orcid);
 
-    NotificationEntity findByOricdAndId(String orcid, Long id);
+	List<String> findOrcidsWithNotificationsToSend();
 
-    void flagAsSent(Collection<Long> ids);
+	/**
+	 * @param effectiveNow
+	 *            Normally this would be the current date and time, but it is
+	 *            useful to be able to pass in a different value for testing.
+	 */
+	List<String> findOrcidsWithNotificationsToSend(Date effectiveNow);
 
-    void flagAsRead(String orcid, Long id);
+	NotificationEntity findByOricdAndId(String orcid, Long id);
 
-    void flagAsArchived(String orcid, Long id);
-    
-    void deleteNotificationById(Long notificationId);
-    
-    void deleteNotificationItemByNotificationId(Long notificationId);
-    
-    void deleteNotificationWorkByNotificationId(Long notificationId);
+	void flagAsSent(Collection<Long> ids);
+
+	void flagAsRead(String orcid, Long id);
+
+	void flagAsArchived(String orcid, Long id);
+
+	void deleteNotificationById(Long notificationId);
+
+	void deleteNotificationItemByNotificationId(Long notificationId);
+
+	void deleteNotificationWorkByNotificationId(Long notificationId);
+
+	List<NotificationEntity> findPermissionsByOrcidAndClient(String orcid, String client,
+			int firstResult, int maxResults);
 
 }

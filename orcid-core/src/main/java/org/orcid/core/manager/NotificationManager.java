@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc4.Item;
 import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -98,5 +99,7 @@ public interface NotificationManager {
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
+
+    NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
 }

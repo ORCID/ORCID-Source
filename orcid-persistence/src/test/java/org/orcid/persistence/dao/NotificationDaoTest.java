@@ -104,5 +104,25 @@ public class NotificationDaoTest extends DBUnitTest {
         assertNotNull(orcids);
         assertEquals(0, orcids.size());
     }
+    
+    @Test
+    public void testFindPermissionByOrcidAndClient() {
+    	List<NotificationEntity> entities = notificationDao.findPermissionsByOrcidAndClient("4444-4444-4444-4442", "4444-4444-4444-4445", 0, 10);
+    	assertNotNull(entities);
+    	assertEquals(2, entities.size());
+    	
+    	entities = notificationDao.findPermissionsByOrcidAndClient("4444-4444-4444-4441", "4444-4444-4444-4445", 0, 10);
+    	assertNotNull(entities);
+    	assertEquals(3, entities.size());
+    	
+     	entities = notificationDao.findPermissionsByOrcidAndClient("4444-4444-4444-4441", "4444-4444-4444-4441", 0, 10);
+    	assertNotNull(entities);
+    	assertTrue(entities.isEmpty());
+    	
+    	entities = notificationDao.findPermissionsByOrcidAndClient("4444-4444-4444-4442", "4444-4444-4444-4441", 0, 10);
+     	assertNotNull(entities);
+    	assertEquals(1, entities.size());
+    	
+    }
 
 }

@@ -3878,6 +3878,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());        
     }        
     
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewRecordWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewRecord(ORCID);
+    }
+    
+    @Test
+    public void testViewRecordWrongScope() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response response = serviceDelegator.viewRecord(ORCID);
+        assertNotNull(response);
+    }
+        
+    
     @Test
     public void testViewRecord() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
