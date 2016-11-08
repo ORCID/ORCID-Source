@@ -1,11 +1,12 @@
 node {
 
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${env.BRANCH_NAME}"
+    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine'
     
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     
     stage('Fetch Code') {
         echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
+        sh "ls -lth orcid-core/src/test/java/org/orcid/"
     }
     
     stage('Build Dependencies') {
