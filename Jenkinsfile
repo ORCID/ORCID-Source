@@ -45,8 +45,8 @@ def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
         sh "$MAVEN/bin/mvn $mvn_task"
-    } catch(Exception err){
-        //def err_msg = err.getMessage() // 
+    } catch(Exception err) {
+        junit '**/target/surefire-reports/*.xml'
         orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
         throw err
     }
