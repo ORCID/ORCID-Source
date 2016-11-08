@@ -1,5 +1,7 @@
 node {
 
+    def failed_modules = ''
+
     git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${env.BRANCH_NAME}"
     
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
@@ -15,34 +17,39 @@ node {
         // # TODO if any module is required before next builds
     }
     stage('Build & Test') {
-        parallel activemq: {
-            do_maven(" -f orcid-activemq/pom.xml test")
-        },utils: {
-            do_maven(" -f orcid-utils/pom.xml test")
-        },core: {
-            do_maven(" -f orcid-core/pom.xml test")
-        },model: {
-            do_maven(" -f orcid-model/pom.xml test")
-        },persistence: {
-            do_maven(" -f orcid-persistence/pom.xml test")
-        },apicommon: {
-            do_maven(" -f orcid-api-common/pom.xml test")
-        },web: {
-            do_maven(" -f orcid-web/pom.xml test")
-        },pubweb: {
-            do_maven(" -f orcid-pub-web/pom.xml test")
-        },apiweb: {
-            do_maven(" -f orcid-api-web/pom.xml test")
-        },solr: {
-            do_maven(" -f orcid-solr-web/pom.xml test")
-        },scheduler: {
-            do_maven(" -f orcid-scheduler-web/pom.xml test")
-        },internalapi: {
-            do_maven(" -f orcid-internal-api/pom.xml test")
-        },messagelistener: {
-            do_maven(" -f orcid-message-listener/pom.xml test")
-        }
-        junit '**/target/surefire-reports/*.xml'
+        try {
+            parallel activemq: {
+                do_maven(" -f orcid-activemq/pom.xml test")
+            },utils: {
+                do_maven(" -f orcid-utils/pom.xml test")
+            },core: {
+                do_maven(" -f orcid-core/pom.xml test")
+            },model: {
+                do_maven(" -f orcid-model/pom.xml test")
+            },persistence: {
+                do_maven(" -f orcid-persistence/pom.xml test")
+            },apicommon: {
+                do_maven(" -f orcid-api-common/pom.xml test")
+            },web: {
+                do_maven(" -f orcid-web/pom.xml test")
+            },pubweb: {
+                do_maven(" -f orcid-pub-web/pom.xml test")
+            },apiweb: {
+                do_maven(" -f orcid-api-web/pom.xml test")
+            },solr: {
+                do_maven(" -f orcid-solr-web/pom.xml test")
+            },scheduler: {
+                do_maven(" -f orcid-scheduler-web/pom.xml test")
+            },internalapi: {
+                do_maven(" -f orcid-internal-api/pom.xml test")
+            },messagelistener: {
+                do_maven(" -f orcid-message-listener/pom.xml test")
+            }
+            junit '**/target/surefire-reports/*.xml'
+        } catch(Exception err) {
+            junit '**/target/surefire-reports/*.xml'            
+            orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+        }        
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
@@ -73,8 +80,6 @@ def do_maven(mvn_task){
     try{
         sh "$MAVEN/bin/mvn $mvn_task"
     } catch(Exception err) {
-        junit '**/target/surefire-reports/*.xml'
-        orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
         throw err
     }
 }
