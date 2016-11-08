@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package package org.orcid.deleteme;
+package org.orcid.deleteme;
 
 import static org.junit.Assert.fail;
 
