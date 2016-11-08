@@ -1,6 +1,6 @@
 node {
 
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine'
+    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: ${env.BRANCH_NAME}
     
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     
