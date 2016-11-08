@@ -13,7 +13,11 @@ node {
     
     stage('Build Dependencies') {
         echo "Lets build the core"
-        do_maven("clean install -Dmaven.test.skip=true")
+        try {
+            do_maven("clean install -Dmaven.test.skip=true")
+        } catch(Exception err) {
+            orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+        }            
         // # TODO if any module is required before next builds
     }
     stage('Build & Test') {
@@ -48,7 +52,7 @@ node {
             junit '**/target/surefire-reports/*.xml'
         } catch(Exception err) {
             junit '**/target/surefire-reports/*.xml'            
-            orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
         }        
     }
     stage('DeployToTomcat') {
@@ -71,7 +75,7 @@ node {
         //properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     }
     stage('Notify Completed'){
-        orcid_notify("Pipeline #$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
     }
 }
 
