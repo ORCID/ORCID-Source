@@ -10,10 +10,11 @@ node {
     
     stage('Build Dependencies') {
         echo "Lets build the core"
+        do_maven("clean install -Dmaven.test.skip=true")
         // TODO if any module is required before next builds
     }
     stage('Build & Test') {
-        do_maven("clean install test")
+        do_maven("clean test")
     }
     stage('Save Tests Results') {
         junit '**/target/surefire-reports/*.xml'        
