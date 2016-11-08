@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.error_rc1.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;

@@ -43,7 +43,7 @@ import org.orcid.jaxb.model.common_rc4.Title;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.common_rc4.Year;
-import org.orcid.jaxb.model.error_rc1.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;

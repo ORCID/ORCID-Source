@@ -44,7 +44,7 @@
     </bean>
     
     <bean id="memberV2ApiClient_rc3" class="org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}/v2.0_"/>
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc3"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
        
