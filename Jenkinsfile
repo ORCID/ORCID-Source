@@ -38,7 +38,7 @@ node {
         properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     }
     stage('Notify Completed'){
-        orcid_notify("Pipeline #$BUILD_NUMBER completed [${JOB_URL}]", 'SUCCESS')
+        orcid_notify("Pipeline #$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
     }
 }
 
@@ -47,8 +47,8 @@ def do_maven(mvn_task){
     try{
         sh "$MAVEN/bin/mvn $mvn_task"
     } catch(Exception err){
-        def err_msg = err.getCause()
-        orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]: $err_msg", 'ERROR')
+        def err_msg = err.getMessage()
+        orcid_notify("Build #$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
     }
 }
 
