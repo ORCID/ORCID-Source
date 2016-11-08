@@ -37,7 +37,7 @@ public interface JpaJaxbWorkAdapter {
     
     WorkSummary toWorkSummary(WorkEntity workEntity);
 
-    LXist<Work> toWork(Collection<WorkEntity> workEntities);
+    List<Work> toWork(Collection<WorkEntity> workEntities);
 
     List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities);
     

@@ -17,6 +17,7 @@ node {
             do_maven("clean install -Dmaven.test.skip=true")
         } catch(Exception err) {
             orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            throw err
         }            
         // # TODO if any module is required before next builds
     }
@@ -53,6 +54,7 @@ node {
         } catch(Exception err) {
             junit '**/target/surefire-reports/*.xml'            
             orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            throw err
         }        
     }
     stage('DeployToTomcat') {
