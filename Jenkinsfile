@@ -5,13 +5,13 @@ node {
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     
     stage('Fetch Code') {
-        echo "triggered by modification on ${BRANCH_NAME} ---------------------------------------------------------------------------"
+        echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
     }
     
     stage('Build Dependencies') {
         echo "Lets build the core"
         do_maven("clean install -Dmaven.test.skip=true")
-        // TODO if any module is required before next builds
+        // # TODO if any module is required before next builds
     }
     stage('Build & Test') {
         do_maven("test")
@@ -19,22 +19,22 @@ node {
     }
     stage('DeployToTomcat') {
         echo "Ready to send to server"
-        // cp *.war tomcat/webapps
-        //or
+        // cp *.war tomcat/webapps && service tomcat restart
+        // # or
         // mvn tomcat7:deploy 
     }
     stage('IntegrationTests') {
         echo "Running selenium blackbox test"
-        // TODO implement virtual screens
+        // # TODO implement virtual screens
         // sh "export DISPLAY=:1.0"
         // sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins &"
-        // stop Xvfb server
+        // #stop Xvfb server
         // mvn test -DfailIfNoTests=false -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite
     }
     stage('Clean & Free resources'){
-        // TODO check orphan process and MEM usage
+        // # TODO check orphan process and MEM usage
         echo "All done."
-        properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
+        //properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     }
     stage('Notify Completed'){
         orcid_notify("Pipeline #$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
