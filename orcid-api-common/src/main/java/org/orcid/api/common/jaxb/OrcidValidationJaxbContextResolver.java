@@ -213,7 +213,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                     if(jaxbContext_2_0_rc4 == null) {
                         jaxbContext_2_0_rc4 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC4.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC4.size()]));
                     }
-                    return jaxbContext_2_0_rc3;
+                    return jaxbContext_2_0_rc4;
                 } else if(apiVersion.equals("2.0_rc3")) {
                     if(jaxbContext_2_0_rc3 == null) {
                         jaxbContext_2_0_rc3 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.size()]));
@@ -260,8 +260,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             if(apiVersion.equals("2.0_rc2")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.get(type);
             }    
-        }            	
-    	return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
+        }               
+        return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
     }
 
     private SchemaFactory createSchemaFactory() {
