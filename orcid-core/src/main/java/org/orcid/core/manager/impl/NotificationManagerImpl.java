@@ -930,6 +930,9 @@ public class NotificationManagerImpl implements NotificationManager {
             if (sourceEntity.getSourceClient() != null) {
                 notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
             }
+        } else {
+            //If we can't find source id, set the user as the source
+            notificationEntity.setSourceId(orcid);
         }
 
         notificationDao.persist(notificationEntity);

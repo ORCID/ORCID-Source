@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -110,6 +111,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     @Override
+    @Transactional
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
         String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 

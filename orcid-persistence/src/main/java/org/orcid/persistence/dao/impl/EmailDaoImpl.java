@@ -121,7 +121,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         } else {
             //Check if the email is primary before removing the email events and the email itself 
             deleteEmailEvent = "delete from email_event where email = :email and not(select is_primary from email where email = :email)";
-            deleteEmail = "delete from email where orcid = :orcid and email = :email and is_primary != true;";
+            deleteEmail = "delete from email where orcid = :orcid and email = :email and not(is_primary);";
         }
         
         Query query = entityManager.createNativeQuery(deleteEmailEvent);        
