@@ -1106,10 +1106,11 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String orcid, String deprecatedOrcid, Date deprecatedAccountCreatedDate, String clientId) {
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
-        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid) {
+        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());        
+        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -1118,7 +1119,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
         
         // Create map of template params
-        templateParams.put("primaryId", orcid);
+        templateParams.put("primaryId", orcidId);
         templateParams.put("name", deriveEmailFriendlyName(orcidProfile));        
         templateParams.put("baseUri", baseUri);        
         templateParams.put("subject", subject);
@@ -1128,6 +1129,13 @@ public class NotificationManagerImpl implements NotificationManager {
                 
         addMessageParams(templateParams, userLocale);
         
-        //TODO
+        // Generate html from template
+        String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
+        
+        NotificationCustom notification = new NotificationCustom();
+        notification.setNotificationType(NotificationType.CUSTOM);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        createNotification(orcidId, notification);
     }
 }

@@ -220,7 +220,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
      */
     @Override
     public boolean isAutoDeprecateEnableForEmail(String email) {
-        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT (CASE WHEN (source_id IS NULL or source_id = '') THEN client_source_id ELSE source_id END) FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email=:email) AND claimed = false)");
+        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT client_source_id FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email=:email) AND claimed = false)");
         query.setParameter("email", email);
         try {
             Boolean result = (Boolean) query.getSingleResult();

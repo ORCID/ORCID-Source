@@ -101,7 +101,7 @@ public interface NotificationManager {
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
     
-    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String orcid, String deprecatedOrcid, Date deprecatedAccountCreatedDate, String clientId);
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid);
 
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
