@@ -238,7 +238,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
         clientDetailsEntity.setGroupProfileId(memberId);
-        clientDetailsEntity.setAllowAutoDeprecate(allowAutoDeprecate);
+        clientDetailsEntity.setAllowAutoDeprecate(allowAutoDeprecate == null ? false : allowAutoDeprecate);
         clientDetailsDao.persist(clientDetailsEntity);
         return clientDetailsEntity;
     }
