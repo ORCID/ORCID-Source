@@ -77,6 +77,19 @@
                         </span>
                     </div>
                 </div>
+                <div>
+                    <div class="relative"  style="margin-bottom: 15px;">
+                        <label class="dark-label">${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>
+                        <div class="checkbox">
+                            <label class="checkbox dark-label">            
+                                <input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
+                                ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
+                            </label>
+                    </div>
+                    <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
+                        <div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
+                    </span>
+                </div>
 				<div class="relative">
                     <button type="submit" tabindex="10" class="btn btn-primary" ng-click="postReactivationConfirm(null)">${springMacroRequestContext.getMessage("orcid.frontend.reactivate")}</button>
                 </div>
