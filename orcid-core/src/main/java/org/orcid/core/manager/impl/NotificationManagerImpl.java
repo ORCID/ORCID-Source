@@ -921,13 +921,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        if(sourceEntity != null) {
+            // Set source id
+            if (sourceEntity.getSourceProfile() != null) {
+                notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+    
+            if (sourceEntity.getSourceClient() != null) {
+                notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            }
         }
 
         notificationDao.persist(notificationEntity);

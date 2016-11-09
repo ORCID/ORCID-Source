@@ -54,6 +54,11 @@ public class RegistrationManagerImplTest {
     }
 
     @Test
+    public void testCreateMinimalRegistrationWithExistingEmailAndClaimed() {
+        fail();
+    }
+    
+    @Test
     public void testCreateMinimalRegistrationWithExistingEmailNotAutoDeprecatable() {
         fail();
     }
