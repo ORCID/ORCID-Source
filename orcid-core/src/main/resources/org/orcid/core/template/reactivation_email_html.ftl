@@ -28,6 +28,9 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
+                <@emailMacros.msg "email.reactivation.thank_you" />
+            </p>
+		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
                 <@emailMacros.msg "email.reactivation.to_reactivate" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
