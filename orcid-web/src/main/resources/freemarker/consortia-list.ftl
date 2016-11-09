@@ -29,7 +29,7 @@
                         <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                     <![endif]-->
                 </div>
-                <div ng-if="membersListSrvc.consortiaList" ng-cloak>
+                <div ng-show="membersListSrvc.consortiaList">
                     <p>There are currently {{membersListSrvc.consortiaList.length}} ORCID consortia members.</p>
                     <p>
 	            		<a href="<@orcid.rootPath '/members'/>">All members</a> | <a class="selected" href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
