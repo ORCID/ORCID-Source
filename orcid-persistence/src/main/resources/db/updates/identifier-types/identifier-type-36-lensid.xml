@@ -1,0 +1,38 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="CREATE-LENSID-IDENTIFIER" author="Tom D">
+    	<preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="identifier_type"/>
+                <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='LENSID';</sqlCheck>
+            </and>
+        </preConditions>
+		    <insert tableName="identifier_type">
+			<column name="id" value="36"/>
+            <column name="id_name" value="LENSID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+    </changeSet>
+    
+</databaseChangeLog>

@@ -41,6 +41,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
 import org.orcid.core.api.OrcidApiConstants;
@@ -52,9 +53,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import javax.xml.validation.Validator;
 
 /**
  * orcid-api - Nov 10, 2011 - OrcidValidationJaxbContextResolver
@@ -112,9 +110,9 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(OrcidMessage.class, "orcid-message-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Address.class, "record_2.0_rc3/address-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Addresses.class, "record_2.0_rc3/address-");        
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Education.class, "record_2.0_rc3/education-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Education.class, "record_2.0_rc3/education-");        
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Email.class, "record_2.0_rc3/email-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Employment.class, "record_2.0_rc3/employment-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Employment.class, "record_2.0_rc3/employment-");        
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class, "record_2.0_rc3/person-external-identifier-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class, "record_2.0_rc3/person-external-identifier-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Funding.class, "record_2.0_rc3/funding-");
@@ -128,7 +126,10 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrls.class, "record_2.0_rc3/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Work.class, "record_2.0_rc3/work-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.WorkBulk.class, "record_2.0_rc3/bulk-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record.summary_rc3.Educations.class, "record_2.0_rc3/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record.summary_rc3.Employments.class, "record_2.0_rc3/activities-");
     }
+            
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;
     private JAXBContext jaxbContext_2_0_rc3;
@@ -188,8 +189,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                 } else if(apiVersion.equals("2.0_rc2")) {
                     if(jaxbContext_2_0_rc2 == null) {
                         jaxbContext_2_0_rc2 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.size()]));
-                }
-                return jaxbContext_2_0_rc2;
+                    }
+                    return jaxbContext_2_0_rc2;
                 }
             }
             //Return rc1 as the last resource
@@ -223,8 +224,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             if(apiVersion.equals("2.0_rc2")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.get(type);
             }    
-        }            	
-    	return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
+        }               
+        return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
     }
 
     private SchemaFactory createSchemaFactory() {

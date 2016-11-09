@@ -27,10 +27,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.messaging.JmsMessageSender;
-import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
@@ -53,9 +50,6 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     @Resource
     private ProfileDao profileDao;
-
-    @Resource
-    JmsMessageSender messaging;
 
     private boolean enabled = true;
 
@@ -122,15 +116,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
-            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
-        //messaging
-        Date last = retrieveLastModifiedDate(orcid);
-        LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-        if (messaging.isEnabled()){
-            if(!messaging.send(mess, JmsDestination.UPDATED_ORCIDS)) {
-                profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.FAILED);    
-            }
-        }          
+            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
     }
 
     /** Fetches the last modified from the request-scope last modified cache

@@ -24,7 +24,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
-import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -40,17 +39,13 @@ public class ExceptionHandler {
     private Orcid12APIClient orcid12ApiClient;
     
     @Resource
-    private Orcid20APIClient orcid20ApiClient;
-    
-    @Resource
-    private SolrIndexUpdater solrIndexUpdater;
+    private Orcid20APIClient orcid20ApiClient;        
     
     @Resource
     private S3Updater s3Updater; 
     
     /**
      * If the record is locked:
-     * - blank it in solr
      * - blank it in 1.2 bucket
      * - blank it in 2.0 bucket
      * @throws JAXBException 
@@ -59,8 +54,6 @@ public class ExceptionHandler {
      * @throws DeprecatedRecordException 
      * */
     public void handleLockedRecordException(LastModifiedMessage message, OrcidMessage errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException, DeprecatedRecordException {
-        //Update solr
-        solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(), message.getLastUpdated());
         //Update 1.2 buckets        
         s3Updater.updateS3(message.getOrcid(), errorMessage);
         //Update 2.0 buckets
@@ -73,7 +66,7 @@ public class ExceptionHandler {
     
     /**
      * If the record is deprecated:
-     * - blank it in solr
+     *
      * - blank it in 1.2 bucket
      * - blank it in 2.0 bucket
      * @throws JAXBException 
@@ -83,8 +76,6 @@ public class ExceptionHandler {
      * @throws LockedRecordException 
      * */
     public void handleDeprecatedRecordException(LastModifiedMessage message, OrcidDeprecated errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException, LockedRecordException {
-        //Update solr
-        solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(), message.getLastUpdated());
         //Update 1.2 buckets        
         s3Updater.updateS3(message.getOrcid(), errorMessage);
         //Update 2.0 buckets

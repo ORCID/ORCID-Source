@@ -120,7 +120,7 @@ public class EmailManagerImpl implements EmailManager {
     
     @Override
     public void addSourceToEmail(String email, String sourceId) {
-        emailDao.addSourceToEmail(email, sourceId);
+        emailDao.addSourceToEmail(sourceId, email);
     }
     
     @Override

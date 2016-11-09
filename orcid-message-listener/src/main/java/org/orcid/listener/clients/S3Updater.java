@@ -47,13 +47,11 @@ public class S3Updater {
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
     
     private final ObjectMapper mapper;
-
-    private final Marshaller marshaller1_2;
-    private final Marshaller marshaller2_0;
-    private final Marshaller marshaller_error_2_0;
-    private final Marshaller marshaller_error_1_2;
    
     private final String bucketPrefix;
+
+    private final JAXBContext jaxbContext_1_2_api;
+    private final JAXBContext jaxbContext_2_0_api;
     
     @Resource
     private S3MessagingService s3MessagingService;    
@@ -77,32 +75,12 @@ public class S3Updater {
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-
-        //Initialize 1.2 Marshaller
-        JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);        
-        marshaller1_2 = context.createMarshaller();
-        // for pretty-print XML in JAXB
-        marshaller1_2.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        
-        //Initialize 1.2 error Marshaller
-        context = JAXBContext.newInstance(OrcidDeprecated.class);
-        marshaller_error_1_2 = context.createMarshaller();
-        // for pretty-print XML in JAXB
-        marshaller_error_1_2.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        
-        //Initialize 2.0 Marshaller
-        context = JAXBContext.newInstance(Record.class);
-        marshaller2_0 = context.createMarshaller();
-        // for pretty-print XML in JAXB
-        marshaller2_0.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        
-        //Initialize 2.0 error Marshaller
-        context = JAXBContext.newInstance(OrcidError.class);
-        marshaller_error_2_0 = context.createMarshaller();
-        // for pretty-print XML in JAXB
-        marshaller_error_2_0.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        
+                      
         this.bucketPrefix = bucketPrefix;
+        
+        //Initialize JAXBContext
+        this.jaxbContext_1_2_api = JAXBContext.newInstance(OrcidMessage.class, OrcidDeprecated.class);
+        this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, OrcidError.class);
     }
 
     public void updateS3(String orcid, Object object) throws JsonProcessingException, AmazonClientException, JAXBException {
@@ -216,16 +194,17 @@ public class S3Updater {
     }
 
     private String toXML(Object object) throws JAXBException {
-        StringWriter sw = new StringWriter();
-        if(OrcidMessage.class.isAssignableFrom(object.getClass())) {
-            marshaller1_2.marshal(object, sw);
-        } else if(Record.class.isAssignableFrom(object.getClass())){
-            marshaller2_0.marshal(object, sw);
-        } else if(OrcidError.class.isAssignableFrom(object.getClass())) {
-            marshaller_error_2_0.marshal(object, sw);
+        StringWriter sw = new StringWriter();        
+        Marshaller marshaller = null;
+        if (OrcidMessage.class.isAssignableFrom(object.getClass()) || OrcidDeprecated.class.isAssignableFrom(object.getClass())) {
+            marshaller = jaxbContext_1_2_api.createMarshaller();                          
+        } else if (Record.class.isAssignableFrom(object.getClass()) || OrcidError.class.isAssignableFrom(object.getClass())) {
+            marshaller = jaxbContext_2_0_api.createMarshaller();            
         } else {
-            marshaller_error_1_2.marshal(object, sw);
-        }
+            throw new IllegalArgumentException("Unable to unmarshall class " + object.getClass());
+        }                
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(object, sw);
         return sw.toString();
     }
     

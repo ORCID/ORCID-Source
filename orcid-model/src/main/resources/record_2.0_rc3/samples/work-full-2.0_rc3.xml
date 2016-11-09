@@ -22,7 +22,7 @@
 	<work:short-description>work:short-description</work:short-description>
 	<work:citation>
 		<work:citation-type>formatted-unspecified</work:citation-type>
-		<work:citation>work:citation</work:citation>
+		<work:citation-value>work:citation</work:citation-value>
 	</work:citation>
 	<work:type>artistic-performance</work:type>
 	<common:publication-date>

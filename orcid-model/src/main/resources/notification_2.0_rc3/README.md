@@ -115,6 +115,13 @@ curl -i -H 'Authorization: Bearer ...' \
 	https://api.sandbox.orcid.org/v2.0_rc1/[ORCID]/notification-permission/[PUT-CODE]
 ```
 
+####Read a list of notifications
+```
+curl -i -H 'Authorization: Bearer ...' \
+	-H 'Content-Type: application/orcid+xml' \
+	https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/notification-permission
+```
+
 ####Flag an unread notification as archived
 ```
 curl -i -H 'Authorization: Bearer ...' \
