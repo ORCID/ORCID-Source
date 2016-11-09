@@ -29,6 +29,7 @@ import org.orcid.core.manager.MembersManager;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.pojo.ajaxForm.Consortium;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -217,6 +218,12 @@ public class ManageMembersController extends BaseController {
         rUri.setActType(Text.valueOf(""));
         rUri.setGeoArea(Text.valueOf(""));
         return rUri;
+    }
+    
+    @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
+    public @ResponseBody Consortium findConsortium(@RequestParam("id") String id) {
+        Consortium consortium = new Consortium();
+        return consortium;
     }
 
     /**

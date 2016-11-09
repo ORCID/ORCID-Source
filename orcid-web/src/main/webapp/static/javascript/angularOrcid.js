@@ -8208,7 +8208,7 @@ orcidNgModule.controller('manageConsortiumCtrl',['$scope', '$compile', function 
      * */
     $scope.findConsortium = function() {
         $.ajax({
-            url: getBaseUri()+'/manage-members/findConsortium.json?id=' + encodeURIComponent($scope.salesForceId),
+            url: getBaseUri()+'/manage-members/find-consortium.json?id=' + encodeURIComponent($scope.salesForceId),
             type: 'GET',
             dataType: 'json',
             success: function(data){
