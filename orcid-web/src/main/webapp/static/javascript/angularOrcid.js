@@ -8193,6 +8193,35 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     };
 }]);
 
+/**
+ * Manage consortium controller
+ * */
+orcidNgModule.controller('manageConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+    $scope.showFindModal = false;
+
+    $scope.toggleFindConsortiumModal = function() {
+        $scope.showFindModal = !$scope.showFindModal;
+    };
+    
+    /**
+     * FIND
+     * */
+    $scope.findConsortium = function() {
+        $.ajax({
+            url: getBaseUri()+'/manage-members/findConsortium.json?id=' + encodeURIComponent($scope.salesForceId),
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                // XXX
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error finding the consortium");
+        });
+    };
+    
+}]);
+
 orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
     $scope.emails = "";
     $scope.emailIdsMap = {};

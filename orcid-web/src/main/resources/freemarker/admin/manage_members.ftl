@@ -445,7 +445,26 @@
 			</div>
 		</div>
 		
-								
+		<!-- Find consortium -->
+        <a name="find"></a>
+        <div ng-controller="manageConsortiumCtrl" class="workspace-accordion-item" ng-cloak>           
+            <p>
+                <a ng-show="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find'/></a>
+                <a ng-hide="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find'/></a>             
+            </p>
+            <div class="collapsible bottom-margin-small admin-modal" id="find_consortium_modal" ng-show="showFindModal">    
+                <!-- Find -->
+                <div class="form-group">
+                    <div>
+                        <label for="salesForceId"><@orcid.msg 'admin.edit_client.any_id' /></label>
+                        <input type="text" id="salesForceId" ng-enter="findConsortium()" ng-model="salesForceId" placeholder="<@orcid.msg 'admin.edit_client.any_id.placeholder' />" class="input-xlarge" />                   
+                    </div>  
+                    <div class="controls save-btns pull-left">
+                        <span id="bottom-search" ng-click="findConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
+                    </div>  
+                </div>
+            </div>
+        </div>						
 						
 	</div>
 </div>
