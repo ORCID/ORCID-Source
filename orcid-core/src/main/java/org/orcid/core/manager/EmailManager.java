@@ -72,7 +72,7 @@ public interface EmailManager {
      * 
      * @param email
      *            Email address
-     * @return true if the email exists, the owner is not claimed and the
+     * @return true if the email exists in a non claimed record and the
      *         client source of the record allows auto deprecating records
      */
     boolean isAutoDeprecateEnableForEmail(String email);

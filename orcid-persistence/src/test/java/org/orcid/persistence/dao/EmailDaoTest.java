@@ -70,4 +70,38 @@ public class EmailDaoTest extends DBUnitTest {
         //Unclaimed but source have auto deprecate disabled
         assertFalse(emailDao.isAutoDeprecateEnableForEmail("public_0000-0000-0000-0006@test.orcid.org"));
     }
+    
+    @Test
+    public void testEmailExists() {
+        assertFalse(emailDao.emailExists("shoud@fail.com"));
+        assertTrue(emailDao.emailExists("public_0000-0000-0000-0001@test.orcid.org"));
+        assertFalse(emailDao.emailExists("0000-0000-0000-0001@test.orcid.org"));
+        assertTrue(emailDao.emailExists("public_0000-0000-0000-0002@test.orcid.org"));
+    }
+    
+    @Test
+    public void testRemovePrimaryEmail() {
+        String primaryEmail = "angel1@montenegro.com";
+        assertTrue(emailDao.emailExists(primaryEmail));
+        //Not the owner
+        emailDao.removeEmail("4444-4444-4444-4443", primaryEmail, true);
+        assertTrue(emailDao.emailExists(primaryEmail));
+        //Don't delete if it is primary
+        emailDao.removeEmail("4444-4444-4444-4444", primaryEmail, false);
+        assertTrue(emailDao.emailExists(primaryEmail));
+        //Right owner and delete even if it is primary
+        emailDao.removeEmail("4444-4444-4444-4444", primaryEmail, true);
+        assertFalse(emailDao.emailExists(primaryEmail));
+    }
+    
+    @Test
+    public void testRemoveNonPrimaryEmail() {
+        String nonPrimaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
+        //Not the owner
+        emailDao.removeEmail("4444-4444-4444-4443", nonPrimaryEmail, false);        
+        assertTrue(emailDao.emailExists(nonPrimaryEmail));
+        //Remove only if it is not primary
+        emailDao.removeEmail("0000-0000-0000-0003", nonPrimaryEmail, false);
+        assertFalse(emailDao.emailExists(nonPrimaryEmail));
+    }
 }

@@ -16,12 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -45,5 +47,19 @@ public class RegistrationManagerImplTest {
         registrationManagerImpl.setOrcidProfileManager(orcidProfileManager);
         registrationManagerImpl.setNotificationManager(mock(NotificationManager.class));
     }
+    
+    @Test
+    public void testCreateMinimalRegistration() {
+        fail();
+    }
 
+    @Test
+    public void testCreateMinimalRegistrationWithExistingEmailNotAutoDeprecatable() {
+        fail();
+    }
+    
+    @Test
+    public void testCreateMinimalRegistrationWithExistingEmailThatCanBeAutoDeprecated() {
+        fail();
+    }
 }

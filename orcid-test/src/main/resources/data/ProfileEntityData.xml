@@ -1693,7 +1693,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="angel1@montenegro.com"
-        is_primary="false"
+        is_primary="true"
         is_current="false"
         is_verified="true"
         visibility="PRIVATE"

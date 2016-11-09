@@ -121,8 +121,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
             ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
             adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
-            // TODO
-            //Notify
+            notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
             return minimalProfile;
         } else {
             return createMinimalProfile(orcidProfile, usedCaptcha);
@@ -130,7 +129,11 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     /**
-     * TODO
+     * Creates a minimal record
+     * 
+     * @param orcidProfile
+     *          The record to create
+     * @return the new record         
      */
     private OrcidProfile createMinimalProfile(OrcidProfile orcidProfile, boolean usedCaptcha) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
@@ -144,9 +147,12 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     /**
-     * TODO
+     * Validates if the given email address could be auto deprecated
+     * 
+     * @param emailAddress
+     *          The email we want to check
      */
-    private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) {
+    private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) throws InvalidRequestException {
         // If the email doesn't exists, just return
         if (!emailManager.emailExists(emailAddress)) {
             return;
@@ -164,7 +170,10 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }
 
     /**
-     * TODO
+     * Returns the orcid id associated with an email address
+     * 
+     * @param emailAddress
+     * @return the orcid id associated with the given email address
      */
     private String getOrcidIdFromEmail(String emailAddress) {
         Map<String, String> emailMap = emailManager.findIdByEmail(emailAddress);
