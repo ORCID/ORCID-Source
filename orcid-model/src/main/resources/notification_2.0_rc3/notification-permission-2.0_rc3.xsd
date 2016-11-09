@@ -1,59 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/notification" xmlns:notification="http://www.orcid.org/ns/notification"
-	xmlns:common="http://www.orcid.org/ns/common"
-	xmlns:activities="http://www.orcid.org/ns/activities"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified" targetNamespace="http://www.orcid.org/ns/notification"
+	xmlns:notification="http://www.orcid.org/ns/notification" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
-	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="../common_2.0_rc3/common-2.0_rc3.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/activities" schemaLocation="../record_2.0_rc3/activities-2.0_rc3.xsd" />
-	<xs:element name="notification">
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.0_rc3/common-2.0_rc3.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/activities"
+		schemaLocation="../record_2.0_rc3/activities-2.0_rc3.xsd" />
+	
+	<xs:element name="notifications">
+		<xs:annotation>
+			<xs:documentation>Notification container</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="notification-type" type="notification:notification-type"/>
-				<xs:element name="authorization-url" type="notification:authorization-url"/>
-				<xs:element ref="notification:notification-subject"/>
-				<xs:element ref="notification:notification-intro"/>
-				<xs:element name="items" type="notification:items"/>
-				<xs:element ref="common:created-date" minOccurs="0"/>
-				<xs:element ref="common:sent-date" minOccurs="0"/>
-				<xs:element ref="common:read-date" minOccurs="0"/>
-				<xs:element name="actioned-date" type="notification:actioned-date" minOccurs="0" />
-				<xs:element ref="common:archived-date" minOccurs="0"/>
-				<xs:element ref="common:source" minOccurs="0"/>
+				<xs:element name="notification" type="notification:notification"
+					minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
-            <xs:attribute name="put-code" type="common:put-code" use="optional" />
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:element name="notification">
+		<xs:annotation>
+			<xs:documentation>Notification element
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="notification:notification"></xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="notification">
+		<xs:sequence>
+			<xs:element name="notification-type" type="notification:notification-type" />
+			<xs:element name="authorization-url" type="notification:authorization-url" />
+			<xs:element ref="notification:notification-subject" />
+			<xs:element ref="notification:notification-intro" />
+			<xs:element name="items" type="notification:items" />
+			<xs:element ref="common:created-date" minOccurs="0" />
+			<xs:element ref="common:sent-date" minOccurs="0" />
+			<xs:element ref="common:read-date" minOccurs="0" />
+			<xs:element name="actioned-date" type="notification:actioned-date"
+				minOccurs="0" />
+			<xs:element ref="common:archived-date" minOccurs="0" />
+			<xs:element ref="common:source" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="put-code" type="common:put-code"
+			use="optional" />
+	</xs:complexType>
+	
 	<xs:simpleType name="notification-type">
-	   <xs:restriction base="xs:string">
-			<xs:enumeration value="permission"/>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="permission" />
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:complexType name="authorization-url">
 		<xs:sequence>
 			<xs:choice>
 				<xs:sequence>
-					<xs:element name="uri" type="xs:anyURI"/>
-					<xs:element name="path" type="xs:string" minOccurs="0"/>
+					<xs:element name="uri" type="xs:anyURI" />
+					<xs:element name="path" type="xs:string" minOccurs="0" />
 				</xs:sequence>
 				<xs:element name="path" type="xs:string" />
 			</xs:choice>
-			<xs:element name="host" type="xs:string" minOccurs="0"/>
+			<xs:element name="host" type="xs:string" minOccurs="0" />
 		</xs:sequence>
-	</xs:complexType>	
+	</xs:complexType>
+	
 	<xs:element name="notification-subject">
 		<xs:annotation>
-			<xs:documentation>The subject line for the message (displayed to the end user)
+			<xs:documentation>The subject line for the message (displayed to the
+				end user)
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string" />
 		</xs:simpleType>
-	</xs:element>	
+	</xs:element>
 	<xs:element name="notification-intro">
 		<xs:annotation>
-			<xs:documentation>A text-only introductory message to be displayed to the end user, and displayed before the example list of items.
+			<xs:documentation>A text-only introductory message to be displayed to
+				the end user, and displayed before the example list of items.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
@@ -61,35 +92,37 @@
 				<xs:maxLength value="1000" />
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>	
+	</xs:element>
 	<xs:complexType name="items">
 		<xs:sequence>
-			<xs:element name="item" type="notification:item" maxOccurs="unbounded" />
+			<xs:element name="item" type="notification:item"
+				maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="item">
 		<xs:sequence>
-			<xs:element name="item-type" type="notification:activity-type"/>
-			<xs:element name="item-name" type="xs:string"/>
+			<xs:element name="item-type" type="notification:activity-type" />
+			<xs:element name="item-name" type="xs:string" />
 			<xs:element ref="common:external-id" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
-    <xs:simpleType name="activity-type">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="education"></xs:enumeration>
-            <xs:enumeration value="employment"></xs:enumeration>
-            <xs:enumeration value="funding"></xs:enumeration>
-            <xs:enumeration value="work"></xs:enumeration>
-            <xs:enumeration value="peer-review"></xs:enumeration>
-        </xs:restriction>
-    </xs:simpleType>
-    <xs:complexType name="actioned-date">        
-	    <xs:annotation>
-	        <xs:documentation>The date time when the user took action on the notification.
-	        </xs:documentation>
-	    </xs:annotation>
-	    <xs:simpleContent>
-	        <xs:extension base="xs:dateTime" />
-	    </xs:simpleContent>        
-    </xs:complexType>
+	<xs:simpleType name="activity-type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="education"></xs:enumeration>
+			<xs:enumeration value="employment"></xs:enumeration>
+			<xs:enumeration value="funding"></xs:enumeration>
+			<xs:enumeration value="work"></xs:enumeration>
+			<xs:enumeration value="peer-review"></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="actioned-date">
+		<xs:annotation>
+			<xs:documentation>The date time when the user took action on the
+				notification.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:dateTime" />
+		</xs:simpleContent>
+	</xs:complexType>
 </xs:schema>

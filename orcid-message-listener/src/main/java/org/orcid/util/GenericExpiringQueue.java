@@ -74,7 +74,7 @@ public class GenericExpiringQueue<T extends RemovalListener<String, LastModified
 
         // create a thread that does the removal - we can fiddle with the
         // Executor if we need more threads
-        executor = Executors.newSingleThreadExecutor();
+        executor = Executors.newCachedThreadPool();
 
         // create the expiring cache
         cacheQueue = CacheBuilder.newBuilder().expireAfterAccess(secondsToWait, TimeUnit.SECONDS)
