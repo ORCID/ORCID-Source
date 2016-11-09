@@ -894,7 +894,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     public void reactivate(String orcid, String givenNames, String familyName, String password) {
-        LOGGER.info("About to reactive record, orcid={}", orcid);
+        LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));

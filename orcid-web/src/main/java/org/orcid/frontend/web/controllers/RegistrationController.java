@@ -101,6 +101,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -122,6 +123,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -550,7 +552,12 @@ public class RegistrationController extends BaseController {
                     link = "/shibboleth/signin";
                 }
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
-            } else {
+            }
+            else if(oe.getCode().equals("orcid.frontend.verify.deactivated_email")){
+                // Handle this message in angular to allow AJAX action
+                reg.getEmail().getErrors().add(oe.getCode());
+            }
+            else {
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
             }
         }
@@ -1102,6 +1109,13 @@ public class RegistrationController extends BaseController {
         return profileToSave;
     }
     
+    @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void sendReactivation(@RequestParam("email") String email) {
+        OrcidProfile orcidProfile = orcidProfileCacheManager.retrieve(emailManager.findOrcidIdByEmail(email));
+        notificationManager.sendReactivationEmail(email, orcidProfile);
+    }
+    
     @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)
     public ModelAndView reactivation(HttpServletRequest request, @PathVariable("resetParams") String resetParams, RedirectAttributes redirectAttributes) {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetParams);
@@ -1165,7 +1179,7 @@ public class RegistrationController extends BaseController {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
-        LOGGER.info("About to reactive record, orcid={}, email={}", orcid, email);
+        LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
         profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
         logUserIn(request, response, orcid, password);

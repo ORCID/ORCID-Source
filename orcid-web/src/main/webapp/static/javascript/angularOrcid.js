@@ -3817,6 +3817,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 	$scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
     	key: orcidVar.recaptchaKey
@@ -3847,7 +3849,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                     if(newValue !== oldValue) {
                         trimAjaxFormText($scope.register.email);
                     }
-                }); // initialize the watch            
+                }); // initialize the watch
+                
+                // special handling of deactivation error
+                $scope.$watch('register.email.errors', function(newValue, oldValue) {
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
+                        $scope.showReactivationSent = false;
+                }); // initialize the watch     
                 
                 // make sure email is trimmed
                 $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
@@ -4039,6 +4047,21 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;
     };
+    
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.register.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
 }]);
 
 orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {

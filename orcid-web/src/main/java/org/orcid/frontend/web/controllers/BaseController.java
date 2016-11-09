@@ -461,7 +461,6 @@ public class BaseController {
                     if (isRegisterRequest) {
                         if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
                             codes = new String[] { "orcid.frontend.verify.deactivated_email" };
-                            notificationManager.sendReactivationEmail(email, orcidProfile);
                         } else {
                             codes = new String[] { "orcid.frontend.verify.duplicate_email" };
                         }
