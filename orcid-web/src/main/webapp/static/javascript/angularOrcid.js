@@ -3970,9 +3970,9 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                         var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
                         var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-                    }
-                    else
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                    } else {
+                    	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                    }                        
                     orcidGA.windowLocationHrefDelay(data.url);
             	}                
             }
