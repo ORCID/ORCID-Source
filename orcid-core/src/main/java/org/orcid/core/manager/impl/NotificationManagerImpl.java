@@ -100,23 +100,23 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class NotificationManagerImpl implements NotificationManager {
 
-    private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
+    private static final String UPDATE_NOTIFY_ORCID_ORG = "ORCID <update@notify.orcid.org>";
 
-    private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
+    private static final String SUPPORT_VERIFY_ORCID_ORG = "ORCID <support@verify.orcid.org>";
 
-    private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
+    private static final String RESET_NOTIFY_ORCID_ORG = "ORCID <reset@notify.orcid.org>";
 
-    private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    private static final String CLAIM_NOTIFY_ORCID_ORG = "ORCID <claim@notify.orcid.org>";
 
-    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
+    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "ORCID <deactivate@notify.orcid.org>";
 
-    private static final String LOCKED_NOTIFY_ORCID_ORG = "locked@notify.orcid.org";
+    private static final String LOCKED_NOTIFY_ORCID_ORG = "ORCID <locked@notify.orcid.org>";
 
-    private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
+    private static final String AMEND_NOTIFY_ORCID_ORG = "ORCID <amend@notify.orcid.org>";
 
-    private static final String DELEGATE_NOTIFY_ORCID_ORG = "delegate@notify.orcid.org";
+    private static final String DELEGATE_NOTIFY_ORCID_ORG = "ORCID <delegate@notify.orcid.org>";
 
-    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "email-changed@notify.orcid.org";
+    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "ORCID <email-changed@notify.orcid.org>";
 
     private static final String WILDCARD_MEMBER_NAME = "${name}";
 
