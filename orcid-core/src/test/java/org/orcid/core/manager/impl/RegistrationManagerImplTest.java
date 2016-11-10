@@ -110,7 +110,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
             orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
             fail();
         } catch(InvalidRequestException e) {
-            assertEquals("Email " + email + " already exists and is claimed, so, it can't be used again", e.getMessage());
+            assertEquals("Unable to register user due: Email " + email + " already exists and is claimed, so, it can't be used again", e.getMessage());
         } catch(Exception e) {
             fail();
         }        
@@ -136,7 +136,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
             orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
             fail();
         } catch(InvalidRequestException e) {
-            assertEquals("Autodeprecate is not enabled for " + email, e.getMessage());
+            assertEquals("Unable to register user due: Autodeprecate is not enabled for " + email, e.getMessage());
         } catch(Exception e) {
             fail();
         }     
