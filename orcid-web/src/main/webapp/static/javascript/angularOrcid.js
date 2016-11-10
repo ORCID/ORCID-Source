@@ -8198,6 +8198,7 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
  * */
 orcidNgModule.controller('manageConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
     $scope.showFindModal = false;
+    $scope.consortium = null;
 
     $scope.toggleFindConsortiumModal = function() {
         $scope.showFindModal = !$scope.showFindModal;
@@ -8212,7 +8213,8 @@ orcidNgModule.controller('manageConsortiumCtrl',['$scope', '$compile', function 
             type: 'GET',
             dataType: 'json',
             success: function(data){
-                // XXX
+                $scope.consortium = data;
+                $scope.$apply();
             }
         }).fail(function(error) {
             // something bad is happening!

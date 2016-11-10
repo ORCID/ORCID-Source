@@ -20,7 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Consortium implements ErrorsInterface, Serializable {
+import org.orcid.core.salesforce.model.MemberDetails;
+
+public class ConsortiumForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -51,6 +53,13 @@ public class Consortium implements ErrorsInterface, Serializable {
 
     public void setWebsite(Text website) {
         this.website = website;
+    }
+
+    public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
+        ConsortiumForm form = new ConsortiumForm();
+        form.setName(Text.valueOf(memberDetails.getMember().getName()));
+        form.setWebsite(Text.valueOf(memberDetails.getMember().getWebsiteUrl().toString()));
+        return form;
     }
 
     

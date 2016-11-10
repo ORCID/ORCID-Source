@@ -26,10 +26,12 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.MembersManager;
+import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Client;
-import org.orcid.pojo.ajaxForm.Consortium;
+import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -58,7 +60,10 @@ public class ManageMembersController extends BaseController {
     ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private GroupAdministratorController groupAdministratorController;          
+    private GroupAdministratorController groupAdministratorController;
+    
+    @Resource
+    private SalesForceManager salesForceManager;
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {
@@ -221,9 +226,10 @@ public class ManageMembersController extends BaseController {
     }
     
     @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
-    public @ResponseBody Consortium findConsortium(@RequestParam("id") String id) {
-        Consortium consortium = new Consortium();
-        return consortium;
+    public @ResponseBody ConsortiumForm findConsortium(@RequestParam("id") String id) {
+        MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
+        ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
+        return consortiumForm;
     }
 
     /**
