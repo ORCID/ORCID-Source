@@ -39,7 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 
 /**
@@ -72,6 +75,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource
     private AdminManager adminManager;
+    
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;
@@ -114,20 +120,25 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Transactional
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
         String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        OrcidProfile profile = transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
+            public OrcidProfile doInTransaction(TransactionStatus status) {
+                if (emailManager.emailExists(emailAddress)) {
+                    checkAutoDeprecateIsEnabledForEmail(emailAddress);
+                    String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
+                    emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
+                    OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);                    
+                    String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
+                    ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
+                    adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
+                    notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);                    
+                    return minimalProfile;
+                } else {
+                    return createMinimalProfile(orcidProfile, usedCaptcha);
+                }
+            } 
+        });
 
-        if (emailManager.emailExists(emailAddress)) {
-            checkAutoDeprecateIsEnabledForEmail(emailAddress);
-            String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
-            emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
-            OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);
-            String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
-            ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
-            adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
-            notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
-            return minimalProfile;
-        } else {
-            return createMinimalProfile(orcidProfile, usedCaptcha);
-        }
+        return profile;
     }
 
     /**
