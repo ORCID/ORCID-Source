@@ -10090,16 +10090,23 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
             	$scope.requestInfoForm = data;
-                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                if($scope.registrationForm.approved) {
-                    for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
-                    }
+            	if($scope.requestInfoForm.errors.length > 0) {                	                
+                	$scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
+                	console.log($scope.generalRegistrationError);
+                	$scope.$apply();
+                	$.colorbox.close();
                 } else {
-                    //Fire GA register deny
-                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
-                }
-                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
+                    if($scope.registrationForm.approved) {
+                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
+                        }
+                    } else {
+                        //Fire GA register deny
+                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                    }
+                    orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                }            	            	
             }
         }).fail(function() {
             // something bad is happening!

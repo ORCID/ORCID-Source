@@ -116,29 +116,32 @@ public class RegistrationManagerImpl implements RegistrationManager {
         return new VerifyRegistrationToken(decryptedParams);
     }
 
-    @Override
-    @Transactional
+    @Override    
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
         String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        OrcidProfile profile = transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
-            public OrcidProfile doInTransaction(TransactionStatus status) {
-                if (emailManager.emailExists(emailAddress)) {
-                    checkAutoDeprecateIsEnabledForEmail(emailAddress);
-                    String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
-                    emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
-                    OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);                    
-                    String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
-                    ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
-                    adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
-                    notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);                    
-                    return minimalProfile;
-                } else {
-                    return createMinimalProfile(orcidProfile, usedCaptcha);
-                }
-            } 
-        });
-
-        return profile;
+        try {
+            OrcidProfile profile = transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
+                public OrcidProfile doInTransaction(TransactionStatus status) {
+                    if (emailManager.emailExists(emailAddress)) {
+                        checkAutoDeprecateIsEnabledForEmail(emailAddress);
+                        String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
+                        emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
+                        OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);                    
+                        String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
+                        ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
+                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
+                        notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
+                        if(2+2==4) throw new InvalidRequestException("An error occured");
+                        return minimalProfile;
+                    } else {
+                        return createMinimalProfile(orcidProfile, usedCaptcha);
+                    }
+                } 
+            });
+            return profile;
+        } catch(Exception e) {
+            throw new InvalidRequestException("Unable to register user due: " + e.getMessage(), e.getCause());
+        }        
     }
 
     /**

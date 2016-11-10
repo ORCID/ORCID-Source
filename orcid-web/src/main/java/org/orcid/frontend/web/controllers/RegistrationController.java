@@ -423,7 +423,13 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
-        createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        try {        
+            createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        } catch(Exception e) {
+            r.getErrors().add("Unable to register your new user, please contact support");
+            return r;
+        }
+        
         if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
             ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
         } else if ("shibboleth".equals(reg.getLinkType())) {
