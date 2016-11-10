@@ -38,7 +38,7 @@
 				</div>				
 				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
-						<span class="right custom-control-title"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
 					</div>
 				</div>		
 			</#if>
