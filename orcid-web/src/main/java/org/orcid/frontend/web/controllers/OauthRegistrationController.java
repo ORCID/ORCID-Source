@@ -155,7 +155,7 @@ public class OauthRegistrationController extends OauthControllerBase {
                 try {
                     registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
                 } catch(Exception e) {
-                    requestInfoForm.getErrors().add("Unable to register your new user, please contact support");
+                    requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
                     return requestInfoForm;
                 }
                 // Authenticate user

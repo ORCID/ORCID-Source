@@ -3960,14 +3960,21 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                if (basePath.startsWith(baseUrl + 'oauth')) {
-                    var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-                    var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-                }
-                else
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
-                orcidGA.windowLocationHrefDelay(data.url);
+            	if(data != null && data.errors != null && data.errors.length > 0) {
+            		$scope.generalRegistrationError = data.errors[0];
+            		console.log($scope.generalRegistrationError);
+            		$scope.$apply();
+            		$.colorbox.close();
+            	} else {
+            		if (basePath.startsWith(baseUrl + 'oauth')) {
+                        var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+                        var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+                    }
+                    else
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                    orcidGA.windowLocationHrefDelay(data.url);
+            	}                
             }
         }).fail(function() {
             // something bad is happening!

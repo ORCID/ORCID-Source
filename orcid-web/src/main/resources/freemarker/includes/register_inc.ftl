@@ -150,7 +150,14 @@
 				<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
    			</span>
         </div>
-	</div>   
+	</div>  
+	<div ng-show="generalRegistrationError != null">
+        <div class="relative"  style="margin-bottom: 15px;">
+        	<div class="col-sm-12">
+        		<span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
+        	</div>
+        </div>
+	</div>	 
     <div class="relative">
     	<#if (RequestParameters['linkRequest'])??>
 			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>

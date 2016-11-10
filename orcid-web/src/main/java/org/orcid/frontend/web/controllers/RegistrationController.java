@@ -426,7 +426,7 @@ public class RegistrationController extends BaseController {
         try {        
             createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
         } catch(Exception e) {
-            r.getErrors().add("Unable to register your new user, please contact support");
+            r.getErrors().add(getMessage("register.error.generalError"));
             return r;
         }
         

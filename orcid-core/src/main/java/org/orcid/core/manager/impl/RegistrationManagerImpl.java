@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -131,7 +130,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
                         adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
                         notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
-                        if(2+2==4) throw new InvalidRequestException("An error occured");
                         return minimalProfile;
                     } else {
                         return createMinimalProfile(orcidProfile, usedCaptcha);
