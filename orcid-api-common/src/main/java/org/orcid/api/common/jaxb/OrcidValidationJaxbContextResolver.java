@@ -129,6 +129,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record.summary_rc3.Educations.class, "record_2.0_rc3/activities-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record.summary_rc3.Employments.class, "record_2.0_rc3/activities-");
     }
+            
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;
     private JAXBContext jaxbContext_2_0_rc3;
@@ -188,8 +189,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                 } else if(apiVersion.equals("2.0_rc2")) {
                     if(jaxbContext_2_0_rc2 == null) {
                         jaxbContext_2_0_rc2 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.size()]));
-                }
-                return jaxbContext_2_0_rc2;
+                    }
+                    return jaxbContext_2_0_rc2;
                 }
             }
             //Return rc1 as the last resource
@@ -223,8 +224,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             if(apiVersion.equals("2.0_rc2")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.get(type);
             }    
-        }            	
-    	return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
+        }               
+        return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
     }
 
     private SchemaFactory createSchemaFactory() {

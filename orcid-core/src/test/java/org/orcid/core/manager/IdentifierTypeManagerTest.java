@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,8 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IdentifierTypeManagerTest extends BaseTest{
@@ -72,6 +75,8 @@ public class IdentifierTypeManagerTest extends BaseTest{
     @Resource
     private IdentifierTypeManager idTypeMan;
     
+    private List<String> v2Ids = Arrays.asList(new String[]{"pdb","kuid", "lensid"});
+    
     @Before
     public void before() throws Exception {
         idTypeMan.setSourceManager(sourceManager);
@@ -83,10 +88,17 @@ public class IdentifierTypeManagerTest extends BaseTest{
     @Test
     public void test0FetchEntities(){
         Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName();
-        assertEquals(35, map.size()); //default set is 34 
-        assertTrue(map.containsKey("other-id"));
-        assertEquals("other-id",map.get("other-id").getName());
-        assertNotNull(map.get("other-id").getPutCode());        
+        assertEquals(34+v2Ids.size(), map.size());
+        checkExists(map,"other-id"); 
+        for (String id : v2Ids){
+            checkExists(map, id);            
+        }
+    }
+
+    private void checkExists(Map<String, IdentifierType> map, String id) {
+        assertTrue(map.containsKey(id));
+        assertEquals(id,map.get(id).getName());
+        assertNotNull(map.get(id).getPutCode());
     }
     
     @Test

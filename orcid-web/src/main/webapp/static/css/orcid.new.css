@@ -6703,6 +6703,7 @@ a:hover .mozilla-badge{
 
 .bio-edit-modal{
 	margin-right: 30px;
+	width: 100%;
 }
 
 .edit-record .custom-control-title{
@@ -6835,7 +6836,14 @@ a:hover .mozilla-badge{
  
 
 .edit-record .bulk-edit-modal #privacy-bar{
+	float: right;
+	margin-right: 35px;
+	clear: both;	
+}
+
+.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
 	float: right;	
+	margin-right: 0;
 }
 
 .fixed-area .col-md-12.padding-right-reset{
@@ -6882,7 +6890,9 @@ a:hover .mozilla-badge{
 	margin-top: 30px;
 }
 
-
+.one-per-line {
+	height: 60px;
+}
 	
 
 /* Media Queries */
@@ -7483,6 +7493,19 @@ a:hover .mozilla-badge{
 	
 	#privacy-settings .popover.bottom .arrow{
 		left: 124px !important;
+	}
+	
+	.edit-record .bulk-edit-modal #privacy-bar{
+		margin-right: 0;
+	}
+	
+	.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
+		margin-right: 35px;
+	}
+	
+	.fixed-area ul.record-settings{
+		margin-top: 6px;
+		margin-right: 0;
 	}
 	
 	/* Public Profile */

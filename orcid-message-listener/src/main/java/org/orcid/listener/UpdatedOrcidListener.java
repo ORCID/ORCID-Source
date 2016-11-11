@@ -20,7 +20,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.listener.listeners.updated.UpdatedOrcidExpringQueue;
+import org.orcid.listener.common.UpdatedOrcidExpringQueue;
+import org.orcid.listener.common.UpdatedOrcidWorker;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -50,10 +51,10 @@ public class UpdatedOrcidListener {
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidListener.class);
 
     @Resource
-    public UpdatedOrcidExpringQueue cacheQueue;
+    public UpdatedOrcidExpringQueue<UpdatedOrcidWorker> cacheQueue;
 
     /**
-     * Queues incoming messages for processing
+     * Queues incoming messages for processing, eventually handled by UpdatedOrcidWorker
      * 
      * @param map
      */
