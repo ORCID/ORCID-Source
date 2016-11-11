@@ -93,39 +93,39 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
         String orcid = getUser1OrcidId();
         Long putCode = 1L;
 
-        Address address = (Address) unmarshallFromPath("/record_2.0_rc2/samples/address-2.0_rc2.xml", Address.class);
+        Address address = (Address) unmarshallFromPath("/record_2.0_rc3/samples/address-2.0_rc3.xml", Address.class);
         evaluateResponse(memberV2ApiClient.createAddress(orcid, address, accessToken));
 
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc2/samples/education-2.0_rc2.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0_rc3/samples/education-2.0_rc3.xml", Education.class);
         evaluateResponse(memberV2ApiClient.createEducationJson(orcid, education, accessToken));
         evaluateResponse(memberV2ApiClient.createEducationXml(orcid, education, accessToken));
 
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc2/samples/employment-2.0_rc2.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc3/samples/employment-2.0_rc3.xml", Employment.class);
         evaluateResponse(memberV2ApiClient.createEmploymentJson(orcid, employment, accessToken));
         evaluateResponse(memberV2ApiClient.createEmploymentXml(orcid, employment, accessToken));
 
-        PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml",
+        PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0_rc3/samples/external-identifier-2.0_rc3.xml",
                 PersonExternalIdentifier.class);
         evaluateResponse(memberV2ApiClient.createExternalIdentifier(orcid, externalIdentifier, accessToken));
 
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc3/samples/funding-2.0_rc3.xml", Funding.class);
         evaluateResponse(memberV2ApiClient.createFundingJson(orcid, funding, accessToken));
         evaluateResponse(memberV2ApiClient.createFundingXml(orcid, funding, accessToken));
 
-        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0_rc2/samples/keyword-2.0_rc2.xml", Keyword.class);
+        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0_rc3/samples/keyword-2.0_rc3.xml", Keyword.class);
         evaluateResponse(memberV2ApiClient.createKeyword(orcid, keyword, accessToken));
 
-        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0_rc2/samples/other-name-2.0_rc2.xml", OtherName.class);
+        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0_rc3/samples/other-name-2.0_rc3.xml", OtherName.class);
         evaluateResponse(memberV2ApiClient.createOtherName(orcid, otherName, accessToken));
 
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc3/samples/peer-review-2.0_rc3.xml", PeerReview.class);
         evaluateResponse(memberV2ApiClient.createPeerReviewJson(orcid, peerReview, accessToken));
         evaluateResponse(memberV2ApiClient.createPeerReviewXml(orcid, peerReview, accessToken));
 
-        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml", ResearcherUrl.class);
+        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc3/samples/researcher-url-2.0_rc3.xml", ResearcherUrl.class);
         evaluateResponse(memberV2ApiClient.createResearcherUrls(orcid, rUrl, accessToken));
 
-        Work work = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work work = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         evaluateResponse(memberV2ApiClient.createWorkJson(orcid, work, accessToken));
         evaluateResponse(memberV2ApiClient.createWorkXml(orcid, work, accessToken));
 

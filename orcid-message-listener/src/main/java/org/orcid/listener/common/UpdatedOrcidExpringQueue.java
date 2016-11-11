@@ -14,15 +14,18 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.listeners.updated;
+package org.orcid.listener.common;
 
 import org.orcid.util.GenericExpiringQueue;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.RemovalListener;
+
 @Component
-public class UpdatedOrcidExpringQueue extends GenericExpiringQueue<UpdatedOrcidWorker> {
+public class UpdatedOrcidExpringQueue<T extends RemovalListener<String, LastModifiedMessage>> extends GenericExpiringQueue<RemovalListener<String, LastModifiedMessage>> {
 
     /**
      * Uses the UpdatedOrcidWorker to process items in the queue
@@ -37,7 +40,7 @@ public class UpdatedOrcidExpringQueue extends GenericExpiringQueue<UpdatedOrcidW
      */
     @Autowired
     public UpdatedOrcidExpringQueue(@Value("${org.orcid.listener.lastUpdateSecondsToWait}") int secondsToWait,
-            @Value("${org.orcid.listener.lastUpdateForceCleanup}") Boolean forceCleanup, UpdatedOrcidWorker removalListener) {
+            @Value("${org.orcid.listener.lastUpdateForceCleanup}") Boolean forceCleanup, T removalListener) {
         super(secondsToWait, forceCleanup, removalListener);
     }
 
