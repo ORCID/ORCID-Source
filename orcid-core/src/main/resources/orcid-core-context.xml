@@ -110,6 +110,20 @@
 		</property>
 	</bean>
 
+	<!-- Record Managers -->
+	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
+
+	<!-- Person Managers -->
+	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl">
+		<property name="addressDao" ref="addressDao" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+	
+	<bean id="addressManagerReadOnly" class="org.orcid.core.manager.read_only.impl.AddressManagerReadOnlyImpl">
+		<property name="addressDao" ref="addressDaoReadOnly" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+
 	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />
 	
 	<bean id="personDetailsManager" class="org.orcid.core.manager.impl.PersonDetailsManagerImpl" />
@@ -345,8 +359,7 @@
 	
 	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />
 	<bean id="profileKeywordManager" class="org.orcid.core.manager.impl.ProfileKeywordManagerImpl" />
-	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />
-	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
+	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />	
 	
 	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />
 	
@@ -392,9 +405,7 @@
 
 	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />
 	
-	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />
-
-	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl" />
+	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />	
 	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 

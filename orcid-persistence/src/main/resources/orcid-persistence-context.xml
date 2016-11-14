@@ -48,6 +48,13 @@
 	<bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
+	<!-- Person DAO's -->
+	<bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
+	
+	<bean id="addressDaoReadOnly" class="org.orcid.persistence.dao.impl.AddressDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
@@ -119,9 +126,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />
     </bean>    
     
-    <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
-    
-    <bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
+    <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
      
     <!-- Statistics Generation DAO -->
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">

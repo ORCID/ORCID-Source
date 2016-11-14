@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 /**
  * 
@@ -66,7 +67,7 @@ public class AddressManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        addressManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(addressManager, "sourceManager", sourceManager);        
     }
     
     @AfterClass

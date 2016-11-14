@@ -35,12 +35,12 @@ import org.springframework.cache.annotation.Cacheable;
 
 public class AddressManagerReadOnlyImpl implements AddressManagerReadOnly {
     
-    private AddressDao addressDao;
-    
-    private ProfileEntityManager profileEntityManager;
-
     @Resource
-    private JpaJaxbAddressAdapter adapter;
+    protected JpaJaxbAddressAdapter adapter;
+    
+    protected AddressDao addressDao;
+    
+    protected ProfileEntityManager profileEntityManager;    
         
     public void setAddressDao(AddressDao addressDao) {
         this.addressDao = addressDao;
@@ -50,7 +50,7 @@ public class AddressManagerReadOnlyImpl implements AddressManagerReadOnly {
         this.profileEntityManager = profileEntityManager;
     }
 
-    private long getLastModified(String orcid) {
+    protected long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }    
