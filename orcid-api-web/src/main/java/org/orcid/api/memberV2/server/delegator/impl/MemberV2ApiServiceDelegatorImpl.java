@@ -35,6 +35,7 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
@@ -45,6 +46,7 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -183,6 +185,12 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private SourceUtils sourceUtils;
     
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
+    
+    @Resource
+    private PersonDetailsManager personDetailsManager;
+    
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
@@ -226,11 +234,11 @@ public class MemberV2ApiServiceDelegatorImpl
         ActivitiesSummary as = null;
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
-            as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);            
+            as = visibilityFilter.filter(activitiesSummaryManager.getActivitiesSummary(orcid), orcid);            
         } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public activities.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                as = profileEntityManager.getPublicActivitiesSummary(orcid);                
+                as = activitiesSummaryManager.getPublicActivitiesSummary(orcid);                
             } else {
                 throw e;
             }
@@ -1031,12 +1039,12 @@ public class MemberV2ApiServiceDelegatorImpl
         Person person = null;
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-            person = profileEntityManager.getPersonDetails(orcid);
+            person = personDetailsManager.getPersonDetails(orcid);
             person = visibilityFilter.filter(person, orcid);
         } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the public element.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                person = profileEntityManager.getPublicPersonDetails(orcid);                
+                person = personDetailsManager.getPublicPersonDetails(orcid);                
             } else {
                 throw e;
             }

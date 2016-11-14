@@ -14,21 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.read_only;
+package org.orcid.core.utils.activities;
 
-import org.orcid.jaxb.model.record_rc3.Biography;
+import java.util.Comparator;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public interface BiographyManagerReadOnly {
-    Biography getBiography(String orcid);
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
 
-    Biography getPublicBiography(String orcid);
-    
-    boolean updateBiography(String orcid, Biography bio);
+public class GroupableActivityComparator implements Comparator<GroupableActivity> {
 
-    void createBiography(String orcid, Biography bio);
+    @Override
+    public int compare(GroupableActivity o1, GroupableActivity o2) {
+        return o1.compareTo(o2);
+    }
 }

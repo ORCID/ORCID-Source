@@ -14,17 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.read_only;
+package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record_rc3.Person;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public interface RecordManagerReadOnly {
-    Record getPublicRecord(String orcid);
-
-    Record getRecord(String orcid);
+public interface PersonDetailsManager {
+    Person getPersonDetails(String orcid);
+    
+    Person getPublicPersonDetails(String orcid);
 }

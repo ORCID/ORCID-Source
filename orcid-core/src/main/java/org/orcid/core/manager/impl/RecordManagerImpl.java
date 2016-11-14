@@ -18,7 +18,9 @@ package org.orcid.core.manager.impl;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordManager;
@@ -57,7 +59,13 @@ public class RecordManagerImpl implements RecordManager {
     
     @Resource
     private EmailManager emailManager;
+    
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
 
+    @Resource
+    private PersonDetailsManager personDetailsManager;
+    
     @Override
     public Record getPublicRecord(String orcid) {
         Record record = new Record();
@@ -65,8 +73,8 @@ public class RecordManagerImpl implements RecordManager {
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(profileEntityManager.getPublicActivitiesSummary(orcid));
-        record.setPerson(profileEntityManager.getPublicPersonDetails(orcid));        
+        record.setActivitiesSummary(activitiesSummaryManager.getPublicActivitiesSummary(orcid));
+        record.setPerson(personDetailsManager.getPublicPersonDetails(orcid));        
         return record;
     }
 
@@ -77,8 +85,8 @@ public class RecordManagerImpl implements RecordManager {
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
-        record.setActivitiesSummary(profileEntityManager.getActivitiesSummary(orcid));
-        record.setPerson(profileEntityManager.getPersonDetails(orcid));        
+        record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid));
+        record.setPerson(personDetailsManager.getPersonDetails(orcid));        
         return record;
     }
     

@@ -107,8 +107,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
                 bioLastModified = bio.getLastModifiedDate().getValue();
             }            
         }
-        
-        
+                
         OtherNames otherNames = getOtherNames(orcid);
         XMLGregorianCalendar otherNamesLatest = null;
         if(otherNames != null && otherNames.getOtherNames() != null) {            

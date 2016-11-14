@@ -70,6 +70,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
+import org.orcid.core.utils.activities.GroupableActivityComparator;
 
 public class WorkManagerImpl implements WorkManager {
 

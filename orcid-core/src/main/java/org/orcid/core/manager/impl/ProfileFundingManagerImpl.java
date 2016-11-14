@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
+import org.orcid.core.utils.activities.GroupableActivityComparator;
 
 public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
@@ -478,7 +479,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
 
             result.getFundingGroup().add(fundingGroup);
-        }
+        }       
 
         return result;
     }

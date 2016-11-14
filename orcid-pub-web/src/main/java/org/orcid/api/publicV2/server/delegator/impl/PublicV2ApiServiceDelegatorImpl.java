@@ -30,6 +30,7 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
@@ -40,6 +41,7 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -181,6 +183,12 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private SourceUtils sourceUtils;
     
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
+    
+    @Resource
+    private PersonDetailsManager personDetailsManager;
+    
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
@@ -204,7 +212,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getPublicActivitiesSummary(orcid), orcid);
+        ActivitiesSummary as = visibilityFilter.filter(activitiesSummaryManager.getPublicActivitiesSummary(orcid), orcid);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         sourceUtils.setSourceName(as);
@@ -550,7 +558,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPerson(String orcid) {
-        Person person = profileEntityManager.getPublicPersonDetails(orcid);
+        Person person = personDetailsManager.getPublicPersonDetails(orcid);
         ElementUtils.setPathToPerson(person, orcid);
         sourceUtils.setSourceName(person);
         return Response.ok(person).build();

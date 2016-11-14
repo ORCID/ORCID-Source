@@ -59,6 +59,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
+import org.orcid.core.utils.activities.GroupableActivityComparator;
 
 public class PeerReviewManagerImpl implements PeerReviewManager {
 

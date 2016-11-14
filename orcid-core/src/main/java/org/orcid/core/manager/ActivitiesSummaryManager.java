@@ -14,20 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.read_only;
+package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 
-/**
-* 
-* @author Angel Montenegro
-* 
-*/
-public interface PersonalDetailsManagerReadOnly {
-    PersonalDetails getPersonalDetails(String orcid);
+public interface ActivitiesSummaryManager {
+    ActivitiesSummary getActivitiesSummary(String orcid);
 
-    PersonalDetails getPublicPersonalDetails(String orcid);
-
-    Name getName(String orcid);
+    ActivitiesSummary getPublicActivitiesSummary(String orcid);
 }

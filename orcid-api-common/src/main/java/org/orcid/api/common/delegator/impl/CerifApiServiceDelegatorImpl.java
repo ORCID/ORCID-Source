@@ -28,6 +28,7 @@ import org.orcid.api.common.cerif.Cerif16Builder;
 import org.orcid.api.common.cerif.CerifTypeTranslator;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -64,6 +65,8 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     private WorkManager workManager;
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
@@ -96,7 +99,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         @SuppressWarnings("unchecked")
         List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
 
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
+        ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as, orcid);
 

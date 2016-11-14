@@ -162,10 +162,6 @@
 	
 	<bean id="groupIdRecordDao" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl" />
 	
-	<bean id="peerReviewSubjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity" />
-    </bean>  
-
 	<bean id="shibbolethAccountDao" class="org.orcid.persistence.dao.impl.ShibbolethAccountDaoImpl" />
 
     <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />

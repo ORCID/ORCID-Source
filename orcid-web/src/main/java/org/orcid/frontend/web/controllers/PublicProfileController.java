@@ -42,6 +42,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.EmailManager;
@@ -183,6 +184,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private SourceUtils sourceUtils;
+    
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -786,7 +790,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             locale = Locale.US;
         }
 
-        ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
+        ActivitiesSummary actSummary = activitiesSummaryManager.getPublicActivitiesSummary(orcid);
 
         boolean haveActivities = false;
 

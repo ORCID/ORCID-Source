@@ -19,7 +19,6 @@ package org.orcid.core.manager.impl;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,31 +53,14 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.Person;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -226,14 +207,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.hasBeenGivenPermissionTo(giverOrcid, receiverOrcid);
     }
 
+    @Override
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
         return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
-    }
-
-    @Override
-    public Long getConfirmedProfileCount() {
-        return profileDao.getConfirmedProfileCount();
-    }
+    }    
 
     /**
      * Deprecates a profile
@@ -387,19 +364,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public boolean isProfileClaimed(String orcid) {
         return profileDao.getClaimedStatus(orcid);
-    }
-
-    /**
-     * Get the client type of a profile
-     * 
-     * @param orcid
-     *            The profile to look for
-     * @return the client type, null if it is not a client
-     */
-    @Override
-    public ClientType getClientType(String orcid) {
-        return profileDao.getClientType(orcid);
-    }
+    }    
 
     /**
      * Get the group type of a profile
@@ -412,82 +377,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
     }
-
-    @Override
-    @Transactional
-    public ActivitiesSummary getActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, false);
-    }
-
-    @Override
-    @Transactional
-    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, true);
-    }
-
-    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
-        if (!orcidExists(orcid)) {
-            throw new NoResultException();
-        }
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = lastModified.getTime();
-        ActivitiesSummary activities = new ActivitiesSummary();
-
-        // Set educations
-        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
-        if (!educationsList.isEmpty()) {
-            Educations educations = new Educations();
-            for (EducationSummary summary : educationsList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        educations.getSummaries().add(summary);
-                    }
-                } else {
-                    educations.getSummaries().add(summary);
-                }
-            }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
-            activities.setEducations(educations);
-        }
-
-        // Set employments
-        List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
-        if (!employmentList.isEmpty()) {
-            Employments employments = new Employments();
-            for (EmploymentSummary summary : employmentList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        employments.getSummaries().add(summary);
-                    }
-                } else {
-                    employments.getSummaries().add(summary);
-                }
-            }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
-            activities.setEmployments(employments);
-        }
-
-        // Set fundings
-        List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
-        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
-        activities.setFundings(fundings);
-
-        // Set peer reviews
-        List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
-        activities.setPeerReviews(peerReviews);
-
-        // Set works
-        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works works = workManager.groupWorks(workSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
-        activities.setWorks(works);
-
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
-        return activities;
-    }    
 
     /** Returns the date cached in the request scope. 
      * 
@@ -655,90 +544,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     @Transactional
-    public Person getPersonDetails(String orcid) {        
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        Person person = new Person();
-        Biography biography = biographyManager.getBiography(orcid);
-        if(biography != null) {
-            person.setBiography(biography);
-        } 
-        
-        person.setName(personalDetailsManager.getName(orcid));
-        
-        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
-        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
-        
-        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);    
-        return person;
-    }
-
-    @Override
-    @Transactional
-    public Person getPublicPersonDetails(String orcid) {
-        Person person = new Person();
-        
-        Biography bio = biographyManager.getPublicBiography(orcid);        
-        if(bio != null) {
-            person.setBiography(bio);
-        } 
-        
-        Name name = personalDetailsManager.getName(orcid);
-        if(Visibility.PUBLIC.equals(name.getVisibility())) {
-            person.setName(name);
-        }
-		
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
-        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-
-        person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);
-        return person;
-    }
-
-    @Override
-    @Transactional
     public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
         //Verify the email
         boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
@@ -890,14 +695,5 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public void updateLocale(String orcid, Locale locale) {
         profileDao.updateLocale(orcid, locale);
-    }
-}
-
-class GroupableActivityComparator implements Comparator<GroupableActivity> {
-
-    @Override
-    public int compare(GroupableActivity o1, GroupableActivity o2) {
-        return o1.compareTo(o2);
-    }
-
+    }    
 }

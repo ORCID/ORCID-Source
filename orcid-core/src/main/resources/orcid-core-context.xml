@@ -110,6 +110,10 @@
 		</property>
 	</bean>
 
+	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />
+	
+	<bean id="personDetailsManager" class="org.orcid.core.manager.impl.PersonDetailsManagerImpl" />
+
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="notificationManager" ref="notificationManager" />
