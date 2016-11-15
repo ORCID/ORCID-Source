@@ -70,8 +70,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+        return profileEntityManager.getLastModified(orcid);
     }
     
     @Override

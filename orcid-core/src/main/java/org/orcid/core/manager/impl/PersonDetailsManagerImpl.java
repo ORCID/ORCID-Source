@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.AddressManager;
@@ -114,8 +112,7 @@ public class PersonDetailsManagerImpl implements PersonDetailsManager {
 
     @Override    
     public Person getPersonDetails(String orcid) {        
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         Person person = new Person();
         Biography biography = biographyManager.getBiography(orcid);
         if(biography != null) {
@@ -165,8 +162,7 @@ public class PersonDetailsManagerImpl implements PersonDetailsManager {
             person.setName(name);
         }
                 
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         

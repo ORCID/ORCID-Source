@@ -291,8 +291,7 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(getEffectiveUserOrcid());
         Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId, lastModifiedTime);
 
         if (work != null) {
@@ -697,9 +696,8 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    public WorkForm validateWorkId(WorkForm work) {
-        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
-        List<Work> works = workManager.findWorks(getEffectiveUserOrcid(), lastModified.getTime());
+    public WorkForm validateWorkId(WorkForm work) {        
+        List<Work> works = workManager.findWorks(getEffectiveUserOrcid(), profileEntityManager.getLastModified(getEffectiveUserOrcid()));
         if (works == null || works.isEmpty()) {
             setError(work, "manual_work_form_contents.edit_work.invalid_id");
         } else if (PojoUtil.isEmpty(work.getPutCode())) {
@@ -738,9 +736,8 @@ public class WorksController extends BaseWorkspaceController {
      * 
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
-        String orcid = getEffectiveUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        List<Work> works = workManager.findWorks(orcid, lastModified.getTime());
+        String orcid = getEffectiveUserOrcid();        
+        List<Work> works = workManager.findWorks(orcid, profileEntityManager.getLastModified(orcid));
         HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {

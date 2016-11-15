@@ -251,7 +251,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
             profileEntityManager.updateLastModifed(delegateOrcid);
-            Date delegateLastModified = profileEntityManager.getLastModified(delegateOrcid);
+            Date delegateLastModified = profileEntityManager.getLastModifiedDate(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
@@ -769,8 +769,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());        
         
@@ -979,7 +978,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         // the granting
                         // user is visible to them immediately
                         profileEntityManager.updateLastModifed(trustedOrcid);
-                        Date delegateLastModified = profileEntityManager.getLastModified(trustedOrcid);
+                        Date delegateLastModified = profileEntityManager.getLastModifiedDate(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
                         permission.setGiver(managedOrcid);
                         ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
@@ -1047,6 +1046,5 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-    }
-
+    }         
 }

@@ -16,9 +16,14 @@
  */
 package org.orcid.core.manager.read_only;
 
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import java.util.Date;
 
-public interface ProfileEntityManagerReadOnly extends ManagerReadOnlyBase {
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 
-    ProfileEntity findByOrcid(String orcid);
+public interface ManagerReadOnlyBase {
+    void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect);
+
+    long getLastModified(String orcid);
+    
+    Date getLastModifiedDate(String orcid);
 }

@@ -18,7 +18,6 @@ package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -42,7 +41,6 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
@@ -50,6 +48,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
@@ -169,7 +168,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private PersonalDetailsManager personalDetailsManager;
 
     @Resource
-    private ProfileKeywordManager keywordsManager;
+    private ProfileKeywordManagerReadOnly keywordsManagerReadOnly;
     
     @Resource
     private AddressManagerReadOnly addressManagerReadOnly;
@@ -189,9 +188,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private PersonDetailsManager personDetailsManager;
     
-    private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManagerReadOnly.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();        
+    private long getLastModifiedTime(String orcid) {        
+        return profileEntityManagerReadOnly.getLastModified(orcid);        
     }
     
     @Override
@@ -520,7 +518,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = keywordsManager.getPublicKeywords(orcid, lastModifiedTime);
+        Keywords keywords = keywordsManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
         sourceUtils.setSourceName(keywords);
         return Response.ok(keywords).build();
@@ -529,7 +527,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
+        Keyword keyword = keywordsManagerReadOnly.getKeyword(orcid, putCode);
         orcidSecurityManager.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);

@@ -16,25 +16,17 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
-import java.util.Date;
-
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
-public class ProfileEntityManagerReadOnlyImpl implements ProfileEntityManagerReadOnly { 
+public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly { 
 
     protected ProfileDao profileDao;       
-    protected ProfileLastModifiedAspect profileLastModifiedAspect;        
     
     public void setProfileDao(ProfileDao profileDao) {
         this.profileDao = profileDao;
     }    
-
-    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
-        this.profileLastModifiedAspect = profileLastModifiedAspect;
-    }
 
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -43,14 +35,5 @@ public class ProfileEntityManagerReadOnlyImpl implements ProfileEntityManagerRea
     @Override
     public ProfileEntity findByOrcid(String orcid) {
         return profileDao.find(orcid);
-    }    
-    
-    /** 
-     * Returns the date cached in the request scope. 
-     * 
-     */
-    @Override
-    public Date getLastModified(String orcid) {
-        return profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
     }       
 }

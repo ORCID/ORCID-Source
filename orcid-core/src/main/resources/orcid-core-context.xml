@@ -142,7 +142,15 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
+	<bean id="profileKeywordManager" class="org.orcid.core.manager.impl.ProfileKeywordManagerImpl">
+		<property name="profileKeywordDao" ref="profileKeywordDao" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
 	
+	<bean id="profileKeywordManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ProfileKeywordManagerReadOnlyImpl">
+		<property name="profileKeywordDao" ref="profileKeywordDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
 
 	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
 
@@ -388,8 +396,7 @@
 	
 	<bean id="emailManager" class="org.orcid.core.manager.impl.EmailManagerImpl" />
 	
-	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />
-	<bean id="profileKeywordManager" class="org.orcid.core.manager.impl.ProfileKeywordManagerImpl" />	
+	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />	
 	
 	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />		
 	

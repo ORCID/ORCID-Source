@@ -17,7 +17,6 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,33 +27,21 @@ import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
 
-public class OtherNameManagerReadOnlyImpl implements OtherNameManagerReadOnly {
+public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements OtherNameManagerReadOnly {
        
     @Resource
     protected JpaJaxbOtherNameAdapter jpaJaxbOtherNameAdapter;
 
     protected OtherNameDao otherNameDao;
     
-    protected ProfileLastModifiedAspect profileLastModifiedAspect;        
-    
     public void setOtherNameDao(OtherNameDao otherNameDao) {
         this.otherNameDao = otherNameDao;
     }
 
-    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
-        this.profileLastModifiedAspect = profileLastModifiedAspect;
-    }
-
-    protected long getLastModified(String orcid) {
-        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }          
-    
     @Override
     @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getOtherNames(String orcid, long lastModified) {

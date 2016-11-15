@@ -16,7 +16,6 @@
  */
 package org.orcid.api.common.delegator.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -71,8 +70,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+        return profileEntityManager.getLastModified(orcid);
     }
     
     /**
@@ -124,8 +122,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws, orcid);

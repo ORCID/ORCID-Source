@@ -943,9 +943,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
         Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
         
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-
-        RecordNameEntity recordName = recordNameManager.getRecordName(orcid, (lastModified == null ? 0 : lastModified.getTime()));
+        RecordNameEntity recordName = recordNameManager.getRecordName(orcid, profileEntityManager.getLastModified(orcid));
         if(recordName != null) {
             recordName.setCreditName(creditName);
             recordName.setFamilyName(familyName);

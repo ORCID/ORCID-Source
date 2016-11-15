@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class ProfileKeywordManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -59,7 +60,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        profileKeywordManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(profileKeywordManager, "sourceManager", sourceManager); 
     }
 
     @AfterClass

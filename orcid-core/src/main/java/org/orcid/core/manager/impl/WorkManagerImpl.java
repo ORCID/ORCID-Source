@@ -229,8 +229,7 @@ public class WorkManagerImpl implements WorkManager {
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                Date lastModified = profileEntityManager.getLastModified(orcid);
-                long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+                long lastModifiedTime = profileEntityManager.getLastModified(orcid);
                 List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
@@ -361,8 +360,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);    
         for(Work work : existingWorks) {
             //If it is the same source
@@ -404,10 +402,8 @@ public class WorkManagerImpl implements WorkManager {
         String existingClientSourceId = workEntity.getClientSourceId();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());
-            
-            Date lastModified = profileEntityManager.getLastModified(orcid);
-            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());                        
+            long lastModifiedTime = profileEntityManager.getLastModified(orcid);
             List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
             
             for (Work existing : existingWorks) {

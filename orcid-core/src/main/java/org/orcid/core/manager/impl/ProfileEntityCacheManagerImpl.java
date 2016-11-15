@@ -24,8 +24,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.sf.ehcache.Cache;
@@ -45,13 +43,11 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileEntityCacheManagerImpl.class);
-
     @Override
     @Transactional
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
-        Date dbDate = profileEntityManager.getLastModified(orcid);
+        Date dbDate = profileEntityManager.getLastModifiedDate(orcid);
         ProfileEntity profile = toProfileEntity(profileCache.get(key));
         if (needsFresh(dbDate, profile))
             try {

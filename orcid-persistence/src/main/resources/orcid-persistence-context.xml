@@ -73,6 +73,12 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 
+	<bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />
+	
+	<bean id="profileKeywordDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
@@ -84,7 +90,7 @@
     
     
     
-    <bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />
+    
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />    
     
     <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />

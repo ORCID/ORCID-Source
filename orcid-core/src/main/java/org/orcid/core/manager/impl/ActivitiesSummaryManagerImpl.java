@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -68,8 +67,7 @@ public class ActivitiesSummaryManagerImpl implements ActivitiesSummaryManager {
     }
 
     public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         ActivitiesSummary activities = new ActivitiesSummary();
 
         // Set educations

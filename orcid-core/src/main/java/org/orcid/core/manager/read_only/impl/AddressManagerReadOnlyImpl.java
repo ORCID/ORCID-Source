@@ -17,7 +17,6 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,33 +27,21 @@ import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;
 
-public class AddressManagerReadOnlyImpl implements AddressManagerReadOnly {
+public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements AddressManagerReadOnly {
     
     @Resource
     protected JpaJaxbAddressAdapter adapter;
     
     protected AddressDao addressDao;
     
-    protected ProfileLastModifiedAspect profileLastModifiedAspect;
-    
     public void setAddressDao(AddressDao addressDao) {
         this.addressDao = addressDao;
     }
 
-    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
-        this.profileLastModifiedAspect = profileLastModifiedAspect;
-    }
-
-    protected long getLastModified(String orcid) {
-        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }    
-    
     @Override
     @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
     public Address getPrimaryAddress(String orcid, long lastModified) {        

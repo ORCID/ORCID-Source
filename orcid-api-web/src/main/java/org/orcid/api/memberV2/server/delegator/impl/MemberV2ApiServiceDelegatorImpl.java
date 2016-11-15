@@ -21,7 +21,6 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessControlException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,8 +191,7 @@ public class MemberV2ApiServiceDelegatorImpl
     private PersonDetailsManager personDetailsManager;
     
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();        
+        return profileEntityManager.getLastModified(orcid);        
     }
     
     @Override

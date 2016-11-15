@@ -624,7 +624,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         
-        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid).getTime());
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -668,7 +668,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid).getTime());
+        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid));
         sourceUtils.setSourceName(workObj);
         
         if (workObj != null) {
