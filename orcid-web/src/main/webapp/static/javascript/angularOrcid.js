@@ -1812,6 +1812,16 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     return serv; 
 }]);
 
+orcidNgModule.factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
+    return {
+          clearFilters : function ($scope){
+              $scope.by_country = undefined;
+              $scope.by_researchCommunity = undefined;
+              $scope.activeLetter = '';
+         }
+     };
+ }]);
+
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
     		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
@@ -10377,7 +10387,7 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
     
 }]);
 
-orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
     $scope.membersListSrvc = membersListSrvc;
     $scope.displayMoreDetails = {};
     
@@ -10400,12 +10410,10 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
     };
     
     //clear filters 
-    $scope.clearFilters = function () {
-        $scope.country = null;
-        $scope.researchCommunity = null;
-        $scope.activeLetter = '';
-    };
-    
+    $scope.clearFilters = function(){
+        return clearMemberListFilterSrvc.clearFilters($scope);
+    }
+        
     // populate the members feed
     membersListSrvc.getMembersList();
     
@@ -10420,7 +10428,7 @@ orcidNgModule.controller('MemberPageController',['$scope', '$sce', 'membersListS
     
 }]);
 
-orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
     $scope.membersListSrvc = membersListSrvc;
     $scope.displayMoreDetails = {};
     
@@ -10441,14 +10449,12 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     $scope.activateLetter = function(letter) {
       $scope.activeLetter = letter
     };
-
-    //clear filters 
-    $scope.clearFilters = function () {
-        $scope.country = null;
-        $scope.researchCommunity = null;
-        $scope.activeLetter = '';
-    };
     
+    //clear filters
+    $scope.clearFilters = function(){
+        return clearMemberListFilterSrvc.clearFilters($scope);
+    }
+        
     // populate the consortia feed
     membersListSrvc.getConsortiaList();    
     
