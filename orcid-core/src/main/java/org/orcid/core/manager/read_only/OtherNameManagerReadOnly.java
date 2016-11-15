@@ -14,20 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.OtherNames;
 
-public interface OtherNameManager extends OtherNameManagerReadOnly {
-    void setSourceManager(SourceManager sourceManager);  
-        
-    boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);
-
-    OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest);
-
-    OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest);
+public interface OtherNameManagerReadOnly {
+    OtherNames getOtherNames(String orcid, long lastModified);
     
-    OtherNames updateOtherNames(String orcid, OtherNames otherNames);
+    OtherNames getPublicOtherNames(String orcid, long lastModified);
+    
+    OtherNames getMinimizedOtherNames(String orcid, long lastModified);
+    
+    OtherName getOtherName(String orcid, Long putCode);
 }

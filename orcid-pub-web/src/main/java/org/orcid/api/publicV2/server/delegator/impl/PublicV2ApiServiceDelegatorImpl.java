@@ -38,7 +38,6 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -49,6 +48,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
@@ -154,7 +154,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ResearcherUrlManager researcherUrlManager;
 
     @Resource
-    private OtherNameManager otherNameManager;
+    private OtherNameManagerReadOnly otherNameManagerReadOnly;
 
     @Resource
     private EmailManager emailManager;
@@ -471,7 +471,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         sourceUtils.setSourceName(otherNames);
         return Response.ok(otherNames).build();
@@ -480,7 +480,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
+        OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
         orcidSecurityManager.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         sourceUtils.setSourceName(otherName);

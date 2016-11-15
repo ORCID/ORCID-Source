@@ -222,6 +222,7 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
      */
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
+        showMyOrcidPage();
         openEditOtherNamesModal();       
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveOtherNamesModal();

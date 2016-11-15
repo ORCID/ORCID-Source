@@ -67,15 +67,25 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 
+	<bean id="otherNameDao" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl" />
+	
+	<bean id="otherNameDaoReadOnly" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
     
+    
+    
+    
+    
+    
     <bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />
-    <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
-    <bean id="otherNameDao" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl" />
+    <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />    
     
     <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
 
