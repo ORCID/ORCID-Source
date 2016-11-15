@@ -57,6 +57,7 @@
 	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
 		<property name="profileDao" ref="profileDaoReadOnly" />
 		<property name="enabled" value="false" />
+		<property name="name" value="read_only" />
 	</bean>
 
 	<!-- Person DAO's -->

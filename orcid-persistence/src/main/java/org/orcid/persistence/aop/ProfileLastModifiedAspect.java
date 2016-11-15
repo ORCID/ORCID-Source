@@ -47,9 +47,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     private ProfileDao profileDao;
 
     private boolean enabled = true;
+    
+    private String name = "default";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);    
+    
     //@formatter:off
     private static final String POINTCUT_DEFINITION_BASE = "(execution(* org.orcid.persistence.dao.*.remove*(..))"
             + "|| execution(* org.orcid.persistence.dao.*.delete*(..))" + "|| execution(* org.orcid.persistence.dao.*.update*(..))"
@@ -70,6 +72,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     /** Runs after any method that updates a record.
@@ -144,6 +150,6 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     }
 
     private String sraKey(String orcid) {
-        return REQUEST_PROFILE_LAST_MODIFIED + '_' + orcid;
+        return REQUEST_PROFILE_LAST_MODIFIED + '_' + name + '_' + orcid;
     }
 }

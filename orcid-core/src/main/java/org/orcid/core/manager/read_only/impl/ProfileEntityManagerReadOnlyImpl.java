@@ -23,7 +23,7 @@ import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
-public class ProfileEntityManagerReadOnlyImpl implements ProfileEntityManagerReadOnly {
+public class ProfileEntityManagerReadOnlyImpl implements ProfileEntityManagerReadOnly { 
 
     protected ProfileDao profileDao;       
     protected ProfileLastModifiedAspect profileLastModifiedAspect;        

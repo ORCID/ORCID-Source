@@ -20,9 +20,6 @@ import java.util.Date;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
-/**
- * User: Declan Newman (declan) Date: 10/02/2012 </p>
- */
 public interface ProfileEntityManagerReadOnly {
 
     ProfileEntity findByOrcid(String orcid);        
