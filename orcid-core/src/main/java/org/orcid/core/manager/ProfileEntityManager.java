@@ -17,13 +17,12 @@
 package org.orcid.core.manager;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
 
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -31,12 +30,10 @@ import org.orcid.pojo.ajaxForm.Claim;
 /**
  * User: Declan Newman (declan) Date: 10/02/2012 </p>
  */
-public interface ProfileEntityManager {
+public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
-    ProfileEntity findByOrcid(String orcid);
-    
     String findByCreditName(String creditName);
-
+    
     boolean orcidExists(String orcid);
 
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
@@ -45,17 +42,13 @@ public interface ProfileEntityManager {
 
     boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
 
-    List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
-
     boolean enableDeveloperTools(OrcidProfile profile);
 
     boolean disableDeveloperTools(OrcidProfile profile);
 
     boolean isProfileClaimed(String orcid);
 
-    MemberType getGroupType(String orcid);
-
-    Date getLastModified(String orcid);
+    MemberType getGroupType(String orcid);    
 
     boolean isDeactivated(String deactivated);
 

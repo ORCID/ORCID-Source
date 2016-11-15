@@ -51,6 +51,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -61,9 +62,7 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
@@ -84,23 +83,15 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
  */
-@Service("profileEntityManager")
-public class ProfileEntityManagerImpl implements ProfileEntityManager {
+public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
-    
-    @Resource
-    private ProfileDao profileDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);    
 
-    @Resource    
-    private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
@@ -147,10 +138,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private OrgAffiliationRelationDao orgRelationAffiliationDao;    
     
     @Resource
-    private OtherNameManager otherNamesManager;
-    
-    @Resource
-    private RecordNameManager recordNameManager;
+    private OtherNameManager otherNamesManager;        
     
     @Resource
     private BiographyManager biographyManager;
@@ -179,24 +167,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private LocaleManager localeManager;
     
-    /**
-     * Fetch a ProfileEntity from the database Instead of calling this function,
-     * use the cache profileEntityCacheManager whenever is possible
-     */
-    @Override
-    public ProfileEntity findByOrcid(String orcid) {
-        return profileDao.find(orcid);
-    }
-
-    @Override
-    public String findByCreditName(String creditName) {
-        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
-        if(recordName == null) {
-            return null;
-        }
-        return recordName.getProfile().getId();
-    }
-
+    @Resource
+    private RecordNameManager recordNameManager;            
+    
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -212,6 +185,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
     }    
 
+    @Override
+    public String findByCreditName(String creditName) {
+        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
+        if(recordName == null) {
+            return null;
+        }
+        return recordName.getProfile().getId();
+    }
+    
     /**
      * Deprecates a profile
      * 
@@ -322,20 +304,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     /**
-     * Return the list of profiles that belongs to the provided OrcidType
-     * 
-     * @param type
-     *            OrcidType that indicates the profile type we want to fetch
-     * @return the list of profiles that belongs to the specified type
-     */
-    @Override
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
-        if (type == null)
-            return new ArrayList<ProfileEntity>();
-        return profileDao.findProfilesByOrcidType(type);
-    }
-
-    /**
      * Enable developer tools
      * 
      * @param profile
@@ -376,14 +344,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
-    }
-
-    /** Returns the date cached in the request scope. 
-     * 
-     */
-    public Date getLastModified(String orcid) {
-        return profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-    }
+    }    
 
     /** Updates the DB and the cached value in the request scope.
      * 

@@ -31,7 +31,6 @@ import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
-import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -43,13 +42,14 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
@@ -121,7 +121,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -172,7 +172,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ProfileKeywordManager keywordsManager;
     
     @Resource
-    private AddressManager addressManager;
+    private AddressManagerReadOnly addressManagerReadOnly;
     
     @Resource
     private BiographyManager biographyManager;
@@ -190,7 +190,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private PersonDetailsManager personDetailsManager;
     
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = profileEntityManagerReadOnly.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
     }
     
@@ -248,7 +248,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewWorkCitation(String orcid, Long putCode) { 
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity entity = profileEntityManagerReadOnly.findByOrcid(orcid);
         String creditName = null;
         RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
         if(recordNameEntity != null) {
@@ -539,7 +539,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
+        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
         sourceUtils.setSourceName(addresses);
         return Response.ok(addresses).build();
@@ -548,7 +548,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddress(String orcid, Long putCode) {
-        Address address = addressManager.getAddress(orcid, putCode);
+        Address address = addressManagerReadOnly.getAddress(orcid, putCode);
         orcidSecurityManager.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtils.setSourceName(address);

@@ -23,12 +23,12 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,18 +40,18 @@ public class AddressManagerReadOnlyImpl implements AddressManagerReadOnly {
     
     protected AddressDao addressDao;
     
-    protected ProfileEntityManager profileEntityManager;    
-        
+    protected ProfileLastModifiedAspect profileLastModifiedAspect;
+    
     public void setAddressDao(AddressDao addressDao) {
         this.addressDao = addressDao;
     }
 
-    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
-        this.profileEntityManager = profileEntityManager;
+    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
+        this.profileLastModifiedAspect = profileLastModifiedAspect;
     }
 
     protected long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }    
     

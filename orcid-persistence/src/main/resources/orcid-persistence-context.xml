@@ -48,6 +48,17 @@
 	<bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
+	<!-- Profile last modified aspect -->
+	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
+		<property name="profileDao" ref="profileDao" />
+		<property name="enabled" value="true" />
+	</bean>
+
+	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
+		<property name="profileDao" ref="profileDaoReadOnly" />
+		<property name="enabled" value="false" />
+	</bean>
+
 	<!-- Person DAO's -->
 	<bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
 	

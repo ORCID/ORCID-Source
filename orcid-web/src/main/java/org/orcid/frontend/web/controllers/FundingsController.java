@@ -96,7 +96,7 @@ public class FundingsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource

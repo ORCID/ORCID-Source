@@ -111,18 +111,37 @@
 	</bean>
 
 	<!-- Record Managers -->
-	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
+	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl">
+		<property name="profileDao" ref="profileDao" />		
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />		
+	</bean>
+	
+	<bean id="profileEntityManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl">
+		<property name="profileDao" ref="profileDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />		
+	</bean>
 
 	<!-- Person Managers -->
 	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl">
 		<property name="addressDao" ref="addressDao" />
-		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="addressManagerReadOnly" class="org.orcid.core.manager.read_only.impl.AddressManagerReadOnlyImpl">
 		<property name="addressDao" ref="addressDaoReadOnly" />
-		<property name="profileEntityManager" ref="profileEntityManager" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
+
+	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
+
+
+
+
+
+
+
+
+	
 
 	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />
 	
@@ -361,9 +380,7 @@
 	<bean id="profileKeywordManager" class="org.orcid.core.manager.impl.ProfileKeywordManagerImpl" />
 	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />	
 	
-	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />
-	
-	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
+	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />		
 	
 	<bean id="BiographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl" />
 	

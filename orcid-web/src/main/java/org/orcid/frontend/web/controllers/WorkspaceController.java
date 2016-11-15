@@ -126,7 +126,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
