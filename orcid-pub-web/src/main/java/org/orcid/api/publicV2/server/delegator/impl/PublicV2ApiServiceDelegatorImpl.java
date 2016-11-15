@@ -168,7 +168,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private PersonalDetailsManager personalDetailsManager;
 
     @Resource
-    private ProfileKeywordManagerReadOnly keywordsManagerReadOnly;
+    private ProfileKeywordManagerReadOnly profileKeywordManagerReadOnly;
     
     @Resource
     private AddressManagerReadOnly addressManagerReadOnly;
@@ -518,7 +518,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = keywordsManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
+        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
         sourceUtils.setSourceName(keywords);
         return Response.ok(keywords).build();
@@ -527,7 +527,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManagerReadOnly.getKeyword(orcid, putCode);
+        Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
         orcidSecurityManager.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);
