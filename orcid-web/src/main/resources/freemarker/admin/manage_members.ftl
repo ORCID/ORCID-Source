@@ -447,7 +447,7 @@
 		
 		<!-- Find consortium -->
         <a name="find-consortium"></a>
-        <div ng-controller="manageConsortiumCtrl" class="workspace-accordion-item" ng-cloak>           
+        <div ng-controller="internalConsortiumCtrl" class="workspace-accordion-item" ng-cloak>           
             <p>
                 <a ng-show="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>
                 <a ng-hide="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>             

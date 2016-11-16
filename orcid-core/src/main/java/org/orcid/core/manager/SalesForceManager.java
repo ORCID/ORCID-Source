@@ -39,12 +39,14 @@ public interface SalesForceManager {
     MemberDetails retrieveDetailsBySlug(String memberSlug);
 
     MemberDetails retrieveDetails(String memberId);
-    
+
     List<Contact> retrieveContactsByAccountId(String accountId);
 
     void addOrcidsToContacts(List<Contact> contacts);
-    
+
     void enableAccess(String accountId, List<Contact> contactsList);
+
+    String retriveAccountIdByOrcid(String orcid);
 
     /**
      * Clear caches

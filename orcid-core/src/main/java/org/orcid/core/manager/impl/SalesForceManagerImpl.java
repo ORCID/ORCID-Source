@@ -127,6 +127,30 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
+    public void enableAccess(String accountId, List<Contact> contactsList) {
+        contactsList.forEach(c -> {
+            String orcid = c.getOrcid();
+            if (orcid == null) {
+                return;
+            }
+            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId);
+            if (connection == null) {
+                connection = new SalesForceConnectionEntity();
+                connection.setOrcid(orcid);
+                connection.setSalesForceAccountId(accountId);
+                connection.setEmail(c.getEmail());
+                salesForceConnectionDao.persist(connection);
+            }
+        });
+    }
+
+    @Override
+    public String retriveAccountIdByOrcid(String orcid) {
+        SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
+        return connection != null ? connection.getSalesForceAccountId() : null;
+    }
+
+    @Override
     public void evictAll() {
         salesForceMembersListCache.removeAll();
         salesForceMemberDetailsCache.removeAll();
@@ -147,25 +171,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
             return subMembers;
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public void enableAccess(String accountId, List<Contact> contactsList) {
-        contactsList.forEach(c -> {
-            String orcid = c.getOrcid();
-            if (orcid == null) {
-                return;
-            }
-            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId);
-            if (connection == null) {
-                connection = new SalesForceConnectionEntity();
-                connection.setOrcid(orcid);
-                connection.setSalesForceAccountId(accountId);
-                connection.setEmail(c.getEmail());
-                salesForceConnectionDao.persist(connection);
-            }
-        });
-
     }
 
 }

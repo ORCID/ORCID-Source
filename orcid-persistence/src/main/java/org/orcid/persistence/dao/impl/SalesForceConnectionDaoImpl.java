@@ -42,4 +42,13 @@ public class SalesForceConnectionDaoImpl extends GenericDaoImpl<SalesForceConnec
         return results.isEmpty() ? null : results.get(0);
     }
 
+    @Override
+    public SalesForceConnectionEntity findByOrcid(String orcid) {
+        TypedQuery<SalesForceConnectionEntity> query = entityManager.createQuery("from SalesForceConnectionEntity where orcid = :orcid",
+                SalesForceConnectionEntity.class);
+        query.setParameter("orcid", orcid);
+        List<SalesForceConnectionEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
 }
