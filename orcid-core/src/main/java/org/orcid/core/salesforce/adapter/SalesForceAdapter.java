@@ -118,7 +118,7 @@ public class SalesForceAdapter {
         return mapperFacade.map(record, Contact.class);
     }
 
-    List<Contact> createContactsFromJson(JSONObject object) {
+    public List<Contact> createContactsFromJson(JSONObject object) {
         try {
             JSONObject firstRecord = extractFirstRecord(object);
             JSONObject contactRoles = firstRecord.getJSONObject("Membership_Contact_Roles__r");

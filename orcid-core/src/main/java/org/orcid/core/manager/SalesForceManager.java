@@ -41,6 +41,8 @@ public interface SalesForceManager {
     MemberDetails retrieveDetailsBySlug(String memberSlug);
 
     MemberDetails retrieveDetails(String memberId);
+    
+    List<Contact> retrieveContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsByOpportunityId(String opportunityId);
 
