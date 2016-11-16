@@ -36,7 +36,7 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
     
     @Override
     public boolean updateBiography(String orcid, Biography bio) {
-        if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
+        if (bio == null || bio.getVisibility() == null) {
             return false;
         }
         return biographyDao.updateBiography(orcid, bio.getContent(), bio.getVisibility());
@@ -47,6 +47,11 @@ public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implement
         if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
             return;
         }
+        
+        if(biographyDao.exists(orcid)) {
+            throw new IllegalArgumentException("The biography for " + orcid + " already exists");
+        }
+        
         biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility());
     }
 }

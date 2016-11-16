@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -32,11 +33,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.BiographyManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc3.Name;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -71,16 +79,23 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
+    @Resource
+    private EmailManager emailManager;
+    
+    @Resource
+    private RecordNameManager recordNameManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -97,14 +112,68 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
-        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");
+        String orcidToDeprecate = "4444-4444-4444-4441";
+        String primaryOrcid = "4444-4444-4444-4442";
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve(orcidToDeprecate);
+        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);                
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
+        
+        Emails emails1 = emailManager.getEmails(orcidToDeprecate, 0);
+        assertNotNull(emails1);
+        assertEquals(5, emails1.getEmails().size());
+        boolean containsEmail = false;
+        for (Email email : emails1.getEmails()) {
+            if (email.getEmail().equals("1@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if (email.getEmail().equals("2@deprecate.com")) {
+                if (email.isCurrent() == false && email.isVerified() == false) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            } else if (email.getEmail().equals("spike@milligan.com")) {
+                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == true) {
+                    containsEmail = true;
+                } else {
+                    containsEmail = false;
+                    break;
+                }
+            }
+        }
+
+        assertTrue(containsEmail);
+        
         boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
         assertTrue(result);
+        
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
-        assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
+        assertEquals(primaryOrcid, profileEntityToDeprecate.getPrimaryRecord().getId());
+        
+        //Verify all emails belongs now to the primary record
+        Map<String, String> emails = emailManager.findIdByEmail("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
+        assertNotNull(emails);
+        assertEquals(primaryOrcid, emails.get("1@deprecate.com"));
+        assertEquals(primaryOrcid, emails.get("2@deprecate.com"));
+        assertEquals(primaryOrcid, emails.get("spike@milligan.com"));
+        assertEquals(primaryOrcid, emails.get("michael@bentine.com"));
+        
+        Name name = recordNameManager.getRecordName(orcidToDeprecate, 0);
+        assertNotNull(name);
+        assertEquals("", name.getCreditName().getContent());
+        assertEquals("Given Names Deactivated", name.getGivenNames().getContent());
+        assertEquals("Family Name Deactivated", name.getFamilyName().getContent());
+        
+        Biography bio = biographyManager.getBiography(orcidToDeprecate);
+        assertNotNull(bio);
+        assertNull(bio.getContent());
+        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, bio.getVisibility());
     }
     
     @Test    

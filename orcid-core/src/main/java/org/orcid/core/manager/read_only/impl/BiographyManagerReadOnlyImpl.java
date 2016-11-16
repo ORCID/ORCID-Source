@@ -66,5 +66,10 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
             return bio;
         }
         return null;
+    }
+
+    @Override
+    public boolean exists(String orcid) {
+        return biographyDao.exists(orcid);
     }    
 }

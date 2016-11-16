@@ -110,7 +110,6 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertTrue(recordNameDao.exists("0000-0000-0000-0002"));
         assertTrue(recordNameDao.exists("0000-0000-0000-0003"));
         assertTrue(recordNameDao.exists("0000-0000-0000-0004"));
-        assertTrue(recordNameDao.exists("0000-0000-0000-0005"));
         
         assertFalse(recordNameDao.exists("0000-0000-0000-0000"));
         assertFalse(recordNameDao.exists("0000-0000-0000-000X"));

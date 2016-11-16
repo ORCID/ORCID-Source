@@ -265,19 +265,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 }                                                        
             }
             
-            //Remove biography
-            Biography deprecatedBio = new Biography();
-            deprecatedBio.setContent(null);
-            deprecatedBio.setVisibility(Visibility.PRIVATE);
-            
-            BiographyEntity bioEntity = deprecated.getBiographyEntity();
-            if(bioEntity != null) {
+            //Remove biography                        
+            if(biographyManager.exists(deprecatedOrcid)) {
+                Biography deprecatedBio = new Biography();
+                deprecatedBio.setContent(null);
+                deprecatedBio.setVisibility(Visibility.PRIVATE);
                 biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
-            } else {
-                biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
-            }
-            
-            
+            } 
+                        
             //Set the deactivated names
             if(recordNameManager.exists(deprecatedOrcid)) {
                 Name name = new Name();

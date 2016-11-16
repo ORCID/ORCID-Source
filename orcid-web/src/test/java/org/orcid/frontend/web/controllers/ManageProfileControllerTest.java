@@ -65,8 +65,6 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
@@ -76,7 +74,6 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource(name = "manageProfileController")

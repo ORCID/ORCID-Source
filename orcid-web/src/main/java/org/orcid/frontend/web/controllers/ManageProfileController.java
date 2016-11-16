@@ -830,7 +830,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
-        Name name = personalDetailsManager.getName(getCurrentUserOrcid());
+        String currentOrcid = getCurrentUserOrcid();
+        Name name = recordNameManager.getRecordName(currentOrcid, profileEntityManager.getLastModified(currentOrcid));        
         NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
@@ -880,7 +881,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
     public @ResponseBody BiographyForm setBiographyFormJson(@RequestBody BiographyForm bf) {
         bf.setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(bf.getBiography())) {
+        if (bf.getBiography() != null) {
             validateBiography(bf.getBiography());
             copyErrors(bf.getBiography(), bf);
             if (bf.getErrors().size() > 0)
@@ -895,11 +896,11 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setVisibility(v);
             }
             
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            if(profile.getBiographyEntity() != null) {
-                biographyManager.updateBiography(getCurrentUserOrcid(), bio);
+            String orcid = getCurrentUserOrcid();
+            if(biographyManager.exists(orcid)) {
+                biographyManager.updateBiography(orcid, bio);
             } else {
-                biographyManager.createBiography(getCurrentUserOrcid(), bio);    
+                biographyManager.createBiography(orcid, bio);    
             }            
         }
         return bf;
