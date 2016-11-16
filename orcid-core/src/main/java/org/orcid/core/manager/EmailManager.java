@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.Email;
@@ -44,6 +45,8 @@ public interface EmailManager {
     
     Map<String, String> findIdsByCsvSeparatedEmails(String csvEmails);
     
+    Map<String, String> findIdsByEmails(List<String> emailList);
+    
     void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email);
@@ -63,4 +66,5 @@ public interface EmailManager {
     org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid);
     
     boolean verifySetCurrentAndPrimary(String orcid, String email);
+
 }

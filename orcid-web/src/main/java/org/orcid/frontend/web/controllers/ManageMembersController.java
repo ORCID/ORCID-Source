@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.MembersManager;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -229,7 +231,9 @@ public class ManageMembersController extends BaseController {
     public @ResponseBody ConsortiumForm findConsortium(@RequestParam("id") String id) {
         MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
-        consortiumForm.setContactsList(salesForceManager.retrieveContactsByAccountId(id));
+        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(id);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        consortiumForm.setContactsList(contactsList);
         return consortiumForm;
     }
 

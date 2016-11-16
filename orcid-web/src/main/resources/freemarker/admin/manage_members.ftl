@@ -487,7 +487,7 @@
                         </div>
                         <!-- Contacts -->
                         <div ng-repeat="contact in consortium.contactsList">
-                            <span>{{contact.name}} {{contact.email}} {{contact.role}}
+                            <span>{{contact.name}} {{contact.email}} {{contact.role}} {{contact.orcid}}
                         </div>
                         <!-- Buttons -->
                         <div class="row">

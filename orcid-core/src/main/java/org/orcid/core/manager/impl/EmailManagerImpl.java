@@ -99,17 +99,22 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public Map<String, String> findIdsByCsvSeparatedEmails(String csvEmail) {
-        Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         List<String> emailList = new ArrayList<String>();
-        String [] emails = csvEmail.split(",");
-        for(String email : emails) {
-            if(StringUtils.isNotBlank(email.trim()))
+        String[] emails = csvEmail.split(",");
+        for (String email : emails) {
+            if (StringUtils.isNotBlank(email.trim()))
                 emailList.add(email.trim());
         }
+        return findIdsByEmails(emailList);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public Map<String, String> findIdsByEmails(List<String> emailList) {
+        Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         List ids = emailDao.findIdByCaseInsensitiveEmail(emailList);
-        for (Iterator it = ids.iterator(); it.hasNext(); ) {
+        for (Iterator it = ids.iterator(); it.hasNext();) {
             Object[] orcidEmail = (Object[]) it.next();
             String orcid = (String) orcidEmail[0];
             String email = (String) orcidEmail[1];

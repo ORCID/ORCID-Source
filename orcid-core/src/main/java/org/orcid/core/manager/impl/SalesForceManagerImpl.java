@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
@@ -63,6 +64,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource
     private SalesForceDao salesForceDao;
+
+    @Resource
+    private EmailManager emailManager;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -123,6 +127,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
         return (Map<String, List<Contact>>) salesForceContactsCache.get(opportunityIds).getObjectValue();
+    }
+
+    @Override
+    public void addOrcidsToContacts(List<Contact> contacts) {
+        List<String> emails = contacts.stream().map(c -> c.getEmail()).collect(Collectors.toList());
+        Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
+        contacts.stream().forEach(c -> {
+            c.setOrcid(emailsToOrcids.get(c.getEmail()));
+        });
     }
 
     @Override
