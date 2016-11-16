@@ -14,9 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.record_rc3.Name;
 
 /**
@@ -24,8 +23,10 @@ import org.orcid.jaxb.model.record_rc3.Name;
  * @author Angel Montenegro
  * 
  */
-public interface RecordNameManager extends RecordNameManagerReadOnly {
-    boolean updateRecordName(String orcid, Name name);
+public interface RecordNameManagerReadOnly {
+    boolean exists(String orcid);
+    
+    Name getRecordName(String orcid, long lastModified);
 
-    void createRecordName(String orcid, Name name);
+    Name findByCreditName(String creditName);    
 }

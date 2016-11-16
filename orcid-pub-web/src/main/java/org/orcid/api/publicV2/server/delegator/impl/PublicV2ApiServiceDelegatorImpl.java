@@ -31,7 +31,6 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -46,6 +45,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
@@ -174,7 +174,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private AddressManagerReadOnly addressManagerReadOnly;
     
     @Resource
-    private BiographyManager biographyManager;
+    private BiographyManagerReadOnly biographyManagerReadOnly;
 
     @Resource
     private RecordManager recordManager;
@@ -508,7 +508,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManager.getPublicBiography(orcid);
+        Biography bio = biographyManagerReadOnly.getPublicBiography(orcid);
         orcidSecurityManager.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();

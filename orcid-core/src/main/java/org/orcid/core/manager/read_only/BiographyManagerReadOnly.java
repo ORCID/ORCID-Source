@@ -14,18 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
-import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.Biography;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public interface RecordNameManager extends RecordNameManagerReadOnly {
-    boolean updateRecordName(String orcid, Name name);
+public interface BiographyManagerReadOnly {
+    Biography getBiography(String orcid);
 
-    void createRecordName(String orcid, Name name);
+    Biography getPublicBiography(String orcid);    
 }

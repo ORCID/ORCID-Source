@@ -55,6 +55,7 @@ import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common_rc3.CreditName;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -62,6 +63,9 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.FamilyName;
+import org.orcid.jaxb.model.record_rc3.GivenNames;
+import org.orcid.jaxb.model.record_rc3.Name;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -187,11 +191,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public String findByCreditName(String creditName) {
-        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
-        if(recordName == null) {
+        Name name = recordNameManager.findByCreditName(creditName);
+        if(name == null) {
             return null;
         }
-        return recordName.getProfile().getId();
+        return name.getPath();
     }
     
     /**
@@ -268,21 +272,21 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             
             BiographyEntity bioEntity = deprecated.getBiographyEntity();
             if(bioEntity != null) {
-                biographyManager.updateBiography(deprecatedOrcid,deprecatedBio);
+                biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
             } else {
                 biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
             }
             
             
             //Set the deactivated names
-            RecordNameEntity recordName = deprecated.getRecordNameEntity();
-            if(recordName != null) {
-                recordName.setCreditName(null);
-                recordName.setGivenNames("Given Names Deactivated");
-                recordName.setFamilyName("Family Name Deactivated");
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
-                recordName.setProfile(new ProfileEntity(deprecatedOrcid));
-                recordNameManager.updateRecordName(recordName);                
+            if(recordNameManager.exists(deprecatedOrcid)) {
+                Name name = new Name();
+                name.setCreditName(new CreditName(""));
+                name.setGivenNames(new GivenNames("Given Names Deactivated"));
+                name.setFamilyName(new FamilyName("Family Name Deactivated"));
+                name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+                name.setPath(deprecatedOrcid);
+                recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
                                                         
             // Move all emails to the primary email

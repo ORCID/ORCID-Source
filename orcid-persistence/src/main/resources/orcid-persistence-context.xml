@@ -61,6 +61,18 @@
 	</bean>
 
 	<!-- Person DAO's -->
+	<bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
+	
+	<bean id="recordNameDaoReadOnly" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="biographyDao" class="org.orcid.persistence.dao.impl.BiographyDaoImpl" />
+	
+	<bean id="biographyDaoReadOnly" class="org.orcid.persistence.dao.impl.BiographyDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
 	<bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
 	
 	<bean id="addressDaoReadOnly" class="org.orcid.persistence.dao.impl.AddressDaoImpl">
@@ -200,11 +212,7 @@
     <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />
     
     <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
-    
-    <bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
-
-	<bean id="biographyDao" class="org.orcid.persistence.dao.impl.BiographyDaoImpl" />
-
+            
     <bean id="identityProviderDao" class="org.orcid.persistence.dao.impl.IdentityProviderDaoImpl" />
 
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />

@@ -40,6 +40,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -65,7 +66,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc3.FamilyName;
 import org.orcid.jaxb.model.record_rc3.GivenNames;
 import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
@@ -278,6 +278,8 @@ public class SetUpClientsAndUsers {
     protected GivenPermissionToDao givenPermissionToDao;   
     @Resource
     protected BiographyManager biographyManager;
+    @Resource
+    protected RecordNameManager recordNameManager;
     
     @Before
     public void before() throws Exception {
@@ -492,15 +494,17 @@ public class SetUpClientsAndUsers {
             }
 
             // Set default names
-            PersonalDetails personalDetails = new PersonalDetails();
             Name name = new Name();
             name.setCreditName(new CreditName(params.get(CREDIT_NAME)));
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
-            name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            personalDetails.setName(name);            
-            orcidProfileManager.updateNames(orcid, personalDetails);
-                       
+            name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));                       
+            if(recordNameManager.exists(orcid)) {
+                recordNameManager.updateRecordName(orcid, name);
+            } else {
+                recordNameManager.createRecordName(orcid, name);
+            }
+                                   
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio

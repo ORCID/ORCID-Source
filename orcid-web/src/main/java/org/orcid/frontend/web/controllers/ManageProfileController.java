@@ -62,7 +62,6 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -859,8 +858,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         copyErrors(nf.getGivenNames(), nf);
         if (nf.getErrors().size() > 0)
             return nf;
-        PersonalDetails personalDetails = nf.toPersonalDetails();
-        orcidProfileManager.updateNames(getCurrentUserOrcid(), personalDetails);
+        Name name = nf.toName();
+        
+        String orcid = getCurrentUserOrcid();
+        if(recordNameManager.exists(orcid)) {
+            recordNameManager.updateRecordName(orcid, name);
+        } else {
+            recordNameManager.createRecordName(orcid, name);
+        }
+        
         return nf;
     }
 

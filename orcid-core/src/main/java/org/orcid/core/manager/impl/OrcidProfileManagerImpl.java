@@ -132,7 +132,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
@@ -932,32 +931,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             securityDetails.setEncryptedSecurityAnswer(encryptedAnswer != null ? new EncryptedSecurityAnswer(encryptedAnswer) : null);
             cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
             orcidProfileCacheManager.put(cachedProfile);
-        }
-    }
-
-    @Override
-    @Transactional    
-    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails) {
-        String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
-        String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
-        String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
-        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-        
-        RecordNameEntity recordName = recordNameManager.getRecordName(orcid, profileEntityManager.getLastModified(orcid));
-        if(recordName != null) {
-            recordName.setCreditName(creditName);
-            recordName.setFamilyName(familyName);
-            recordName.setGivenNames(givenNames);
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(namesVisibility.value()));
-            recordNameManager.updateRecordName(recordName);
-        } else {
-            recordName = new RecordNameEntity();
-            recordName.setCreditName(creditName);
-            recordName.setFamilyName(familyName);
-            recordName.setGivenNames(givenNames);
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(namesVisibility.value()));
-            recordName.setProfile(new ProfileEntity(orcid));
-            recordNameManager.createRecordName(recordName);
         }
     }            
 

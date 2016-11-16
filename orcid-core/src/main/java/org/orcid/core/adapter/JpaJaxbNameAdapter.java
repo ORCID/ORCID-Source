@@ -14,18 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.adapter;
 
-import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public interface RecordNameManager extends RecordNameManagerReadOnly {
-    boolean updateRecordName(String orcid, Name name);
+public interface JpaJaxbNameAdapter {
 
-    void createRecordName(String orcid, Name name);
+    RecordNameEntity toRecordNameEntity(Name name);
+
+    Name toName(RecordNameEntity entity);
+
+    RecordNameEntity toRecordNameEntity(Name name, RecordNameEntity existing);
 }

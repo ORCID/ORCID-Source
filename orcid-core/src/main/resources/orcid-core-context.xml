@@ -122,6 +122,22 @@
 	</bean>
 
 	<!-- Person Managers -->
+	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl">
+		<property name="recordNameDao" ref="recordNameDao" />
+	</bean>
+	
+	<bean id="recordNameManagerReadOnly" class="org.orcid.core.manager.read_only.impl.RecordNameManagerReadOnlyImpl">
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+	</bean>
+
+	<bean id="biographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl">
+		<property name="biographyDao" ref="biographyDao" />
+	</bean>
+	
+	<bean id="biographyManagerReadOnly" class="org.orcid.core.manager.read_only.impl.BiographyManagerReadOnlyImpl">
+		<property name="biographyDao" ref="biographyDaoReadOnly" />
+	</bean>
+	
 	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl">
 		<property name="addressDao" ref="addressDao" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
@@ -150,11 +166,7 @@
 	<bean id="profileKeywordManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ProfileKeywordManagerReadOnlyImpl">
 		<property name="profileKeywordDao" ref="profileKeywordDaoReadOnly" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
-	</bean>
-
-	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
-
-
+	</bean>	
 
 
 
@@ -398,9 +410,7 @@
 	
 	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />	
 	
-	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />		
-	
-	<bean id="BiographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl" />
+	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />				
 	
 	<bean id="profileFundingManager" class="org.orcid.core.manager.impl.ProfileFundingManagerImpl" />
 	
@@ -867,6 +877,11 @@
     <bean id="otherNameUrlMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getOtherNameMapperFacade"/>
 	<bean id="jpaJaxbOtherNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbOtherNameAdapterImpl">
         <property name="mapperFacade" ref="otherNameUrlMapperFacade" />
+    </bean>
+    
+    <bean id="nameMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getNameMapperFacade"/>
+	<bean id="jpaJaxbNameAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNameAdapterImpl">
+        <property name="mapperFacade" ref="nameMapperFacade" />
     </bean>
     
     <bean id="externalIdentifierMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getExternalIdentifierMapperFacade"/>
