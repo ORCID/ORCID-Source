@@ -328,7 +328,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
+        return salesForceAdapter.createContactsFromJsonLegacy(response.getEntity(JSONObject.class));
     }
 
     private WebResource createContactsResource(Collection<String> opportunityIds) {

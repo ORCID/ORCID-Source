@@ -19,6 +19,7 @@ package org.orcid.core.salesforce.adapter;
 import java.net.URL;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -57,11 +58,15 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
 
     public MapperFacade getMemberMapperFacade() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().propertyResolverStrategy(new JSONPropertyResolver()).build();
-
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new StringConverter());
         converterFactory.registerConverter(new URLConverter());
+        registerMemberMap(mapperFactory);
+        registerContactMap(mapperFactory);
+        return mapperFactory.getMapperFacade();
+    }
 
+    public void registerMemberMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Member, JSONObject> classMap = mapperFactory.classMap(Member.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
         classMap.field("name", "Name");
@@ -74,7 +79,14 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("mainOpportunityPath", "Opportunities.records_array.first.attributes.url");
         classMap.field("consortiumLeadId", "Opportunities.records_array.first.Consortia_Lead__c");
         classMap.register();
-        return mapperFactory.getMapperFacade();
+    }
+    
+    public void registerContactMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<Contact,JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("role", "Member_Org_Role__c");
+        classMap.field("name", "Contact__r.Name");
+        classMap.field("email", "Contact__r.Email");
+        classMap.register();
     }
 
     private static class JSONPropertyResolver extends IntrospectorPropertyResolver {

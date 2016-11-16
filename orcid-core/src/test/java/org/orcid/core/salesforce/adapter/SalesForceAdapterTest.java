@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 
 /**
@@ -114,6 +115,33 @@ public class SalesForceAdapterTest {
         member.setWebsiteUrl(new URL("http://org1newsite.org"));
         JSONObject record = salesForceAdapter.createSaleForceRecordFromMember(member);
         assertEquals("{\"Name\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}", record.toString());
+    }
+
+    @Test
+    public void testCreateContactFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_contacts_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        JSONArray records = inputObject.getJSONArray("records");
+        JSONObject record = records.getJSONObject(0);
+        JSONObject contactRoles = record.getJSONObject("Membership_Contact_Roles__r");
+        JSONArray contactRoleRecords = contactRoles.getJSONArray("records");
+        JSONObject contactRole = contactRoleRecords.getJSONObject(0);
+        Contact contact = salesForceAdapter.createContactFromJson(contactRole);
+        assertEquals("Contact1FirstName Contact1LastName", contact.getName());
+        assertEquals("contact1@mailinator.com", contact.getEmail());
+        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+    }
+    
+    @Test
+    public void testCreateContactsFromJson() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_contacts_list.json"));
+        JSONObject inputObject = new JSONObject(inputString);
+        List<Contact> contactsList = salesForceAdapter.createContactsFromJson(inputObject);
+        assertEquals(2, contactsList.size());
+        Contact contact = contactsList.get(0);
+        assertEquals("Contact1FirstName Contact1LastName", contact.getName());
+        assertEquals("contact1@mailinator.com", contact.getEmail());
+        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -54,7 +55,7 @@ public class SalesForceAdapter {
 
     @Resource(name = "salesForceMemberMapperFacade")
     private MapperFacade mapperFacade;
-    
+
     public void setMapperFacade(MapperFacade mapperFacade) {
         this.mapperFacade = mapperFacade;
     }
@@ -90,7 +91,7 @@ public class SalesForceAdapter {
         return null;
     }
 
-    public Map<String, List<Contact>> createContactsFromJson(JSONObject results) {
+    public Map<String, List<Contact>> createContactsFromJsonLegacy(JSONObject results) {
         Map<String, List<Contact>> map = new HashMap<>();
         try {
             JSONArray records = results.getJSONArray("records");
@@ -111,6 +112,21 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
         }
         return map;
+    }
+
+    Contact createContactFromJson(JSONObject record) {
+        return mapperFacade.map(record, Contact.class);
+    }
+
+    List<Contact> createContactsFromJson(JSONObject object) {
+        try {
+            JSONObject firstRecord = extractFirstRecord(object);
+            JSONObject contactRoles = firstRecord.getJSONObject("Membership_Contact_Roles__r");
+            List<JSONObject> objectsList = extractObjectListFromRecords(contactRoles);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contacts list from SalesForce JSON", e);
+        }
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {
@@ -174,8 +190,8 @@ public class SalesForceAdapter {
     Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
         return mapperFacade.map(record, Member.class);
     }
-    
-    JSONObject createSaleForceRecordFromMember(Member member){
+
+    JSONObject createSaleForceRecordFromMember(Member member) {
         return mapperFacade.map(member, JSONObject.class);
     }
 
@@ -220,6 +236,20 @@ public class SalesForceAdapter {
             urlString = "http://" + urlString;
         }
         return urlString;
+    }
+
+    private List<JSONObject> extractObjectListFromRecords(JSONObject object) throws JSONException {
+        List<JSONObject> objects = new ArrayList<>();
+        JSONArray records = object.getJSONArray("records");
+        for (int i = 0; i < records.length(); i++) {
+            objects.add(records.getJSONObject(i));
+        }
+        return objects;
+    }
+
+    private JSONObject extractFirstRecord(JSONObject object) throws JSONException {
+        JSONArray records = object.getJSONArray("records");
+        return records.getJSONObject(0);
     }
 
     public static String extractIdFromUrl(String url) {
