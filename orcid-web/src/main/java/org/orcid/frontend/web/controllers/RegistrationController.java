@@ -961,7 +961,7 @@ public class RegistrationController extends BaseController {
             return claim;
         }
 
-        Map<String, String> emails = emailManager.findIdByEmail(decryptedEmail);
+        Map<String, String> emails = emailManager.findIdsByCsvSeparatedEmails(decryptedEmail);
         String orcid = emails.get(decryptedEmail);
 
         if (PojoUtil.isEmpty(orcid)) {
