@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -102,31 +100,16 @@ public class SalesForceManagerImpl implements SalesForceManager {
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
-            details.setContacts(findContacts(salesForceMember));
             details.setSubMembers(findSubMembers(memberId));
             return details;
         }
         throw new IllegalArgumentException("No member details found for " + memberId);
     }
 
-    @Override
-    public List<Contact> retrieveContactsByOpportunityId(String opportunityId) {
-        List<String> opportunityIds = new ArrayList<>();
-        opportunityIds.add(opportunityId);
-        Map<String, List<Contact>> contacts = retrieveContactsByOpportunityId(opportunityIds);
-        return contacts.get(opportunityId);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public List<Contact> retrieveContactsByAccountId(String accountId) {
         return (List<Contact>) salesForceContactsCache.get(accountId).getObjectValue();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
-        return (Map<String, List<Contact>>) salesForceContactsCache.get(opportunityIds).getObjectValue();
     }
 
     @Override
@@ -147,10 +130,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
         salesForceContactsCache.removeAll();
     }
 
-    private List<Contact> findContacts(Member member) {
-        return retrieveContactsByAccountId(member.getId());
-    }
-
     private List<SubMember> findSubMembers(String memberId) {
         Consortium consortium = retrieveConsortium(memberId);
         if (consortium != null) {
@@ -158,11 +137,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 SubMember subMember = new SubMember();
                 subMember.setOpportunity(o);
                 subMember.setSlug(SlugUtils.createSlug(o.getTargetAccountId(), o.getAccountName()));
-                List<Contact> contactsList = retrieveContactsByAccountId(o.getTargetAccountId());
-                Optional<Contact> mainContactOptional = contactsList.stream().filter(c -> SalesForceDao.MAIN_CONTACT_ROLE.equals(c.getRole())).findFirst();
-                if (mainContactOptional.isPresent()) {
-                    subMember.setMainContact(mainContactOptional.get());
-                }
                 return subMember;
             }).collect(Collectors.toList());
             return subMembers;

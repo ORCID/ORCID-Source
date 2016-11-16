@@ -19,7 +19,6 @@ package org.orcid.core.salesforce.dao.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -127,16 +126,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
             return retrieveContactsFromSalesForceByAccountId(getFreshAccessToken(), accountId);
-        }
-    }
-
-    @Override
-    public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
-        try {
-            return retrieveContactsFromSalesForceByOpportunityId(getAccessToken(), opportunityIds);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
-            return retrieveContactsFromSalesForceByOpportunityId(getFreshAccessToken(), opportunityIds);
         }
     }
 
@@ -341,37 +330,9 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
-    private Map<String, List<Contact>> retrieveContactsFromSalesForceByOpportunityId(String accessToken, Collection<String> opportunityIds)
-            throws SalesForceUnauthorizedException {
-        LOGGER.info("About get legacy list of contacts from SalesForce");
-        validateSalesForceIdsAndConcatenate(opportunityIds);
-        WebResource resource = createLegacyContactsResource(opportunityIds);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
-        checkAuthorization(response);
-        if (response.getStatus() != 200) {
-            throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
-                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
-        }
-        return salesForceAdapter.createContactsFromJsonLegacy(response.getEntity(JSONObject.class));
-    }
-
     private WebResource createContactsResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "Select (Select Id, Contact__r.Name, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='" + accountId + "'");
-        return resource;
-    }
-
-    private WebResource createLegacyContactsResource(Collection<String> opportunityIds) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('" + MAIN_CONTACT_ROLE + "','" + TECH_LEAD_ROLE
-                        + "')) FROM Opportunity WHERE Id IN (" + validateSalesForceIdsAndConcatenate(opportunityIds) + ")");
         return resource;
     }
 

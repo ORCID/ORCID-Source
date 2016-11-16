@@ -16,9 +16,7 @@
  */
 package org.orcid.core.salesforce.dao;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
@@ -45,8 +43,6 @@ public interface SalesForceDao {
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
     
     List<Contact> retrieveContactsByAccountId(String accountId);
-
-    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
 
     /**
      * @return The sales force object id, if valid.
