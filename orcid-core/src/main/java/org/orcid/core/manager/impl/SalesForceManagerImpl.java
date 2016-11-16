@@ -34,6 +34,8 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.persistence.dao.SalesForceConnectionDao;
+import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.ReleaseNameUtils;
 
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
@@ -62,6 +64,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource
     private SalesForceDao salesForceDao;
+
+    @Resource
+    private SalesForceConnectionDao salesForceConnectionDao;
 
     @Resource
     private EmailManager emailManager;
@@ -142,6 +147,25 @@ public class SalesForceManagerImpl implements SalesForceManager {
             return subMembers;
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public void enableAccess(String accountId, List<Contact> contactsList) {
+        contactsList.forEach(c -> {
+            String orcid = c.getOrcid();
+            if (orcid == null) {
+                return;
+            }
+            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId);
+            if (connection == null) {
+                connection = new SalesForceConnectionEntity();
+                connection.setOrcid(orcid);
+                connection.setSalesForceAccountId(accountId);
+                connection.setEmail(c.getEmail());
+                salesForceConnectionDao.persist(connection);
+            }
+        });
+
     }
 
 }

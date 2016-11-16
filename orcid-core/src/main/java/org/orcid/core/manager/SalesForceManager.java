@@ -43,6 +43,8 @@ public interface SalesForceManager {
     List<Contact> retrieveContactsByAccountId(String accountId);
 
     void addOrcidsToContacts(List<Contact> contacts);
+    
+    void enableAccess(String accountId, List<Contact> contactsList);
 
     /**
      * Clear caches

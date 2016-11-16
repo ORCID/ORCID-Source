@@ -236,6 +236,13 @@ public class ManageMembersController extends BaseController {
         consortiumForm.setContactsList(contactsList);
         return consortiumForm;
     }
+    
+    @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
+    public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
+        consortium.setErrors(new ArrayList<String>());
+        salesForceManager.enableAccess(consortium.getAccountId(), consortium.getContactsList());
+        return consortium;
+    }
 
     /**
      * MODEL ATTRIBUTES

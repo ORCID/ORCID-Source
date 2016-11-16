@@ -40,8 +40,8 @@ public class SalesForceConnectionEntity extends BaseEntity<Long> {
 
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "saleforce_connection_seq")
-    @SequenceGenerator(name = "saleforce_connection_seq", sequenceName = "saleforce_connection_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "salesforce_connection_seq")
+    @SequenceGenerator(name = "salesforce_connection_seq", sequenceName = "salesforce_connection_seq")
     public Long getId() {
         return id;
     }

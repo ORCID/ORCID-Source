@@ -26,10 +26,19 @@ import org.orcid.core.salesforce.model.MemberDetails;
 public class ConsortiumForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String accountId;
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
     private List<Contact> contactsList;
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
 
     @Override
     public List<String> getErrors() {
@@ -67,6 +76,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
 
     public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
         ConsortiumForm form = new ConsortiumForm();
+        form.setAccountId(memberDetails.getMember().getId());
         form.setName(Text.valueOf(memberDetails.getMember().getName()));
         form.setWebsite(Text.valueOf(memberDetails.getMember().getWebsiteUrl().toString()));
         return form;
