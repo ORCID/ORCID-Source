@@ -229,6 +229,7 @@ public class ManageMembersController extends BaseController {
     public @ResponseBody ConsortiumForm findConsortium(@RequestParam("id") String id) {
         MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
+        consortiumForm.setContactsList(salesForceManager.retrieveContactsByAccountId(id));
         return consortiumForm;
     }
 

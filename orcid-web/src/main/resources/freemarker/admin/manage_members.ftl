@@ -485,6 +485,10 @@
                                 <i>{{consortium.website.value}}</i><br />
                             </div>
                         </div>
+                        <!-- Contacts -->
+                        <div ng-repeat="contact in consortium.contactsList">
+                            <span>{{contact.name}} {{contact.email}} {{contact.role}}
+                        </div>
                         <!-- Buttons -->
                         <div class="row">
                             <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">

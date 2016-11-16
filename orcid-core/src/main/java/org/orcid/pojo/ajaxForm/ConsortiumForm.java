@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.MemberDetails;
 
 public class ConsortiumForm implements ErrorsInterface, Serializable {
@@ -28,6 +29,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
+    private List<Contact> contactsList;
 
     @Override
     public List<String> getErrors() {
@@ -55,6 +57,14 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         this.website = website;
     }
 
+    public List<Contact> getContactsList() {
+        return contactsList;
+    }
+
+    public void setContactsList(List<Contact> contactsList) {
+        this.contactsList = contactsList;
+    }
+
     public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
         ConsortiumForm form = new ConsortiumForm();
         form.setName(Text.valueOf(memberDetails.getMember().getName()));
@@ -62,5 +72,4 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         return form;
     }
 
-    
 }
