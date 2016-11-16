@@ -167,6 +167,16 @@
 		<property name="profileKeywordDao" ref="profileKeywordDaoReadOnly" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>	
+	
+	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl">
+		<property name="externalIdentifierDao" ref="externalIdentifierDao" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>	
+	
+	<bean id="externalIdentifierManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ExternalIdentifierManagerReadOnlyImpl">
+		<property name="externalIdentifierDao" ref="externalIdentifierDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>	
 
 
 
@@ -416,9 +426,7 @@
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
 
-    <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />
-
-	<bean id="externalIdentifierManager" class="org.orcid.core.manager.impl.ExternalIdentifierManagerImpl" />
+    <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
 	
 	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
 	

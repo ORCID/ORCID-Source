@@ -96,6 +96,12 @@
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
+     
+     <bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
+     
+     <bean id="externalIdentifierDaoReadOnly" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl">
+     	<property name="entityManager" ref="entityManagerReadOnly" />
+     </bean>
     
     
     
@@ -175,9 +181,7 @@
 	
 	
 	<!-- Statistics DAO -->
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
-     
-	<bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
+	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     	
 	
     <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />     
  

@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -65,7 +66,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        externalIdentifierManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", sourceManager);
     }
 
     @AfterClass

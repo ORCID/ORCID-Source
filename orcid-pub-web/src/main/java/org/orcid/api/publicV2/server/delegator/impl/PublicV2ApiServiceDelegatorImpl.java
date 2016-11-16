@@ -33,7 +33,6 @@ import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -46,6 +45,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
@@ -159,7 +159,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private EmailManager emailManager;
 
     @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -489,7 +489,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifiers(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         sourceUtils.setSourceName(extIds);
         return Response.ok(extIds).build();
@@ -498,7 +498,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
+        PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtils.setSourceName(extId);
