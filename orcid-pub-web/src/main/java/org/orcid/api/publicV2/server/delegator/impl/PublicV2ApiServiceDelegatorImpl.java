@@ -35,7 +35,6 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
@@ -45,6 +44,7 @@ import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
@@ -135,19 +135,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ProfileDao profileDao;
 
     @Resource
-    private SourceManager sourceManager;
-
-    @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
-
-    @Resource
-    private GroupIdRecordManager groupIdRecordManager;
-
-    @Resource
-    private LocaleManager localeManager;    
+    private ActivitiesSummaryManager activitiesSummaryManager;
     
     //Person managers
     @Resource
@@ -175,15 +163,31 @@ public class PublicV2ApiServiceDelegatorImpl
     private BiographyManagerReadOnly biographyManagerReadOnly;
 
     @Resource
-    private RecordManager recordManager;        
+    private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
     
+    //Record manager
     @Resource
-    private ActivitiesSummaryManager activitiesSummaryManager;
+    private RecordManager recordManager;                
     
-    @Resource
-    private PersonDetailsManager personDetailsManager;
+    
     
     //Others
+    @Resource
+    private SourceManager sourceManager;
+
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+
+    @Resource(name = "visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
+
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
+
+    @Resource
+    private LocaleManager localeManager;    
+
+    
     @Resource
     private SourceUtils sourceUtils;
     
@@ -558,7 +562,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPerson(String orcid) {
-        Person person = personDetailsManager.getPublicPersonDetails(orcid);
+        Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         ElementUtils.setPathToPerson(person, orcid);
         sourceUtils.setSourceName(person);
         return Response.ok(person).build();

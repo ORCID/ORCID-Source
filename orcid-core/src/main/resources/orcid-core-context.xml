@@ -213,14 +213,44 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
+	<bean id="personDetailsManager" class="org.orcid.core.manager.impl.PersonDetailsManagerImpl">
+		<property name="addressManager" ref="addressManager"/>
+		<property name="externalIdentifierManager" ref="externalIdentifierManager"/>
+		<property name="profileKeywordManager" ref="profileKeywordManager"/>
+		<property name="otherNameManager" ref="otherNameManager"/>
+		<property name="researcherUrlManager" ref="researcherUrlManager"/>
+		<property name="emailManager" ref="emailManager"/>
+		<property name="recordNameManager" ref="recordNameManager"/>
+		<property name="biographyManager" ref="biographyManager"/>
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
+	
+	<bean id="personDetailsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.PersonDetailsManagerReadOnlyImpl">
+		<property name="addressManager" ref="addressManagerReadOnly"/>
+		<property name="externalIdentifierManager" ref="externalIdentifierManagerReadOnly"/>
+		<property name="profileKeywordManager" ref="profileKeywordManagerReadOnly"/>
+		<property name="otherNameManager" ref="otherNameManagerReadOnly"/>
+		<property name="researcherUrlManager" ref="researcherUrlManagerReadOnly"/>
+		<property name="emailManager" ref="emailManagerReadOnly"/>
+		<property name="recordNameManager" ref="recordNameManagerReadOnly"/>
+		<property name="biographyManager" ref="biographyManagerReadOnly"/>
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
 	
 
-	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />
-	
-	<bean id="personDetailsManager" class="org.orcid.core.manager.impl.PersonDetailsManagerImpl" />
+	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />		
 
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />

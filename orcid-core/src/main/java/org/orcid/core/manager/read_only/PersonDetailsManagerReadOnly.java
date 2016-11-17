@@ -14,10 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.jaxb.model.record_rc3.Person;
 
-public interface PersonDetailsManager extends PersonDetailsManagerReadOnly {
+public interface PersonDetailsManagerReadOnly {
+    Person getPersonDetails(String orcid);
     
+    Person getPublicPersonDetails(String orcid);
 }
