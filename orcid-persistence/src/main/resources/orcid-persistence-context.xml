@@ -103,15 +103,17 @@
      	<property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
     
+	<bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
+	
+	<bean id="emailDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>    		
     
     
     
     
     
-    
-    <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />    
-    
-    <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
+    <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />            
 
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />

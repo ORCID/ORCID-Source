@@ -32,7 +32,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -44,6 +43,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
@@ -156,7 +156,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private OtherNameManagerReadOnly otherNameManagerReadOnly;
 
     @Resource
-    private EmailManager emailManager;
+    private EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
@@ -450,7 +450,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmails(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Emails emails = emailManager.getPublicEmails(orcid, lastModifiedTime);
+        Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
         ElementUtils.setPathToEmail(emails, orcid);
         sourceUtils.setSourceName(emails);
         return Response.ok(emails).build();
