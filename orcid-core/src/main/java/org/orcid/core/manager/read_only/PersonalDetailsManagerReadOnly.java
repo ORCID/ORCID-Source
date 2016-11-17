@@ -14,16 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.PersonalDetailsManager;
-import org.orcid.core.manager.read_only.impl.PersonalDetailsManagerReadOnlyImpl;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 
 /**
 * 
 * @author Angel Montenegro
 * 
 */
-public class PersonalDetailsManagerImpl extends PersonalDetailsManagerReadOnlyImpl implements PersonalDetailsManager {
-    
+public interface PersonalDetailsManagerReadOnly extends ManagerReadOnlyBase {
+    PersonalDetails getPersonalDetails(String orcid);
+
+    PersonalDetails getPublicPersonalDetails(String orcid);
 }

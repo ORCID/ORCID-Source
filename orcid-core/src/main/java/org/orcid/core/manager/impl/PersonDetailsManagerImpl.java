@@ -113,13 +113,9 @@ public class PersonDetailsManagerImpl implements PersonDetailsManager {
     @Override    
     public Person getPersonDetails(String orcid) {        
         long lastModifiedTime = profileEntityManager.getLastModified(orcid);
-        Person person = new Person();
-        Biography biography = biographyManager.getBiography(orcid);
-        if(biography != null) {
-            person.setBiography(biography);
-        } 
-        
-        person.setName(personalDetailsManager.getName(orcid));
+        Person person = new Person();        
+        person.setName(recordNameManager.getRecordName(orcid, lastModifiedTime));
+        person.setBiography(biographyManager.getBiography(orcid, lastModifiedTime));
         
         person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
@@ -150,19 +146,19 @@ public class PersonDetailsManagerImpl implements PersonDetailsManager {
 
     @Override    
     public Person getPublicPersonDetails(String orcid) {
-        Person person = new Person();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
+        Person person = new Person();                
         
-        Biography bio = biographyManager.getPublicBiography(orcid);        
-        if(bio != null) {
-            person.setBiography(bio);
-        } 
-        
-        Name name = personalDetailsManager.getName(orcid);
+        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);
         if(Visibility.PUBLIC.equals(name.getVisibility())) {
             person.setName(name);
         }
-                
-        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
+        
+        Biography bio = biographyManager.getPublicBiography(orcid, lastModifiedTime);        
+        if(bio != null) {
+            person.setBiography(bio);
+        }
+                        
         person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         

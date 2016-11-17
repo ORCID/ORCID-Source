@@ -25,6 +25,7 @@ import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
@@ -42,7 +43,8 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     }
     
     @Override
-    public Biography getBiography(String orcid) {
+    @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
+    public Biography getBiography(String orcid, long lastModified) {
         Biography bio = new Biography();
         BiographyEntity biographyEntity = null;
         try {
@@ -60,8 +62,9 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     }
     
     @Override
-    public Biography getPublicBiography(String orcid) {
-        Biography bio = getBiography(orcid);
+    @Cacheable(value = "public-biography", key = "#orcid.concat('-').concat(#lastModified)")
+    public Biography getPublicBiography(String orcid, long lastModified) {
+        Biography bio = getBiography(orcid, lastModified);
         if(bio != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }

@@ -178,9 +178,19 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>	
 
+	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl">
+		<property name="otherNameManager" ref="otherNameManager" />
+		<property name="recordNameManager" ref="recordNameManager" />
+		<property name="biographyManager" ref="biographyManager" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
 
-
-
+	<bean id="personalDetailsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.PersonalDetailsManagerReadOnlyImpl">
+		<property name="otherNameManager" ref="otherNameManagerReadOnly" />
+		<property name="recordNameManager" ref="recordNameManagerReadOnly" />
+		<property name="biographyManager" ref="biographyManagerReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
 
 
 	
@@ -456,9 +466,7 @@
 
 	<bean id="membersManager" class="org.orcid.core.manager.impl.MembersManagerImpl" />
 
-	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />
-	
-	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />	
+	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
 	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 

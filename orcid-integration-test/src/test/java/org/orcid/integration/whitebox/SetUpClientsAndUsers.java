@@ -508,7 +508,7 @@ public class SetUpClientsAndUsers {
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            org.orcid.jaxb.model.record_rc3.Biography bio = biographyManager.getBiography(orcid);
+            org.orcid.jaxb.model.record_rc3.Biography bio = biographyManager.getBiography(orcid, 0L);
             if (bio == null || bio.getContent() == null) {
                 bio = new org.orcid.jaxb.model.record_rc3.Biography(params.get(BIO)); 
                 bio.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));

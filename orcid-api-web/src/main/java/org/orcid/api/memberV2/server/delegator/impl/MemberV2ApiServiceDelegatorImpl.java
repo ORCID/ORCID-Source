@@ -995,12 +995,12 @@ public class MemberV2ApiServiceDelegatorImpl
         Biography bio = null;
         try {            
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-            bio = biographyManager.getBiography(orcid);
+            bio = biographyManager.getBiography(orcid, getLastModifiedTime(orcid));
             orcidSecurityManager.checkVisibility(bio, orcid);            
         } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                bio = biographyManager.getPublicBiography(orcid);
+                bio = biographyManager.getPublicBiography(orcid, getLastModifiedTime(orcid));
                 if(bio == null) {
                     throw new OrcidUnauthorizedException("The biography is not public");
                 }

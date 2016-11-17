@@ -37,7 +37,6 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonDetailsManager;
-import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
@@ -47,6 +46,7 @@ import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -165,7 +165,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private String baseUrl;
 
     @Resource
-    private PersonalDetailsManager personalDetailsManager;
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
 
     @Resource
     private ProfileKeywordManagerReadOnly profileKeywordManagerReadOnly;
@@ -459,7 +459,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+        PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         sourceUtils.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
@@ -508,7 +508,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManagerReadOnly.getPublicBiography(orcid);
+        Biography bio = biographyManagerReadOnly.getPublicBiography(orcid, getLastModifiedTime(orcid));
         orcidSecurityManager.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();

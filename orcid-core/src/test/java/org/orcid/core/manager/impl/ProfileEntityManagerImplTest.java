@@ -170,7 +170,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals("Given Names Deactivated", name.getGivenNames().getContent());
         assertEquals("Family Name Deactivated", name.getFamilyName().getContent());
         
-        Biography bio = biographyManager.getBiography(orcidToDeprecate);
+        Biography bio = biographyManager.getBiography(orcidToDeprecate, 0);
         assertNotNull(bio);
         assertNull(bio.getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, bio.getVisibility());

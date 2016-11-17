@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.record_rc3.Biography;
 public interface BiographyManagerReadOnly {
     boolean exists(String orcid);
     
-    Biography getBiography(String orcid);
+    Biography getBiography(String orcid, long lastModified);
 
-    Biography getPublicBiography(String orcid);    
+    Biography getPublicBiography(String orcid, long lastModified);    
 }
