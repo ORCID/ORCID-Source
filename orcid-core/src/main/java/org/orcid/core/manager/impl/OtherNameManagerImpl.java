@@ -50,12 +50,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private SourceManager sourceManager;     
     
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
+    private ProfileEntityCacheManager profileEntityCacheManager;        
         
     @Override
     @Transactional

@@ -1471,17 +1471,19 @@
         is_verified="true"
         visibility="LIMITED"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-02 15:31:00.00"
     />
     
     <email
         orcid="4444-4444-4444-4441"
         email="public@email.com"
-        is_primary="true"
+        is_primary="false"
         is_current="true"
         is_verified="true"
         visibility="PUBLIC"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-02 15:31:00.00"
     />
     
@@ -1493,6 +1495,7 @@
         is_verified="true"
         visibility="LIMITED"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-02 15:31:00.00"
     />
     
@@ -1504,7 +1507,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
-         last_modified="2016-01-01 12:22:00.00"
+        date_created="2016-01-01 00:00:00.00"
+		last_modified="2016-01-01 12:22:00.00"
     />
     
     <email
@@ -1515,6 +1519,7 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+		date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-02 15:31:00.00"
     />
         
@@ -1526,6 +1531,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
     <email
@@ -1536,6 +1543,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
      <email
@@ -1547,7 +1556,7 @@
         visibility="LIMITED"
         source_id="4444-4444-4444-4442"
         last_modified="2011-07-02 15:31:00.00"
-            date_created="2011-06-29 15:31:00.00"
+		date_created="2011-06-29 15:31:00.00"
     />
 
     <email
@@ -1559,7 +1568,7 @@
         visibility="PRIVATE"
         source_id="4444-4444-4444-4442"
         last_modified="2016-08-10 13:12:00.00"
-            date_created="2016-08-09 12:42:00.00"
+		date_created="2016-08-09 12:42:00.00"
     />
     
     <email
@@ -1630,6 +1639,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4444"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
     <email
@@ -1640,6 +1651,8 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
         
     <email
@@ -1662,6 +1675,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
 	<email
@@ -1672,6 +1687,8 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />    
     
     <email
@@ -1682,6 +1699,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4446"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
     <email
@@ -1692,6 +1711,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4447"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
       
 	<email
@@ -1702,6 +1723,8 @@
         is_verified="true"
         visibility="PUBLIC"
         source_id="4444-4444-4444-444X"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />
     
     <email
@@ -1712,6 +1735,8 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />        
       
 	<email
@@ -1721,8 +1746,9 @@
         is_current="true"
         is_verified="false"
         visibility="PUBLIC"
-        client_source_id="APP-5555555555555555"
-        last_modified="2016-04-01 15:31:00.00"
+        client_source_id="APP-5555555555555555"        
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />        
       
 	<email
@@ -1733,7 +1759,8 @@
         is_verified="false"
         visibility="PUBLIC"
         client_source_id="APP-5555555555555555"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />  
       
 	<email
@@ -1744,7 +1771,8 @@
         is_verified="true"
         visibility="PUBLIC"
         client_source_id="APP-5555555555555555"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />  
 
 	<email
@@ -1755,7 +1783,8 @@
         is_verified="true"
         visibility="LIMITED"
         client_source_id="APP-5555555555555555"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />  
 
 	<email
@@ -1766,7 +1795,8 @@
         is_verified="true"
         visibility="PRIVATE"
         client_source_id="APP-5555555555555555"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />  
             
 	<email
@@ -1777,19 +1807,57 @@
         is_verified="true"
         visibility="LIMITED"
         source_id="0000-0000-0000-0003"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />              
             
     <email
         orcid="0000-0000-0000-0003"
         email="self_private_0000-0000-0000-0003@test.orcid.org"
         is_primary="false"
-        is_current="true"
-        is_verified="true"
+        is_current="false"
+        is_verified="false"
         visibility="PRIVATE"
         source_id="0000-0000-0000-0003"
-        last_modified="2016-04-01 15:31:00.00"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
     />        
+    
+    <email
+        orcid="0000-0000-0000-0004"
+        email="public_0000-0000-0000-0004@test.orcid.org"
+        is_primary="false"
+        is_current="false"
+        is_verified="false"
+        visibility="PUBLIC"
+        source_id="0000-0000-0000-0004"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />  
+    
+    <email
+        orcid="0000-0000-0000-0004"
+        email="limited_0000-0000-0000-0004@test.orcid.org"
+        is_primary="false"
+        is_current="false"
+        is_verified="false"
+        visibility="LIMITED"
+        source_id="0000-0000-0000-0004"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />  
+    
+    <email
+        orcid="0000-0000-0000-0004"
+        email="private_0000-0000-0000-0004@test.orcid.org"
+        is_primary="true"
+        is_current="false"
+        is_verified="false"
+        visibility="PRIVATE"
+        source_id="0000-0000-0000-0004"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />  
     
     <profile_keyword 
     	id="1"            

@@ -38,7 +38,6 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -49,6 +48,7 @@ import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
@@ -147,10 +147,11 @@ public class PublicV2ApiServiceDelegatorImpl
     private GroupIdRecordManager groupIdRecordManager;
 
     @Resource
-    private LocaleManager localeManager;
-
+    private LocaleManager localeManager;    
+    
+    //Person managers
     @Resource
-    private ResearcherUrlManager researcherUrlManager;
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
 
     @Resource
     private OtherNameManagerReadOnly otherNameManagerReadOnly;
@@ -159,10 +160,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
-    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;    
 
     @Resource
     private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
@@ -177,16 +175,20 @@ public class PublicV2ApiServiceDelegatorImpl
     private BiographyManagerReadOnly biographyManagerReadOnly;
 
     @Resource
-    private RecordManager recordManager;
-    
-    @Resource
-    private SourceUtils sourceUtils;
+    private RecordManager recordManager;        
     
     @Resource
     private ActivitiesSummaryManager activitiesSummaryManager;
     
     @Resource
     private PersonDetailsManager personDetailsManager;
+    
+    //Others
+    @Resource
+    private SourceUtils sourceUtils;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
     
     private long getLastModifiedTime(String orcid) {        
         return profileEntityManagerReadOnly.getLastModified(orcid);        
@@ -430,7 +432,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrls(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         sourceUtils.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
@@ -439,7 +441,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
+        ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         sourceUtils.setSourceName(researcherUrl);

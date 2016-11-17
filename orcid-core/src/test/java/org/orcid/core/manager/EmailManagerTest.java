@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -143,21 +144,77 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void moveEmailToOtherAccountTest() {
-        fail();
+        String email = "public@email.com";
+        String from = "4444-4444-4444-4441";        
+        String to = "4444-4444-4444-4499";
+        
+        Map<String, String> map = emailManager.findIdByEmail(email);
+        assertNotNull(map);
+        assertEquals(from, map.get(email));
+        emailManager.moveEmailToOtherAccount(email, from, to);
+        
+        //Assert the email was moved
+        map = emailManager.findIdByEmail(email);
+        assertNotNull(map);
+        assertEquals(to, map.get(email));
+        
+        //Assert the email is not anymore in the from record
+        Emails emails = emailManager.getEmails(from, System.currentTimeMillis());
+        for(Email e : emails.getEmails()) {
+            assertFalse(email.equals(e.getEmail()));        
+        }
+        
+        //Assert the email belongs to the to record
+        emails = emailManager.getEmails(to, System.currentTimeMillis());
+        boolean found = false;
+        for(Email e : emails.getEmails()) {
+            if(email.equals(e.getEmail())) {
+                found = true;
+            }        
+        }
+        
+        assertTrue(found);
     }
     
     @Test
     public void verifySetCurrentAndPrimaryTest() {
-        fail();
-    }
-    
-    @Test
-    public void verifyEmailTest() {
-        fail();
+        String email = "public_0000-0000-0000-0004@test.orcid.org";
+        String orcid = "0000-0000-0000-0004";
+        Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
+        Email element = null;
+        for(Email e : emails.getEmails()) {
+            if(email.equals(e.getEmail())) {
+                element = e;
+                break;
+            }
+        }
+        
+        assertNotNull(element);
+        assertFalse(element.isCurrent());
+        assertFalse(element.isPrimary());
+        assertFalse(element.isVerified());
+        
+        emailManager.verifySetCurrentAndPrimary(orcid, email);
+        
+        emails = emailManager.getEmails(orcid, System.currentTimeMillis());
+        element = null;
+        for(Email e : emails.getEmails()) {
+            if(email.equals(e.getEmail())) {
+                element = e;
+                break;
+            }
+        }
+        
+        assertNotNull(element);
+        assertTrue(element.isCurrent());
+        assertTrue(element.isPrimary());
+        assertTrue(element.isVerified());
     }
     
     @Test
     public void verifyPrimaryEmailTest() {
-        fail();
+        assertFalse(emailManager.isPrimaryEmailVerified("0000-0000-0000-0004"));
+        emailManager.verifyPrimaryEmail("0000-0000-0000-0004");
+        assertTrue(emailManager.isPrimaryEmailVerified("0000-0000-0000-0004"));
     }
 }

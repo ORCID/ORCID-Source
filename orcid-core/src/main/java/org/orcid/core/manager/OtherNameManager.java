@@ -21,8 +21,6 @@ import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.OtherNames;
 
 public interface OtherNameManager extends OtherNameManagerReadOnly {
-    void setSourceManager(SourceManager sourceManager);  
-        
     boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);
 
     OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest);

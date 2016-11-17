@@ -203,6 +203,19 @@
 	</bean>
 	
 	
+	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl">
+		<property name="researcherUrlDao" ref="researcherUrlDao" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
+	
+	<bean id="researcherUrlManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ResearcherUrlManagerReadOnlyImpl">
+		<property name="researcherUrlDao" ref="researcherUrlDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+	
+	
+	
+	
 	
 
 	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />
@@ -434,9 +447,7 @@
 	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
 	
 	<!-- Statistics Cron Job -->
-	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />		
-	
-	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl" />	
+	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />			
 	
 	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />				
 	
