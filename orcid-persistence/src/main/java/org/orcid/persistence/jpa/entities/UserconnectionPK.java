@@ -84,4 +84,9 @@ public class UserconnectionPK implements Serializable {
 		
 		return hash;
 	}
+
+    @Override
+    public String toString() {
+        return "UserconnectionPK [userid=" + userid + ", providerid=" + providerid + ", provideruserid=" + provideruserid + "]";
+    }
 }

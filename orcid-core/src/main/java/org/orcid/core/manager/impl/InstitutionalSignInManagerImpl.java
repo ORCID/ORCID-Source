@@ -34,9 +34,13 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 public class InstitutionalSignInManagerImpl implements InstitutionalSignInManager {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstitutionalSignInManagerImpl.class);
 
     @Resource
     protected UserConnectionDao userConnectionDao;
@@ -59,6 +63,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUserId, providerId,
                 idType);
         if (userConnectionEntity == null) {
+            LOGGER.info("No user connection found for idType={}, remoteUserId={}, displayName={}, providerId={}, userOrcid={}", new Object[]{idType, remoteUserId, displayName, providerId, userOrcid});
             userConnectionEntity = new UserconnectionEntity();
             String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
             UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUserId);            
@@ -72,7 +77,10 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             userConnectionEntity.setIdType(idType);
             userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
             userConnectionDao.persist(userConnectionEntity);
-        }    
+        }
+        else{
+            LOGGER.info("Found existing user connection, {}", userConnectionEntity);
+        }
         
         sendNotification(userOrcid, providerId);
     }        

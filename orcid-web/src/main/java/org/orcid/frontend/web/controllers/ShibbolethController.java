@@ -99,6 +99,7 @@ public class ShibbolethController extends BaseController {
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
+        LOGGER.info("Headers for shibboleth sign in: {}", headers);
         checkEnabled();
         mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
@@ -119,6 +120,7 @@ public class ShibbolethController extends BaseController {
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
+            LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             try {
                 //Check if the user has been notified
                 if(!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
