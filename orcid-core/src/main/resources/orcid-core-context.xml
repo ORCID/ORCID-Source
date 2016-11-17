@@ -237,15 +237,33 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
+	<!-- Activities Managers -->
+	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl">
+		<property name="workDao" ref="workDao" />
+		<property name="workEntityCacheManager" ref="workEntityCacheManager" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
+	
+	<bean id="workManagerReadOnly" class="org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl">
+		<property name="workDao" ref="workDaoReadOnly" />
+		<property name="workEntityCacheManager" ref="workEntityCacheManagerReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+		
+	<!-- Other Managers -->
+	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
+		<property name="workDao" ref="workDao" />
+	</bean>
+	
+	<bean id="workEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
+		<property name="workDao" ref="workDaoReadOnly" />
+	</bean>
 	
 	
-	
-	
-	
-	
-	
-	
-	
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	
 	
@@ -295,9 +313,7 @@
 	
 	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl"/>
 	
-	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
-
-	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
+	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>	
 
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
@@ -489,9 +505,7 @@
 	
 	<bean id="ActivityCacheManager" class="org.orcid.core.manager.impl.ActivityCacheManagerImpl" />
 	
-	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />
-	
-	<bean id="workManager" class="org.orcid.core.manager.impl.WorkManagerImpl" />
+	<bean id="profileEventManager" class="org.orcid.core.profileEvent.ProfileEventManager" />		
 	
 	<bean id="orgManager" class="org.orcid.core.manager.impl.OrgManagerImpl" />
 	

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
@@ -44,14 +43,7 @@ import net.sf.ehcache.Element;
  * @author Will Simpson
  *
  */
-public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
-
-    @Resource
-    private WorkDao workDao;
-
-    @Resource
-    private ProfileDao profileDao;
-
+public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {    
     @Resource(name = "workLastModifiedCache")
     private Cache workLastModifiedCache;
 
@@ -73,6 +65,12 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private LockerObjectsManager lockerMinimizedWork = new LockerObjectsManager();
     
     private LockerObjectsManager lockerFullWork = new LockerObjectsManager();
+
+    private WorkDao workDao;
+
+    public void setWorkDao(WorkDao workDao) {
+        this.workDao = workDao;
+    }
 
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
@@ -134,8 +132,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return minimizedWorkEntity;
     }
-        
-    
+            
     /**
      * Fetches a list of minimised works - does this by checking cache and then
      * fetching all misses in one go from the DB.

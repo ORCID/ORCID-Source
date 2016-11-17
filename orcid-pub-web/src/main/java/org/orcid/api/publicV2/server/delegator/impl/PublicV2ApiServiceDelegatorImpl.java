@@ -38,7 +38,6 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
@@ -49,6 +48,7 @@ import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
@@ -88,8 +88,6 @@ import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -111,28 +109,16 @@ public class PublicV2ApiServiceDelegatorImpl
         implements PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
     @Resource
-    private WorkManager workManager;
+    private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
-    private ProfileFundingManager profileFundingManager;
-
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
-    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    private ProfileFundingManager profileFundingManager;       
 
     @Resource
     private AffiliationsManager affiliationsManager;
 
     @Resource
     private PeerReviewManager peerReviewManager;
-
-    @Resource
-    private WebhookDao webhookDao;
-
-    @Resource
-    private ProfileDao profileDao;
 
     @Resource
     private ActivitiesSummaryManager activitiesSummaryManager;
@@ -167,26 +153,35 @@ public class PublicV2ApiServiceDelegatorImpl
     
     //Record manager
     @Resource
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    
+    //TODO: Read only implementation
+    @Resource
     private RecordManager recordManager;                
     
+    //Other managers
+    //TODO: Read only implementation
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
     
-    
-    //Others
+    //TODO: Read only implementation
     @Resource
     private SourceManager sourceManager;
 
+    //TODO: Read only implementation, do we need it for this?
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
-
+    //TODO: Read only implementation
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
     @Resource
     private LocaleManager localeManager;    
-
+    
+    //Others
+    @Resource(name = "visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
     
     @Resource
     private SourceUtils sourceUtils;
@@ -227,7 +222,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
+        Work w = workManagerReadOnly.getWork(orcid, putCode, lastModifiedTime);
         orcidSecurityManager.checkIsPublic(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -239,8 +234,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorks(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        List<WorkSummary> works = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works publicWorks = workManager.groupWorks(works, true);
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid, lastModifiedTime);
+        Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicWorks = visibilityFilter.filter(publicWorks, orcid);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
@@ -277,7 +272,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, Long putCode) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);

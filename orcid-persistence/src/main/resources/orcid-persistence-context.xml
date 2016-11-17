@@ -115,7 +115,12 @@
     	<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
     
-    
+    <!-- Activities DAO's -->
+	<bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
+	
+	<bean id="workDaoReadOnly" class="org.orcid.persistence.dao.impl.WorkDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
                 
 
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
@@ -128,9 +133,7 @@
 
     <bean id="subjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SubjectEntity" />
-    </bean>
-
-    <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
+    </bean>    
     
     <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
     
