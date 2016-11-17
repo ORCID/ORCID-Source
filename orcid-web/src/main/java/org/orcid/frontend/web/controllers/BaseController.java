@@ -156,6 +156,9 @@ public class BaseController {
 
     @Value("${org.orcid.recaptcha.web_site_key:}")
     private String recaptchaWebKey;
+    
+    @Value("${org.orcid.shibboleth.enabled:false}")
+    private boolean shibbolethEnabled;
 
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
@@ -164,6 +167,15 @@ public class BaseController {
 
     public void setRecaptchaWebKey(String recaptchaWebKey) {
         this.recaptchaWebKey = recaptchaWebKey;
+    }
+    
+    @ModelAttribute("shibbolethEnabled")
+    public boolean isShibbolethEnabled() {
+        return shibbolethEnabled;
+    }
+
+    public void setShibbolethEnabled(boolean shibbolethEnabled) {
+        this.shibbolethEnabled = shibbolethEnabled;
     }
 
     public LocaleManager getLocaleManager() {

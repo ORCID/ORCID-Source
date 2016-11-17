@@ -37,7 +37,6 @@ import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -78,9 +77,6 @@ public class ShibbolethController extends BaseController {
     private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
 
     private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
-
-    @Value("${org.orcid.shibboleth.enabled:false}")
-    private boolean enabled;
 
     @Resource
     private UserConnectionDao userConnectionDao;
@@ -152,7 +148,7 @@ public class ShibbolethController extends BaseController {
     }
 
     private void checkEnabled() {
-        if (!enabled) {
+        if (!isShibbolethEnabled()) {
             throw new FeatureDisabledException();
         }
     }
