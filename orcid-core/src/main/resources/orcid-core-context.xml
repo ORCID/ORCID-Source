@@ -121,9 +121,6 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />		
 	</bean>
 
-
-
-
 	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl">
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="emailManager" ref="emailManager" />
@@ -131,16 +128,12 @@
 		<property name="personDetailsManager" ref="personDetailsManager" />		
 	</bean> 
 
-	<bean id="recordManagerReadOnlt" class="org.orcid.core.manager.read_only.impl.RecordManagerReadOnlyImpl">
+	<bean id="recordManagerReadOnly" class="org.orcid.core.manager.read_only.impl.RecordManagerReadOnlyImpl">
 		<property name="profileEntityCacheManager" ref="profileEntityCacheManagerReadOnly" />
 		<property name="emailManager" ref="emailManagerReadOnly" />
 		<property name="activitiesSummaryManager" ref="activitiesSummaryManagerReadOnly" />
 		<property name="personDetailsManager" ref="personDetailsManagerReadOnly" />		
 	</bean>
-
-
-
-
 
 	<!-- Person Managers -->
 	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl">
