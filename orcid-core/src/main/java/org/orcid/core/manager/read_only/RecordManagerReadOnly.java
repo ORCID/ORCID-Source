@@ -14,10 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
+import org.orcid.jaxb.model.record_rc3.Record;
 
-public interface ActivitiesSummaryManager extends ActivitiesSummaryManagerReadOnly {
-    
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public interface RecordManagerReadOnly {
+    Record getPublicRecord(String orcid);
+
+    Record getRecord(String orcid);
 }

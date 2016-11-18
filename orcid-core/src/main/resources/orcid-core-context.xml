@@ -121,6 +121,27 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />		
 	</bean>
 
+
+
+
+	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="emailManager" ref="emailManager" />
+		<property name="activitiesSummaryManager" ref="activitiesSummaryManager" />
+		<property name="personDetailsManager" ref="personDetailsManager" />		
+	</bean> 
+
+	<bean id="recordManagerReadOnlt" class="org.orcid.core.manager.read_only.impl.RecordManagerReadOnlyImpl">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManagerReadOnly" />
+		<property name="emailManager" ref="emailManagerReadOnly" />
+		<property name="activitiesSummaryManager" ref="activitiesSummaryManagerReadOnly" />
+		<property name="personDetailsManager" ref="personDetailsManagerReadOnly" />		
+	</bean>
+
+
+
+
+
 	<!-- Person Managers -->
 	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl">
 		<property name="recordNameDao" ref="recordNameDao" />
@@ -200,8 +221,7 @@
 	<bean id="emailManagerReadOnly" class="org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl">
 		<property name="emailDao" ref="emailDaoReadOnly" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
-	</bean>
-	
+	</bean>	
 	
 	<bean id="researcherUrlManager" class="org.orcid.core.manager.impl.ResearcherUrlManagerImpl">
 		<property name="researcherUrlDao" ref="researcherUrlDao" />
@@ -274,16 +294,23 @@
 		<property name="peerReviewDao" ref="peerReviewDaoReadOnly" />
 	</bean>
 	
+	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl">
+		<property name="affiliationsManager" ref="affiliationsManager" />
+		<property name="fundingManager" ref="profileFundingManager" />
+		<property name="peerReviewManager" ref="peerReviewManager" />
+		<property name="workManager" ref="workManager" />		
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+	</bean>
 	
+	<bean id="activitiesSummaryManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ActivitiesSummaryManagerReadOnlyImpl">
+		<property name="affiliationsManager" ref="affiliationsManagerReadOnly" />
+		<property name="fundingManager" ref="profileFundingManagerReadOnly" />
+		<property name="peerReviewManager" ref="peerReviewManagerReadOnly" />
+		<property name="workManager" ref="workManagerReadOnly" />		
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
 	
-	
-	
-	
-	
-	
-	
-		
-	<!-- Other Managers -->
+	<!-- Other Read Only Managers -->
 	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
 		<property name="workDao" ref="workDao" />
 	</bean>
@@ -292,15 +319,19 @@
 		<property name="workDao" ref="workDaoReadOnly" />
 	</bean>	
 	
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl">
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
 	
+	<bean id="profileEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl">
+		<property name="profileEntityManager" ref="profileEntityManagerReadOnly" />
+	</bean>
 	
-	
-
-	<bean id="activitiesSummaryManager" class="org.orcid.core.manager.impl.ActivitiesSummaryManagerImpl" />		
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+					
 
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
@@ -337,9 +368,7 @@
 	
 	<bean id="orcidProfileCacheManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
 	    <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
-	</bean>
-	
-	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl"/>
+	</bean>		
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
@@ -525,9 +554,7 @@
 	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
 	
 	<!-- Statistics Cron Job -->
-	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />			
-	
-	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />						
+	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />										
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
 

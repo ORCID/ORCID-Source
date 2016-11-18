@@ -34,21 +34,21 @@ import org.orcid.jaxb.model.record_rc3.Person;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
     
-    private AddressManagerReadOnly addressManager;
+    protected AddressManagerReadOnly addressManager;
 
-    private ExternalIdentifierManagerReadOnly externalIdentifierManager;
+    protected ExternalIdentifierManagerReadOnly externalIdentifierManager;
 
-    private ProfileKeywordManagerReadOnly profileKeywordManager;
+    protected ProfileKeywordManagerReadOnly profileKeywordManager;
 
-    private OtherNameManagerReadOnly otherNameManager;
+    protected OtherNameManagerReadOnly otherNameManager;
 
-    private ResearcherUrlManagerReadOnly researcherUrlManager;
+    protected ResearcherUrlManagerReadOnly researcherUrlManager;
     
-    private EmailManagerReadOnly emailManager;           
+    protected EmailManagerReadOnly emailManager;           
     
-    private RecordNameManagerReadOnly recordNameManager;
+    protected RecordNameManagerReadOnly recordNameManager;
     
-    private BiographyManagerReadOnly biographyManager;
+    protected BiographyManagerReadOnly biographyManager;
        
     public void setAddressManager(AddressManagerReadOnly addressManager) {
         this.addressManager = addressManager;

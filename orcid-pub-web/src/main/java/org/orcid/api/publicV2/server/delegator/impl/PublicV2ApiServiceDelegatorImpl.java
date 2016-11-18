@@ -29,12 +29,11 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
@@ -47,6 +46,7 @@ import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
@@ -108,6 +108,7 @@ import de.undercouch.citeproc.csl.CSLItemData;
 public class PublicV2ApiServiceDelegatorImpl
         implements PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
+    //Activities managers
     @Resource
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -121,7 +122,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource
-    private ActivitiesSummaryManager activitiesSummaryManager;
+    private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
     
     //Person managers
     @Resource
@@ -155,9 +156,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
     
-    //TODO: Read only implementation
     @Resource
-    private RecordManager recordManager;                
+    private RecordManagerReadOnly recordManagerReadOnly;                
     
     //Other managers
     //TODO: Read only implementation
@@ -211,7 +211,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = visibilityFilter.filter(activitiesSummaryManager.getPublicActivitiesSummary(orcid), orcid);
+        ActivitiesSummary as = visibilityFilter.filter(activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid), orcid);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         sourceUtils.setSourceName(as);
@@ -566,7 +566,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewRecord(String orcid) {
-        Record record = recordManager.getPublicRecord(orcid);
+        Record record = recordManagerReadOnly.getPublicRecord(orcid);
         if(record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtils.setSourceName(record.getPerson());

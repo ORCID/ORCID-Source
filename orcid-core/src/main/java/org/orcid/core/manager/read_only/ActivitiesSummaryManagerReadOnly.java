@@ -14,10 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 
-public interface ActivitiesSummaryManager extends ActivitiesSummaryManagerReadOnly {
-    
+public interface ActivitiesSummaryManagerReadOnly extends ManagerReadOnlyBase {
+    ActivitiesSummary getActivitiesSummary(String orcid);
+
+    ActivitiesSummary getPublicActivitiesSummary(String orcid);
 }

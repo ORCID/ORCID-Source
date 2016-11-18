@@ -21,7 +21,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +35,16 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
 
     @Resource(name = "profileEntityCache")
     private Cache profileCache;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+    
+    private ProfileEntityManagerReadOnly profileEntityManager;
 
     LockerObjectsManager lockers = new LockerObjectsManager();
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    public void setProfileEntityManager(ProfileEntityManagerReadOnly profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
+    }
 
     @Override
     @Transactional
