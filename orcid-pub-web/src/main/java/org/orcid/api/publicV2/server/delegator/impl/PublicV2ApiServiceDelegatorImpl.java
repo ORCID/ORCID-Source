@@ -33,7 +33,6 @@ import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -42,6 +41,7 @@ import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
@@ -118,7 +118,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
     @Resource
-    private PeerReviewManager peerReviewManager;
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource
     private ActivitiesSummaryManager activitiesSummaryManager;
@@ -385,7 +385,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReview(String orcid, Long putCode) {
-        PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
+        PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
         sourceUtils.setSourceName(peerReview);
@@ -395,8 +395,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviews = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
-        PeerReviews publicPeerReviews = peerReviewManager.groupPeerReviews(peerReviews, true);
+        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
         sourceUtils.setSourceName(publicPeerReviews);
@@ -406,7 +406,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
+        PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
         sourceUtils.setSourceName(summary);

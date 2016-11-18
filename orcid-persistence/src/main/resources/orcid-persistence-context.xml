@@ -134,6 +134,11 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 
+	<bean id="peerReviewDao" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl" />
+	
+	<bean id="peerReviewDaoReadOnly" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl">	
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
 
 
                 
@@ -226,9 +231,7 @@
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
 	
-	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
-	
-	<bean id="peerReviewDao" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl" />
+	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />		
 	
 	<bean id="groupIdRecordDao" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl" />
 	
