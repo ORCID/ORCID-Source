@@ -30,6 +30,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -49,10 +50,10 @@ import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
-public class AffiliationsManagerImpl implements AffiliationsManager {
+public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
     @Resource
-    OrgAffiliationRelationDao affiliationsDao;
+    OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     @Resource
     JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
@@ -80,32 +81,20 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-
+    
     @Override
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
         if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
             return null;
-        OrgAffiliationRelationEntity affiliation = affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
+        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
         return affiliation;
-    }
-
-    @Override
-    public List<OrgAffiliationRelationEntity> findAffiliationsByType(AffiliationType type) {
-        if (type == null)
-            return null;
-        return affiliationsDao.getByType(type);
-    }
+    }    
 
     @Override
     public List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type) {
         if (PojoUtil.isEmpty(userOrcid) || type == null)
             return null;
-        return affiliationsDao.getByUserAndType(userOrcid, type);
+        return orgAffiliationRelationDao.getByUserAndType(userOrcid, type);
     }
 
     /**
@@ -172,8 +161,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        affiliationsDao.persist(educationEntity);
-        affiliationsDao.flush();
+        orgAffiliationRelationDao.persist(educationEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -189,7 +178,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
+        OrgAffiliationRelationEntity educationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         //Save the original source
         String existingSourceId = educationEntity.getSourceId();
@@ -213,8 +202,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         educationEntity.setOrg(updatedOrganization);
 
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        educationEntity = affiliationsDao.merge(educationEntity);
-        affiliationsDao.flush();
+        educationEntity = orgAffiliationRelationDao.merge(educationEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -282,8 +271,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        affiliationsDao.persist(employmentEntity);
-        affiliationsDao.flush();
+        orgAffiliationRelationDao.persist(employmentEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -299,7 +288,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
+        OrgAffiliationRelationEntity employmentEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();  
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
@@ -324,8 +313,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         employmentEntity.setOrg(updatedOrganization);
 
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        employmentEntity = affiliationsDao.merge(employmentEntity);
-        affiliationsDao.flush();
+        employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -342,9 +331,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
-        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);                
+        OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity);
-        boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
+        boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if(result)
             notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
         return result; 
@@ -396,11 +385,17 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         item.setItemType(AffiliationType.EDUCATION.equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return item;
+    }        
+
+    @Override
+    public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
+        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
     }
     
+    @Deprecated
     @Override
     public List<AffiliationForm> getAffiliations(String orcid) {
-        List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);        
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
         List<AffiliationForm> result = new ArrayList<AffiliationForm>();
         
         if(affiliations != null) {
@@ -417,10 +412,4 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         
         return result;
     }
-
-    @Override
-    public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
-        return affiliationsDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
-    }
-
 }

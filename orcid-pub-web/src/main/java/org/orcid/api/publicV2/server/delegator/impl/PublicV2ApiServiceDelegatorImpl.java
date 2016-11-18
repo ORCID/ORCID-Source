@@ -30,7 +30,6 @@ import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
-import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -38,6 +37,7 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
@@ -115,7 +115,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;       
 
     @Resource
-    private AffiliationsManager affiliationsManager;
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
     @Resource
     private PeerReviewManager peerReviewManager;
@@ -314,7 +314,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducation(String orcid, Long putCode) {
-        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
@@ -324,7 +324,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducations(String orcid) {        
-        List<EducationSummary> educations = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
+        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
         Educations publicEducations = new Educations();
         for(EducationSummary summary : educations) {
             if(Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -340,7 +340,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducationSummary(String orcid, Long putCode) {
-        EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
+        EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);
@@ -350,7 +350,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmployment(String orcid, Long putCode) {
-        Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
@@ -360,7 +360,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmployments(String orcid) {        
-        List<EmploymentSummary> employments = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
         Employments publicEmployments = new Employments();
         for(EmploymentSummary summary : employments) {
             if(Visibility.PUBLIC.equals(summary.getVisibility())) {
@@ -375,7 +375,7 @@ public class PublicV2ApiServiceDelegatorImpl
     
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
+        EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);

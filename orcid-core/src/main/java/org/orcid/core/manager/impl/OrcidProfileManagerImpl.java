@@ -119,6 +119,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -170,7 +171,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private ProfileDao profileDao;
 
     @Resource
-    private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     @Resource
     private ProfileFundingDao profileFundingDao;
@@ -1735,7 +1736,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (Affiliation updatedAffiliation : updatedAffiliationsList) {
             OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(updatedAffiliation, profileEntity);
-            orgAffilationRelationDao.persist(orgAffiliationRelationEntity);
+            orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
         }
         orcidProfileCacheManager.remove(orcid);
     }

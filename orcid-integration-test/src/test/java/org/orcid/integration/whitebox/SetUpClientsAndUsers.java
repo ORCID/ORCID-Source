@@ -255,7 +255,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected WorkDao workDao;
     @Resource
-    protected OrgAffiliationRelationDao affiliationsDao;
+    protected OrgAffiliationRelationDao orgAffiliationRelationDao;
     @Resource
     protected ProfileFundingDao profileFundingDao;
     @Resource
@@ -588,10 +588,10 @@ public class SetUpClientsAndUsers {
             }
             
             // Remove affiliations
-            List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);
+            List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);
             if (affiliations != null && !affiliations.isEmpty()) {
                 for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                    affiliationsDao.remove(affiliation.getId());
+                    orgAffiliationRelationDao.remove(affiliation.getId());
                 }
             }
 

@@ -258,6 +258,15 @@
 		<property name="profileFundingDao" ref="profileFundingDaoReadOnly" />		
 	</bean>
 		
+	<bean id="affiliationsManager" class="org.orcid.core.manager.impl.AffiliationsManagerImpl">
+		<property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDao" />
+	</bean>
+	
+	<bean id="affiliationsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl">
+		<property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
+	</bean>
+	
+		
 	<!-- Other Managers -->
 	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
 		<property name="workDao" ref="workDao" />
@@ -522,9 +531,7 @@
 	
 	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
 	
-	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />
-
-	<bean id="affiliationsManager" class="org.orcid.core.manager.impl.AffiliationsManagerImpl" />
+	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />
 	

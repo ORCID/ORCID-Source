@@ -139,7 +139,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private EmailManager emailManager;
     
     @Resource
-    private OrgAffiliationRelationDao orgRelationAffiliationDao;    
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;    
     
     @Resource
     private OtherNameManager otherNamesManager;        
@@ -233,7 +233,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             // Remove affiliations
             if (deprecated.getOrgAffiliationRelations() != null) {
                 for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
-                    orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
+                    orgAffiliationRelationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
                 }
             }
             

@@ -127,6 +127,12 @@
 	<bean id="profileFundingDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
+	
+	<bean id="orgAffiliationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />
+	
+	<bean id="orgAffiliationRelationDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
 
 
 
@@ -200,9 +206,7 @@
 	
 	
 	<!-- Statistics DAO -->
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     	
-	
-    <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />     
+	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     		        
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
