@@ -253,7 +253,7 @@ When updating a record item, include the put code as an attribute in the root el
 ### Webhooks
 |Item  | Scope      | Example cURL Statement  |
 |------|----------------|-------------------------|
-| Register a webhook	| /webhook|```curl -v -H 'Authorization: Bearer 64cea88d-b600-48aa-af4c-690b7fb56bc1' -X PUT 'http://api.qa.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'```|
-| Delete a webhook  	| /webhook |```curl -v -H 'Authorization: Bearer 64cea88d-b600-48aa-af4c-690b7fb56bc1' -X DELETE 'http://api.qa.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'  ```|
+| Register a webhook	| /webhook|```curl -v -H 'Authorization: Bearer 64cea88d-b600-48aa-af4c-690b7fb56bc1' -X PUT 'http://api.sandbox.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'```|
+| Delete a webhook  	| /webhook |```curl -v -H 'Authorization: Bearer 64cea88d-b600-48aa-af4c-690b7fb56bc1' -X DELETE 'http://api.sandbox.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'  ```|
 
 
