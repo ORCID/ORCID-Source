@@ -250,6 +250,14 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 		
+	<bean id="profileFundingManager" class="org.orcid.core.manager.impl.ProfileFundingManagerImpl">
+		<property name="profileFundingDao" ref="profileFundingDao" />		
+	</bean>
+	
+	<bean id="profileFundingManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl">
+		<property name="profileFundingDao" ref="profileFundingDaoReadOnly" />		
+	</bean>
+		
 	<!-- Other Managers -->
 	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
 		<property name="workDao" ref="workDao" />
@@ -257,8 +265,7 @@
 	
 	<bean id="workEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl">
 		<property name="workDao" ref="workDaoReadOnly" />
-	</bean>
-	
+	</bean>	
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
@@ -495,9 +502,7 @@
 	<!-- Statistics Cron Job -->
 	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />			
 	
-	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />				
-	
-	<bean id="profileFundingManager" class="org.orcid.core.manager.impl.ProfileFundingManagerImpl" />
+	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />						
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
 

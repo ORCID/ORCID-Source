@@ -35,7 +35,6 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -46,6 +45,7 @@ import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
@@ -112,7 +112,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
-    private ProfileFundingManager profileFundingManager;       
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;       
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -283,7 +283,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFunding(String orcid, Long putCode) {
-        Funding f = profileFundingManager.getFunding(orcid, putCode);
+        Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtils.setSourceName(f);
@@ -293,8 +293,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFundings(String orcid) {        
-        List<FundingSummary> fundings = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
-        Fundings publicFundings = profileFundingManager.groupFundings(fundings, true);
+        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicFundings = visibilityFilter.filter(publicFundings, orcid);        
         ActivityUtils.setPathToFundings(publicFundings, orcid);
         sourceUtils.setSourceName(publicFundings);
@@ -304,7 +304,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFundingSummary(String orcid, Long putCode) {
-        FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
+        FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
         sourceUtils.setSourceName(fs);

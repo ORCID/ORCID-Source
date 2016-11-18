@@ -121,7 +121,18 @@
 	<bean id="workDaoReadOnly" class="org.orcid.persistence.dao.impl.WorkDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
+
+	<bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
+	
+	<bean id="profileFundingDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+
+
                 
+
+
 
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
@@ -195,9 +206,7 @@
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
-    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
-            
-     <bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
+    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />                 
     
 	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
