@@ -18,6 +18,8 @@ package org.orcid.core.manager.impl;
 
 import java.util.Collection;
 
+import javax.annotation.Resource;
+
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -42,17 +44,11 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
  */
 public class SourceManagerImpl implements SourceManager {
 
+    @Resource
     private ProfileDao profileDao;
 
-    private ClientDetailsManager clientDetailsManager;
-
-    public void setProfileDao(ProfileDao profileDao) {
-        this.profileDao = profileDao;
-    }
-
-    public void setClientDetailsManager(ClientDetailsManager clientDetailsManager) {
-        this.clientDetailsManager = clientDetailsManager;
-    }
+    @Resource
+    private ClientDetailsManager clientDetailsManager;    
 
     @Override
     public String retrieveSourceOrcid() {
