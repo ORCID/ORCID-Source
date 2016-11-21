@@ -90,4 +90,41 @@
 
     <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
 
+	<!-- Persistence -->
+	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="${org.orcid.message-listener.db.dataSource}" />
+        <property name="changeLog" value="classpath:message-listener-db-master.xml" />
+    </bean>
+	
+	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="${org.orcid.message-listener.db.dialect}" />
+        <property name="showSql" value="${org.orcid.message-listener.db.showSql}" />
+        <property name="generateDdl" value="${org.orcid.message-listener.db.generateDdl}" />
+    </bean>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="dataSource" ref="${org.orcid.message-listener.db.dataSource}" />
+        <property name="persistenceUnitName" value="message-listener" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="${org.orcid.message-listener.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
+    </bean>   
+    
+    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${org.orcid.message-listener.db.class}" />
+        <property name="jdbcUrl" value="${org.orcid.message-listener.db.url}" />
+        <property name="user" value="${org.orcid.message-listener.db.username}" />
+        <property name="password" value="${org.orcid.message-listener.db.password}" />
+        <property name="initialPoolSize" value="${org.orcid.message-listener.db.initialPoolSize}" />
+        <property name="minPoolSize" value="${org.orcid.message-listener.db.minPoolSize}" />
+        <property name="maxPoolSize" value="${org.orcid.message-listener.db.maxPoolSize}" />
+        <property name="maxStatements" value="${org.orcid.message-listener.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.message-listener.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.message-listener.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.message-listener.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.message-listener.db.numHelperThreads:10}"/>
+    </bean>
 </beans>

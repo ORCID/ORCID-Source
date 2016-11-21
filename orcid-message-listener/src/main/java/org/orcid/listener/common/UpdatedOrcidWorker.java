@@ -16,8 +16,6 @@
  */
 package org.orcid.listener.common;
 
-import java.util.function.Consumer;
-
 import javax.annotation.Resource;
 
 import org.orcid.utils.listener.LastModifiedMessage;

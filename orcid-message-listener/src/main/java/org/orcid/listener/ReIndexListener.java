@@ -17,7 +17,6 @@
 package org.orcid.listener;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;

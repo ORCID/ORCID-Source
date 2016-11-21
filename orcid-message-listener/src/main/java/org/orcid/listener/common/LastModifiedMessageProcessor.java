@@ -53,6 +53,12 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean solrIndexingEnabled;
     
+    @Value("${org.orcid.message-listener.api12Enabled:true}")
+    private boolean is12IndexingEnabled;
+    
+    @Value("${org.orcid.message-listener.api20Enabled:true}")
+    private boolean is20IndexingEnabled;
+    
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     @Resource
@@ -66,37 +72,42 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
      * Populates the Amazon S3 buckets and updates solr index
      */
     public void accept(LastModifiedMessage m) {
-            String orcid = m.getOrcid();
-            try{
-                // Phase #1: update S3 
-                if(dumpIndexingEnabled) {
+        String orcid = m.getOrcid();
+        try {
+            // Phase #1: update S3
+            if (dumpIndexingEnabled) {
+                if (is12IndexingEnabled) {
                     updateS3_1_2_API(orcid);
+                }
+                if (is20IndexingEnabled) {
                     updateS3_2_0_API(orcid);
-                } 
-                
-            } catch(LockedRecordException lre) {                
-                try {
-                    LOG.error("Record " + orcid + " is locked");
-                    exceptionHandler.handleLockedRecordException(m, lre.getOrcidMessage());
-                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
-                    LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
-                } catch (DeprecatedRecordException e1) {
-                    // Should never happen, since it is already locked
-                }                
-            } catch(DeprecatedRecordException dre) {
-                try {
-                    LOG.error("Record " + orcid + " is deprecated");
-                    exceptionHandler.handleDeprecatedRecordException(m, dre.getOrcidDeprecated());
-                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
-                    LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
-                } catch (LockedRecordException e1) {
-                    // Should never happen, since it is already deprecated
-                } 
-            } catch(Exception e) {
-                //something else went wrong fetching record from ORCID and threw a runtime exception
-                LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
+                }
             }
-     
+
+        } catch (LockedRecordException lre) {
+            try {
+                LOG.error("Record " + orcid + " is locked");
+                exceptionHandler.handleLockedRecordException(m, lre.getOrcidMessage());
+            } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
+            } catch (DeprecatedRecordException e1) {
+                // Should never happen, since it is already locked
+            }
+        } catch (DeprecatedRecordException dre) {
+            try {
+                LOG.error("Record " + orcid + " is deprecated");
+                exceptionHandler.handleDeprecatedRecordException(m, dre.getOrcidDeprecated());
+            } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
+            } catch (LockedRecordException e1) {
+                // Should never happen, since it is already deprecated
+            }
+        } catch (Exception e) {
+            // something else went wrong fetching record from ORCID and threw a
+            // runtime exception
+            LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
+        }
+
     }
     
     private void updateS3_1_2_API(String orcid) throws LockedRecordException, DeprecatedRecordException {
