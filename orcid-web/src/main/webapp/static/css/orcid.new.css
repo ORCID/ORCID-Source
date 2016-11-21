@@ -6841,11 +6841,6 @@ a:hover .mozilla-badge{
 	clear: both;	
 }
 
-.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
-	float: right;	
-	margin-right: 0;
-}
-
 .fixed-area .col-md-12.padding-right-reset{
 	padding-right: 30px;
 	margin-top: 15px;
@@ -7497,10 +7492,6 @@ a:hover .mozilla-badge{
 	
 	.edit-record .bulk-edit-modal #privacy-bar{
 		margin-right: 0;
-	}
-	
-	.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
-		margin-right: 35px;
 	}
 	
 	.fixed-area ul.record-settings{
