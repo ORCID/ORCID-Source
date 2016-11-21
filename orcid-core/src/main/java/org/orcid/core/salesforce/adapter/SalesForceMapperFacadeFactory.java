@@ -16,16 +16,21 @@
  */
 package org.orcid.core.salesforce.adapter;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.MappingException;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
@@ -61,6 +66,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new StringConverter());
         converterFactory.registerConverter(new URLConverter());
+        converterFactory.registerConverter(new ReverseURLConverter());
         registerMemberMap(mapperFactory);
         registerContactMap(mapperFactory);
         return mapperFactory.getMapperFacade();
@@ -76,13 +82,29 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("description", "Public_Display_Description__c");
         classMap.field("logoUrl", "Logo_Description__c");
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
-        classMap.field("mainOpportunityPath", "Opportunities.records_array.first.attributes.url");
-        classMap.field("consortiumLeadId", "Opportunities.records_array.first.Consortia_Lead__c");
+        classMap.customize(new CustomMapper<Member, JSONObject>() {
+            @Override
+            public void mapBtoA(JSONObject b, Member a, MappingContext context) {
+                JSONObject opportunitiesObject = b.optJSONObject("Opportunities");
+                if (opportunitiesObject != null) {
+                    JSONArray recordsArray = opportunitiesObject.optJSONArray("records");
+                    if (recordsArray != null && recordsArray.length() > 0) {
+                        try {
+                            JSONObject first = recordsArray.getJSONObject(0);
+                            a.setMainOpportunityPath(first.getJSONObject("attributes").getString("url"));
+                            a.setConsortiumLeadId(first.getString("Consortia_Lead__c"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException("Error reading first opportunity record", e);
+                        }
+                    }
+                }
+            }
+        });
         classMap.register();
     }
-    
+
     public void registerContactMap(MapperFactory mapperFactory) {
-        ClassMapBuilder<Contact,JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        ClassMapBuilder<Contact, JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("role", "Member_Org_Role__c");
         classMap.field("name", "Contact__r.Name");
         classMap.field("email", "Contact__r.Email");
@@ -134,6 +156,21 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         @Override
         public Object convert(URL source, Type<? extends Object> destinationType) {
             return source.toString();
+        }
+    }
+
+    private class ReverseURLConverter extends CustomConverter<Object, URL> {
+        @Override
+        public URL convert(Object source, Type<? extends URL> destinationType) {
+            String s = source.toString();
+            if (!s.startsWith("http")) {
+                s += "http://";
+            }
+            try {
+                return new URL(s);
+            } catch (MalformedURLException e) {
+                return null;
+            }
         }
     }
 
