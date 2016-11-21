@@ -3656,7 +3656,202 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewRecord(ORCID);
         assertNotNull(response);
     }
-        
+    
+    @Test
+    public void testViewRecordReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewRecord(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewActivitiesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewActivities(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewResearcherUrlsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewResearcherUrls(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmailsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmails(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewOtherNamesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewOtherNames(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewExternalIdentifiersReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewExternalIdentifiers(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewKeywordsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewKeywords(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewAddressesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewAddresses(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewBiographyReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewBiography(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPersonalDetailsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPersonalDetails(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPersonReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPerson(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewAddressReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewAddress(ORCID, 9L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducation(ORCID, 20L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducations(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducationSummary(ORCID, 20L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmployment(ORCID, 17L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmployments(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewExternalIdentifierReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewFundingReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewFunding(ORCID, 10L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewFundingSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewFundingSummary(ORCID, 10L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewKeywordReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewKeyword(ORCID, 9L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewOtherNameReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewOtherName(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPeerReviewReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPeerReviewSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewResearcherUrlReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewWorkReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewWork(ORCID, 11L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewWorkSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewWorkSummary(ORCID, 11L);
+        assertTrue(true);
+    }
     
     @Test
     public void testViewRecord() {        
@@ -4749,53 +4944,53 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Test can't create
         try {
             serviceDelegator.createAddress(ORCID, getAddress());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEducation(ORCID, getEducation());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEmployment(ORCID, getEmployment());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createExternalIdentifier(ORCID, getPersonExternalIdentifier());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createFunding(ORCID, getFunding());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createKeyword(ORCID, getKeyword());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createOtherName(ORCID, getOtherName());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createPeerReview(ORCID, getPeerReview());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createResearcherUrl(ORCID, getResearcherUrl());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createWork(ORCID, getWork("work # 1 " + System.currentTimeMillis()));
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }        
         try {
             serviceDelegator.createGroupIdRecord(getGroupIdRecord());
@@ -4809,158 +5004,158 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.viewActivities(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddress(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddresses(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewBiography(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducation(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducationSummary(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducations(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmails(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployment(ORCID, 17L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployments(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifiers(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFunding(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundingSummary(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundings(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeyword(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeywords(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherName(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherNames(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReview(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviews(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPerson(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPersonalDetails(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrl(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrls(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWork(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorkSummary(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorks(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewRecord(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewGroupIdRecord(1L);
@@ -4979,48 +5174,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.deleteAddress(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteAffiliation(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteExternalIdentifier(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteFunding(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteKeyword(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteOtherName(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deletePeerReview(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteResearcherUrl(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteWork(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
     }
     
@@ -5035,8 +5230,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateAddress(ORCID, a.getPutCode(), a);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5048,8 +5243,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateEducation(ORCID, edu.getPutCode(), edu);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
                 
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5061,9 +5256,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateEmployment(ORCID, emp.getPutCode(), emp);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
-        } 
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
+        }  
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewExternalIdentifier(ORCID, 13L); 
@@ -5074,8 +5269,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateExternalIdentifier(ORCID, extId.getPutCode(), extId);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5087,9 +5282,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateFunding(ORCID, f.getPutCode(), f);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
-        } 
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
+        }  
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewKeyword(ORCID, 9L);
@@ -5100,8 +5295,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateKeyword(ORCID, k.getPutCode(), k);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5113,8 +5308,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateOtherName(ORCID, o.getPutCode(), o);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5126,8 +5321,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updatePeerReview(ORCID, p.getPutCode(), p);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5139,8 +5334,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateResearcherUrl(ORCID, r.getPutCode(), r);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5152,8 +5347,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateWork(ORCID, w.getPutCode(), w);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
     }    
     
