@@ -141,10 +141,8 @@
 	</bean>
 
 
-                
 
-
-
+	<!-- Other DAO's -->
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
     </bean>
@@ -208,7 +206,6 @@
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
-	
 	
 	<!-- Statistics DAO -->
 	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     		        

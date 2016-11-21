@@ -54,7 +54,7 @@
 	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
-	    <!-- Effectively a wrapper around the client details service, converting client to user details -->
+	<!-- Effectively a wrapper around the client details service, converting client to user details -->
     <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
         <constructor-arg ref="clientDetailsManager"/>
     </bean>
@@ -134,7 +134,7 @@
 		<property name="activitiesSummaryManager" ref="activitiesSummaryManagerReadOnly" />
 		<property name="personDetailsManager" ref="personDetailsManagerReadOnly" />		
 	</bean>
-
+	
 	<!-- Person Managers -->
 	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl">
 		<property name="recordNameDao" ref="recordNameDao" />
@@ -320,12 +320,7 @@
 		<property name="profileEntityManager" ref="profileEntityManagerReadOnly" />
 	</bean>
 	
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
-					
-
+	<!-- Other Managers -->
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="notificationManager" ref="notificationManager" />
