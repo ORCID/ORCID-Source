@@ -30,5 +30,6 @@
      -->
 
     <include file="/db/install.xml"/>    
+    <include file="/db/add_column_for_amazon_s3_status.xml"/>
         
 </databaseChangeLog>

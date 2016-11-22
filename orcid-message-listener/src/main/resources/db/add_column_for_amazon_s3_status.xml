@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="record_status" columnName="amazon_s3"/>
+            </not>            
+		</preConditions>
+		<sql>ALTER TABLE record_status ADD amazon_s3 integer;</sql>		
+	</changeSet>		
+	
+	<changeSet id="SET-DEFAULT-VALUE-TO-AMAZON-S3-COLUMN" author="Angel Montenegro">
+		<sql>UPDATE record_status SET amazon_s3=0;</sql>
+	</changeSet>
+	
+	<changeSet id="AMAZON-S3-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="amazon_s3_index" tableName="record_status" />
+			</not>
+		</preConditions>
+		<sql>create index amazon_s3_index on record_status(amazon_s3);</sql>
+	</changeSet>
+</databaseChangeLog>
