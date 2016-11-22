@@ -476,15 +476,12 @@
 				<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">
-				<div class="alert alert-success" ng-show="result.lockSuccessfulList.length || result.notFoundList.length || result.alreadyLockedList.length || result.reviewedList.length" style="overflow-x:auto;">
+				<div class="alert alert-success" ng-show="result.lockSuccessfulList.length || result.notFoundList.length || result.alreadyLockedList.length" style="overflow-x:auto;">
 	    			<div ng-show="result.lockSuccessfulList.length"><@spring.message "admin.profile_lock.lock_success"/>
 	    				<br>{{result.lockSuccessfulList}}
 	    			</div>
 	    			<div ng-show="result.alreadyLockedList.length"><br><@spring.message "admin.profile_lock.already_locked"/>
 	    				<br>{{result.alreadyLockedList}}
-	    			</div>
-	    			<div ng-show="result.reviewedList.length"><br><@spring.message "admin.profile_lock.reviewed"/>
-	    				<br>{{result.reviewedList}}
 	    			</div>
 	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_lock.not_found"/>
 	    				<br>{{result.notFoundList}}
