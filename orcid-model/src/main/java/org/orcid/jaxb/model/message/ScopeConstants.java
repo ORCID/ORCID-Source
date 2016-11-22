@@ -57,6 +57,7 @@ final public class ScopeConstants {
     public static final String PEER_REVIEW_CREATE = "/peer-review/create";
     public static final String GROUP_ID_RECORD_READ = "/group-id-record/read";
     public static final String GROUP_ID_RECORD_UPDATE = "/group-id-record/update";
+    public static final String EMAIL_READ_PRIVATE = "/email/read-private";
 
     // Per activity API
     public static final String ACTIVITIES_READ_LIMITED = "/activities/read-limited";

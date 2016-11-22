@@ -115,7 +115,7 @@ public class OauthLoginController extends OauthControllerBase {
                     Map<String, String> params = new HashMap<String, String>();
                     Map<String, String> approvalParams = new HashMap<String, String>();
                     
-                    fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled());                                        
+                    fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled(), form.isEmailAccessAllowed());                                        
 
                     // Authorize
                     try {

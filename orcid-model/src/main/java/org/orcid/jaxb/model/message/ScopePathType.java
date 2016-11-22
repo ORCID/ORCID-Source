@@ -130,7 +130,9 @@ public enum ScopePathType implements Serializable {
     // Internal scopes
     @XmlEnumValue(ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED) INTERNAL_PERSON_LAST_MODIFIED (ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED),     
     
-    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE);
+    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE),
+    
+    @XmlEnumValue(ScopeConstants.EMAIL_READ_PRIVATE) EMAIL_READ_PRIVATE(ScopeConstants.EMAIL_READ_PRIVATE);
     //@formatter:on
 
     private final String value;

@@ -215,4 +215,5 @@
     <include file="/db/updates/identifier-types/identifier-type-pdb.xml" />
     <include file="/db/updates/identifier-types/identifier-type-kuid.xml" />
     <include file="/db/updates/identifier-types/identifier-type-36-lensid.xml" />
+    <include file="/db/updates/add_email_access_reason.xml" />
 </databaseChangeLog>
