@@ -770,6 +770,15 @@ $(function() {
     
 });
 
+//request private email oauth
+$("#allowEmailAccess").change(function() {
+    var url = window.location.href;
+    if($(this).not(":checked")) {
+         url = url.replace('/email/read-private','');
+         location.replace(url);
+     }
+});
+
 /* START: Bibjson to work AjaxForm */
 /*
  * { "errors":[], "publicationDate": {
