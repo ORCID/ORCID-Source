@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.persistence;
+package org.orcid.listener.persistence.entities;
 
 import java.util.Date;
 

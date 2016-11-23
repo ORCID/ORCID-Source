@@ -28,6 +28,8 @@ import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +69,8 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
     private S3Updater s3Updater;
     @Resource
     private ExceptionHandler exceptionHandler;
+    @Resource
+    private RecordStatusManager recordStatusManager;
     
     /**
      * Populates the Amazon S3 buckets and updates solr index
@@ -82,8 +86,8 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
                 if (is20IndexingEnabled) {
                     updateS3_2_0_API(orcid);
                 }
-            }
-
+                recordStatusManager.markAsSent(orcid, AvailableBroker.AMAZON_S3);
+            }            
         } catch (LockedRecordException lre) {
             try {
                 LOG.error("Record " + orcid + " is locked");
@@ -106,6 +110,7 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
             // something else went wrong fetching record from ORCID and threw a
             // runtime exception
             LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
+            recordStatusManager.markAsFailed(orcid, AvailableBroker.AMAZON_S3);
         }
 
     }

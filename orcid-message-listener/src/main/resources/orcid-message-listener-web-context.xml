@@ -127,4 +127,10 @@
         <property name="preferredTestQuery" value="${org.orcid.message-listener.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="${org.orcid.message-listener.db.numHelperThreads:10}"/>
     </bean>
+    
+    <!-- DAO's -->
+    <bean id="recordStatusDao" class="org.orcid.listener.persistence.dao.RecordStatusDao" />
+    
+    <!-- Manager's -->
+    <bean id="recordStatusManager" class="org.orcid.listener.persistence.managers.RecordStatusManager" />
 </beans>

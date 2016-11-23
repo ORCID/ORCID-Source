@@ -24,7 +24,7 @@
 	
 	<persistence-unit name="message-listener" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>	
-		<class>org.orcid.listener.persistence.RecordStatusEntity</class>		
+		<class>org.orcid.listener.persistence.entities.RecordStatusEntity</class>		
 	</persistence-unit>
 
 </persistence>

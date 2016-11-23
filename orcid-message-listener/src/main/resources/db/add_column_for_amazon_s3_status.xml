@@ -28,6 +28,7 @@
                 <columnExists tableName="record_status" columnName="amazon_s3"/>
             </not>            
 		</preConditions>
+		<!-- Indicates the number of times it have failed to be sent to S3 -->
 		<sql>ALTER TABLE record_status ADD amazon_s3 integer;</sql>		
 	</changeSet>		
 	

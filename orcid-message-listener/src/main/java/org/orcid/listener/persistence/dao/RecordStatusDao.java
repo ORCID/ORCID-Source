@@ -1,0 +1,54 @@
+package org.orcid.listener.persistence.dao;
+
+import java.math.BigInteger;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.orcid.listener.persistence.entities.RecordStatusEntity;
+import org.orcid.listener.persistence.util.AvailableBroker;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RecordStatusDao {
+    @Resource(name="entityManager")
+    protected EntityManager entityManager;
+    
+    public RecordStatusEntity get(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM record_status WHERE orcid = :orcid", RecordStatusEntity.class);
+        query.setParameter("orcid", orcid);
+        return (RecordStatusEntity) query.getSingleResult();
+    }
+    
+    public boolean exists(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM record_status WHERE orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
+    }
+    
+    public void create(String orcid, AvailableBroker broker, Integer status) {
+        RecordStatusEntity entity = new RecordStatusEntity();
+        entity.setId(orcid);
+        entity.setAmazonS3(status);
+        Date now = new Date();
+        entity.setDateCreated(now);
+        entity.setLastModified(now);
+        entityManager.persist(entity);
+    }
+    
+    public boolean updateStatus(String orcid, AvailableBroker broker, Integer status) {
+        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = :status, last_modified = now() WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("status", status);
+        return query.executeUpdate() > 0;
+    }
+    
+    public boolean updateStatus(String orcid, AvailableBroker broker) {
+        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = " + broker + " + 1, last_modified = now() WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);        
+        return query.executeUpdate() > 0;
+    }
+}
