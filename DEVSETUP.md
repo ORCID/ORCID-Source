@@ -226,6 +226,14 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Click Finish
 
+* For Windows 10 users, if all your projects shows an error "Missing artifact jdk.tools:jdk.tools:jar:1.6", it means your STS Maven plugin is looking for a Java 1.6 tools.jar library, please modify the STS.ini fileto indicate the java executable you want to use to run STS, which should be the JDK one: 
+
+	```
+	-vm
+	C:/Program Files/Java/jdk1.8.0_65/bin/javaw.exe
+	``` 
+	Do this before the '-vmargs' param
+
 * Select Window -> Preferences -> Servers(Expand) -> Runtime Environments
 
 * Click on Add.
