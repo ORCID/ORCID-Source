@@ -1,10 +1,26 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.listener.persistence.dao;
 
 import java.math.BigInteger;
 import java.util.Date;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.orcid.listener.persistence.entities.RecordStatusEntity;
@@ -13,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RecordStatusDao {
-    @Resource(name="entityManager")
+    @PersistenceContext
     protected EntityManager entityManager;
     
     public RecordStatusEntity get(String orcid) {
