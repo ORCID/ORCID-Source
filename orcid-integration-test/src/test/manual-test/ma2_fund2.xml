@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<funding:funding
+    xmlns:common="http://www.orcid.org/ns/common" xmlns:funding="http://www.orcid.org/ns/funding"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/funding https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/funding-2.0_rc2.xsd ">    
+    <funding:type>grant</funding:type>
+    <funding:organization-defined-type>subtype</funding:organization-defined-type>
+    <funding:title>
+        <common:title>Manual Test 2.0 Post</common:title>
+    </funding:title>
+    <funding:short-description>Funding Description</funding:short-description>
+    <funding:amount currency-code="USD">100</funding:amount>
+    <funding:url></funding:url>
+    <common:start-date>
+        <common:year>2016</common:year>
+        <common:month>03</common:month>
+    </common:start-date>
+    <common:external-ids>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>1</common:external-id-value>                  
+            <common:external-id-url>http://tempuri.org</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>2</common:external-id-value>                 
+            <common:external-id-url>http://tempuri.org/2</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+    </common:external-ids>
+    <funding:contributors/>
+    <funding:organization>
+        <common:name>Wellcome Trust</common:name>
+        <common:address>
+            <common:city>London</common:city>
+            <common:region>London</common:region>
+            <common:country>GB</common:country>
+        </common:address>
+        <common:disambiguated-organization>
+            <common:disambiguated-organization-identifier>5072</common:disambiguated-organization-identifier>
+            <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+        </common:disambiguated-organization>
+    </funding:organization>
+</funding:funding>
