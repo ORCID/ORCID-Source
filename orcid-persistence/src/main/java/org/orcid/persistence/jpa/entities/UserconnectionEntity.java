@@ -62,7 +62,7 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     private boolean isLinked;
 
     private String idType;
-    
+
     private UserConnectionStatus connectionSatus = UserConnectionStatus.STARTED;
 
     public UserconnectionEntity() {
@@ -202,7 +202,7 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     public void setIdType(String idType) {
         this.idType = idType;
     }
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     public UserConnectionStatus getConnectionSatus() {
@@ -211,5 +211,12 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     public void setConnectionSatus(UserConnectionStatus connectionSatus) {
         this.connectionSatus = connectionSatus;
-    }        
+    }
+
+    @Override
+    public String toString() {
+        return "UserconnectionEntity [id=" + id + ", accesstoken=" + accesstoken + ", displayname=" + displayname + ", email=" + email + ", expiretime=" + expiretime
+                + ", imageurl=" + imageurl + ", lastLogin=" + lastLogin + ", orcid=" + orcid + ", profileurl=" + profileurl + ", rank=" + rank + ", refreshtoken="
+                + refreshtoken + ", secret=" + secret + ", isLinked=" + isLinked + ", idType=" + idType + ", connectionSatus=" + connectionSatus + "]";
+    }
 }
