@@ -49,10 +49,12 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
-							<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-			  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-						</div>
+					    <#if shibbolethEnabled>
+						    <div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
+							    <a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+			  				    <a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+						    </div>
+						</#if>
 						<!-- Personal Login -->
 						<!-- Login form -->
 						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
