@@ -2711,7 +2711,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
 
     $scope.deleteWebsite = function(website){
         var websites = $scope.websitesForm.websites;
-        var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
             if (websites[len] == website)
@@ -3887,7 +3886,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,
             dataType: 'json',
             success: function(data) {
-                   $scope.duplicates = data;
+                $scope.duplicates = data;
                 $scope.$apply();
             	var diffDate = new Date();
             	// reg was filled out to fast reload the page
@@ -4025,7 +4024,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             transition: 'fade',
             close: '',
             scrolling: true
-                    });
+            });
         $scope.$apply();
         $.colorbox.resize({width:"780px" , height:"400px"});
     };
