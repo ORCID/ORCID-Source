@@ -1996,12 +1996,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
                     LOG.debug("Got profile to index: {}", orcid);
-                    //---------------------------
-                    //---------------------------
-                    //TODO!!!! ENABLE THIS AGAIN
-                    //---------------------------
-                    //---------------------------
-                    //orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
+                    orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
                 
