@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
@@ -200,6 +201,9 @@ public class RegistrationController extends BaseController {
     @Resource
     private ProfileEntityManager profileEntityManager;
 
+    @Resource
+    private AdminManager adminManager;
+    
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;    
     
@@ -422,7 +426,13 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
-        createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        try {        
+            createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        } catch(Exception e) {
+            r.getErrors().add(getMessage("register.error.generalError"));
+            return r;
+        }
+        
         if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
             ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
         } else if ("shibboleth".equals(reg.getLinkType())) {
@@ -529,11 +539,36 @@ public class RegistrationController extends BaseController {
         if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
-        // validate email
+        String emailAddress = reg.getEmail().getValue();
+        
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-        // make sure there are no dups
-        validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
-
+        // Validate the email address is ok        
+        if(!validateEmailAddress(emailAddress)) {
+            String[] codes = { "Email.personalInfoForm.email" };
+            String[] args = { emailAddress };
+            mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Not vaild"));
+        } else {
+            //Validate duplicates 
+            //If email exists
+            if(emailManager.emailExists(emailAddress)) {
+                //If it is claimed, should return a duplicated exception
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                    
+                    String[] codes = { "orcid.frontend.verify.duplicate_email" };
+                    String[] args = { emailAddress };
+                    mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
+                } else {
+                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception
+                    if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
+                        String[] args = { emailAddress };
+                        mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                    } else {
+                        LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
+                    }
+                }                                
+            }
+        }
+        
         for (ObjectError oe : mbr.getAllErrors()) {
             Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
@@ -1186,5 +1221,4 @@ public class RegistrationController extends BaseController {
         profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
         logUserIn(request, response, orcid, password);
     }
-
 }

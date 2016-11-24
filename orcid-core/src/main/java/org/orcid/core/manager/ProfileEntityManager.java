@@ -57,6 +57,8 @@ public interface ProfileEntityManager {
     boolean disableDeveloperTools(OrcidProfile profile);
 
     boolean isProfileClaimed(String orcid);
+    
+    boolean isProfileClaimedByEmail(String email);
 
     ClientType getClientType(String orcid);
 

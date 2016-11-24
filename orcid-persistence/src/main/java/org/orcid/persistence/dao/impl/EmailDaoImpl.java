@@ -120,10 +120,16 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
-        String deleteEmailEvent  = "delete from email_event where email = :email ;";
-        String deleteEmail = "delete from email where orcid = :orcid and email = :email";
-        if (removeIfPrimary) deleteEmail +=" ;";
-        else  deleteEmail +=" and is_primary != true ;";
+        String deleteEmailEvent  = null;
+        String deleteEmail = null;
+        if (removeIfPrimary) {
+            deleteEmailEvent = "delete from email_event where email = :email";
+            deleteEmail = "delete from email where orcid = :orcid and email = :email";
+        } else {
+            //Check if the email is primary before removing the email events and the email itself 
+            deleteEmailEvent = "delete from email_event where email = :email and not(select is_primary from email where email = :email)";
+            deleteEmail = "delete from email where orcid = :orcid and email = :email and not(is_primary);";
+        }
         
         Query query = entityManager.createNativeQuery(deleteEmailEvent);        
         query.setParameter("email", email);                
@@ -214,4 +220,27 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         return query.executeUpdate() > 0;
     }
 
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists, the owner is not claimed and the
+     *         client source of the record allows auto deprecating records
+     */
+    @Override
+    public boolean isAutoDeprecateEnableForEmail(String email) {
+        Query query = entityManager.createNativeQuery("SELECT allow_auto_deprecate FROM client_details WHERE client_details_id=(SELECT client_source_id FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email=:email) AND claimed = false)");
+        query.setParameter("email", email);
+        try {
+            Boolean result = (Boolean) query.getSingleResult();
+            return result == null ? false : result;
+        } catch(Exception e) {
+            //TODO log exception
+        }
+        return false;
+    }
 }

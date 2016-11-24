@@ -221,4 +221,22 @@ public class EmailManagerImpl implements EmailManager {
         return emailDao.verifySetCurrentAndPrimary(orcid, email);
     }
 
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists in a non claimed record and the
+     *         client source of the record allows auto deprecating records
+     */
+    @Override
+    public boolean isAutoDeprecateEnableForEmail(String email) {
+        if(PojoUtil.isEmpty(email)) {
+            return false;
+        }
+        return emailDao.isAutoDeprecateEnableForEmail(email);
+    }
 }

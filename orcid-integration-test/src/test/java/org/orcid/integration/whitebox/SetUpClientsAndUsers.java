@@ -668,7 +668,7 @@ public class SetUpClientsAndUsers {
         scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
         
         clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
-                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
     }
     
     @Test

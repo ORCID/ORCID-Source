@@ -893,6 +893,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
+    public boolean isProfileClaimedByEmail(String email) {
+        return profileDao.getClaimedStatusByEmail(email);
+    }
+
     public void reactivate(String orcid, String givenNames, String familyName, String password) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
@@ -903,7 +907,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
     }
-
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

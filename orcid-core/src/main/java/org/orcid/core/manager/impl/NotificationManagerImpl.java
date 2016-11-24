@@ -953,13 +953,18 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        if(sourceEntity != null) {
+            // Set source id
+            if (sourceEntity.getSourceProfile() != null) {
+                notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+    
+            if (sourceEntity.getSourceClient() != null) {
+                notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            }
+        } else {
+            //If we can't find source id, set the user as the source
+            notificationEntity.setSourceId(orcid);
         }
 
         notificationDao.persist(notificationEntity);
@@ -1135,5 +1140,39 @@ public class NotificationManagerImpl implements NotificationManager {
         }
 
         return result;
+    }
+
+    @Override
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid) {
+        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+        ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());        
+        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = getSubject("email.subject.auto_deprecate", orcidProfile);
+        String baseUri = orcidUrlManager.getBaseUrl();
+        Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
+        
+        // Create map of template params
+        templateParams.put("primaryId", orcidId);
+        templateParams.put("name", deriveEmailFriendlyName(orcidProfile));        
+        templateParams.put("baseUri", baseUri);        
+        templateParams.put("subject", subject);
+        templateParams.put("clientName", clientDetails.getClientName());
+        templateParams.put("deprecatedAccountCreationDate", deprecatedAccountCreationDate);
+        templateParams.put("deprecatedId", deprecatedOrcid);
+                
+        addMessageParams(templateParams, userLocale);
+        
+        // Generate html from template
+        String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
+        
+        NotificationCustom notification = new NotificationCustom();
+        notification.setNotificationType(NotificationType.CUSTOM);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        createNotification(orcidId, notification);
     }
 }
