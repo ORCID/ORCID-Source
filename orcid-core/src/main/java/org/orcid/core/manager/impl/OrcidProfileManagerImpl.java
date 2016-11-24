@@ -1996,8 +1996,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     LOG.debug("Null profile found during indexing: {}", orcid);
                 } else {
                     LOG.debug("Got profile to index: {}", orcid);
-                    //orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
-                    //profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                    orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
                 
                 //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
