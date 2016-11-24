@@ -17,29 +17,33 @@
 package org.orcid.listener.persistence.util;
 
 public enum AvailableBroker {
-    AMAZON_S3("amazon_s3");
-    
-    private final String name;
+	/**
+	 * The name variable of the available broker should match the column name in
+	 * the record_status table
+	 */
+	DUMP_STATUS_1_2_API("api_1_2_dump_status"), DUMP_STATUS_2_0_API("api_2_0_dump_status");
 
-    AvailableBroker(String n) {
-        this.name = n;
-    }
+	private final String name;
 
-    public String value() {
-        return name;
-    }
+	AvailableBroker(String n) {
+		this.name = n;
+	}
 
-    public static AvailableBroker fromValue(String v) {
-        for (AvailableBroker c : AvailableBroker.values()) {
-            if (c.name.equals(v.toLowerCase())) {
-                return c;
-            }
-        }
-        throw new IllegalArgumentException(v);
-    }
+	public String value() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	public static AvailableBroker fromValue(String v) {
+		for (AvailableBroker c : AvailableBroker.values()) {
+			if (c.name.equals(v.toLowerCase())) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException(v);
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

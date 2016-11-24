@@ -29,8 +29,8 @@ public class RecordStatusEntity {
     private Date dateCreated;
     private Date lastModified;
     private String orcid;
-    //Integer that represents the number of times the system have tried to persists this record on this broker 
-    private Integer amazonS3;
+    private Integer dumpStatus12Api;
+    private Integer dumpStatus20Api;
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -60,12 +60,21 @@ public class RecordStatusEntity {
         this.lastModified = lastModified;
     }
 
-    @Column(name = "amazon_s3")
-    public Integer getAmazonS3() {
-        return amazonS3;
-    }
+    @Column(name = "api_1_2_dump_status")
+	public Integer getDumpStatus12Api() {
+		return dumpStatus12Api;
+	}
 
-    public void setAmazonS3(Integer amazonS3) {
-        this.amazonS3 = amazonS3;
-    }       
+	public void setDumpStatus12Api(Integer dumpStatus12Api) {
+		this.dumpStatus12Api = dumpStatus12Api;
+	}
+
+	@Column(name = "api_2_0_dump_status")
+	public Integer getDumpStatus20Api() {
+		return dumpStatus20Api;
+	}
+
+	public void setDumpStatus20Api(Integer dumpStatus20Api) {
+		this.dumpStatus20Api = dumpStatus20Api;
+	}       
 }

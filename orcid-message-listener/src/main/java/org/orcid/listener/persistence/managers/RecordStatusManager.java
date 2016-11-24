@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class RecordStatusManager {
 
-    private static Integer FIRST_FAIL = 1;
+    public static final Integer FIRST_FAIL = 1;
+    
+    public static final Integer OK = 0;
     
     @Autowired
     private RecordStatusDao dao;
@@ -33,9 +35,9 @@ public class RecordStatusManager {
     @Transactional
     public void markAsSent(String orcid, AvailableBroker broker) {
         if(dao.exists(orcid)) {
-            dao.updateStatus(orcid, broker, 0);
+            dao.updateStatus(orcid, broker, OK);
         } else {
-            dao.create(orcid, broker, 0);
+            dao.create(orcid, broker, OK);
         }
     }
     

@@ -22,26 +22,27 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="" author="Angel Montenegro">
+	<changeSet id="1_2-DUMP-STATUS" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
             <not>
-                <columnExists tableName="record_status" columnName="amazon_s3"/>
+                <columnExists tableName="record_status" columnName="api_1_2_dump_status"/>
             </not>            
 		</preConditions>
 		<!-- Indicates the number of times it have failed to be sent to S3 -->
-		<sql>ALTER TABLE record_status ADD amazon_s3 integer;</sql>		
-	</changeSet>		
-	
-	<changeSet id="SET-DEFAULT-VALUE-TO-AMAZON-S3-COLUMN" author="Angel Montenegro">
-		<sql>UPDATE record_status SET amazon_s3=0;</sql>
+		<sql>ALTER TABLE record_status ADD api_1_2_dump_status integer;</sql>		
+	</changeSet>
+			
+	<!-- Initial value of -1 indicates it have never been indexed -->
+	<changeSet id="SET-INITIAL-VALUE" author="Angel Montenegro">
+    	<sql>UPDATE record_status SET api_1_2_dump_status=-1;</sql>
 	</changeSet>
 	
-	<changeSet id="AMAZON-S3-INDEX" author="Angel Montenegro">
+	<changeSet id="1_2-DUMP-STATUS-INDEX" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<indexExists indexName="amazon_s3_index" tableName="record_status" />
+				<indexExists indexName="api_1_2_dump_status_index" tableName="record_status" />
 			</not>
 		</preConditions>
-		<sql>create index amazon_s3_index on record_status(amazon_s3);</sql>
+		<sql>create index api_1_2_dump_status_index on record_status(api_1_2_dump_status);</sql>
 	</changeSet>
 </databaseChangeLog>

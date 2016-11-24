@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
@@ -47,10 +48,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @Component
 public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessage>{
 
-    Logger LOG = LoggerFactory.getLogger(LastModifiedMessageProcessor.class);
-
-    @Value("${org.orcid.persistence.messaging.dump_indexing.enabled}")
-    private boolean dumpIndexingEnabled;
+    Logger LOG = LoggerFactory.getLogger(LastModifiedMessageProcessorTest.class);    
     
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean solrIndexingEnabled;
@@ -77,67 +75,73 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
      */
     public void accept(LastModifiedMessage m) {
         String orcid = m.getOrcid();
-        try {
-            // Phase #1: update S3
-            if (dumpIndexingEnabled) {
-                if (is12IndexingEnabled) {
-                    updateS3_1_2_API(orcid);
-                }
-                if (is20IndexingEnabled) {
-                    updateS3_2_0_API(orcid);
-                }
-                recordStatusManager.markAsSent(orcid, AvailableBroker.AMAZON_S3);
-            }            
-        } catch (LockedRecordException lre) {
-            try {
-                LOG.error("Record " + orcid + " is locked");
-                exceptionHandler.handleLockedRecordException(m, lre.getOrcidMessage());
-            } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
-                LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
-            } catch (DeprecatedRecordException e1) {
-                // Should never happen, since it is already locked
-            }
-        } catch (DeprecatedRecordException dre) {
-            try {
-                LOG.error("Record " + orcid + " is deprecated");
-                exceptionHandler.handleDeprecatedRecordException(m, dre.getOrcidDeprecated());
-            } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
-                LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
-            } catch (LockedRecordException e1) {
-                // Should never happen, since it is already deprecated
-            }
-        } catch (Exception e) {
-            // something else went wrong fetching record from ORCID and threw a
-            // runtime exception
-            LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
-            recordStatusManager.markAsFailed(orcid, AvailableBroker.AMAZON_S3);
-        }
-
-    }
-    
-    private void updateS3_1_2_API(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
-        // Update API 1.2
-        if(profile != null) {
-            try {
-                s3Updater.updateS3(orcid, profile);
-            } catch(Exception e) {
-                //Unable to update record in S3
-                LOG.error("Unable to update S3 bucket for 1.2 API", e);
-            } 
-        }                
-    }
-    
-    private void updateS3_2_0_API(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        Record record = orcid20ApiClient.fetchPublicProfile(orcid);
-        // Update API 2.0
-        if(record != null) {
-            try {
-                s3Updater.updateS3(orcid, record);
-            } catch(Exception e) {
-                //Unable to update record in S3
-                LOG.error("Unable to update S3 bucket for 2.0 API", e);
-            }
-        }
+        update_1_2_API(orcid);
+        update_2_0_API(orcid);
     }        
+    
+    private void update_1_2_API(String orcid) {
+    	if (is12IndexingEnabled) {
+    		try {
+	    		OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
+	            // Update API 1.2
+	            if(profile != null) {	                
+                    s3Updater.updateS3(orcid, profile);
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);	                
+	            }
+    		} catch (LockedRecordException | DeprecatedRecordException e) {
+                try {
+                	if(e instanceof LockedRecordException) {
+                		LOG.error("Record " + orcid + " is locked");
+                		exceptionHandler.handle12LockedRecordException(orcid, ((LockedRecordException)e).getOrcidMessage());
+                	} else {
+                		LOG.error("Record " + orcid + " is deprecated");
+                		exceptionHandler.handle12DeprecatedRecordException(orcid, ((DeprecatedRecordException)e).getOrcidDeprecated());
+                	}                                        
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+                }             
+            } catch (Exception e) {
+                // something else went wrong fetching record from ORCID and threw a
+                // runtime exception
+                LOG.error("Unable to fetch record " + orcid + " for 1.2 API");
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+            }
+        }    	               
+    }
+    
+	private void update_2_0_API(String orcid) {
+		if (is20IndexingEnabled) {
+			// Update API 2.0
+			try {
+				Record record = orcid20ApiClient.fetchPublicProfile(orcid);
+				if (record != null) {
+					s3Updater.updateS3(orcid, record);
+					recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+				}
+			} catch (LockedRecordException | DeprecatedRecordException e) {
+                try {
+                	OrcidError error = null;
+                	if(e instanceof LockedRecordException) {
+                		LOG.error("Record " + orcid + " is locked");
+                		error = ((LockedRecordException) e).getOrcidError();
+                	} else {
+                		LOG.error("Record " + orcid + " is deprecated");
+                		error = ((DeprecatedRecordException) e).getOrcidError();
+                	}
+                	exceptionHandler.handle20Exception(orcid, error);
+                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                } 
+            } catch (Exception e) {
+                // something else went wrong fetching record from ORCID and threw a
+                // runtime exception
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API");
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+            }
+		}
+	}        
 }

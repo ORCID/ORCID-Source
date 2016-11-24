@@ -35,7 +35,7 @@ public class RecordStatusDao {
     public RecordStatusEntity get(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT * FROM record_status WHERE orcid = :orcid", RecordStatusEntity.class);
         query.setParameter("orcid", orcid);
-        return (RecordStatusEntity) query.getSingleResult();
+        return (RecordStatusEntity) query.getSingleResult();        
     }
     
     public boolean exists(String orcid) {
@@ -48,11 +48,18 @@ public class RecordStatusDao {
     public void create(String orcid, AvailableBroker broker, Integer status) {
         RecordStatusEntity entity = new RecordStatusEntity();
         entity.setId(orcid);
-        entity.setAmazonS3(status);
+        switch(broker) {
+        case DUMP_STATUS_1_2_API:
+        	entity.setDumpStatus12Api(status);
+        	break;
+        case DUMP_STATUS_2_0_API:
+        	entity.setDumpStatus20Api(status);
+        	break;
+        }        
         Date now = new Date();
         entity.setDateCreated(now);
         entity.setLastModified(now);
-        entityManager.persist(entity);
+        entityManager.persist(entity);        
     }
     
     public boolean updateStatus(String orcid, AvailableBroker broker, Integer status) {
@@ -63,8 +70,8 @@ public class RecordStatusDao {
     }
     
     public boolean updateStatus(String orcid, AvailableBroker broker) {
-        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = " + broker + " + 1, last_modified = now() WHERE orcid = :orcid");
+        Query query = entityManager.createNativeQuery("UPDATE record_status SET " + broker + " = (" + broker + " + 1), last_modified = now() WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);        
         return query.executeUpdate() > 0;
-    }
+    }        
 }
