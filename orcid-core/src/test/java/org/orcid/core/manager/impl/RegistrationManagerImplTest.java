@@ -88,7 +88,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidIdentifier());
         String orcid = orcidProfile.getOrcidIdentifier().getPath();
         assertTrue(OrcidStringUtils.isValidOrcid(orcid));
-        Map<String, String> map = emailManager.findIdByEmail(email);
+        Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(orcid, map.get(email));        
     }
@@ -156,7 +156,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         String orcidBefore = orcidProfile.getOrcidIdentifier().getPath();
         assertTrue(OrcidStringUtils.isValidOrcid(orcidBefore));
         
-        Map<String, String> map1 = emailManager.findIdByEmail(email);
+        Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
         assertEquals(orcidBefore, map1.get(email));  
         
@@ -168,7 +168,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         
         assertThat(orcidAfter, is(not(equalTo(orcidBefore))));
         
-        Map<String, String> map2 = emailManager.findIdByEmail(email);
+        Map<String, String> map2 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map2);
         assertEquals(orcidAfter, map2.get(email));  
     }

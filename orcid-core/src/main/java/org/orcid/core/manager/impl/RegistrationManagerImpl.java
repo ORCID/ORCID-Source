@@ -190,7 +190,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @return the orcid id associated with the given email address
      */
     private String getOrcidIdFromEmail(String emailAddress) {
-        Map<String, String> emailMap = emailManager.findIdByEmail(emailAddress);
+        Map<String, String> emailMap = emailManager.findOricdIdsByCommaSeparatedEmails(emailAddress);
         String unclaimedOrcid = emailMap == null ? null : emailMap.get(emailAddress);
         if (PojoUtil.isEmpty(unclaimedOrcid)) {
             throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
