@@ -99,8 +99,13 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
+    public String findOrcidIdByEmail(String email) {
+        return emailDao.findOrcidIdByCaseInsenitiveEmail(email);
+    }
+    
+    @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, String> findIdByEmail(String csvEmail) {
+    public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
         Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         List<String> emailList = new ArrayList<String>();
         String [] emails = csvEmail.split(",");
@@ -234,5 +239,4 @@ public class EmailManagerImpl implements EmailManager {
         }
         return emailDao.isAutoDeprecateEnableForEmail(email);
     }
-    
 }

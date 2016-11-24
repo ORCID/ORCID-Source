@@ -1,10 +1,12 @@
 # Manual Test
 
 ##Register/Verify
+0. Get the list of QA testing clients from ORCID-Internal, find and replace the member and public API client iDs and secrets with the ones listed in that document
+0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016
 1. Visit https://qa.orcid.org/register
 2. Create new account:
     * First name: ma_test
-    * Last name: [DD][month][YYYY] (ex: 24feb2016)
+    * Last name: [DD][month][YYYY]
     * Email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
     * Password: generate random password using [LastPass generator](https://lastpass.com/generatepassword.php) or similar
     * Default privacy for new activities: Public
@@ -33,14 +35,14 @@
 20. Visit https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&show_login=true
 21. Sign in using a Google account not linked to an existing ORCID record
 22. Complete steps to link the Google account to the account created today
-23. Check that after linking the account you are taken back to the authorize page not to my-orcid
+23. Check that after linking the account you are taken back to the authorize page not to my-orcid (you do not need to complete the authorization)
 24. Visit https://qa.orcid.org/account and revoke Google and UnitedID account access
 
 ##My-ORCID
 25. Visit https://qa.orcid.org/my-orcid
 26. Use the language selector to change the language to Spanish- check that the page updates into Spanish
 27. Use the language selector to set the page back to English
-28. Add a published name: Published Name
+28. Add a published name: Published Name (Published name can be edited using the pencil icon next to the record name)
 29. Add an also know as name: Other Name
 30. Add a country: Afghanistan
 31. Add a keyword: keyword
@@ -66,7 +68,7 @@
     * Default privacy for new activities: Private
     * Email frequency: Never
 
-42. Exchange the authorization code: 
+42. Exchange the authorization code (the 6 digit code returned with the URI, you do not need to do anything on the Google Playground page): 
 
     ```
     curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&client_secret=[public client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
@@ -86,7 +88,7 @@
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]' -k
     ```
-46. Check that both records are returned
+46. Check that both the ma_test and ma_public_test records are returned in the search results
 
 47. Find and replace [orcid id] in this document with iD of the record created at the start of this document
 
@@ -119,9 +121,9 @@
 ##Member API 1.2 Post/Update 
 53. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-bio/update /orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground&email=ma_test_[DD][month][YYYY]@mailinator.com
 
-53. Log into the account created for testing today and grant short lived authorization
+53. Log into the account created for testing today and grant short lived authorization. After granting authorization you will be taken to the Google OAuth playground- you do not need to do anything on this page, but retrieve the access code included with the URL
 
-54. Exchange the authorization code:
+54. Exchange the authorization code (the 6 digit code returned in the URI):
  
     ```
     curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
@@ -131,7 +133,7 @@
 
 56. Find and replace [1.2 refresh] in this document with the refresh token
 
-57. Update the files paths in this document to point to the local copy of the manual-test files
+57. Update the files paths in this document to point to the local copy of the manual-test files or change directories to where they are stored (ie cd to /src/test/manual-test)
 
 58. Post the ma test work:
  
@@ -225,9 +227,9 @@
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
     ```
     
-86. Check that the work appears at https://qa.orcid.org/my-orcid and is grouped with the manually added work
+86. Check that the work appears at https://qa.orcid.org/my-orcid and is grouped with the manually added work. (You will need to click on the sources section of the manually added to work to see the version that was just posted)
 
-87. Find and replace [put-code] in this document with the put-code for the work that was just added
+87. Copy the put-code from the location header returned when the work was posted. Find and replace [put-code] in this document with the put-code
 
 88. Update the work with JSON: 
 
@@ -292,6 +294,8 @@
 	* Check that notification to add a work has posted
 	* Check that notifications from the previous updates have posted
 	
+100. Visit https://qa.orcid.org/signout	
+	
 ##Member API 1.2 Creating/Claiming
 
 101. Get a token to create records
@@ -344,7 +348,7 @@
 	```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://pub.qa.orcid.org/v1.2/[new id]/orcid-profile' -L -i -k
     ```
-107. Check the email inbox used when creating the record, api_[DD][month][YYYY]api@mailinator.com, and follow the link to claim the record
+107. Check the email inbox used when creating the record, api_[DD][month][YYYY]@mailinator.com, and follow the link to claim the record
 
 108. Complete the steps to claim the record
     * Password: [DD][month][YYYY]
@@ -403,7 +407,7 @@ In this section all calls are expected to fail.
 "external-id-relationship": "SELF"}]}}}' -L -i -k
 ```
 
-116. Attempt to update an item you are not the source of. (If these directions have been followed exactly you can replace the given put-code in both the call and the JSON with one that is three less and it will be for a work that was created manually). Check that an 401 Unauthorized error is returned with the message "Invalid access token..."
+116. Attempt to update an item you are not the source of. (If these directions have been followed exactly you can replace the given put-code in both the call and the JSON with one that is three less and it will be for a work that was created manually). Check that a 403 Forbidden error is returned.
 
     ```
     curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]-3' -d '{
@@ -612,7 +616,7 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-149. Read record with access token for another record 2.0_rc2. Check that nothing is returned
+149. Read record with access token for another record 2.0_rc2. Check that a 401 Unauthorized error is returned with the message "Access token is for a different record"
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
@@ -654,19 +658,19 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-156. Read record with access token with orcid-profile/create scope 2.0_rc2. Check that no content is returned
+156. Read record with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
     ```
 
-157. Read a single work with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+157. Read a single work with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
     ```
 
-158. Read email section with access token with orcid-profile/create scope 2.0_rc2. Check that no content is returned
+158. Read email section with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k

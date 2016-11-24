@@ -95,4 +95,7 @@ public interface ProfileEntityManager {
     void updateLastModifed(String orcid);
 
     void updateLocale(String orcid, Locale locale);
+
+    void reactivate(String orcid, String givenNames, String familyName, String password);
+
 }

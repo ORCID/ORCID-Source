@@ -31,6 +31,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean emailExists(String email);
 
     EmailEntity findCaseInsensitive(String email);
+    
+    String findOrcidIdByCaseInsenitiveEmail(String email);
 
     void updateEmail(String orcid, String email, boolean isCurrent, Visibility visibility);
 

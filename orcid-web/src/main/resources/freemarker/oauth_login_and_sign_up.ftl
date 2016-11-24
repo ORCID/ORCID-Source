@@ -45,50 +45,52 @@
 					<p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
 					<p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
-						<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-					</div>
-					<!-- Personal Login -->
-					<!-- Login form -->
-					<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
-						<div class="login-box">
-							<p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
-							<div class="row personal-login">
-								<div class="form-group">
-								    <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>									   
-								    <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >									    									    
-								</div>
-								<div class="form-group">
-								    <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
-								    <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
-								    <div id="login-reset">
-								        <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
-								    </div>
-								</div>			
+				<div class="row">
+					<div class="col-md-12">
+					    <#if shibbolethEnabled>
+						    <div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
+							    <a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+			  				    <a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+						    </div>
+						</#if>
+						<!-- Personal Login -->
+						<!-- Login form -->
+						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
+							<div class="login-box">
+								<p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
+								<div class="row personal-login">
+									<div class="form-group">
+									    <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>									   
+									    <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >									    									    
+									</div>
+									<div class="form-group">
+									    <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
+									    <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
+									    <div id="login-reset">
+									        <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
+									    </div>
+									</div>		
+									<div class="form-group">
+								        <span class="orcid-error" ng-show="authorizationForm.errors.length > 0">
+											<div ng-repeat='error in authorizationForm.errors' ng-bind-html="error"></div>
+										</span>
+									</div>
+									<div class="form-group">
+										<div class="col-md-12">
+											<div class="col-md-6">
+												<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+													<@orcid.msg 'confirm-oauth-access.Deny' />
+												</a>
+											</div>
+											<div class="col-md-6">				                                		            		               					
+												<button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+													<@orcid.msg 'confirm-oauth-access.Authorize' />
+												</button>
+											</div>
+										</div>
+									</div>												
+								</div>									
 							</div>
-				        	<div class="row">
-				        		<div>
-							        <span class="orcid-error" ng-show="authorizationForm.errors.length > 0">
-										<div ng-repeat='error in authorizationForm.errors' ng-bind-html="error"></div>
-									</span>
-								</div>
-				        	</div>								
-							<div class="row">
-								<div class="col-md-6">
-									<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
-										<@orcid.msg 'confirm-oauth-access.Deny' />
-									</a>
-								</div>
-								<div class="col-md-6">				                                		            		               					
-									<button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
-										<@orcid.msg 'confirm-oauth-access.Authorize' />
-									</button>
-								</div>
-				            </div>
 						</div>
 						<!-- SOCIAL LOGIN -->					            
 						<div class="social-login">
