@@ -891,6 +891,19 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public void updateLocale(String orcid, Locale locale) {
         profileDao.updateLocale(orcid, locale);
     }
+
+    @Override
+    public void reactivate(String orcid, String givenNames, String familyName, String password) {
+        LOGGER.info("About to reactivate record, orcid={}", orcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        profileEntity.setDeactivationDate(null);
+        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
+        recordNameEntity.setGivenNames(givenNames);
+        recordNameEntity.setFamilyName(familyName);
+        profileDao.merge(profileEntity);
+    }
+
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

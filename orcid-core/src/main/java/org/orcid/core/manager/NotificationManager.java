@@ -43,6 +43,8 @@ public interface NotificationManager {
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
+    
+    void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
 
     public String createVerificationUrl(String email, String baseUri);
 
