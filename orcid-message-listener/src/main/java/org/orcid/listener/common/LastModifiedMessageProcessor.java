@@ -48,7 +48,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @Component
 public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessage>{
 
-    Logger LOG = LoggerFactory.getLogger(LastModifiedMessageProcessorTest.class);    
+    Logger LOG = LoggerFactory.getLogger(LastModifiedMessageProcessor.class);    
     
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean solrIndexingEnabled;
