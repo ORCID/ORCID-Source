@@ -111,8 +111,6 @@ import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
 
-import java.util.Optional;
-
 /**
  * 
  * @author Angel Montenegro

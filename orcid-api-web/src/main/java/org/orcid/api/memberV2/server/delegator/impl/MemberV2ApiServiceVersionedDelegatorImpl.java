@@ -16,8 +16,6 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
-import java.util.Optional;
-
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 

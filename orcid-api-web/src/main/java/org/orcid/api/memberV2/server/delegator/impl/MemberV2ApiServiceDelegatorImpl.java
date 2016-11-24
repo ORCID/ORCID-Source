@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
