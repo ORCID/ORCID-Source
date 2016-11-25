@@ -14,16 +14,18 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.manager.read_only;
 
-import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 
-public interface GroupIdRecordManager extends GroupIdRecordManagerReadOnly {
+public interface GroupIdRecordManagerReadOnly {
 
-    GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord);
+    GroupIdRecord getGroupIdRecord(Long putCode);
 
-    GroupIdRecord updateGroupIdRecord(Long putCode, GroupIdRecord groupIdRecord);
+    GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
 
-    void deleteGroupIdRecord(Long putCode);    
+    boolean exists(String groupId);
+    
+    GroupIdRecord findByGroupId(String groupId);
 }

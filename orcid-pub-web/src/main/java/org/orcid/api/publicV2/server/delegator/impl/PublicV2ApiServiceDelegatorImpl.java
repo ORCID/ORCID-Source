@@ -28,17 +28,14 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
@@ -160,24 +157,8 @@ public class PublicV2ApiServiceDelegatorImpl
     private RecordManagerReadOnly recordManagerReadOnly;                
     
     //Other managers
-    //TODO: Read only implementation
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-    
-    //TODO: Read only implementation
-    @Resource
-    private SourceManager sourceManager;
-
-    //TODO: Read only implementation, do we need it for this?
-    @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    //TODO: Read only implementation
-    @Resource
-    private GroupIdRecordManager groupIdRecordManager;
-
-    @Resource
-    private LocaleManager localeManager;    
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
     
     //Others
     @Resource(name = "visibilityFilterV2")
@@ -185,6 +166,10 @@ public class PublicV2ApiServiceDelegatorImpl
     
     @Resource
     private SourceUtils sourceUtils;
+    
+    //Other managers that don't need read only implementations
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -416,14 +401,14 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecord(Long putCode) {
-        GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
+        GroupIdRecord record = groupIdRecordManagerReadOnly.getGroupIdRecord(putCode);
         return Response.ok(record).build();
     }
 
     @Override
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
-        GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+        GroupIdRecords records = groupIdRecordManagerReadOnly.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
     }
 
