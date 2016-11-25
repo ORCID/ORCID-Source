@@ -37,65 +37,69 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class ExceptionHandler {
 
 	@Value("${org.orcid.message-listener.api12Enabled:true}")
-    private boolean is12IndexingEnabled;
-    
-    @Value("${org.orcid.message-listener.api20Enabled:true}")
-    private boolean is20IndexingEnabled;
-	
-    @Resource
-    private Orcid12APIClient orcid12ApiClient;
-    
-    @Resource
-    private Orcid20APIClient orcid20ApiClient;        
-    
-    @Resource
-    private S3Updater s3Updater; 
-    
-    /**
-     * If the record is locked:
-     * - blank it in 1.2 bucket
-     * @throws JAXBException 
-     * @throws AmazonClientException 
-     * @throws JsonProcessingException 
-     * @throws DeprecatedRecordException 
-     * */
-    public void handle12LockedRecordException(String orcid, OrcidMessage errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException {
-        //Update 1.2 buckets
-    	if (is12IndexingEnabled) {
-    		s3Updater.updateS3(orcid, errorMessage);
-    	}        
-    }
+	private boolean is12IndexingEnabled;
 
-    /**
-     * If the record is deprecated:     
-     * - blank it in 1.2 bucket     
-     * @throws JAXBException 
-     * @throws AmazonClientException 
-     * @throws JsonProcessingException 
-     * @throws DeprecatedRecordException 
-     * @throws LockedRecordException 
-     * */
-    public void handle12DeprecatedRecordException(String orcid, OrcidDeprecated errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException  {
-        //Update 1.2 buckets   
-    	if (is12IndexingEnabled) {
-    		s3Updater.updateS3(orcid, errorMessage);
-    	}               
-    }
-    
-    /**
-     * If the record is deprecated:
-     *
-     * - blank it in 2.0 bucket
-     * @throws JAXBException 
-     * @throws AmazonClientException 
-     * @throws JsonProcessingException 
-     * @throws DeprecatedRecordException 
-     * @throws LockedRecordException 
-     * */
-    public void handle20Exception(String orcid, OrcidError orcidError) throws JsonProcessingException, AmazonClientException, JAXBException  {
-    	//Update 2.0 buckets 
-    	if (is20IndexingEnabled) {
-    		s3Updater.updateS3(orcid, orcidError);        
-    	}
-    }
+	@Value("${org.orcid.message-listener.api20Enabled:true}")
+	private boolean is20IndexingEnabled;
+
+	@Resource
+	private Orcid12APIClient orcid12ApiClient;
+
+	@Resource
+	private Orcid20APIClient orcid20ApiClient;
+
+	@Resource
+	private S3Updater s3Updater;
+
+	/**
+	 * If the record is locked: - blank it in 1.2 bucket
+	 * 
+	 * @throws JAXBException
+	 * @throws AmazonClientException
+	 * @throws JsonProcessingException
+	 * @throws DeprecatedRecordException
+	 */
+	public void handle12LockedRecordException(String orcid, OrcidMessage errorMessage)
+			throws JsonProcessingException, AmazonClientException, JAXBException {
+		// Update 1.2 buckets
+		if (is12IndexingEnabled) {
+			s3Updater.updateS3(orcid, errorMessage);
+		}
+	}
+
+	/**
+	 * If the record is deprecated: - blank it in 1.2 bucket
+	 * 
+	 * @throws JAXBException
+	 * @throws AmazonClientException
+	 * @throws JsonProcessingException
+	 * @throws DeprecatedRecordException
+	 * @throws LockedRecordException
+	 */
+	public void handle12DeprecatedRecordException(String orcid, OrcidDeprecated errorMessage)
+			throws JsonProcessingException, AmazonClientException, JAXBException {
+		// Update 1.2 buckets
+		if (is12IndexingEnabled) {
+			s3Updater.updateS3(orcid, errorMessage);
+		}
+	}
+
+	/**
+	 * If the record is deprecated:
+	 *
+	 * - blank it in 2.0 bucket
+	 * 
+	 * @throws JAXBException
+	 * @throws AmazonClientException
+	 * @throws JsonProcessingException
+	 * @throws DeprecatedRecordException
+	 * @throws LockedRecordException
+	 */
+	public void handle20Exception(String orcid, OrcidError orcidError)
+			throws JsonProcessingException, AmazonClientException, JAXBException {
+		// Update 2.0 buckets
+		if (is20IndexingEnabled) {
+			s3Updater.updateS3(orcid, orcidError);
+		}
+	}
 }

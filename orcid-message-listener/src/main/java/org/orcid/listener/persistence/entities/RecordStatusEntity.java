@@ -26,41 +26,41 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "record_status")
 public class RecordStatusEntity {
-    private Date dateCreated;
-    private Date lastModified;
-    private String orcid;
-    private Integer dumpStatus12Api;
-    private Integer dumpStatus20Api;
-    
-    @Id
-    @Column(name = "orcid", length = 19)
-    public String getId() {
-        return orcid;
-    }
+	private Date dateCreated;
+	private Date lastModified;
+	private String orcid;
+	private Integer dumpStatus12Api;
+	private Integer dumpStatus20Api;
 
-    public void setId(String orcid) {
-        this.orcid = orcid;
-    }
+	@Id
+	@Column(name = "orcid", length = 19)
+	public String getId() {
+		return orcid;
+	}
 
-    @Column(name = "date_created")
-    public Date getDateCreated() {
-        return dateCreated;
-    }
+	public void setId(String orcid) {
+		this.orcid = orcid;
+	}
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+	@Column(name = "date_created")
+	public Date getDateCreated() {
+		return dateCreated;
+	}
 
-    @Column(name = "last_modified")
-    public Date getLastModified() {
-        return lastModified;
-    }
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
+	}
 
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
+	@Column(name = "last_modified")
+	public Date getLastModified() {
+		return lastModified;
+	}
 
-    @Column(name = "api_1_2_dump_status")
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	@Column(name = "api_1_2_dump_status")
 	public Integer getDumpStatus12Api() {
 		return dumpStatus12Api;
 	}
@@ -76,5 +76,5 @@ public class RecordStatusEntity {
 
 	public void setDumpStatus20Api(Integer dumpStatus20Api) {
 		this.dumpStatus20Api = dumpStatus20Api;
-	}       
+	}
 }

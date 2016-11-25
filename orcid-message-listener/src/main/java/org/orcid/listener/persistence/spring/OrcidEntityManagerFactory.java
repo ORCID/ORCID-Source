@@ -30,25 +30,25 @@ import org.springframework.orm.jpa.SharedEntityManagerCreator;
  */
 public class OrcidEntityManagerFactory implements FactoryBean<EntityManager> {
 
-    private EntityManagerFactory entityManagerFactory;
+	private EntityManagerFactory entityManagerFactory;
 
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
+	}
 
-    @Override
-    public EntityManager getObject() throws BeansException {
-        return SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory, null, true);        
-    }
+	@Override
+	public EntityManager getObject() throws BeansException {
+		return SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory, null, true);
+	}
 
-    @Override
-    public Class<EntityManager> getObjectType() {
-        return EntityManager.class;
-    }
+	@Override
+	public Class<EntityManager> getObjectType() {
+		return EntityManager.class;
+	}
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
+	@Override
+	public boolean isSingleton() {
+		return false;
+	}
 
 }
