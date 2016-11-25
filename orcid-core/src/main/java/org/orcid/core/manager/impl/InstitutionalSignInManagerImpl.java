@@ -20,13 +20,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -34,6 +37,8 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.orcid.pojo.HeaderCheckResult;
+import org.orcid.pojo.HeaderMismatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,14 +64,15 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     
     @Override
     @Transactional
-    public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) throws UnsupportedEncodingException {
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUserId, providerId,
-                idType);
+    public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid, Map<String, String> headers)
+            throws UnsupportedEncodingException {
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUserId, providerId, idType);
         if (userConnectionEntity == null) {
-            LOGGER.info("No user connection found for idType={}, remoteUserId={}, displayName={}, providerId={}, userOrcid={}", new Object[]{idType, remoteUserId, displayName, providerId, userOrcid});
+            LOGGER.info("No user connection found for idType={}, remoteUserId={}, displayName={}, providerId={}, userOrcid={}",
+                    new Object[] { idType, remoteUserId, displayName, providerId, userOrcid });
             userConnectionEntity = new UserconnectionEntity();
             String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUserId);            
+            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUserId);
             userConnectionEntity.setOrcid(userOrcid);
             userConnectionEntity.setProfileurl(orcidUrlManager.getBaseUriHttp() + "/" + userOrcid);
             userConnectionEntity.setDisplayname(displayName);
@@ -76,14 +82,14 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             userConnectionEntity.setLastLogin(new Date());
             userConnectionEntity.setIdType(idType);
             userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
+            userConnectionEntity.setHeadersJson(JsonUtils.convertToJsonString(headers));
             userConnectionDao.persist(userConnectionEntity);
-        }
-        else{
+        } else {
             LOGGER.info("Found existing user connection, {}", userConnectionEntity);
         }
-        
+
         sendNotification(userOrcid, providerId);
-    }        
+    }
     
     @Override
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
@@ -99,6 +105,24 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         }
     }
     
+    @Override
+    public HeaderCheckResult checkHeaders(Map<String, String> originalHeaders, Map<String, String> currentHeaders) {
+        HeaderCheckResult result = new HeaderCheckResult();
+        String[] headersToCheck = new String[] { "eppn" };
+        for (String headerName : headersToCheck) {
+            String original = originalHeaders.get(headerName);
+            String current = currentHeaders.get(headerName);
+            // Only compare where both are not blank, because otherwise could
+            // just be an IdP config change to add/remove the attribute
+            if (StringUtils.isNoneBlank(original, current)) {
+                if (!current.equals(original)) {
+                    result.addMismatch(new HeaderMismatch(headerName, original, current));
+                }
+            }
+        }
+        return result;
+    }
+
     private boolean doesClientKnowUser(String userOrcid, String clientId) {
         List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userOrcid);
         if(existingTokens == null || existingTokens.isEmpty()) {
@@ -114,4 +138,5 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         
         return false;
     }
+
 }

@@ -16,18 +16,26 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +43,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.HeaderCheckResult;
+import org.orcid.pojo.HeaderMismatch;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
@@ -104,7 +115,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(null);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, times(1)).sendAcknowledgeMessage(userOrcid, clientId);
@@ -123,7 +135,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
@@ -142,7 +155,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, times(1)).sendAcknowledgeMessage(userOrcid, clientId);
@@ -154,7 +168,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenThrow(new IllegalArgumentException());
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(null);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
@@ -168,7 +183,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(null);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, never()).persist(Matchers.any());
         verify(mock_notificationManager, times(1)).sendAcknowledgeMessage(userOrcid, clientId);
@@ -186,7 +202,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenThrow(new IllegalArgumentException());
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, never()).persist(Matchers.any());
         verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
@@ -222,7 +239,8 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
@@ -253,9 +271,39 @@ public class InstitutionalSignInManagerTest {
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
 
-        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
+                Collections.<String, String> emptyMap());
 
         verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
         verify(mock_notificationManager, times(1)).sendAcknowledgeMessage(userOrcid, clientId);
     }
+
+    @Test
+    public void testCheckHeaders() throws IOException {
+        @SuppressWarnings("unchecked")
+        Map<String, String> originalHeaders = JsonUtils.readObjectFromJsonString(IOUtils.toString(getClass().getResource("shibboleth_headers_original.json")), Map.class);
+        Map<String, String> currentHeaders = new HashMap<>(originalHeaders);
+
+        // When all headers are the same
+        HeaderCheckResult result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertTrue(result.isSuccess());
+        assertEquals(0, result.getMismatches().size());
+
+        // When eppn is different
+        currentHeaders.put("eppn", "someoneelse@testshib.org");
+        result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertFalse(result.isSuccess());
+        assertEquals(1, result.getMismatches().size());
+        HeaderMismatch mismatch = result.getMismatches().get(0);
+        assertEquals("eppn", mismatch.getHeaderName());
+        assertEquals("myself@testshib.org", mismatch.getOriginalValue());
+        assertEquals("someoneelse@testshib.org", mismatch.getCurrentValue());
+
+        // When eppn was originally there, but is not now
+        currentHeaders.remove("eppn");
+        result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertTrue(result.isSuccess());
+        assertEquals(0, result.getMismatches().size());
+    }
+
 }

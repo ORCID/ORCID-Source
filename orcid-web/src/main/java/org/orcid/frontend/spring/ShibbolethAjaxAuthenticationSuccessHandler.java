@@ -72,7 +72,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         String idType = remoteUser.getIdType();
         String displayName = ShibbolethController.retrieveDisplayName(headers);
         String userOrcid = getRealUserOrcid();                
-        institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid);
+        institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid, headers);
     }
 
     private void checkEnabled() {

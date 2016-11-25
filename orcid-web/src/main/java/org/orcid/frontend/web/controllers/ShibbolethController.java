@@ -29,12 +29,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.HeaderCheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -117,6 +119,13 @@ public class ShibbolethController extends BaseController {
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
+            @SuppressWarnings("unchecked")
+            Map<String, String> originalHeaders = JsonUtils.readObjectFromJsonString(userConnectionEntity.getHeadersJson(), Map.class);
+            HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(originalHeaders, headers);
+            if (!checkHeadersResult.isSuccess()) {
+                mav.addObject("headerCheckFailed", true);
+                return mav;
+            }
             try {
                 //Check if the user has been notified
                 if(!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
