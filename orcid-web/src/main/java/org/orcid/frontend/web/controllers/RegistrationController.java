@@ -1106,10 +1106,10 @@ public class RegistrationController extends BaseController {
 
     public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave,
             boolean usedCaptchaVerification) {
+    	String unencryptedPassword = profileToSave.getPassword();
         profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
-        String orcidId = profileToSave.getOrcidIdentifier().getPath();
-        String password = profileToSave.getPassword();
-        logUserIn(request, response, orcidId, password);
+        String orcidId = profileToSave.getOrcidIdentifier().getPath();        
+        logUserIn(request, response, orcidId, unencryptedPassword);
     }
 
     public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
