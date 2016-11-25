@@ -5,12 +5,28 @@
 * Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
 
 * Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html). see: [OSX](http://stackoverflow.com/questions/12245179/how-to-install-unlimited-strength-jce-for-jre-7-in-macosx) or [Windows](http://help.boomi.com/atomsphere/GUID-D7FA3445-6483-45C5-85AD-60CA5BB15719.html)
+
+*Java / JCE installation on MAC
+Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
+    
+    
+    * Create JAVA_HOME pointing to /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
+    
+    Extract the contents of UnlimitedJCEPolicyJDK7.zip into /Users/jeffrey/Sites/UnlimitedJCEPolicy/
+
+    ```    
+    mkdir /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+    mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+    cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
+    ```   
     
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
-* Install [Postgres](http://www.postgresql.org/download/) version 9.3.x. (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
+NOTE: In the case of Windows, don't create an environment variable named M2_HOME. instead add the path to the bin folder of Maven (i.e. C:\apache-maven-3.3.9\bin) to the PATH variable. If the PAth variable doesn't exists, create it, if it does, ensure you separate the new value by a semi-colon(;) 
 
-	If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
+* Install [Postgres] Windows: (http://www.postgresql.org/download/) version 9.3.x. (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
+
+* Install [Postgres] Mac: install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
 	  
    	```
    	nano .bash_profile
@@ -57,12 +73,32 @@ We'll set up postgres using the default settings in
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
     psql -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
-    
+
 * Exit postgres user prompt
     
     ```
     exit
     ```
+*Set up database using pgAdmin III
+    
+    Under "databases" select "postgres". This will enable the SQL query editor. Click on it.
+
+    Run the following queries:
+
+    ```
+    CREATE DATABASE orcid;    
+    CREATE USER orcid WITH PASSWORD 'orcid';
+    GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;
+    
+    CREATE DATABASE statistics;
+    CREATE USER statistics WITH PASSWORD 'statistics';
+    GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;
+    
+    CREATE USER orcidro WITH PASSWORD 'orcidro';
+    GRANT CONNECT ON DATABASE orcid to orcidro;
+    GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;
+    ```
+
 
 * Verify user login and database exist
 
@@ -70,22 +106,8 @@ We'll set up postgres using the default settings in
     psql -U orcid -d orcid -c "\list" -h localhost
     psql -U statistics -d statistics -c "\list" -h localhost
     ```
-	
-## Install Java and JCE
-
-    Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
-    
-    _osx_
-    
-    * Create JAVA_HOME pointing to /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
-    
-    Extract the contents of UnlimitedJCEPolicyJDK7.zip into /Users/jeffrey/Sites/UnlimitedJCEPolicy/
-
-    ```    
-    mkdir /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
-    mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
-    cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
-    ```    
+    NOTE: When testing this, if the console doesn't return anything, the databases weren't created suscesfully. You can try using the GUI 
+     
 	
 ## Setup Maven & Tomcat
 
@@ -203,6 +225,14 @@ http://www.springsource.org/downloads/sts-ggts
 * Select all pom.xml(s) after.
 
 * Click Finish
+
+* For Windows 10 users, if all your projects shows an error "Missing artifact jdk.tools:jdk.tools:jar:1.6", it means your STS Maven plugin is looking for a Java 1.6 tools.jar library, please modify the STS.ini fileto indicate the java executable you want to use to run STS, which should be the JDK one: 
+
+	```
+	-vm
+	C:/Program Files/Java/jdk1.8.0_65/bin/javaw.exe
+	``` 
+	Do this before the '-vmargs' param
 
 * Select Window -> Preferences -> Servers(Expand) -> Runtime Environments
 

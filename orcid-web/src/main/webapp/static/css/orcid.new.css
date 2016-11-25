@@ -6622,6 +6622,21 @@ a:hover .mozilla-badge{
 	padding-left: 10px;
 }
 
+.member-list h1 a,
+.member-list h1 a:visited,
+.member-list h2 a,
+.member-list h2 a:visited{
+	color: #a6ce39;
+	text-decoration: none;
+}
+.member-list h1 a:hover,
+.member-list h1 a:active,
+.member-list h2 a:hover,
+.member-list h2 a:active{
+	color: #338caf;
+	text-decoration: none;
+}
+
 .member-list .member-logo{
 	width: auto;
 	height: auto;
@@ -6697,6 +6712,14 @@ a:hover .mozilla-badge{
 .member-list ul.filter {
   list-style-type: none;
   margin: 6px 0;
+}
+
+.small-element{
+	width:5% !important;	
+}
+
+.middle {
+	vertical-align: middle;
 }
 
 /* Bulk edit bio*/
@@ -6839,11 +6862,6 @@ a:hover .mozilla-badge{
 	float: right;
 	margin-right: 35px;
 	clear: both;	
-}
-
-.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
-	float: right;	
-	margin-right: 0;
 }
 
 .fixed-area .col-md-12.padding-right-reset{
@@ -7497,10 +7515,6 @@ a:hover .mozilla-badge{
 	
 	.edit-record .bulk-edit-modal #privacy-bar{
 		margin-right: 0;
-	}
-	
-	.edit-record .email-pop-up .bulk-edit-modal #privacy-bar{
-		margin-right: 35px;
 	}
 	
 	.fixed-area ul.record-settings{
@@ -8174,12 +8188,12 @@ a:hover .mozilla-badge{
 	}
 	
 	/*Member list*/
+
 	.member-list .member-logo{
 		display: block;
 		float: none;
 		margin: 10px;
 	}
-
 	.member-list .member-description{
 		display: block;
 		clear: both;

@@ -25,17 +25,21 @@
 	
 	<div class="login" ng-controller="LoginLayoutController">
 		<#if !(RequestParameters['oldlogin'])??>
-			<div class="row">
-				<div class="col-md-12">
-					<p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>
+			<#if shibbolethEnabled>
+			    <div class="row">
+				    <div class="col-md-12">
+					    <p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>
+				    </div>
 				</div>
-			</div>
+		    </#if>
 			<div class="row">
 				<div class="col-md-offset-3 col-md-6">
-					<div class="btn-group btn-group-justified" role="group">
-		  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-					</div>					
+				    <#if shibbolethEnabled>
+    					<div class="btn-group btn-group-justified" role="group">
+    		  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+    		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+    					</div>
+    				</#if>				
 					<div class="row personal-login" ng-hide="personalLogin == false" ng-cloak>
 						<div class="col-md-12">
 							<div class="login-box">

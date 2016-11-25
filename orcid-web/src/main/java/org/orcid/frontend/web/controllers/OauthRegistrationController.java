@@ -152,7 +152,12 @@ public class OauthRegistrationController extends OauthControllerBase {
             registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                try {
+                    registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                } catch(Exception e) {
+                    requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
+                    return requestInfoForm;
+                }
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();

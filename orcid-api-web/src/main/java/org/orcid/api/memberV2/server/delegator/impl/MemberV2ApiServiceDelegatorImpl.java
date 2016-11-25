@@ -205,7 +205,7 @@ public class MemberV2ApiServiceDelegatorImpl
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
             record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);             
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public activities.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 record = recordManager.getPublicRecord(orcid);                
