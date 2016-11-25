@@ -552,9 +552,16 @@ public class RegistrationController extends BaseController {
             //If email exists
             if(emailManager.emailExists(emailAddress)) {
                 //If it is claimed, should return a duplicated exception
-                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                    
-                    String[] codes = { "orcid.frontend.verify.duplicate_email" };
-                    String[] args = { emailAddress };
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                  	
+                	String orcid = emailManager.findOrcidIdByEmail(emailAddress);
+                	String[] args = { emailAddress };
+                	String[] codes = null;
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                    } else {
+                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                    }
+                                        
                     mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
                 } else {
                     //If the email is not eligible for auto deprecate, we should show an email duplicated exception
