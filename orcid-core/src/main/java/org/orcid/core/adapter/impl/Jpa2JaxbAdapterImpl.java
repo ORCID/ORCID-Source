@@ -274,6 +274,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             client.setWebsite(clientDetailsEntity.getClientWebsite());
             client.setPersistentTokenEnabled(clientDetailsEntity.isPersistentTokensEnabled());
             client.setIdp(clientDetailsEntity.getAuthenticationProviderId());
+            client.setAllowAutoDeprecate(clientDetailsEntity.getAllowAutoDeprecate());
             Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
             RedirectUris redirectUris = new RedirectUris();
             client.setRedirectUris(redirectUris);

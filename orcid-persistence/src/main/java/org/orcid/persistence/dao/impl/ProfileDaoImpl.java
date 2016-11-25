@@ -723,4 +723,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("batchSize", batchSize);        
         return (List<Object[]>) query.getResultList();
     }
+
+    @Override
+    public boolean getClaimedStatusByEmail(String email) {
+        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email=:email)");
+        query.setParameter("email", email);
+        return (Boolean) query.getSingleResult();
+    }
 }
