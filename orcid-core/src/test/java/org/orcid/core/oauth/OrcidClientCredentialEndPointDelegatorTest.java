@@ -52,7 +52,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml" })
-public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
+public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTestX {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";    
     private static final String USER_ORCID = "0000-0000-0000-0001";
