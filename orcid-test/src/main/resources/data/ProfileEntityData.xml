@@ -1792,6 +1792,36 @@
         last_modified="2016-04-01 15:31:00.00"
     />        
     
+    <email
+        orcid="4444-4444-4444-4497"
+        email="public_4444-4444-4444-4497@test.orcid.org"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        last_modified="2016-04-01 15:31:00.00"
+    />  
+
+	<email
+        orcid="4444-4444-4444-4497"
+        email="limited_4444-4444-4444-4497@test.orcid.org"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="LIMITED"
+        last_modified="2016-04-01 15:31:00.00"
+    />  
+
+	<email
+        orcid="4444-4444-4444-4497"
+        email="private_4444-4444-4444-4497@test.orcid.org"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        last_modified="2016-04-01 15:31:00.00"
+    />  
+    
     <profile_keyword 
     	id="1"            
         profile_orcid="4444-4444-4444-4443"

@@ -697,18 +697,26 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = null;
         long lastModified = getLastModifiedTime(orcid);
+        
         try {
-            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
+            // return all emails if client has /email/read-private scope
+            orcidSecurityManager.checkPermissions(ScopePathType.EMAIL_READ_PRIVATE, orcid);            
             emails = emailManager.getEmails(orcid, lastModified);
-            emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));            
         } catch(AccessControlException | OrcidUnauthorizedException e) {
-            //If the user have the READ_PUBLIC scope, return him the list of public elements.
-            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                emails = emailManager.getPublicEmails(orcid, lastModified);
-            } else {
-                throw e;
+            try {
+                orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
+                emails = emailManager.getEmails(orcid, lastModified);
+                emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));            
+            } catch(AccessControlException | OrcidUnauthorizedException ex) {
+                //If the user have the READ_PUBLIC scope, return him the list of public elements.
+                if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                    emails = emailManager.getPublicEmails(orcid, lastModified);
+                } else {
+                    throw ex;
+                }
             }
         }
+        
         ElementUtils.setPathToEmail(emails, orcid);
         sourceUtils.setSourceName(emails);
         return Response.ok(emails).build();

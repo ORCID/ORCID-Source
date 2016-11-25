@@ -19,6 +19,7 @@ package org.orcid.api.common.security.filter.impl;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
+import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.visibility.filter.impl.VisibilityFilterImpl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Keyword;
@@ -26,9 +27,12 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.Visibility;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.InputStream;
 
 /**
