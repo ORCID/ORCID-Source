@@ -140,6 +140,25 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 
+	<!-- Client details DAO's -->
+	<bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
+	
+	<bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+    
+    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
+    
+    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
+	
+	<bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
 	<!-- Other DAO's -->
 	<bean id="groupIdRecordDao" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl" />
 	
@@ -147,6 +166,13 @@
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 	
+
+
+	
+
+
+
+
 	
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
@@ -158,11 +184,7 @@
 
     <bean id="subjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SubjectEntity" />
-    </bean>    
-    
-    <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
-    
-    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
+    </bean>        
 
     <bean id="clientAuthorisedGrantTypeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity" />
@@ -189,9 +211,7 @@
 
     <bean id="solrDao" class="org.orcid.persistence.dao.impl.SolrDaoImpl" />
     
-    <bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />
-    
-    <bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
+    <bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />        
 
     <bean id="isoCountryReferenceDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />

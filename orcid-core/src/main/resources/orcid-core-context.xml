@@ -328,6 +328,33 @@
 		<property name="groupIdRecordDao" ref="groupIdRecordDaoReadOnly" />
 	</bean>
 	
+	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl">
+		<property name="clientDetailsDao" ref="clientDetailsDao" />
+		<property name="clientSecretDao" ref="clientSecretDao" />
+		<property name="clientRedirectDao" ref="clientRedirectDao" />
+	</bean>
+	
+	<bean id="clientDetailsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl">
+		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
+		<property name="clientSecretDao" ref="clientSecretDaoReadOnly" />
+		<property name="clientRedirectDao" ref="clientRedirectDaoReadOnly" />
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl"/>
+	
+	
+	
+	
+	
+	
+	
+	
 	<!-- Other Managers -->
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
@@ -368,8 +395,6 @@
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
-	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl"/>
-	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>	
 
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
@@ -401,9 +426,7 @@
 
 	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
 
-	<bean id="orcidSSOManager" class="org.orcid.core.manager.impl.OrcidSSOManagerImpl" />
-
-	<bean id="clientDetailsManager" class="org.orcid.core.manager.impl.ClientDetailsManagerImpl" />
+	<bean id="orcidSSOManager" class="org.orcid.core.manager.impl.OrcidSSOManagerImpl" />	
 
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">

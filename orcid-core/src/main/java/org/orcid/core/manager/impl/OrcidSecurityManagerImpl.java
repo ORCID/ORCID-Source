@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -104,17 +105,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private int claimWaitPeriodDays;
     
     @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-    
-    @Override
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    } 
+    private String baseUrl;        
     
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
