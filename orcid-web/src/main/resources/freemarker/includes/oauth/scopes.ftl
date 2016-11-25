@@ -39,7 +39,7 @@
 	</div>
 	<div ng-show="emailRequested">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<span class="mini-icon glyphicon glyphicon-repeat green"></span>
+			<span class="mini-icon glyphicon glyphicon-envelope green"></span>
 			<h4 class="dark-label">EMAIL</h4>
 		</div>
 		<div class="col-md-1 col-sm-1 col-xs-1">
