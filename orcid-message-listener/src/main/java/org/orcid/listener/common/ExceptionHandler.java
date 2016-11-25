@@ -27,6 +27,7 @@ import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
@@ -41,8 +42,12 @@ public class ExceptionHandler {
     @Resource
     private Orcid20APIClient orcid20ApiClient;        
     
+    @Value("${org.orcid.persistence.messaging.dump_indexing.enabled}")
+    private boolean dumpIndexingEnabled;
+    
     @Resource
     private S3Updater s3Updater; 
+    
     
     /**
      * If the record is locked:
@@ -54,14 +59,16 @@ public class ExceptionHandler {
      * @throws DeprecatedRecordException 
      * */
     public void handleLockedRecordException(LastModifiedMessage message, OrcidMessage errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException, DeprecatedRecordException {
-        //Update 1.2 buckets        
-        s3Updater.updateS3(message.getOrcid(), errorMessage);
-        //Update 2.0 buckets
-        try {
-            orcid20ApiClient.fetchPublicProfile(message.getOrcid()); 
-        } catch(LockedRecordException lre) {
-            s3Updater.updateS3(message.getOrcid(), lre.getOrcidError());
-        } 
+        if (dumpIndexingEnabled){
+            //Update 1.2 buckets        
+            s3Updater.updateS3(message.getOrcid(), errorMessage);
+            //Update 2.0 buckets
+            try {
+                orcid20ApiClient.fetchPublicProfile(message.getOrcid()); 
+            } catch(LockedRecordException lre) {
+                s3Updater.updateS3(message.getOrcid(), lre.getOrcidError());
+            }             
+        }
     }
     
     /**
@@ -76,13 +83,15 @@ public class ExceptionHandler {
      * @throws LockedRecordException 
      * */
     public void handleDeprecatedRecordException(LastModifiedMessage message, OrcidDeprecated errorMessage) throws JsonProcessingException, AmazonClientException, JAXBException, LockedRecordException {
-        //Update 1.2 buckets        
-        s3Updater.updateS3(message.getOrcid(), errorMessage);
-        //Update 2.0 buckets
-        try {
-            orcid20ApiClient.fetchPublicProfile(message.getOrcid()); 
-        } catch(DeprecatedRecordException lre) {
-            s3Updater.updateS3(message.getOrcid(), lre.getOrcidError());
-        } 
+        if (dumpIndexingEnabled){
+            //Update 1.2 buckets        
+            s3Updater.updateS3(message.getOrcid(), errorMessage);
+            //Update 2.0 buckets
+            try {
+                orcid20ApiClient.fetchPublicProfile(message.getOrcid()); 
+            } catch(DeprecatedRecordException lre) {
+                s3Updater.updateS3(message.getOrcid(), lre.getOrcidError());
+            } 
+        }
     }
 }

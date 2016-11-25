@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -81,5 +82,21 @@ public class Orcid20APIClient {
             }
         }
         return response.getEntity(Record.class);
+    }
+    
+    public Funding fetchFunding(String orcid, Long putCode){
+        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/funding/"+ putCode);
+        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        ClientResponse response = builder.get(ClientResponse.class);
+        if (response.getStatus() != 200) {
+            switch (response.getStatus()) {
+                default:
+                LOG.error("Unable to fetch funding record " + orcid + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+            }
+        }
+        return response.getEntity(Funding.class);
+
     }
 }

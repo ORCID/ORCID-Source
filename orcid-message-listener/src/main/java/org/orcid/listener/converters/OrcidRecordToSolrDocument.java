@@ -16,6 +16,7 @@
  */
 package org.orcid.listener.converters;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,13 +26,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.Relationship;
@@ -44,18 +49,23 @@ import org.slf4j.LoggerFactory;
 public class OrcidRecordToSolrDocument {
     
     private final boolean indexProfile;
-  
+    private final JAXBContext jaxbContext_2_0_api;
+
     public OrcidRecordToSolrDocument(boolean indexProfile){
         this.indexProfile=indexProfile;
+        try {
+            this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     
     Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
 
-    public OrcidSolrDocument convert(Record record, String v12profileXML) {
+    public OrcidSolrDocument convert(Record record, List<Funding> fundings) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
-        
         
         if(record.getHistory() != null) {
             if (record.getHistory().getLastModifiedDate() != null){
@@ -192,30 +202,79 @@ public class OrcidRecordToSolrDocument {
                 profileIndexDocument.setWorkTitles(new ArrayList<String>(workTitles));
             }
 
-            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && record.getActivitiesSummary().getFundings().getFundingGroup() != null){
+            Map<String, List<String>> organisationIds = new HashMap<String,List<String>>();
+            organisationIds.put("fundref"+SolrConstants.DYNAMIC_ORGANISATION_ID, new ArrayList<String>());
+            organisationIds.put("ringgold"+SolrConstants.DYNAMIC_ORGANISATION_ID, new ArrayList<String>());
+            Map<String, List<String>> organisationNames = new HashMap<String,List<String>>();
+            organisationNames.put("affiliation"+SolrConstants.DYNAMIC_ORGANISATION_NAME, new ArrayList<String>()); 
+            organisationNames.put("funding"+SolrConstants.DYNAMIC_ORGANISATION_NAME, new ArrayList<String>()); 
+
+            
+            if (!fundings.isEmpty()){
                 Set<String> fundingTitle = new HashSet<String>();
-                for (FundingGroup group : record.getActivitiesSummary().getFundings().getFundingGroup()){
-                    if (group.getFundingSummary() !=null){
-                        for (FundingSummary f : group.getFundingSummary()){
-                            if (f.getTitle() != null){
-                                if (f.getTitle().getTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTitle().getContent())){
-                                    fundingTitle.add(f.getTitle().getTitle().getContent());
-                                }
-                                if (f.getTitle().getTranslatedTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTranslatedTitle().getContent())){
-                                    fundingTitle.add(f.getTitle().getTranslatedTitle().getContent());
-                                }
-                            }
-                        }                        
+                Set<String> fundingGrantNumbers = new HashSet<String>();
+                for (Funding f : fundings){
+                    if (f.getTitle() != null){
+                        if (f.getTitle().getTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTitle().getContent())){
+                            fundingTitle.add(f.getTitle().getTitle().getContent());
+                        }
+                        if (f.getTitle().getTranslatedTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTranslatedTitle().getContent())){
+                            fundingTitle.add(f.getTitle().getTranslatedTitle().getContent());
+                        }
                     }
-                }
+                    if (f.getExternalIdentifiers() != null && f.getExternalIdentifiers().getExternalIdentifier() !=null){
+                        for (ExternalID id : f.getExternalIdentifiers().getExternalIdentifier()){
+                            if (id.getType().equals("grant_id")){
+                                fundingGrantNumbers.add(id.getValue());
+                            }
+                        }
+                    }
+                    if (f.getOrganization() != null){
+                        organisationNames.get("funding"+SolrConstants.DYNAMIC_ORGANISATION_NAME).add(f.getOrganization().getName()); 
+                        if (f.getOrganization().getDisambiguatedOrganization() !=null)
+                            organisationIds.get("fundref"+SolrConstants.DYNAMIC_ORGANISATION_ID).add(f.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                    }
+                }                        
                 profileIndexDocument.setFundingTitles(new ArrayList<String>(fundingTitle));
+                profileIndexDocument.setGrantNumbers(new ArrayList<String>(fundingGrantNumbers));
             }
             
             //now do affiliations
+            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getEducations() != null && record.getActivitiesSummary().getEducations().getSummaries() != null){
+                for (EducationSummary e : record.getActivitiesSummary().getEducations().getSummaries()){
+                    if (e.getOrganization() !=null){                        
+                        organisationNames.get("affiliation"+SolrConstants.DYNAMIC_ORGANISATION_NAME).add(e.getOrganization().getName());
+                        if (e.getOrganization().getDisambiguatedOrganization() != null)
+                            organisationIds.get("ringold"+SolrConstants.DYNAMIC_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                    }
+                }
+            }
+
+            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getEmployments() != null && record.getActivitiesSummary().getEmployments().getSummaries() != null){
+                for (EmploymentSummary e: record.getActivitiesSummary().getEmployments().getSummaries()){
+                    if (e.getOrganization() !=null){                        
+                        organisationNames.get("affiliation"+SolrConstants.DYNAMIC_ORGANISATION_NAME).add(e.getOrganization().getName());
+                        if (e.getOrganization().getDisambiguatedOrganization() != null)
+                            organisationIds.get("ringold"+SolrConstants.DYNAMIC_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                    }
+                }
+            }
+            profileIndexDocument.setOrganisationIds(organisationIds);
+            profileIndexDocument.setOrganisationNames(organisationNames);
         }
 
-        if (indexProfile)
-            profileIndexDocument.setPublicProfileMessage(v12profileXML);
+        if (indexProfile){
+            StringWriter sw = new StringWriter(); 
+            try {
+                jaxbContext_2_0_api.createMarshaller().marshal(record, sw);
+                //note this is a summary instead of full now...
+                LOG.info(sw.getBuffer().toString());
+                LOG.info(sw.getBuffer().toString().replaceAll("<[^>]+>", " "));
+                profileIndexDocument.setPublicProfileMessage(sw.getBuffer().toString().replaceAll("<[^>]+>", " "));
+            } catch (JAXBException e) {
+                LOG.error("problem marshalling xml",e);
+            }
+        }
         
         LOG.debug(profileIndexDocument.toString());
         return profileIndexDocument;

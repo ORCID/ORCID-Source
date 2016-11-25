@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
+import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -60,6 +61,8 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
     @Resource
     private S3Updater s3Updater;
     @Resource
+    private SolrIndexUpdater solrUpdater;
+    @Resource
     private ExceptionHandler exceptionHandler;
     
     /**
@@ -68,11 +71,20 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
     public void accept(LastModifiedMessage m) {
             String orcid = m.getOrcid();
             try{
-                // Phase #1: update S3 
+                //we do it like this, so that we only have one version of the record in scope at a time
+                
                 if(dumpIndexingEnabled) {
-                    updateS3_1_2_API(orcid);
-                    updateS3_2_0_API(orcid);
+                    updateS3_1_2_API(orcid); 
                 } 
+
+                if (solrIndexingEnabled || dumpIndexingEnabled){
+                    Record record = orcid20ApiClient.fetchPublicProfile(orcid);
+                    if(dumpIndexingEnabled)
+                        updateS3_2_0_API(orcid,record);
+                    if (solrIndexingEnabled)
+                        updateSOLR(orcid);
+                }
+                
                 
             } catch(LockedRecordException lre) {                
                 try {
@@ -112,8 +124,8 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
         }                
     }
     
-    private void updateS3_2_0_API(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        Record record = orcid20ApiClient.fetchPublicProfile(orcid);
+    private void updateS3_2_0_API(String orcid,Record record) throws LockedRecordException, DeprecatedRecordException {
+        //Record record = orcid20ApiClient.fetchPublicProfile(orcid);
         // Update API 2.0
         if(record != null) {
             try {
@@ -123,5 +135,14 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
                 LOG.error("Unable to update S3 bucket for 2.0 API", e);
             }
         }
-    }        
+    }     
+    
+    private void updateSOLR(String orcid) throws LockedRecordException, DeprecatedRecordException{
+            try {
+                solrUpdater.updateSolrIndex(orcid);
+            } catch(Exception e) {
+                //Unable to update record in Solr
+                LOG.error("Unable to update Solr", e);
+            }
+    }
 }

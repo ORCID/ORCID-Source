@@ -353,8 +353,6 @@ public class SolrDaoTest {
         testDoc.setOrcid(firstOrcid);
         testDoc.setGivenNames("Given Name of Person");
         testDoc.setFamilyName("Smith");
-        testDoc.setPastInstitutionNames(Arrays.asList(new String[] { "Harvard", "Brown" }));
-        testDoc.setAffiliateInstitutionNames(Arrays.asList(new String[] { "Current Inst 2" }));
         testDoc.setPatentNumbers(Arrays.asList(new String[] { "Elec-hammer01X:" }));
         return testDoc;
     }
@@ -377,9 +375,6 @@ public class SolrDaoTest {
         secondOrcidDoc.setGivenNames("Given Names");
         secondOrcidDoc.setDigitalObjectIds(Arrays.asList(new String[] { "id1", "id2" }));
         secondOrcidDoc.setOtherNames(Arrays.asList(new String[] { "Other Name 1", "Other Name 2" }));
-        secondOrcidDoc.setPastInstitutionNames(null);
-        secondOrcidDoc.setAffiliateInstitutionNames(null);
-        secondOrcidDoc.setAffiliatePrimaryInstitutionNames(null);
         secondOrcidDoc.setWorkTitles(Arrays.asList(new String[] { "Work Title 1", "Work Title 2" }));
         secondOrcidDoc.setGrantNumbers(Arrays.asList(new String[] { "Grant-number02X:" }));
         return secondOrcidDoc;

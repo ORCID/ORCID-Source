@@ -55,6 +55,7 @@ import org.orcid.utils.solr.entities.OrcidSolrDocument;
 public class OrcidProfileToSolrDocument {
 
     
+    @Deprecated 
     public OrcidSolrDocument convert(OrcidProfile profile) {
         // Check if the profile is locked
         if (profile.isLocked()) {
