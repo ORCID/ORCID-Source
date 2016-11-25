@@ -126,9 +126,9 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void removeEmailTest() {
-        assertTrue(emailManager.emailExists("angel1@montenegro.com"));
-        emailManager.removeEmail("4444-4444-4444-4444", "angel1@montenegro.com");
-        assertFalse(emailManager.emailExists("angel1@montenegro.com"));
+        assertTrue(emailManager.emailExists("teddybass3public@semantico.com"));
+        emailManager.removeEmail("4444-4444-4444-4443", "teddybass3public@semantico.com");
+        assertFalse(emailManager.emailExists("teddybass3public@semantico.com"));
     }
     
     @Test
