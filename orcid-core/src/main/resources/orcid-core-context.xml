@@ -346,7 +346,32 @@
 	
 	
 	
-	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl"/>
+	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl">
+		<property name="recordNameDao" ref="recordNameDao" />
+		<property name="clientDetailsDao" ref="clientDetailsDao" />
+	</bean>
+	
+	<bean id="sourceNameCacheManagerReadOnly" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl">
+		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
+		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
+	</bean>
+	
+	
+	<!-- Utilities -->
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils">
+		<property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
+	</bean>
+	
+	<bean id="sourceUtilsReadOnly" class="org.orcid.core.utils.SourceUtils">
+		<property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
+	</bean>
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -1069,8 +1094,7 @@
 	
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
-	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
+	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />		
 	
 	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />	
 </beans>

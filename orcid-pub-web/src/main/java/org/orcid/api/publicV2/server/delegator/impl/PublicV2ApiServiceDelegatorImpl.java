@@ -160,16 +160,15 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
     
-    //Others
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
-    
     @Resource
-    private SourceUtils sourceUtils;
+    private SourceUtils sourceUtilsReadOnly;
     
     //Other managers that don't need read only implementations
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource(name = "visibilityFilterV2")
+    private VisibilityFilterV2 visibilityFilter;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -199,7 +198,7 @@ public class PublicV2ApiServiceDelegatorImpl
         ActivitiesSummary as = visibilityFilter.filter(activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid), orcid);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
-        sourceUtils.setSourceName(as);
+        sourceUtilsReadOnly.setSourceName(as);
         return Response.ok(as).build();
     }
 
@@ -211,7 +210,7 @@ public class PublicV2ApiServiceDelegatorImpl
         orcidSecurityManager.checkIsPublic(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);
+        sourceUtilsReadOnly.setSourceName(w);
         return Response.ok(w).build();
     }
     
@@ -224,7 +223,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicWorks = visibilityFilter.filter(publicWorks, orcid);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
-        sourceUtils.setSourceName(publicWorks);
+        sourceUtilsReadOnly.setSourceName(publicWorks);
         return Response.ok(publicWorks).build();
     }
     
@@ -261,7 +260,7 @@ public class PublicV2ApiServiceDelegatorImpl
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
-        sourceUtils.setSourceName(ws);
+        sourceUtilsReadOnly.setSourceName(ws);
         return Response.ok(ws).build();
     }
 
@@ -271,7 +270,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
-        sourceUtils.setSourceName(f);
+        sourceUtilsReadOnly.setSourceName(f);
         return Response.ok(f).build();
     }
 
@@ -282,7 +281,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicFundings = visibilityFilter.filter(publicFundings, orcid);        
         ActivityUtils.setPathToFundings(publicFundings, orcid);
-        sourceUtils.setSourceName(publicFundings);
+        sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
     }
     
@@ -292,7 +291,7 @@ public class PublicV2ApiServiceDelegatorImpl
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
-        sourceUtils.setSourceName(fs);
+        sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
     }
 
@@ -302,7 +301,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
-        sourceUtils.setSourceName(e);
+        sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -314,7 +313,7 @@ public class PublicV2ApiServiceDelegatorImpl
         for(EducationSummary summary : educations) {
             if(Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtils.setSourceName(summary);
+                sourceUtilsReadOnly.setSourceName(summary);
                 publicEducations.getSummaries().add(summary);
             }
         }
@@ -328,7 +327,7 @@ public class PublicV2ApiServiceDelegatorImpl
         EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
-        sourceUtils.setSourceName(es);
+        sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
     }
 
@@ -338,7 +337,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
-        sourceUtils.setSourceName(e);
+        sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -350,7 +349,7 @@ public class PublicV2ApiServiceDelegatorImpl
         for(EmploymentSummary summary : employments) {
             if(Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtils.setSourceName(summary);
+                sourceUtilsReadOnly.setSourceName(summary);
                 publicEmployments.getSummaries().add(summary);
             }
         }
@@ -363,7 +362,7 @@ public class PublicV2ApiServiceDelegatorImpl
         EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
-        sourceUtils.setSourceName(es);
+        sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
     }
 
@@ -373,7 +372,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
-        sourceUtils.setSourceName(peerReview);
+        sourceUtilsReadOnly.setSourceName(peerReview);
         return Response.ok(peerReview).build();
     }
 
@@ -384,7 +383,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
-        sourceUtils.setSourceName(publicPeerReviews);
+        sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
     }
     
@@ -394,7 +393,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
-        sourceUtils.setSourceName(summary);
+        sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
     }
 
@@ -418,7 +417,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
-        sourceUtils.setSourceName(researcherUrls);
+        sourceUtilsReadOnly.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
 
@@ -428,7 +427,7 @@ public class PublicV2ApiServiceDelegatorImpl
         ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
-        sourceUtils.setSourceName(researcherUrl);
+        sourceUtilsReadOnly.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
 
@@ -438,7 +437,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
         ElementUtils.setPathToEmail(emails, orcid);
-        sourceUtils.setSourceName(emails);
+        sourceUtilsReadOnly.setSourceName(emails);
         return Response.ok(emails).build();
     }
     
@@ -447,7 +446,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
-        sourceUtils.setSourceName(personalDetails);
+        sourceUtilsReadOnly.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
     }    
 
@@ -457,7 +456,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
-        sourceUtils.setSourceName(otherNames);
+        sourceUtilsReadOnly.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
 
@@ -467,7 +466,7 @@ public class PublicV2ApiServiceDelegatorImpl
         OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
         orcidSecurityManager.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
-        sourceUtils.setSourceName(otherName);
+        sourceUtilsReadOnly.setSourceName(otherName);
         return Response.ok(otherName).build();
     }    
     
@@ -477,7 +476,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
-        sourceUtils.setSourceName(extIds);
+        sourceUtilsReadOnly.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
 
@@ -487,7 +486,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
-        sourceUtils.setSourceName(extId);
+        sourceUtilsReadOnly.setSourceName(extId);
         return Response.ok(extId).build();
     }    
     
@@ -506,7 +505,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
-        sourceUtils.setSourceName(keywords);
+        sourceUtilsReadOnly.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
 
@@ -516,7 +515,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
         orcidSecurityManager.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
-        sourceUtils.setSourceName(keyword);
+        sourceUtilsReadOnly.setSourceName(keyword);
         return Response.ok(keyword).build();
     }
     
@@ -525,7 +524,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
-        sourceUtils.setSourceName(addresses);
+        sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
 
@@ -535,7 +534,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Address address = addressManagerReadOnly.getAddress(orcid, putCode);
         orcidSecurityManager.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
-        sourceUtils.setSourceName(address);
+        sourceUtilsReadOnly.setSourceName(address);
         return Response.ok(address).build();
     }
     
@@ -544,7 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         ElementUtils.setPathToPerson(person, orcid);
-        sourceUtils.setSourceName(person);
+        sourceUtilsReadOnly.setSourceName(person);
         return Response.ok(person).build();
     }
     
@@ -554,12 +553,12 @@ public class PublicV2ApiServiceDelegatorImpl
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         if(record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
-            sourceUtils.setSourceName(record.getPerson());
+            sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if(record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
-            sourceUtils.setSourceName(record.getActivitiesSummary());
+            sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
         }         
         return Response.ok(record).build();
     }

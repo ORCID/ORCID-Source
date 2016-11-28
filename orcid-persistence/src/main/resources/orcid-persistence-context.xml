@@ -143,19 +143,19 @@
 	<!-- Client details DAO's -->
 	<bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
 	
-	<bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl">
+	<bean id="clientDetailsDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
     
     <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
     
-    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl">
+    <bean id="clientSecretDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl">
     	<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 	
 	<bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
 	
-	<bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl">
+	<bean id="clientRedirectDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 

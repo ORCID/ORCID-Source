@@ -46,9 +46,6 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
     
     protected ClientRedirectDao clientRedirectDao;
     
-    //TODO
-    //DO THE READ ONLY DAO'S
-    
     public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
 		this.clientDetailsDao = clientDetailsDao;
 	}
