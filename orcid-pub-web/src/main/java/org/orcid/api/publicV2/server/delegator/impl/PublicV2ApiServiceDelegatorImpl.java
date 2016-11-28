@@ -28,7 +28,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
-import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
@@ -47,7 +47,6 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
-import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
@@ -163,12 +162,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private SourceUtils sourceUtilsReadOnly;
     
-    //Other managers that don't need read only implementations
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
+    private PublicAPISecurityManagerV2 publicAPISecurityManagerV2;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -195,7 +190,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = visibilityFilter.filter(activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid), orcid);
+        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid);
+        publicAPISecurityManagerV2.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         sourceUtilsReadOnly.setSourceName(as);
@@ -207,7 +203,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewWork(String orcid, Long putCode) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         Work w = workManagerReadOnly.getWork(orcid, putCode, lastModifiedTime);
-        orcidSecurityManager.checkIsPublic(w);
+        publicAPISecurityManagerV2.checkIsPublic(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtilsReadOnly.setSourceName(w);
@@ -220,7 +216,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid, lastModifiedTime);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
-        publicWorks = visibilityFilter.filter(publicWorks, orcid);
+        publicAPISecurityManagerV2.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         sourceUtilsReadOnly.setSourceName(publicWorks);
@@ -258,7 +254,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkIsPublic(ws);
+        publicAPISecurityManagerV2.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         sourceUtilsReadOnly.setSourceName(ws);
         return Response.ok(ws).build();
@@ -268,7 +264,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFunding(String orcid, Long putCode) {
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(f);
+        publicAPISecurityManagerV2.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtilsReadOnly.setSourceName(f);
         return Response.ok(f).build();
@@ -279,7 +275,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewFundings(String orcid) {        
         List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
-        publicFundings = visibilityFilter.filter(publicFundings, orcid);        
+        publicAPISecurityManagerV2.filter(publicFundings);        
         ActivityUtils.setPathToFundings(publicFundings, orcid);
         sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
@@ -289,7 +285,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(fs);
+        publicAPISecurityManagerV2.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
         sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
@@ -299,7 +295,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducation(String orcid, Long putCode) {
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(e);
+        publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
@@ -311,11 +307,10 @@ public class PublicV2ApiServiceDelegatorImpl
         List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
         Educations publicEducations = new Educations();
         for(EducationSummary summary : educations) {
-            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
-                ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtilsReadOnly.setSourceName(summary);
-                publicEducations.getSummaries().add(summary);
-            }
+        	publicAPISecurityManagerV2.checkIsPublic(summary);
+        	ActivityUtils.setPathToActivity(summary, orcid);
+        	sourceUtilsReadOnly.setSourceName(summary);
+        	publicEducations.getSummaries().add(summary);            
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
         return Response.ok(publicEducations).build();
@@ -325,7 +320,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducationSummary(String orcid, Long putCode) {
         EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(es);
+        publicAPISecurityManagerV2.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
@@ -335,7 +330,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmployment(String orcid, Long putCode) {
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(e);
+        publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
@@ -347,11 +342,10 @@ public class PublicV2ApiServiceDelegatorImpl
         List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
         Employments publicEmployments = new Employments();
         for(EmploymentSummary summary : employments) {
-            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
-                ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtilsReadOnly.setSourceName(summary);
-                publicEmployments.getSummaries().add(summary);
-            }
+        	publicAPISecurityManagerV2.checkIsPublic(summary);
+        	ActivityUtils.setPathToActivity(summary, orcid);
+            sourceUtilsReadOnly.setSourceName(summary);
+            publicEmployments.getSummaries().add(summary);            
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
         return Response.ok(publicEmployments).build();
@@ -360,7 +354,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmploymentSummary(String orcid, Long putCode) {
         EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(es);
+        publicAPISecurityManagerV2.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
@@ -370,7 +364,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReview(String orcid, Long putCode) {
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(peerReview);
+        publicAPISecurityManagerV2.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
         sourceUtilsReadOnly.setSourceName(peerReview);
         return Response.ok(peerReview).build();
@@ -381,7 +375,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPeerReviews(String orcid) {
         List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
-        publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
+        publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
@@ -391,7 +385,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(summary);
+        publicAPISecurityManagerV2.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
         sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
@@ -425,7 +419,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(researcherUrl);
+        publicAPISecurityManagerV2.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         sourceUtilsReadOnly.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
@@ -436,6 +430,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
+      //TODO
         ElementUtils.setPathToEmail(emails, orcid);
         sourceUtilsReadOnly.setSourceName(emails);
         return Response.ok(emails).build();
@@ -445,6 +440,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
+        //TODO
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         sourceUtilsReadOnly.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
@@ -455,6 +451,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewOtherNames(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
+        //TODO
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         sourceUtilsReadOnly.setSourceName(otherNames);
         return Response.ok(otherNames).build();
@@ -464,7 +461,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(otherName);
+        publicAPISecurityManagerV2.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         sourceUtilsReadOnly.setSourceName(otherName);
         return Response.ok(otherName).build();
@@ -475,6 +472,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewExternalIdentifiers(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
+      //TODO
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         sourceUtilsReadOnly.setSourceName(extIds);
         return Response.ok(extIds).build();
@@ -484,7 +482,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(extId);
+        publicAPISecurityManagerV2.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtilsReadOnly.setSourceName(extId);
         return Response.ok(extId).build();
@@ -494,7 +492,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewBiography(String orcid) {
         Biography bio = biographyManagerReadOnly.getPublicBiography(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkIsPublic(bio);
+        publicAPISecurityManagerV2.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
@@ -504,6 +502,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewKeywords(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
+      //TODO
         ElementUtils.setPathToKeywords(keywords, orcid);
         sourceUtilsReadOnly.setSourceName(keywords);
         return Response.ok(keywords).build();
@@ -513,7 +512,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(keyword);
+        publicAPISecurityManagerV2.checkIsPublic(keyword);
+      //TODO
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtilsReadOnly.setSourceName(keyword);
         return Response.ok(keyword).build();
@@ -523,6 +523,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
+      //TODO
         ElementUtils.setPathToAddresses(addresses, orcid);
         sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
@@ -532,7 +533,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManagerReadOnly.getAddress(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(address);
+        publicAPISecurityManagerV2.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtilsReadOnly.setSourceName(address);
         return Response.ok(address).build();
@@ -542,6 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
+      //TODO
         ElementUtils.setPathToPerson(person, orcid);
         sourceUtilsReadOnly.setSourceName(person);
         return Response.ok(person).build();
@@ -551,6 +553,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response viewRecord(String orcid) {
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
+      //TODO
         if(record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtilsReadOnly.setSourceName(record.getPerson());
