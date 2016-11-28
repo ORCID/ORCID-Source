@@ -17,6 +17,8 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -108,7 +110,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Override
     public HeaderCheckResult checkHeaders(Map<String, String> originalHeaders, Map<String, String> currentHeaders) {
         HeaderCheckResult result = new HeaderCheckResult();
-        String[] headersToCheck = new String[] { "eppn" };
+        List<String> headersToCheck = new ArrayList<>();
+        headersToCheck.addAll(Arrays.asList(POSSIBLE_REMOTE_USER_HEADERS));
+        headersToCheck.add(EPPN_HEADER);
         for (String headerName : headersToCheck) {
             String original = originalHeaders.get(headerName);
             String current = currentHeaders.get(headerName);

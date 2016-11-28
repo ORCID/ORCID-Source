@@ -60,18 +60,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
-
-    private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
-
-    private static final String EPPN_HEADER = "eppn";
-
-    private static final String DISPLAY_NAME_HEADER = "displayname";
-
-    private static final String GIVEN_NAME_HEADER = "givenname";
-
-    private static final String SN_HEADER = "sn";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
     private static final String SEPARATOR = ";";
@@ -91,7 +79,7 @@ public class ShibbolethController extends BaseController {
 
     @Resource
     private IdentityProviderDao identityProviderDao;
-    
+
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
 
@@ -100,7 +88,7 @@ public class ShibbolethController extends BaseController {
         LOGGER.info("Headers for shibboleth sign in: {}", headers);
         checkEnabled();
         mav.setViewName("social_link_signin");
-        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
         mav.addObject("providerId", shibIdentityProvider);
         String displayName = retrieveDisplayName(headers);
         mav.addObject("accountId", displayName);
@@ -112,7 +100,7 @@ public class ShibbolethController extends BaseController {
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
-        
+
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
@@ -127,22 +115,22 @@ public class ShibbolethController extends BaseController {
                 return mav;
             }
             try {
-                //Check if the user has been notified
-                if(!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
+                // Check if the user has been notified
+                if (!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
                     try {
                         institutionalSignInManager.sendNotification(userConnectionEntity.getOrcid(), shibIdentityProvider);
                         userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
-                    } catch(UnsupportedEncodingException e) {
+                    } catch (UnsupportedEncodingException e) {
                         LOGGER.error("Unable to send institutional sign in notification to user " + userConnectionEntity.getOrcid(), e);
                     }
                 }
-                
+
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 userConnectionEntity.setLastLogin(new Date());
-                userConnectionDao.merge(userConnectionEntity);                
+                userConnectionDao.merge(userConnectionEntity);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -152,8 +140,9 @@ public class ShibbolethController extends BaseController {
         } else {
             // To avoid confusion, force the user to login to ORCID again
             mav.addObject("linkType", "shibboleth");
-            mav.addObject("firstName", (headers.get(GIVEN_NAME_HEADER) == null) ? "" : headers.get(GIVEN_NAME_HEADER));
-            mav.addObject("lastName", (headers.get(SN_HEADER) == null) ? "" : headers.get(SN_HEADER));
+            mav.addObject("firstName",
+                    (headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
+            mav.addObject("lastName", (headers.get(InstitutionalSignInManager.SN_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.SN_HEADER));
         }
         return mav;
     }
@@ -165,7 +154,7 @@ public class ShibbolethController extends BaseController {
     }
 
     public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
-        for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
+        for (String possibleHeader : InstitutionalSignInManager.POSSIBLE_REMOTE_USER_HEADERS) {
             String userId = extractFirst(headers.get(possibleHeader));
             if (userId != null) {
                 return new RemoteUser(userId, possibleHeader);
@@ -175,16 +164,16 @@ public class ShibbolethController extends BaseController {
     }
 
     public static String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = extractFirst(headers.get(EPPN_HEADER));
+        String eppn = extractFirst(headers.get(InstitutionalSignInManager.EPPN_HEADER));
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
         }
-        String displayName = extractFirst(headers.get(DISPLAY_NAME_HEADER));
+        String displayName = extractFirst(headers.get(InstitutionalSignInManager.DISPLAY_NAME_HEADER));
         if (StringUtils.isNotBlank(displayName)) {
             return displayName;
         }
-        String givenName = extractFirst(headers.get(GIVEN_NAME_HEADER));
-        String sn = extractFirst(headers.get(SN_HEADER));
+        String givenName = extractFirst(headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
+        String sn = extractFirst(headers.get(InstitutionalSignInManager.SN_HEADER));
         String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;
