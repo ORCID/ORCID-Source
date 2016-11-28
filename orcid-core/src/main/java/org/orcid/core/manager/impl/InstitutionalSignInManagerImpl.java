@@ -124,6 +124,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
                 }
             }
         }
+        if (!result.isSuccess()) {
+            LOGGER.info("Institutional sign in header check failed: {}, originalHeaders={}", result, originalHeaders);
+        }
         return result;
     }
 
