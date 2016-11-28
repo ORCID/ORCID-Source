@@ -340,12 +340,6 @@
 		<property name="clientRedirectDao" ref="clientRedirectDaoReadOnly" />
 	</bean>
 	
-	
-	
-	
-	
-	
-	
 	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl">
 		<property name="recordNameDao" ref="recordNameDao" />
 		<property name="clientDetailsDao" ref="clientDetailsDao" />
