@@ -57,6 +57,8 @@ public interface ProfileEntityManager {
     boolean disableDeveloperTools(OrcidProfile profile);
 
     boolean isProfileClaimed(String orcid);
+    
+    boolean isProfileClaimedByEmail(String email);
 
     ClientType getClientType(String orcid);
 
@@ -93,4 +95,7 @@ public interface ProfileEntityManager {
     void updateLastModifed(String orcid);
 
     void updateLocale(String orcid, Locale locale);
+
+    void reactivate(String orcid, String givenNames, String familyName, String password);
+
 }

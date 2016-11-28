@@ -134,18 +134,20 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @param clientGrantedAuthorities
      *            the authorities that can be used to. These are likely to be
      *            only "ROLE_CLIENT"
+     * @param allowAutoDeprecate
+     *          Indicates if the client will enable auto deprecating unclaimed records.
      * @return
      */
     @Override
     public ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {        
         if (!profileEntityManager.orcidExists(memberId)) {
             throw new IllegalArgumentException("ORCID does not exist for " + memberId + " cannot continue");
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
             String clientId = appIdGenerationManager.createNewAppId();
             return populateClientDetailsEntity(clientId, memberId, name, description, idp, website, clientSecret, clientType, clientScopes, clientResourceIds,
-                    clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
+                    clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, allowAutoDeprecate);
         }
     }   
 
@@ -216,9 +218,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         return clientAuthorisedGrantTypeEntities;
     }
 
+    @Override
     public ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientType(clientType);
@@ -235,6 +238,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
         clientDetailsEntity.setGroupProfileId(memberId);
+        clientDetailsEntity.setAllowAutoDeprecate(allowAutoDeprecate == null ? false : allowAutoDeprecate);
         clientDetailsDao.persist(clientDetailsEntity);
         return clientDetailsEntity;
     }

@@ -2711,7 +2711,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
 
     $scope.deleteWebsite = function(website){
         var websites = $scope.websitesForm.websites;
-        var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
             if (websites[len] == website)
@@ -3827,6 +3826,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 	$scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
     	key: orcidVar.recaptchaKey
@@ -3857,7 +3858,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                     if(newValue !== oldValue) {
                         trimAjaxFormText($scope.register.email);
                     }
-                }); // initialize the watch            
+                }); // initialize the watch
+                
+                // special handling of deactivation error
+                $scope.$watch('register.email.errors', function(newValue, oldValue) {
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
+                        $scope.showReactivationSent = false;
+                }); // initialize the watch     
                 
                 // make sure email is trimmed
                 $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
@@ -3887,7 +3894,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,
             dataType: 'json',
             success: function(data) {
-                   $scope.duplicates = data;
+                $scope.duplicates = data;
                 $scope.$apply();
             	var diffDate = new Date();
             	// reg was filled out to fast reload the page
@@ -3970,14 +3977,21 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                if (basePath.startsWith(baseUrl + 'oauth')) {
-                    var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-                    var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-                }
-                else
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
-                orcidGA.windowLocationHrefDelay(data.url);
+            	if(data != null && data.errors != null && data.errors.length > 0) {
+            		$scope.generalRegistrationError = data.errors[0];
+            		console.log($scope.generalRegistrationError);
+            		$scope.$apply();
+            		$.colorbox.close();
+            	} else {
+            		if (basePath.startsWith(baseUrl + 'oauth')) {
+                        var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+                        var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+                    } else {
+                    	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                    }                        
+                    orcidGA.windowLocationHrefDelay(data.url);
+            	}                
             }
         }).fail(function() {
             // something bad is happening!
@@ -4025,7 +4039,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             transition: 'fade',
             close: '',
             scrolling: true
-                    });
+            });
         $scope.$apply();
         $.colorbox.resize({width:"780px" , height:"400px"});
     };
@@ -4049,7 +4063,103 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;
     };
+    
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.register.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
 }]);
+
+orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
+    
+    $scope.getReactivation = function(resetParams, linkFlag){
+        $.ajax({
+            url: getBaseUri() + '/register.json',
+            dataType: 'json',
+            success: function(data) {
+               $scope.register = data;
+               $scope.register.resetParams = resetParams;
+               $scope.$apply();               
+    
+               $scope.$watch('register.givenNames.value', function() {
+                   trimAjaxFormText($scope.register.givenNames);
+               }); // initialize the watch
+    
+               $scope.$watch('register.familyNames.value', function() {
+                    trimAjaxFormText($scope.register.familyNames);
+               }); // initialize the watch
+            }
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error fetching register.json");
+        });
+    };
+    
+    $scope.postReactivationConfirm = function () {
+        $scope.register.valNumClient = $scope.register.valNumServer / 2;
+        var baseUri = getBaseUri();
+        if($scope.register.linkType === 'shibboleth'){
+            baseUri += '/shibboleth';
+        }
+        $.ajax({
+            url: baseUri + '/reactivationConfirm.json',
+            type: 'POST',
+            data:  angular.toJson($scope.register),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                if(data.errors.length == 0){
+                    window.location.href = data.url;
+                }
+                else{
+                    $scope.register = data;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("ReactivationCtrl.postReactivationConfirm() error");
+        });
+    };
+
+    $scope.serverValidate = function (field) {        
+        if (field === undefined) field = '';
+        $.ajax({
+            url: getBaseUri() + '/register' + field + 'Validate.json',
+            type: 'POST',
+            data:  angular.toJson($scope.register),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                commonSrvc.copyErrorsLeft($scope.register, data);
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("RegistrationCtrl.serverValidate() error");
+        });
+    };
+
+    $scope.isValidClass = function (cur) {
+        if (cur === undefined) return '';
+        var valid = true;
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+        if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+        return valid ? '' : 'text-error';
+    };
+        
+}]);
+
 
 orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.postingClaim = false;
@@ -10100,16 +10210,23 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
             	$scope.requestInfoForm = data;
-                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                if($scope.registrationForm.approved) {
-                    for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
-                    }
+            	if($scope.requestInfoForm.errors.length > 0) {                	                
+                	$scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
+                	console.log($scope.generalRegistrationError);
+                	$scope.$apply();
+                	$.colorbox.close();
                 } else {
-                    //Fire GA register deny
-                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
-                }
-                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
+                    if($scope.registrationForm.approved) {
+                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
+                        }
+                    } else {
+                        //Fire GA register deny
+                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                    }
+                    orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                }            	            	
             }
         }).fail(function() {
             // something bad is happening!

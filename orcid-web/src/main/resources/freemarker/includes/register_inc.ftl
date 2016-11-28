@@ -70,9 +70,15 @@
         <div class="relative">        	
             <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-blur="serverValidate('Email')"/>
             <span class="required" ng-class="isValidClass(register.email)">*</span>
-            <span class="orcid-error" ng-show="register.email.errors.length > 0">
+            <span class="orcid-error" ng-show="register.email.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
 				<div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
    			</span>
+   			<span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
+   			    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+   			</span>
+   			<span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
+                ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+            </span>
         </div>
     </div>				
     <div>
@@ -80,7 +86,7 @@
         <div class="relative">
             <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
-            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0">
+            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 && !showReactivationSent">
 				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>
    			</span>
         </div>
@@ -150,7 +156,14 @@
 				<div ng-repeat='error in register.termsOfUse.errors' ng-bind-html="error"></div>
    			</span>
         </div>
-	</div>   
+	</div>  
+	<div ng-show="generalRegistrationError != null">
+        <div class="relative"  style="margin-bottom: 15px;">
+        	<div class="col-sm-12">
+        		<span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
+        	</div>
+        </div>
+	</div>	 
     <div class="relative">
     	<#if (RequestParameters['linkRequest'])??>
 			<button type="submit" tabindex="10" class="btn btn-primary" ng-click="postRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>

@@ -99,8 +99,13 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
+    public String findOrcidIdByEmail(String email) {
+        return emailDao.findOrcidIdByCaseInsenitiveEmail(email);
+    }
+    
+    @Override
     @SuppressWarnings("rawtypes")
-    public Map<String, String> findIdByEmail(String csvEmail) {
+    public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
         Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
         List<String> emailList = new ArrayList<String>();
         String [] emails = csvEmail.split(",");
@@ -215,5 +220,23 @@ public class EmailManagerImpl implements EmailManager {
         
         return emailDao.verifySetCurrentAndPrimary(orcid, email);
     }
-    
+
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists in a non claimed record and the
+     *         client source of the record allows auto deprecating records
+     */
+    @Override
+    public boolean isAutoDeprecateEnableForEmail(String email) {
+        if(PojoUtil.isEmpty(email)) {
+            return false;
+        }
+        return emailDao.isAutoDeprecateEnableForEmail(email);
+    }
 }
