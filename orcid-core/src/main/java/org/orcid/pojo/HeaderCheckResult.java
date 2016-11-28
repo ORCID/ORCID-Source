@@ -40,4 +40,9 @@ public class HeaderCheckResult {
         mismatches.add(mismatch);
     }
 
+    @Override
+    public String toString() {
+        return "HeaderCheckResult [mismatches=" + mismatches + "]";
+    }
+
 }

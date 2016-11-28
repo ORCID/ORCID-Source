@@ -45,4 +45,9 @@ public class HeaderMismatch {
         return currentValue;
     }
 
+    @Override
+    public String toString() {
+        return "HeaderMismatch [headerName=" + headerName + ", originalValue=" + originalValue + ", currentValue=" + currentValue + "]";
+    }
+
 }
