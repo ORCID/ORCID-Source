@@ -1271,7 +1271,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         getUniqueDois : function(putCode){
         	var dois = [];            	
         	var group = worksSrvc.getGroup(putCode);
-        	console.log("group Unique Dois", group);
         	for (var idx in group.activities) {            		
         		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
         			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
@@ -1953,7 +1952,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 else {
                     var bestMatch = null;
                     var group = peerReviewSrvc.getGroup(putCode);
-                    console.log("group PeerReview", group);
                     for (var idx in group.activitiess) {
                         if (group[idx].source == orcidVar.orcidId) {
                             bestMatch = callback(group[idx]);
@@ -4804,7 +4802,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
-        console.log("bbb arcSortState");
         $scope.sortState.sortBy(key);
     };
 
