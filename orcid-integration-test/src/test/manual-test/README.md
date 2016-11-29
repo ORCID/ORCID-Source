@@ -1,5 +1,32 @@
 # Manual Test
 
+## If working with windows
+
+Known Issues:
+
+Git bash present issues with the format of the scope, i.e. Instruction 43. 
+
+Solution (easiest one):
+
+Download Vagrant (https://www.vagrantup.com/docs/installation/) and virtual box (https://www.virtualbox.org/).
+
+Follow the instructions on vagrant getting started guide to get your basic environment.
+
+Known problems:
+Once Vagrant Up has been run, you must run "vagrant ssh". It is possible that ssh is not added to your environment variables and this will cause an error that will be reported in the console.
+
+To add ssh you need to install git. After this, proceed to add the following path to your PATH environment variable: C:\Program Files\Git\usr\bin (or wherever git is installed on your system).
+
+After this you should be able to enter the vagrant enviroment. There you will need to install curl ($ sudo apt-get install curl).
+
+Now you are ready to start your tests.
+
+NOTE: After instruction 58 you will need to use some files located on your system.
+
+Please read this guide on how to do this: https://www.vagrantup.com/docs/getting-started/synced_folders.html
+
+Short story: copy your folder with the tests inside your vagrant folder. I.e: C:\_work\vagrant\manual-test. Update the path inside the curl command with "@/vagrant/manual-test/ma_work.xml" matching the name of your folder.
+
 ## Register/Verify
 
 0. Get the list of QA testing clients from ORCID-Internal, find and replace the member and public API client iDs and secrets with the ones listed in that document
