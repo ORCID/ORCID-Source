@@ -1,25 +1,24 @@
 # Development Environment Setup
 
-##Prerequisites 
+## Prerequisites 
 
 * Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
 
 * Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html). see: [OSX](http://stackoverflow.com/questions/12245179/how-to-install-unlimited-strength-jce-for-jre-7-in-macosx) or [Windows](http://help.boomi.com/atomsphere/GUID-D7FA3445-6483-45C5-85AD-60CA5BB15719.html)
 
-*Java / JCE installation on MAC
+* Java / JCE installation on MAC
 Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
-    
-    
-    * Create JAVA_HOME pointing to /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
-    
-    Extract the contents of UnlimitedJCEPolicyJDK7.zip into /Users/jeffrey/Sites/UnlimitedJCEPolicy/
 
-    ```    
-    mkdir /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
-    mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
-    cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
-    ```   
-    
+* Create JAVA_HOME pointing to /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
+
+Extract the contents of UnlimitedJCEPolicyJDK7.zip into /Users/jeffrey/Sites/UnlimitedJCEPolicy/
+
+```    
+mkdir /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
+```
+
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
 NOTE: In the case of Windows, don't create an environment variable named M2_HOME. instead add the path to the bin folder of Maven (i.e. C:\apache-maven-3.3.9\bin) to the PATH variable. If the PAth variable doesn't exists, create it, if it does, ensure you separate the new value by a semi-colon(;) 
@@ -27,7 +26,7 @@ NOTE: In the case of Windows, don't create an environment variable named M2_HOME
 * Install [Postgres] Windows: (http://www.postgresql.org/download/) version 9.3.x. (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
 * Install [Postgres] Mac: install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
-	  
+
    	```
    	nano .bash_profile
 	```
@@ -79,7 +78,8 @@ We'll set up postgres using the default settings in
     ```
     exit
     ```
-*Set up database using pgAdmin III
+
+* Set up database using pgAdmin III
     
     Under "databases" select "postgres". This will enable the SQL query editor. Click on it.
 
@@ -107,25 +107,24 @@ We'll set up postgres using the default settings in
     psql -U statistics -d statistics -c "\list" -h localhost
     ```
     NOTE: When testing this, if the console doesn't return anything, the databases weren't created suscesfully. You can try using the GUI 
-     
-	
+
 ## Setup Maven & Tomcat
 
-    Extract next files into ~/Bin folder (Create if it does not exist)
-    * apache-maven-3.3.9-bin.tar.gz
-    * apache-tomcat-8.0.37.tar.gz
+Extract next files into ~/Bin folder (Create if it does not exist)
 
-    ```
-    SJO-WS2555:~ jperez$ JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
-    SJO-WS2555:~ jperez$ ~/Bin/apache-maven-3.3.9/bin/mvn -version                                                                        
-        Apache Maven 3.3.9 (bb52d8502b132ec0a5a3f4c09453c07478323dc5; 2015-11-10T10:41:47-06:00)                                              
-        Maven home: /Users/jeffrey/Bin/apache-maven-3.3.9                                                                                     
-        Java version: 1.8.0_92, vendor: Oracle Corporation                                                                                    
-        Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre                                                        
-        Default locale: en_US, platform encoding: UTF-8                                                                                       
-        OS name: "mac os x", version: "10.11.3", arch: "x86_64", family: "mac"
-    SJO-WS2555:~ jperez$
-    ```
+* apache-maven-3.3.9-bin.tar.gz
+* apache-tomcat-8.0.37.tar.gz
+
+```
+SJO-WS2555:~ jperez$ JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
+SJO-WS2555:~ jperez$ ~/Bin/apache-maven-3.3.9/bin/mvn -version
+Apache Maven 3.3.9 (bb52d8502b132ec0a5a3f4c09453c07478323dc5; 2015-11-10T10:41:47-06:00)
+Maven home: /Users/jeffrey/Bin/apache-maven-3.3.9
+Java version: 1.8.0_92, vendor: Oracle Corporation
+Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre
+Default locale: en_US, platform encoding: UTF-8OS name: "mac os x", version: "10.11.3", arch: "x86_64", family: "mac"
+SJO-WS2555:~ jperez$
+```
 
 ## Clone the git repository
 
