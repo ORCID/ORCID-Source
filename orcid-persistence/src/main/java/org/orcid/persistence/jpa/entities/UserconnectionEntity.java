@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -62,6 +63,8 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     private boolean isLinked;
 
     private String idType;
+
+    private String headersJson;
 
     private UserConnectionStatus connectionSatus = UserConnectionStatus.STARTED;
 
@@ -211,6 +214,15 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     public void setConnectionSatus(UserConnectionStatus connectionSatus) {
         this.connectionSatus = connectionSatus;
+    }
+
+    @Column(name = "headers_json")
+    public String getHeadersJson() {
+        return headersJson;
+    }
+    
+    public void setHeadersJson(String headersJson) {
+        this.headersJson = headersJson;
     }
 
     @Override
