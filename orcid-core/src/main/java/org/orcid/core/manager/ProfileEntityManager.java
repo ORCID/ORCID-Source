@@ -48,7 +48,7 @@ public interface ProfileEntityManager {
 
     Long getConfirmedProfileCount();
 
-    boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
+    boolean deprecateProfile(String deprecated, String primary);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 

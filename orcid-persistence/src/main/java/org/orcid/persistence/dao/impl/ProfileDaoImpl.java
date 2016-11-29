@@ -486,10 +486,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
+    public boolean deprecateProfile(String toDeprecate, String primaryOrcid) {
         Query query = entityManager.createQuery(
                 "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
-        query.setParameter("orcid", toDeprecate.getId());
+        query.setParameter("orcid", toDeprecate);
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));        
         query.setParameter("defaultVisibility", Visibility.PRIVATE);

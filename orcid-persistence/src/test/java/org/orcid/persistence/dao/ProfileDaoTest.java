@@ -417,7 +417,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile(profileToDeprecate, "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);
