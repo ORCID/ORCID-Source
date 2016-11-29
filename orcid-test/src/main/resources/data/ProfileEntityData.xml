@@ -233,6 +233,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            orcid_type="USER"
             />
 
 	<profile
