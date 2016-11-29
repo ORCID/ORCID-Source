@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -63,6 +64,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     
     @Resource
     protected NotificationManager notificationManager;
+    
+    @Resource
+    private SlackManager slackManager;
     
     @Override
     @Transactional
@@ -125,7 +129,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             }
         }
         if (!result.isSuccess()) {
-            LOGGER.info("Institutional sign in header check failed: {}, originalHeaders={}", result, originalHeaders);
+            String message = String.format("Institutional sign in header check failed: %s, originalHeaders=%s", result, originalHeaders);
+            LOGGER.info(message);
+            slackManager.sendSystemAlert(message);
         }
         return result;
     }
