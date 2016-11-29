@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -107,8 +108,10 @@ public class ShibbolethController extends BaseController {
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
+            String originalHeadersJson = userConnectionEntity.getHeadersJson();
             @SuppressWarnings("unchecked")
-            Map<String, String> originalHeaders = JsonUtils.readObjectFromJsonString(userConnectionEntity.getHeadersJson(), Map.class);
+            Map<String, String> originalHeaders = originalHeadersJson != null ? JsonUtils.readObjectFromJsonString(originalHeadersJson, Map.class)
+                    : Collections.<String, String> emptyMap();
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(originalHeaders, headers);
             if (!checkHeadersResult.isSuccess()) {
                 mav.addObject("headerCheckFailed", true);
