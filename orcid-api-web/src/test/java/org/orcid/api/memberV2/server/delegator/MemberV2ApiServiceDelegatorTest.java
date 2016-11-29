@@ -51,6 +51,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
@@ -5558,6 +5559,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }    
+    
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
+    }
         
     private Address getAddress() {
         Address address = new Address();

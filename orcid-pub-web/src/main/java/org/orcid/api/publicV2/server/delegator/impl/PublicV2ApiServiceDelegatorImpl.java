@@ -52,6 +52,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
@@ -570,5 +571,11 @@ public class PublicV2ApiServiceDelegatorImpl
             sourceUtils.setSourceName(record.getActivitiesSummary());
         }         
         return Response.ok(record).build();
+    }
+
+    @Override
+    public Response viewClient(String clientId) {
+        Client client = clientDetailsManager.getClient(clientId);
+        return Response.ok(client).build();
     }
 }

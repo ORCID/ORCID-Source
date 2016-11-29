@@ -496,6 +496,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewPerson(orcid));
     }
+    
+    @Override
+    public Response viewClient(String clientId) {
+       return memberV2ApiServiceDelegator.viewClient(clientId);
+    }
 
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
@@ -517,4 +522,5 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private void checkProfileStatus(String orcid) {        
         orcidSecurityManager.checkProfile(orcid);
     }
+
 }

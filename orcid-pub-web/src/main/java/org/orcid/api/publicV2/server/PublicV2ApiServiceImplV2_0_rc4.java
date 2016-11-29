@@ -19,6 +19,7 @@ package org.orcid.api.publicV2.server;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
@@ -378,5 +379,14 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/record-2.0_rc4.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
+    }
+    
+    @GET
+    @Path(CLIENT_PATH)
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @ApiOperation(value = "Fetch client details")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/client-2.0_rc4.xsd")
+    public Response viewClient(@PathParam("client_id") String clientId) {
+        return serviceDelegator.viewClient(clientId);
     }
 }

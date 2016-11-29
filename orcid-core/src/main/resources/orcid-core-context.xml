@@ -835,6 +835,11 @@
 	<bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.impl.JpaJaxbAddressAdapterImpl">
         <property name="mapperFacade" ref="addressMapperFacade" />
     </bean>
+    
+    <bean id="clientMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getClientMapperFacade"/>
+	<bean id="jpaJaxbClientAdapter" class="org.orcid.core.adapter.impl.JpaJaxbClientAdapterImpl">
+        <property name="mapperFacade" ref="clientMapperFacade" />
+    </bean>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
             

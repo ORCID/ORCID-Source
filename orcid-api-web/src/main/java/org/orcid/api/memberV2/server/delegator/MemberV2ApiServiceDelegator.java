@@ -160,4 +160,6 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response deleteAddress(String orcid, Long putCode);
     
     Response viewPerson(String orcid);
+
+    Response viewClient(String clientId);
 }

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -121,4 +122,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
     
     ClientDetailsEntity findByIdP(String idp);
+
+    Client getClient(String clientId);
 }
