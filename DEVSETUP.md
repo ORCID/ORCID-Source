@@ -44,6 +44,7 @@ source .bash_profile
 
 
 ## Setup Postgres DB
+
 We'll set up postgres using the default settings in [staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties). Please change usernames and passwords for any production environments.
 
 *  Become postgres user
@@ -73,13 +74,14 @@ psql -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
 ```
 
 * Exit postgres user prompt
+
     
 ```
 exit
 ```
 
 * Set up database using pgAdmin III
-    
+
 Under "databases" select "postgres". This will enable the SQL query editor. Click on it.
 
 Run the following queries:
@@ -104,8 +106,8 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;
 psql -U orcid -d orcid -c "\list" -h localhost
 psql -U statistics -d statistics -c "\list" -h localhost
 ```
-    
-NOTE: When testing this, if the console doesn't return anything, the databases weren't created suscesfully. You can try using the GUI 
+
+> NOTE: When testing this, if the console doesn't return anything, the databases weren't created suscesfully. You can try using the GUI 
 
 ## Setup Maven & Tomcat (OSX)
 
@@ -138,7 +140,7 @@ mkdir ~/git
 ```
 cd ~/git
 git clone git@github.com:ORCID/ORCID-Source.git
-    ```
+```
 
 ## Clone the git ORCID-Fonts-Dot-Com repository
 
@@ -149,7 +151,7 @@ Due to licensing issues this is only available to ORCID.org employees.
 ```
 git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git ~/git/ORCID-Source/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
 ```
-    
+
 * Alternatively create a symbolic link inside static folder
 
 ```
