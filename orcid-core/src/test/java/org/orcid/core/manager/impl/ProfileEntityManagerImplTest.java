@@ -97,10 +97,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
-        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
-        boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
+        boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());

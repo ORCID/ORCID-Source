@@ -89,7 +89,7 @@ public class AdminManagerImpl implements AdminManager {
                 if (primary.getDeactivationDate() != null) {
                     result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", primaryOrcid));
                 } else {                    
-                    return profileEntityManager.deprecateProfile(deprecated, primary);
+                    return profileEntityManager.deprecateProfile(deprecatedOrcid, primaryOrcid);
                 }
             }
         }
