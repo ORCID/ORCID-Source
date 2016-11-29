@@ -1,6 +1,6 @@
 # Manual Test
 
-##If working with windows
+## If working with windows
 
 Known Issues:
 
@@ -27,7 +27,8 @@ Please read this guide on how to do this: https://www.vagrantup.com/docs/getting
 
 Short story: copy your folder with the tests inside your vagrant folder. I.e: C:\_work\vagrant\manual-test. Update the path inside the curl command with "@/vagrant/manual-test/ma_work.xml" matching the name of your folder.
 
-##Register/Verify
+## Register/Verify
+
 0. Get the list of QA testing clients from ORCID-Internal, find and replace the member and public API client iDs and secrets with the ones listed in that document
 0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016
 1. Visit https://qa.orcid.org/register
@@ -45,7 +46,8 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 7. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
 8. Visit https://qa.orcid.org/signout
 
-##Reset password
+## Reset password
+
 9. Visit https://qa.orcid.org/reset-password and reset the password for ma_test_[DD][month][YYYY]@mailinator.com
 10. Visit http://mailinator.com and check ma_test_[DD][month][YYYY]@mailinator.com
 11. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request 
@@ -54,7 +56,8 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 14. Visit https://qa.orcid.org/signin and sign in using the new password
 15. Visit https://qa.orcid.org/signout
 
-##Sign In
+## Sign In
+
 16. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 17. Visit https://qa.orcid.org/signin and sign in using a UnitedID account and complete steps to link it to the account created today.
 18. Check that the notification to link the account to State University displays on the record
@@ -65,7 +68,8 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 23. Check that after linking the account you are taken back to the authorize page not to my-orcid (you do not need to complete the authorization)
 24. Visit https://qa.orcid.org/account and revoke Google and UnitedID account access
 
-##My-ORCID
+## My-ORCID
+
 25. Visit https://qa.orcid.org/my-orcid
 26. Use the language selector to change the language to Spanish- check that the page updates into Spanish
 27. Use the language selector to set the page back to English
@@ -80,11 +84,12 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 36. Add a work: category: "publication', type: 'journal article', title 'ma test work', identifier type 'DOI', identifier value “9999”
 37. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
 38. Visit public page (http://qa.orcid.org/[XXXX-XXXX-XXXX-XXXX])
-	  * Verify information added in the steps above is visible
-      * Verify email address ma_test_[DD][month][YYYY]@mailinator.com is not visible
+    * Verify information added in the steps above is visible
+    * Verify email address ma_test_[DD][month][YYYY]@mailinator.com is not visible
 39. Visit https://qa.orcid.org/signout
 
-##Public API Authenticate
+## Public API Authenticate
+
 40. Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 
 41. Register for a new account and grant authorization
@@ -102,6 +107,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
     ```
 
 ## Public API Read/Search
+
 43. Generate a read-public token:
 
     ```
@@ -113,7 +119,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 45. Search for the records you created:
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]' -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' -H 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]' -k
     ```
 46. Check that both the ma_test and ma_public_test records are returned in the search results
 
@@ -145,7 +151,8 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
     
 52. Visit https://qa.orcid.org/signout
 
-##Member API 1.2 Post/Update 
+## Member API 1.2 Post/Update
+
 53. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-bio/update /orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground&email=ma_test_[DD][month][YYYY]@mailinator.com
 
 53. Log into the account created for testing today and grant short lived authorization. After granting authorization you will be taken to the Google OAuth playground- you do not need to do anything on this page, but retrieve the access code included with the URL
@@ -226,11 +233,11 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 
 78. Create a webhook for this record. Check that a 201 Created message is returned.
 
-	```
-	curl -i -H 'Accept: application/json' -H 'Authorization: Bearer ce0fc237-1f27-4e6e-8007-20b51ad595b9' -H "Content-Length: 0" -X PUT 'http://api.qa.orcid.org/[orcid id]/webhook/http%3A%2F%2Fnowhere2.com%2Fupdated' -k
-	```	
-		
-##Member API 2.0 Post/Update/Notifications
+    ```
+    curl -i -H 'Accept: application/json' -H 'Authorization: Bearer ce0fc237-1f27-4e6e-8007-20b51ad595b9' -H "Content-Length: 0" -X PUT 'http://api.qa.orcid.org/[orcid id]/webhook/http%3A%2F%2Fnowhere2.com%2Fupdated' -k
+    ```
+            
+## Member API 2.0 Post/Update/Notifications
 
 79. Log into the account created for testing today if you are not already
 
@@ -247,6 +254,13 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 83. Find and replace [2.0 token] in this document with the access token
 
 84. Find and replace [2.0 refresh] in this document with the refresh token
+
+### Browse to your local copy of https://github.com/ORCID/ORCID-Source/
+
+**Sample xml files**
+
+* orcid-integration-test/src/test/manual-test
+* orcid-model/src/main/resources/record_2.0_rc2/samples
 
 85. Post the ma test work 2: 
 
@@ -290,52 +304,54 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 93. Post a funding item:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_fund.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/funding' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_fund2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/funding' -L -i -k
     ```
 
 94. Post a peer-review item:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_peer.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/peer-review' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_peer2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/peer-review' -L -i -k
     ```
+
 95. Check that the education, funding and peer-review item appear at https://qa.orcid.org/my-orcid
     
 96. Post a keyword:
-	```
+    ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_keyword.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/keywords' -L -i -k
     ```
 
 97. Post a personal external identifier:
-	```
+    ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_identifier.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/external-identifiers' -L -i -k
     ```
 98. Check that the keyword and external identifier appear at https://qa.orcid.org/my-orcid and no other personal information was changed
 
 99. Post a notification
 
-	```
-	curl -i -H 'Authorization: Bearer eafafe49-b5bf-41db-9fb5-ad3a6cba575b' -H 'Content-Type: application/orcid+xml' -X POST -d '@notify.xml' https://api.qa.orcid.org/v2.0_rc2/[orcid id]/notification-permission -k
-	```
-	
-100. Go to https://qa.orcid.org/inbox 
-	* Check that notification to add a work has posted
-	* Check that notifications from the previous updates have posted
-	
+    ```
+    curl -i -H 'Authorization: Bearer eafafe49-b5bf-41db-9fb5-ad3a6cba575b' -H 'Content-Type: application/orcid+xml' -X POST -d '@notify.xml' https://api.qa.orcid.org/v2.0_rc2/[orcid id]/notification-permission -k
+    ```
+    
+100. Go to https://qa.orcid.org/inbox
+
+* Check that notification to add a work has posted
+* Check that notifications from the previous updates have posted
+
 100. Visit https://qa.orcid.org/signout	
-	
-##Member API 1.2 Creating/Claiming
+
+## Member API 1.2 Creating/Claiming
 
 101. Get a token to create records
-	
-	```
-	curl -i -L -H 'Accept: application/json' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
-	```
+
+    ```
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    ```
 102. Find and replace [create token] in this document with the token you just generated
 
 103. Post a new record with the 1.2 API
-	
-	```
-	curl -H 'Accept: application/xml' -H 'Content-Type: application/vdn.orcid+json' -H 'Authorization: Bearer [create token]'  'http://api.qa.orcid.org/v1.2/orcid-profile' -X POST -d '{
+
+    ```
+    curl -H 'Accept: application/xml' -H 'Content-Type: application/vdn.orcid+json' -H 'Authorization: Bearer [create token]'  'http://api.qa.orcid.org/v1.2/orcid-profile' -X POST -d '{
 "message-version" : "1.2",
   "orcid-profile" : 
 {"orcid-bio" : 
@@ -365,14 +381,15 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 "work-external-identifier" : [ {
 "work-external-identifier-type" : "DOI",
 "work-external-identifier-id" : {"value" : "9999"}}]}}]}}}}' -k -i
-```
+    ```
+
 104. Find the ORCID iD of the new record in the response. Find and replace [new id] in this documente with that iD
 
 105. View the newly created record in the UI at http://qa.orcid.org/[new id]. Check that no information is public and the record reads 'Reserved for claim' 
 
 106. Read the newly created record with the API and check that no information is returned
 
-	```
+    ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://pub.qa.orcid.org/v1.2/[new id]/orcid-profile' -L -i -k
     ```
 107. Check the email inbox used when creating the record, api_[DD][month][YYYY]@mailinator.com, and follow the link to claim the record
@@ -386,18 +403,18 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 109. Check the record is populated with personal information that is set to limited, and there is one work on the record
 
 110. Try to post to the record using the create token. You should get a 401 Forbidden error with the message "Security problem : You cannot update this profile as it has been claimed, or you are not the owner."
-	
-	```
+
+    ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [create token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[new id]/orcid-works' -L -i -k
     ```
     
 111. Try to read the record with the create token. Check that the personal information set to limited visibility is not returned.
-	
-	```
+
+    ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [create token]' -H 'Accept: application/xml' 'http://api.qa.orcid.org/v1.2/[new id]/orcid-profile' -L -i -k
     ```
-	
-###Check that errors are returned when expected
+
+### Check that errors are returned when expected
 
 In this section all calls are expected to fail.
 
@@ -410,14 +427,14 @@ In this section all calls are expected to fail.
 113. Attempt to access the wrong record in 2.0_rc2. Check that an 401 Unauthorized error is returned with the message "Invalid access token..."
     
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v2.0_rc2/0000-0002-2619-0514/orcid-works' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-2619-0514/orcid-works' -L -i -k
     ```
 
 
 114. Attempt to post to a record without a token. Check that a 403 Forbidden error is returned.
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
     ```
 
 115. Attempt to update an item without a token.  Check that a 403 Forbidden error is returned.
@@ -452,60 +469,61 @@ In this section all calls are expected to fail.
 https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
 Check that you are sent to https://developers.google.com/oauthplayground with the error 'access_denied'
 
-##Refresh tokens
+## Refresh tokens
 
 118. Generate a new token with the same scopes and expiration as the 2.0 token and do not revoke the original token
 
-	```
-	curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
-	```
+    ```
+    curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
+    ```
 
 119. Use the newly generated refreshed token to post the test work
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-	```
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    ```
 
 120. Check that the original token still works by reading the record
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
-	```
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+    ```
 
 121. Generate a new token with a short lifespan, only /read-limited scope and revoke the original token    
 
-	```
-	curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=true' -d 'scope=/read-limited' -d 'expires_in=600' https://qa.orcid.org/oauth/token
-	```
+    ```
+    curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=true' -d 'scope=/read-limited' -d 'expires_in=600' https://qa.orcid.org/oauth/token
+    ```
 
 122. Find and replace [refreshed2] in this document with the token you just generated
 
 123. Check the new token can't be used to post items by attempting to post the test work. A 403 Forbidden error with the message "Insufficient or wrong scope [/read-limited]" should be returned
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-	```
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    ```
 
 124. Check the original token was revoked by attempting to post the test work. A 401 Unauthorized error with the message "Invalid access token...: should be returned
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
-	```
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    ```
 
 125. Check that the new token can be used to read the record. The full record should be returned
 
-	```
-	curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
-	```
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+    ```
 
 126. Check that you can't generate a refresh token using a revoked token. You should get an error message "Parent token is disabled"
 
-	```
-	curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
-	```
+    ```
+    curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
+    ```
 
-##Privacy Check
-###Public Record
+## Privacy Check
+
+### Public Record
 
 This record has every field set to public. Access this record via the API and UI to check that all fields are returned.
 
@@ -566,7 +584,7 @@ This record has every field set to public. Access this record via the API and UI
     ```
 
 
-###Limited Record
+### Limited Record
 
 This record has ever field set to limited, check that nothing is visible in the UI and that it can only be read on the API with a /read-limited token.
 
@@ -727,7 +745,7 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
     ```	
 
-###Private Record
+### Private Record
 
 This record has every fields set to private. Check that no information is displayed in the UI or via the API when accessing it.
 
@@ -777,7 +795,7 @@ This record has every fields set to private. Check that no information is displa
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/email' -L -i -k
     ```
 
-##Scopes/Methods
+## Scopes/Methods
 
 This section checks that clients can only get access based on the allowed scopes for that client type.
 
@@ -786,29 +804,29 @@ This section checks that clients can only get access based on the allowed scopes
 
 
 173. Attempt to get an /read-limited token via 2 step OAuth. Check a 401 Unauthorized error is returned
-	
-	```
-	curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-limited' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-	```
+
+    ```
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-limited' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
+    ```
 
 174. Attempt to get an /activities/update token via 2 step. Check a 401 Unauthorized error is returned
 
-	```
-	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    ```
+    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 
-	```
+    ```
 
 175. Attempt to get a /webhooks token with a basic client. Check a 401 Unauthorized error is returned
 
-	```
-	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
-	```
+    ```
+    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    ```
 
 176. Attempt to get a /orcid-profile/create token with a non-institution client. Check a 401 Unauthorized error is returned
 
-	```
-	curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
-	```
+    ```
+    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    ```
 
 
 * Finally help out by improving these instructions!      
