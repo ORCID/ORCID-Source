@@ -119,7 +119,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 45. Search for the records you created:
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]' -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' -H 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]' -k
     ```
 46. Check that both the ma_test and ma_public_test records are returned in the search results
 
