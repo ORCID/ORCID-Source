@@ -108,11 +108,7 @@ public class ShibbolethController extends BaseController {
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
-            String originalHeadersJson = userConnectionEntity.getHeadersJson();
-            @SuppressWarnings("unchecked")
-            Map<String, String> originalHeaders = originalHeadersJson != null ? JsonUtils.readObjectFromJsonString(originalHeadersJson, Map.class)
-                    : Collections.<String, String> emptyMap();
-            HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(originalHeaders, headers);
+            HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
                 mav.addObject("headerCheckFailed", true);
                 return mav;
@@ -148,6 +144,13 @@ public class ShibbolethController extends BaseController {
             mav.addObject("lastName", (headers.get(InstitutionalSignInManager.SN_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.SN_HEADER));
         }
         return mav;
+    }
+
+    private Map<String, String> parseOriginalHeaders(String originalHeadersJson) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> originalHeaders = originalHeadersJson != null ? JsonUtils.readObjectFromJsonString(originalHeadersJson, Map.class)
+                : Collections.<String, String> emptyMap();
+        return originalHeaders;
     }
 
     private void checkEnabled() {
