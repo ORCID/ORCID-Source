@@ -57,6 +57,7 @@ node {
     }
     stage('Notify Completed'){
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        deleteDir()
     }
 }
 
