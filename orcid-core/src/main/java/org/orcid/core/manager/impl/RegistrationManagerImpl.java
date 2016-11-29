@@ -27,6 +27,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.PasswordGenerationManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.VerifyRegistrationToken;
@@ -72,6 +73,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource
     private ProfileEntityManager profileEntityManager;
 
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Resource
     private AdminManager adminManager;
     
@@ -130,6 +134,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
                         adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
                         notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
+                        profileEntityCacheManager.remove(unclaimedOrcid);
                         return minimalProfile;
                     } else {
                         return createMinimalProfile(orcidProfile, usedCaptcha);
