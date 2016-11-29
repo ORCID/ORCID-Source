@@ -307,10 +307,11 @@ public class PublicV2ApiServiceDelegatorImpl
         List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
         Educations publicEducations = new Educations();
         for(EducationSummary summary : educations) {
-        	publicAPISecurityManagerV2.checkIsPublic(summary);
-        	ActivityUtils.setPathToActivity(summary, orcid);
-        	sourceUtilsReadOnly.setSourceName(summary);
-        	publicEducations.getSummaries().add(summary);            
+        	if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+	        	ActivityUtils.setPathToActivity(summary, orcid);
+	        	sourceUtilsReadOnly.setSourceName(summary);
+	        	publicEducations.getSummaries().add(summary);          
+        	}
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
         return Response.ok(publicEducations).build();
@@ -342,10 +343,11 @@ public class PublicV2ApiServiceDelegatorImpl
         List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
         Employments publicEmployments = new Employments();
         for(EmploymentSummary summary : employments) {
-        	publicAPISecurityManagerV2.checkIsPublic(summary);
-        	ActivityUtils.setPathToActivity(summary, orcid);
-            sourceUtilsReadOnly.setSourceName(summary);
-            publicEmployments.getSummaries().add(summary);            
+        	if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+	        	ActivityUtils.setPathToActivity(summary, orcid);
+	            sourceUtilsReadOnly.setSourceName(summary);
+	            publicEmployments.getSummaries().add(summary);         
+        	}
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
         return Response.ok(publicEmployments).build();

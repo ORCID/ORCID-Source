@@ -183,6 +183,9 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
     				return true;
     			}
     		});
+        	if(personalDetails.getOtherNames().getOtherNames().isEmpty()) {
+        		personalDetails.setOtherNames(null);
+        	}
         }
 	}
 	
