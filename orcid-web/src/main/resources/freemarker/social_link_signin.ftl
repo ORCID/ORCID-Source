@@ -32,7 +32,7 @@
             </div>
         <#elseif headerCheckFailed??>
             <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
-                Header check failed!
+                <p class="alert">${springMacroRequestContext.getMessage("social.link.header.mismatch.1")} <a href="mailto:suppport@orcid.org">${springMacroRequestContext.getMessage("social.link.header.mismatch.2")}</a> ${springMacroRequestContext.getMessage("social.link.header.mismatch.3")}</p>
             </div>
         <#else>
             <div ng-hide="loadedFeed" class="text-center">
