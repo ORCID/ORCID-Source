@@ -501,7 +501,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -520,17 +520,18 @@ public class RegistrationControllerTest extends DBUnitTest {
     	when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
     	//Set enable auto deprecate off
     	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(false);
-    	    	
+    	when(servletRequest.getScheme()).thenReturn("http");    	
+    	
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertTrue(reg.getEmail().getErrors().get(0).startsWith(email + " already exists in our system as an unclaimed record."));
+    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href=\"http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org\">resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
     }
     
     @Test
@@ -546,7 +547,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -570,7 +571,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -593,7 +594,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());

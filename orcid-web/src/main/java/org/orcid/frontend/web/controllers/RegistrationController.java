@@ -318,7 +318,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
-        validateRegistrationFields(reg);
+        validateRegistrationFields(request, reg);
         validateGrcaptcha(request, reg);
         return reg;
     }
@@ -387,7 +387,7 @@ public class RegistrationController extends BaseController {
         }
 
         // make sure validation still passes
-        validateRegistrationFields(reg);
+        validateRegistrationFields(request, reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
             r.getErrors().add("Please revalidate at /register.json");
             return r;
@@ -415,13 +415,13 @@ public class RegistrationController extends BaseController {
         return r;
     }
 
-    public void validateRegistrationFields(Registration reg) {
+    public void validateRegistrationFields(HttpServletRequest request, Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(reg, false, false);
+        regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -502,11 +502,11 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Registration regEmailValidate(@RequestBody Registration reg) {
-        return regEmailValidate(reg, false, true);
+    public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
+        return regEmailValidate(request, reg, false, true);
     }
 
-    public Registration regEmailValidate(Registration reg, boolean isOauthRequest, boolean isKeyup) {
+    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
         if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
@@ -540,8 +540,10 @@ public class RegistrationController extends BaseController {
                 		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));
                 	} else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
                 		//If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
-                		String[] codes = { "orcid.frontend.verify.unclaimed_email" };                        
-                        mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                		String resendUrl = createResendClaimUrl(emailAddress, request);
+                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
+                        args = new String[] { emailAddress, resendUrl };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
                     } else {
                         LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
                     }
