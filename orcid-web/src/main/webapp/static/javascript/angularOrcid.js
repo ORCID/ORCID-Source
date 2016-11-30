@@ -11199,7 +11199,6 @@ orcidNgModule.directive('focusMe', function($timeout) {
         $timeout( //[fn], [delay], [invokeApply], [Pass]
             function(){
                 if (scope.trigger) {
-                    console.log("focus me true", element[0]);
                     element[0].focus();
                     scope.trigger = false;
                 }
