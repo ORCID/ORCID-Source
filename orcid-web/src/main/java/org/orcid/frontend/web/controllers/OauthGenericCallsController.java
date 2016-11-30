@@ -137,8 +137,8 @@ public class OauthGenericCallsController extends OauthControllerBase {
     }
 
     @RequestMapping(value = "/oauth/custom/register/validateEmail.json", method = RequestMethod.POST)
-    public @ResponseBody OauthRegistrationForm validateEmail(@RequestBody OauthRegistrationForm reg) {
-        registrationController.regEmailValidate(reg, true, false);
+    public @ResponseBody OauthRegistrationForm validateEmail(HttpServletRequest request, @RequestBody OauthRegistrationForm reg) {
+        registrationController.regEmailValidate(request, reg, true, false);
         return reg;
     }
 

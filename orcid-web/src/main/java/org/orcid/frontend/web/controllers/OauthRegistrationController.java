@@ -79,7 +79,7 @@ public class OauthRegistrationController extends OauthControllerBase {
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         
         if (form.getApproved()) {
-            registrationController.validateRegistrationFields(form);
+            registrationController.validateRegistrationFields(request, form);
             registrationController.validateGrcaptcha(request, form);            
         } else {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
@@ -149,7 +149,7 @@ public class OauthRegistrationController extends OauthControllerBase {
             }
             
             // Check there are no errors
-            registrationController.validateRegistrationFields(form);
+            registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
                 try {

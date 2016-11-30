@@ -501,7 +501,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -524,7 +524,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -546,7 +546,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -570,7 +570,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
@@ -593,7 +593,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	Registration reg = new Registration();
     	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
     	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
-    	reg = registrationController.regEmailValidate(reg, false, true);
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
     	
     	assertNotNull(reg);
     	assertNotNull(reg.getEmail());
