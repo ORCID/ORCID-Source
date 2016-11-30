@@ -207,34 +207,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;    
     
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
-
-    public void setNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
-    }
-
-    public void setEncryptionManager(EncryptionManager encryptionManager) {
-        this.encryptionManager = encryptionManager;
-    }
-
-    public void setRegistrationManager(RegistrationManager registrationManager) {
-        this.registrationManager = registrationManager;
-    }
-
-    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
-        this.orcidSearchManager = orcidSearchManager;
-    }
-
-    public OrcidSearchManager getOrcidSearchManager() {
-        return orcidSearchManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
-
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
@@ -346,7 +318,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody Registration setRegister(HttpServletRequest request, @RequestBody Registration reg) {
-        validateRegistrationFields(request, reg);
+        validateRegistrationFields(reg);
         validateGrcaptcha(request, reg);
         return reg;
     }
@@ -415,7 +387,7 @@ public class RegistrationController extends BaseController {
         }
 
         // make sure validation still passes
-        validateRegistrationFields(request, reg);
+        validateRegistrationFields(reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
             r.getErrors().add("Please revalidate at /register.json");
             return r;
@@ -443,13 +415,13 @@ public class RegistrationController extends BaseController {
         return r;
     }
 
-    public void validateRegistrationFields(HttpServletRequest request, Registration reg) {
+    public void validateRegistrationFields(Registration reg) {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
-        regEmailValidate(request, reg, false, false);
+        regEmailValidate(reg, false, false);
         registerTermsOfUseValidate(reg);
 
         copyErrors(reg.getEmailConfirm(), reg);
@@ -530,11 +502,11 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
-    public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
-        return regEmailValidate(request, reg, false, true);
+    public @ResponseBody Registration regEmailValidate(@RequestBody Registration reg) {
+        return regEmailValidate(reg, false, true);
     }
 
-    public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
+    public Registration regEmailValidate(Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
         if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
@@ -551,23 +523,24 @@ public class RegistrationController extends BaseController {
             //Validate duplicates 
             //If email exists
             if(emailManager.emailExists(emailAddress)) {
+            	String orcid = emailManager.findOrcidIdByEmail(emailAddress);
+            	String[] args = { emailAddress };
                 //If it is claimed, should return a duplicated exception
-                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                  	
-                	String orcid = emailManager.findOrcidIdByEmail(emailAddress);
-                	String[] args = { emailAddress };
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                  	                	                	
                 	String[] codes = null;
                 	if(profileEntityManager.isDeactivated(orcid)) {
                 		codes = new String[] { "orcid.frontend.verify.deactivated_email" };
                     } else {
                         codes = new String[] { "orcid.frontend.verify.duplicate_email" };
-                    }
-                                        
+                    }                                        
                     mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
                 } else {
-                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception
-                    if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
-                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                        String[] args = { emailAddress };
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		String[] codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));
+                	} else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                		//If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                		String[] codes = { "orcid.frontend.verify.unclaimed_email" };                        
                         mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
                     } else {
                         LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
