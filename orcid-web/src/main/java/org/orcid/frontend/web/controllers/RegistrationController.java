@@ -1200,7 +1200,10 @@ public class RegistrationController extends BaseController {
         String orcid = emailManager.findOrcidIdByEmail(email);
         LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
+        //Reactivate user
         profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
+        //Verify email used to reactivate
+        emailManager.verifyEmail(email);
         logUserIn(request, response, orcid, password);
     }
 }
