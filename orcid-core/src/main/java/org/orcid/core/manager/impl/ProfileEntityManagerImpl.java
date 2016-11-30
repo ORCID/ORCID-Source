@@ -897,6 +897,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
+        profileEntity.setClaimed(true);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
         RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
         recordNameEntity.setGivenNames(givenNames);
