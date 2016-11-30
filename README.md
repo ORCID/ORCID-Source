@@ -35,6 +35,13 @@ Backend Technologies (brief version):
 
 The above is just a brief introduction. Best way to see everything used is to dig into the code, but baring that please browse our [PROJECTS](https://github.com/ORCID/ORCID-Source/blob/master/PROJECTS.md) page.
 
+# Versioning
+
+Version number used with releases will look to follow a similar format like [semver](http://semver.org/)
+
+**e.g.** 1.138.2 described as next
+
+> [release that can’t be rolled back, typically DB changes].[release sequence].[release patch]|([patches applied after pushed to production]) 
 
 # Contributing
 Pull requests are welcome; See [CONTRIBUTING.md](CONTRIBUTING.md)
