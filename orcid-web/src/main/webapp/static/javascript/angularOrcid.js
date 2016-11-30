@@ -10909,42 +10909,53 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 //Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
-    	
+    	var isPartOf = false;
+        var link = null;
     	var ngclass = '';
-    	var output = '';
+        var output = '';
+        var value = null;        
 
-        if (externalIdentifier == null) return output;
-        
+        if (externalIdentifier == null) {
+            return output;
+        }
+
+        if(externalIdentifier.relationship != null && externalIdentifier.relationship.value == 'part-of') {
+            isPartOf = true;     
+        }
+
         //If type is set always come: "grant_number"
         if (type != null) {
-        	if (type.value == 'grant') {
-        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
-        	} else if (type.value == 'contract') {
-        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
-        	} else {
-        		output += om.get('funding.add.external_id.value.label.award') + ": ";
-        	}
+            if (type.value == 'grant') {
+                output += om.get('funding.add.external_id.value.label.grant') + ": ";
+            } else if (type.value == 'contract') {
+                output += om.get('funding.add.external_id.value.label.contract') + ": ";
+            } else {
+                output += om.get('funding.add.external_id.value.label.award') + ": ";
+            }
+            
+            if(isPartOf){
+                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.value.toUpperCase() + "</span></span>: ";
+            }
         }         
         
-        var value = null;        
         if(externalIdentifier.value != null){
-        	value = externalIdentifier.value.value;
+            value = externalIdentifier.value.value;
         }
         
-        var link = null;
-        if(externalIdentifier.url != null)
+        if(externalIdentifier.url != null) {
             link = externalIdentifier.url.value;
-       
+        }
+ 
         if(link != null) {
-        	
         	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
         	} else {
         		if(type != null) {
-        			
-        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			if (moreInfo == false || typeof moreInfo == 'undefined') {
+                        ngclass = 'truncate-anchor';
+                    }
         			
         			if(type.value == 'grant') {
         				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
@@ -10973,9 +10984,8 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 				  </div>';
         }
         
-        //if (length > 1 && !last) output = output + ',';
-        	return output;
-    	};
+        return output;
+    };
 }]);
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
