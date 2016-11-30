@@ -452,15 +452,18 @@ GroupedActivities.prototype.unionCheck = function() {
 };
 
 var ActSortState = function(groupType) {
-    this.type = groupType;    
-    this.predicateKey = 'date';
-    if (this.type == 'peerReview') this.predicateKey = 'groupName';
-    this.reverseKey = {};
-    this.reverseKey['date']  = false;
-    this.reverseKey['title'] = false;
-    this.reverseKey['type']  = false;
-    this.reverseKey['groupName']  = false;
-    this.predicate = this.predicateMap[this.type][this.predicateKey];
+    var _self = this;
+    _self.type = groupType;    
+    _self.predicateKey = 'title';
+    if (_self.type == 'peerReview') {
+        _self.predicateKey = 'groupName';
+    }
+    _self.reverseKey = {};
+    _self.reverseKey['date']  = false;
+    _self.reverseKey['title'] = false;
+    _self.reverseKey['type']  = false;
+    _self.reverseKey['groupName']  = false;
+    _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
 };
 
 var sortPredicateMap = {};
@@ -484,12 +487,12 @@ sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 ActSortState.prototype.sortBy = function(key) {	
-        if (this.predicateKey == key){
-           this.reverse = !this.reverse;
-           this.reverseKey[key] = !this.reverseKey[key];           
-        }
-        this.predicateKey = key;
-        this.predicate = this.predicateMap[this.type][key];
+    if (this.predicateKey == key){
+       this.reverse = !this.reverse;
+       this.reverseKey[key] = !this.reverseKey[key];           
+    }
+    this.predicateKey = key;
+    this.predicate = this.predicateMap[this.type][key];
 };
 
 
@@ -1268,7 +1271,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         getUniqueDois : function(putCode){
         	var dois = [];            	
         	var group = worksSrvc.getGroup(putCode);
-        	
         	for (var idx in group.activities) {            		
         		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
         			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
