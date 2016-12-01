@@ -5950,16 +5950,19 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        if ($scope.addingWork) return; // don't process if adding work
+        if ($scope.addingWork) {
+            return; // don't process if adding work
+        }
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){        	    
+            function(data){
+                console.log("data.errors", data);
                 if (data.errors.length == 0) {
-                	if ($scope.bibtextWork == false){
-                		$.colorbox.close();
-                		$scope.addingWork = false;
-                	} else {
+                    if ($scope.bibtextWork == false){
+                        $.colorbox.close();
+                        $scope.addingWork = false;
+                    } else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
                         $scope.addingWork = false;
@@ -5974,9 +5977,23 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     $scope.addingWork = false;
                     $scope.$apply();
                     // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block"))
+                    if (!($("#colorbox").css("display")=="block")) {
                         $scope.addWorkModal(data);
+                    }
+                    console.log("no citation desc 2", $scope.editWork.citation.citation.errors);
                 }
+                if( angular.isDefined($scope.editWork)
+                    && angular.isDefined($scope.editWork.citation)
+                    && angular.isDefined($scope.editWork.citation.citationType)
+                    && angular.isDefined($scope.editWork.citation.citationType.value)
+                    && $scope.editWork.citation.citationType.value == "formatted-unspecified"
+                    && $scope.editWork.citation.citation.value.trim().length == 0
+
+                ){
+                    console.log("if");
+                    $scope.editWork.citation.citation.errors = ["Please provide the citation"];
+                }
+                console.log("no citation desc 1a", $scope.editWork.citation.citation.errors);
             },
             function() {
                 // something bad is happening!
@@ -5992,6 +6009,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.validateCitation = function() {
+
         if ($scope.editWork.citation
                 && $scope.editWork.citation.citation.value
                 && $scope.editWork.citation.citation.value.length > 0
@@ -6199,8 +6217,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.isValidClass = function (cur) {
-        if (cur === undefined || cur == null) return '';
         var valid = true;
+        if (cur === undefined || cur == null) {
+            return '';
+        }
         if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
@@ -6396,10 +6416,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         peerReviewSrvc.postPeerReview($scope.editPeerReview,
             function(data){        	    
                 if (data.errors.length == 0) {
-                	    $scope.addingPeerReview = false;
-                        $scope.$apply();
-                        $.colorbox.close();
-                        $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+            	    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                    $.colorbox.close();
+                    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                 } else {
                     $scope.editPeerReview = data;
                     commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
@@ -6567,13 +6587,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
+        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        var maxSize = 100;
+        
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
-        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        
         if (peerReview.subjectName)
             $scope.fixedTitle = peerReview.subjectName.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
+        else {
+            $scope.fixedTitle = '';
+        }
+        
         if($scope.fixedTitle.length > maxSize)
             $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
         $.colorbox({
