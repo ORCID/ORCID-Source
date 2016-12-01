@@ -47,11 +47,11 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-					    <#if shibbolethEnabled>
-						    <div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
-							    <a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-			  				    <a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-						    </div>
+				    <#if shibbolethEnabled> 
+				    <div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
+ 							<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+	  				</div>
 						</#if>
 						<!-- Personal Login -->
 						<!-- Login form -->
@@ -91,47 +91,47 @@
 									</div>												
 								</div>									
 							</div>
-						</div>
-						<!-- SOCIAL LOGIN -->					            
-						<div class="social-login">
-							<div class="title">
-							 	${springMacroRequestContext.getMessage("login.signinwithasocialaccount")}
-								<div class="popover-help-container">
-									<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-									<div id="social-login-help" class="popover bottom">
-										<div class="arrow"></div>
-										<div class="popover-content">
-											<p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+							<!-- SOCIAL LOGIN -->					            
+							<div class="social-login">
+								<div class="title">
+								 	${springMacroRequestContext.getMessage("login.signinwithasocialaccount")}
+									<div class="popover-help-container">
+										<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+										<div id="social-login-help" class="popover bottom">
+											<div class="arrow"></div>
+											<div class="popover-content">
+												<p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-		                    <ul class="social-icons">
-		                        <li>
-		                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
-		                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
-		                                <input type="hidden" name="scope" value="email" />
-		                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		                            </form>
-		                        </li>
-		                        <!-- 
-		                        <li>
-		                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST" ng-submit="loginSocial('twitter')">
-		                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
-		                                <input type="hidden" name="scope" value="email" />
-		                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		                            </form>
-		                        </li>
-		                         -->
-		                         <li>
-		                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST" ng-submit="loginSocial('google')">
-		                                <button type="submit" class="btn btn-social-icon btn-google"></button>
-		                                <input type="hidden" name="scope" value="email" />
-		                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		                            </form>
-		                        </li>
-		                    </ul>                       
-		                </div>            	
+	              <ul class="social-icons">
+	                  <li>
+	                      <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
+	                          <button type="submit" class="btn btn-social-icon btn-facebook"></button>
+	                          <input type="hidden" name="scope" value="email" />
+	                          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	                      </form>
+	                  </li>
+	                  <!-- 
+	                  <li>
+	                      <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST" ng-submit="loginSocial('twitter')">
+	                          <button type="submit" class="btn btn-social-icon btn-twitter"></button>
+	                          <input type="hidden" name="scope" value="email" />
+	                          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	                      </form>
+	                  </li>
+	                   -->
+	                   <li>
+	                      <form action="<@orcid.rootPath '/signin/google'/>" method="POST" ng-submit="loginSocial('google')">
+	                          <button type="submit" class="btn btn-social-icon btn-google"></button>
+	                          <input type="hidden" name="scope" value="email" />
+	                          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	                      </form>
+	                  </li>
+	              </ul>                       
+	            </div>            	
+						</div>
 					</div>
 					<!-- SHIBBOLETH -->
 					<div ng-show="personalLogin == false && !showRegisterForm"  ng-cloak>
