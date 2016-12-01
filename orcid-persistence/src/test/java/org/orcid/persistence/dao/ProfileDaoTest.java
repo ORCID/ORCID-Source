@@ -429,8 +429,11 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     public void testGetClaimedStatusByEmail() {
         assertFalse(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0001@test.orcid.org"));
+        assertFalse(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0001@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0002@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0002@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("pUbLiC_0000-0000-0000-0003@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("limited_0000-0000-0000-0003@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("private_0000-0000-0000-0003@test.orcid.org"));
     }
