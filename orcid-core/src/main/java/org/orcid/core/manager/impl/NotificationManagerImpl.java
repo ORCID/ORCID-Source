@@ -529,7 +529,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
-        String reactivationUrl = createReactivationUrl(orcidProfile, orcidUrlManager.getBaseUrl());
+        String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("reactivationUrl", reactivationUrl);
 
         addMessageParams(templateParams, orcidProfile);
@@ -866,15 +866,19 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
 
-    public String createResetParams(OrcidProfile orcidProfile) {
+    private String createResetParams(OrcidProfile orcidProfile) {
         String userEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        return createResetParams(userEmail);
+    }
+    
+    private String createResetParams(String userEmail) {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return resetParams;
     }
     
-    private String createReactivationUrl(OrcidProfile orcidProfile, String baseUri) {
-        String resetParams = createResetParams(orcidProfile);
+    private String createReactivationUrl(String userEmail, String baseUri) {
+        String resetParams = createResetParams(userEmail);
         return createEmailBaseUrl(resetParams, baseUri, "reactivation");
     }
 
