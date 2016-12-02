@@ -211,10 +211,7 @@
 						        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
 						        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 						            <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
-						            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
-						            
-						            
-						            
+						            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            						            						            						            
 						            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent">
 										<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
 						   			</span>
@@ -223,10 +220,7 @@
 						   			</span>
 						   			<span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
 						                ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
-						            </span>
-						            
-						            
-						            
+						            </span>						            						            						            
 						        </div>			       
 						    </div>				
 						    
