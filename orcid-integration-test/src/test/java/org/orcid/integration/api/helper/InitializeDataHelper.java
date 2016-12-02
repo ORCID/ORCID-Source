@@ -215,7 +215,7 @@ public class InitializeDataHelper {
         String website = value + "_website";
             
         ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, null, website, clientType, createScopes(clientType),
-                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
         
         OrcidClient client =  adapter.toOrcidClient(clientDetails);
         //Decrypt the client secret

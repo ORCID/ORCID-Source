@@ -43,9 +43,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
 
     LockerObjectsManager lockers = new LockerObjectsManager();
 
-    private String releaseName = ReleaseNameUtils.getReleaseName();
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileEntityCacheManagerImpl.class);
+    private String releaseName = ReleaseNameUtils.getReleaseName();    
 
     @Override
     @Transactional

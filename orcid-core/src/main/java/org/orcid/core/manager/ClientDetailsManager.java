@@ -51,10 +51,12 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * @param clientGrantedAuthorities
      *            the authorities that can be used to. These are likely to be
      *            only "ROLE_CLIENT"
+     * @param allowAutoDeprecate
+     *          Indicates if the client will enable auto deprecating unclaimed records.           
      * @return
      */
     ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);    
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);    
 
     ClientDetailsEntity findByClientId(String orcid);
 
@@ -118,7 +120,7 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * */
     ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);
     
     ClientDetailsEntity findByIdP(String idp);
 }

@@ -29,7 +29,7 @@
 	    	</div>
         	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
-		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.name}}</h1>
+		            <h1 ng-cloak><a href="{{membersListSrvc.currentMemberDetails.member.websiteUrl}}" target="_blank">{{membersListSrvc.currentMemberDetails.member.name}}</a></h1>
 		            <p ng-cloak>{{membersListSrvc.currentMemberDetails.member.researchCommunity}} | {{membersListSrvc.currentMemberDetails.member.country}}</p>
 		        </div>
 		        <div class="col-md-10 col-sm-10 col-xs-12">		       
