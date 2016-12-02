@@ -5980,25 +5980,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     if (!($("#colorbox").css("display")=="block")) {
                         $scope.addWorkModal(data);
                     }
-                    console.log("no citation desc 2", $scope.editWork.citation.citation.errors);
                 }
-                if( angular.isDefined($scope.editWork)
-                    && angular.isDefined($scope.editWork.citation)
-                    && angular.isDefined($scope.editWork.citation.citationType)
-                    && angular.isDefined($scope.editWork.citation.citationType.value)
-                    && $scope.editWork.citation.citationType.value == "formatted-unspecified"
-                    && $scope.editWork.citation.citation.value.trim().length == 0
-
-                ){
-                    console.log("if");
-                    $scope.editWork.citation.citation.errors = ["Please provide the citation"];
-                }
-                console.log("no citation desc 1a", $scope.editWork.citation.citation.errors);
             },
             function() {
                 // something bad is happening!
                 $scope.addingWork = false;
-                console.log("error fetching works");
             }
         );
     };
@@ -6009,7 +5995,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.validateCitation = function() {
-
         if ($scope.editWork.citation
                 && $scope.editWork.citation.citation.value
                 && $scope.editWork.citation.citation.value.length > 0
