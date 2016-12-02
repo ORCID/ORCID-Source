@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -70,12 +71,22 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     }
 
     @Override
-    public GroupIdRecord findByGroupId(String groupId) {
+    public Optional<GroupIdRecord> findByGroupId(String groupId) {
         try {
             GroupIdRecordEntity entity = groupIdRecordDao.findByGroupId(groupId);
-            return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
+            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
         } catch(NoResultException nre) {
-            return null;
+            return Optional.empty();
+        }
+    }
+    
+    @Override
+    public Optional<GroupIdRecord> findGroupIdRecordByName(String name) {
+        try {
+            GroupIdRecordEntity entity = groupIdRecordDao.findByName(name);
+            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
+        } catch(NoResultException nre) {
+            return Optional.empty();
         }
     }
     
@@ -184,4 +195,5 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
             }
         }
     }
+
 }
