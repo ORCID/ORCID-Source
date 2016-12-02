@@ -3124,7 +3124,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.newElementDefaultVisibility = null;
     $scope.scrollTop = 0;
     $scope.commonSrvc = commonSrvc;
-    
+        
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3254,7 +3254,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }
     };
     
-    $scope.openEditModal = function(){    	
+    $scope.openEditModal = function(){
     	$scope.bulkEditShow = false;    	
         $.colorbox({
             scrolling: true,
@@ -11196,15 +11196,15 @@ orcidNgModule.directive('focusMe', function($timeout) {
     return {
       scope: { trigger: '=focusMe' },
       link: function(scope, element) {
-        scope.$watch('trigger', function(value) {
-          if(value === true) { 
-            //console.log('trigger',value);
-            //$timeout(function() {
-              element[0].focus();
-              scope.trigger = false;
-            //});
-          }
-        });
+        $timeout( //[fn], [delay], [invokeApply], [Pass]
+            function(){
+                if (scope.trigger) {
+                    element[0].focus();
+                    scope.trigger = false;
+                }
+            },
+            1000
+        );
       }
     };
 });
