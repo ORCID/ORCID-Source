@@ -10919,7 +10919,6 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
             return output;
         }
 
-        //console.log("externalIdentifier", externalIdentifier);
         if(externalIdentifier.relationship != null && externalIdentifier.relationship.value == 'part-of') {
             isPartOf = true;     
         }
