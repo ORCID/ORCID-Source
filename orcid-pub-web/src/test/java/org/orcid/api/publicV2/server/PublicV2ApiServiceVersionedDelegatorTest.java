@@ -16,6 +16,8 @@
  */
 package org.orcid.api.publicV2.server;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
@@ -37,6 +40,7 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -52,26 +56,27 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
 public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", 
-            "/data/OrgAffiliationEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
-    
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
+
     @Resource(name = "publicV2ApiServiceDelegatorRc3")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
-    
+
     @Resource
     private ProfileDao profileDao;
-    
-    private String nonExistingUser = "0000-0000-0000-000X";    
+
+    private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
     private String lockedUserOrcid = "0000-0000-0000-0005";
-    
+    private String userWithNoBio = "1000-0000-0000-0001";
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);        
+        initDBUnitData(DATA_FILES);
     }
-    
+
     @Before
     public void before() {
         ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
@@ -79,13 +84,13 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymous", roles);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);
         removeDBUnitData(DATA_FILES);
     }
-    
+
     /**
      * Security checks
      */
@@ -248,7 +253,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.viewPerson(nonExistingUser);
         fail();
     }
-    
+
     /**
      * Locked account throws an exception
      */
@@ -715,6 +720,14 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         updateProfileSubmissionDate(unclaimedUserOrcid, 0);
         serviceDelegator.viewBiography(unclaimedUserOrcid);
         fail();
+    }
+
+    @Test
+    public void testViewBiographyWhereBiographyIsNull() {
+        Response response = serviceDelegator.viewBiography(userWithNoBio);
+        assertNotNull(response.getEntity());
+        Biography biography = (Biography) response.getEntity();
+        assertNull(biography.getContent());
     }
 
     @Test(expected = OrcidNotClaimedException.class)
