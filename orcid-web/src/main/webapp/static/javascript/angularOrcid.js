@@ -4086,7 +4086,7 @@ orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc'
     
     $scope.getReactivation = function(resetParams, linkFlag){
         $.ajax({
-            url: getBaseUri() + '/register.json',
+            url: getBaseUri() + '/register.json?isReactivation=true',
             dataType: 'json',
             success: function(data) {
                $scope.register = data;
