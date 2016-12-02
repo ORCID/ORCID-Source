@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -38,6 +39,8 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.RelevancyScore;
+import org.orcid.jaxb.model.record_rc4.OrcidId;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
@@ -217,6 +220,17 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         orcidMessage.setOrcidSearchResults(searchResults);
         return orcidMessage;
 
+    }
+
+    @Override
+    public OrcidIds findOrcidIds(Map<String, List<String>> queryParameters) {
+        OrcidIds orcidIds = new OrcidIds();
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(queryParameters);
+        if (orcidSolrResults != null && orcidSolrResults.getResults() != null) {
+            List<OrcidId> orcidIdList = orcidSolrResults.getResults().stream().map(r -> new OrcidId(r.getOrcid())).collect(Collectors.toList());
+            orcidIds.getOrcidIds().addAll(orcidIdList);
+        }
+        return orcidIds;
     }
 
 }
