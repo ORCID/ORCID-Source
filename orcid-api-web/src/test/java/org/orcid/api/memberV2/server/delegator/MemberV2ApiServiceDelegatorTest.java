@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,15 +42,25 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.locale.LocaleManagerImpl;
+import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
+import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
@@ -100,6 +111,8 @@ import org.orcid.jaxb.model.record_rc4.FundingType;
 import org.orcid.jaxb.model.record_rc4.History;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.OrcidId;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
@@ -121,6 +134,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
@@ -5558,6 +5572,57 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }    
+    
+    @Test
+    public void testSearchByQuery() {
+        OrcidIds orcidIds = new OrcidIds();
+        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
+        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>>any())).thenReturn(orcidIds);
+
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
+        Mockito.doNothing().when(orcidSecurityManager).checkPermissions(Mockito.any(ScopePathType.class), Mockito.anyString());
+        
+        MemberV2ApiServiceDelegatorImpl delegator = new MemberV2ApiServiceDelegatorImpl();
+        ReflectionTestUtils.setField(delegator, "orcidSearchManager", orcidSearchManager);
+        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
+        
+        Response response = delegator.searchByQuery(new HashMap<String, List<String>>());
+        
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof OrcidIds);
+        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
+        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+    }
+    
+    @Test(expected = OrcidBadRequestException.class)
+    public void testSearchByQueryTooManyRows() {
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("rows", Arrays.asList(Integer.toString(MemberV2ApiServiceDelegatorImpl.MAX_SEARCH_ROWS + 20)));
+        
+        LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
+        Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");
+        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
+        Mockito.doNothing().when(orcidSecurityManager).checkPermissions(Mockito.any(ScopePathType.class), Mockito.anyString());
+
+        MemberV2ApiServiceDelegatorImpl delegator = new MemberV2ApiServiceDelegatorImpl();
+        ReflectionTestUtils.setField(delegator, "localeManager", localeManager);
+        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
+        delegator.searchByQuery(params);
+    }
+    
+    @Test(expected =  AccessControlException.class)
+    public void testSearchByQueryBadScope() {
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
+        Mockito.doThrow(new AccessControlException("some problem with scope")).when(orcidSecurityManager).checkPermissions(Mockito.any(ScopePathType.class), Mockito.anyString());
+
+        MemberV2ApiServiceDelegatorImpl delegator = new MemberV2ApiServiceDelegatorImpl();
+        ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
+        
+        delegator.searchByQuery(new HashMap<>());
+    }
         
     private Address getAddress() {
         Address address = new Address();
