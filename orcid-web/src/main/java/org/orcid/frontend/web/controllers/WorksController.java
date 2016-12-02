@@ -685,8 +685,7 @@ public class WorksController extends BaseWorkspaceController {
         // Citations must have a type if citation text has a value
         if (PojoUtil.isEmpty(work.getCitation().getCitationType()) && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
-        } else if (work.getCitation().getCitationType().getValue() != null
-                && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
+        } else if (!PojoUtil.isEmpty(work.getCitation().getCitationType())) {
             // citation should not be blank if citation type is set
             if (PojoUtil.isEmpty(work.getCitation().getCitation())) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
