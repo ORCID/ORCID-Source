@@ -9967,6 +9967,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showLimitedIcon = false;    
     $scope.showUpdateIcon = false;    
     $scope.gaString = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
 		key: orcidVar.recaptchaKey
@@ -10106,6 +10108,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
                 $scope.$apply();
+                                
+                // special handling of deactivation error
+                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                	console.log("register watch");	
+                	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                	$scope.showReactivationSent = false;
+                }); // initialize the watch                     
             }
         }).fail(function() {
             console.log("An error occured initializing the registration form.");
@@ -10123,6 +10132,20 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.registrationForm.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
