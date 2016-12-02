@@ -307,6 +307,12 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
+        <sec:intercept-url pattern="/reactivation/.*?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/reactivationConfirm.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/sendReactivation.json"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/developer-tools" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*" 

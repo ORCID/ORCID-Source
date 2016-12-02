@@ -298,6 +298,15 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Test
+    public void testSendReactivationEmail() throws Exception {
+    	String email = "original@email.com";
+    	for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendReactivationEmail(email, orcidProfile);
+        }
+    }
+    
+    @Test
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
@@ -400,8 +409,8 @@ public class NotificationManagerTest extends DBUnitTest {
         NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient("some-orcid", "some-client", 0, OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE);
 
         assertEquals(notificationPermissions.size(), notifications.getNotifications().size());
-    }
-
+    }    
+    
     private OrcidProfile getProfile(Locale locale) throws JAXBException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();

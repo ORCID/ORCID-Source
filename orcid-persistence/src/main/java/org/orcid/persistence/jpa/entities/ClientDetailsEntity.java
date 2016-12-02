@@ -78,6 +78,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
     private boolean persistentTokensEnabled = false;
+    private boolean allowAutoDeprecate = false;
 
     public ClientDetailsEntity() {
     }
@@ -463,5 +464,14 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setAuthenticationProviderId(String authenticationProviderId) {
         this.authenticationProviderId = authenticationProviderId;
-    }    
+    }
+
+    @Column(name = "allow_auto_deprecate")
+    public Boolean getAllowAutoDeprecate() {
+        return allowAutoDeprecate;
+    }
+
+    public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
+        this.allowAutoDeprecate = allowAutoDeprecate;
+    }          
 }

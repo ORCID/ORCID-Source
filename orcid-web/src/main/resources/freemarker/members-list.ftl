@@ -42,10 +42,10 @@
 	            			</p>
 	            			
 	            			<p>
-							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
+							<select ng-model="by_country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
-            				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
+            				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
             				<button class="btn btn-primary" ng-click="clearFilters()">Reset</button>
@@ -55,14 +55,12 @@
 	            			<ul class="filter">
       							<li ng-click="activateLetter('')" ng-class="{'active':activeLetter==''}"><a>ALL</a></li>
       							<li ng-repeat="letter in alphabet track by $index " ng-click="activateLetter(letter)" ng-class="{'active':letter==activeLetter}"><a>{{letter}}</a></li>
-	
     						</ul>
-            				
 	                    </div>
-	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter: country | filter: researchCommunity | startsWithLetter : activeLetter | orderBy : 'name' ">
+	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter:{ country: by_country} | filter: {researchCommunity: by_researchCommunity} | startsWithLetter : activeLetter | orderBy : 'name' ">
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
-	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
+	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.name}}</a></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
