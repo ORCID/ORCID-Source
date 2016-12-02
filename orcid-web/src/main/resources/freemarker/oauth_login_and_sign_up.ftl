@@ -212,9 +212,21 @@
 						        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 						            <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
 						            <span class="required" ng-class="isValidClass(registrationForm.email)">*</span>			            
-						            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0">
+						            
+						            
+						            
+						            <span class="orcid-error" ng-show="emailTrustAsHtmlErrors.length > 0 && !showDeactivatedError && !showReactivationSent">
 										<div ng-repeat='error in emailTrustAsHtmlErrors' ng-bind-html="error" compile="html"></div>
 						   			</span>
+						   			<span class="orcid-error" ng-show="showDeactivatedError" ng-cloak>
+						   			    ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+						   			</span>
+						   			<span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
+						                ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+						            </span>
+						            
+						            
+						            
 						        </div>			       
 						    </div>				
 						    
