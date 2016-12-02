@@ -3124,7 +3124,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.newElementDefaultVisibility = null;
     $scope.scrollTop = 0;
     $scope.commonSrvc = commonSrvc;
-    
+        
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3254,7 +3254,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }
     };
     
-    $scope.openEditModal = function(){    	
+    $scope.openEditModal = function(){
     	$scope.bulkEditShow = false;    	
         $.colorbox({
             scrolling: true,
@@ -4086,7 +4086,7 @@ orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc'
     
     $scope.getReactivation = function(resetParams, linkFlag){
         $.ajax({
-            url: getBaseUri() + '/register.json',
+            url: getBaseUri() + '/register.json?isReactivation=true',
             dataType: 'json',
             success: function(data) {
                $scope.register = data;
@@ -9992,6 +9992,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showLimitedIcon = false;    
     $scope.showUpdateIcon = false;    
     $scope.gaString = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
 		key: orcidVar.recaptchaKey
@@ -10131,6 +10133,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
                 $scope.$apply();
+                                
+                // special handling of deactivation error
+                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                	console.log("register watch");	
+                	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                	$scope.showReactivationSent = false;
+                }); // initialize the watch                     
             }
         }).fail(function() {
             console.log("An error occured initializing the registration form.");
@@ -10148,6 +10157,20 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.registrationForm.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
@@ -11221,15 +11244,15 @@ orcidNgModule.directive('focusMe', function($timeout) {
     return {
       scope: { trigger: '=focusMe' },
       link: function(scope, element) {
-        scope.$watch('trigger', function(value) {
-          if(value === true) { 
-            //console.log('trigger',value);
-            //$timeout(function() {
-              element[0].focus();
-              scope.trigger = false;
-            //});
-          }
-        });
+        $timeout( //[fn], [delay], [invokeApply], [Pass]
+            function(){
+                if (scope.trigger) {
+                    element[0].focus();
+                    scope.trigger = false;
+                }
+            },
+            1000
+        );
       }
     };
 });

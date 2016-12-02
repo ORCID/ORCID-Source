@@ -111,7 +111,6 @@ import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
 
-
 /**
  * 
  * @author Angel Montenegro
@@ -567,7 +566,10 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
-    public Response viewGroupIdRecords(@QueryParam("page-size") String pageSize, @QueryParam("page") String page) {
+    public Response viewGroupIdRecords(@QueryParam("page-size") String pageSize, @QueryParam("page") String page, @QueryParam("name") String name) {
+        if (name != null){
+            return serviceDelegator.findGroupIdRecordByName(name);
+        }
         return serviceDelegator.viewGroupIdRecords(pageSize, page);
     }
 

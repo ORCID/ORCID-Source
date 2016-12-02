@@ -65,7 +65,7 @@ public class OauthRegistrationController extends OauthControllerBase {
         if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
-        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response));
+        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response, false));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(StringUtils.EMPTY);
