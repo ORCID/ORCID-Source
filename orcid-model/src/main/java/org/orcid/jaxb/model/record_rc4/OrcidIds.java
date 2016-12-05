@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "otherNames" })
+@XmlType(propOrder = { "orcidIds" })
 @XmlRootElement(name = "orcid-ids", namespace = "http://www.orcid.org/ns/orcid-id")
 public class OrcidIds implements Serializable {
     private static final long serialVersionUID = 6312730308815255894L;
