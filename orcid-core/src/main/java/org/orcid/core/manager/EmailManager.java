@@ -47,7 +47,7 @@ public interface EmailManager {
 
     String findOrcidIdByEmail(String email);
 
-    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
+    Map<String, String> findIdsByCommaSeparatedEmails(String csvEmail);
     
     void addSourceToEmail(String email, String sourceId);
     

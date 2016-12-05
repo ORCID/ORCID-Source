@@ -287,7 +287,7 @@ public class ManageMembersController extends BaseController {
             String newEmail = group.getEmail().getValue();
             String userOrcid = group.getGroupOrcid().getValue();
             if (emailManager.emailExists(newEmail)) {
-                Map<String, String> ids = emailManager.findOricdIdsByCommaSeparatedEmails(newEmail);
+                Map<String, String> ids = emailManager.findIdsByCommaSeparatedEmails(newEmail);
                 String orcidThatOwnsTheEmail = ids.get(newEmail);
                 // If the email is not the same, it means the member cannot use
                 // that email address

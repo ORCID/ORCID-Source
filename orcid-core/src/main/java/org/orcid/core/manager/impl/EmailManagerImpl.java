@@ -104,7 +104,7 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
-    public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
+    public Map<String, String> findIdsByCommaSeparatedEmails(String csvEmail) {
         List<String> emailList = new ArrayList<String>();
         String[] emails = csvEmail.split(",");
         for (String email : emails) {
