@@ -10948,6 +10948,9 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 
         //If type is set always come: "grant_number"
         if (type != null) {
+            if(isPartOf){
+                output += om.get("common.part_of") + " ";
+            }
             if (type.value == 'grant') {
                 output += om.get('funding.add.external_id.value.label.grant') + ": ";
             } else if (type.value == 'contract') {
@@ -10956,9 +10959,6 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
                 output += om.get('funding.add.external_id.value.label.award') + ": ";
             }
             
-            if(isPartOf){
-                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.value.toUpperCase() + "</span></span>: ";
-            }
         }         
         
         if(externalIdentifier.value != null){
