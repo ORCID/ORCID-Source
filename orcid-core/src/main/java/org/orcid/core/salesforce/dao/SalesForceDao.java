@@ -41,7 +41,7 @@ public interface SalesForceDao {
     Consortium retrieveConsortium(String consortiumId);
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
-    
+
     List<Contact> retrieveContactsByAccountId(String accountId);
 
     /**
@@ -51,5 +51,7 @@ public interface SalesForceDao {
      *             could contain something malicious.
      */
     String validateSalesForceId(String memberId);
+
+    void updateMember(Member member);
 
 }

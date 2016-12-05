@@ -151,6 +151,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
+    public void updateMember(Member member) {
+        salesForceDao.updateMember(member);
+    }
+
+    @Override
     public void evictAll() {
         salesForceMembersListCache.removeAll();
         salesForceMemberDetailsCache.removeAll();

@@ -138,6 +138,40 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return salesForceId;
     }
 
+    @Override
+    public void updateMember(Member member) {
+        try {
+            updateMemberInSalesForce(getAccessToken(), member);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to update member, trying again.", e);
+            updateMemberInSalesForce(getFreshAccessToken(), member);
+        }
+
+    }
+
+    private void updateMemberInSalesForce(String accessToken, Member member) {
+        LOGGER.info("About update member in SalesForce");
+        String accountId = member.getId();
+        validateSalesForceId(accountId);
+        WebResource resource = createUpdateMemberResource(accountId);
+        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
+        // SalesForce doesn't allow the Id in the body
+        memberJson.remove("Id");
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 204) {
+            throw new RuntimeException("Error updating member in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return;
+    }
+
+    private WebResource createUpdateMemberResource(String accountId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/" + validateSalesForceId(accountId)).queryParam("_HttpMethod",
+                "PATCH");
+        return resource;
+    }
+
     private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {
         salesForceIds.stream().forEach(e -> validateSalesForceId(e));
         return "'" + String.join("','", salesForceIds) + "'";

@@ -190,8 +190,8 @@ public class SalesForceAdapter {
     Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
         return mapperFacade.map(record, Member.class);
     }
-
-    JSONObject createSaleForceRecordFromMember(Member member) {
+    
+    public JSONObject createSaleForceRecordFromMember(Member member) {
         return mapperFacade.map(member, JSONObject.class);
     }
 
