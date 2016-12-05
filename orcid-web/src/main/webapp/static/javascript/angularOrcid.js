@@ -963,14 +963,54 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
+        blankWork: null,
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        details: new Object(), // we should think about putting details in the
         groups: new Array(),
-        quickRef: {},
+        labelsMapping: {
+            "default": {
+                types: [
+                    {
+                        type: "all",
+                        title: "Title"
+                    }
+                ]
+            }, 
+            "publication": {
+                types: [
+                    {
+                        type: "book",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "journal-article",
+                        title: "Journal title"
+                    }
+                ]
+            }
+        },
         loading: false,
         loadingDetails: false,
-        blankWork: null,
-        details: new Object(), // we should think about putting details in the
-        worksToAddIds: null,             
+        quickRef: {},
+        worksToAddIds: null,
+
+        getLabelMapping: function(workCategory, workType){
+            //console.log(workCategory, workType);
+            var result = this.labelsMapping.default.types[0];
+            var tempI = null;
+
+            if( this.labelsMapping[workCategory] != undefined ){
+                tempI = this.labelsMapping[workCategory].types;
+                for( var i = 0; i < tempI.length; i++) {
+                    if( tempI[i].type == workType ) {
+                        result = tempI[i];
+                    }
+                }
+            }
+
+            //console.log(result);
+            return result;
+        },   
         addBibtexJson: function(dw) {
             if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                 try {
@@ -5093,17 +5133,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         });
     };
 
-    /*
-    $scope.deleteFundingConfirm = function(funding) {
-        $scope.delFunding = funding;
-
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-    };
-    */
-
     $scope.deleteFundingConfirm = function(putCode, deleteGroup) {
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
@@ -5587,8 +5616,16 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexURL = "";
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
+    $scope.labels = null;
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    
+    $scope.applyLabelWorkType = function() {
+        var obj = null;
+        obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
+        $scope.labels = obj;
+    }
+
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
@@ -5929,6 +5966,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.addWorkModal = function(data){
+        console.log("addworkmodal data", data);
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
                 $scope.editWork = data;
@@ -5950,6 +5988,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
+        console.log("putWork");
         if ($scope.addingWork) {
             return; // don't process if adding work
         }
@@ -5957,7 +5996,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
             function(data){
-                console.log("data.errors", data);
                 if (data.errors.length == 0) {
                     if ($scope.bibtextWork == false){
                         $.colorbox.close();
