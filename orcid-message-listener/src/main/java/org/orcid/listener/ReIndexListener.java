@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.listener.common.LastModifiedMessageProcessor;
-import org.orcid.listener.common.SolrLastModifiedMessageProcessor;
+import org.orcid.listener.common.S3MessageProcessor;
+import org.orcid.listener.common.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -39,10 +39,10 @@ public class ReIndexListener {
     Logger LOG = LoggerFactory.getLogger(ReIndexListener.class);
     
     @Resource
-    private LastModifiedMessageProcessor s3Processor;
+    private S3MessageProcessor s3Processor;
 
     @Resource
-    private SolrLastModifiedMessageProcessor solrProcessor;
+    private SolrMessageProcessor solrProcessor;
 
     /**
      * Processes messages on receipt.

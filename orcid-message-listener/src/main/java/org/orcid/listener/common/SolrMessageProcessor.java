@@ -16,15 +16,17 @@ import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.listener.converters.OrcidRecordToSolrDocument;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-public class SolrLastModifiedMessageProcessor implements Consumer<LastModifiedMessage>{
+public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
 
-    Logger LOG = LoggerFactory.getLogger(SolrLastModifiedMessageProcessor.class);
+    Logger LOG = LoggerFactory.getLogger(SolrMessageProcessor.class);
 
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean isSolrIndexingEnabled;
@@ -35,10 +37,13 @@ public class SolrLastModifiedMessageProcessor implements Consumer<LastModifiedMe
     @Resource
     private SolrIndexUpdater solrUpdater;
     
+    @Resource
+    private RecordStatusManager recordStatusManager;
+
     private OrcidRecordToSolrDocument recordConv;
 
     @Autowired
-    public SolrLastModifiedMessageProcessor(
+    public SolrMessageProcessor(
             @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}") boolean isSolrIndexingEnabled, 
             @Value("${org.orcid.core.indexPublicProfile}") boolean indexPublicProfile) throws JAXBException{
         this.isSolrIndexingEnabled = isSolrIndexingEnabled;
@@ -70,12 +75,18 @@ public class SolrLastModifiedMessageProcessor implements Consumer<LastModifiedMe
                 }
             }            
             solrUpdater.persist(recordConv.convert(record,fundings));
-        } catch(LockedRecordException lre) {    
+            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+        } catch(LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
-            solrUpdater.updateSolrIndexForLockedRecord(orcid, solrUpdater.retrieveLastModified(orcid));
+            solrUpdater.updateSolrIndexForLockedOrDeprecatedRecord(orcid, solrUpdater.retrieveLastModified(orcid));
+            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch(DeprecatedRecordException dre) {
             LOG.error("Record " + orcid + " is deprecated");
-            //TODO: ???
+            solrUpdater.updateSolrIndexForLockedOrDeprecatedRecord(orcid, solrUpdater.retrieveLastModified(orcid));
+            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+        } catch (Exception e){
+            LOG.error("Unable to fetch record " + orcid + " for SOLR");
+            recordStatusManager.markAsFailed(orcid, AvailableBroker.SOLR);
         }
     }
 }

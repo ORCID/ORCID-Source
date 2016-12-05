@@ -57,7 +57,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class LastModifiedMessageProcessorTest {
 
     @Resource
-    private LastModifiedMessageProcessor processor;
+    private S3MessageProcessor processor;
     
     @Mock
     private Orcid12APIClient mock_orcid12ApiClient;

@@ -32,10 +32,10 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidWorker.class);
 
     @Resource
-    private LastModifiedMessageProcessor s3Processor;
+    private S3MessageProcessor s3Processor;
 
     @Resource
-    private SolrLastModifiedMessageProcessor solrProcessor;
+    private SolrMessageProcessor solrProcessor;
 
 
     /**

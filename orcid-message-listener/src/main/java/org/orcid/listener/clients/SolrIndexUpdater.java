@@ -90,7 +90,7 @@ public class SolrIndexUpdater {
      * @param orcid
      * @param lastUpdated
      */
-    public void updateSolrIndexForLockedRecord(String orcid, Date lastUpdated) {
+    public void updateSolrIndexForLockedOrDeprecatedRecord(String orcid, Date lastUpdated) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(orcid);        
         profileIndexDocument.setProfileLastModifiedDate(lastUpdated); 
