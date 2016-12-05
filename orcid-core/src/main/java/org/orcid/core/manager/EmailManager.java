@@ -43,9 +43,11 @@ public interface EmailManager {
 
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
     
-    Map<String, String> findIdsByCsvSeparatedEmails(String csvEmails);
-    
     Map<String, String> findIdsByEmails(List<String> emailList);
+
+    String findOrcidIdByEmail(String email);
+
+    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
     
     void addSourceToEmail(String email, String sourceId);
     
@@ -67,4 +69,16 @@ public interface EmailManager {
     
     boolean verifySetCurrentAndPrimary(String orcid, String email);
 
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists in a non claimed record and the
+     *         client source of the record allows auto deprecating records
+     */
+    boolean isAutoDeprecateEnableForEmail(String email);
 }

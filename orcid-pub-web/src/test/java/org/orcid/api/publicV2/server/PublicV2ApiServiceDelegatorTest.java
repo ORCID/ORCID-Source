@@ -628,20 +628,16 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, b.getVisibility());
     }
     
-    @Test
+    @Test(expected = OrcidUnauthorizedException.class)
     public void testGetLimitedBiographyUsingToken() {        
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewBiography("0000-0000-0000-0002");
-        assertNotNull(r);
-        assertNull(r.getEntity());        
+        serviceDelegator.viewBiography("0000-0000-0000-0002");
     }
     
-    @Test
+    @Test(expected = OrcidUnauthorizedException.class)
     public void testGetPrivateBiographyUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewBiography("0000-0000-0000-0001");
-        assertNotNull(r);
-        assertNull(r.getEntity());
+        serviceDelegator.viewBiography("0000-0000-0000-0001");
     }
     
     //Address

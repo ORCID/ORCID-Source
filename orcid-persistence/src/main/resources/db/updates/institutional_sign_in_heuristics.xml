@@ -1,0 +1,37 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-HEADERS-TO-USERCONNECTION" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="userconnection" columnName="headers_json"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="userconnection">
+            <column name="headers_json" type="text" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="CONVERT-TEXT-TO-JSON" author="Will Simpson" dbms="postgresql">
+        <sql>ALTER TABLE userconnection ALTER COLUMN headers_json TYPE json USING headers_json::JSON</sql>
+    </changeSet>
+    
+</databaseChangeLog>

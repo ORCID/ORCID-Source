@@ -6622,6 +6622,21 @@ a:hover .mozilla-badge{
 	padding-left: 10px;
 }
 
+.member-list h1 a,
+.member-list h1 a:visited,
+.member-list h2 a,
+.member-list h2 a:visited{
+	color: #a6ce39;
+	text-decoration: none;
+}
+.member-list h1 a:hover,
+.member-list h1 a:active,
+.member-list h2 a:hover,
+.member-list h2 a:active{
+	color: #338caf;
+	text-decoration: none;
+}
+
 .member-list .member-logo{
 	width: auto;
 	height: auto;
@@ -6697,6 +6712,14 @@ a:hover .mozilla-badge{
 .member-list ul.filter {
   list-style-type: none;
   margin: 6px 0;
+}
+
+.small-element{
+	width:5% !important;	
+}
+
+.middle {
+	vertical-align: middle;
 }
 
 /* Bulk edit bio*/
@@ -8165,12 +8188,12 @@ a:hover .mozilla-badge{
 	}
 	
 	/*Member list*/
+
 	.member-list .member-logo{
 		display: block;
 		float: none;
 		margin: 10px;
 	}
-
 	.member-list .member-description{
 		display: block;
 		clear: both;
