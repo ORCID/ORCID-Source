@@ -14,36 +14,25 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.clients;
+package org.orcid.listener.solr;
 
 import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
 import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.converters.OrcidRecordToSolrDocument;
-import org.orcid.listener.exception.DeprecatedRecordException;
-import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -65,7 +54,7 @@ public class SolrIndexUpdater {
             throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
         }
 
-    }
+    } 
 
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();

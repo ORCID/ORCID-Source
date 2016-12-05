@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener;
 
 import org.orcid.util.GenericExpiringQueue;
 import org.orcid.utils.listener.LastModifiedMessage;

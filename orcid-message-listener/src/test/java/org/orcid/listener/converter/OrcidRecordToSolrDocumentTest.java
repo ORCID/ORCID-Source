@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.converters.OrcidProfileToSolrDocument;
-import org.orcid.listener.converters.OrcidRecordToSolrDocument;
+import org.orcid.listener.solr.OrcidProfileToSolrDocument;
+import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 
 public class OrcidRecordToSolrDocumentTest {

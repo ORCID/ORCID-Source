@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.converters;
+package org.orcid.listener.solr;
 
 import java.util.ArrayList;
 import java.util.HashMap;

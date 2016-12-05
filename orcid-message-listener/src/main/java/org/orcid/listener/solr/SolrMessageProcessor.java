@@ -1,4 +1,20 @@
-package org.orcid.listener.common;
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.listener.solr;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +27,20 @@ import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.clients.Orcid20APIClient;
-import org.orcid.listener.clients.SolrIndexUpdater;
-import org.orcid.listener.converters.OrcidRecordToSolrDocument;
+import org.orcid.listener.solr.SolrIndexUpdater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
-import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.listener.persistence.util.AvailableBroker; 
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
 
     Logger LOG = LoggerFactory.getLogger(SolrMessageProcessor.class);

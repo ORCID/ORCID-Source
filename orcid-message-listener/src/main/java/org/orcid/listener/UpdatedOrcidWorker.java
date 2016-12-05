@@ -14,10 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener;
 
 import javax.annotation.Resource;
 
+import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

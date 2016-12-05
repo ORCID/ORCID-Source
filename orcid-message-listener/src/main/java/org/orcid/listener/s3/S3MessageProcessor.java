@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener.s3;
 
 import java.util.function.Consumer;
 
@@ -24,11 +24,10 @@ import javax.xml.bind.JAXBException;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.clients.Orcid12APIClient;
-import org.orcid.listener.clients.Orcid20APIClient;
-import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.orcid.Orcid12APIClient;
+import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.LastModifiedMessage;

@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.listener.common.S3MessageProcessor;
-import org.orcid.listener.common.SolrMessageProcessor;
+import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;

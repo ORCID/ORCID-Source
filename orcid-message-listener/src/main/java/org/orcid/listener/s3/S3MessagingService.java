@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.service;
+package org.orcid.listener.s3;
 
 import javax.xml.bind.JAXBException;
 
