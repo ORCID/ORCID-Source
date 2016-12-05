@@ -4,8 +4,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.OrcidForbiddenException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.springframework.stereotype.Controller;
@@ -47,7 +51,12 @@ public class ManageConsortiumController extends BaseController {
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
     public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
         MemberDetails memberDetails = consortium.toMemberDetails();
-        salesForceManager.updateMember(memberDetails.getMember());
+        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        Member member = memberDetails.getMember();
+        if (!usersAuthorizedAccountId.equals(member.getId())) {
+            throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
+        }
+        salesForceManager.updateMember(member);
         return consortium;
     }
 
