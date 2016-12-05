@@ -5950,16 +5950,19 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        if ($scope.addingWork) return; // don't process if adding work
+        if ($scope.addingWork) {
+            return; // don't process if adding work
+        }
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){        	    
+            function(data){
+                console.log("data.errors", data);
                 if (data.errors.length == 0) {
-                	if ($scope.bibtextWork == false){
-                		$.colorbox.close();
-                		$scope.addingWork = false;
-                	} else {
+                    if ($scope.bibtextWork == false){
+                        $.colorbox.close();
+                        $scope.addingWork = false;
+                    } else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
                         $scope.addingWork = false;
@@ -5974,14 +5977,14 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     $scope.addingWork = false;
                     $scope.$apply();
                     // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block"))
+                    if (!($("#colorbox").css("display")=="block")) {
                         $scope.addWorkModal(data);
+                    }
                 }
             },
             function() {
                 // something bad is happening!
                 $scope.addingWork = false;
-                console.log("error fetching works");
             }
         );
     };
@@ -6199,8 +6202,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.isValidClass = function (cur) {
-        if (cur === undefined || cur == null) return '';
         var valid = true;
+        if (cur === undefined || cur == null) {
+            return '';
+        }
         if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
@@ -6396,10 +6401,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         peerReviewSrvc.postPeerReview($scope.editPeerReview,
             function(data){        	    
                 if (data.errors.length == 0) {
-                	    $scope.addingPeerReview = false;
-                        $scope.$apply();
-                        $.colorbox.close();
-                        $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+            	    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                    $.colorbox.close();
+                    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                 } else {
                     $scope.editPeerReview = data;
                     commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
@@ -6567,13 +6572,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
+        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        var maxSize = 100;
+        
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
-        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        
         if (peerReview.subjectName)
             $scope.fixedTitle = peerReview.subjectName.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
+        else {
+            $scope.fixedTitle = '';
+        }
+        
         if($scope.fixedTitle.length > maxSize)
             $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
         $.colorbox({
@@ -11094,6 +11104,9 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 
         //If type is set always come: "grant_number"
         if (type != null) {
+            if(isPartOf){
+                output += om.get("common.part_of") + " ";
+            }
             if (type.value == 'grant') {
                 output += om.get('funding.add.external_id.value.label.grant') + ": ";
             } else if (type.value == 'contract') {
@@ -11102,9 +11115,6 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
                 output += om.get('funding.add.external_id.value.label.award') + ": ";
             }
             
-            if(isPartOf){
-                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.value.toUpperCase() + "</span></span>: ";
-            }
         }         
         
         if(externalIdentifier.value != null){
