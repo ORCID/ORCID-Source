@@ -153,6 +153,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public void updateMember(Member member) {
         salesForceDao.updateMember(member);
+        salesForceMembersListCache.removeAll();
     }
 
     @Override
