@@ -19,7 +19,7 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
 public interface JpaJaxbGroupIdRecordAdapter {

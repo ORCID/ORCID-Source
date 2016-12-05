@@ -23,10 +23,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.listener.service.S3MessagingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +100,7 @@ public class S3Updater {
             return;
         }
         
-        // API 2.0_rc3
+        // API 2.0_rc4
         if(Record.class.isAssignableFrom(object.getClass())) {
             Record record = (Record) object;
             putJsonElement(orcid, record);

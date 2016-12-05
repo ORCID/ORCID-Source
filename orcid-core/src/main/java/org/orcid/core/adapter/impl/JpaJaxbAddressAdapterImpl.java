@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
 import ma.glasnost.orika.MapperFacade;

@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc3.Title;
-import org.orcid.jaxb.model.record_rc3.FundingTitle;
+import org.orcid.jaxb.model.common_rc4.Title;
+import org.orcid.jaxb.model.record_rc4.FundingTitle;
 
 public class FundingTitleForm implements ErrorsInterface, Serializable {
     

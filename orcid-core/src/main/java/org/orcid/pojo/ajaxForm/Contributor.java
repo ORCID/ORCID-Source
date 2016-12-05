@@ -24,12 +24,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_rc3.ContributorEmail;
-import org.orcid.jaxb.model.common_rc3.ContributorOrcid;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.record_rc3.FundingContributor;
-import org.orcid.jaxb.model.record_rc3.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_rc3.FundingContributorRole;
+import org.orcid.jaxb.model.common_rc4.ContributorEmail;
+import org.orcid.jaxb.model.common_rc4.ContributorOrcid;
+import org.orcid.jaxb.model.common_rc4.CreditName;
+import org.orcid.jaxb.model.record_rc4.FundingContributor;
+import org.orcid.jaxb.model.record_rc4.FundingContributorAttributes;
+import org.orcid.jaxb.model.record_rc4.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -51,7 +51,7 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Visibility creditNameVisibility;    
     
-    public static Contributor valueOf(org.orcid.jaxb.model.common_rc3.Contributor contributor) {
+    public static Contributor valueOf(org.orcid.jaxb.model.common_rc4.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
@@ -162,7 +162,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
-            cn.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            cn.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
             c.setCreditName(cn);
         }
         return c;
