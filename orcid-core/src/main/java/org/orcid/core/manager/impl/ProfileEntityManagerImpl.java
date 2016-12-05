@@ -246,16 +246,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      */
     @Override
     @Transactional 
-    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
-        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
+    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
+        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);        
         // If it was successfully deprecated
         if (wasDeprecated) {
-            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedProfile.getId(), primaryProfile.getId());
-            ProfileEntity deprecated = profileDao.find(deprecatedProfile.getId());
-            
-            String deprecatedOrcid = deprecatedProfile.getId();
-            String primaryOrcid = primaryProfile.getId();
+            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
+            ProfileEntity deprecated = profileDao.find(deprecatedOrcid);                        
             
             // Remove works
             workManager.removeAllWorks(deprecatedOrcid);
@@ -309,7 +305,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             
             BiographyEntity bioEntity = deprecated.getBiographyEntity();
             if(bioEntity != null) {
-                biographyManager.updateBiography(deprecatedOrcid,deprecatedBio);
+                biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
             } else {
                 biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
             }
@@ -890,6 +886,23 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public void updateLocale(String orcid, Locale locale) {
         profileDao.updateLocale(orcid, locale);
+    }
+
+    @Override
+    public boolean isProfileClaimedByEmail(String email) {
+        return profileDao.getClaimedStatusByEmail(email);
+    }
+
+    public void reactivate(String orcid, String givenNames, String familyName, String password) {
+        LOGGER.info("About to reactivate record, orcid={}", orcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        profileEntity.setDeactivationDate(null);
+        profileEntity.setClaimed(true);
+        profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
+        recordNameEntity.setGivenNames(givenNames);
+        recordNameEntity.setFamilyName(familyName);
+        profileDao.merge(profileEntity);
     }
 }
 

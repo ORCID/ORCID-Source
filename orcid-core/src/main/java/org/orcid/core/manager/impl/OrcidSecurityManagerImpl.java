@@ -456,24 +456,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new NoResultException();
         }
 
-        // Check if the profile is not claimed and not old enough
-        if ((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
-            // Let the creator access the profile even if it is not claimed and
-            // not old enough
-            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
-
-            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
-            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
-
-            // If the profile doesn't have source or the current source is not
-            // the profile source, throw an exception
-            if (profileSource == null || !Objects.equals(profileSource, currentSource)) {
-                throw new OrcidNotClaimedException();
-            }
-        }
-
         // Check if the user record is deprecated
-        if (profile.getPrimaryRecord() != null) {
+        if(profile.getPrimaryRecord() != null) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
@@ -483,9 +467,24 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
             throw new OrcidDeprecatedException(params);
         }
+        
+        //Check if the profile is not claimed and not old enough
+        if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
+            //Let the creator access the profile even if it is not claimed and not old enough
+            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
 
-        // Check if the record is locked
-        if (!profile.isAccountNonLocked()) {
+            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
+            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+
+            // If the profile doesn't have source or the current source is not
+            // the profile source, throw an exception
+            if (profileSource == null || !Objects.equals(profileSource, currentSource)) {
+                throw new OrcidNotClaimedException();
+            }                        
+        }                
+        
+        //Check if the record is locked
+        if(!profile.isAccountNonLocked()) {
             LockedException lockedException = new LockedException();
             lockedException.setOrcid(profile.getId());
             throw lockedException;

@@ -452,15 +452,18 @@ GroupedActivities.prototype.unionCheck = function() {
 };
 
 var ActSortState = function(groupType) {
-    this.type = groupType;    
-    this.predicateKey = 'date';
-    if (this.type == 'peerReview') this.predicateKey = 'groupName';
-    this.reverseKey = {};
-    this.reverseKey['date']  = false;
-    this.reverseKey['title'] = false;
-    this.reverseKey['type']  = false;
-    this.reverseKey['groupName']  = false;
-    this.predicate = this.predicateMap[this.type][this.predicateKey];
+    var _self = this;
+    _self.type = groupType;    
+    _self.predicateKey = 'title';
+    if (_self.type == 'peerReview') {
+        _self.predicateKey = 'groupName';
+    }
+    _self.reverseKey = {};
+    _self.reverseKey['date']  = false;
+    _self.reverseKey['title'] = false;
+    _self.reverseKey['type']  = false;
+    _self.reverseKey['groupName']  = false;
+    _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
 };
 
 var sortPredicateMap = {};
@@ -484,12 +487,12 @@ sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 ActSortState.prototype.sortBy = function(key) {	
-        if (this.predicateKey == key){
-           this.reverse = !this.reverse;
-           this.reverseKey[key] = !this.reverseKey[key];           
-        }
-        this.predicateKey = key;
-        this.predicate = this.predicateMap[this.type][key];
+    if (this.predicateKey == key){
+       this.reverse = !this.reverse;
+       this.reverseKey[key] = !this.reverseKey[key];           
+    }
+    this.predicateKey = key;
+    this.predicate = this.predicateMap[this.type][key];
 };
 
 
@@ -1268,7 +1271,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         getUniqueDois : function(putCode){
         	var dois = [];            	
         	var group = worksSrvc.getGroup(putCode);
-        	
         	for (var idx in group.activities) {            		
         		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
         			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
@@ -2711,7 +2713,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
 
     $scope.deleteWebsite = function(website){
         var websites = $scope.websitesForm.websites;
-        var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
             if (websites[len] == website)
@@ -3123,7 +3124,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.newElementDefaultVisibility = null;
     $scope.scrollTop = 0;
     $scope.commonSrvc = commonSrvc;
-    
+        
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3253,7 +3254,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }
     };
     
-    $scope.openEditModal = function(){    	
+    $scope.openEditModal = function(){
     	$scope.bulkEditShow = false;    	
         $.colorbox({
             scrolling: true,
@@ -3827,6 +3828,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 	$scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
     	key: orcidVar.recaptchaKey
@@ -3857,7 +3860,13 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                     if(newValue !== oldValue) {
                         trimAjaxFormText($scope.register.email);
                     }
-                }); // initialize the watch            
+                }); // initialize the watch
+                
+                // special handling of deactivation error
+                $scope.$watch('register.email.errors', function(newValue, oldValue) {
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.register.email.errors) != -1);
+                        $scope.showReactivationSent = false;
+                }); // initialize the watch     
                 
                 // make sure email is trimmed
                 $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
@@ -3887,7 +3896,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             url: getBaseUri() + '/dupicateResearcher.json?familyNames=' + $scope.register.familyNames.value + '&givenNames=' + $scope.register.givenNames.value,
             dataType: 'json',
             success: function(data) {
-                   $scope.duplicates = data;
+                $scope.duplicates = data;
                 $scope.$apply();
             	var diffDate = new Date();
             	// reg was filled out to fast reload the page
@@ -3970,14 +3979,21 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                if (basePath.startsWith(baseUrl + 'oauth')) {
-                    var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
-                    var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
-                }
-                else
-                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
-                orcidGA.windowLocationHrefDelay(data.url);
+            	if(data != null && data.errors != null && data.errors.length > 0) {
+            		$scope.generalRegistrationError = data.errors[0];
+            		console.log($scope.generalRegistrationError);
+            		$scope.$apply();
+            		$.colorbox.close();
+            	} else {
+            		if (basePath.startsWith(baseUrl + 'oauth')) {
+                        var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
+                        var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
+                    } else {
+                    	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                    }                        
+                    orcidGA.windowLocationHrefDelay(data.url);
+            	}                
             }
         }).fail(function() {
             // something bad is happening!
@@ -4025,7 +4041,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             transition: 'fade',
             close: '',
             scrolling: true
-                    });
+            });
         $scope.$apply();
         $.colorbox.resize({width:"780px" , height:"400px"});
     };
@@ -4049,7 +4065,103 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;
     };
+    
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.register.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
 }]);
+
+orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
+    
+    $scope.getReactivation = function(resetParams, linkFlag){
+        $.ajax({
+            url: getBaseUri() + '/register.json?isReactivation=true',
+            dataType: 'json',
+            success: function(data) {
+               $scope.register = data;
+               $scope.register.resetParams = resetParams;
+               $scope.$apply();               
+    
+               $scope.$watch('register.givenNames.value', function() {
+                   trimAjaxFormText($scope.register.givenNames);
+               }); // initialize the watch
+    
+               $scope.$watch('register.familyNames.value', function() {
+                    trimAjaxFormText($scope.register.familyNames);
+               }); // initialize the watch
+            }
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error fetching register.json");
+        });
+    };
+    
+    $scope.postReactivationConfirm = function () {
+        $scope.register.valNumClient = $scope.register.valNumServer / 2;
+        var baseUri = getBaseUri();
+        if($scope.register.linkType === 'shibboleth'){
+            baseUri += '/shibboleth';
+        }
+        $.ajax({
+            url: baseUri + '/reactivationConfirm.json',
+            type: 'POST',
+            data:  angular.toJson($scope.register),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                if(data.errors.length == 0){
+                    window.location.href = data.url;
+                }
+                else{
+                    $scope.register = data;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("ReactivationCtrl.postReactivationConfirm() error");
+        });
+    };
+
+    $scope.serverValidate = function (field) {        
+        if (field === undefined) field = '';
+        $.ajax({
+            url: getBaseUri() + '/register' + field + 'Validate.json',
+            type: 'POST',
+            data:  angular.toJson($scope.register),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                commonSrvc.copyErrorsLeft($scope.register, data);
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("RegistrationCtrl.serverValidate() error");
+        });
+    };
+
+    $scope.isValidClass = function (cur) {
+        if (cur === undefined) return '';
+        var valid = true;
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+        if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+        return valid ? '' : 'text-error';
+    };
+        
+}]);
+
 
 orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.postingClaim = false;
@@ -5838,16 +5950,19 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        if ($scope.addingWork) return; // don't process if adding work
+        if ($scope.addingWork) {
+            return; // don't process if adding work
+        }
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){        	    
+            function(data){
+                console.log("data.errors", data);
                 if (data.errors.length == 0) {
-                	if ($scope.bibtextWork == false){
-                		$.colorbox.close();
-                		$scope.addingWork = false;
-                	} else {
+                    if ($scope.bibtextWork == false){
+                        $.colorbox.close();
+                        $scope.addingWork = false;
+                    } else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
                         $scope.addingWork = false;
@@ -5862,14 +5977,14 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     $scope.addingWork = false;
                     $scope.$apply();
                     // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block"))
+                    if (!($("#colorbox").css("display")=="block")) {
                         $scope.addWorkModal(data);
+                    }
                 }
             },
             function() {
                 // something bad is happening!
                 $scope.addingWork = false;
-                console.log("error fetching works");
             }
         );
     };
@@ -6087,8 +6202,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.isValidClass = function (cur) {
-        if (cur === undefined || cur == null) return '';
         var valid = true;
+        if (cur === undefined || cur == null) {
+            return '';
+        }
         if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
@@ -6284,10 +6401,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         peerReviewSrvc.postPeerReview($scope.editPeerReview,
             function(data){        	    
                 if (data.errors.length == 0) {
-                	    $scope.addingPeerReview = false;
-                        $scope.$apply();
-                        $.colorbox.close();
-                        $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+            	    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                    $.colorbox.close();
+                    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                 } else {
                     $scope.editPeerReview = data;
                     commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
@@ -6455,13 +6572,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
+        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        var maxSize = 100;
+        
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
-        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        
         if (peerReview.subjectName)
             $scope.fixedTitle = peerReview.subjectName.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
+        else {
+            $scope.fixedTitle = '';
+        }
+        
         if($scope.fixedTitle.length > maxSize)
             $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
         $.colorbox({
@@ -9855,6 +9977,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showLimitedIcon = false;    
     $scope.showUpdateIcon = false;    
     $scope.gaString = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
 		key: orcidVar.recaptchaKey
@@ -9994,6 +10118,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
                 $scope.$apply();
+                                
+                // special handling of deactivation error
+                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                	console.log("register watch");	
+                	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                	$scope.showReactivationSent = false;
+                }); // initialize the watch                     
             }
         }).fail(function() {
             console.log("An error occured initializing the registration form.");
@@ -10011,6 +10142,20 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
+    $scope.sendReactivationEmail = function () {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: $scope.registrationForm.email.value },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
@@ -10100,16 +10245,23 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
             	$scope.requestInfoForm = data;
-                orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                if($scope.registrationForm.approved) {
-                    for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
-                    }
+            	if($scope.requestInfoForm.errors.length > 0) {                	                
+                	$scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
+                	console.log($scope.generalRegistrationError);
+                	$scope.$apply();
+                	$.colorbox.close();
                 } else {
-                    //Fire GA register deny
-                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
-                }
-                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
+                    if($scope.registrationForm.approved) {
+                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
+                        }
+                    } else {
+                        //Fire GA register deny
+                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                    }
+                    orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                }            	            	
             }
         }).fail(function() {
             // something bad is happening!
@@ -10790,42 +10942,53 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 //Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
-    	
+    	var isPartOf = false;
+        var link = null;
     	var ngclass = '';
-    	var output = '';
+        var output = '';
+        var value = null;        
 
-        if (externalIdentifier == null) return output;
-        
+        if (externalIdentifier == null) {
+            return output;
+        }
+
+        if(externalIdentifier.relationship != null && externalIdentifier.relationship.value == 'part-of') {
+            isPartOf = true;     
+        }
+
         //If type is set always come: "grant_number"
         if (type != null) {
-        	if (type.value == 'grant') {
-        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
-        	} else if (type.value == 'contract') {
-        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
-        	} else {
-        		output += om.get('funding.add.external_id.value.label.award') + ": ";
-        	}
+            if(isPartOf){
+                output += om.get("common.part_of") + " ";
+            }
+            if (type.value == 'grant') {
+                output += om.get('funding.add.external_id.value.label.grant') + ": ";
+            } else if (type.value == 'contract') {
+                output += om.get('funding.add.external_id.value.label.contract') + ": ";
+            } else {
+                output += om.get('funding.add.external_id.value.label.award') + ": ";
+            }
+            
         }         
         
-        var value = null;        
         if(externalIdentifier.value != null){
-        	value = externalIdentifier.value.value;
+            value = externalIdentifier.value.value;
         }
         
-        var link = null;
-        if(externalIdentifier.url != null)
+        if(externalIdentifier.url != null) {
             link = externalIdentifier.url.value;
-       
+        }
+ 
         if(link != null) {
-        	
         	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
         	} else {
         		if(type != null) {
-        			
-        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			if (moreInfo == false || typeof moreInfo == 'undefined') {
+                        ngclass = 'truncate-anchor';
+                    }
         			
         			if(type.value == 'grant') {
         				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
@@ -10854,9 +11017,8 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 				  </div>';
         }
         
-        //if (length > 1 && !last) output = output + ',';
-        	return output;
-    	};
+        return output;
+    };
 }]);
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
@@ -11067,15 +11229,15 @@ orcidNgModule.directive('focusMe', function($timeout) {
     return {
       scope: { trigger: '=focusMe' },
       link: function(scope, element) {
-        scope.$watch('trigger', function(value) {
-          if(value === true) { 
-            //console.log('trigger',value);
-            //$timeout(function() {
-              element[0].focus();
-              scope.trigger = false;
-            //});
-          }
-        });
+        $timeout( //[fn], [delay], [invokeApply], [Pass]
+            function(){
+                if (scope.trigger) {
+                    element[0].focus();
+                    scope.trigger = false;
+                }
+            },
+            1000
+        );
       }
     };
 });

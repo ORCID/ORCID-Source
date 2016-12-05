@@ -233,6 +233,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            orcid_type="USER"
             />
 
 	<profile
@@ -487,6 +488,64 @@
             enable_notifications="true"
             />
 
+	<profile
+            orcid="0000-0000-0000-0006"
+            creation_method="API"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Unclaimed User"
+            family_name="Test User"
+            credit_name="ORCID"
+            biography_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="PUBLIC"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="false"
+            reviewed="true"
+            record_locked="true"            
+            client_source_id="APP-5555555555555556"
+            enable_notifications="true"
+            />
+            
+    <profile
+            orcid="1000-0000-0000-0001"
+            creation_method="API"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Unclaimed User"
+            family_name="Test User"
+            credit_name="ORCID"
+            biography_visibility="LIMITED"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="PUBLIC"
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="true"
+            reviewed="true"
+            record_locked="false"            
+            enable_notifications="true"
+            />
+
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4441"
@@ -537,6 +596,11 @@
             authority="USER_ROLE"
             orcid="0000-0000-0000-0003"
             />	
+
+	<granted_authority
+            authority="USER_ROLE"
+            orcid="0000-0000-0000-0006"
+            />
 
     <external_identifier
     		id="1"
@@ -1517,8 +1581,7 @@
         source_id="4444-4444-4444-4441"
         last_modified="2016-01-02 15:31:00.00"
     />
-    
-    
+        
     <email
         orcid="4444-4444-4444-4499"
         email="4441-10@milligan.com"
@@ -1658,7 +1721,7 @@
     <email
         orcid="4444-4444-4444-4444"
         email="angel1@montenegro.com"
-        is_primary="false"
+        is_primary="true"
         is_current="false"
         is_verified="true"
         visibility="PRIVATE"
@@ -1790,7 +1853,18 @@
         visibility="PRIVATE"
         source_id="0000-0000-0000-0003"
         last_modified="2016-04-01 15:31:00.00"
-    />        
+    /> 
+    
+    <email
+        orcid="0000-0000-0000-0006"
+        email="public_0000-0000-0000-0006@test.orcid.org"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        client_source_id="APP-5555555555555556"
+        last_modified="2016-04-01 15:31:00.00"
+    />       
     
     <profile_keyword 
     	id="1"            

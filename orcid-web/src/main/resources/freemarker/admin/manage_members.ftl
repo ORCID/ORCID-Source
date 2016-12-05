@@ -340,13 +340,22 @@
 						<!-- Persistent tokens -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<input type="checkbox" name="persistentToken" ng-model="client.persistentTokenEnabled.value" />
-								<span><@orcid.msg 'manage_member.edit_client.use_pesistent_tokens'/></span>								
+								<input type="checkbox" name="persistentToken" class="small-element middle" ng-model="client.persistentTokenEnabled.value" />
+								<span class="middle"><@orcid.msg 'manage_member.edit_client.use_pesistent_tokens'/></span>								
 								<span class="orcid-error" ng-show="client.persistentTokenEnabled.errors.length > 0">
 									<div ng-repeat='error in client.persistentTokenEnabled.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
 						</div>
+						
+						<!-- Allow auto deprecate -->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<input type="checkbox" name="persistentToken" class="small-element middle" ng-model="client.allowAutoDeprecate.value" />
+								<span class="middle"><@orcid.msg 'manage.developer_tools.group.allow_auto_deprecate'/></span>
+							</div>
+						</div>
+						
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">
