@@ -47,6 +47,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -130,6 +131,9 @@ public class BaseController {
 
     @Resource
     protected EmailManager emailManager;
+    
+    @Resource
+    protected NotificationManager notificationManager;
 
     @Resource
     private StatisticsCacheManager statisticsCacheManager;
@@ -156,6 +160,9 @@ public class BaseController {
 
     @Value("${org.orcid.recaptcha.web_site_key:}")
     private String recaptchaWebKey;
+    
+    @Value("${org.orcid.shibboleth.enabled:false}")
+    private boolean shibbolethEnabled;
 
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
@@ -164,6 +171,15 @@ public class BaseController {
 
     public void setRecaptchaWebKey(String recaptchaWebKey) {
         this.recaptchaWebKey = recaptchaWebKey;
+    }
+    
+    @ModelAttribute("shibbolethEnabled")
+    public boolean isShibbolethEnabled() {
+        return shibbolethEnabled;
+    }
+
+    public void setShibbolethEnabled(boolean shibbolethEnabled) {
+        this.shibbolethEnabled = shibbolethEnabled;
     }
 
     public LocaleManager getLocaleManager() {
@@ -455,7 +471,11 @@ public class BaseController {
                 if (orcidProfile.getOrcidHistory().isClaimed()) {
                     String[] codes = null;
                     if (isRegisterRequest) {
-                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                        if (orcidProfile.getOrcidHistory().getDeactivationDate() != null) {
+                            codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                        } else {
+                            codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                        }
                     } else {
                         codes = new String[] { "orcid.frontend.verify.claimed_email" };
                     }

@@ -65,14 +65,14 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
         oauth.scope(ScopePathType.READ_LIMITED.value(), "Read Limited record");
         oauth.scope(ScopePathType.PERSON_UPDATE.value(), "Update person");
         oauth.scope(ScopePathType.ACTIVITIES_UPDATE.value(), "Update activities");
-        oauth.scope(ScopePathType.GROUP_ID_RECORD_READ.value(), "Read groups");
-        oauth.scope(ScopePathType.GROUP_ID_RECORD_UPDATE.value(), "Update groups");
         s.securityDefinition("orcid_auth", oauth);
 
         OAuth2Definition oauthTwoLegs = new OAuth2Definition();
         oauthTwoLegs.application(this.tokenEndPoint);
         oauthTwoLegs.scope(ScopePathType.PREMIUM_NOTIFICATION.value(), "Notifications");
         oauthTwoLegs.scope(ScopePathType.READ_PUBLIC.value(), "Read Public record");
+        oauthTwoLegs.scope(ScopePathType.GROUP_ID_RECORD_READ.value(), "Read groups");
+        oauthTwoLegs.scope(ScopePathType.GROUP_ID_RECORD_UPDATE.value(), "Update groups");
         s.securityDefinition("orcid_two_legs", oauthTwoLegs);
 
         return s;

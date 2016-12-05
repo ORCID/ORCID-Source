@@ -65,7 +65,7 @@ public class OauthRegistrationController extends OauthControllerBase {
         if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
-        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response));
+        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response, false));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(StringUtils.EMPTY);
@@ -152,7 +152,12 @@ public class OauthRegistrationController extends OauthControllerBase {
             registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                try {
+                    registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                } catch(Exception e) {
+                    requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
+                    return requestInfoForm;
+                }
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();

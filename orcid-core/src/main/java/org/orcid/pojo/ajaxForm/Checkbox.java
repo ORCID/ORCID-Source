@@ -26,6 +26,14 @@ public class Checkbox implements ErrorsInterface, Required {
     private boolean required = true;
     private String getRequiredMessage;
 
+    public Checkbox() {
+        
+    }
+    
+    public Checkbox(Boolean value) {
+        this.value = value;
+    }
+    
     public List<String> getErrors() {
         return errors;
     }
@@ -58,4 +66,7 @@ public class Checkbox implements ErrorsInterface, Required {
         this.getRequiredMessage = getRequiredMessage;
     }
 
+    public static Checkbox valueOf(Boolean value) {
+        return new Checkbox(value);
+    }    
 }

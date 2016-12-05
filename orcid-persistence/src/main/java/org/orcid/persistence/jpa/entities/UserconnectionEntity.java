@@ -17,6 +17,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -62,7 +63,9 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     private boolean isLinked;
 
     private String idType;
-    
+
+    private String headersJson;
+
     private UserConnectionStatus connectionSatus = UserConnectionStatus.STARTED;
 
     public UserconnectionEntity() {
@@ -202,7 +205,7 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     public void setIdType(String idType) {
         this.idType = idType;
     }
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     public UserConnectionStatus getConnectionSatus() {
@@ -211,5 +214,21 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     public void setConnectionSatus(UserConnectionStatus connectionSatus) {
         this.connectionSatus = connectionSatus;
-    }        
+    }
+
+    @Column(name = "headers_json")
+    public String getHeadersJson() {
+        return headersJson;
+    }
+    
+    public void setHeadersJson(String headersJson) {
+        this.headersJson = headersJson;
+    }
+
+    @Override
+    public String toString() {
+        return "UserconnectionEntity [id=" + id + ", accesstoken=" + accesstoken + ", displayname=" + displayname + ", email=" + email + ", expiretime=" + expiretime
+                + ", imageurl=" + imageurl + ", lastLogin=" + lastLogin + ", orcid=" + orcid + ", profileurl=" + profileurl + ", rank=" + rank + ", refreshtoken="
+                + refreshtoken + ", secret=" + secret + ", isLinked=" + isLinked + ", idType=" + idType + ", connectionSatus=" + connectionSatus + "]";
+    }
 }
