@@ -91,8 +91,10 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
                     if (recordsArray != null && recordsArray.length() > 0) {
                         try {
                             JSONObject first = recordsArray.getJSONObject(0);
-                            a.setMainOpportunityPath(first.getJSONObject("attributes").getString("url"));
-                            a.setConsortiumLeadId(first.getString("Consortia_Lead__c"));
+                            Object urlObj = first.getJSONObject("attributes").opt("url");
+                            a.setMainOpportunityPath(JSONObject.NULL.equals(urlObj) ? null : urlObj.toString());
+                            Object consortiumLeadIdObj = first.opt("Consortia_Lead__c");
+                            a.setConsortiumLeadId(JSONObject.NULL.equals(consortiumLeadIdObj) ? null : consortiumLeadIdObj.toString());
                         } catch (JSONException e) {
                             throw new RuntimeException("Error reading first opportunity record", e);
                         }
