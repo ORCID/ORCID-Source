@@ -52,54 +52,10 @@ public class SolrIndexUpdater {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexUpdater.class);
 
-    private final boolean isSolrIndexingEnabled;
-        
     @Resource(name = "solrServer")
     private SolrServer solrServer;
     
-    @Resource
-    private Orcid20APIClient orcid20ApiClient;
-    
-    private OrcidRecordToSolrDocument recordConv;
-    
-    @Autowired
-    public SolrIndexUpdater(
-            @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}") boolean isSolrIndexingEnabled, 
-            @Value("${org.orcid.core.indexPublicProfile}") boolean indexPublicProfile) throws JAXBException{
-        this.isSolrIndexingEnabled = isSolrIndexingEnabled;
-        recordConv = new OrcidRecordToSolrDocument(indexPublicProfile);
-    }
-    
-    public void updateSolrIndex(String orcid) {        
-        LOG.info("Updating using Record " + orcid + " in SOLR index");
-        if(!isSolrIndexingEnabled) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }
-        try{
-            Record record = orcid20ApiClient.fetchPublicProfile(orcid); 
-            //get detailed funding so we can discover org name and id
-            List<Funding> fundings = new ArrayList<Funding>();
-            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && record.getActivitiesSummary().getFundings().getFundingGroup() != null){
-                for (FundingGroup group : record.getActivitiesSummary().getFundings().getFundingGroup()){
-                    if (group.getFundingSummary() !=null){
-                        for (FundingSummary f : group.getFundingSummary()){
-                            fundings.add(orcid20ApiClient.fetchFunding(record.getOrcidIdentifier().getPath(), f.getPutCode()));
-                        }
-                    }
-                }
-            }            
-            this.persist(recordConv.convert(record,fundings));
-        } catch(LockedRecordException lre) {    
-            LOG.error("Record " + orcid + " is locked");
-            updateSolrIndexForLockedRecord(orcid, retrieveLastModified(orcid));
-        } catch(DeprecatedRecordException dre) {
-            LOG.error("Record " + orcid + " is deprecated");
-            //TODO: ???
-        }
-    }
-
-    private void persist(OrcidSolrDocument orcidSolrDocument) {
+    public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {
             solrServer.addBean(orcidSolrDocument);
             solrServer.commit();
@@ -111,7 +67,7 @@ public class SolrIndexUpdater {
 
     }
 
-    private Date retrieveLastModified(String orcid) {
+    public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORCID + ":\"" + orcid + "\"");
         query.setFields(PROFILE_LAST_MODIFIED_DATE);
@@ -134,11 +90,7 @@ public class SolrIndexUpdater {
      * @param orcid
      * @param lastUpdated
      */
-    private void updateSolrIndexForLockedRecord(String orcid, Date lastUpdated) {
-        if(!isSolrIndexingEnabled) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }
+    public void updateSolrIndexForLockedRecord(String orcid, Date lastUpdated) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(orcid);        
         profileIndexDocument.setProfileLastModifiedDate(lastUpdated); 
