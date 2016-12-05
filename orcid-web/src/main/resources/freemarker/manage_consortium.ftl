@@ -23,15 +23,10 @@
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
             <h1 id="manage-developer-tools">
-                <span><@spring.message "manage.developer_tools.user.title"/></span>
+                <span><@spring.message "manage_consortium.heading"/></span>
             </h1>
             <div ng-show="consortium != null" ng-cloak>
                 <div class="admin-edit-client">
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <h3><@orcid.msg 'manage_consortium.heading'/></h3>
-                        </div>
-                    </div>                      
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">

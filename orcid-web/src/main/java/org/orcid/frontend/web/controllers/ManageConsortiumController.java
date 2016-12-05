@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = { "/manage-consortium" })
 public class ManageConsortiumController extends BaseController {
-    
+
     @Resource
     private SalesForceManager salesForceManager;
 
@@ -32,7 +32,7 @@ public class ManageConsortiumController extends BaseController {
         ModelAndView mav = new ModelAndView("manage_consortium");
         return mav;
     }
-    
+
     @RequestMapping(value = "/get-consortium.json", method = RequestMethod.GET)
     public @ResponseBody ConsortiumForm getConsortium() {
         String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
@@ -43,9 +43,11 @@ public class ManageConsortiumController extends BaseController {
         consortiumForm.setContactsList(contactsList);
         return consortiumForm;
     }
-    
+
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
     public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
+        MemberDetails memberDetails = consortium.toMemberDetails();
+        salesForceManager.updateMember(memberDetails.getMember());
         return consortium;
     }
 

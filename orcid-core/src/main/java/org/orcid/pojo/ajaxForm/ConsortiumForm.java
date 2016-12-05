@@ -17,10 +17,13 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 
 public class ConsortiumForm implements ErrorsInterface, Serializable {
@@ -76,10 +79,25 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
 
     public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
         ConsortiumForm form = new ConsortiumForm();
-        form.setAccountId(memberDetails.getMember().getId());
-        form.setName(Text.valueOf(memberDetails.getMember().getName()));
-        form.setWebsite(Text.valueOf(memberDetails.getMember().getWebsiteUrl().toString()));
+        Member member = memberDetails.getMember();
+        form.setAccountId(member.getId());
+        form.setName(Text.valueOf(member.getName()));
+        form.setWebsite(Text.valueOf(member.getWebsiteUrl().toString()));
         return form;
+    }
+
+    public MemberDetails toMemberDetails() {
+        MemberDetails memberDetails = new MemberDetails();
+        Member member = new Member();
+        memberDetails.setMember(member);
+        member.setId(getAccountId());
+        member.setName(getName().getValue());
+        try {
+            member.setWebsiteUrl(new URL(getWebsite().getValue()));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error parsing website", e);
+        }
+        return memberDetails;
     }
 
 }
