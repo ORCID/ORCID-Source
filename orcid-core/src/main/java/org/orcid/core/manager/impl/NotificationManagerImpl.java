@@ -537,9 +537,6 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
-        
-        System.out.println(htmlBody);
-        
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reactivation", orcidProfile), body, htmlBody);
     }
 
