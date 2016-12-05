@@ -264,13 +264,10 @@ public class OrcidRecordToSolrDocument {
         }
 
         if (indexProfile){
-            StringWriter sw = new StringWriter(); 
             try {
+                StringWriter sw = new StringWriter(); 
                 jaxbContext_2_0_api.createMarshaller().marshal(record, sw);
-                //note this is a summary instead of full now...
-                LOG.info(sw.getBuffer().toString());
-                LOG.info(sw.getBuffer().toString().replaceAll("<[^>]+>", " "));
-                profileIndexDocument.setPublicProfileMessage(sw.getBuffer().toString().replaceAll("<[^>]+>", " "));
+                profileIndexDocument.setPublicProfileMessage(sw.getBuffer().toString()/*.replaceAll("<[^>]+>", " ")*/);
             } catch (JAXBException e) {
                 LOG.error("problem marshalling xml",e);
             }
