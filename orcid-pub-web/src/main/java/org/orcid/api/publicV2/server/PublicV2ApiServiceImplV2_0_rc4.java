@@ -390,8 +390,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_SEARCH_PATH)
-    @ApiOperation(value = "Search records", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/orcid-id-2.0_rc4.xsd")
     public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
@@ -402,8 +401,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(BIO_SEARCH_PATH)
-    @ApiOperation(value = "Search records", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/orcid-id-2.0_rc4.xsd")
     public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
