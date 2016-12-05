@@ -452,8 +452,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         } catch(IllegalArgumentException e) {
             throw new NoResultException();
         }
-
     
+        // Check if the user record is deprecated
+        if(profile.getPrimaryRecord() != null) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (profile.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }
+            throw new OrcidDeprecatedException(params);
+        }
+        
         //Check if the profile is not claimed and not old enough
         if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             //Let the creator access the profile even if it is not claimed and not old enough
@@ -466,19 +477,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             if(profileSource == null || !Objects.equals(profileSource, currentSource)) {
                 throw new OrcidNotClaimedException();
             }                        
-        }
-        
-        // Check if the user record is deprecated
-        if(profile.getPrimaryRecord() != null) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (profile.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            }
-            throw new OrcidDeprecatedException(params);
-        }
+        }                
         
         //Check if the record is locked
         if(!profile.isAccountNonLocked()) {

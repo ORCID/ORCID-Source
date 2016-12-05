@@ -6622,6 +6622,21 @@ a:hover .mozilla-badge{
 	padding-left: 10px;
 }
 
+.member-list h1 a,
+.member-list h1 a:visited,
+.member-list h2 a,
+.member-list h2 a:visited{
+	color: #a6ce39;
+	text-decoration: none;
+}
+.member-list h1 a:hover,
+.member-list h1 a:active,
+.member-list h2 a:hover,
+.member-list h2 a:active{
+	color: #338caf;
+	text-decoration: none;
+}
+
 .member-list .member-logo{
 	width: auto;
 	height: auto;
@@ -6699,10 +6714,19 @@ a:hover .mozilla-badge{
   margin: 6px 0;
 }
 
+.small-element{
+	width:5% !important;	
+}
+
+.middle {
+	vertical-align: middle;
+}
+
 /* Bulk edit bio*/
 
 .bio-edit-modal{
 	margin-right: 30px;
+	width: 100%;
 }
 
 .edit-record .custom-control-title{
@@ -6835,7 +6859,9 @@ a:hover .mozilla-badge{
  
 
 .edit-record .bulk-edit-modal #privacy-bar{
-	float: right;	
+	float: right;
+	margin-right: 35px;
+	clear: both;	
 }
 
 .fixed-area .col-md-12.padding-right-reset{
@@ -7485,6 +7511,15 @@ a:hover .mozilla-badge{
 	
 	#privacy-settings .popover.bottom .arrow{
 		left: 124px !important;
+	}
+	
+	.edit-record .bulk-edit-modal #privacy-bar{
+		margin-right: 0;
+	}
+	
+	.fixed-area ul.record-settings{
+		margin-top: 6px;
+		margin-right: 0;
 	}
 	
 	/* Public Profile */
@@ -8153,12 +8188,12 @@ a:hover .mozilla-badge{
 	}
 	
 	/*Member list*/
+
 	.member-list .member-logo{
 		display: block;
 		float: none;
 		margin: 10px;
 	}
-
 	.member-list .member-description{
 		display: block;
 		clear: both;

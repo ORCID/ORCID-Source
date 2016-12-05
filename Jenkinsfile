@@ -17,8 +17,7 @@ node {
         } catch(Exception err) {
             orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
-        }            
-        // # TODO if any module is required before next builds
+        }
     }
     stage('Build & Test') {
         try {
@@ -56,33 +55,16 @@ node {
             throw err
         }        
     }
-    stage('DeployToTomcat') {
-        echo "Ready to send to server"
-        // cp *.war tomcat/webapps && service tomcat restart
-        // # or
-        // mvn tomcat7:deploy 
-    }
-    stage('IntegrationTests') {
-        echo "Running selenium blackbox test"
-        // # TODO implement virtual screens
-        // sh "export DISPLAY=:1.0"
-        // sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins &"
-        // #stop Xvfb server
-        // mvn test -DfailIfNoTests=false -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite
-    }
-    stage('Clean & Free resources'){
-        // # TODO check orphan process and MEM usage
-        echo "All done."
-        //properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
-    }
     stage('Notify Completed'){
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        deleteDir()
     }
 }
 
 def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
+        sh "export MAVEN_OPTS='-XX:MaxPermSize=512m -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
         sh "$MAVEN/bin/mvn $mvn_task"
     } catch(Exception err) {
         throw err

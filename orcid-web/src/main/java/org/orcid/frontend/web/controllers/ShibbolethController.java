@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -29,15 +30,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.HeaderCheckResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -59,18 +61,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
-
-    private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
-
-    private static final String EPPN_HEADER = "eppn";
-
-    private static final String DISPLAY_NAME_HEADER = "displayname";
-
-    private static final String GIVEN_NAME_HEADER = "givenname";
-
-    private static final String SN_HEADER = "sn";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
     private static final String SEPARATOR = ";";
@@ -78,9 +68,6 @@ public class ShibbolethController extends BaseController {
     private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
 
     private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
-
-    @Value("${org.orcid.shibboleth.enabled:false}")
-    private boolean enabled;
 
     @Resource
     private UserConnectionDao userConnectionDao;
@@ -93,15 +80,16 @@ public class ShibbolethController extends BaseController {
 
     @Resource
     private IdentityProviderDao identityProviderDao;
-    
+
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
+        LOGGER.info("Headers for shibboleth sign in: {}", headers);
         checkEnabled();
         mav.setViewName("social_link_signin");
-        String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
         mav.addObject("providerId", shibIdentityProvider);
         String displayName = retrieveDisplayName(headers);
         mav.addObject("accountId", displayName);
@@ -113,29 +101,35 @@ public class ShibbolethController extends BaseController {
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
-        
+
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
+            LOGGER.info("Found existing user connection: {}", userConnectionEntity);
+            HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
+            if (!checkHeadersResult.isSuccess()) {
+                mav.addObject("headerCheckFailed", true);
+                return mav;
+            }
             try {
-                //Check if the user has been notified
-                if(!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
+                // Check if the user has been notified
+                if (!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
                     try {
                         institutionalSignInManager.sendNotification(userConnectionEntity.getOrcid(), shibIdentityProvider);
                         userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
-                    } catch(UnsupportedEncodingException e) {
+                    } catch (UnsupportedEncodingException e) {
                         LOGGER.error("Unable to send institutional sign in notification to user " + userConnectionEntity.getOrcid(), e);
                     }
                 }
-                
+
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 userConnectionEntity.setLastLogin(new Date());
-                userConnectionDao.merge(userConnectionEntity);                
+                userConnectionDao.merge(userConnectionEntity);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -145,20 +139,28 @@ public class ShibbolethController extends BaseController {
         } else {
             // To avoid confusion, force the user to login to ORCID again
             mav.addObject("linkType", "shibboleth");
-            mav.addObject("firstName", (headers.get(GIVEN_NAME_HEADER) == null) ? "" : headers.get(GIVEN_NAME_HEADER));
-            mav.addObject("lastName", (headers.get(SN_HEADER) == null) ? "" : headers.get(SN_HEADER));
+            mav.addObject("firstName",
+                    (headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
+            mav.addObject("lastName", (headers.get(InstitutionalSignInManager.SN_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.SN_HEADER));
         }
         return mav;
     }
 
+    private Map<String, String> parseOriginalHeaders(String originalHeadersJson) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> originalHeaders = originalHeadersJson != null ? JsonUtils.readObjectFromJsonString(originalHeadersJson, Map.class)
+                : Collections.<String, String> emptyMap();
+        return originalHeaders;
+    }
+
     private void checkEnabled() {
-        if (!enabled) {
+        if (!isShibbolethEnabled()) {
             throw new FeatureDisabledException();
         }
     }
 
     public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
-        for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
+        for (String possibleHeader : InstitutionalSignInManager.POSSIBLE_REMOTE_USER_HEADERS) {
             String userId = extractFirst(headers.get(possibleHeader));
             if (userId != null) {
                 return new RemoteUser(userId, possibleHeader);
@@ -168,16 +170,16 @@ public class ShibbolethController extends BaseController {
     }
 
     public static String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = extractFirst(headers.get(EPPN_HEADER));
+        String eppn = extractFirst(headers.get(InstitutionalSignInManager.EPPN_HEADER));
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
         }
-        String displayName = extractFirst(headers.get(DISPLAY_NAME_HEADER));
+        String displayName = extractFirst(headers.get(InstitutionalSignInManager.DISPLAY_NAME_HEADER));
         if (StringUtils.isNotBlank(displayName)) {
             return displayName;
         }
-        String givenName = extractFirst(headers.get(GIVEN_NAME_HEADER));
-        String sn = extractFirst(headers.get(SN_HEADER));
+        String givenName = extractFirst(headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
+        String sn = extractFirst(headers.get(InstitutionalSignInManager.SN_HEADER));
         String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;

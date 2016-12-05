@@ -29,15 +29,15 @@
                         <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                     <![endif]-->
                 </div>
-                <div ng-if="membersListSrvc.consortiaList" ng-cloak>
+                <div ng-show="membersListSrvc.consortiaList">
                     <p>There are currently {{membersListSrvc.consortiaList.length}} ORCID consortia members.</p>
                     <p>
 	            		<a href="<@orcid.rootPath '/members'/>">All members</a> | <a class="selected" href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
 	            	<p>
-						<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.consortiaList | unique:'country' | orderBy : 'country'">
+						<select ng-model="by_country" ng-options="member.country as member.country for member in membersListSrvc.consortiaList | unique:'country' | orderBy : 'country'">
             					<option value="">Country</option>
         				</select>
-        				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.consortiaList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
+        				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.consortiaList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
             					<option value="">Research community</option>
         				</select>
         				<button class="btn btn-primary" ng-click="clearFilters()">Reset</button>
@@ -49,10 +49,10 @@
 						<li ng-repeat="letter in alphabet track by $index " ng-click="activateLetter(letter)" ng-class="{'active':letter==activeLetter}"><a>{{letter}}</a></li>
 
 					</ul>
-                    <div class="member" ng-repeat="member in membersListSrvc.consortiaList | filter: country | filter: researchCommunity | startsWithLetter : activeLetter | orderBy : 'name'">
+                    <div class="member" ng-repeat="member in membersListSrvc.consortiaList | filter:{ country: by_country} | filter: {researchCommunity: by_researchCommunity} | startsWithLetter : activeLetter | orderBy : 'name' ">
                         <hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
-	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
+	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.name}}</a></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">

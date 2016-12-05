@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -171,7 +172,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         
         //Update #1 with an existing group id
         try {
-            GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1");
+            GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
             existingOne.setGroupId("orcid-generated:valid-group-id#2");
             existingOne.setDescription("updated-description");
             groupIdRecordManager.updateGroupIdRecord(existingOne.getPutCode(), existingOne);
@@ -184,7 +185,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         
         //Update #1 with an existing group id
         try {
-            GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1");
+            GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
             existingOne.setGroupId("orcid-generated:valid-group-id#3");
             existingOne.setDescription("updated-description");
             groupIdRecordManager.updateGroupIdRecord(existingOne.getPutCode(), existingOne);
@@ -196,7 +197,7 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         }
         
         //Update #1 with a new group id
-        GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1");
+        GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
         existingOne.setGroupId("orcid-generated:valid-group-id#1-updated");
         existingOne.setDescription("updated-description");
         existingOne = groupIdRecordManager.updateGroupIdRecord(existingOne.getPutCode(), existingOne);
@@ -229,11 +230,11 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         //Test find
         assertTrue(groupIdRecordManager.exists(g1.getGroupId()));
         
-        GroupIdRecord existingByGroupId = groupIdRecordManager.findByGroupId(g1.getGroupId());
-        assertNotNull(existingByGroupId);
-        assertNotNull(existingByGroupId.getPutCode());
-        assertEquals(putCode, existingByGroupId.getPutCode());
-        assertEquals(g1.getGroupId(), existingByGroupId.getGroupId());
+        Optional<GroupIdRecord> existingByGroupId = groupIdRecordManager.findByGroupId(g1.getGroupId());
+        assertTrue(existingByGroupId.isPresent());
+        assertNotNull(existingByGroupId.get().getPutCode());
+        assertEquals(putCode, existingByGroupId.get().getPutCode());
+        assertEquals(g1.getGroupId(), existingByGroupId.get().getGroupId());
         
         GroupIdRecord existingByPutCode = groupIdRecordManager.getGroupIdRecord(g1.getPutCode());
         assertNotNull(existingByPutCode);

@@ -25,11 +25,11 @@ Decription : 1000 chars
 
 1) Get the access_token :
 
-``curl -i -L -H 'Accept: application/json' -d 'client\_id=APP-OAGL07C5YB6GP2L0' -d 'client\_secret=ead57be0-cf91-47f7-a673-a154cbab7d3f' -d 'scope=/group-id-record/update' -d 'grant\_type=client_credentials' 'http://localhost:8080/orcid-web/oauth/token'``
+``curl -i -L -H 'Accept: application/json' -d 'client_id=APP-OAGL07C5YB6GP2L0' -d 'client_secret=ead57be0-cf91-47f7-a673-a154cbab7d3f' -d 'scope=/group-id-record/update' -d 'grant_type=client_credentials' 'https://sandbox.orcid.org/oauth/token'``
 
 
 
-``{"access\_token":"**a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0**","token\_type":"bearer","expires\_in":631138518,"scope":"/group-id-record/update","orcid":null}``
+``{"access_token":"**a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0**","token_type":"bearer","expires_in":631138518,"scope":"/group-id-record/update","orcid":null}``
 
 2) Use the token to perform the GET, POST, PUT, DELETE.
 
@@ -37,28 +37,28 @@ Decription : 1000 chars
 
 Creates a new record
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'http://localhost:8080/orcid-api-web/v2.0_rc3/group-id-record'``
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record'``
 
 **View Group-id-record**
 
 Returns a record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'http://localhost:8080/orcid-api-web/v2.0_rc3/group-id-record/1000'``
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record/1000'``
 
 **Update Group-id-record**
 
 Updates and replaces the updated values for the record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X PUT 'http://localhost:8080/orcid-api-web/v2.0_rc3/group-id-record/1000'``
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record/1000'``
 
 **Delete Group-id-record**
 
 Deletes the record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X DELETE 'http://localhost:8080/orcid-api-web/v2.0_rc3/group-id-record/1000'``
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record/1000'``
 
 **View Group-id-records-Paging**
 
 Returns a list of group-id-records which belong to the page number 1, when the given page-size is 5. Also returns other fields('total', 'page', 'page-size') along with the group-id-record list.
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'http://localhost:8080/orcid-api-web/v2.0_rc3/group-id-record?page-size=5&page=1'``
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record?page-size=5&page=1'``

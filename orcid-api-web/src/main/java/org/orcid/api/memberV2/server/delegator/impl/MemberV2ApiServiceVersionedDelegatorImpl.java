@@ -300,6 +300,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
+    public Response findGroupIdRecordByName(String name) {
+        return downgradeResponse(memberV2ApiServiceDelegator.findGroupIdRecordByName(name));
+    }
+
+    @Override
     public Response viewResearcherUrls(String orcid) {
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewResearcherUrls(orcid));
@@ -516,8 +521,9 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         V2Convertible result = null;
         if (entity != null) {
             result = v2VersionConverterChain.downgrade(new V2Convertible(entity, MemberV2ApiServiceDelegator.LATEST_V2_VERSION), externalVersion);
+            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
         }
-        return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
+        return response;
     }
 
     private Object upgradeObject(Object entity) {

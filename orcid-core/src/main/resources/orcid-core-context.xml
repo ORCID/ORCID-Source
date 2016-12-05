@@ -403,6 +403,8 @@
     <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl" />
 
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
+    
+    <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

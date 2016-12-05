@@ -165,4 +165,6 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewPerson(String orcid);
 
     Response searchByQuery(Map<String, List<String>> solrParams);
+
+    Response findGroupIdRecordByName(String name);
 }

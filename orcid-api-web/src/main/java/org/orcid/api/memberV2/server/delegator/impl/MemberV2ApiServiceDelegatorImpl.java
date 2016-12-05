@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -100,6 +101,8 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.api.NotFoundException;
 
 /**
  * <p/>
@@ -207,12 +210,11 @@ public class MemberV2ApiServiceDelegatorImpl
         Record record = null;
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
-            record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);
-        } catch (AccessControlException e) {
-            // If the user have the READ_PUBLIC scope, return him the list of
-            // public activities.
-            if (orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                record = recordManager.getPublicRecord(orcid);
+            record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);             
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public activities.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                record = recordManager.getPublicRecord(orcid);                
             } else {
                 throw e;
             }
@@ -634,6 +636,16 @@ public class MemberV2ApiServiceDelegatorImpl
         orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ, null);
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
         return Response.ok(records).build();
+    }
+    
+    @Override
+    public Response findGroupIdRecordByName(String name) {
+        orcidSecurityManager.checkPermissions(ScopePathType.GROUP_ID_RECORD_READ, null);
+        Optional<GroupIdRecord> record = groupIdRecordManager.findGroupIdRecordByName(name);
+        if (record.isPresent())
+            return Response.ok(record.get()).build();
+        throw new NotFoundException();
+        //return Response.status(Status.NOT_FOUND).build();
     }
 
     /**
