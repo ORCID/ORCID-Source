@@ -22,9 +22,9 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc3.Filterable;
+import org.orcid.jaxb.model.common_rc3.VisibilityType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Name;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
@@ -41,9 +41,7 @@ public interface OrcidSecurityManager {
     
     void checkVisibility(Filterable filterable, String orcid);   
     
-    void checkVisibility(Name name, String orcid);
-    
-    void checkVisibility(Biography biography, String orcid);         
+    void checkBiographicalVisibility(VisibilityType visibilityType, String orcid);
     
     void checkIsPublic(Filterable filterable);
     
@@ -61,7 +59,9 @@ public interface OrcidSecurityManager {
 
     String getClientIdFromAPIRequest();
     
-    void checkPermissions(ScopePathType requiredScope, String orcid);
+    void checkClientCanAccessRecord(String orcid);
+
+    void checkScopes(ScopePathType requiredScope);
     
     void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
 }
