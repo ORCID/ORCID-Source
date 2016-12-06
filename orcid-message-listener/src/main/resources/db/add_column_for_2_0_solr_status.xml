@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="2_0-SOLR-STATUS" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="record_status" columnName="api_2_0_solr_status"/>
+            </not>            
+		</preConditions>
+		<!-- Indicates the number of times it have failed to be sent to S3 -->
+		<sql>ALTER TABLE record_status ADD api_2_0_solr_status integer;</sql>		
+	</changeSet>		
+	
+	<!-- Initial value of -1 indicates it have never been indexed -->
+	<changeSet id="SET-INITIAL-VALUE" author="Tom Demeranville">
+    	<sql>UPDATE record_status SET api_2_0_solr_status=-1;</sql>
+	</changeSet>
+	
+	<changeSet id="2_0-SOLR-STATUS-INDEX" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="api_2_0_solr_status_index" tableName="record_status" />
+			</not>
+		</preConditions>
+		<sql>create index api_2_0_solr_status_index on record_status(api_2_0_solr_status);</sql>
+	</changeSet>
+</databaseChangeLog>
