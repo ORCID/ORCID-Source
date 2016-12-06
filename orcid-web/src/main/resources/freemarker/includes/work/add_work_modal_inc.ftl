@@ -43,7 +43,7 @@
 		    		<label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
 					<span class="required" ng-class="isValidClass(editWork.workCategory)">*</span>
 		    		<div class="relative">
-			    		<select id="workCategory" name="workCategory" class="form-control" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes();clearErrors()">
+			    		<select id="workCategory" name="workCategory" class="form-control" ng-model="editWork.workCategory.value" ng-change="loadWorkTypes(); clearErrors(); applyLabelWorkType();">
 			    			<option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
 							<#list workCategories?keys as key>
 								<option value="${key}">${workCategories[key]}</option>
@@ -115,7 +115,7 @@
 				</div>
 
 				<div class="form-group">
-					<label><@orcid.msg 'manual_work_form_contents.journalTitle'/></label>
+					<label>{{labels.title}}</label>
 				    <div class="relative">
 						<input name="journalTitle" type="text" class="form-control"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>"   ng-change="serverValidate('works/work/journalTitleValidate.json')"    ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.journalTitle.errors.length > 0">

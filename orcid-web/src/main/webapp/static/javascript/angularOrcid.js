@@ -980,7 +980,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "book",
-                        title: "Publisher"
+                        title: om.get("funding.add.external_id.value.placeholder.award")
                     },
                     {
                         type: "book-chapter",
@@ -1160,7 +1160,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }
             }
 
-            //console.log(result);
             return result;
         },   
         addBibtexJson: function(dw) {
@@ -5768,7 +5767,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexURL = "";
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
-    $scope.labels = null;
+    $scope.labels = {
+        title: "Title"
+    };
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
@@ -5776,7 +5777,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         var obj = null;
         obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
         $scope.labels = obj;
-    }
+        //<@orcid.msg 'manual_work_form_contents.journalTitle'/>
+    };
 
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
@@ -8045,14 +8047,12 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
         var isOk = true;
         $scope.errors = null;
         if($scope.deprecated_verified === undefined || $scope.deprecated_verified == false){
-            $("#deprecated_orcid").addClass("error");
-            $("#deprecated_orcid").addClass("orcid-red-background-input");
+            $("#deprecated_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
         if($scope.primary_verified === undefined || $scope.primary_verified == false){
-            $("#primary_orcid").addClass("error");
-            $("#primary_orcid").addClass("orcid-red-background-input");
+            $("#primary_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
@@ -11077,31 +11077,33 @@ orcidNgModule.filter('clean', function($filter){
 
 orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
-        var output = '';
-        var ngclass = '';
+        var id = null;
         var isPartOf = false;
+        var link = null;
+        var ngclass = '';
+        var output = '';
+        var type = null;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;        
+            isPartOf = true;        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
         
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
-        var type;
+        id = workExternalIdentifier.workExternalIdentifierId.value;
+        type;
         
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;        
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();
-        	if(isPartOf)
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-        	else 
-        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+            if(isPartOf)
+                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+            else 
+                output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
         
-        var link = null;
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
         	link = workExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type);	
@@ -11214,7 +11216,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
-    	
+    	var id = null;
         var output = '';
         var ngclass = '';
         var isPartOf = false;
@@ -11228,7 +11230,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	isPartOf = true;
         
         if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
         
         if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
@@ -11323,8 +11325,9 @@ orcidNgModule.filter('startsWithLetter', function() {
 
         var filtered = [];
         var letterMatch = new RegExp(letter, 'i');
+        var item = null;
         for (var i = 0; i < items.length; i++) {
-          var item = items[i];
+          item = items[i];
           if (letterMatch.test(item.name.substring(0, 1))) {
             filtered.push(item);
           }
@@ -11657,19 +11660,23 @@ angular.module('ui.multiselect', [])
           }, true);
 
           //watch model change
-          scope.$watch(function () {
-            return modelCtrl.$modelValue;
-          }, function (newVal, oldVal) {
-            //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
-            //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
-            //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
-            if (angular.isDefined(newVal)) {
-              markChecked(newVal);
-              scope.$eval(changeHandler);
-            }
-            getHeaderText();
-            modelCtrl.$setValidity('required', scope.valid());
-          }, true);
+          scope.$watch(
+            function () {
+                return modelCtrl.$modelValue;
+            }, 
+            function (newVal, oldVal) {
+                //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
+                //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
+                //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
+                if (angular.isDefined(newVal)) {
+                  markChecked(newVal);
+                  scope.$eval(changeHandler);
+                }
+                getHeaderText();
+                modelCtrl.$setValidity('required', scope.valid());
+              }, 
+              true
+          );
 
           function parseModel() {
             scope.items.length = 0;
@@ -11721,10 +11728,8 @@ angular.module('ui.multiselect', [])
           };
 
           function selectSingle(item) {
-            if (item.checked) {
-              scope.uncheckAll();
-            } else {
-              scope.uncheckAll();
+          scope.uncheckAll();
+            if (!item.checked) {
               item.checked = !item.checked;
             }
             setModelValue(false);
