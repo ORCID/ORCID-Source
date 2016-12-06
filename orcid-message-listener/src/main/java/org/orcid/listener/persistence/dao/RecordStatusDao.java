@@ -50,13 +50,16 @@ public class RecordStatusDao {
 		RecordStatusEntity entity = new RecordStatusEntity();
 		entity.setId(orcid);
 		switch (broker) {
-		case DUMP_STATUS_1_2_API:
-			entity.setDumpStatus12Api(status);
-			break;
-		case DUMP_STATUS_2_0_API:
-			entity.setDumpStatus20Api(status);
-			break;
-		}
+        		case DUMP_STATUS_1_2_API:
+        			entity.setDumpStatus12Api(status);
+        			break;
+        		case DUMP_STATUS_2_0_API:
+        			entity.setDumpStatus20Api(status);
+        			break;
+                        case SOLR:
+                            entity.setSolrStatus20Api(status);
+                            break;
+                }
 		Date now = new Date();
 		entity.setDateCreated(now);
 		entity.setLastModified(now);
