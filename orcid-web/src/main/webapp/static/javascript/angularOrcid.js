@@ -41,7 +41,7 @@ function openImportWizardUrl(url) {
         }
     }, 250);
     $.colorbox.close();
-};
+}
 
 function contains(arr, obj) {
     var index = arr.length;
@@ -51,7 +51,7 @@ function contains(arr, obj) {
        }
     }
     return false;
-};
+}
 
 function formatDate(oldDate) {
 	var date = new Date(oldDate);
@@ -65,7 +65,7 @@ function formatDate(oldDate) {
 		day = '0' + day;
 	}
 	return (year + '-' + month + '-' + day);
-};
+}
 
 function getScripts(scripts, callback) {
     var progress = 0;
@@ -77,11 +77,11 @@ function getScripts(scripts, callback) {
     scripts.forEach(function(script) {        
         $.getScript(script, internalCallback);        
     });
-};
+}
 
 function formColorBoxWidth() {
     return isMobile()? '100%': '800px';
-};
+}
 
 function formColorBoxResize() {
     if (isMobile())
@@ -91,7 +91,7 @@ function formColorBoxResize() {
         // however the default div height
         // is auto anyway
         $.colorbox.resize({width:'800px'});
-};
+}
 
 function fixZindexIE7(target, zindex){
     if(isIE() == 7){
@@ -100,19 +100,19 @@ function fixZindexIE7(target, zindex){
             --zindex;
         });
     }
-};
+}
 
 function emptyTextField(field) {
     if (field != null
             && field.value != null
             && field.value.trim() != '') return false;
     return true;
-};
+}
 
 function addComma(str) {
     if (str.length > 0) return str + ', ';
     return str;
-};
+}
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -125,7 +125,7 @@ function removeBadContributors(dw) {
                 dw.contributors.splice(idx,1);
             }
     }
-};
+}
 
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
@@ -134,19 +134,19 @@ function removeBadExternalIdentifiers(dw) {
             dw.workExternalIdentifiers.splice(idx,1);
         }
     }
-};
+}
 
 function isEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-};
+}
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
+}
 
 /*
  * GROUPINGS LOGIC
@@ -222,12 +222,12 @@ var GroupedActivities = function(type) {
     this.activitiesCount = 0;
     this.activePutCode = null;
     this.defaultPutCode = null;
-    this.dateSortString;
+    this.dateSortString = null;
     this.groupId = GroupedActivities.count;
     this.groupDescription = null;
     this.groupType = null;
     this.groupRealId = null;
-    this.title;
+    this.title = null;
 };
 
 GroupedActivities.count = 0;
@@ -279,11 +279,12 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
-GroupedActivities.prototype.consistentVis = function() {	
+GroupedActivities.prototype.consistentVis = function() {
+    var vis = null;
 	if (this.type == GroupedActivities.FUNDING)
-        var vis = this.getDefault().visibility.visibility;
+        vis = this.getDefault().visibility.visibility;
     else
-        var vis = this.getDefault().visibility;
+        vis = this.getDefault().visibility;
 
     for (var idx in this.activities)
     	
