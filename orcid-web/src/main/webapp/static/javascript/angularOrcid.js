@@ -981,87 +981,87 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "book",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "book-chapter",
-                        title: om.get("manual_work_form_contents.labelTitleBookChapter")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookChapter")
                     },
                     {
                         type: "book-review",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "dictionary-entry",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "dissertation",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "edited-book",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "encyclopedia-entry",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "journal-article",
-                        title: om.get("manual_work_form_contents.journalTitle")
+                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
                     },
                     {
                         type: "journal-issue",
-                        title: om.get("manual_work_form_contents.journalTitle")
+                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
                     },
                     {
                         type: "magazine-article",
-                        title: om.get("manual_work_form_contents.labelTitleMagazineArticle")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle")
                     },
                     {
                         type: "manual",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "newsletter-article",
-                        title: om.get("manual_work_form_contents.labelTitleNewsletter")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter")
                     },
                     {
                         type: "newspaper-article",
-                        title: om.get("manual_work_form_contents.labelTitleNewsletter")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter")
                     },
                     {
                         type: "online-resource",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "report",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "research-tool",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "supervised-student-publication",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "test",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "translation",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "website",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "working-paper",
-                        title: om.get("manual_work_form_contents.labelTitleDissertation")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleDissertation")
                     }
                 ]
             },
@@ -1069,15 +1069,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "conference-abstract",
-                        title: om.get("manual_work_form_contents.labelTitleConference")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
                     },
                     {
                         type: "conference-paper",
-                        title: om.get("manual_work_form_contents.labelTitleConference")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
                     },
                     {
                         type: "conference-poster",
-                        title: om.get("manual_work_form_contents.labelTitleConference")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
                     }
                 ]
             },
@@ -1085,19 +1085,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "disclosure",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "license",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "patent",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "registered-copyright",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     }
                 ]
             },
@@ -1105,39 +1105,39 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "artistic-performance",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "data-set",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "invention",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "lecture-speech",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "research-technique",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "spin-off-company",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "standards-and-policy",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "technical-standard",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "other",
-                        title: om.get("manual_work_form_contents.labelTitleBook")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
                     }
                 ]
             }
@@ -1149,6 +1149,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
 
         getLabelMapping: function(workCategory, workType){
             console.log(workCategory, workType);
+            console.log("asdf", om.get("manual_work_form_contents.labelTitleBook"));
             var result = this.labelsMapping.default.types[0];
             var tempI = null;
 
