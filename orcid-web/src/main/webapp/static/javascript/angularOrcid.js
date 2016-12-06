@@ -981,87 +981,87 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "book",
-                        title: om.get("funding.add.external_id.value.placeholder.award")
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "book-chapter",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBookChapter")
                     },
                     {
                         type: "book-review",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "dictionary-entry",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "dissertation",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "edited-book",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "encyclopedia-entry",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "journal-article",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.journalTitle")
                     },
                     {
                         type: "journal-issue",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.journalTitle")
                     },
                     {
                         type: "magazine-article",
-                        title: "Journal title"
+                        title: om.get("manual_work_form_contents.labelTitleMagazineArticle")
                     },
                     {
                         type: "manual",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "newsletter-article",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleNewsletter")
                     },
                     {
                         type: "newspaper-article",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleNewsletter")
                     },
                     {
                         type: "online-resource",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "report",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "research-tool",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "supervised-student-publication",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "test",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     },
                     {
                         type: "translation",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "website",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "working-paper",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleDissertation")
                     }
                 ]
             },
@@ -1069,15 +1069,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "conference-abstract",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleConference")
                     },
                     {
                         type: "conference-paper",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleConference")
                     },
                     {
                         type: "conference-poster",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleConference")
                     }
                 ]
             },
@@ -1085,19 +1085,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "disclosure",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "license",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "patent",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "registered-copyright",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     }
                 ]
             },
@@ -1105,39 +1105,39 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "artistic-performance",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "data-set",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "invention",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "lecture-speech",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "research-technique",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "spin-off-company",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "standards-and-policy",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "technical-standard",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     },
                     {
                         type: "other",
-                        title: "Publisher"
+                        title: om.get("manual_work_form_contents.labelTitleBook")
                     }
                 ]
             }
