@@ -196,17 +196,7 @@ public class WorksController extends BaseWorkspaceController {
             Text jt = new Text();
             jt.setRequired(false);
             w.setJournalTitle(jt);
-        }
-
-        if (w.getCitation() == null) {
-            Citation c = new Citation();
-            Text ctText = new Text();
-            ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
-            c.setCitationType(ctText);
-            Text cText = Text.valueOf(StringUtils.EMPTY);
-            c.setCitation(cText);
-            w.setCitation(c);
-        }
+        }        
 
         if (PojoUtil.isEmpty(w.getWorkCategory())) {
             Text wCategoryText = new Text();
