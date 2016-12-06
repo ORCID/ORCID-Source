@@ -10959,7 +10959,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         //If type is set always come: "grant_number"
         if (type != null) {
             if(isPartOf){
-                output += om.get("common.part_of") + " ";
+                output += "<span class='italic'>" + om.get("common.part_of") + "</span>&nbsp";
             }
             if (type.value == 'grant') {
                 output += om.get('funding.add.external_id.value.label.grant') + ": ";

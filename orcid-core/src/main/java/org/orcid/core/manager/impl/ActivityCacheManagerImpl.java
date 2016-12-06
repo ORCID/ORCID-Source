@@ -24,9 +24,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
@@ -40,6 +41,9 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private ProfileFundingManager profileFundingManager;
     
     @Resource
     private WorkManager workManager;
@@ -70,16 +74,16 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return peerReviewMap;
     }
     
-    @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-funding-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified) {
+    	List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified);
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getFundings() != null) {
-                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings())
-                    if (Visibility.PUBLIC.equals(funding.getVisibility()))
-                        fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
-            }
-        }
+		if (fundings != null) {
+			for (Funding funding : fundings) {
+				if (funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC))
+					fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
+			}
+		}
         return fundingMap;
     }
 
