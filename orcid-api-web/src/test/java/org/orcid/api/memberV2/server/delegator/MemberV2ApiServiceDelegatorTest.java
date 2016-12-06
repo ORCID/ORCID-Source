@@ -3215,402 +3215,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewPublicDataUsingOtherUserToken() {
-        //Set all possible permissions to user 0000-0000-0000-0001
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
-                ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
-                ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
-                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
-                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
-                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
-                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
-        //Try to view anything on the user        
-        Response r = serviceDelegator.viewActivities(ORCID);
-        ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
-        testActivities(as, ORCID);
-        
-        //Get only public address
-        r = serviceDelegator.viewAddresses(ORCID);
-        Addresses addresses = (Addresses) r.getEntity();
-        assertNotNull(addresses);
-        assertEquals(1, addresses.getAddress().size());
-        assertEquals(Long.valueOf(9L), addresses.getAddress().get(0).getPutCode());
-        
-        //View public address works
-        serviceDelegator.viewAddress(ORCID, 9L);
-        try {
-            //Limited fail
-            serviceDelegator.viewAddress(ORCID, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-                
-        //Public works
-        serviceDelegator.viewEducation(ORCID, 20L);
-        serviceDelegator.viewEducationSummary(ORCID, 20L);
-        
-        try {
-            //Limited fail
-            serviceDelegator.viewEducation(ORCID, 21L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            //Limited fail
-            serviceDelegator.viewEducationSummary(ORCID, 21L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            //Private fail
-            serviceDelegator.viewEducation(ORCID, 22L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            //Private fail
-            serviceDelegator.viewEducationSummary(ORCID, 22L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-
-        r = serviceDelegator.viewEmails(ORCID);
-        Emails emails = (Emails) r.getEntity();
-        assertNotNull(emails);
-        assertEquals(1, emails.getEmails().size());
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
-                
-        //Public works
-        serviceDelegator.viewEmployment(ORCID, 17L);
-        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-                        
-        try {
-            //Limited fail
-            serviceDelegator.viewEmployment(ORCID, 18L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEmploymentSummary(ORCID, 18L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            //Private fail
-            serviceDelegator.viewEmployment(ORCID, 19L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEmploymentSummary(ORCID, 19L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        r = serviceDelegator.viewExternalIdentifiers(ORCID);
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
-        assertNotNull(extIds);
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifiers().get(0).getPutCode());
-        
-        //Public works
-        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-        
-        //Limited fails
-        try {
-            serviceDelegator.viewExternalIdentifier(ORCID, 14L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fails
-        try {
-            serviceDelegator.viewExternalIdentifier(ORCID, 15L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Public works
-        serviceDelegator.viewFunding(ORCID, 10L);
-        serviceDelegator.viewFundingSummary(ORCID, 10L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewFunding(ORCID, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewFundingSummary(ORCID, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fail
-        try {
-            serviceDelegator.viewFunding(ORCID, 12L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewFundingSummary(ORCID, 12L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        r = serviceDelegator.viewKeywords(ORCID);
-        Keywords k = (Keywords) r.getEntity();
-        assertNotNull(k);
-        assertEquals(1, k.getKeywords().size());
-        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
-        
-        //Public works 
-        serviceDelegator.viewKeyword(ORCID, 9L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewKeyword(ORCID, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fail
-        try {
-            serviceDelegator.viewKeyword(ORCID, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        r = serviceDelegator.viewOtherNames(ORCID);
-        OtherNames o = (OtherNames) r.getEntity();
-        assertNotNull(o);
-        assertEquals(1, o.getOtherNames().size());
-        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
-        
-        //Public work
-        serviceDelegator.viewOtherName(ORCID, 13L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewOtherName(ORCID, 14L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fail
-        try {
-            serviceDelegator.viewOtherName(ORCID, 15L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-                                
-        //Public works
-        serviceDelegator.viewPeerReview(ORCID, 9L);
-        serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewPeerReview(ORCID, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fail
-        try {
-            serviceDelegator.viewPeerReview(ORCID, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        r = serviceDelegator.viewResearcherUrls(ORCID);
-        ResearcherUrls rUrls = (ResearcherUrls) r.getEntity();
-        assertNotNull(rUrls);
-        assertEquals(1, rUrls.getResearcherUrls().size());
-        assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
-        
-        //Public works
-        serviceDelegator.viewResearcherUrl(ORCID, 13L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewResearcherUrl(ORCID, 14L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Private fail
-        try {
-            serviceDelegator.viewResearcherUrl(ORCID, 15L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-                
-        //Public work
-        serviceDelegator.viewWork(ORCID, 11L);
-        serviceDelegator.viewWorkSummary(ORCID, 11L);
-        
-        //Limited fail
-        try {
-            serviceDelegator.viewWork(ORCID, 12L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWorkSummary(ORCID, 12L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-                
-        //Private fail
-        try {
-            serviceDelegator.viewWork(ORCID, 13L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWorkSummary(ORCID, 13L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The activity is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //View public bio works
-        serviceDelegator.viewBiography(ORCID);
-        
-        //View limited bio fails
-        try {
-            serviceDelegator.viewBiography("0000-0000-0000-0002");
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("The biography is not public", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        r = serviceDelegator.viewPersonalDetails(ORCID);
-        PersonalDetails _003details = (PersonalDetails) r.getEntity();
-        assertNotNull(_003details);
-        assertEquals("Biography for 0000-0000-0000-0003", _003details.getBiography().getContent());
-        assertEquals("Credit Name", _003details.getName().getCreditName().getContent());
-        assertEquals("Family Name", _003details.getName().getFamilyName().getContent());
-        assertEquals("Given Names", _003details.getName().getGivenNames().getContent());
-        assertEquals(1, _003details.getOtherNames().getOtherNames().size());
-        assertEquals(Long.valueOf(13), _003details.getOtherNames().getOtherNames().get(0).getPutCode());
-        
-        r = serviceDelegator.viewPerson(ORCID);
-        Person p = (Person) r.getEntity();
-        testPerson(p, ORCID);                              
-    }
-    
-    @Test
     public void testReadPublicScope_Activities() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         
@@ -3877,6 +3481,377 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
         assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());        
     }        
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewRecordWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewRecord(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewActivitiesWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewActivities(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewResearcherUrlsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewResearcherUrls(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEmailsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmails(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewOtherNamesWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewOtherNames(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewExternalIdentifiersWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewExternalIdentifiers(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewKeywordsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewKeywords(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewAddressesWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewAddresses(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewBiographyWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewBiography(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewPersonalDetailsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPersonalDetails(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewPersonWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPerson(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewAddressWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewAddress(ORCID, 10L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEducationWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEducation(ORCID, 20L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEducationsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEducations(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEducationSummaryWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEducationSummary(ORCID, 20L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEmploymentWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmployment(ORCID, 17L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEmploymentsWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmployments(ORCID);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewEmploymentSummaryWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewExternalIdentifierWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewFundingWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewFunding(ORCID, 10L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewFundingSummaryWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewFundingSummary(ORCID, 10L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewKeywordWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewKeyword(ORCID, 9L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewOtherNameWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewOtherName(ORCID, 13L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewPeerReviewWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewPeerReviewSummaryWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewResearcherUrlWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewResearcherUrl(ORCID, 13L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewWorkWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewWork(ORCID, 11L);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewWorkSummaryWrongToken() {        
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewWorkSummary(ORCID, 11L);
+    }
+    
+    @Test
+    public void testViewRecordWrongScope() {        
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response response = serviceDelegator.viewRecord(ORCID);
+        assertNotNull(response);
+    }
+    
+    @Test
+    public void testViewRecordReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewRecord(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewActivitiesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewActivities(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewResearcherUrlsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewResearcherUrls(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmailsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmails(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewOtherNamesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewOtherNames(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewExternalIdentifiersReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewExternalIdentifiers(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewKeywordsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewKeywords(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewAddressesReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewAddresses(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewBiographyReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewBiography(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPersonalDetailsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPersonalDetails(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPersonReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPerson(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewAddressReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewAddress(ORCID, 9L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducation(ORCID, 20L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducations(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEducationSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEducationSummary(ORCID, 20L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmployment(ORCID, 17L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentsReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmployments(ORCID);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewEmploymentSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewExternalIdentifierReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewFundingReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewFunding(ORCID, 10L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewFundingSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewFundingSummary(ORCID, 10L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewKeywordReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewKeyword(ORCID, 9L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewOtherNameReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewOtherName(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPeerReviewReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewPeerReviewSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewResearcherUrlReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewWorkReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewWork(ORCID, 11L);
+        assertTrue(true);
+    }
+    
+    @Test
+    public void testViewWorkSummaryReadPublic() {        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        serviceDelegator.viewWorkSummary(ORCID, 11L);
+        assertTrue(true);
+    }
     
     @Test
     public void testViewRecord() {        
@@ -4969,53 +4944,53 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Test can't create
         try {
             serviceDelegator.createAddress(ORCID, getAddress());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEducation(ORCID, getEducation());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEmployment(ORCID, getEmployment());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createExternalIdentifier(ORCID, getPersonExternalIdentifier());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createFunding(ORCID, getFunding());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createKeyword(ORCID, getKeyword());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createOtherName(ORCID, getOtherName());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createPeerReview(ORCID, getPeerReview());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createResearcherUrl(ORCID, getResearcherUrl());
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createWork(ORCID, getWork("work # 1 " + System.currentTimeMillis()));
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }        
         try {
             serviceDelegator.createGroupIdRecord(getGroupIdRecord());
@@ -5029,158 +5004,158 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.viewActivities(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddress(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddresses(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewBiography(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducation(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducationSummary(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducations(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmails(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployment(ORCID, 17L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployments(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifiers(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFunding(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundingSummary(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundings(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeyword(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeywords(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherName(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherNames(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReview(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviews(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPerson(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPersonalDetails(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrl(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrls(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWork(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorkSummary(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorks(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewRecord(ORCID);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewGroupIdRecord(1L);
@@ -5199,48 +5174,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.deleteAddress(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteAffiliation(ORCID, 20L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteExternalIdentifier(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteFunding(ORCID, 10L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteKeyword(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteOtherName(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deletePeerReview(ORCID, 9L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteResearcherUrl(ORCID, 13L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.deleteWork(ORCID, 11L);
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
     }
     
@@ -5255,8 +5230,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateAddress(ORCID, a.getPutCode(), a);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5268,8 +5243,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateEducation(ORCID, edu.getPutCode(), edu);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
                 
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5281,9 +5256,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateEmployment(ORCID, emp.getPutCode(), emp);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
-        } 
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
+        }  
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewExternalIdentifier(ORCID, 13L); 
@@ -5294,8 +5269,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateExternalIdentifier(ORCID, extId.getPutCode(), extId);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5307,9 +5282,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateFunding(ORCID, f.getPutCode(), f);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
-        } 
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
+        }  
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         response = serviceDelegator.viewKeyword(ORCID, 9L);
@@ -5320,8 +5295,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateKeyword(ORCID, k.getPutCode(), k);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5333,8 +5308,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateOtherName(ORCID, o.getPutCode(), o);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5346,8 +5321,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updatePeerReview(ORCID, p.getPutCode(), p);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5359,8 +5334,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateResearcherUrl(ORCID, r.getPutCode(), r);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
         
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
@@ -5372,8 +5347,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             SecurityContextTestUtils.setUpSecurityContextForClientOnly();
             serviceDelegator.updateWork(ORCID, w.getPutCode(), w);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-            assertEquals("Incorrect token for claimed record", e.getMessage());
+        } catch (IllegalStateException e) {
+            assertEquals("Non client credential scope found in client request", e.getMessage());
         } 
     }    
     
