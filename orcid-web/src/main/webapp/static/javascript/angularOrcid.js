@@ -983,8 +983,160 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         title: "Publisher"
                     },
                     {
+                        type: "book-chapter",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "book-review",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "dictionary-entry",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "dissertation",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "edited-book",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "encyclopedia-entry",
+                        title: "Publisher"
+                    },
+                    {
                         type: "journal-article",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "journal-issue",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "magazine-article",
                         title: "Journal title"
+                    },
+                    {
+                        type: "manual",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "newsletter-article",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "newspaper-article",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "online-resource",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "report",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "research-tool",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "supervised-student-publication",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "test",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "translation",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "website",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "working-paper",
+                        title: "Publisher"
+                    }
+                ]
+            },
+            "conference": {
+                types: [
+                    {
+                        type: "conference-abstract",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "conference-paper",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "conference-poster",
+                        title: "Publisher"
+                    }
+                ]
+            },
+            "intellectual_property": {
+                types: [
+                    {
+                        type: "disclosure",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "license",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "patent",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "registered-copyright",
+                        title: "Publisher"
+                    }
+                ]
+            },
+            "other_output": {
+                types: [
+                    {
+                        type: "artistic-performance",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "data-set",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "invention",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "lecture-speech",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "research-technique",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "spin-off-company",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "standards-and-policy",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "technical-standard",
+                        title: "Publisher"
+                    },
+                    {
+                        type: "other",
+                        title: "Publisher"
                     }
                 ]
             }
@@ -995,7 +1147,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         worksToAddIds: null,
 
         getLabelMapping: function(workCategory, workType){
-            //console.log(workCategory, workType);
+            console.log(workCategory, workType);
             var result = this.labelsMapping.default.types[0];
             var tempI = null;
 
