@@ -234,7 +234,7 @@
                             <div class="col-sm-9 col-xs-9-fix bottomBuffer">
                                 <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
                                 <span class="required" ng-class="isValidClass(registrationForm.emailConfirm)">*</span>                  
-                                <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0">
+                                <span class="orcid-error" ng-show="registrationForm.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
                                     <div ng-repeat='error in registrationForm.emailConfirm.errors' ng-bind-html="error"></div>
                                 </span>
                             </div>              
