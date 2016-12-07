@@ -439,7 +439,7 @@
             <div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">             
               <div class="row full-height-row">   
                 <div class="col-md-9 col-sm-9 col-xs-7">
-                  <h3  class="workspace-title" ng-class="work.title.value == null ? 'bibtex-content-missing'">
+                  <h3 class="workspace-title" ng-class="work.title.value == null ? 'bibtex-content-missing' :  ''">
                     <span ng-if="work.title.value != null">{{work.title.value}}</span>
                     <span ng-if="work.title.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
                     <span class="journaltitle" ng-if="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>
