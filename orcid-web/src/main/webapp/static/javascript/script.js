@@ -567,7 +567,7 @@ $(function() {
     function showLoginError(message) {
         if ($('form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible').length == 0) {
              $(
-                "<div class='alert' id='login-error-mess'>"
+                "<div class='orcid-error' id='login-error-mess'>"
                         + message
                         + "</div>")
                 .hide()

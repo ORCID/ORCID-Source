@@ -2490,7 +2490,7 @@ ul.pullleft-list{
 	padding: 0;
 }
 
-label.error,span.orcid-error {
+label.error,span.orcid-error,div.orcid-error {
 	color: red;
 }
 
