@@ -115,9 +115,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{labels.title}}</label>
+                            <label>{{contentCopy.titleLabel}}</label>
                             <div class="relative">
-                                <input name="journalTitle" type="text" class="form-control"  ng-model="editWork.journalTitle.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_journalTitle'/>"   ng-change="serverValidate('works/work/journalTitleValidate.json')"    ng-model-onblur/>
+                                <input name="journalTitle" type="text" class="form-control"  ng-model="editWork.journalTitle.value" placeholder="{{contentCopy.titlePlaceholder}}" ng-change="serverValidate('works/work/journalTitleValidate.json')"    ng-model-onblur/>
                                 <span class="orcid-error" ng-show="editWork.journalTitle.errors.length > 0">
                                     <div ng-repeat='error in editWork.journalTitle.errors' ng-bind-html="error"></div>
                                 </span>                     
