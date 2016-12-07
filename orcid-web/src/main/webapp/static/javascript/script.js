@@ -441,7 +441,7 @@ $(function() {
                             loginUrl = baseUrl + 'social/signin/auth.json';
                         }
                         $('form#loginForm').attr('disabled', 'disabled');
-                        $('#login-error-mess').hide();
+                        $('#login-error-mess, #login-deactivated-error').hide();
                         $('#ajax-loader').css('display', 'block');
                         $
                                 .ajax(
@@ -499,8 +499,8 @@ $(function() {
                                                             message = om
                                                                     .get('orcid.frontend.security.deprecated');
                                                     } else if (data.disabled) {
-                                                            message = om
-                                                                   .get('orcid.frontend.security.orcid_deactivated');
+                                                            showLoginDeactivatedError();
+                                                            return;
                                                     } else if (data.unclaimed) {
                                                         var resendClaimUrl = window.location
                                                                 + "/../resend-claim";
@@ -565,7 +565,7 @@ $(function() {
     };
     
     function showLoginError(message) {
-        if ($('form#loginForm #login-error-mess').length == 0) {
+        if ($('form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible').length == 0) {
              $(
                 "<div class='alert' id='login-error-mess'>"
                         + message
@@ -574,9 +574,10 @@ $(function() {
                 .appendTo(
                         'form#loginForm')
                 .fadeIn('fast');
-        } else {
+        } 
+        else {
              $(
-             'form#loginForm #login-error-mess')
+             'form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible')
              .fadeOut(
                     'fast',
                      function() {
@@ -587,7 +588,21 @@ $(function() {
                                          'fast');
                      });
         }
-        
+    }
+    
+    function showLoginDeactivatedError() {
+        angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        if ($('form#loginForm #login-error-mess').length == 0) {
+            $('form#loginForm #login-deactivated-error').fadeIn('fast');
+        } else {
+             $(
+             'form#loginForm #login-error-mess')
+             .fadeOut(
+                    'fast',
+                     function() {
+                        $('form#loginForm #login-deactivated-error').fadeIn('fast');
+                     });
+        }
     }
 
     // Privacy toggle

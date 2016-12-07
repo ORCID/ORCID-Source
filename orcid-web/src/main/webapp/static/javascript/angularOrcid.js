@@ -10452,6 +10452,8 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
     $scope.scriptsInjected = false; //Flag to show or not the spinner
     $scope.counter = 0; //To hide the spinner when the second script has been loaded, not the first one.
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.showPersonalLogin = function () {        
         $scope.personalLogin = true;        
@@ -10483,6 +10485,26 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
         return false;
     };
+    
+    $scope.showDeactivationError = function() {
+        $scope.showDeactivatedError = true;
+        $scope.showReactivationSent = false;
+        $scope.$apply();
+    };
+
+    $scope.sendReactivationEmail = function () {
+       $scope.showDeactivatedError = false;
+       $scope.showReactivationSent = true;
+       $.ajax({
+           url: getBaseUri() + '/sendReactivation.json',
+           type: "POST",
+           data: { email: $('#userId').val() },
+           dataType: 'json',
+       }).fail(function(){
+       // something bad is happening!
+           console.log("error sending reactivation email");
+       });
+   };
     
 }]);
 

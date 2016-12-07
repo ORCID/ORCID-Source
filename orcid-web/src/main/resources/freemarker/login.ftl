@@ -68,8 +68,16 @@
 					                    </#if>   
 					                    <#if (RequestParameters['invalidClaimUrl'])??>
 					                        <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
-					                    </#if>              
-					                </div>              
+					                    </#if>
+					                </div>
+					                <div id="login-deactivated-error" class="alert" style="display:none">
+                                        <span ng-show="showDeactivatedError">
+                                            ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a href="" ng-click="sendReactivationEmail()">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                                        </span>
+                                        <span ng-show="showReactivationSent">
+                                            ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
+                                        </span>
+                                    </div>
 					            </form>
 							</div>
 				            <!-- SOCIAL LOGIN -->					            
