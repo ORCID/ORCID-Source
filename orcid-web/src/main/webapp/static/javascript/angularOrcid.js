@@ -10081,6 +10081,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if(data) {
                     if(data.errors.length != 0) {
                         $scope.authorizationForm = data;
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', $scope.authorizationForm.errors) != -1);
+                        $scope.showReactivationSent = false;
                         $scope.$apply();
                     } else {
                         //Fire google GA event
@@ -10122,7 +10124,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                                 
                 // special handling of deactivation error
                 $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
-                	console.log("register watch");	
                 	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                 	$scope.showReactivationSent = false;
                 }); // initialize the watch                     
@@ -10143,13 +10144,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
-    $scope.sendReactivationEmail = function () {
+    $scope.sendReactivationEmail = function (email) {
         $scope.showDeactivatedError = false;
         $scope.showReactivationSent = true;
         $.ajax({
             url: getBaseUri() + '/sendReactivation.json',
             type: "POST",
-            data: { email: $scope.registrationForm.email.value },
+            data: { email: email },
             dataType: 'json',
         }).fail(function(){
         // something bad is happening!
