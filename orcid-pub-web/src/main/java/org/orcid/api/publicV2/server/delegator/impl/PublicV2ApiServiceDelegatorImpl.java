@@ -533,6 +533,8 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
+        //Set the latest last modified
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(addresses);
         sourceUtils.setSourceName(addresses);
         return Response.ok(addresses).build();
     }

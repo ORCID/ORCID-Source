@@ -971,6 +971,8 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToAddresses(addresses, orcid);
+        //Set the latest last modified
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(addresses);
         sourceUtils.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
