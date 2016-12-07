@@ -5883,8 +5883,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                             newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
                     };
                     worksSrvc.worksValidate(newWorks, function(data) {
-                        for (i in data)
-                            $scope.worksFromBibtex.push(data[i]);
+                        for (i in data) {                        	
+                        	$scope.worksFromBibtex.push(data[i]);
+                        }
                         $scope.$apply();
                     });
                 });
@@ -11153,7 +11154,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         //If type is set always come: "grant_number"
         if (type != null) {
             if(isPartOf){
-                output += om.get("common.part_of") + " ";
+                output += "<span class='italic'>" + om.get("common.part_of") + "</span>&nbsp";
             }
             if (type.value == 'grant') {
                 output += om.get('funding.add.external_id.value.label.grant') + ": ";
