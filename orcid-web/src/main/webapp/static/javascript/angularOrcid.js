@@ -454,7 +454,7 @@ GroupedActivities.prototype.unionCheck = function() {
 var ActSortState = function(groupType) {
     var _self = this;
     _self.type = groupType;    
-    _self.predicateKey = 'title';
+    _self.predicateKey = 'date';
     if (_self.type == 'peerReview') {
         _self.predicateKey = 'groupName';
     }
