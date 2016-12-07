@@ -1029,7 +1029,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     },
                     {
                         type: "newspaper-article",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter")
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper")
                     },
                     {
                         type: "online-resource",
@@ -1148,6 +1148,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         worksToAddIds: null,
 
         getLabelMapping: function(workCategory, workType){
+            console.log("test", workCategory, workType);
             var result = this.labelsMapping.default.types[0];
             var tempI = null;
 
@@ -5775,9 +5776,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     
     $scope.applyLabelWorkType = function() {
         var obj = null;
-        obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
-        $scope.labels = obj;
-        //<@orcid.msg 'manual_work_form_contents.journalTitle'/>
+        $timeout(function() {
+            obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
+            $scope.labels = obj;
+        }, 100);
     };
 
     $scope.sort = function(key) {
@@ -6121,7 +6123,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.addWorkModal = function(data){
-        console.log("addworkmodal data", data);
         if (data == undefined) {
             worksSrvc.getBlankWork(function(data) {
                 $scope.editWork = data;
