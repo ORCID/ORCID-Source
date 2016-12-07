@@ -5690,8 +5690,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                             newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
                     };
                     worksSrvc.worksValidate(newWorks, function(data) {
-                        for (i in data)
-                            $scope.worksFromBibtex.push(data[i]);
+                        for (i in data) {                        	
+                        	$scope.worksFromBibtex.push(data[i]);
+                        }
                         $scope.$apply();
                     });
                 });
