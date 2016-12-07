@@ -55,10 +55,8 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -442,7 +440,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                     educations.getSummaries().add(summary);
                 }
             }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
             activities.setEducations(educations);
         }
 
@@ -458,30 +455,24 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 } else {
                     employments.getSummaries().add(summary);
                 }
-            }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
+            }            
             activities.setEmployments(employments);
         }
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
-        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
+        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);        
         activities.setFundings(fundings);
 
         // Set peer reviews
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);        
         activities.setPeerReviews(peerReviews);
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works works = workManager.groupWorks(workSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
-        activities.setWorks(works);
-
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
+        Works works = workManager.groupWorks(workSummaries, justPublic);        
+        activities.setWorks(works);        
         return activities;
     }    
 
@@ -661,31 +652,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         } 
         
         person.setName(personalDetailsManager.getName(orcid));
-        
         person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
-        
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);    
         return person;
     }
 
@@ -707,29 +679,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-
         person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);
         return person;
     }
 

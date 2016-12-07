@@ -31,7 +31,6 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.SourceClientId;
 import org.orcid.jaxb.model.common_rc3.SourceOrcid;
@@ -162,8 +161,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
             records.getGroupIdRecord().addAll(recordsReturned);
         } else {
             records.setTotal(0);
-        }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(records);
+        }        
         return records;
     }
 

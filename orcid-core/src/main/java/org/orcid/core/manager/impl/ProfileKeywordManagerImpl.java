@@ -35,7 +35,6 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.Keywords;
@@ -96,9 +95,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
             entities = profileKeywordDao.getProfileKeywors(orcid, Visibility.PUBLIC);
         }
         
-        Keywords result = adapter.toKeywords(entities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return adapter.toKeywords(entities);        
     }       
 
     @Override

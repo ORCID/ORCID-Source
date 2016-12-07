@@ -34,7 +34,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
@@ -99,9 +98,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, visibility);
         }
 
-        PersonExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(extIds);
-        return extIds;
+        return jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);        
     }
 
     @Override
