@@ -25,6 +25,7 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc3.Person;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -96,6 +97,6 @@ public interface ProfileEntityManager {
 
     void updateLocale(String orcid, Locale locale);
 
-    void reactivate(String orcid, String givenNames, String familyName, String password);
+    void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility);
 
 }

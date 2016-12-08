@@ -77,6 +77,17 @@
                         </span>
                     </div>
                 </div>
+                <div style="margin-bottom: 20px; margin-top: 10px;">
+                    <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label>
+                    <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+                    <@orcid.privacyToggle
+                        angularModel="register.activitiesVisibilityDefault.visibility"
+                        questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                        clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}"
+                        publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+                        limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+                        privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
+                </div>
                 <div>
                     <div class="relative"  style="margin-bottom: 15px;">
                         <label class="dark-label">${springMacroRequestContext.getMessage("register.labelTermsofUse")} <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span></label>

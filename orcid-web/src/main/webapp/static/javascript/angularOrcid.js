@@ -4033,7 +4033,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-    };    
+    };
     
     $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
@@ -4276,6 +4276,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 
 orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     
+    $scope.privacyHelp = {};
+
+    $scope.toggleClickPrivacyHelp = function(key) {
+        if (!document.documentElement.className.contains('no-touch'))
+            $scope.privacyHelp[key]=!$scope.privacyHelp[key];
+    };
+
+    $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+        $scope.register.activitiesVisibilityDefault.visibility = priv;
+    };
+
     $scope.getReactivation = function(resetParams, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
