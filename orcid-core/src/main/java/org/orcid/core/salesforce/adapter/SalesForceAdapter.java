@@ -69,7 +69,8 @@ public class SalesForceAdapter {
                     salesForceOpportunity.setId(extractOpportunityId(opportunity));
                     JSONObject account = extractObject(opportunity, "Account");
                     salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Name"));
+                    //salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Name"));
+                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Public_Display_Name__c"));
                     opportunityList.add(salesForceOpportunity);
                 }
                 return consortium;
@@ -140,7 +141,8 @@ public class SalesForceAdapter {
         try {
             JSONArray records = results.getJSONArray("records");
             if (records.length() > 0) {
-                return extractString(records.getJSONObject(0), "Name");
+                //return extractString(records.getJSONObject(0), "Name");
+                return extractString(records.getJSONObject(0), "Public_Display_Name__c");
             }
         } catch (JSONException e) {
             throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
@@ -173,6 +175,7 @@ public class SalesForceAdapter {
         } catch (MalformedURLException e) {
             LOGGER.info("Malformed website URL for member: {}", name, e);
         }
+        member.setPublicDisplayName(extractString(record, "Public_Display_Name__c"));
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
         member.setPublicDisplayEmail(extractString(record, "Public_Display_Email__c"));
