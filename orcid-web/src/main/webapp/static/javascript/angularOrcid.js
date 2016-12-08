@@ -973,7 +973,8 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "all",
-                        title: "Title"
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
                     }
                 ]
             }, 
@@ -981,87 +982,108 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "book",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "book-chapter",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookPlaceholder")
                     },
                     {
                         type: "book-review",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "dictionary-entry",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "dissertation",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     },
                     {
                         type: "edited-book",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "encyclopedia-entry",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "journal-article",
-                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
                     },
                     {
                         type: "journal-issue",
-                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
                     },
                     {
                         type: "magazine-article",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticlePlaceholder")
                     },
                     {
                         type: "manual",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "newsletter-article",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletterPlaceholder")
                     },
                     {
                         type: "newspaper-article",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaperPlaceholder")
                     },
                     {
                         type: "online-resource",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "report",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     },
                     {
                         type: "research-tool",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     },
                     {
                         type: "supervised-student-publication",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     },
                     {
                         type: "test",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     },
                     {
                         type: "translation",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "website",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "working-paper",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
                     }
                 ]
             },
@@ -1069,15 +1091,18 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "conference-abstract",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
                     },
                     {
                         type: "conference-paper",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
                     },
                     {
                         type: "conference-poster",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
                     }
                 ]
             },
@@ -1085,19 +1110,23 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "disclosure",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "license",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "patent",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "registered-copyright",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     }
                 ]
             },
@@ -1105,39 +1134,48 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 types: [
                     {
                         type: "artistic-performance",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "data-set",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "invention",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "lecture-speech",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "research-technique",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "spin-off-company",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "standards-and-policy",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "technical-standard",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     },
                     {
                         type: "other",
-                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
                     }
                 ]
             }
@@ -1148,7 +1186,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         worksToAddIds: null,
 
         getLabelMapping: function(workCategory, workType){
-            console.log("test", workCategory, workType);
             var result = this.labelsMapping.default.types[0];
             var tempI = null;
 
@@ -1160,7 +1197,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }
             }
-
             return result;
         },   
         addBibtexJson: function(dw) {
@@ -5768,8 +5804,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexURL = "";
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
-    $scope.labels = {
-        title: "Title"
+    $scope.contentCopy = {
+        titleLabel: "Title",
+        titlePlaceholder: "Add a title"
     };
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
@@ -5778,7 +5815,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         var obj = null;
         $timeout(function() {
             obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
-            $scope.labels = obj;
+            $scope.contentCopy = obj;
         }, 100);
     };
 
