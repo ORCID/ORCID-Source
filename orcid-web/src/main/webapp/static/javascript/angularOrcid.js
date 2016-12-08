@@ -10320,6 +10320,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if(data) {
                     if(data.errors.length != 0) {
                         $scope.authorizationForm = data;
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', $scope.authorizationForm.errors) != -1);
+                        $scope.showReactivationSent = false;
                         $scope.$apply();
                     } else {
                         //Fire google GA event
@@ -10361,7 +10363,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                                 
                 // special handling of deactivation error
                 $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
-                	console.log("register watch");	
                 	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
                 	$scope.showReactivationSent = false;
                 }); // initialize the watch                     
@@ -10382,13 +10383,13 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
-    $scope.sendReactivationEmail = function () {
+    $scope.sendReactivationEmail = function (email) {
         $scope.showDeactivatedError = false;
         $scope.showReactivationSent = true;
         $.ajax({
             url: getBaseUri() + '/sendReactivation.json',
             type: "POST",
-            data: { email: $scope.registrationForm.email.value },
+            data: { email: email },
             dataType: 'json',
         }).fail(function(){
         // something bad is happening!
@@ -10691,6 +10692,8 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
     $scope.scriptsInjected = false; //Flag to show or not the spinner
     $scope.counter = 0; //To hide the spinner when the second script has been loaded, not the first one.
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.showPersonalLogin = function () {        
         $scope.personalLogin = true;        
@@ -10722,6 +10725,26 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
         return false;
     };
+    
+    $scope.showDeactivationError = function() {
+        $scope.showDeactivatedError = true;
+        $scope.showReactivationSent = false;
+        $scope.$apply();
+    };
+
+    $scope.sendReactivationEmail = function () {
+       $scope.showDeactivatedError = false;
+       $scope.showReactivationSent = true;
+       $.ajax({
+           url: getBaseUri() + '/sendReactivation.json',
+           type: "POST",
+           data: { email: $('#userId').val() },
+           dataType: 'json',
+       }).fail(function(){
+       // something bad is happening!
+           console.log("error sending reactivation email");
+       });
+   };
     
 }]);
 
