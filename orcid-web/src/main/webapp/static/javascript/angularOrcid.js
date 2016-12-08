@@ -5783,8 +5783,8 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$controller', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
-                                      function ($scope, $controller, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
+                                      function ($scope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
     $scope.badgesRequested = {};
     $scope.bibtexGenerated = false;
@@ -5827,9 +5827,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$controller', '$compile', '$fil
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
+    /////////////////////// Begin of verified email logic for work
     var emailVerified = false;
-    //var emailValidationViewCtrl = $controller('VerifyEmailCtrl');
-    //console.log('emailValidationViewCtrl', emailValidationViewCtrl);
 
     var showEmailVerificationModal = function(){
         $.colorbox({
@@ -5845,7 +5844,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$controller', '$compile', '$fil
     
     $scope.emailSrvc.getEmails(
         function(data) {
-            /* This foreach will be useful if at some points all the emails are taking in consideration to display the verified modal. At this moment only the primary email matters.
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -5853,13 +5851,55 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$controller', '$compile', '$fil
                     }
                 }
             );
-            */
-            if(data.emails[0].verified === true){
-                emailVerified = true;
-            }
         }
     );
-    
+
+    $scope.verifyEmail = function() {
+        var colorboxHtml = null;
+        $.ajax({
+            url: getBaseUri() + '/account/verifyEmail.json',
+            type: 'get',
+            data:  { "email": $scope.primaryEmail },
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with multi email");
+        });
+        
+        colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+
+        $scope.emailSent = true;
+        $.colorbox({
+            html : colorboxHtml,
+            escKey: true,
+            overlayClose: true,
+            transition: 'fade',
+            close: '',
+            scrolling: false
+                    });
+        $.colorbox.resize({height:"200px", width:"500px"});
+    };
+
+    $scope.closeColorBox = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/delayVerifyEmail.json',
+            type: 'get',
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with multi email");
+        });
+        $.colorbox.close();
+    };
+    /////////////////////// End of verified email logic for work
+
     $scope.applyLabelWorkType = function() {
         var obj = null;
         $timeout(function() {
