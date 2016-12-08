@@ -44,21 +44,21 @@ import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.error_rc3.OrcidError;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.BulkElement;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkBulk;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
+import org.orcid.jaxb.model.record_rc4.BulkElement;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.GroupAble;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
+import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -491,7 +491,7 @@ public class WorkManagerImpl implements WorkManager {
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {

@@ -62,7 +62,7 @@ public class PojoUtil {
         return false;
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.Url url) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.Url url) {
         if (url == null || url.getValue() == null || url.getValue().trim().isEmpty()) return true;
         return false;
     }
@@ -98,7 +98,7 @@ public class PojoUtil {
         return year + "-" + month + '-' + day;
     }
     
-    public static String createDateSortString(org.orcid.jaxb.model.common_rc3.FuzzyDate start, org.orcid.jaxb.model.common_rc3.FuzzyDate end) {
+    public static String createDateSortString(org.orcid.jaxb.model.common_rc4.FuzzyDate start, org.orcid.jaxb.model.common_rc4.FuzzyDate end) {
         String year = "0";
         String month = "0";
         String day = "0";
@@ -140,7 +140,7 @@ public class PojoUtil {
         return true;
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.FuzzyDate date) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.FuzzyDate date) {
         if (date == null) return true;
         if (!isEmpty(date.getDay()))
             return false;
@@ -166,17 +166,17 @@ public class PojoUtil {
         return isEmpty(month.getValue());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.Year year) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.Year year) {
         if (year==null) return true;
         return isEmpty(year.getValue());
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.Day day) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.Day day) {
         if (day==null) return true;
         return isEmpty(day.getValue());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.Month month) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.Month month) {
         if (month==null) return true;
         return isEmpty(month.getValue());
     }
@@ -194,7 +194,7 @@ public class PojoUtil {
         return isEmpty(contributorOrcid.getPath());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.common_rc3.ContributorOrcid contributorOrcid) {
+    public static boolean isEmpty(org.orcid.jaxb.model.common_rc4.ContributorOrcid contributorOrcid) {
         if(contributorOrcid == null) return true;
         return isEmpty(contributorOrcid.getPath());
     }

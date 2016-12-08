@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.springframework.cache.annotation.Cacheable;

@@ -18,8 +18,8 @@ package org.orcid.core.adapter;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public interface JpaJaxbExternalIdentifierAdapter {

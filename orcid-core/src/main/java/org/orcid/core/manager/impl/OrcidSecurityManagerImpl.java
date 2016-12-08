@@ -42,31 +42,31 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.common_rc3.Filterable;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.VisibilityType;
+import org.orcid.jaxb.model.common_rc4.Filterable;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -421,14 +421,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkIsPublic(Filterable filterable) {
-        if (filterable != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+        if(filterable != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(filterable.getVisibility())) {
             throw new OrcidUnauthorizedException("The activity is not public");
         }
     }
 
     @Override
     public void checkIsPublic(Biography biography) {
-        if (biography != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }

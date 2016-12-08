@@ -49,7 +49,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProfileKeywordEntity> getProfileKeywors(String orcid, org.orcid.jaxb.model.common_rc3.Visibility visibility) {
+    public List<ProfileKeywordEntity> getProfileKeywors(String orcid, org.orcid.jaxb.model.common_rc4.Visibility visibility) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
@@ -79,7 +79,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @Transactional
-    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, org.orcid.jaxb.model.common_rc3.Visibility visibility) {
+    public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, org.orcid.jaxb.model.common_rc4.Visibility visibility) {
         Query query = entityManager
                 .createNativeQuery("INSERT INTO profile_keyword (id, date_created, last_modified, profile_orcid, keywords_name, source_id, client_source_id, visibility) VALUES (nextval('keyword_seq'), now(), now(), :orcid, :keywords_name, :source_id, :client_source_id, :keywords_visibility)");
         query.setParameter("orcid", orcid);

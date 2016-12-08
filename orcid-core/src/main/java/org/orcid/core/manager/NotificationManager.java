@@ -26,10 +26,10 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermissions;
-import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
