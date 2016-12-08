@@ -222,7 +222,7 @@ public class MemberV2ApiServiceDelegatorImpl
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtils.setSourceName(record.getActivitiesSummary());
         } 
-
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
 

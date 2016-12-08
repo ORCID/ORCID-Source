@@ -582,7 +582,8 @@ public class PublicV2ApiServiceDelegatorImpl
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtils.setSourceName(record.getActivitiesSummary());
-        }         
+        }
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
 }

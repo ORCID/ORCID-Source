@@ -26,6 +26,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc3.Activity;
 import org.orcid.jaxb.model.record_rc3.Address;
@@ -43,11 +44,31 @@ import org.orcid.jaxb.model.record_rc3.Person;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 
 public class Api2_0_rc3_LastModifiedDatesHelper {
 
+	public static void calculateLastModified(ActivitiesSummary activitiesSummary) {
+		if(activitiesSummary != null) {
+			calculateLastModified(activitiesSummary.getEducations());
+			calculateLastModified(activitiesSummary.getEmployments());
+			calculateLastModified(activitiesSummary.getFundings());
+			calculateLastModified(activitiesSummary.getPeerReviews());
+			calculateLastModified(activitiesSummary.getWorks());
+			
+			LastModifiedDate l1 = activitiesSummary.getEducations() == null ? null : activitiesSummary.getEducations().getLastModifiedDate();
+			LastModifiedDate l2= activitiesSummary.getEmployments() == null ? null : activitiesSummary.getEmployments().getLastModifiedDate();
+			LastModifiedDate l3 = activitiesSummary.getFundings() == null ? null : activitiesSummary.getFundings().getLastModifiedDate();
+			LastModifiedDate l4 = activitiesSummary.getPeerReviews() == null ? null : activitiesSummary.getPeerReviews().getLastModifiedDate();
+			LastModifiedDate l5 = activitiesSummary.getWorks() == null ? null : activitiesSummary.getWorks().getLastModifiedDate();
+			
+			LastModifiedDate globalLatest = calculateLatest(l1, l2, l3, l4, l5);
+			activitiesSummary.setLastModifiedDate(globalLatest);
+		}		
+	}
+	
 	public static void calculateLastModified(ActivitiesContainer actContainerRc3) {
         Collection<? extends Activity> activities = actContainerRc3.retrieveActivities();
         if (activities != null && !activities.isEmpty()) {
@@ -214,7 +235,14 @@ public class Api2_0_rc3_LastModifiedDatesHelper {
 			LastModifiedDate globalLatest = calculateLatest(l1, l2, l3, l4, l5, l6);
 			person.setLastModifiedDate(globalLatest);
 		}
-	}        
+	}
+	
+	public static void calculateLastModified(Record record) {
+		if (record != null) {
+			calculateLastModified(record.getPerson());
+			calculateLastModified(record.getActivitiesSummary());			
+		}
+	}
     
     public static LastModifiedDate calculateLatest(LastModifiedDate ... dates) {
         LastModifiedDate latest = null;
