@@ -57,10 +57,10 @@
       							<li ng-repeat="letter in alphabet track by $index " ng-click="activateLetter(letter)" ng-class="{'active':letter==activeLetter}"><a>{{letter}}</a></li>
     						</ul>
 	                    </div>
-	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter:{ country: by_country} | filter: {researchCommunity: by_researchCommunity} | startsWithLetter : activeLetter | orderBy : 'name' ">
+	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter:{ country: by_country} | filter: {researchCommunity: by_researchCommunity} | startsWithLetter : activeLetter | orderBy : 'publicDisplayName' ">
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
-	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.name}}</a></h2>	                        
+	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.publicDisplayName}}</a></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
