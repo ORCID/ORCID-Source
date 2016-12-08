@@ -67,7 +67,6 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -77,6 +76,7 @@ import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.Keywords;
 import org.orcid.jaxb.model.record_rc3.Name;
@@ -590,7 +590,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
-            orcidMessageUtil.setSourceName(funding);
+            sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
@@ -737,7 +737,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             //Set the numeric id (the table id in the group_id_record table) of the group id
             if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
                 form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
             }
             
@@ -871,10 +871,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.fundingMap(profile);
+    	OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();        
+        return activityCacheManager.fundingMap(orcid, lastModified.getTime());
     }
 
     public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
