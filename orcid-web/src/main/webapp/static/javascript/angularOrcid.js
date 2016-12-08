@@ -29,7 +29,7 @@
  */
 
 /*
- * RANDOM FUNCTIONS
+ * Utility FUNCTIONS
  */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
@@ -104,8 +104,10 @@ function fixZindexIE7(target, zindex){
 
 function emptyTextField(field) {
     if (field != null
-            && field.value != null
-            && field.value.trim() != '') return false;
+        && field.value != null
+        && field.value.trim() != '') {
+        return false;
+    }
     return true;
 }
 
@@ -156,8 +158,7 @@ PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
 PRIVACY.PRIVATE = 'PRIVATE';
 
-var GroupedActivitiesUtil = function() {
-};
+var GroupedActivitiesUtil = function() {};
 
 GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
     var matches = new Array();
@@ -2669,7 +2670,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
 
     $scope.getEmails = function() {
         emailSrvc.getEmails(function() {
-                    if(isIE() == 7) $scope.fixZindexesIE7();
+            if(isIE() == 7) $scope.fixZindexesIE7();
         });
     };
 
@@ -4489,7 +4490,9 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                 for (i in $scope.emailsPojo.emails) {
                     if ($scope.emailsPojo.emails[i].primary) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
-                        if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
+                        if ($scope.emailsPojo.emails[i].verified) {
+                            primeVerified = true;
+                        }
                     };
                 };
                 if (!primeVerified && !getBaseUri().contains("sandbox")) {
@@ -4502,8 +4505,8 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                         transition: 'fade',
                         close: '',
                         scrolling: false
-                                });
-                        $.colorbox.resize();
+                    });
+                    $.colorbox.resize();
                 };
                 $scope.loading = false;
                 $scope.$apply();
@@ -4515,6 +4518,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
     };
 
     $scope.verifyEmail = function() {
+        var colorboxHtml = null;
         $.ajax({
             url: getBaseUri() + '/account/verifyEmail.json',
             type: 'get',
@@ -4528,7 +4532,8 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
             // something bad is happening!
             console.log("error with multi email");
         });
-        var colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+        
+        colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
 
         $scope.emailSent = true;
         $.colorbox({
@@ -5767,49 +5772,82 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
-                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$controller', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
+                                      function ($scope, $controller, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
-    $scope.canReadFiles = false;
-    $scope.showBibtexImportWizard = false;
-    $scope.textFiles = [];
-    $scope.worksFromBibtex = null;
-    $scope.workspaceSrvc = workspaceSrvc;
-    $scope.worksSrvc = worksSrvc;
-    $scope.showBibtex = {};
-    $scope.editTranslatedTitle = false;
-    $scope.types = null;
-    $scope.privacyHelp = {};
-    $scope.moreInfoOpen = false;
-    $scope.moreInfo = {};
-    $scope.editSources = {};
+    $scope.badgesRequested = {};
+    $scope.bibtexGenerated = false;
+    $scope.bibtexExportError = false;
     $scope.bibtexParsingError = false;
+    $scope.bibtexURL = "";
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
-    $scope.showElement = {};
-    $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
-    $scope.workImportWizard = false;
-    $scope.wizardDescExpanded = {};
-    $scope.displayURLPopOver = {};
-    $scope.workType = ['All'];
-    $scope.geoArea = ['All'];
-    $scope.badgesRequested = {};
-    $scope.noLinkFlag = true;
-    $scope.showBibtexExport = false;
-    $scope.generatingBibtex = false;
-    $scope.scriptsLoaded = false;
-    $scope.bibtexGenerated = false;
-    $scope.bibtexURL = "";
-    $scope.bibtexExportError = false;
-    $scope.bibtexURL = '';
+    $scope.canReadFiles = false;
     $scope.contentCopy = {
         titleLabel: "Title",
         titlePlaceholder: "Add a title"
     };
-    
+    $scope.delCountVerify = 0;
+    $scope.displayURLPopOver = {};
+    $scope.editSources = {};
+    $scope.editTranslatedTitle = false;
+    $scope.emailSrvc = emailSrvc;
+    $scope.generatingBibtex = false;
+    $scope.geoArea = ['All'];
+    $scope.moreInfo = {};
+    $scope.moreInfoOpen = false;
+    $scope.noLinkFlag = true;
+    $scope.privacyHelp = {};
+    $scope.scriptsLoaded = false;
+    $scope.showBibtex = {};
+    $scope.showBibtexExport = false;
+    $scope.showBibtexImportWizard = false;
+    $scope.showElement = {};
+    $scope.textFiles = [];
+    $scope.types = null;
+    $scope.wizardDescExpanded = {};
+    $scope.workImportWizard = false;
+    $scope.worksFromBibtex = null;
+    $scope.workspaceSrvc = workspaceSrvc;
+    $scope.worksSrvc = worksSrvc;
+    $scope.workType = ['All'];
+
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    
+    var emailVerified = false;
+    //var emailValidationViewCtrl = $controller('VerifyEmailCtrl');
+    //console.log('emailValidationViewCtrl', emailValidationViewCtrl);
+
+    var showEmailVerificationModal = function(){
+        $.colorbox({
+            html: $compile($('#verify-email-modal').html())($scope),
+            escKey:false,
+            overlayClose:false,
+            transition: 'fade',
+            close: '',
+            scrolling: false
+        });
+        $.colorbox.resize();
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            /* This foreach will be useful if at some points all the emails are taking in consideration to display the verified modal. At this moment only the primary email matters.
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+            */
+            if(data.emails[0].verified === true){
+                emailVerified = true;
+            }
+        }
+    );
     
     $scope.applyLabelWorkType = function() {
         var obj = null;
@@ -6160,18 +6198,22 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.addWorkModal = function(data){
-        if (data == undefined) {
-            worksSrvc.getBlankWork(function(data) {
-                $scope.editWork = data;
-                $scope.$apply(function() {
-                    $scope.loadWorkTypes();
-                    $scope.showAddWorkModal();
+        if(emailVerified === true){
+            if (data == undefined) {
+                worksSrvc.getBlankWork(function(data) {
+                    $scope.editWork = data;
+                    $scope.$apply(function() {
+                        $scope.loadWorkTypes();
+                        $scope.showAddWorkModal();
+                    });
                 });
-            });
-        } else {
-            $scope.editWork = data;            
-            $scope.loadWorkTypes();
-            $scope.showAddWorkModal();
+            } else {
+                $scope.editWork = data;            
+                $scope.loadWorkTypes();
+                $scope.showAddWorkModal();
+            }
+        }else{
+            showEmailVerificationModal();
         }
 
     };
@@ -6181,7 +6223,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        console.log("putWork");
         if ($scope.addingWork) {
             return; // don't process if adding work
         }
