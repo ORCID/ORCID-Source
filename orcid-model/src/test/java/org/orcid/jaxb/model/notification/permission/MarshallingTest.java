@@ -44,6 +44,7 @@ public class MarshallingTest {
 
     private static final String SAMPLE_PATH_RC2 = "/notification_2.0_rc2/samples/notification-permission-2.0_rc2.xml";
     private static final String SAMPLE_PATH_RC3 = "/notification_2.0_rc3/samples/notification-permission-2.0_rc3.xml";
+    private static final String SAMPLE_PATH_RC4 = "/notification_2.0_rc4/samples/notification-permission-2.0_rc4.xml";
 
     @Test
     public void testMarshallingV2_0_RC2() throws JAXBException, IOException, SAXException {
@@ -88,6 +89,31 @@ public class MarshallingTest {
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc3.xsd");
+        StringWriter writer = new StringWriter();
+        marshaller.marshal(notification, writer);
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff diff = new Diff(expected, writer.toString());
+        assertTrue(diff.identical());
+    }
+    
+    @Test
+    public void testMarshallingV2_0_RC4() throws JAXBException, IOException, SAXException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc4");
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream(SAMPLE_PATH_RC4);
+        org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission notification = (org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission) unmarshaller.unmarshal(inputStream);
+        assertNotNull(notification);
+        assertEquals(org.orcid.jaxb.model.notification_rc4.NotificationType.PERMISSION, notification.getNotificationType());
+        assertEquals(2, notification.getItems().getItems().size());
+        assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
+
+        // Back the other way
+        String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH_RC4), "UTF-8");
+        Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
+        expected = pattern.matcher(expected).replaceAll("");
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc4.xsd");
         StringWriter writer = new StringWriter();
         marshaller.marshal(notification, writer);
         XMLUnit.setIgnoreWhitespace(true);

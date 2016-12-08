@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bulk:bulk xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:error="http://www.orcid.org/ns/error" 
+	xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:bulk="http://www.orcid.org/ns/bulk" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.0_rc4.xsd">
+	<error:error>
+		<error:response-code>0</error:response-code>
+		<error:developer-message>error:developer-message0</error:developer-message>
+		<error:user-message>error:user-message0</error:user-message>
+		<error:error-code>0</error:error-code>
+		<error:more-info>http://tempuri.org/0</error:more-info>
+	</error:error>
+	<work:work>
+		<work:title>
+			<common:title>Current treatment of left main coronary artery disease # 1</common:title>
+		</work:title>
+		<work:journal-title>Cor et Vasa</work:journal-title>
+		<work:type>journal-article</work:type>
+		<common:publication-date>
+			<common:year>2015</common:year>
+			<common:month>06</common:month>
+			<common:day>01</common:day>
+		</common:publication-date>
+		<common:external-ids>
+			<common:external-id>
+				<common:external-id-type>doi</common:external-id-type>
+				<common:external-id-value>10.1016/j.crvasa.2015.05.007</common:external-id-value>			
+				<common:external-id-url>http://extId/1</common:external-id-url>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+		</common:external-ids>		
+	</work:work>
+	<work:work>
+		<work:title>
+			<common:title>Current treatment of left main coronary artery disease # 2</common:title>
+		</work:title>
+		<work:journal-title>Cor et Vasa</work:journal-title>
+		<work:type>journal-article</work:type>
+		<common:publication-date>
+			<common:year>2015</common:year>
+			<common:month>06</common:month>
+			<common:day>01</common:day>
+		</common:publication-date>
+		<common:external-ids>
+			<common:external-id>
+				<common:external-id-type>doi</common:external-id-type>
+				<common:external-id-value>10.1016/j.crvasa.2015.05.008</common:external-id-value>			
+				<common:external-id-url>http://extId/2</common:external-id-url>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+		</common:external-ids>
+	</work:work>
+	<error:error>
+		<error:response-code>1</error:response-code>
+		<error:developer-message>error:developer-message1</error:developer-message>
+		<error:user-message>error:user-message1</error:user-message>
+		<error:error-code>1</error:error-code>
+		<error:more-info>http://tempuri.org/1</error:more-info>
+	</error:error>
+</bulk:bulk>

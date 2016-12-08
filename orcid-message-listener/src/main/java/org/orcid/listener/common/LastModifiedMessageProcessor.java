@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;

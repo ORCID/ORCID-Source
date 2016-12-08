@@ -149,6 +149,10 @@
     	<property name="externalVersion" value="2.0_rc3" />
     </bean>
 
+	<bean id="notificationsApiServiceDelegatorRc4" class="org.orcid.api.notifications.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+    	<property name="externalVersion" value="2.0_rc4" />
+    </bean>
+
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     
     <!--  Member_2 API RC1-->
@@ -176,6 +180,15 @@
     <bean id="memberV2ApiServiceImplV2_0_rc3" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc3">    	
         <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorRc3"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorRc3"/>
+    </bean>
+    
+    <!--  Member_2 API RC4-->
+    <bean id="memberV2ApiServiceDelegatorRc4" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="2.0_rc4" />
+    </bean>
+    <bean id="memberV2ApiServiceImplV2_0_rc4" class="org.orcid.api.memberV2.server.MemberV2ApiServiceImplV2_0_rc4">    	
+        <property name="serviceDelegator" ref="memberV2ApiServiceDelegatorRc4"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorRc4"/>
     </bean>
     
     <!--  CERIF API -->
