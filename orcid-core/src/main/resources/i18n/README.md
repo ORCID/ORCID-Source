@@ -100,7 +100,7 @@ If Github deployment was not successful, translated property files can be pushed
 ####Release translations
 Translated properties files are pushed directly to [ORCID-Source master](https://github.com/ORCID/ORCID-Source) by TXGH, so translations become live on QA, Sandbox or Prod during the normal ORCID release process.
 
-##Update existing string(s) -  English only 
+##Update existing string(s) -  English only OR English + other languages
 
 ###Developers
 
@@ -111,7 +111,7 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
         git push origin [branch name]
 
 3. When changes are merged into master, edited strings will be pulled into Transifex automatically and marked as 'Untranslated'.
-3. Add the Transifex Project Maintainer to the Trello card for the fix (create a card if there is not one already) so they are aware of this update.
+3. Add the Transifex Project Maintainer to the Trello card for the fix (create a card if there is not one already) so they are aware of this update. Include the both the key and value for each changed string on the card.
 
 ###Transifex Project Maintainer
 
