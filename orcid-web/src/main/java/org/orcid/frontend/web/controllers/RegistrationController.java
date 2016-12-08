@@ -220,7 +220,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
-    public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "isReactivation", required=false) Boolean isReactivation) {
+    public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
         if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
@@ -235,12 +235,9 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
-        reg.getTermsOfUse().setValue(false);
-        if(isReactivation == null || !isReactivation) {
-        	setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        } else {
-        	setError(reg.getTermsOfUse(), "reactivate.acceptTermsAndConditions");
-        }
+        reg.getTermsOfUse().setValue(false);        
+        setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
+        
 
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
@@ -495,7 +492,7 @@ public class RegistrationController extends BaseController {
     private void termsOfUserValidate(Checkbox termsOfUser) {
         termsOfUser.setErrors(new ArrayList<String>());
         if (termsOfUser.getValue() != true) {
-            setError(termsOfUser, "AssertTrue.registrationForm.acceptTermsAndConditions");
+            setError(termsOfUser, "validations.acceptTermsAndConditions");
         }
     }
 

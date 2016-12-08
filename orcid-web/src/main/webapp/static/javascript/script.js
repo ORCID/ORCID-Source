@@ -816,12 +816,28 @@ bibToWorkTypeMap['techreport'] = [ 'publication', 'report' ];
 bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];
 
 function workExternalIdentifierId(work, id, value) {
+	
+	//Define relationship type based on work type
+	var relationship = 'self';
+	if(id == 'issn') {
+		if(work.workType.value != 'book') {
+			relationship = 'part-of';
+		}
+	} else if(id == 'isbn') {
+		if(work.workType.value == 'book-chapter' || work.workType.value == 'conference-paper') {
+			relationship = 'part-of';
+		}
+	} 
+	
     var ident = {
         workExternalIdentifierId : {
             'value' : value
         },
         workExternalIdentifierType : {
             'value' : id
+        }, 
+        relationship : {
+        	'value' : relationship
         }
     };
     if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
@@ -834,10 +850,9 @@ function populateWorkAjaxForm(bibJson, work) {
 
     // get the bibtex back put it in the citation field
     var bibtex = bibtexParse.toBibtex([ bibJson ]);
-    work.citation.citation.value = bibtex;
-    work.citation.citationType.value = 'bibtex';
-
-    // set the work type based off the entry type
+    work.citation = {'citation': {'value': bibtex},'citationType': {'value': 'bibtex'}}
+    
+    // set the work type based off the entry type    
     if (bibJson.entryType) {
 
         var type = bibJson.entryType.toLowerCase();

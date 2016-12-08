@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
 
 /**
  * 
@@ -37,7 +38,7 @@ import org.orcid.jaxb.model.common_rc4.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
-public class Biography implements Serializable {
+public class Biography implements VisibilityType, Serializable {
     private static final long serialVersionUID = 1L;
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")

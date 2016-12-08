@@ -218,11 +218,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Name name = createName();
         // Check public with any scope
-        orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
+        orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
         name.setVisibility(Visibility.LIMITED);
         try {
             // Check limited with any scope
-            orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
+            orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException ua) {
 
@@ -232,12 +232,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
+        orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
 
         name.setVisibility(Visibility.PRIVATE);
         try {
             // Check private always fail
-            orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
+            orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException ua) {
 
         } catch (Exception e) {
@@ -250,11 +250,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Biography bio = createBiography();
         // Check public with any scope
-        orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
+        orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
         bio.setVisibility(Visibility.LIMITED);
         try {
             // Check limited with any scope
-            orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
+            orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException ua) {
 
@@ -264,12 +264,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
+        orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
 
         bio.setVisibility(Visibility.PRIVATE);
         try {
             // Check private always fail
-            orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
+            orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException ua) {
 
         } catch (Exception e) {
@@ -488,13 +488,15 @@ public class OrcidSecurityManagerTest extends BaseTest {
         for (ScopePathType scope : ScopePathType.values()) {
             if (scopeThatShouldWork.combined().contains(scope)) {
                 try {
-                    orcidSecurityManager.checkPermissions(scope, userOrcid);
+                    orcidSecurityManager.checkClientCanAccessRecord(userOrcid);
+                    orcidSecurityManager.checkScopes(scope);
                 } catch (Exception e) {
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
                 }
             } else {
                 try {
-                    orcidSecurityManager.checkPermissions(scope, userOrcid);
+                    orcidSecurityManager.checkClientCanAccessRecord(userOrcid);
+                    orcidSecurityManager.checkScopes(scope);
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should fail");
                 } catch (AccessControlException ace) {
 
