@@ -41,7 +41,7 @@ function openImportWizardUrl(url) {
         }
     }, 250);
     $.colorbox.close();
-};
+}
 
 function contains(arr, obj) {
     var index = arr.length;
@@ -51,7 +51,7 @@ function contains(arr, obj) {
        }
     }
     return false;
-};
+}
 
 function formatDate(oldDate) {
 	var date = new Date(oldDate);
@@ -65,7 +65,7 @@ function formatDate(oldDate) {
 		day = '0' + day;
 	}
 	return (year + '-' + month + '-' + day);
-};
+}
 
 function getScripts(scripts, callback) {
     var progress = 0;
@@ -77,11 +77,11 @@ function getScripts(scripts, callback) {
     scripts.forEach(function(script) {        
         $.getScript(script, internalCallback);        
     });
-};
+}
 
 function formColorBoxWidth() {
     return isMobile()? '100%': '800px';
-};
+}
 
 function formColorBoxResize() {
     if (isMobile())
@@ -91,7 +91,7 @@ function formColorBoxResize() {
         // however the default div height
         // is auto anyway
         $.colorbox.resize({width:'800px'});
-};
+}
 
 function fixZindexIE7(target, zindex){
     if(isIE() == 7){
@@ -100,19 +100,19 @@ function fixZindexIE7(target, zindex){
             --zindex;
         });
     }
-};
+}
 
 function emptyTextField(field) {
     if (field != null
             && field.value != null
             && field.value.trim() != '') return false;
     return true;
-};
+}
 
 function addComma(str) {
     if (str.length > 0) return str + ', ';
     return str;
-};
+}
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -125,7 +125,7 @@ function removeBadContributors(dw) {
                 dw.contributors.splice(idx,1);
             }
     }
-};
+}
 
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
@@ -134,19 +134,19 @@ function removeBadExternalIdentifiers(dw) {
             dw.workExternalIdentifiers.splice(idx,1);
         }
     }
-};
+}
 
 function isEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-};
+}
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
+}
 
 /*
  * GROUPINGS LOGIC
@@ -222,12 +222,12 @@ var GroupedActivities = function(type) {
     this.activitiesCount = 0;
     this.activePutCode = null;
     this.defaultPutCode = null;
-    this.dateSortString;
+    this.dateSortString = null;
     this.groupId = GroupedActivities.count;
     this.groupDescription = null;
     this.groupType = null;
     this.groupRealId = null;
-    this.title;
+    this.title = null;
 };
 
 GroupedActivities.count = 0;
@@ -279,11 +279,12 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
-GroupedActivities.prototype.consistentVis = function() {	
+GroupedActivities.prototype.consistentVis = function() {
+    var vis = null;
 	if (this.type == GroupedActivities.FUNDING)
-        var vis = this.getDefault().visibility.visibility;
+        vis = this.getDefault().visibility.visibility;
     else
-        var vis = this.getDefault().visibility;
+        vis = this.getDefault().visibility;
 
     for (var idx in this.activities)
     	
@@ -454,7 +455,7 @@ GroupedActivities.prototype.unionCheck = function() {
 var ActSortState = function(groupType) {
     var _self = this;
     _self.type = groupType;    
-    _self.predicateKey = 'title';
+    _self.predicateKey = 'date';
     if (_self.type == 'peerReview') {
         _self.predicateKey = 'groupName';
     }
@@ -963,14 +964,205 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
+        blankWork: null,
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        details: new Object(), // we should think about putting details in the
         groups: new Array(),
-        quickRef: {},
+        labelsMapping: {
+            "default": {
+                types: [
+                    {
+                        type: "all",
+                        title: "Title"
+                    }
+                ]
+            }, 
+            "publication": {
+                types: [
+                    {
+                        type: "book",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "book-chapter",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook")
+                    },
+                    {
+                        type: "book-review",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "dictionary-entry",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "dissertation",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    },
+                    {
+                        type: "edited-book",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "encyclopedia-entry",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "journal-article",
+                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
+                    },
+                    {
+                        type: "journal-issue",
+                        title: om.get("orcid.frontend.manual_work_form_contents.journalTitle")
+                    },
+                    {
+                        type: "magazine-article",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle")
+                    },
+                    {
+                        type: "manual",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "newsletter-article",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter")
+                    },
+                    {
+                        type: "newspaper-article",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper")
+                    },
+                    {
+                        type: "online-resource",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "report",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    },
+                    {
+                        type: "research-tool",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    },
+                    {
+                        type: "supervised-student-publication",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    },
+                    {
+                        type: "test",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    },
+                    {
+                        type: "translation",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "website",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "working-paper",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution")
+                    }
+                ]
+            },
+            "conference": {
+                types: [
+                    {
+                        type: "conference-abstract",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                    },
+                    {
+                        type: "conference-paper",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                    },
+                    {
+                        type: "conference-poster",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference")
+                    }
+                ]
+            },
+            "intellectual_property": {
+                types: [
+                    {
+                        type: "disclosure",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "license",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "patent",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "registered-copyright",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    }
+                ]
+            },
+            "other_output": {
+                types: [
+                    {
+                        type: "artistic-performance",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "data-set",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "invention",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "lecture-speech",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "research-technique",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "spin-off-company",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "standards-and-policy",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "technical-standard",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    },
+                    {
+                        type: "other",
+                        title: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher")
+                    }
+                ]
+            }
+        },
         loading: false,
         loadingDetails: false,
-        blankWork: null,
-        details: new Object(), // we should think about putting details in the
-        worksToAddIds: null,             
+        quickRef: {},
+        worksToAddIds: null,
+
+        getLabelMapping: function(workCategory, workType){
+            console.log("test", workCategory, workType);
+            var result = this.labelsMapping.default.types[0];
+            var tempI = null;
+
+            if( this.labelsMapping[workCategory] != undefined ){
+                tempI = this.labelsMapping[workCategory].types;
+                for( var i = 0; i < tempI.length; i++) {
+                    if( tempI[i].type == workType ) {
+                        result = tempI[i];
+                    }
+                }
+            }
+
+            return result;
+        },   
         addBibtexJson: function(dw) {
             if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                 try {
@@ -5093,17 +5285,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         });
     };
 
-    /*
-    $scope.deleteFundingConfirm = function(funding) {
-        $scope.delFunding = funding;
-
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-    };
-    */
-
     $scope.deleteFundingConfirm = function(putCode, deleteGroup) {
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
@@ -5587,8 +5768,20 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexURL = "";
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
+    $scope.labels = {
+        title: "Title"
+    };
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    
+    $scope.applyLabelWorkType = function() {
+        var obj = null;
+        $timeout(function() {
+            obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
+            $scope.labels = obj;
+        }, 100);
+    };
+
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
@@ -5951,6 +6144,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
+        console.log("putWork");
         if ($scope.addingWork) {
             return; // don't process if adding work
         }
@@ -5958,7 +6152,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
             function(data){
-                console.log("data.errors", data);
                 if (data.errors.length == 0) {
                     if ($scope.bibtextWork == false){
                         $.colorbox.close();
@@ -7856,14 +8049,12 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
         var isOk = true;
         $scope.errors = null;
         if($scope.deprecated_verified === undefined || $scope.deprecated_verified == false){
-            $("#deprecated_orcid").addClass("error");
-            $("#deprecated_orcid").addClass("orcid-red-background-input");
+            $("#deprecated_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
         if($scope.primary_verified === undefined || $scope.primary_verified == false){
-            $("#primary_orcid").addClass("error");
-            $("#primary_orcid").addClass("orcid-red-background-input");
+            $("#primary_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
@@ -10911,31 +11102,33 @@ orcidNgModule.filter('clean', function($filter){
 
 orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
-        var output = '';
-        var ngclass = '';
+        var id = null;
         var isPartOf = false;
+        var link = null;
+        var ngclass = '';
+        var output = '';
+        var type = null;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;        
+            isPartOf = true;        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
         
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
-        var type;
+        id = workExternalIdentifier.workExternalIdentifierId.value;
+        type;
         
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;        
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();
-        	if(isPartOf)
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-        	else 
-        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+            if(isPartOf)
+                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+            else 
+                output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
         
-        var link = null;
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
         	link = workExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type);	
@@ -11048,7 +11241,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
-    	
+    	var id = null;
         var output = '';
         var ngclass = '';
         var isPartOf = false;
@@ -11062,7 +11255,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	isPartOf = true;
         
         if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
         
         if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
@@ -11157,8 +11350,9 @@ orcidNgModule.filter('startsWithLetter', function() {
 
         var filtered = [];
         var letterMatch = new RegExp(letter, 'i');
+        var item = null;
         for (var i = 0; i < items.length; i++) {
-          var item = items[i];
+          item = items[i];
           if (letterMatch.test(item.name.substring(0, 1))) {
             filtered.push(item);
           }
@@ -11491,19 +11685,23 @@ angular.module('ui.multiselect', [])
           }, true);
 
           //watch model change
-          scope.$watch(function () {
-            return modelCtrl.$modelValue;
-          }, function (newVal, oldVal) {
-            //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
-            //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
-            //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
-            if (angular.isDefined(newVal)) {
-              markChecked(newVal);
-              scope.$eval(changeHandler);
-            }
-            getHeaderText();
-            modelCtrl.$setValidity('required', scope.valid());
-          }, true);
+          scope.$watch(
+            function () {
+                return modelCtrl.$modelValue;
+            }, 
+            function (newVal, oldVal) {
+                //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
+                //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
+                //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
+                if (angular.isDefined(newVal)) {
+                  markChecked(newVal);
+                  scope.$eval(changeHandler);
+                }
+                getHeaderText();
+                modelCtrl.$setValidity('required', scope.valid());
+              }, 
+              true
+          );
 
           function parseModel() {
             scope.items.length = 0;
@@ -11555,10 +11753,8 @@ angular.module('ui.multiselect', [])
           };
 
           function selectSingle(item) {
-            if (item.checked) {
-              scope.uncheckAll();
-            } else {
-              scope.uncheckAll();
+          scope.uncheckAll();
+            if (!item.checked) {
               item.checked = !item.checked;
             }
             setModelValue(false);

@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,7 @@ import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc3.VisibilityType;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -83,6 +85,8 @@ import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Works;
+import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc3.Activity;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
@@ -3654,205 +3658,361 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testViewRecordWrongScope() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         Response response = serviceDelegator.viewRecord(ORCID);
-        assertNotNull(response);
+        //Verify everything inside is public
+        Record record = (Record) response.getEntity();
+        assertNotNull(record);
+        assertIsPublic(record.getActivitiesSummary());
+        assertIsPublic(record.getPerson());
     }
     
     @Test
     public void testViewRecordReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewRecord(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewRecord(ORCID);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record);
+        assertIsPublic(record.getActivitiesSummary());
+        assertIsPublic(record.getPerson());
     }
     
     @Test
     public void testViewActivitiesReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewActivities(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+        assertNotNull(as);
+        assertIsPublic(as);
     }
     
     @Test
     public void testViewResearcherUrlsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewResearcherUrls(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewResearcherUrls(ORCID);
+        ResearcherUrls element = (ResearcherUrls) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEmailsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEmails(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEmails(ORCID);
+        Emails element = (Emails) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
+        
     }
     
     @Test
     public void testViewOtherNamesReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewOtherNames(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewOtherNames(ORCID);
+        OtherNames element = (OtherNames) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewExternalIdentifiersReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewExternalIdentifiers(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
+        PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewKeywordsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewKeywords(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewKeywords(ORCID);
+        Keywords element = (Keywords) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewAddressesReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewAddresses(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewAddresses(ORCID);
+        Addresses element = (Addresses) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewBiographyReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewBiography(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewBiography(ORCID);
+        Biography element = (Biography) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewPersonalDetailsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewPersonalDetails(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewPersonalDetails(ORCID);
+        PersonalDetails element = (PersonalDetails) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewPersonReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewPerson(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewPerson(ORCID);
+        Person element = (Person) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewAddressReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewAddress(ORCID, 9L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewAddress(ORCID, 9L);
+        Address element = (Address) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEducationReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEducation(ORCID, 20L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEducation(ORCID, 20L);
+        Education element = (Education) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEducationsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEducations(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEducations(ORCID);
+        Educations element = (Educations) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEducationSummaryReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEducationSummary(ORCID, 20L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEducationSummary(ORCID, 20L);
+        EducationSummary element = (EducationSummary) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEmploymentReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEmployment(ORCID, 17L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEmployment(ORCID, 17L);
+        Employment element = (Employment) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEmploymentsReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEmployments(ORCID);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEmployments(ORCID);
+        Employments element = (Employments) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewEmploymentSummaryReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewEmploymentSummary(ORCID, 17L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+        EmploymentSummary element = (EmploymentSummary) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewExternalIdentifierReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewExternalIdentifier(ORCID, 13L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+        PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewFundingReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewFunding(ORCID, 10L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewFunding(ORCID, 10L);
+        Funding element = (Funding) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewFundingSummaryReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewFundingSummary(ORCID, 10L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewFundingSummary(ORCID, 10L);
+        FundingSummary element = (FundingSummary) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewKeywordReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewKeyword(ORCID, 9L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewKeyword(ORCID, 9L);
+        Keyword element = (Keyword) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewOtherNameReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewOtherName(ORCID, 13L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewOtherName(ORCID, 13L);
+        OtherName element = (OtherName) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewPeerReviewReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        PeerReview element = (PeerReview) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewPeerReviewSummaryReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
-        assertTrue(true);
+        Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
+        PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewResearcherUrlReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewResearcherUrl(ORCID, 13L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        ResearcherUrl element = (ResearcherUrl) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewWorkReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewWork(ORCID, 11L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewWork(ORCID, 11L);
+        Work element = (Work) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
     @Test
     public void testViewWorkSummaryReadPublic() {        
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-        serviceDelegator.viewWorkSummary(ORCID, 11L);
-        assertTrue(true);
+        Response r = serviceDelegator.viewWorkSummary(ORCID, 11L);
+        WorkSummary element = (WorkSummary) r.getEntity();
+        assertNotNull(element);
+        assertIsPublic(element);
     }
     
+    private void assertIsPublic(VisibilityType v) {
+    	assertEquals(Visibility.PUBLIC, v.getVisibility());
+    }
+    
+    private void assertIsPublic(ActivitiesContainer c) {
+    	Collection<? extends Activity> activities = c.retrieveActivities();
+    	for(Activity a : activities) {
+    		assertIsPublic(a);
+    	}
+    }
+    
+    private void assertIsPublic(Addresses elements) {
+    	if(elements == null || elements.getAddress() == null) {
+    		return;    		
+    	}
+    	
+    	for(Address e : elements.getAddress()) {
+    		assertIsPublic(e);
+    	}
+    }
+    
+	private void assertIsPublic(Keywords elements) {
+		if(elements == null || elements.getKeywords() == null) {
+    		return;    		
+    	}
+    	
+    	for(Keyword e : elements.getKeywords()) {
+    		assertIsPublic(e);
+    	}
+	}
+	
+	private void assertIsPublic(ResearcherUrls elements) {
+		if(elements == null || elements.getResearcherUrls() == null) {
+    		return;    		
+    	}
+    	
+    	for(ResearcherUrl e : elements.getResearcherUrls()) {
+    		assertIsPublic(e);
+    	}
+	}
+	
+	private void assertIsPublic(PersonExternalIdentifiers elements) {
+		if(elements == null || elements.getExternalIdentifiers() == null) {
+    		return;    		
+    	}
+    	
+    	for(PersonExternalIdentifier e : elements.getExternalIdentifiers()) {
+    		assertIsPublic(e);
+    	}
+	}
+	
+	private void assertIsPublic(Emails elements) {
+		if (elements == null || elements.getEmails() == null) {
+			return;
+		}
+
+		for (Email e : elements.getEmails()) {
+			assertIsPublic(e);
+		}
+	}
+
+	private void assertIsPublic(OtherNames elements) {
+		if (elements == null || elements.getOtherNames() == null) {
+			return;
+		}
+
+		for (OtherName e : elements.getOtherNames()) {
+			assertIsPublic(e);
+		}
+	}
+
+	private void assertIsPublic(PersonalDetails p) {
+		if (p == null) {
+			return;
+		}
+
+		assertIsPublic(p.getBiography());
+		assertIsPublic(p.getOtherNames());
+		assertIsPublic(p.getName());
+	}
+
+	private void assertIsPublic(Person p) {
+		if (p == null) {
+			return;
+		}
+		assertIsPublic(p.getAddresses());
+		assertIsPublic(p.getBiography());
+		assertIsPublic(p.getEmails());
+		assertIsPublic(p.getExternalIdentifiers());
+		assertIsPublic(p.getKeywords());
+		assertIsPublic(p.getName());
+		assertIsPublic(p.getOtherNames());
+		assertIsPublic(p.getResearcherUrls());
+	}
     @Test
     public void testViewRecord() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
