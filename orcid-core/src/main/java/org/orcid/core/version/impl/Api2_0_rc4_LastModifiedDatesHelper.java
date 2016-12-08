@@ -70,18 +70,20 @@ public class Api2_0_rc4_LastModifiedDatesHelper {
 	}
 	
 	public static void calculateLastModified(ActivitiesContainer actContainerRc4) {
-        Collection<? extends Activity> activities = actContainerRc4.retrieveActivities();
-        if (activities != null && !activities.isEmpty()) {
-            Iterator<? extends Activity> activitiesIterator = activities.iterator();
-            XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
-            while (activitiesIterator.hasNext()) {
-                Activity activity = activitiesIterator.next();
-                if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
-                    latest = activity.getLastModifiedDate().getValue();
-                }
-            }
-            actContainerRc4.setLastModifiedDate(new LastModifiedDate(latest));         
-        }        
+		if(actContainerRc4 != null) {
+	        Collection<? extends Activity> activities = actContainerRc4.retrieveActivities();
+	        if (activities != null && !activities.isEmpty()) {
+	            Iterator<? extends Activity> activitiesIterator = activities.iterator();
+	            XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
+	            while (activitiesIterator.hasNext()) {
+	                Activity activity = activitiesIterator.next();
+	                if (latest.compare(activity.getLastModifiedDate().getValue()) == -1) {
+	                    latest = activity.getLastModifiedDate().getValue();
+	                }
+	            }
+	            actContainerRc4.setLastModifiedDate(new LastModifiedDate(latest));         
+	        }        
+		}
     }        
 
     public static void calculateLastModified(GroupsContainer groupsContainerRc4) {
