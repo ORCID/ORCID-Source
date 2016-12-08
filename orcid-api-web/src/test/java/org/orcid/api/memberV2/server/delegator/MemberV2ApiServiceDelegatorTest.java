@@ -156,18 +156,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test    
     public void testViewActitivies() {
+    	//WORK ON LAST MODIFIED DATES
+    	fail("LAST MODIFIED DATES!!!!");
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
-        
+        assertNotNull(summary.getLastModifiedDate());
+        assertNotNull(summary.getLastModifiedDate().getValue());
         // Check works
         assertNotNull(summary.getWorks());
+        assertNotNull(summary.getWorks().getLastModifiedDate().getValue());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
         boolean foundPrivateWork = false;
         for(WorkGroup group : summary.getWorks().getWorkGroup()) {
-            assertNotNull(group.getWorkSummary());
+        	assertNotNull(group.getLastModifiedDate());
+        	assertNotNull(group.getLastModifiedDate().getValue());
+        	assertNotNull(group.getWorkSummary());
             assertEquals(1, group.getWorkSummary().size());
             WorkSummary work = group.getWorkSummary().get(0);
             assertThat(work.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
