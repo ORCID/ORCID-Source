@@ -23,7 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
+import org.orcid.jaxb.model.notification_rc4.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.transaction.annotation.Transactional;

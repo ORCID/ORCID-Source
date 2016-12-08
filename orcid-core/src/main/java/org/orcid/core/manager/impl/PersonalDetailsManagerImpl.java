@@ -26,17 +26,17 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_rc3.CreatedDate;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.FamilyName;
-import org.orcid.jaxb.model.record_rc3.GivenNames;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.CreditName;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.FamilyName;
+import org.orcid.jaxb.model.record_rc4.GivenNames;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -103,7 +103,6 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         if(otherNames != null && otherNames.getOtherNames() != null) {            
             personalDetails.setOtherNames(otherNames);            
         }                
-        
         return personalDetails;
     }   
     
@@ -146,7 +145,6 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         } else {
             personalDetails.setOtherNames(null);
         }
-        
         return personalDetails;
     }
     

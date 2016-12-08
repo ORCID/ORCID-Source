@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
+import org.orcid.jaxb.model.common_rc4.TranslatedTitle;
 
 public class TranslatedTitleForm implements ErrorsInterface, Required, Serializable {
     private static final long serialVersionUID = 1L;

@@ -444,7 +444,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                                 String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
                                 String listVisibilityValue = researcherUrls.getVisibility() == null ? null : researcherUrls.getVisibility().value();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(listVisibilityValue));
                                 }                                                                
                             }
                             break;
@@ -557,7 +557,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                                 String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
                                 String listVisibilityValue = otherNames.getVisibility() == null ? null : otherNames.getVisibility().value();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(listVisibilityValue));
                                 }                                                                
                             }
                             break;
@@ -618,9 +618,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();                        
             //Save the record name entity
             if(creditName.getVisibility() != null) {
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(creditName.getVisibility().value()));
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(creditName.getVisibility().value()));
             } else {
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
             }            
             recordName.setCreditName(creditName.getContent());            
         }
@@ -678,7 +678,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                                 String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
                                 String listVisibilityValue = keywords.getVisibility() == null ? null : keywords.getVisibility().value();                                                                
                                 if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(listVisibilityValue));
                                 }                                                                
                             }
                             break;
@@ -767,7 +767,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                                 String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();
                                 String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();
                                 if (listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(listVisibilityValue));
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(listVisibilityValue));
                                 }
                             }
                             break;
@@ -855,7 +855,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
                 //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
-                newAddress.setIso2Country(org.orcid.jaxb.model.common_rc3.Iso3166Country.fromValue(country.value()));
+                newAddress.setIso2Country(org.orcid.jaxb.model.common_rc4.Iso3166Country.fromValue(country.value()));
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
@@ -949,15 +949,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {                
                 if (biography.getVisibility() != null) {
-                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(biography.getVisibility().value()));
+                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(biography.getVisibility().value()));
                 } else {                    
-                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(defaultVisibility.value()));
+                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(defaultVisibility.value()));
                 }                
             }  
             
             //Fill the visibility in case it is still null
             if(profileEntity.getBiographyEntity().getVisibility() == null) {
-                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(defaultVisibility.value()));
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(defaultVisibility.value()));
             }
         }
     }
@@ -1361,7 +1361,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return sourceId;        
     }
     
-    private org.orcid.jaxb.model.common_rc3.Visibility getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
+    private org.orcid.jaxb.model.common_rc4.Visibility getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
         Visibility defaultVisibility = elementDefault.getVisibility();
         
         //If the profile is not claimed, set the list visibility
@@ -1378,6 +1378,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
         
-        return org.orcid.jaxb.model.common_rc3.Visibility.fromValue(defaultVisibility.value());
+        return org.orcid.jaxb.model.common_rc4.Visibility.fromValue(defaultVisibility.value());
     }
 }
