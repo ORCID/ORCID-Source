@@ -5913,17 +5913,23 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc
     };
 
     $scope.toggleBulkEdit = function() {
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in worksSrvc.groups)
-                $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-        $scope.showBibtexImportWizard = false;
-        $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;
+
+        if(emailVerified === true){
+            if (!$scope.bulkEditShow) {
+                $scope.bulkEditMap = {};
+                $scope.bulkChecked = false;
+                for (var idx in worksSrvc.groups)
+                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+            };
+            $scope.bulkEditShow = !$scope.bulkEditShow;
+            $scope.showBibtexImportWizard = false;
+            $scope.workImportWizard = false;
+            $scope.showBibtexExport = false;
+        }else{
+            showEmailVerificationModal();
+        }
     };
+
 
     $scope.bulkApply = function(func) {
         for (var idx in worksSrvc.groups)
@@ -6263,7 +6269,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc
                 $scope.loadWorkTypes();
                 $scope.showAddWorkModal();
             }
-        }else{
+        } else {
             showEmailVerificationModal();
         }
 
@@ -6274,42 +6280,46 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc
     };       
 
     $scope.putWork = function(){
-        if ($scope.addingWork) {
-            return; // don't process if adding work
-        }
-        $scope.addingWork = true;
-        $scope.editWork.errors.length = 0;
-        worksSrvc.putWork($scope.editWork,
-            function(data){
-                if (data.errors.length == 0) {
-                    if ($scope.bibtextWork == false){
-                        $.colorbox.close();
-                        $scope.addingWork = false;
+        if(emailVerified === true){
+            if ($scope.addingWork) {
+                return; // don't process if adding work
+            }
+            $scope.addingWork = true;
+            $scope.editWork.errors.length = 0;
+            worksSrvc.putWork($scope.editWork,
+                function(data){
+                    if (data.errors.length == 0) {
+                        if ($scope.bibtextWork == false){
+                            $.colorbox.close();
+                            $scope.addingWork = false;
+                        } else {
+                            $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+                            $scope.bibtextWork = false;
+                            $scope.addingWork = false;
+                            $scope.$apply();
+                            $.colorbox.close();
+                            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        }
                     } else {
-                        $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
-                        $scope.bibtextWork = false;
+                        $scope.editWork = data;                    
+                        commonSrvc.copyErrorsLeft($scope.editWork, data);
+                        
                         $scope.addingWork = false;
                         $scope.$apply();
-                        $.colorbox.close();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        // make sure colorbox is shown if there are errors
+                        if (!($("#colorbox").css("display")=="block")) {
+                            $scope.addWorkModal(data);
+                        }
                     }
-                } else {
-                    $scope.editWork = data;                    
-                    commonSrvc.copyErrorsLeft($scope.editWork, data);
-                    
+                },
+                function() {
+                    // something bad is happening!
                     $scope.addingWork = false;
-                    $scope.$apply();
-                    // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block")) {
-                        $scope.addWorkModal(data);
-                    }
                 }
-            },
-            function() {
-                // something bad is happening!
-                $scope.addingWork = false;
-            }
-        );
+            );
+        } else {
+            showEmailVerificationModal();
+        }
     };
 
     $scope.closeAllMoreInfo = function() {
