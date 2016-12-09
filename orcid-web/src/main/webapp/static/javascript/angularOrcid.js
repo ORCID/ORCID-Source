@@ -5797,8 +5797,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc
     $scope.bulkDeleteSubmit = false;
     $scope.canReadFiles = false;
     $scope.contentCopy = {
-        titleLabel: "Title",
-        titlePlaceholder: "Add a title"
+        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
     };
     $scope.delCountVerify = 0;
     $scope.displayURLPopOver = {};
