@@ -5816,8 +5816,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
     $scope.contentCopy = {
-        titleLabel: "Title",
-        titlePlaceholder: "Add a title"
+        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
     };
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
