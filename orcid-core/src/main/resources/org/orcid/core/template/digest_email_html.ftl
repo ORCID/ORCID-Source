@@ -104,7 +104,9 @@
             	<div><img src="${baseUri}/static/img/request.png">&nbsp;<@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${(notification.idpName)!}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.2' /><a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.institutional_connection.here" /></a><@emailMacros.msg 'email.institutional_connection.3' /><@emailMacros.space />${(notification.source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.4' /><@emailMacros.space /><#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></div>
             </p>
             <#else>
-            ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+            <p>
+            	<div><img src="${baseUri}/static/img/request.png">&nbsp;${(notification.subject)}</div>
+            </p>
             </#if>
 			</#list>
 			</#list>
