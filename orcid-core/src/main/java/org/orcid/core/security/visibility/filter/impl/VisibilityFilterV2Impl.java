@@ -174,7 +174,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     public PersonalDetails filter(PersonalDetails personalDetails, String orcid) {
         if(personalDetails.getName() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getName(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(personalDetails.getName(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setName(null);
             }
@@ -182,7 +182,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         
         if(personalDetails.getBiography() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getBiography(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(personalDetails.getBiography(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setBiography(null);
             }
@@ -236,7 +236,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         // If it is private
         try {
             if (person.getBiography() != null) {
-                orcidSecurityManager.checkVisibility(person.getBiography(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(person.getBiography(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setBiography(null);
@@ -244,7 +244,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
         try {
             if (person.getName() != null) {
-                orcidSecurityManager.checkVisibility(person.getName(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(person.getName(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setName(null);

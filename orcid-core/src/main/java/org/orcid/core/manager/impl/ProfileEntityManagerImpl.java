@@ -893,12 +893,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.getClaimedStatusByEmail(email);
     }
 
-    public void reactivate(String orcid, String givenNames, String familyName, String password) {
+    @Override
+    public void reactivate(String orcid, String givenNames, String familyName, String password, org.orcid.jaxb.model.message.Visibility defaultVisibility) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
         profileEntity.setClaimed(true);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
         RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);

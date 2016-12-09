@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -43,6 +44,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
@@ -102,20 +104,20 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
-    
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
-    
+
     @Override
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
-    
+
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
-    } 
-    
+    }
+
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
@@ -159,27 +161,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
     }
 
+    /**
+    * Check visibility for Biography or Name object
+    * @param visibilityType
+    * @param orcid
+    */
     @Override
-    public void checkVisibility(Name name, String orcid) {
-        if (Visibility.PRIVATE.equals(name.getVisibility())) {
+    public void checkBiographicalVisibility(VisibilityType visibilityType, String orcid) {
+        if (Visibility.PRIVATE.equals(visibilityType.getVisibility())) {
             throw new OrcidVisibilityException();
         }
         boolean hasReadLimitedScope = hasScope(ScopePathType.ORCID_BIO_READ_LIMITED);
         if (!hasReadLimitedScope) {
-            if (Visibility.LIMITED.equals(name.getVisibility())) {
-                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
-            }
-        }
-    }
-
-    @Override
-    public void checkVisibility(Biography biography, String orcid) {
-        if (Visibility.PRIVATE.equals(biography.getVisibility())) {
-            throw new OrcidVisibilityException();
-        }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.ORCID_BIO_READ_LIMITED);
-        if (!hasReadLimitedScope) {
-            if (Visibility.LIMITED.equals(biography.getVisibility())) {
+            if (Visibility.LIMITED.equals(visibilityType.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
@@ -198,14 +192,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Override
     public void checkSource(IdentifierTypeEntity existingEntity) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId(); 
+        String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId();
         if (!Objects.equals(sourceIdOfUpdater, existingEntitySourceId)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);
         }
     }
-    
+
     @Override
     public boolean isAdmin() {
         Authentication authentication = getAuthentication();
@@ -284,11 +278,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return updateScopes;
     }
 
-    private void checkIsCorrectUser(String orcid) {
+    public void checkClientCanAccessRecord(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication == null) {
             throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
+
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        String clientId = sourceManager.retrieveSourceOrcid();
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
             Object principal = userAuthentication.getPrincipal();
@@ -300,16 +297,27 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             } else {
                 throw new OrcidUnauthorizedException("Missing user authentication");
             }
-        } else {
-            // Check if the record is unclaimed and the client is the source
-            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-            Boolean claimed = profile.getClaimed();
-            SourceEntity source = profile.getSource();
-            String clientId = sourceManager.retrieveSourceOrcid();
-            if (!((claimed == null || !claimed) && source != null && clientId.equals(source.getSourceId()))) {
-                throw new OrcidUnauthorizedException("Incorrect token for claimed record");
+        } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
+            throw new IllegalStateException("Non client credential scope found in client request");
+        } 
+    }
+    
+    private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
+        Boolean claimed = profile.getClaimed();
+        SourceEntity source = profile.getSource();
+        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
+    }
+
+    private boolean isNonClientCredentialScope(OAuth2Authentication oAuth2Authentication) {
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+        for (String scopeName : requestedScopes) {
+            ScopePathType scopePathType = ScopePathType.fromValue(scopeName);
+            if (!scopePathType.isClientCreditalScope()) {
+                return true;
             }
         }
+        return false;
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -328,8 +336,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                     }
                 }
 
-                throw new AccessControlException(
-                        "Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
+                throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString()
+                        : ", as it's null!");
             }
         } else {
             throw new IllegalStateException("No security context found. This is bad!");
@@ -361,14 +369,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
-    public void checkPermissions(ScopePathType requiredScope, String orcid) {
-        if (orcid != null) {
-            checkIsCorrectUser(orcid);
-        }
-        checkScopes(requiredScope, orcid);
-    }
-
-    private void checkScopes(ScopePathType requiredScope, String orcid) {
+    public void checkScopes(ScopePathType requiredScope) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<String> requestedScopes = authorizationRequest.getScope();
@@ -424,35 +425,37 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("The activity is not public");
         }
     }
-    
+
     @Override
     public void checkIsPublic(Biography biography) {
         if(biography != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
-    
+
     /**
-     * Checks a record status and throw an exception indicating if the profile have any of the following conditions:
-     * - The record is not claimed and is not old enough nor being accessed by its creator
-     * - It is locked
-     * - It is deprecated
-     * - It is deactivated
+     * Checks a record status and throw an exception indicating if the profile
+     * have any of the following conditions: - The record is not claimed and is
+     * not old enough nor being accessed by its creator - It is locked - It is
+     * deprecated - It is deactivated
      * 
-     * @throws OrcidDeprecatedException in case the account is deprecated
-     * @throws OrcidNotClaimedException in case the account is not claimed
-     * @throws LockedException in the case the account is locked
+     * @throws OrcidDeprecatedException
+     *             in case the account is deprecated
+     * @throws OrcidNotClaimedException
+     *             in case the account is not claimed
+     * @throws LockedException
+     *             in the case the account is locked
      * */
     @Override
     public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
         ProfileEntity profile = null;
-        
+
         try {
             profile = profileEntityCacheManager.retrieve(orcid);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new NoResultException();
         }
-    
+
         // Check if the user record is deprecated
         if(profile.getPrimaryRecord() != null) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
@@ -469,12 +472,13 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             //Let the creator access the profile even if it is not claimed and not old enough
             SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
-            
+
             String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
             String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
-            
-            //If the profile doesn't have source or the current source is not the profile source, throw an exception
-            if(profileSource == null || !Objects.equals(profileSource, currentSource)) {
+
+            // If the profile doesn't have source or the current source is not
+            // the profile source, throw an exception
+            if (profileSource == null || !Objects.equals(profileSource, currentSource)) {
                 throw new OrcidNotClaimedException();
             }                        
         }                
@@ -486,8 +490,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw lockedException;
         }
     }
-        
+
     private boolean isOldEnough(ProfileEntity profile) {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
-    }          
+    }
 }
