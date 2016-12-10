@@ -7,7 +7,7 @@ function IdPSelectUIParms(){
     this.alwaysShow = true;          // If true, this will show results as soon as you start typing
     this.dataSource = '/Shibboleth.sso/DiscoFeed';   // Where to get the data from
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
-    this.defaultLogo = '/static/img/orcid-logo.png';  // Replace with your own logo
+    this.defaultLogo = '/static/img/idp-placeholder-logo.png';  // Replace with your own logo
     this.defaultLogoWidth = 1;
     this.defaultLogoHeight = 1 ;
     

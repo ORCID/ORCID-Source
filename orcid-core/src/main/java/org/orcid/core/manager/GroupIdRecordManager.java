@@ -16,8 +16,9 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
+import java.util.Optional;
 
 public interface GroupIdRecordManager {
 
@@ -30,8 +31,10 @@ public interface GroupIdRecordManager {
     void deleteGroupIdRecord(Long putCode);
 
     GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
+    
+    Optional<GroupIdRecord> findGroupIdRecordByName(String name);
 
     boolean exists(String groupId);
     
-    GroupIdRecord findByGroupId(String groupId);
+    Optional<GroupIdRecord> findByGroupId(String groupId);
 }

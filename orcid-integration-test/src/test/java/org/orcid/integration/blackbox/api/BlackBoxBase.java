@@ -55,8 +55,8 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -411,7 +411,7 @@ public class BlackBoxBase {
         By elementLocation = By.xpath(String.format("//div[@id='names-section']//div[@id='privacy-bar']/ul/li[%s]/a", getPrivacyIndex(visibility)));
         waitForElementVisibility(elementLocation);
         WebElement privacyOption = findElement(elementLocation);
-        ngAwareClick(privacyOption);
+        ngAwareClick(privacyOption, true);
     }    
     
     /**
@@ -458,7 +458,7 @@ public class BlackBoxBase {
 
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
-            BBBUtil.ngAwareClick(webElement, webDriver);
+            BBBUtil.ngAwareClick(webElement, webDriver, true);
         }        
     }
     
@@ -484,7 +484,7 @@ public class BlackBoxBase {
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(keywordsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
-            BBBUtil.ngAwareClick(webElement, webDriver);
+            BBBUtil.ngAwareClick(webElement, webDriver, true);
         }        
     }
     
@@ -505,8 +505,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteKeyword(keyword)']")));
-            waitForAngular();
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteKeyword(keyword)']")));            
         }
     }
     
@@ -529,11 +528,11 @@ public class BlackBoxBase {
         int index = getPrivacyIndex(visibility);
         
         String countriesVisibilityXpath = "//div[@ng-repeat='country in countryForm.addresses']//descendant::div[@id='privacy-bar']/ul/li[" + index + "]/a";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(countriesVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath(countriesVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(countriesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
-            BBBUtil.ngAwareClick(webElement, webDriver);
+        	BBBUtil.ngAwareClick(webElement, webDriver, true);
         }                
     }                
     
@@ -546,7 +545,7 @@ public class BlackBoxBase {
         By emptyInput = By.xpath("(//select[@ng-model='country.iso2Country.value'])[last()]");
         waitForElementVisibility(emptyInput);
         Select input = new Select(findElement(emptyInput));
-        input.selectByValue(countryCode);
+        input.selectByValue(countryCode);        
     }
     
     public static void deleteAddresses() {
@@ -584,7 +583,7 @@ public class BlackBoxBase {
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(researcherUrlsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
-            BBBUtil.ngAwareClick(webElement, webDriver);
+            BBBUtil.ngAwareClick(webElement, webDriver, true);
         }               
     }
     
@@ -657,7 +656,7 @@ public class BlackBoxBase {
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(extIdsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
-            BBBUtil.ngAwareClick(webElement, webDriver);
+            BBBUtil.ngAwareClick(webElement, webDriver, true);
         }        
     }
      

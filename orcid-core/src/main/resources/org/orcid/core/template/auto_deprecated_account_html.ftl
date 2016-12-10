@@ -44,10 +44,7 @@
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"> 
 				<@emailMacros.msg "email.auto_deprecate.8" />             
 		    </p>
-			<hr />
-			<p>
-			   <#include "email_footer_html.ftl"/>
-			</p>
+			<hr />			
 		 </div>
 	 </body>
  </html>

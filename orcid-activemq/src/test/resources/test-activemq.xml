@@ -38,7 +38,7 @@
             <!-- vm transport for intra-jvm communication -->
             <transportConnector name="vm" uri="vm://OrcidBroker"/>
             <!-- tcp for external communication -->
-            <transportConnector name="tcp" uri="tcp://0.0.0.0:61616"/>
+            <transportConnector name="tcp" uri="tcp://0.0.0.0:60606"/>
         </transportConnectors>
  
     </broker>

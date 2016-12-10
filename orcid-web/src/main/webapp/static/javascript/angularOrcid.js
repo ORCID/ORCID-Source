@@ -41,7 +41,7 @@ function openImportWizardUrl(url) {
         }
     }, 250);
     $.colorbox.close();
-};
+}
 
 function contains(arr, obj) {
     var index = arr.length;
@@ -51,7 +51,7 @@ function contains(arr, obj) {
        }
     }
     return false;
-};
+}
 
 function formatDate(oldDate) {
 	var date = new Date(oldDate);
@@ -65,7 +65,7 @@ function formatDate(oldDate) {
 		day = '0' + day;
 	}
 	return (year + '-' + month + '-' + day);
-};
+}
 
 function getScripts(scripts, callback) {
     var progress = 0;
@@ -77,11 +77,11 @@ function getScripts(scripts, callback) {
     scripts.forEach(function(script) {        
         $.getScript(script, internalCallback);        
     });
-};
+}
 
 function formColorBoxWidth() {
     return isMobile()? '100%': '800px';
-};
+}
 
 function formColorBoxResize() {
     if (isMobile())
@@ -91,7 +91,7 @@ function formColorBoxResize() {
         // however the default div height
         // is auto anyway
         $.colorbox.resize({width:'800px'});
-};
+}
 
 function fixZindexIE7(target, zindex){
     if(isIE() == 7){
@@ -100,19 +100,19 @@ function fixZindexIE7(target, zindex){
             --zindex;
         });
     }
-};
+}
 
 function emptyTextField(field) {
     if (field != null
             && field.value != null
             && field.value.trim() != '') return false;
     return true;
-};
+}
 
 function addComma(str) {
     if (str.length > 0) return str + ', ';
     return str;
-};
+}
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -125,7 +125,7 @@ function removeBadContributors(dw) {
                 dw.contributors.splice(idx,1);
             }
     }
-};
+}
 
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
@@ -134,19 +134,19 @@ function removeBadExternalIdentifiers(dw) {
             dw.workExternalIdentifiers.splice(idx,1);
         }
     }
-};
+}
 
 function isEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-};
+}
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
+}
 
 /*
  * GROUPINGS LOGIC
@@ -222,12 +222,12 @@ var GroupedActivities = function(type) {
     this.activitiesCount = 0;
     this.activePutCode = null;
     this.defaultPutCode = null;
-    this.dateSortString;
+    this.dateSortString = null;
     this.groupId = GroupedActivities.count;
     this.groupDescription = null;
     this.groupType = null;
     this.groupRealId = null;
-    this.title;
+    this.title = null;
 };
 
 GroupedActivities.count = 0;
@@ -279,11 +279,12 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
-GroupedActivities.prototype.consistentVis = function() {	
+GroupedActivities.prototype.consistentVis = function() {
+    var vis = null;
 	if (this.type == GroupedActivities.FUNDING)
-        var vis = this.getDefault().visibility.visibility;
+        vis = this.getDefault().visibility.visibility;
     else
-        var vis = this.getDefault().visibility;
+        vis = this.getDefault().visibility;
 
     for (var idx in this.activities)
     	
@@ -452,15 +453,18 @@ GroupedActivities.prototype.unionCheck = function() {
 };
 
 var ActSortState = function(groupType) {
-    this.type = groupType;    
-    this.predicateKey = 'date';
-    if (this.type == 'peerReview') this.predicateKey = 'groupName';
-    this.reverseKey = {};
-    this.reverseKey['date']  = false;
-    this.reverseKey['title'] = false;
-    this.reverseKey['type']  = false;
-    this.reverseKey['groupName']  = false;
-    this.predicate = this.predicateMap[this.type][this.predicateKey];
+    var _self = this;
+    _self.type = groupType;    
+    _self.predicateKey = 'date';
+    if (_self.type == 'peerReview') {
+        _self.predicateKey = 'groupName';
+    }
+    _self.reverseKey = {};
+    _self.reverseKey['date']  = false;
+    _self.reverseKey['title'] = false;
+    _self.reverseKey['type']  = false;
+    _self.reverseKey['groupName']  = false;
+    _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
 };
 
 var sortPredicateMap = {};
@@ -484,12 +488,12 @@ sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
 ActSortState.prototype.sortBy = function(key) {	
-        if (this.predicateKey == key){
-           this.reverse = !this.reverse;
-           this.reverseKey[key] = !this.reverseKey[key];           
-        }
-        this.predicateKey = key;
-        this.predicate = this.predicateMap[this.type][key];
+    if (this.predicateKey == key){
+       this.reverse = !this.reverse;
+       this.reverseKey[key] = !this.reverseKey[key];           
+    }
+    this.predicateKey = key;
+    this.predicate = this.predicateMap[this.type][key];
 };
 
 
@@ -960,14 +964,241 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
+        blankWork: null,
         constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        details: new Object(), // we should think about putting details in the
         groups: new Array(),
-        quickRef: {},
+        labelsMapping: {
+            "default": {
+                types: [
+                    {
+                        type: "all",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+                    }
+                ]
+            }, 
+            "publication": {
+                types: [
+                    {
+                        type: "book",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "book-chapter",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookPlaceholder")
+                    },
+                    {
+                        type: "book-review",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "dictionary-entry",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "dissertation",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "edited-book",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "encyclopedia-entry",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "journal-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+                    },
+                    {
+                        type: "journal-issue",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+                    },
+                    {
+                        type: "magazine-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticlePlaceholder")
+                    },
+                    {
+                        type: "manual",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "newsletter-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletterPlaceholder")
+                    },
+                    {
+                        type: "newspaper-article",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaperPlaceholder")
+                    },
+                    {
+                        type: "online-resource",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "report",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "research-tool",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "supervised-student-publication",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "test",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    },
+                    {
+                        type: "translation",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "website",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "working-paper",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+                    }
+                ]
+            },
+            "conference": {
+                types: [
+                    {
+                        type: "conference-abstract",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    },
+                    {
+                        type: "conference-paper",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    },
+                    {
+                        type: "conference-poster",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+                    }
+                ]
+            },
+            "intellectual_property": {
+                types: [
+                    {
+                        type: "disclosure",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "license",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "patent",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "registered-copyright",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    }
+                ]
+            },
+            "other_output": {
+                types: [
+                    {
+                        type: "artistic-performance",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "data-set",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "invention",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "lecture-speech",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "research-technique",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "spin-off-company",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "standards-and-policy",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "technical-standard",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    },
+                    {
+                        type: "other",
+                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+                    }
+                ]
+            }
+        },
         loading: false,
         loadingDetails: false,
-        blankWork: null,
-        details: new Object(), // we should think about putting details in the
-        worksToAddIds: null,             
+        quickRef: {},
+        worksToAddIds: null,
+
+        getLabelMapping: function(workCategory, workType){
+            var result = this.labelsMapping.default.types[0];
+            var tempI = null;
+
+            if( this.labelsMapping[workCategory] != undefined ){
+                tempI = this.labelsMapping[workCategory].types;
+                for( var i = 0; i < tempI.length; i++) {
+                    if( tempI[i].type == workType ) {
+                        result = tempI[i];
+                    }
+                }
+            }
+            return result;
+        },   
         addBibtexJson: function(dw) {
             if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
                 try {
@@ -1268,7 +1499,6 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
         getUniqueDois : function(putCode){
         	var dois = [];            	
         	var group = worksSrvc.getGroup(putCode);
-        	
         	for (var idx in group.activities) {            		
         		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
         			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
@@ -3122,7 +3352,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.newElementDefaultVisibility = null;
     $scope.scrollTop = 0;
     $scope.commonSrvc = commonSrvc;
-    
+        
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3252,7 +3482,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }
     };
     
-    $scope.openEditModal = function(){    	
+    $scope.openEditModal = function(){
     	$scope.bulkEditShow = false;    	
         $.colorbox({
             scrolling: true,
@@ -3839,7 +4069,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-    };    
+    };
     
     $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
@@ -4082,6 +4312,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
 
 orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     
+    $scope.privacyHelp = {};
+
+    $scope.toggleClickPrivacyHelp = function(key) {
+        if (!document.documentElement.className.contains('no-touch'))
+            $scope.privacyHelp[key]=!$scope.privacyHelp[key];
+    };
+
+    $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+        $scope.register.activitiesVisibilityDefault.visibility = priv;
+    };
+
     $scope.getReactivation = function(resetParams, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -5091,17 +5332,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         });
     };
 
-    /*
-    $scope.deleteFundingConfirm = function(funding) {
-        $scope.delFunding = funding;
-
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-    };
-    */
-
     $scope.deleteFundingConfirm = function(putCode, deleteGroup) {
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
@@ -5585,8 +5815,21 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.bibtexURL = "";
     $scope.bibtexExportError = false;
     $scope.bibtexURL = '';
+    $scope.contentCopy = {
+        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+    };
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    
+    $scope.applyLabelWorkType = function() {
+        var obj = null;
+        $timeout(function() {
+            obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
+            $scope.contentCopy = obj;
+        }, 100);
+    };
+
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
@@ -5688,8 +5931,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                             newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
                     };
                     worksSrvc.worksValidate(newWorks, function(data) {
-                        for (i in data)
-                            $scope.worksFromBibtex.push(data[i]);
+                        for (i in data) {                        	
+                        	$scope.worksFromBibtex.push(data[i]);
+                        }
                         $scope.$apply();
                     });
                 });
@@ -5948,16 +6192,19 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        if ($scope.addingWork) return; // don't process if adding work
+        console.log("putWork");
+        if ($scope.addingWork) {
+            return; // don't process if adding work
+        }
         $scope.addingWork = true;
         $scope.editWork.errors.length = 0;
         worksSrvc.putWork($scope.editWork,
-            function(data){        	    
+            function(data){
                 if (data.errors.length == 0) {
-                	if ($scope.bibtextWork == false){
-                		$.colorbox.close();
-                		$scope.addingWork = false;
-                	} else {
+                    if ($scope.bibtextWork == false){
+                        $.colorbox.close();
+                        $scope.addingWork = false;
+                    } else {
                         $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
                         $scope.bibtextWork = false;
                         $scope.addingWork = false;
@@ -5972,14 +6219,14 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     $scope.addingWork = false;
                     $scope.$apply();
                     // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block"))
+                    if (!($("#colorbox").css("display")=="block")) {
                         $scope.addWorkModal(data);
+                    }
                 }
             },
             function() {
                 // something bad is happening!
                 $scope.addingWork = false;
-                console.log("error fetching works");
             }
         );
     };
@@ -6197,8 +6444,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.isValidClass = function (cur) {
-        if (cur === undefined || cur == null) return '';
         var valid = true;
+        if (cur === undefined || cur == null) {
+            return '';
+        }
         if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
         if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
         return valid ? '' : 'text-error';
@@ -6394,10 +6643,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         peerReviewSrvc.postPeerReview($scope.editPeerReview,
             function(data){        	    
                 if (data.errors.length == 0) {
-                	    $scope.addingPeerReview = false;
-                        $scope.$apply();
-                        $.colorbox.close();
-                        $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
+            	    $scope.addingPeerReview = false;
+                    $scope.$apply();
+                    $.colorbox.close();
+                    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
                 } else {
                     $scope.editPeerReview = data;
                     commonSrvc.copyErrorsLeft($scope.editPeerReview, data);
@@ -6565,13 +6814,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
+        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        var maxSize = 100;
+        
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
-        var peerReview = peerReviewSrvc.getPeerReview(putCode);
+        
         if (peerReview.subjectName)
             $scope.fixedTitle = peerReview.subjectName.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
+        else {
+            $scope.fixedTitle = '';
+        }
+        
         if($scope.fixedTitle.length > maxSize)
             $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
         $.colorbox({
@@ -7843,14 +8097,12 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
         var isOk = true;
         $scope.errors = null;
         if($scope.deprecated_verified === undefined || $scope.deprecated_verified == false){
-            $("#deprecated_orcid").addClass("error");
-            $("#deprecated_orcid").addClass("orcid-red-background-input");
+            $("#deprecated_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
         if($scope.primary_verified === undefined || $scope.primary_verified == false){
-            $("#primary_orcid").addClass("error");
-            $("#primary_orcid").addClass("orcid-red-background-input");
+            $("#primary_orcid").addClass("error orcid-red-background-input");
             isOk = false;
         }
 
@@ -9966,6 +10218,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showLimitedIcon = false;    
     $scope.showUpdateIcon = false;    
     $scope.gaString = null;
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.model = {
 		key: orcidVar.recaptchaKey
@@ -10073,6 +10327,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if(data) {
                     if(data.errors.length != 0) {
                         $scope.authorizationForm = data;
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', $scope.authorizationForm.errors) != -1);
+                        $scope.showReactivationSent = false;
                         $scope.$apply();
                     } else {
                         //Fire google GA event
@@ -10111,6 +10367,12 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
                 $scope.$apply();
+                                
+                // special handling of deactivation error
+                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                	$scope.showReactivationSent = false;
+                }); // initialize the watch                     
             }
         }).fail(function() {
             console.log("An error occured initializing the registration form.");
@@ -10128,6 +10390,20 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.register();
     };
 
+    $scope.sendReactivationEmail = function (email) {
+        $scope.showDeactivatedError = false;
+        $scope.showReactivationSent = true;
+        $.ajax({
+            url: getBaseUri() + '/sendReactivation.json',
+            type: "POST",
+            data: { email: email },
+            dataType: 'json',
+        }).fail(function(){
+        // something bad is happening!
+            console.log("error sending reactivation email");
+        });
+    };
+    
     $scope.register = function() {
         if($scope.enablePersistentToken) {
             $scope.registrationForm.persistentTokenEnabled=true;
@@ -10432,6 +10708,8 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
     $scope.scriptsInjected = false; //Flag to show or not the spinner
     $scope.counter = 0; //To hide the spinner when the second script has been loaded, not the first one.
+    $scope.showDeactivatedError = false;
+    $scope.showReactivationSent = false;
     
     $scope.showPersonalLogin = function () {        
         $scope.personalLogin = true;        
@@ -10463,6 +10741,26 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
         return false;
     };
+    
+    $scope.showDeactivationError = function() {
+        $scope.showDeactivatedError = true;
+        $scope.showReactivationSent = false;
+        $scope.$apply();
+    };
+
+    $scope.sendReactivationEmail = function () {
+       $scope.showDeactivatedError = false;
+       $scope.showReactivationSent = true;
+       $.ajax({
+           url: getBaseUri() + '/sendReactivation.json',
+           type: "POST",
+           data: { email: $('#userId').val() },
+           dataType: 'json',
+       }).fail(function(){
+       // something bad is happening!
+           console.log("error sending reactivation email");
+       });
+   };
     
 }]);
 
@@ -10868,31 +11166,33 @@ orcidNgModule.filter('clean', function($filter){
 
 orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
-        var output = '';
-        var ngclass = '';
+        var id = null;
         var isPartOf = false;
+        var link = null;
+        var ngclass = '';
+        var output = '';
+        var type = null;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;        
+            isPartOf = true;        
         if (workExternalIdentifier == null) return output;
         if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
         
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
-        var type;
+        id = workExternalIdentifier.workExternalIdentifierId.value;
+        type;
         
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;        
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();
-        	if(isPartOf)
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-        	else 
-        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+            if(isPartOf)
+                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+            else 
+                output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
         
-        var link = null;
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
         	link = workExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type);	
@@ -10923,42 +11223,53 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 //Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
-    	
+    	var isPartOf = false;
+        var link = null;
     	var ngclass = '';
-    	var output = '';
+        var output = '';
+        var value = null;        
 
-        if (externalIdentifier == null) return output;
-        
+        if (externalIdentifier == null) {
+            return output;
+        }
+
+        if(externalIdentifier.relationship != null && externalIdentifier.relationship.value == 'part-of') {
+            isPartOf = true;     
+        }
+
         //If type is set always come: "grant_number"
         if (type != null) {
-        	if (type.value == 'grant') {
-        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
-        	} else if (type.value == 'contract') {
-        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
-        	} else {
-        		output += om.get('funding.add.external_id.value.label.award') + ": ";
-        	}
+            if(isPartOf){
+                output += "<span class='italic'>" + om.get("common.part_of") + "</span>&nbsp";
+            }
+            if (type.value == 'grant') {
+                output += om.get('funding.add.external_id.value.label.grant') + ": ";
+            } else if (type.value == 'contract') {
+                output += om.get('funding.add.external_id.value.label.contract') + ": ";
+            } else {
+                output += om.get('funding.add.external_id.value.label.award') + ": ";
+            }
+            
         }         
         
-        var value = null;        
         if(externalIdentifier.value != null){
-        	value = externalIdentifier.value.value;
+            value = externalIdentifier.value.value;
         }
         
-        var link = null;
-        if(externalIdentifier.url != null)
+        if(externalIdentifier.url != null) {
             link = externalIdentifier.url.value;
-       
+        }
+ 
         if(link != null) {
-        	
         	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
         	} else {
         		if(type != null) {
-        			
-        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			if (moreInfo == false || typeof moreInfo == 'undefined') {
+                        ngclass = 'truncate-anchor';
+                    }
         			
         			if(type.value == 'grant') {
         				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
@@ -10987,15 +11298,14 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 				  </div>';
         }
         
-        //if (length > 1 && !last) output = output + ',';
-        	return output;
-    	};
+        return output;
+    };
 }]);
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
-    	
+    	var id = null;
         var output = '';
         var ngclass = '';
         var isPartOf = false;
@@ -11009,7 +11319,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	isPartOf = true;
         
         if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
         
         if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
@@ -11104,8 +11414,9 @@ orcidNgModule.filter('startsWithLetter', function() {
 
         var filtered = [];
         var letterMatch = new RegExp(letter, 'i');
+        var item = null;
         for (var i = 0; i < items.length; i++) {
-          var item = items[i];
+          item = items[i];
           if (letterMatch.test(item.name.substring(0, 1))) {
             filtered.push(item);
           }
@@ -11200,15 +11511,15 @@ orcidNgModule.directive('focusMe', function($timeout) {
     return {
       scope: { trigger: '=focusMe' },
       link: function(scope, element) {
-        scope.$watch('trigger', function(value) {
-          if(value === true) { 
-            //console.log('trigger',value);
-            //$timeout(function() {
-              element[0].focus();
-              scope.trigger = false;
-            //});
-          }
-        });
+        $timeout( //[fn], [delay], [invokeApply], [Pass]
+            function(){
+                if (scope.trigger) {
+                    element[0].focus();
+                    scope.trigger = false;
+                }
+            },
+            1000
+        );
       }
     };
 });
@@ -11438,19 +11749,23 @@ angular.module('ui.multiselect', [])
           }, true);
 
           //watch model change
-          scope.$watch(function () {
-            return modelCtrl.$modelValue;
-          }, function (newVal, oldVal) {
-            //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
-            //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
-            //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
-            if (angular.isDefined(newVal)) {
-              markChecked(newVal);
-              scope.$eval(changeHandler);
-            }
-            getHeaderText();
-            modelCtrl.$setValidity('required', scope.valid());
-          }, true);
+          scope.$watch(
+            function () {
+                return modelCtrl.$modelValue;
+            }, 
+            function (newVal, oldVal) {
+                //when directive initialize, newVal usually undefined. Also, if model value already set in the controller
+                //for preselected list then we need to mark checked in our scope item. But we don't want to do this every time
+                //model changes. We need to do this only if it is done outside directive scope, from controller, for example.
+                if (angular.isDefined(newVal)) {
+                  markChecked(newVal);
+                  scope.$eval(changeHandler);
+                }
+                getHeaderText();
+                modelCtrl.$setValidity('required', scope.valid());
+              }, 
+              true
+          );
 
           function parseModel() {
             scope.items.length = 0;
@@ -11502,10 +11817,8 @@ angular.module('ui.multiselect', [])
           };
 
           function selectSingle(item) {
-            if (item.checked) {
-              scope.uncheckAll();
-            } else {
-              scope.uncheckAll();
+          scope.uncheckAll();
+            if (!item.checked) {
               item.checked = !item.checked;
             }
             setModelValue(false);

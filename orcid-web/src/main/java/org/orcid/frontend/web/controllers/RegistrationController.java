@@ -81,7 +81,7 @@ import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -207,34 +207,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;    
     
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
-
-    public void setNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
-    }
-
-    public void setEncryptionManager(EncryptionManager encryptionManager) {
-        this.encryptionManager = encryptionManager;
-    }
-
-    public void setRegistrationManager(RegistrationManager registrationManager) {
-        this.registrationManager = registrationManager;
-    }
-
-    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
-        this.orcidSearchManager = orcidSearchManager;
-    }
-
-    public OrcidSearchManager getOrcidSearchManager() {
-        return orcidSearchManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
-
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
@@ -263,8 +235,9 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
-        reg.getTermsOfUse().setValue(false);
-        setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
+        reg.getTermsOfUse().setValue(false);        
+        setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
+        
 
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
@@ -519,7 +492,7 @@ public class RegistrationController extends BaseController {
     private void termsOfUserValidate(Checkbox termsOfUser) {
         termsOfUser.setErrors(new ArrayList<String>());
         if (termsOfUser.getValue() != true) {
-            setError(termsOfUser, "AssertTrue.registrationForm.acceptTermsAndConditions");
+            setError(termsOfUser, "validations.acceptTermsAndConditions");
         }
     }
 
@@ -551,17 +524,27 @@ public class RegistrationController extends BaseController {
             //Validate duplicates 
             //If email exists
             if(emailManager.emailExists(emailAddress)) {
+            	String orcid = emailManager.findOrcidIdByEmail(emailAddress);
+            	String[] args = { emailAddress };
                 //If it is claimed, should return a duplicated exception
-                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                    
-                    String[] codes = { "orcid.frontend.verify.duplicate_email" };
-                    String[] args = { emailAddress };
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                  	                	                	
+                	String[] codes = null;
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                    } else {
+                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                    }                                        
                     mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
                 } else {
-                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception
-                    if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		String[] codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));
+                	} else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                		//If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                		String resendUrl = createResendClaimUrl(emailAddress, request);
                         String[] codes = { "orcid.frontend.verify.unclaimed_email" };
-                        String[] args = { emailAddress };
-                        mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                        args = new String[] { emailAddress, resendUrl };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
                     } else {
                         LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
                     }
@@ -1106,10 +1089,10 @@ public class RegistrationController extends BaseController {
 
     public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave,
             boolean usedCaptchaVerification) {
+    	String unencryptedPassword = profileToSave.getPassword();
         profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
-        String orcidId = profileToSave.getOrcidIdentifier().getPath();
-        String password = profileToSave.getPassword();
-        logUserIn(request, response, orcidId, password);
+        String orcidId = profileToSave.getOrcidIdentifier().getPath();        
+        logUserIn(request, response, orcidId, unencryptedPassword);
     }
 
     public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
@@ -1218,7 +1201,11 @@ public class RegistrationController extends BaseController {
         String orcid = emailManager.findOrcidIdByEmail(email);
         LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
-        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
+        // Reactivate user
+        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
+                reactivation.getActivitiesVisibilityDefault().getVisibility());
+        // Verify email used to reactivate
+        emailManager.verifyEmail(email);
         logUserIn(request, response, orcid, password);
     }
 }

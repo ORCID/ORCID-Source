@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record_rc4.Record;
 
 /**
  * 

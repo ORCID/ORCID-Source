@@ -33,12 +33,12 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.PeerReviewType;
+import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_rc4.Role;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -206,7 +206,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
                     
                     //Set the numeric id (the table id in the group_id_record table) of the group id
                     if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                        GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                        GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
                         form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
                     }                    
                     

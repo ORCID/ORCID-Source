@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**

@@ -97,10 +97,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
-        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4442");
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
-        boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
+        boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
@@ -133,34 +132,34 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
         assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, a.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
         assertEquals(3, profile.getExternalIdentifiers().size());
         for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, e.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, e.getVisibility());
         }
         assertNotNull(profile.getKeywords());
         assertEquals(3, profile.getKeywords().size());
         for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, k.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, k.getVisibility());
         }
         
         assertNotNull(profile.getOtherNames());
         assertEquals(3, profile.getOtherNames().size());
         for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, o.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, o.getVisibility());
         }
         
         assertNotNull(profile.getResearcherUrls());
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, r.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, r.getVisibility());
         }        
     }
     

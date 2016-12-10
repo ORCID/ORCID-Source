@@ -41,7 +41,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
@@ -221,6 +221,10 @@ public class WorksControllerTest extends BaseControllerTest {
         wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
         if(!PojoUtil.isEmpty(work.getPutCode())) {
             work.setPutCode(Text.valueOf(""));
+        }
+        
+        if(work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
+        	work.getCitation().getCitation().setValue("test");
         }
         
         work = worksController.postWork(null, work);

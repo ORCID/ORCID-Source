@@ -29,7 +29,7 @@ import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Member;
 
