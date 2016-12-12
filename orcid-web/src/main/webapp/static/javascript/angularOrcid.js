@@ -11508,18 +11508,16 @@ orcidNgModule.filter('startsWithLetter', function() {
 /*
  * For modal with email verification validation
  */
-$("*").on("click",function(){console.log($(this));});
 orcidNgModule.directive(
     'modalEmailUnVerified', 
     [
         '$compile',
         '$timeout',
         function( $compile, $timeout ) {
-            function initModal( scope, element ){
-                console.log("element", element, element.parent(), element.find('.lightbox-container'));
-                $(element).colorbox(
+            var openModal = function( scope ){
+                $.colorbox(
                     {
-                        html : $compile($('#modal-email-unverified').html('<div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>workspace.your_primary_email</h4>workspace.ensure_future_access<br /><br /><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">workspace.send_verification</button><a class="cancel-option inner-row" ng-click="closeColorBox()">freemarker.btncancel</a></div></div>'))(scope),
+                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>workspace.your_primary_email</h4>workspace.ensure_future_access<br /><br /><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">workspace.send_verification</button><a class="cancel-option inner-row" ng-click="closeColorBox()">freemarker.btncancel</a></div></div></div>'))(scope),
                         escKey: true,
                         overlayClose: true,
                         transition: 'fade',
@@ -11527,20 +11525,26 @@ orcidNgModule.directive(
                         scrolling: false
                     }
                 );
-                $(element).colorbox.resize({height:"200px", width:"500px"});
-                $timeout(
-                    function() {
-                        //element.find('.lightbox-container').triggerHandler('click');
-                        //angular.element('#MyButtonTest').triggerHandler('click');
-                        //scope.$apply;
-                    }, 
-                    1000
-                );
+                $.colorbox.resize({height:"200px", width:"500px"});
             }
 
+            var closeModal = function(){
+                $.ajax({
+                    url: getBaseUri() + '/account/delayVerifyEmail.json',
+                    type: 'get',
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function(data) {
+                        //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with multi email");
+                });
+                $.colorbox.close();
+            }
 
             function link( scope, element, attrs ) {
-                initModal( scope, element );
+                openModal( scope );
                 //scope.$apply();
 
                 scope.loading = true;
@@ -11577,18 +11581,7 @@ orcidNgModule.directive(
                 };
     */
                 scope.closeColorBox = function() {
-                    $.ajax({
-                        url: getBaseUri() + '/account/delayVerifyEmail.json',
-                        type: 'get',
-                        contentType: 'application/json;charset=UTF-8',
-                        success: function(data) {
-                            //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
-                        }
-                    }).fail(function() {
-                        // something bad is happening!
-                        console.log("error with multi email");
-                    });
-                    $.colorbox.close();
+                    closeModal();
                 };
 
                 scope.emailSent = false;
@@ -11598,7 +11591,7 @@ orcidNgModule.directive(
 
             return {
                 link: link,
-                template: '<div class="lightbox-container" id="modal-email-unverified"></div>',
+                template: '<div id="modal-email-unverified-container"></div>',
                 transclude: true
             };
         }
