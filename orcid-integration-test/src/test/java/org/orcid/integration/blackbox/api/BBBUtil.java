@@ -141,9 +141,12 @@ public class BBBUtil {
         actions.moveToElement(webElement).perform();
         
         if(hidePopOvers) {
-	        List<WebElement> visibilityElements = webDriver.findElements(By.className("popover-help-container"));
-	        for (WebElement popOver : visibilityElements) {
-	        	executeJavaScript("arguments[0].setAttribute('class','hide')", popOver, webDriver);	        	
+        	//Hide all popover tooltip 
+	        List<WebElement> visibilityElements = webDriver.findElements(By.className("popover"));
+	        for (WebElement popOver : visibilityElements) {	        	
+	        	if(popOver.isDisplayed()) {
+	        		executeJavaScript("arguments[0].setAttribute('class','hide')", popOver, webDriver);
+	        	}
 	        } 
         }
         
