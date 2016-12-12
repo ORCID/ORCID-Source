@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -58,7 +59,7 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes(null).getStatus(), 200);
         Response r = service.viewIdentifierTypes(null);
         @SuppressWarnings("unchecked")
-        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
+        Collection<IdentifierType> types = (Collection<IdentifierType>) r.getEntity();
         Boolean found = false;
         for (IdentifierType t : types){
             if (t.getName().equals("doi")){
@@ -74,7 +75,7 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes("es").getStatus(), 200);
         Response r = service.viewIdentifierTypes("es");
         @SuppressWarnings("unchecked")
-        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
+        Collection<IdentifierType> types = (Collection<IdentifierType>) r.getEntity();
         Boolean found = false;
         for (IdentifierType t : types){
             if (t.getName().equals("doi")){
