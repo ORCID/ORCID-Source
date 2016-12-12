@@ -60,7 +60,8 @@ public class AddressTest extends BlackBoxBaseRC4 {
     
     @BeforeClass
     public static void setup(){
-        signin();        
+        signin();
+        showMyOrcidPage();
         openEditAddressModal();  
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
