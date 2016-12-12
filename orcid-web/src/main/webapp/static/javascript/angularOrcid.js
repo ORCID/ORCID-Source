@@ -5783,8 +5783,8 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
-                                      function ($scope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
+                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
     $scope.badgesRequested = {};
     $scope.bibtexGenerated = false;
@@ -5829,18 +5829,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter','emailSrvc
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    emailVerified = false;
 
     var showEmailVerificationModal = function(){
-        $.colorbox({
-            html: $compile($('#verify-email-modal').html())($scope),
-            escKey:false,
-            overlayClose:false,
-            transition: 'fade',
-            close: '',
-            scrolling: false
-        });
-        $.colorbox.resize();
+        $rootScope.emailVerified = true; //Hack to set flag to true and then reassign to real value (true/false) to trigger watch
+        $rootScope.emailVerified = emailVerified; //This will trigger the modal display
     };
     
     $scope.emailSrvc.getEmails(
@@ -11509,25 +11502,110 @@ orcidNgModule.filter('startsWithLetter', function() {
 /*
  * For modal with email verification validation
  */
+
+
+/**********
+orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+    $scope.loading = true;
+    $scope.getEmails = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/emails.json',
+            //type: 'POST',
+            //data: $scope.emailsPojo,
+            dataType: 'json',
+            success: function(data) {
+                $scope.emailsPojo = data;
+                $scope.$apply();
+                var primeVerified = false;
+                for (i in $scope.emailsPojo.emails) {
+                    if ($scope.emailsPojo.emails[i].primary) {
+                        $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
+                        if ($scope.emailsPojo.emails[i].verified) {
+                            primeVerified = true;
+                        }
+                    };
+                };
+                if (!primeVerified && !getBaseUri().contains("sandbox")) {
+                    var colorboxHtml = $compile($('#verify-email-modal').html())($scope);
+                    $scope.$apply();
+                    $.colorbox({
+                        html : colorboxHtml,
+                        escKey:false,
+                        overlayClose:false,
+                        transition: 'fade',
+                        close: '',
+                        scrolling: false
+                    });
+                    $.colorbox.resize();
+                };
+                $scope.loading = false;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with multi email");
+        });
+    };
+
+    $scope.verifyEmail = function() {
+        var colorboxHtml = null;
+        $.ajax({
+            url: getBaseUri() + '/account/verifyEmail.json',
+            type: 'get',
+            data:  { "email": $scope.primaryEmail },
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with multi email");
+        });
+        
+        colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+
+        $scope.emailSent = true;
+        $.colorbox({
+            html : colorboxHtml,
+            escKey: true,
+            overlayClose: true,
+            transition: 'fade',
+            close: '',
+            scrolling: false
+                    });
+        $.colorbox.resize({height:"200px", width:"500px"});
+    };
+
+    $scope.closeColorBox = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/delayVerifyEmail.json',
+            type: 'get',
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with multi email");
+        });
+        $.colorbox.close();
+    };
+
+    $scope.emailSent = false;
+    $scope.getEmails();
+}]);
+*/
+
 orcidNgModule.directive(
     'modalEmailUnVerified', 
     [
         '$compile',
+        '$rootScope',
         '$timeout',
-        function( $compile, $timeout ) {
+        function( $compile, $rootScope, $timeout ) {
 
             var closeModal = function(){
-                $.ajax({
-                    url: getBaseUri() + '/account/delayVerifyEmail.json',
-                    type: 'get',
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function(data) {
-                        //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with multi email");
-                });
                 $.colorbox.close();
             }
 
@@ -11571,14 +11649,14 @@ orcidNgModule.directive(
                     transition: 'fade',
                     close: '',
                     scrolling: false
-                            });
+                });
                 $.colorbox.resize({height:"200px", width:"500px"});
             }
 
             function link( scope, element, attrs ) {
                 scope.loading = true;
 
-                scope.verifyEmail = function( scope ) {
+                scope.verifyEmail = function() {
                     verifyEmail( scope );
                 };
 
@@ -11586,15 +11664,22 @@ orcidNgModule.directive(
                     closeModal();
                 };
 
-                scope.openModal = function( scope ){
+                scope.openModal = function(){
                     openModal( scope );
                 }
 
                 scope.emailSent = false;
-                scope.openModal( scope );
+                //scope.openModal(); scope.openModal( scope );
+                scope.$watch('emailVerified', function (val) {
+                    console.log("emailVerified directive", val);
+                    if (val == false ) {
+                        scope.openModal(); 
+                    }
+                    else
+                        scope.closeColorBox(); 
+                    }
+                );
             }
-
-
 
             return {
                 link: link,
