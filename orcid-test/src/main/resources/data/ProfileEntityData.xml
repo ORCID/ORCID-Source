@@ -1677,9 +1677,9 @@
     <email
         orcid="4444-4444-4444-4443"
         email="teddybass3private@semantico.com"
-        is_primary="false"
+        is_primary="true"
         is_current="true"
-        is_verified="false"
+        is_verified="true"
         visibility="PRIVATE"
         client_source_id="APP-5555555555555555"
         last_modified="2011-07-02 15:31:00.00"
