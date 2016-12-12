@@ -28,6 +28,7 @@ public class IdentifierType implements Serializable{
     private Long id;
     private String validationRegex;
     private String resolutionPrefix;
+    private String description;
     
     private Date dateCreated;
     private Date lastModified;
@@ -35,7 +36,7 @@ public class IdentifierType implements Serializable{
     @Override
     public String toString() {
         return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", dateCreated="
-                + dateCreated + ", lastModified=" + lastModified + ", sourceClient=" + sourceClient + ", deprecated=" + deprecated + "]";
+                + dateCreated + ", lastModified=" + lastModified + ", sourceClient=" + sourceClient + ", deprecated=" + deprecated + ", description=" + description +"]";
     }
     private ClientDetailsEntity sourceClient;
     
@@ -86,6 +87,12 @@ public class IdentifierType implements Serializable{
     }
     public void setSourceClient(ClientDetailsEntity sourceClient) {
         this.sourceClient = sourceClient;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
     private Boolean deprecated = Boolean.FALSE;
     

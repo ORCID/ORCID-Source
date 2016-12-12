@@ -8,7 +8,9 @@ There are five steps:
 - Add the user entered id link translation (optional)
 - Update the test
 
-Add the database row using a liquibase script in this directory.  
+Add the database row using a liquibase script in this directory. 
+(also add the primary_use column - either work or funding (for now) 
+(also add the id_resolution_prefix column) 
 Example: See identifier-type.pdb.xml
 
 Update orcid-persistence/src/main/resources/db-master.xml.  

@@ -20,12 +20,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
@@ -61,6 +64,9 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
     @Resource
     private OrcidSecurityManager securityManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     private IdentifierTypePOJOConverter adapter = new IdentifierTypePOJOConverter();
     private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();
@@ -75,9 +81,12 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     
     @Override
     @Cacheable("identifier-types")
-    public IdentifierType fetchIdentifierTypeByDatabaseName(String name) {
+    public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Optional<Locale> loc) {
+        Locale l = (loc.isPresent())? loc.get(): Locale.ENGLISH;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
-        return adapter.fromEntity(entity);
+        IdentifierType type = adapter.fromEntity(entity);
+        type.setDescription(getMessage(type.getName(), l));
+        return type;
     }
 
     /**
@@ -86,11 +95,13 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
      */
     @Override
     @Cacheable("identifier-types-map")
-    public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName() {
+    public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Optional<Locale> loc) {
+        Locale l = (loc.isPresent())? loc.get(): Locale.ENGLISH;
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
         Map<String, IdentifierType> ids = new HashMap<String, IdentifierType>();
         for (IdentifierTypeEntity e : entities) {
             IdentifierType id = adapter.fromEntity(e);
+            id.setDescription(getMessage(id.getName(), l));
             ids.put(id.getName(), id);
         }
         return Collections.unmodifiableMap(ids);
@@ -122,6 +133,15 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         entity.setLastModified(new Date());
         entity = idTypeDao.updateIdentifierType(entity);
         return adapter.fromEntity(entity);
+    }
+    
+    private String getMessage(String type, Locale locale) {
+        try {
+            String key = new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString();
+            return localeManager.resolveMessage(key, locale, type);
+        }catch(Exception e){
+            return type.replace('_', ' ');
+        }
     }
 
 }

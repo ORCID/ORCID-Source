@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl.IdentifierTypeWithDescription;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -58,9 +58,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes(null).getStatus(), 200);
         Response r = service.viewIdentifierTypes(null);
         @SuppressWarnings("unchecked")
-        List<IdentifierTypeWithDescription> types = (List<IdentifierTypeWithDescription>) r.getEntity();
+        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
         Boolean found = false;
-        for (IdentifierTypeWithDescription t : types){
+        for (IdentifierType t : types){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Digital object identifier",t.getDescription());
                 found = true;
@@ -74,9 +74,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes("es").getStatus(), 200);
         Response r = service.viewIdentifierTypes("es");
         @SuppressWarnings("unchecked")
-        List<IdentifierTypeWithDescription> types = (List<IdentifierTypeWithDescription>) r.getEntity();
+        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
         Boolean found = false;
-        for (IdentifierTypeWithDescription t : types){
+        for (IdentifierType t : types){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Identificador de objeto digital",t.getDescription());
                 found = true;
