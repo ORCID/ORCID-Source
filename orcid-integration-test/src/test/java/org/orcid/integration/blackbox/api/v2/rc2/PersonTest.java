@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -60,8 +59,12 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     private static boolean allSet = false;
     
-    @BeforeClass
-    public static void beforeClass() {
+    @Before
+    public void setUpUserInUi() throws InterruptedException, JSONException {               
+        if(allSet) {
+            return;
+        }
+        
         signin();
         openEditAddressModal();
         deleteAddresses();
@@ -89,13 +92,6 @@ public class PersonTest extends BlackBoxBaseRC2 {
             deleteExternalIdentifiers();
             saveExternalIdentifiersModal();
         }
-    }
-    
-    @Before
-    public void setUpUserInUi() throws InterruptedException, JSONException {               
-        if(allSet) {
-            return;
-        }
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
@@ -121,6 +117,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
     
     @AfterClass
     public static void afterClass() {
+    	showMyOrcidPage();
         openEditAddressModal();
         deleteAddresses();
         saveEditAddressModal();
@@ -132,8 +129,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         openEditKeywordsModal();
         deleteKeywords();
         saveKeywordsModal();
-        
-        showMyOrcidPage();
+                
         openEditExternalIdentifiersModal();
         deleteExternalIdentifiers();
         saveExternalIdentifiersModal();        
