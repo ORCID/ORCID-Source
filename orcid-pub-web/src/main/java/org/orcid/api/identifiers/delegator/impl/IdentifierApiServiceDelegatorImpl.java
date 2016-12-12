@@ -44,8 +44,7 @@ public class IdentifierApiServiceDelegatorImpl implements IdentifierApiServiceDe
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getIdentifierTypes(String locale) {
-        Optional<Locale> loc = Optional.of(LocaleUtils.toLocale(locale));
-        Collection<IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(loc).values();
+        Collection<IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(LocaleUtils.toLocale(locale)).values();
         return Response.ok(types).build();
     }
 

@@ -28,6 +28,6 @@ public interface IdentifierTypeManager {
     public void setSecurityManager(OrcidSecurityManager manager);
     public IdentifierType createIdentifierType(IdentifierType id);
     public IdentifierType updateIdentifierType(IdentifierType id);
-    public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Optional<Locale> loc);
-    public Map<String,IdentifierType> fetchIdentifierTypesByAPITypeName(Optional<Locale> loc);
+    IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc);
+    Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc);
 }

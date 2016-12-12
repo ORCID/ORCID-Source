@@ -79,10 +79,13 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         this.securityManager = manager;
     }
     
+    /**
+     * Null locale will result in Locale.ENGLISH
+     */
     @Override
     @Cacheable("identifier-types")
-    public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Optional<Locale> loc) {
-        Locale l = (loc.isPresent())? loc.get(): Locale.ENGLISH;
+    public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc) {
+        Locale l = (loc == null )? loc: Locale.ENGLISH;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
         IdentifierType type = adapter.fromEntity(entity);
         type.setDescription(getMessage(type.getName(), l));
@@ -91,12 +94,13 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
     /**
      * Returns an immutable map of API Type Name->identifierType objects.
+     * Null locale will result in Locale.ENGLISH
      * 
      */
     @Override
     @Cacheable("identifier-types-map")
-    public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Optional<Locale> loc) {
-        Locale l = (loc.isPresent())? loc.get(): Locale.ENGLISH;
+    public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc) {
+        Locale l = (loc == null )? loc: Locale.ENGLISH;
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
         Map<String, IdentifierType> ids = new HashMap<String, IdentifierType>();
         for (IdentifierTypeEntity e : entities) {
