@@ -5774,11 +5774,11 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 				              c[0].appendChild(s);
 				            }
 				    	}
-				    	$scope.badgesRequested[putCode] = true;
-			    	}
-		      	}
-		    }
-		);	
+                        $scope.badgesRequested[putCode] = true;
+                    }
+                }
+            }
+        );  
     };
     
 }]);
@@ -5786,6 +5786,9 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
                                       function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
+
+    $rootScope.emailVerifiedObj = {}
+    
     $scope.badgesRequested = {};
     $scope.bibtexGenerated = false;
     $scope.bibtexExportError = false;
@@ -5827,13 +5830,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
-    
     /////////////////////// Begin of verified email logic for work
     emailVerified = false;
 
     var showEmailVerificationModal = function(){
-        $rootScope.emailVerified = true; //Hack to set flag to true and then reassign to real value (true/false) to trigger watch
-        $rootScope.emailVerified = emailVerified; //This will trigger the modal display
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
     };
     
     $scope.emailSrvc.getEmails(
@@ -11664,20 +11665,22 @@ orcidNgModule.directive(
                     closeModal();
                 };
 
-                scope.openModal = function(){
+                scope.openModal = function( scope ){
                     openModal( scope );
                 }
 
                 scope.emailSent = false;
-                //scope.openModal(); scope.openModal( scope );
-                scope.$watch('emailVerified', function (val) {
-                    console.log("emailVerified directive", val);
-                    if (val == false ) {
-                        scope.openModal(); 
+                scope.$on(
+                    'emailVerifiedObj',
+                    function(event, data){
+                        if (data.flag == false ) {
+                            scope.openModal( scope ); 
+                        }
+                        else {
+                            scope.closeColorBox(); 
+                        }
                     }
-                    else
-                        scope.closeColorBox(); 
-                    }
+
                 );
             }
 
