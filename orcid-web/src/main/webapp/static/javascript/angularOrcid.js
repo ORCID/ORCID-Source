@@ -11514,19 +11514,6 @@ orcidNgModule.directive(
         '$compile',
         '$timeout',
         function( $compile, $timeout ) {
-            var openModal = function( scope ){
-                $.colorbox(
-                    {
-                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>workspace.your_primary_email</h4>workspace.ensure_future_access<br /><br /><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">workspace.send_verification</button><a class="cancel-option inner-row" ng-click="closeColorBox()">freemarker.btncancel</a></div></div></div>'))(scope),
-                        escKey: true,
-                        overlayClose: true,
-                        transition: 'fade',
-                        close: '',
-                        scrolling: false
-                    }
-                );
-                $.colorbox.resize({height:"200px", width:"500px"});
-            }
 
             var closeModal = function(){
                 $.ajax({
@@ -11543,48 +11530,67 @@ orcidNgModule.directive(
                 $.colorbox.close();
             }
 
-            function link( scope, element, attrs ) {
-                openModal( scope );
-                //scope.$apply();
-
-                scope.loading = true;
-
-    /*
-                scope.verifyEmail = function() {
-                    var colorboxHtml = null;
-                    $.ajax({
-                        url: getBaseUri() + '/account/verifyEmail.json',
-                        type: 'get',
-                        data:  { "email": $scope.primaryEmail },
-                        contentType: 'application/json;charset=UTF-8',
-                        dataType: 'json',
-                        success: function(data) {
-                            //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
-                        }
-                    }).fail(function() {
-                        // something bad is happening!
-                        console.log("error with multi email");
-                    });
-                    
-                    colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
-
-                    $scope.emailSent = true;
-                    $.colorbox({
-                        html : colorboxHtml,
+            var openModal = function( scope ){
+                $.colorbox(
+                    {
+                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '<br /><br /><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.workspace.cancel") + '</a></div></div></div>'))(scope),
                         escKey: true,
                         overlayClose: true,
                         transition: 'fade',
                         close: '',
                         scrolling: false
-                                });
-                    $.colorbox.resize({height:"200px", width:"500px"});
+                    }
+                );
+                $.colorbox.resize({height:"200px", width:"500px"});
+            }
+
+            var verifyEmail = function(){
+                var colorboxHtml = null;
+                $.ajax({
+                    url: getBaseUri() + '/account/verifyEmail.json',
+                    type: 'get',
+                    data:  { "email": $scope.primaryEmail },
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with multi email");
+                });
+                
+                colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+
+                $scope.emailSent = true;
+                $.colorbox({
+                    html : colorboxHtml,
+                    escKey: true,
+                    overlayClose: true,
+                    transition: 'fade',
+                    close: '',
+                    scrolling: false
+                            });
+                $.colorbox.resize({height:"200px", width:"500px"});
+            }
+
+            function link( scope, element, attrs ) {
+                scope.loading = true;
+
+                scope.verifyEmail = function() {
+                    verifyEmail();
                 };
-    */
+
                 scope.closeColorBox = function() {
                     closeModal();
                 };
 
+                scope.openModal = function( scope ){
+                    openModal( scope );
+                }
+
                 scope.emailSent = false;
+                scope.openModal( scope );
             }
 
 
