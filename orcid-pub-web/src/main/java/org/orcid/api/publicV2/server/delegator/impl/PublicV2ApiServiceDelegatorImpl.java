@@ -207,6 +207,7 @@ public class PublicV2ApiServiceDelegatorImpl
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getPublicActivitiesSummary(orcid), orcid);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
         sourceUtils.setSourceName(as);
         return Response.ok(as).build();
     }
@@ -232,6 +233,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicWorks = visibilityFilter.filter(publicWorks, orcid);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicWorks);
         sourceUtils.setSourceName(publicWorks);
         return Response.ok(publicWorks).build();
     }
@@ -290,6 +292,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManager.groupFundings(fundings, true);
         publicFundings = visibilityFilter.filter(publicFundings, orcid);        
         ActivityUtils.setPathToFundings(publicFundings, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtils.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
     }
@@ -326,7 +329,7 @@ public class PublicV2ApiServiceDelegatorImpl
                 publicEducations.getSummaries().add(summary);
             }
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEducations);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEducations);
         return Response.ok(publicEducations).build();
     }
     
@@ -362,7 +365,7 @@ public class PublicV2ApiServiceDelegatorImpl
                 publicEmployments.getSummaries().add(summary);
             }
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEmployments);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
         return Response.ok(publicEmployments).build();
     }
     
@@ -392,6 +395,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManager.groupPeerReviews(peerReviews, true);
         publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtils.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
     }
@@ -417,6 +421,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(records);
         return Response.ok(records).build();
     }
 
@@ -426,6 +431,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtils.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
@@ -446,6 +452,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         Emails emails = emailManager.getPublicEmails(orcid, lastModifiedTime);
         ElementUtils.setPathToEmail(emails, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
         return Response.ok(emails).build();
     }
@@ -455,6 +462,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtils.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
     }    
@@ -465,6 +473,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtils.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
@@ -485,6 +494,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtils.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
@@ -514,6 +524,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         Keywords keywords = keywordsManager.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(keywords);
         sourceUtils.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
@@ -533,6 +544,8 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
+        //Set the latest last modified
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(addresses);
         sourceUtils.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
@@ -552,6 +565,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = profileEntityManager.getPublicPersonDetails(orcid);
         ElementUtils.setPathToPerson(person, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);
         return Response.ok(person).build();
     }
@@ -568,7 +582,8 @@ public class PublicV2ApiServiceDelegatorImpl
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtils.setSourceName(record.getActivitiesSummary());
-        }         
+        }
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
 }
