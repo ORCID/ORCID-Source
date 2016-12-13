@@ -5119,22 +5119,42 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
 /**
  * Fundings Controller
  * */
-orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc) {
-    $scope.workspaceSrvc = workspaceSrvc;
-    $scope.fundingSrvc = fundingSrvc;
+orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc) {
     $scope.addingFunding = false;
-    $scope.editFunding = null;
     $scope.disambiguatedFunding = null;
-    $scope.moreInfo = {};
-    $scope.editSources = {};
-    $scope.privacyHelp = {};
-    $scope.editTranslatedTitle = false;
-    $scope.lastIndexedTerm = null;
-    $scope.showElement = {};
-    $scope.fundingImportWizard = false;
-    $scope.wizardDescExpanded = {};
     $scope.displayURLPopOver = {};
+    $scope.editFunding = null;
+    $scope.editSources = {};
+    $scope.editTranslatedTitle = false;
+    $scope.emailSrvc = emailSrvc;
+    $scope.fundingImportWizard = false;
+    $scope.fundingSrvc = fundingSrvc;
+    $scope.lastIndexedTerm = null;
+    $scope.moreInfo = {};
+    $scope.privacyHelp = {};
+    $scope.showElement = {};
+    $scope.wizardDescExpanded = {};
+    $scope.workspaceSrvc = workspaceSrvc;
     
+    /////////////////////// Begin of verified email logic for work
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -5216,26 +5236,30 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.addFundingModal = function(data){
-        if(data == undefined) {
-            $scope.removeDisambiguatedFunding();
-            $.ajax({
-                url: getBaseUri() + '/fundings/funding.json',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.$apply(function() {                    	
-                        $scope.editFunding = data;
-                        $scope.showAddModal();
-                    });
-                }
-            }).fail(function() {
-                console.log("Error fetching funding: " + value);
-            });
-        } else {
-            $scope.editFunding = data;
-            if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
-                $scope.editFunding.externalIdentifiers.push($scope.getEmptyExtId());
-            }            
-            $scope.showAddModal();
+        if(emailVerified === true){
+            if(data == undefined) {
+                $scope.removeDisambiguatedFunding();
+                $.ajax({
+                    url: getBaseUri() + '/fundings/funding.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.$apply(function() {                    	
+                            $scope.editFunding = data;
+                            $scope.showAddModal();
+                        });
+                    }
+                }).fail(function() {
+                    console.log("Error fetching funding: " + value);
+                });
+            } else {
+                $scope.editFunding = data;
+                if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
+                    $scope.editFunding.externalIdentifiers.push($scope.getEmptyExtId());
+                }            
+                $scope.showAddModal();
+            }
+        }else{
+            showEmailVerificationModal();
         }
     };
 
