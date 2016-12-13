@@ -3627,19 +3627,41 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc',function ($scope, $compile, bioBulkSrvc, commonSrvc) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc) {
 	bioBulkSrvc.initScope($scope);
-    $scope.showEdit = false;
-    $scope.countryForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
-    $scope.orcidId = orcidVar.orcidId;
-    $scope.newInput = false;    
-    $scope.defaultVisibility = null;
-    $scope.newElementDefaultVisibility = null;
-    $scope.primaryElementIndex = null;
-    $scope.scrollTop = 0;   
     $scope.commonSrvc = commonSrvc;
+    $scope.countryForm = null;
+    $scope.defaultVisibility = null;
+    $scope.emailSrvc = emailSrvc;
+    $scope.newElementDefaultVisibility = null;
+    $scope.newInput = false;    
+    $scope.orcidId = orcidVar.orcidId;
+    $scope.primaryElementIndex = null;
+    $scope.privacyHelp = false;
+    $scope.scrollTop = 0;   
+    $scope.showEdit = false;
+    $scope.showElement = {};
+
+
+    /////////////////////// Begin of verified email logic for work
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.getCountryForm = function(){
         $.ajax({
@@ -3754,35 +3776,39 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'c
     
     $scope.openEditModal = function() {
     	
-    	$scope.bulkEditShow = false;
-    	
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#edit-country').html())($scope),
-            onLoad: function() {
-                $('#cboxClose').remove();
-                if ($scope.countryForm.addresses.length == 0){                	
-                    $scope.addNewModal();
-                } else {
-                	if ($scope.countryForm.addresses.length == 1){
-                        if($scope.countryForm.addresses[0].source == null){
-                        	$scope.countryForm.addresses[0].source = $scope.orcidId;
-                        	$scope.countryForm.addresses[0].sourceName = "";
+        if(emailVerified === true){
+        	$scope.bulkEditShow = false;
+        	
+            $.colorbox({
+                scrolling: true,
+                html: $compile($('#edit-country').html())($scope),
+                onLoad: function() {
+                    $('#cboxClose').remove();
+                    if ($scope.countryForm.addresses.length == 0){                	
+                        $scope.addNewModal();
+                    } else {
+                    	if ($scope.countryForm.addresses.length == 1){
+                            if($scope.countryForm.addresses[0].source == null){
+                            	$scope.countryForm.addresses[0].source = $scope.orcidId;
+                            	$scope.countryForm.addresses[0].sourceName = "";
+                            }
                         }
-                    }
-                	$scope.updateDisplayIndex();
-                }                
-            },
- 
-            width: formColorBoxResize(),
-            onComplete: function() {
-                    
-            },
-            onClosed: function() {
-                $scope.getCountryForm();
-            }            
-        });
-        $.colorbox.resize();
+                    	$scope.updateDisplayIndex();
+                    }                
+                },
+     
+                width: formColorBoxResize(),
+                onComplete: function() {
+                        
+                },
+                onClosed: function() {
+                    $scope.getCountryForm();
+                }            
+            });
+            $.colorbox.resize();
+        }else{
+            showEmailVerificationModal();
+        }
     }
     
     $scope.closeEditModal = function(){
@@ -5830,8 +5856,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
 
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+    
     /////////////////////// Begin of verified email logic for work
-    emailVerified = false;
+    var emailVerified = false;
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
@@ -5848,51 +5875,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
             );
         }
     );
-
-    $scope.verifyEmail = function() {
-        var colorboxHtml = null;
-        $.ajax({
-            url: getBaseUri() + '/account/verifyEmail.json',
-            type: 'get',
-            data:  { "email": $scope.primaryEmail },
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("error with multi email");
-        });
-        
-        colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
-
-        $scope.emailSent = true;
-        $.colorbox({
-            html : colorboxHtml,
-            escKey: true,
-            overlayClose: true,
-            transition: 'fade',
-            close: '',
-            scrolling: false
-                    });
-        $.colorbox.resize({height:"200px", width:"500px"});
-    };
-
-    $scope.closeColorBox = function() {
-        $.ajax({
-            url: getBaseUri() + '/account/delayVerifyEmail.json',
-            type: 'get',
-            contentType: 'application/json;charset=UTF-8',
-            success: function(data) {
-                //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
-            }
-        }).fail(function() {
-            // something bad is happening!
-            console.log("error with multi email");
-        });
-        $.colorbox.close();
-    };
     /////////////////////// End of verified email logic for work
 
     $scope.applyLabelWorkType = function() {
