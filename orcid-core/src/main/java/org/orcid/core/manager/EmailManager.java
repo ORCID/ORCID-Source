@@ -35,7 +35,7 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     void removeEmail(String orcid, String email);
 
-    void removeEmail(String orcid, String email, boolean removeIfPrimary);
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);        
 
     void addSourceToEmail(String email, String sourceId);
     

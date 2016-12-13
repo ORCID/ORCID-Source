@@ -27,7 +27,6 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ResearcherUrlManagerReadOnlyImpl;
@@ -36,7 +35,6 @@ import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -50,13 +48,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     private static final Logger LOGGER = LoggerFactory.getLogger(ResearcherUrlManagerImpl.class);
 
     @Resource
-    private ProfileDao profileDao;
-
-    @Resource
     private SourceManager sourceManager;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;        

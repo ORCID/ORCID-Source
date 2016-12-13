@@ -16,12 +16,14 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
@@ -30,6 +32,7 @@ import org.orcid.jaxb.model.record_rc4.Education;
 import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -41,12 +44,18 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
     protected JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
     
     protected OrgAffiliationRelationDao orgAffiliationRelationDao;    
+        
+    protected SourceNameCacheManager sourceNameCacheManager;
     
     public void setOrgAffiliationRelationDao(OrgAffiliationRelationDao orgAffiliationRelationDao) {
         this.orgAffiliationRelationDao = orgAffiliationRelationDao;
     }
 
-    @Override
+    public void setSourceNameCacheManager(SourceNameCacheManager sourceNameCacheManager) {
+		this.sourceNameCacheManager = sourceNameCacheManager;
+	}
+
+	@Override
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
         if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
             return null;
@@ -151,4 +160,25 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
         List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
     }    
+    
+    @Deprecated
+    @Override
+    public List<AffiliationForm> getAffiliations(String orcid) {
+        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
+        List<AffiliationForm> result = new ArrayList<AffiliationForm>();
+        
+        if(affiliations != null) {
+            for (OrgAffiliationRelationEntity affiliation : affiliations) {
+                AffiliationForm affiliationForm = AffiliationForm.valueOf(affiliation);
+                //Get the name from the name cache
+                if(!PojoUtil.isEmpty(affiliationForm.getSource())) {
+                    String sourceName = sourceNameCacheManager.retrieve(affiliationForm.getSource());
+                    affiliationForm.setSourceName(sourceName);
+                }
+                result.add(affiliationForm);
+            }
+        }
+        
+        return result;
+    }
 }

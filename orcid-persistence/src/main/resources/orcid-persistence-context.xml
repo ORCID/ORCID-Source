@@ -259,6 +259,8 @@
 
     <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />
     
+    <bean id="salesForceConnectionDao" class="org.orcid.persistence.dao.impl.SalesForceConnectionDaoImpl" />
+    
     <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
             
     <bean id="identityProviderDao" class="org.orcid.persistence.dao.impl.IdentityProviderDaoImpl" />

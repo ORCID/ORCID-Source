@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
 import org.orcid.jaxb.model.record_rc4.Education;
 import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 
 public interface AffiliationsManagerReadOnly {
 
@@ -95,5 +96,8 @@ public interface AffiliationsManagerReadOnly {
      *          Last modified date used to check the cache
      * @return the list of educations that belongs to this user
      * */
-    List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);               
+    List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);  
+    
+    @Deprecated
+    List<AffiliationForm> getAffiliations(String orcid);
 }

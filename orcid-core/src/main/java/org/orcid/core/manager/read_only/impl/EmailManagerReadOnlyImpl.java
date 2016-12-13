@@ -80,6 +80,20 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
+    @SuppressWarnings("rawtypes")
+    public Map<String, String> findIdsByEmails(List<String> emailList) {
+        Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+        List ids = emailDao.findIdByCaseInsensitiveEmail(emailList);
+        for (Iterator it = ids.iterator(); it.hasNext();) {
+            Object[] orcidEmail = (Object[]) it.next();
+            String orcid = (String) orcidEmail[0];
+            String email = (String) orcidEmail[1];
+            emailIds.put(email, orcid);
+        }
+        return emailIds;
+    }
+    
+    @Override
     public boolean isPrimaryEmailVerified(String orcid) {
         return emailDao.isPrimaryEmailVerified(orcid);
     }

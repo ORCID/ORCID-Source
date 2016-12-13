@@ -25,4 +25,5 @@ import org.orcid.core.manager.read_only.impl.RecordManagerReadOnlyImpl;
  * 
  */
 public class RecordManagerImpl extends RecordManagerReadOnlyImpl implements RecordManager {
+	
 }

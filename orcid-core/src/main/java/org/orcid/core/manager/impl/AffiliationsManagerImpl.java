@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,7 +26,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.AffiliationType;
@@ -43,7 +41,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -64,10 +61,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     private NotificationManager notificationManager;
     
     @Resource 
-    private ActivityValidator activityValidator;
-    
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
+    private ActivityValidator activityValidator;        
     
     @Override
     public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
@@ -377,26 +371,5 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
-    }
-    
-    @Deprecated
-    @Override
-    public List<AffiliationForm> getAffiliations(String orcid) {
-        List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
-        List<AffiliationForm> result = new ArrayList<AffiliationForm>();
-        
-        if(affiliations != null) {
-            for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                AffiliationForm affiliationForm = AffiliationForm.valueOf(affiliation);
-                //Get the name from the name cache
-                if(!PojoUtil.isEmpty(affiliationForm.getSource())) {
-                    String sourceName = sourceNameCacheManager.retrieve(affiliationForm.getSource());
-                    affiliationForm.setSourceName(sourceName);
-                }
-                result.add(affiliationForm);
-            }
-        }
-        
-        return result;
-    }
+    }        
 }

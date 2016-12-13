@@ -16,13 +16,10 @@
  */
 package org.orcid.core.manager;
 
-import java.util.List;
-
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc4.Education;
 import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
 
 public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**
@@ -75,8 +72,5 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * */
     boolean checkSourceAndDelete(String orcid, Long affiliationId);        
     
-    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
-    
-    @Deprecated
-    List<AffiliationForm> getAffiliations(String orcid);
+    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);        
 }

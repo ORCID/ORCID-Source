@@ -16,14 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.message.Email;
@@ -47,27 +41,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
         emailDao.removeEmail(orcid, email, removeIfPrimary);
-    }
-    
-    @Override
-    @SuppressWarnings("rawtypes")
-    public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {
-        Map<String, String> emailIds = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-        List<String> emailList = new ArrayList<String>();
-        String [] emails = csvEmail.split(",");
-        for(String email : emails) {
-            if(StringUtils.isNotBlank(email.trim()))
-                emailList.add(email.trim());
-        }
-        List ids = emailDao.findIdByCaseInsensitiveEmail(emailList);
-        for (Iterator it = ids.iterator(); it.hasNext(); ) {
-            Object[] orcidEmail = (Object[]) it.next();
-            String orcid = (String) orcidEmail[0];
-            String email = (String) orcidEmail[1];
-            emailIds.put(email, orcid);
-        }
-        return emailIds;
-    }
+    }        
     
     @Override
     public void addSourceToEmail(String email, String sourceId) {

@@ -273,10 +273,12 @@
 		
 	<bean id="affiliationsManager" class="org.orcid.core.manager.impl.AffiliationsManagerImpl">
 		<property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDao" />
+		<property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
 	</bean>
 	
 	<bean id="affiliationsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl">
 		<property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
+		<property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
 	</bean>
 	
 	<bean id="peerReviewManager" class="org.orcid.core.manager.impl.PeerReviewManagerImpl">
@@ -1056,6 +1058,9 @@
 	<bean id="jpaJaxbAddressAdapter" class="org.orcid.core.adapter.impl.JpaJaxbAddressAdapterImpl">
         <property name="mapperFacade" ref="addressMapperFacade" />
     </bean>
+    
+    <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
+    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
             

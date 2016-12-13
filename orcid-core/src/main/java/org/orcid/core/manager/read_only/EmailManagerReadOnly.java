@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.read_only;
 
+import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.record_rc4.Emails;
@@ -32,6 +33,8 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     String findOrcidIdByEmail(String email);
     
     Map<String, String> findOricdIdsByCommaSeparatedEmails(String email);
+    
+    Map<String, String> findIdsByEmails(List<String> emailList);
     
     boolean isPrimaryEmailVerified(String orcid);
     
