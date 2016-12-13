@@ -2839,18 +2839,40 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     
 }]);
 
-orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'commonSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc, commonSrvc) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc) {
 	bioBulkSrvc.initScope($scope);
-    $scope.showEdit = false;
-    $scope.websitesForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
+
+    $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
+    $scope.privacyHelp = false;
     $scope.scrollTop = 0;
-    $scope.commonSrvc = commonSrvc;
+    $scope.showEdit = false;
+    $scope.showElement = {};
+    $scope.websitesForm = null;
     
+    /////////////////////// Begin of verified email logic for work
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3020,34 +3042,38 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
     	$scope.showElement[elem] = false;
     }
         
-    $scope.openEditModal = function(){    
-    	$scope.bulkEditShow = false;
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#edit-websites').html())($scope),
-            onLoad: function() {
-                $('#cboxClose').remove();
-                if ($scope.websitesForm.websites.length == 0){
-                    $scope.addNewModal();
-                } else {
-                	if ($scope.websitesForm.websites.length == 1){
-                    	if($scope.websitesForm.websites[0].source == null){
-                    		$scope.websitesForm.websites[0].source = $scope.orcidId;
-                    		$scope.websitesForm.websites[0].sourceName = "";
-                    	}
-                    }
-                    $scope.updateDisplayIndex();
-                }                
-            },
-            width: formColorBoxResize(),
-            onComplete: function() {
-                    
-            },
-            onClosed: function() {
-                $scope.getWebsitesForm();
-            }            
-        });
-        $.colorbox.resize();
+    $scope.openEditModal = function(){
+        if(emailVerified === true){
+        	$scope.bulkEditShow = false;
+            $.colorbox({
+                scrolling: true,
+                html: $compile($('#edit-websites').html())($scope),
+                onLoad: function() {
+                    $('#cboxClose').remove();
+                    if ($scope.websitesForm.websites.length == 0){
+                        $scope.addNewModal();
+                    } else {
+                    	if ($scope.websitesForm.websites.length == 1){
+                        	if($scope.websitesForm.websites[0].source == null){
+                        		$scope.websitesForm.websites[0].source = $scope.orcidId;
+                        		$scope.websitesForm.websites[0].sourceName = "";
+                        	}
+                        }
+                        $scope.updateDisplayIndex();
+                    }                
+                },
+                width: formColorBoxResize(),
+                onComplete: function() {
+                        
+                },
+                onClosed: function() {
+                    $scope.getWebsitesForm();
+                }            
+            });
+            $.colorbox.resize();
+        }else{
+            showEmailVerificationModal();
+        }
     }
     
     $scope.closeEditModal = function(){
