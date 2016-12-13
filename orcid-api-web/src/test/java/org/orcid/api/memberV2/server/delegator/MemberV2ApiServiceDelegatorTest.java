@@ -2244,14 +2244,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             case "teddybass2@semantico.com":
                 assertEquals(Visibility.LIMITED, email.getVisibility());
                 assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                assertEquals(false, email.isVerified());
+                assertEquals(false, email.isPrimary());
                 break;
             case "teddybass3public@semantico.com":
                 assertEquals(Visibility.PUBLIC, email.getVisibility());
                 assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                assertEquals(false, email.isVerified());
+                assertEquals(false, email.isPrimary());
                 break;
             case "teddybass3private@semantico.com":
                 assertEquals(Visibility.PRIVATE, email.getVisibility());
                 assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                assertEquals(true, email.isVerified());
+                assertEquals(true, email.isPrimary());
                 break;
             }
         }

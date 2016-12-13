@@ -61,14 +61,12 @@ public class Email implements Filterable, Serializable, SourceAware {
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
-    @XmlTransient
-    @JsonIgnore
+    @XmlAttribute
     protected Boolean verified;
     @XmlTransient
     @JsonIgnore
     protected Boolean current;
-    @XmlTransient
-    @JsonIgnore
+    @XmlAttribute
     protected Boolean primary;
 
     public String getEmail() {
