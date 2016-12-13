@@ -67,4 +67,4 @@ Returns a list of group-id-records which belong to the page number 1, when the g
 
 Returns a list of group-id-records with a name which match that in the the call ('orcid' in this example). As with view group-id-records the find results can be paged.
 
-```curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer b32c78e4-3f55-4902-a38e-bfb2eafbad56' 'https://api.qa.orcid.org/v2.0_rc3/group-id-record/?name=orcid&start=1&rows=10'```
+```curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' 'https://api.qa.orcid.org/v2.0_rc3/group-id-record/?name=orcid&start=1&rows=10'```
