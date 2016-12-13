@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
 	@Override
@@ -60,7 +61,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
 	
     @Override
     public void checkIsPublic(Biography biography) {
-        if(biography != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
