@@ -2855,13 +2855,15 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     
     /////////////////////// Begin of verified email logic for work
     var emailVerified = false;
+    var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -3125,14 +3127,15 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     $scope.showElement = {};
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    var emailVerified = false;var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -3695,14 +3698,15 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
 
 
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    var emailVerified = false;var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -4810,14 +4814,15 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     $scope.workspaceSrvc = workspaceSrvc;
 
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    var emailVerified = false;var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -5137,14 +5142,15 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     $scope.workspaceSrvc = workspaceSrvc;
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    var emailVerified = false;var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -5902,9 +5908,7 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
                                       function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
     actBulkSrvc.initScope($scope);
-
-    $rootScope.emailVerifiedObj = {}
-    
+   
     $scope.badgesRequested = {};
     $scope.bibtexGenerated = false;
     $scope.bibtexExportError = false;
@@ -5948,14 +5952,15 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;
+    var emailVerified = false;var emails = {};
 
     var showEmailVerificationModal = function(){
-        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
     
     $scope.emailSrvc.getEmails(
         function(data) {
+            emails = data.emails;
             data.emails.forEach(
                 function(element){
                     if(element.verified == true) {
@@ -11587,15 +11592,14 @@ orcidNgModule.directive(
         function( $compile, $rootScope, $timeout ) {
 
             var closeModal = function(){
-                //$.colorbox.close();
                 $.colorbox.remove();
                 $('modal-email-un-verified').html('<div id="modal-email-unverified-container"></div>');
             }
 
-            var openModal = function( scope ){
+            var openModal = function( scope, data ){
                 $.colorbox(
                     {
-                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '</p><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div>'))(scope),
+                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><a href="mailto:' + data.emails[0].value + '" target="_blank">' + data.emails[0].value + '</a></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail(' + data.emails[0].value + ')">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div>'))(scope),
                         escKey: true,
                         overlayClose: true,
                         transition: 'fade',
@@ -11603,15 +11607,15 @@ orcidNgModule.directive(
                         scrolling: false
                     }
                 );
-                $.colorbox.resize({height:"200px", width:"500px"});
+                $.colorbox.resize({height:"250px", width:"500px"});
             }
 
-            var verifyEmail = function( scope ){
+            var verifyEmail = function( email ){
                 var colorboxHtml = null;
                 $.ajax({
                     url: getBaseUri() + '/account/verifyEmail.json',
                     type: 'get',
-                    data:  { "email": scope.primaryEmail },
+                    data:  { "email": email },
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
@@ -11645,15 +11649,15 @@ orcidNgModule.directive(
                     closeModal();
                 };
 
-                scope.openModal = function( scope ){
-                    openModal( scope );
+                scope.openModal = function( scope, data ){
+                    openModal( scope, data );
                 }
 
                 scope.$on(
                     'emailVerifiedObj',
                     function(event, data){
                         if (data.flag == false ) {
-                            scope.openModal( scope ); 
+                            scope.openModal( scope, data ); 
                         }
                         else {
                             scope.closeColorBox(); 
