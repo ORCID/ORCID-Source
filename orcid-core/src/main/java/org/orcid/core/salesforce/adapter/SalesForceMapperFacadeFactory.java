@@ -76,6 +76,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         ClassMapBuilder<Member, JSONObject> classMap = mapperFactory.classMap(Member.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
         classMap.field("name", "Name");
+        classMap.field("publicDisplayName", "Public_Display_Name__c");
         classMap.field("websiteUrl", "Website");
         classMap.field("researchCommunity", "Research_Community__c");
         classMap.field("country", "BillingCountry");

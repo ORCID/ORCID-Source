@@ -81,7 +81,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         ConsortiumForm form = new ConsortiumForm();
         Member member = memberDetails.getMember();
         form.setAccountId(member.getId());
-        form.setName(Text.valueOf(member.getName()));
+        form.setName(Text.valueOf(member.getPublicDisplayName()));
         form.setWebsite(Text.valueOf(member.getWebsiteUrl().toString()));
         return form;
     }
@@ -91,7 +91,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         Member member = new Member();
         memberDetails.setMember(member);
         member.setId(getAccountId());
-        member.setName(getName().getValue());
+        member.setPublicDisplayName(getName().getValue());
         try {
             member.setWebsiteUrl(new URL(getWebsite().getValue()));
         } catch (MalformedURLException e) {
