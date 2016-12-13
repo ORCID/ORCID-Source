@@ -119,6 +119,7 @@ public class PublicAPISecurityManagerV2Test {
 	public void checkIsPublicBiographyTest() {
 		Biography b = new Biography();
 		b.setVisibility(Visibility.PUBLIC);
+		b.setContent("Bio test");
 		publicAPISecurityManagerV2.checkIsPublic(b);
 
 		try {
@@ -1051,6 +1052,7 @@ public class PublicAPISecurityManagerV2Test {
 		p.setName(name);
 		Biography bio = new Biography();
 		bio.setVisibility(bioVisiblity);
+		bio.setContent("Bio test");
 		p.setBiography(bio);
 		p.setOtherNames(getOtherNamesElement(otherNamesVisibility));
 		return p;
@@ -1072,6 +1074,7 @@ public class PublicAPISecurityManagerV2Test {
 
 		Biography b = new Biography();
 		b.setVisibility(Visibility.PUBLIC);
+		b.setContent("Biography test");
 		p.setBiography(b);
 
 		return p;
