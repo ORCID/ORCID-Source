@@ -1,0 +1,45 @@
+{
+  "totalSize" : 1,
+  "done" : true,
+  "records" : [ {
+    "attributes" : {
+      "type" : "Account",
+      "url" : "/services/data/v20.0/sobjects/Account/001J000001pZwWWIA0"
+    },
+    "Membership_Contact_Roles__r" : {
+      "totalSize" : 2,
+      "done" : true,
+      "records" : [ {
+        "attributes" : {
+          "type" : "Membership_Contact_Role__c",
+          "url" : "/services/data/v20.0/sobjects/Membership_Contact_Role__c/a19J0000001W5v2IAC"
+        },
+        "Id" : "a19J0000001W5v2IAC",
+        "Contact__r" : {
+          "attributes" : {
+            "type" : "Contact",
+            "url" : "/services/data/v20.0/sobjects/Contact/003J000001OTbUaIAL"
+          },
+          "Name" : "Contact1FirstName Contact1LastName",
+          "Email" : "contact1@mailinator.com"
+        },
+        "Member_Org_Role__c" : "Main relationship contact (OFFICIAL)"
+      }, {
+        "attributes" : {
+          "type" : "Membership_Contact_Role__c",
+          "url" : "/services/data/v20.0/sobjects/Membership_Contact_Role__c/a19J0000001W5v3IAC"
+        },
+        "Id" : "a19J0000001W5v3IAC",
+        "Contact__r" : {
+          "attributes" : {
+            "type" : "Contact",
+            "url" : "/services/data/v20.0/sobjects/Contact/003J000001OTbUbIAL"
+          },
+          "Name" : "Contact2FirstName Contact2LastName",
+          "Email" : "contact2@mailinator.com"
+        },
+        "Member_Org_Role__c" : "Technical contact"
+      } ]
+    }
+  } ]
+}

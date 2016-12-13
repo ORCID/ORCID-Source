@@ -14,28 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.salesforce.cache;
+package org.orcid.persistence.dao;
 
-import javax.annotation.Resource;
-
-import org.orcid.core.salesforce.dao.SalesForceDao;
-
-import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
+import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 
 /**
- * 
  * @author Will Simpson
- *
  */
-public class ContactsCacheEntryFactory implements CacheEntryFactory {
+public interface SalesForceConnectionDao extends GenericDao<SalesForceConnectionEntity, Long> {
 
-    @Resource
-    private SalesForceDao salesForceDao;
+    SalesForceConnectionEntity findByOrcidAndAccountId(String orcid, String accountId);
 
-    @Override
-    public Object createEntry(Object key) throws Exception {
-        String accountId = (String) key;
-        return salesForceDao.retrieveContactsByAccountId(accountId);
-    }
+    SalesForceConnectionEntity findByOrcid(String orcid);
 
 }

@@ -157,8 +157,8 @@
 		<a name="find"></a>
 		<div ng-controller="manageMembersCtrl" class="workspace-accordion-item" ng-cloak>			
 			<p>
-				<a ng-show="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find'/></a>
-				<a ng-hide="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find'/></a>				
+				<a ng-show="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find_member'/></a>
+				<a ng-hide="showFindModal" ng-click="toggleFindModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find_member'/></a>				
 			</p>
 			<div class="collapsible bottom-margin-small admin-modal" id="find_edit_modal" style="display:none;">	
 				<div class="form-group" ng-show="success_edit_member_message != null">
@@ -454,8 +454,60 @@
 			</div>
 		</div>
 		
-								
-						
+		<!-- Find consortium -->
+        <a name="find-consortium"></a>
+        <div ng-controller="internalConsortiumCtrl" class="workspace-accordion-item" ng-cloak>           
+            <p>
+                <a ng-show="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>
+                <a ng-hide="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>             
+            </p>
+            <div class="collapsible bottom-margin-small admin-modal" id="find_consortium_modal" ng-show="showFindModal">    
+                <!-- Find -->
+                <div class="form-group">
+                    <div>
+                        <label for="salesForceId"><@orcid.msg 'manage_consortium.salesforce_id' /></label>
+                        <input type="text" id="salesForceId" ng-enter="findConsortium()" ng-model="salesForceId" placeholder="<@orcid.msg 'manage_consortium.salesforce_id' />" class="input-xlarge" />                   
+                    </div>  
+                    <div class="controls save-btns pull-left">
+                        <span id="bottom-search" ng-click="findConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.find'/></span>
+                    </div>  
+                </div>
+                <!-- Edit consortium -->
+                <div ng-show="consortium != null" ng-cloak>
+                    <div class="admin-edit-client">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <h3><@orcid.msg 'manage_consortium.heading'/></h3>
+                            </div>
+                        </div>                      
+                        <!-- Name -->
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <span><@orcid.msg 'manage_groups.group_name'/></span><br />
+                                <i>{{consortium.name.value}}</i><br />
+                            </div>
+                        </div>
+                        <!-- website -->
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <span><@orcid.msg 'manage_consortium.website'/></span><br />
+                                <i>{{consortium.website.value}}</i><br />
+                            </div>
+                        </div>
+                        <!-- Contacts -->
+                        <div ng-repeat="contact in consortium.contactsList">
+                            <span>{{contact.name}} {{contact.email}} {{contact.role}} {{contact.orcid}}
+                        </div>
+                        <!-- Buttons -->
+                        <div class="row">
+                            <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+                                <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+                            </div>
+                        </div>                      
+                    </div>
+                </div>
+            </div>
+        </div>
 	</div>
 </div>
 
@@ -511,6 +563,22 @@
     			<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 			</div>
 		</div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="confirm-modal-consortium">
+    <div class="lightbox-container">
+        <div class="row">
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <h3><@orcid.msg 'manage_member.edit_member.confirm_update.title' /></h3>    
+                <p><@orcid.msg 'manage_member.edit_memeber.confirm_update.text' /></p>          
+                <p><strong>{{member.groupName.value}}</strong></p>                      
+                <div class="btn btn-danger" ng-click="updateConsortium()">
+                    <@orcid.msg 'manage_member.edit_member.btn.update' />
+                </div>
+                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+            </div>
+        </div>
     </div>
 </script>
 
