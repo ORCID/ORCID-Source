@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -41,8 +40,6 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -110,36 +107,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-    	String orcidToDeprecate = "4444-4444-4444-4441";
-        String primaryOrcid = "4444-4444-4444-4442";
-        
-    	        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
+    	ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
-        
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
-        assertEquals(primaryOrcid, profileEntityToDeprecate.getPrimaryRecord().getId());
-        
-        //Verify all emails belongs now to the primary record
-        Map<String, String> emails = emailManager.findOricdIdsByCommaSeparatedEmails("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
-        assertNotNull(emails);
-        assertEquals(primaryOrcid, emails.get("1@deprecate.com"));
-        assertEquals(primaryOrcid, emails.get("2@deprecate.com"));
-        assertEquals(primaryOrcid, emails.get("spike@milligan.com"));
-        assertEquals(primaryOrcid, emails.get("michael@bentine.com"));
-        
-        Name name = recordNameManager.getRecordName(orcidToDeprecate, 0);
-        assertNotNull(name);
-        assertEquals("", name.getCreditName().getContent());
-        assertEquals("Given Names Deactivated", name.getGivenNames().getContent());
-        assertEquals("Family Name Deactivated", name.getFamilyName().getContent());
-        
-        Biography bio = biographyManager.getBiography(orcidToDeprecate, 0);
-        assertNotNull(bio);
-        assertNull(bio.getContent());
-        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, bio.getVisibility());
+        assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
     }
     
     @Test    
