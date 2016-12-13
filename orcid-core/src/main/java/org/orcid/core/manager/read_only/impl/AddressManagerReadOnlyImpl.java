@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Addresses;
@@ -85,9 +84,6 @@ public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implemen
             addresses = addressDao.getAddresses(orcid, visibility);
         }           
         
-        Addresses result = adapter.toAddressList(addresses);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
-        
-        return result;
+        return adapter.toAddressList(addresses);        
     }    
 }

@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
@@ -62,9 +61,7 @@ public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
             otherNameEntityList = otherNameDao.getOtherNames(orcid, visibility);
         }
         
-        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
     }
     
     @Override

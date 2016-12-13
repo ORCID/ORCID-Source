@@ -64,7 +64,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
         return emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
     }
-
+        
     @Override
     public boolean verifySetCurrentAndPrimary(String orcid, String email) {
         if(PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(email)) {

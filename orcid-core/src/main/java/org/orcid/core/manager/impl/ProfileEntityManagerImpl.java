@@ -341,7 +341,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getGroupType(orcid);
     }
 
-    /** Updates the DB and the cached value in the request scope.
+    /** 
+     * Updates the DB and the cached value in the request scope.
      * 
      */
     @Override

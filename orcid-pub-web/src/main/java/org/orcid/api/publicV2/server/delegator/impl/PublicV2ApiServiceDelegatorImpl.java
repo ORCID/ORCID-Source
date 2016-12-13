@@ -194,6 +194,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
         sourceUtilsReadOnly.setSourceName(as);
         return Response.ok(as).build();
     }
@@ -219,6 +220,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicWorks);
         sourceUtilsReadOnly.setSourceName(publicWorks);
         return Response.ok(publicWorks).build();
     }
@@ -277,6 +279,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV2.filter(publicFundings);        
         ActivityUtils.setPathToFundings(publicFundings, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
     }
@@ -313,7 +316,7 @@ public class PublicV2ApiServiceDelegatorImpl
 	        	publicEducations.getSummaries().add(summary);          
         	}
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEducations);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEducations);
         return Response.ok(publicEducations).build();
     }
     
@@ -349,7 +352,7 @@ public class PublicV2ApiServiceDelegatorImpl
 	            publicEmployments.getSummaries().add(summary);         
         	}
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEmployments);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
         return Response.ok(publicEmployments).build();
     }
     
@@ -379,6 +382,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
     }
@@ -393,7 +397,7 @@ public class PublicV2ApiServiceDelegatorImpl
         return Response.ok(summary).build();
     }
 
-    @Override
+    @Override 
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecord(Long putCode) {
         GroupIdRecord record = groupIdRecordManagerReadOnly.getGroupIdRecord(putCode);
@@ -404,6 +408,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         GroupIdRecords records = groupIdRecordManagerReadOnly.getGroupIdRecords(pageSize, pageNum);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(records);
         return Response.ok(records).build();
     }
 
@@ -413,6 +418,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtilsReadOnly.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
@@ -434,6 +440,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
         return Response.ok(emails).build();
     }
@@ -444,6 +451,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
         publicAPISecurityManagerV2.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtilsReadOnly.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
     }    
@@ -455,6 +463,7 @@ public class PublicV2ApiServiceDelegatorImpl
         OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtilsReadOnly.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
@@ -476,6 +485,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
         publicAPISecurityManagerV2.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtilsReadOnly.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
@@ -506,6 +516,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(keywords);
         sourceUtilsReadOnly.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
@@ -526,6 +537,8 @@ public class PublicV2ApiServiceDelegatorImpl
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         publicAPISecurityManagerV2.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
+        //Set the latest last modified
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(addresses);
         sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
@@ -546,6 +559,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
         ElementUtils.setPathToPerson(person, orcid);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
         return Response.ok(person).build();
     }
@@ -563,7 +577,8 @@ public class PublicV2ApiServiceDelegatorImpl
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
-        }         
+        }
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
 }

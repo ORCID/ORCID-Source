@@ -25,8 +25,6 @@ import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Name;
@@ -90,29 +88,11 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         person.setBiography(biographyManager.getBiography(orcid, lastModifiedTime));
         
         person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
-        
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);    
+        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));                   
         return person;
     }
 
@@ -132,29 +112,11 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         }
                         
         person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-
         person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);
         return person;
     }
 }

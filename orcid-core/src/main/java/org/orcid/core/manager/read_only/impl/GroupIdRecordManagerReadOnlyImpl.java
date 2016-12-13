@@ -26,7 +26,6 @@ import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
@@ -86,8 +85,7 @@ public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerRea
             records.getGroupIdRecord().addAll(recordsReturned);
         } else {
             records.setTotal(0);
-        }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(records);
+        }        
         return records;
     }
 

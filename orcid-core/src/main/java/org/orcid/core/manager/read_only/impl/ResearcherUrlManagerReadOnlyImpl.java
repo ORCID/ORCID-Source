@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
@@ -79,9 +78,7 @@ public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
         }       
         
-        ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(rUrls);
-        return rUrls;
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
     }
 
     @Override

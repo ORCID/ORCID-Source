@@ -23,7 +23,6 @@ import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
@@ -88,8 +87,7 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
                 } else {
                     educations.getSummaries().add(summary);
                 }
-            }
-            Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(educations);
+            }            
             activities.setEducations(educations);
         }
 
@@ -105,30 +103,25 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
                 } else {
                     employments.getSummaries().add(summary);
                 }
-            }
-            Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(employments);
+            }            
             activities.setEmployments(employments);
         }
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
-        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(fundings);
+        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);        
         activities.setFundings(fundings);
 
         // Set peer reviews
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);        
         activities.setPeerReviews(peerReviews);
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works works = workManager.groupWorks(workSummaries, justPublic);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(works);
+        Works works = workManager.groupWorks(workSummaries, justPublic);        
         activities.setWorks(works);
 
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }
 }

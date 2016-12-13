@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -105,5 +107,17 @@ public class LastModifiedDate implements Serializable {
     @Override
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
+    }
+    
+    public boolean after(LastModifiedDate other) {
+    	if(this.value == null) {
+    		return false;
+    	}
+    	
+    	if(other == null || other.getValue() == null) {
+    		return true;
+    	}
+    	
+    	return other.getValue().compare(this.value) < 0;
     }
 }
