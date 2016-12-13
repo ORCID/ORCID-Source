@@ -85,10 +85,10 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @Cacheable("identifier-types")
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc) {
-        Locale l = (loc == null )? loc: Locale.ENGLISH;
+        loc = (loc == null )? Locale.ENGLISH : loc;
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(name);
         IdentifierType type = adapter.fromEntity(entity);
-        type.setDescription(getMessage(type.getName(), l));
+        type.setDescription(getMessage(type.getName(), loc));
         return type;
     }
 
@@ -100,12 +100,12 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @Cacheable("identifier-types-map")
     public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc) {
-        Locale l = (loc == null )? loc: Locale.ENGLISH;
+        loc = (loc == null )? Locale.ENGLISH : loc;
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
         Map<String, IdentifierType> ids = new HashMap<String, IdentifierType>();
         for (IdentifierTypeEntity e : entities) {
             IdentifierType id = adapter.fromEntity(e);
-            id.setDescription(getMessage(id.getName(), l));
+            id.setDescription(getMessage(id.getName(), loc));
             ids.put(id.getName(), id);
         }
         return Collections.unmodifiableMap(ids);
