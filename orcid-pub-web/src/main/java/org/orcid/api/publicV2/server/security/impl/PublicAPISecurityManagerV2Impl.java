@@ -23,51 +23,51 @@ import java.util.List;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
-import org.orcid.jaxb.model.common_rc3.Filterable;
-import org.orcid.jaxb.model.common_rc3.VisibilityType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc3.Activity;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Group;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.GroupsContainer;
-import org.orcid.jaxb.model.record_rc3.Keywords;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.common_rc4.Filterable;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc4.Activity;
+import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Group;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
+import org.orcid.jaxb.model.record_rc4.GroupsContainer;
+import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
 	@Override
     public void checkIsPublic(Filterable filterable) {
-        if(filterable != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+        if(filterable != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(filterable.getVisibility())) {
             throw new OrcidUnauthorizedException("The activity is not public");
         }
     }
     
 	@Override
     public void checkIsPublic(VisibilityType visibilityType) {
-        if(visibilityType != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
+        if(visibilityType != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
             throw new OrcidUnauthorizedException("The element is not public");
         }
     }
 	
     @Override
     public void checkIsPublic(Biography biography) {
-        if(biography != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
 
     @Override
     public void checkIsPublic(Name name) {
-        if(name != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(name.getVisibility())) {
+        if(name != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(name.getVisibility())) {
             throw new OrcidUnauthorizedException("The name is not public");
         }
     }

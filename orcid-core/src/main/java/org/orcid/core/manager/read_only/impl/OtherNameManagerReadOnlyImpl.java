@@ -23,10 +23,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,7 +63,7 @@ public class OtherNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implem
         }
         
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     

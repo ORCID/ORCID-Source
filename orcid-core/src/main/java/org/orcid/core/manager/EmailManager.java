@@ -17,10 +17,10 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.message.Email; 
+import org.orcid.jaxb.model.message.Email;
+
 
 /**
  * 
@@ -37,10 +37,6 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
 
-    String findOrcidIdByEmail(String email);
-
-    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
-    
     void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email);

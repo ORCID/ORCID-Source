@@ -25,12 +25,12 @@ import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.Person;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
     
@@ -94,23 +94,23 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
         
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
         temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setLastModifiedDate(latest);    
         return person;
@@ -136,23 +136,23 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
         temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
 
         person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc4_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setLastModifiedDate(latest);
         return person;

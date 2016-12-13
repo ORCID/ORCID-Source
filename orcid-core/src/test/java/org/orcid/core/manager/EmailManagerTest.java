@@ -34,8 +34,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Emails;
 
 public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -148,13 +148,13 @@ public class EmailManagerTest extends BaseTest {
         String from = "4444-4444-4444-4441";        
         String to = "4444-4444-4444-4499";
         
-        Map<String, String> map = emailManager.findIdByEmail(email);
+        Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(from, map.get(email));
         emailManager.moveEmailToOtherAccount(email, from, to);
         
         //Assert the email was moved
-        map = emailManager.findIdByEmail(email);
+        map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(to, map.get(email));
         

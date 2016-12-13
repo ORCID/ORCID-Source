@@ -19,10 +19,10 @@ package org.orcid.core.manager.read_only;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface AffiliationsManagerReadOnly {

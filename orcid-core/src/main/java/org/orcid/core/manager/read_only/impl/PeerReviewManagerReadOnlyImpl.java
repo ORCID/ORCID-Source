@@ -27,14 +27,14 @@ import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.GroupAble;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -97,7 +97,7 @@ public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly 
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

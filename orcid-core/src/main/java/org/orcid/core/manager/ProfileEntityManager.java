@@ -23,7 +23,7 @@ import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 
@@ -40,7 +40,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
 
-    boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
+    boolean deprecateProfile(String deprecated, String primary);
 
     boolean enableDeveloperTools(OrcidProfile profile);
 
@@ -74,6 +74,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     void updateLocale(String orcid, Locale locale);
 
-    void reactivate(String orcid, String givenNames, String familyName, String password);
+    void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility);
 
 }

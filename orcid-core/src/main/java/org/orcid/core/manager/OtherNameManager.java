@@ -17,8 +17,8 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 
 public interface OtherNameManager extends OtherNameManagerReadOnly {
     boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);

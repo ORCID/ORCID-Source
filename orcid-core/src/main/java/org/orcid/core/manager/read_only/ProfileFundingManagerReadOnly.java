@@ -18,9 +18,9 @@ package org.orcid.core.manager.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record_rc4.Funding;
 
 public interface ProfileFundingManagerReadOnly {    
     /**

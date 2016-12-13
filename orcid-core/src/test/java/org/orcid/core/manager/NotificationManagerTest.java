@@ -64,12 +64,12 @@ import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermissions;
-import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.custom_rc4.NotificationCustom;
+import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.notification_rc4.NotificationType;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -298,6 +298,15 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Test
+    public void testSendReactivationEmail() throws Exception {
+    	String email = "original@email.com";
+    	for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendReactivationEmail(email, orcidProfile);
+        }
+    }
+    
+    @Test
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
@@ -400,8 +409,8 @@ public class NotificationManagerTest extends DBUnitTest {
         NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient("some-orcid", "some-client", 0, OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE);
 
         assertEquals(notificationPermissions.size(), notifications.getNotifications().size());
-    }
-
+    }    
+    
     private OrcidProfile getProfile(Locale locale) throws JAXBException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();

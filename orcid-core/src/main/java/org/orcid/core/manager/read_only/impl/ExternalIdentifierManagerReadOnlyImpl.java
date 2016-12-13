@@ -23,10 +23,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,7 +63,7 @@ public class ExternalIdentifierManagerReadOnlyImpl extends ManagerReadOnlyBaseIm
         }
 
         PersonExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(extIds);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(extIds);
         return extIds;
     }
 

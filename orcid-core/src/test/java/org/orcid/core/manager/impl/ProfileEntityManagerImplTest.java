@@ -41,10 +41,8 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -112,44 +110,12 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-        String orcidToDeprecate = "4444-4444-4444-4441";
+    	String orcidToDeprecate = "4444-4444-4444-4441";
         String primaryOrcid = "4444-4444-4444-4442";
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve(orcidToDeprecate);
-        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);                
+        
+    	        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
-        
-        Emails emails1 = emailManager.getEmails(orcidToDeprecate, 0);
-        assertNotNull(emails1);
-        assertEquals(5, emails1.getEmails().size());
-        boolean containsEmail = false;
-        for (Email email : emails1.getEmails()) {
-            if (email.getEmail().equals("1@deprecate.com")) {
-                if (email.isCurrent() == false && email.isVerified() == true) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            } else if (email.getEmail().equals("2@deprecate.com")) {
-                if (email.isCurrent() == false && email.isVerified() == false) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            } else if (email.getEmail().equals("spike@milligan.com")) {
-                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == true) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            }
-        }
-
-        assertTrue(containsEmail);
-        
-        boolean result = profileEntityManager.deprecateProfile(profileEntityToDeprecate, primaryProfileEntity);
+        boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
@@ -157,7 +123,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(primaryOrcid, profileEntityToDeprecate.getPrimaryRecord().getId());
         
         //Verify all emails belongs now to the primary record
-        Map<String, String> emails = emailManager.findIdByEmail("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
+        Map<String, String> emails = emailManager.findOricdIdsByCommaSeparatedEmails("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
         assertNotNull(emails);
         assertEquals(primaryOrcid, emails.get("1@deprecate.com"));
         assertEquals(primaryOrcid, emails.get("2@deprecate.com"));
@@ -173,7 +139,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         Biography bio = biographyManager.getBiography(orcidToDeprecate, 0);
         assertNotNull(bio);
         assertNull(bio.getContent());
-        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, bio.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, bio.getVisibility());
     }
     
     @Test    
@@ -202,34 +168,34 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
         assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, a.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
         assertEquals(3, profile.getExternalIdentifiers().size());
         for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, e.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, e.getVisibility());
         }
         assertNotNull(profile.getKeywords());
         assertEquals(3, profile.getKeywords().size());
         for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, k.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, k.getVisibility());
         }
         
         assertNotNull(profile.getOtherNames());
         assertEquals(3, profile.getOtherNames().size());
         for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, o.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, o.getVisibility());
         }
         
         assertNotNull(profile.getResearcherUrls());
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, r.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, r.getVisibility());
         }        
     }
     

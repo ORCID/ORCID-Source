@@ -24,13 +24,13 @@ import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -84,12 +84,12 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
         XMLGregorianCalendar otherNamesLatest = null;
         if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {            
-            otherNamesLatest = Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(otherNames);
+            otherNamesLatest = Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(otherNames);
             otherNames.setLastModifiedDate(new LastModifiedDate(otherNamesLatest));
             personalDetails.setOtherNames(otherNames);            
         }               
         
-        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
                 
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {                       
             personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
@@ -131,7 +131,7 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
             otherNamesLatest = otherNames.getLastModifiedDate().getValue();
         }                
         
-        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
         
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
             personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));

@@ -32,9 +32,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 
 /**
 * 

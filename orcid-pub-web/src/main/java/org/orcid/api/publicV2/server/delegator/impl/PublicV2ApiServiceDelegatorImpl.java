@@ -48,42 +48,42 @@ import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.utils.SourceUtils;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Educations;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Employments;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -313,7 +313,7 @@ public class PublicV2ApiServiceDelegatorImpl
 	        	publicEducations.getSummaries().add(summary);          
         	}
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEducations);
         return Response.ok(publicEducations).build();
     }
     
@@ -349,7 +349,7 @@ public class PublicV2ApiServiceDelegatorImpl
 	            publicEmployments.getSummaries().add(summary);         
         	}
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(publicEmployments);
         return Response.ok(publicEmployments).build();
     }
     

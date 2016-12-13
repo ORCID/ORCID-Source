@@ -23,10 +23,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,7 +63,7 @@ public class ProfileKeywordManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
         }
         
         Keywords result = adapter.toKeywords(entities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }       
 

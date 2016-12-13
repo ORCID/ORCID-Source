@@ -23,16 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.Resource;
-
-import org.orcid.core.adapter.JpaJaxbEmailAdapter;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -40,34 +36,6 @@ import org.apache.commons.lang3.StringUtils;
  * 
  */
 public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailManager {
-
-    @Resource
-    private EmailDao emailDao;
-
-    @Resource
-    private JpaJaxbEmailAdapter jpaJaxbEmailAdapter; 
-    
-    @Override
-    @Transactional
-    public void addEmail(String orcid, Email email) {
-        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource(), email.getSourceClientId());
-    }    
-    
-    @Override
-    @Transactional
-    public void updateEmails(String orcid, Collection<Email> emails) {
-        int primaryCount = 0;
-        for (Email email : emails) {
-            emailDao.updateEmail(orcid, email.getValue(), email.isCurrent(), email.getVisibility());
-            if (email.isPrimary()) {
-                primaryCount++;
-                emailDao.updatePrimary(orcid, email.getValue());
-            }
-        }
-        if (primaryCount != 1) {
-            throw new IllegalArgumentException("Wrong number of primary emails: " + primaryCount);
-        }
-    }
 
     @Override
     @Transactional
@@ -79,11 +47,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Transactional
     public void removeEmail(String orcid, String email, boolean removeIfPrimary) {
         emailDao.removeEmail(orcid, email, removeIfPrimary);
-    }
-    
-    @Override
-    public String findOrcidIdByEmail(String email) {
-        return emailDao.findOrcidIdByCaseInsenitiveEmail(email);
     }
     
     @Override
@@ -127,7 +90,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
         return emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
     }
-        
+
     @Override
     public boolean verifySetCurrentAndPrimary(String orcid, String email) {
         if(PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(email)) {
@@ -155,4 +118,26 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         return emailDao.isAutoDeprecateEnableForEmail(email);
     }
+
+    @Override
+    @Transactional
+    public void updateEmails(String orcid, Collection<Email> emails) {
+        int primaryCount = 0;
+        for (Email email : emails) {
+            emailDao.updateEmail(orcid, email.getValue(), email.isCurrent(), email.getVisibility());
+            if (email.isPrimary()) {
+                primaryCount++;
+                emailDao.updatePrimary(orcid, email.getValue());
+            }
+        }
+        if (primaryCount != 1) {
+            throw new IllegalArgumentException("Wrong number of primary emails: " + primaryCount);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void addEmail(String orcid, Email email) {
+        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource(), email.getSourceClientId());
+    }	
 }

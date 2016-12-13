@@ -17,6 +17,7 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -25,9 +26,9 @@ import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
@@ -51,16 +52,26 @@ public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerRea
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(groupIdRecordEntity);
     }
 
-    @Override
-    public GroupIdRecord findByGroupId(String groupId) {
+	@Override
+    public Optional<GroupIdRecord> findByGroupId(String groupId) {
         try {
             GroupIdRecordEntity entity = groupIdRecordDao.findByGroupId(groupId);
-            return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
+            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
         } catch(NoResultException nre) {
-            return null;
+            return Optional.empty();
         }
     }
     
+	@Override
+    public Optional<GroupIdRecord> findGroupIdRecordByName(String name) {
+        try {
+            GroupIdRecordEntity entity = groupIdRecordDao.findByName(name);
+            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
+        } catch(NoResultException nre) {
+            return Optional.empty();
+        }
+    }
+	
     @Override
     public GroupIdRecords getGroupIdRecords(String pageSize, String pageNum) {
         int pageNumInt = convertToInteger(pageNum);
@@ -76,7 +87,7 @@ public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerRea
         } else {
             records.setTotal(0);
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(records);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(records);
         return records;
     }
 

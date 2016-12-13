@@ -18,9 +18,9 @@ package org.orcid.core.manager.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
 
 public interface PeerReviewManagerReadOnly {
     /**

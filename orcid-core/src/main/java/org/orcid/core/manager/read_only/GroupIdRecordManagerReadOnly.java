@@ -16,8 +16,10 @@
  */
 package org.orcid.core.manager.read_only;
 
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
+import java.util.Optional;
+
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 
 public interface GroupIdRecordManagerReadOnly {
 
@@ -27,5 +29,7 @@ public interface GroupIdRecordManagerReadOnly {
 
     boolean exists(String groupId);
     
-    GroupIdRecord findByGroupId(String groupId);
+    Optional<GroupIdRecord> findByGroupId(String groupId);
+    
+    Optional<GroupIdRecord> findGroupIdRecordByName(String name);
 }

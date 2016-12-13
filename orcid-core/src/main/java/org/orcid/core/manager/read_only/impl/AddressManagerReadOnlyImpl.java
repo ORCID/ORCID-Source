@@ -23,10 +23,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -86,7 +86,7 @@ public class AddressManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implemen
         }           
         
         Addresses result = adapter.toAddressList(addresses);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
         
         return result;
     }    

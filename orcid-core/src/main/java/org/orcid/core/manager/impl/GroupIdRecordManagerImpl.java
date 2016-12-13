@@ -28,10 +28,10 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.SourceClientId;
-import org.orcid.jaxb.model.common_rc3.SourceOrcid;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.common_rc4.Source;
+import org.orcid.jaxb.model.common_rc4.SourceClientId;
+import org.orcid.jaxb.model.common_rc4.SourceOrcid;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
@@ -120,4 +120,5 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             }
         }
     }
+
 }

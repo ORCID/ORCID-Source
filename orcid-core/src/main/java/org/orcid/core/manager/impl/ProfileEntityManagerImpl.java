@@ -55,17 +55,17 @@ import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.FamilyName;
-import org.orcid.jaxb.model.record_rc3.GivenNames;
-import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.CreditName;
+import org.orcid.jaxb.model.record_rc4.FamilyName;
+import org.orcid.jaxb.model.record_rc4.GivenNames;
+import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -209,16 +209,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      */
     @Override
     @Transactional 
-    public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
-        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
+    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
+        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);        
         // If it was successfully deprecated
         if (wasDeprecated) {
-            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedProfile.getId(), primaryProfile.getId());
-            ProfileEntity deprecated = profileDao.find(deprecatedProfile.getId());
-            
-            String deprecatedOrcid = deprecatedProfile.getId();
-            String primaryOrcid = primaryProfile.getId();
+            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
+            ProfileEntity deprecated = profileDao.find(deprecatedOrcid);                        
             
             // Remove works
             workManager.removeAllWorks(deprecatedOrcid);
@@ -276,10 +272,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             //Set the deactivated names
             if(recordNameManager.exists(deprecatedOrcid)) {
                 Name name = new Name();
-                name.setCreditName(new CreditName(""));
+                name.setCreditName(new CreditName());
                 name.setGivenNames(new GivenNames("Given Names Deactivated"));
                 name.setFamilyName(new FamilyName("Family Name Deactivated"));
-                name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+                name.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
                 name.setPath(deprecatedOrcid);
                 recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
@@ -343,7 +339,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
-    }    
+    }
 
     /** Updates the DB and the cached value in the request scope.
      * 
@@ -526,7 +522,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 
         //Update the visibility for every bio element to the visibility selected by the user
         //Update the bio
-        org.orcid.jaxb.model.common_rc3.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        org.orcid.jaxb.model.common_rc4.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc4.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if(profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
@@ -629,7 +625,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);                                      
         }
         
         Set<EmailEntity> emails = toClear.getEmails();
@@ -662,11 +658,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getClaimedStatusByEmail(email);
     }
 
-    public void reactivate(String orcid, String givenNames, String familyName, String password) {
+    @Override
+    public void reactivate(String orcid, String givenNames, String familyName, String password, org.orcid.jaxb.model.message.Visibility defaultVisibility) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
+        profileEntity.setClaimed(true);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
         RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);

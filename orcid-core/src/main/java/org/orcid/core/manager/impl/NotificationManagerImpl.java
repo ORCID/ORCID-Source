@@ -61,18 +61,18 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc3.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.Items;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermissions;
-import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc4.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_rc4.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc4.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.Items;
+import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.notification_rc4.NotificationType;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.model.notification.institutional_sign_in_rc4.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -529,7 +529,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
-        String reactivationUrl = createReactivationUrl(orcidProfile, orcidUrlManager.getBaseUrl());
+        String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("reactivationUrl", reactivationUrl);
 
         addMessageParams(templateParams, orcidProfile);
@@ -866,15 +866,19 @@ public class NotificationManagerImpl implements NotificationManager {
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
 
-    public String createResetParams(OrcidProfile orcidProfile) {
+    private String createResetParams(OrcidProfile orcidProfile) {
         String userEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        return createResetParams(userEmail);
+    }
+    
+    private String createResetParams(String userEmail) {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return resetParams;
     }
     
-    private String createReactivationUrl(OrcidProfile orcidProfile, String baseUri) {
-        String resetParams = createResetParams(orcidProfile);
+    private String createReactivationUrl(String userEmail, String baseUri) {
+        String resetParams = createResetParams(userEmail);
         return createEmailBaseUrl(resetParams, baseUri, "reactivation");
     }
 
@@ -1100,8 +1104,8 @@ public class NotificationManagerImpl implements NotificationManager {
             if (emails == null || emails.getEmails() == null) {
                 throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
             }
-            for (org.orcid.jaxb.model.record_rc3.Email email : emails.getEmails()) {
-                if (email.isPrimary()) {
+            for(org.orcid.jaxb.model.record_rc4.Email email : emails.getEmails()) {
+                if(email.isPrimary()) {
                     primaryEmail = email.getEmail();
                 }
             }

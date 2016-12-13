@@ -16,22 +16,22 @@
  */
 package org.orcid.api.publicV2.server.security;
 
-import org.orcid.jaxb.model.common_rc3.Filterable;
-import org.orcid.jaxb.model.common_rc3.VisibilityType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.GroupsContainer;
-import org.orcid.jaxb.model.record_rc3.Keywords;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.common_rc4.Filterable;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.GroupsContainer;
+import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 
 public interface PublicAPISecurityManagerV2 {
 	void checkIsPublic(Filterable filterable);

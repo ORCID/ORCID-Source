@@ -21,8 +21,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbEducationAdapter;
-import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -34,14 +32,13 @@ import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -51,16 +48,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
-
-    @Resource
-    OrgAffiliationRelationDao orgAffiliationRelationDao;
-
-    @Resource
-    JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
-
-    @Resource
-    JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
-
     @Resource
     private OrgManager orgManager;
 

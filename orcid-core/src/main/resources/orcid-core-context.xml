@@ -360,20 +360,6 @@
 		<property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
 	</bean>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<!-- Other Managers -->
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
@@ -631,6 +617,8 @@
     <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl" />
 
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
+    
+    <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -659,11 +647,13 @@
             <list>
 	            <ref bean="versionConverterV2_0_rc1ToV2_0_rc2" />
 	            <ref bean="versionConverterV2_0_rc2ToV2_0_rc3" />
+	            <ref bean="versionConverterV2_0_rc3ToV2_0_rc4" />
 	        </list>
 	    </property>
 	</bean>
     <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
 	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
+	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	

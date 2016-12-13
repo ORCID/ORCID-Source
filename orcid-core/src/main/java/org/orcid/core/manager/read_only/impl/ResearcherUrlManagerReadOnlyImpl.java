@@ -22,10 +22,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -80,7 +80,7 @@ public class ResearcherUrlManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         }       
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(rUrls);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }
 

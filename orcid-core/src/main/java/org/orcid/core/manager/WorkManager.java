@@ -19,9 +19,9 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkBulk;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkBulk;
 
 public interface WorkManager extends WorkManagerReadOnly {
     

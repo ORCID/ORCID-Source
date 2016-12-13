@@ -23,19 +23,19 @@ import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Educations;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Employments;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
 
 public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ActivitiesSummaryManagerReadOnly {    
     private AffiliationsManagerReadOnly affiliationsManager;
@@ -89,7 +89,7 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
                     educations.getSummaries().add(summary);
                 }
             }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
+            Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(educations);
             activities.setEducations(educations);
         }
 
@@ -106,29 +106,29 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
                     employments.getSummaries().add(summary);
                 }
             }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
+            Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(employments);
             activities.setEmployments(employments);
         }
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
         Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(fundings);
         activities.setFundings(fundings);
 
         // Set peer reviews
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(peerReviews);
         activities.setPeerReviews(peerReviews);
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
         Works works = workManager.groupWorks(workSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(works);
         activities.setWorks(works);
 
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }
 }

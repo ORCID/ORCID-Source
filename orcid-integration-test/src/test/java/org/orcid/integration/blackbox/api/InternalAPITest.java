@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;

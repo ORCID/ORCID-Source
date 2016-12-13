@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -60,27 +59,31 @@ public class PersonTest extends BlackBoxBaseRC3 {
 
     private static boolean allSet = false;
     
-    @BeforeClass
-    public static void beforeClass() {
+    @Before
+    public void setUpUserInUi() throws InterruptedException, JSONException {               
+        if(allSet) {
+            return;
+        }
+        
         signin();
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);        
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
         saveEditAddressModal();
 
         openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName("other-name-1");
         createOtherName("other-name-2");
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
         
         openEditKeywordsModal();
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
         
         if(hasExternalIdentifiers()) {
@@ -89,22 +92,15 @@ public class PersonTest extends BlackBoxBaseRC3 {
             deleteExternalIdentifiers();
             saveExternalIdentifiersModal();
         }
-    }
-    
-    @Before
-    public void setUpUserInUi() throws InterruptedException, JSONException {               
-        if(allSet) {
-            return;
-        }
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         } else {
-            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         }
         
         String accessToken = getAccessToken();
@@ -113,14 +109,15 @@ public class PersonTest extends BlackBoxBaseRC3 {
         
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);        
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
         saveExternalIdentifiersModal();
         allSet = true;
     }
     
     @AfterClass
     public static void afterClass() {
+    	showMyOrcidPage();
         openEditAddressModal();
         deleteAddresses();
         saveEditAddressModal();
@@ -132,8 +129,7 @@ public class PersonTest extends BlackBoxBaseRC3 {
         openEditKeywordsModal();
         deleteKeywords();
         saveKeywordsModal();
-        
-        showMyOrcidPage();
+                
         openEditExternalIdentifiersModal();
         deleteExternalIdentifiers();
         saveExternalIdentifiersModal();        
@@ -208,7 +204,7 @@ public class PersonTest extends BlackBoxBaseRC3 {
         assertTrue(foundLimited);
 
         assertNotNull(person.getKeywords());
-        assertNotNull(person.getKeywords().getKeywords());
+        assertNotNull(person.getKeywords().getKeywords());        
         assertEquals(2, person.getKeywords().getKeywords().size());
         assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
         assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));

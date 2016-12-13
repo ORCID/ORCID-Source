@@ -38,37 +38,37 @@ import org.junit.runner.RunWith;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.History;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Educations;
+import org.orcid.jaxb.model.record.summary_rc4.Employments;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.History;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -628,20 +628,16 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, b.getVisibility());
     }
     
-    @Test
+    @Test(expected = OrcidUnauthorizedException.class)
     public void testGetLimitedBiographyUsingToken() {        
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewBiography("0000-0000-0000-0002");
-        assertNotNull(r);
-        assertNull(r.getEntity());        
+        serviceDelegator.viewBiography("0000-0000-0000-0002");
     }
     
-    @Test
+    @Test(expected = OrcidUnauthorizedException.class)
     public void testGetPrivateBiographyUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.READ_LIMITED);
-        Response r = serviceDelegator.viewBiography("0000-0000-0000-0001");
-        assertNotNull(r);
-        assertNull(r.getEntity());
+        serviceDelegator.viewBiography("0000-0000-0000-0001");
     }
     
     //Address

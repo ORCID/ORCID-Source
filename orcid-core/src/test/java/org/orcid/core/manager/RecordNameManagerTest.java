@@ -30,12 +30,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.FamilyName;
-import org.orcid.jaxb.model.record_rc3.GivenNames;
-import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.common_rc4.CreditName;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.FamilyName;
+import org.orcid.jaxb.model.record_rc4.GivenNames;
+import org.orcid.jaxb.model.record_rc4.Name;
 
 public class RecordNameManagerTest extends BaseTest {
     @Resource
