@@ -4798,15 +4798,36 @@ orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }]);
 
-orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
+orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc){
     $scope.affiliationsSrvc = affiliationsSrvc;
-    $scope.workspaceSrvc = workspaceSrvc;
     $scope.editAffiliation;
-    $scope.privacyHelp = {};
-    $scope.privacyHelpCurKey = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
+    $scope.privacyHelp = {};
+    $scope.privacyHelpCurKey = null;
     $scope.showElement = {};
+    $scope.workspaceSrvc = workspaceSrvc;
+
+    /////////////////////// Begin of verified email logic for work
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {    	
@@ -4853,16 +4874,6 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
         $scope.moreInfo[key]=!$scope.moreInfo[key];
-        /*
-        if (document.documentElement.className.contains('no-touch')) {
-            if ($scope.moreInfoCurKey != null
-                    && $scope.moreInfoCurKey != key) {
-                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
-            }
-            $scope.moreInfoCurKey = key;
-            $scope.moreInfo[key]=true;
-        }
-        */
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -4963,29 +4974,33 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        $scope.addAffType = type;
-        if(affiliation === undefined) {
-            $scope.removeDisambiguatedAffiliation();
-            $.ajax({
-                url: getBaseUri() + '/affiliations/affiliation.json',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.editAffiliation = data;
-                    if (type != null)
-                        $scope.editAffiliation.affiliationType.value = type;
-                    $scope.$apply(function() {
-                        $scope.showAddModal();
-                    });
-                }
-            }).fail(function() {
-                console.log("Error fetching affiliation: " + value);
-            });
-        } else {
-            $scope.editAffiliation = affiliation;
-            if($scope.editAffiliation.orgDisambiguatedId != null)
-                $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
+        if(emailVerified === true){
+            $scope.addAffType = type;
+            if(affiliation === undefined) {
+                $scope.removeDisambiguatedAffiliation();
+                $.ajax({
+                    url: getBaseUri() + '/affiliations/affiliation.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.editAffiliation = data;
+                        if (type != null)
+                            $scope.editAffiliation.affiliationType.value = type;
+                        $scope.$apply(function() {
+                            $scope.showAddModal();
+                        });
+                    }
+                }).fail(function() {
+                    console.log("Error fetching affiliation: " + value);
+                });
+            } else {
+                $scope.editAffiliation = affiliation;
+                if($scope.editAffiliation.orgDisambiguatedId != null)
+                    $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
 
-            $scope.showAddModal();
+                $scope.showAddModal();
+            }
+        }else{
+            showEmailVerificationModal();
         }
     };
 
