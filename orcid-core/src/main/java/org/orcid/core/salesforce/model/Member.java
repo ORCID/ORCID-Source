@@ -32,6 +32,7 @@ public class Member implements Serializable {
 
     private String id;
     private String name;
+    private String publicDisplayName;
     private URL websiteUrl;
     private String researchCommunity;
     private String country;
@@ -47,6 +48,14 @@ public class Member implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPublicDisplayName() {
+        return publicDisplayName;
+    }
+
+    public void setPublicDisplayName(String publicDisplayName) {
+        this.publicDisplayName = publicDisplayName;
     }
 
     public String getName() {
@@ -131,9 +140,9 @@ public class Member implements Serializable {
 
     @Override
     public String toString() {
-        return "Member [id=" + id + ", name=" + name + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country
-                + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail=" + publicDisplayEmail + ", mainOpportunityPath=" + mainOpportunityPath
-                + ", consortiumLeadId=" + consortiumLeadId + "]";
+        return "Member [id=" + id + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl=" + websiteUrl + ", researchCommunity="
+                + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail=" + publicDisplayEmail
+                + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId + "]";
     }
 
 }

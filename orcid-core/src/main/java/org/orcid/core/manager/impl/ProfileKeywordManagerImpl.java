@@ -35,10 +35,10 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
@@ -97,7 +97,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
         
         Keywords result = adapter.toKeywords(entities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }       
 
@@ -258,7 +258,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         return keywords;
     }
 
-    private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc3.Keyword keyword, SourceEntity source) {
+    private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc4.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();             
             if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
@@ -271,12 +271,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingKeywordVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }
 }

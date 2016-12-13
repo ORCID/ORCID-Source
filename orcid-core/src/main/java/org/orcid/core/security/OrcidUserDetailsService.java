@@ -83,11 +83,11 @@ public class OrcidUserDetailsService implements UserDetailsService {
 					"orcid.frontend.security.deprecated_with_primary", profile
 							.getPrimaryRecord().getId(), profile.getId());
         }
-        if (!profile.getClaimed() && !securityMgr.isAdmin()) {
-            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
-        }
         if (profile.getDeactivationDate() != null && !securityMgr.isAdmin()) {
             throw new DisabledException("Account not active, please call helpdesk");
+        }
+        if (!profile.getClaimed() && !securityMgr.isAdmin()) {
+            throw new UnclaimedProfileExistsException("orcid.frontend.security.unclaimed_exists");
         }
 
         String primaryEmail = null;
