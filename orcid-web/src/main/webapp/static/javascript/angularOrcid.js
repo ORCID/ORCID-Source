@@ -3596,14 +3596,40 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.getOtherNamesForm();
 }]);
 
-orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope, $compile) {
-    $scope.showEdit = false;
+orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', function ($scope, $rootScope, $compile, emailSrvc) {
     $scope.biographyForm = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.lengthError = false;
+    $scope.showEdit = false;
     $scope.showElement = {};
 
+    /////////////////////// Begin of verified email logic for work
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.toggleEdit = function() {
-        $scope.showEdit = !$scope.showEdit;
+        if(emailVerified === true){
+            $scope.showEdit = !$scope.showEdit;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.close = function() {
