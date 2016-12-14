@@ -144,5 +144,14 @@ function printPublicRecord(url){
                 window.frames['printRecordFrame'].print(); 
             }
         );
+
+        window.onfocus = function () { 
+            setTimeout(
+                function () { 
+                    $("#printRecordFrame").remove();
+                }, 
+                500
+            ); 
+        }
     }); 
 }
