@@ -70,8 +70,7 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void isPrimaryEmailVerifiedTest() {
-        assertFalse(emailManager.isPrimaryEmailVerified("4444-4444-4444-4443"));
+    public void isPrimaryEmailVerifiedTest() {        
         assertFalse(emailManager.isPrimaryEmailVerified("4444-4444-4444-4445"));
         assertFalse(emailManager.isPrimaryEmailVerified("0000-0000-0000-0001"));
         assertTrue(emailManager.isPrimaryEmailVerified("0000-0000-0000-0003"));
@@ -83,7 +82,7 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(emailManager.haveAnyEmailVerified("0000-0000-0000-0003"));
         assertTrue(emailManager.haveAnyEmailVerified("4444-4444-4444-4442"));
         assertFalse(emailManager.haveAnyEmailVerified("0000-0000-0000-0001"));
-        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4443"));
+        assertFalse(emailManager.haveAnyEmailVerified("4444-4444-4444-4445"));
     }
     
     @Test
