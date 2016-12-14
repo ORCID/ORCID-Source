@@ -116,6 +116,8 @@
 								<xs:documentation>End date for the funding.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
+						<xs:element name="organization" type="common:organization" 
+							minOccurs="1" maxOccurs="1" />
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
@@ -152,53 +154,7 @@
 			<xs:enumeration value="salary-award" />
 		</xs:restriction>
 	</xs:simpleType>
-<!--
-	<xs:complexType name="external-identifiers">
-		<xs:annotation>
-			<xs:documentation>Container for storing the external references to
-				the funding.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="externalIdentifier" type="funding:external-identifier" />
-		</xs:sequence>
-	</xs:complexType>
- 
-	<xs:complexType name="external-identifier">
-		<xs:annotation>
-			<xs:documentation>An external identifier that uniquely represents the
-				funding. Includes an identifier type and value as well as a URL for
-				a link to more information about the funding.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="common:external-identifier">
-				<xs:sequence>
-					<xs:element name="external-identifier-type" type="funding:external-identifier-type"
-						minOccurs="1" maxOccurs="1" />
-					<xs:element name="external-identifier-value" type="common:string-2084"
-						minOccurs="0" maxOccurs="1">
-						<xs:annotation>
-							<xs:documentation>Value of the external identifier.</xs:documentation>
-						</xs:annotation>
-					</xs:element>			
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>		
-	</xs:complexType>
-
-	<xs:simpleType name="external-identifier-type">
-		<xs:annotation>
-			<xs:documentation>The type of the funding external identifier.
-				Currently only grant number is supported.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="grant_number" />
-		</xs:restriction>
-	</xs:simpleType>
- -->
+	
 	<xs:complexType name="contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a funding.
