@@ -36,7 +36,7 @@
 
     a,
     a:visited {
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     a[href]:after {
@@ -101,12 +101,27 @@
         font-size: 12px;
     }
 
+    #orcid-id {
+        font-size: 14px;
+    }
+
+    #orcid-id:before {
+        content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
+        display: block;
+        float: left;
+        height: 16px;
+        margin-right: 4px;
+        width: 16px;
+    }
+
+    ul.sources-edit-list > li,
+    .id-banner .oid,
     .workspace-body-list > li,
     .workspace-accordion-content > li,
     .workspace-border-box {
-        border: none;
-        box-shadow: none;
+        border: 0;
     }
+
     *,
     .full-name,
     .orcid-id,
@@ -116,6 +131,9 @@
         margin: 0;
         padding: 0;
     }
+
+    .bottom-margin-medium,
+    .bottomBuffer,
     .main {
         margin: 0;
     }
@@ -156,10 +174,6 @@
         width: 100%;
     }
 
-    .id-banner .oid {
-        border: 0;
-    }
-
     .id-banner .oid .orcid-id-container,
     .workspace-accordion-header {
         background-color: #fff;
@@ -191,19 +205,6 @@
         font-size: 32px;
     }
 
-    #orcid-id {
-        font-size: 14px;
-    }
-
-    #orcid-id:before {
-        content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
-        display: block;
-        float: left;
-        height: 16px;
-        margin-right: 4px;
-        width: 16px;
-    }
-
     .workspace-profile .workspace-section {
         display: block;
         float: left;
@@ -221,32 +222,21 @@
         padding: 0;
     }
 
+    .info-detail, 
     .workspace-accordion-content,
-    .info-detail {
+    .workspace-accordion-content .workspace-title {
         font-size: 12px;
         line-height: normal;
     }
 
     .workspace-accordion-content .workspace-title span {
-        font-size: 12px;
         font-weight: bold;
-        line-height: normal;
     }
-    
-    .bottom-margin-medium,
-    .bottomBuffer {
-        margin: 0;
-    }
-    
-    ul.sources-edit-list > li {
-        border: 0;
-    }
+       
     
     a.toggle-text[href]:after {
         content: none;
     }
-
-    
 
     .workspace-accordion-content .workspace-title .journaltitle {
         font-style: italic;
