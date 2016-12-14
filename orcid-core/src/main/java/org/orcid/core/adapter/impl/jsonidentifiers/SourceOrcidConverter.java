@@ -17,7 +17,7 @@
 package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common_rc3.SourceOrcid;
+import org.orcid.jaxb.model.common_rc4.SourceOrcid;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;

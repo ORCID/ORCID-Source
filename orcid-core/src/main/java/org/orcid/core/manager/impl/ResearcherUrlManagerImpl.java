@@ -33,10 +33,9 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -210,13 +209,11 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
         }       
         
-        ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(rUrls);
-        return rUrls;
+        return jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);        
     }
 
     @Override
-    public org.orcid.jaxb.model.record_rc3.ResearcherUrl getResearcherUrl(String orcid, long id) {
+    public org.orcid.jaxb.model.record_rc4.ResearcherUrl getResearcherUrl(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, id);        
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
     }
@@ -310,12 +307,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingWorkVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultResearcherUrlsVisibility);
         } else if (incomingWorkVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }        
 }

@@ -19,6 +19,8 @@ package org.orcid.core.salesforce.model;
 import java.io.Serializable;
 import java.net.URL;
 
+import org.orcid.core.salesforce.adapter.SalesForceAdapter;
+
 /**
  * 
  * @author Will Simpson
@@ -30,14 +32,14 @@ public class Member implements Serializable {
 
     private String id;
     private String name;
-    private String slug;
+    private String publicDisplayName;
     private URL websiteUrl;
     private String researchCommunity;
     private String country;
     private String description;
     private URL logoUrl;
     private String publicDisplayEmail;
-    private String mainOpportunityId;
+    private String mainOpportunityPath;
     private String consortiumLeadId;
 
     public String getId() {
@@ -46,6 +48,14 @@ public class Member implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPublicDisplayName() {
+        return publicDisplayName;
+    }
+
+    public void setPublicDisplayName(String publicDisplayName) {
+        this.publicDisplayName = publicDisplayName;
     }
 
     public String getName() {
@@ -57,11 +67,7 @@ public class Member implements Serializable {
     }
 
     public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
+        return SlugUtils.createSlug(getId(), getName());
     }
 
     public URL getWebsiteUrl() {
@@ -112,12 +118,16 @@ public class Member implements Serializable {
         this.publicDisplayEmail = publicDisplayEmail;
     }
 
-    public String getMainOpportunityId() {
-        return mainOpportunityId;
+    public String getMainOpportunityPath() {
+        return mainOpportunityPath;
     }
 
-    public void setMainOpportunityId(String mainOpportunityId) {
-        this.mainOpportunityId = mainOpportunityId;
+    public String getMainOpportunityId() {
+        return SalesForceAdapter.extractIdFromUrl(mainOpportunityPath);
+    }
+
+    public void setMainOpportunityPath(String mainOpportunityPath) {
+        this.mainOpportunityPath = mainOpportunityPath;
     }
 
     public String getConsortiumLeadId() {
@@ -130,9 +140,9 @@ public class Member implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesForceMember [id=" + id + ", name=" + name + ", slug=" + slug + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity
-                + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", mainOpportunityId=" + mainOpportunityId + ", consortiumLeadId="
-                + consortiumLeadId + "]";
+        return "Member [id=" + id + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl=" + websiteUrl + ", researchCommunity="
+                + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail=" + publicDisplayEmail
+                + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId + "]";
     }
 
 }

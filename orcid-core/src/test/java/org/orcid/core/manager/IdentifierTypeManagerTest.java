@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,8 +44,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IdentifierTypeManagerTest extends BaseTest{

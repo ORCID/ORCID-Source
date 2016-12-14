@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -35,10 +38,11 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
-import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ma.glasnost.orika.MapperFacade;
 
 /**
  * 
@@ -48,6 +52,13 @@ import org.slf4j.LoggerFactory;
 public class SalesForceAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceAdapter.class);
+
+    @Resource(name = "salesForceMemberMapperFacade")
+    private MapperFacade mapperFacade;
+
+    public void setMapperFacade(MapperFacade mapperFacade) {
+        this.mapperFacade = mapperFacade;
+    }
 
     public Consortium createConsortiumFromJson(JSONObject results) {
         try {
@@ -69,7 +80,9 @@ public class SalesForceAdapter {
                     salesForceOpportunity.setId(extractOpportunityId(opportunity));
                     JSONObject account = extractObject(opportunity, "Account");
                     salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Name"));
+                    // salesForceOpportunity.setAccountName(JsonUtils.extractString(account,
+                    // "Name"));
+                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Public_Display_Name__c"));
                     opportunityList.add(salesForceOpportunity);
                 }
                 return consortium;
@@ -80,7 +93,7 @@ public class SalesForceAdapter {
         return null;
     }
 
-    public Map<String, List<Contact>> createContactsFromJson(JSONObject results) {
+    public Map<String, List<Contact>> createContactsFromJsonLegacy(JSONObject results) {
         Map<String, List<Contact>> map = new HashMap<>();
         try {
             JSONArray records = results.getJSONArray("records");
@@ -101,6 +114,21 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
         }
         return map;
+    }
+
+    Contact createContactFromJson(JSONObject record) {
+        return mapperFacade.map(record, Contact.class);
+    }
+
+    public List<Contact> createContactsFromJson(JSONObject object) {
+        try {
+            JSONObject firstRecord = extractFirstRecord(object);
+            JSONObject contactRoles = firstRecord.getJSONObject("Membership_Contact_Roles__r");
+            List<JSONObject> objectsList = extractObjectListFromRecords(contactRoles);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contacts list from SalesForce JSON", e);
+        }
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {
@@ -140,7 +168,8 @@ public class SalesForceAdapter {
         try {
             JSONArray records = results.getJSONArray("records");
             if (records.length() > 0) {
-                return extractString(records.getJSONObject(0), "Name");
+                // return extractString(records.getJSONObject(0), "Name");
+                return extractString(records.getJSONObject(0), "Public_Display_Name__c");
             }
         } catch (JSONException e) {
             throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
@@ -161,38 +190,12 @@ public class SalesForceAdapter {
         return accountId;
     }
 
-    private Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        String name = extractString(record, "Name");
-        String id = extractString(record, "Id");
-        Member member = new Member();
-        member.setName(name);
-        member.setId(id);
-        member.setSlug(SlugUtils.createSlug(id, name));
-        try {
-            member.setWebsiteUrl(extractURL(record, "Website"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed website URL for member: {}", name, e);
-        }
-        member.setResearchCommunity(extractString(record, "Research_Community__c"));
-        member.setCountry(extractString(record, "BillingCountry"));
-        member.setPublicDisplayEmail(extractString(record, "Public_Display_Email__c"));
-        JSONObject opportunitiesObject = extractObject(record, "Opportunities");
-        if (opportunitiesObject != null) {
-            JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
-            if (opportunitiesArray.length() > 0) {
-                JSONObject mainOpportunity = opportunitiesArray.getJSONObject(0);
-                JSONObject mainOppAttributes = extractObject(mainOpportunity, "attributes");
-                member.setMainOpportunityId(extractIdFromUrl(extractString(mainOppAttributes, "url")));
-                member.setConsortiumLeadId(extractString(mainOpportunity, "Consortia_Lead__c"));
-            }
-        }
-        member.setDescription(extractString(record, "Public_Display_Description__c"));
-        try {
-            member.setLogoUrl(extractURL(record, "Logo_Description__c"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed logo URL for member: {}", name, e);
-        }
-        return member;
+    Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
+        return mapperFacade.map(record, Member.class);
+    }
+
+    public JSONObject createSaleForceRecordFromMember(Member member) {
+        return mapperFacade.map(member, JSONObject.class);
     }
 
     private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
@@ -238,7 +241,21 @@ public class SalesForceAdapter {
         return urlString;
     }
 
-    private String extractIdFromUrl(String url) {
+    private List<JSONObject> extractObjectListFromRecords(JSONObject object) throws JSONException {
+        List<JSONObject> objects = new ArrayList<>();
+        JSONArray records = object.getJSONArray("records");
+        for (int i = 0; i < records.length(); i++) {
+            objects.add(records.getJSONObject(i));
+        }
+        return objects;
+    }
+
+    private JSONObject extractFirstRecord(JSONObject object) throws JSONException {
+        JSONArray records = object.getJSONArray("records");
+        return records.getJSONObject(0);
+    }
+
+    public static String extractIdFromUrl(String url) {
         if (url == null) {
             return null;
         }

@@ -17,10 +17,11 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
@@ -41,10 +42,12 @@ public interface EmailManager {
     void removeEmail(String orcid, String email);
 
     void removeEmail(String orcid, String email, boolean removeIfPrimary);
+    
+    Map<String, String> findIdsByEmails(List<String> emailList);
 
     String findOrcidIdByEmail(String email);
 
-    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
+    Map<String, String> findIdsByCommaSeparatedEmails(String csvEmail);
     
     void addSourceToEmail(String email, String sourceId);
     

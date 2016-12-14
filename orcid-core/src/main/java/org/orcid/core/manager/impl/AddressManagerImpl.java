@@ -35,10 +35,9 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -204,12 +203,12 @@ public class AddressManagerImpl implements AddressManager {
     }    
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingCountryVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
+        org.orcid.jaxb.model.common_rc4.Visibility incomingCountryVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultCountryVisibility);            
         } else if (incomingCountryVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }
 
@@ -234,10 +233,7 @@ public class AddressManagerImpl implements AddressManager {
             addresses = addressDao.getAddresses(orcid, visibility);
         }           
         
-        Addresses result = adapter.toAddressList(addresses);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
-        
-        return result;
+        return adapter.toAddressList(addresses);
     }
     
     @Override

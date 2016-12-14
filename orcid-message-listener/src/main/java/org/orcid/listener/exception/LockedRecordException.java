@@ -16,7 +16,7 @@
  */
 package org.orcid.listener.exception;
 
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 public class LockedRecordException extends Exception {

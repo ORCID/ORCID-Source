@@ -40,7 +40,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermissions;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
 import org.orcid.persistence.dao.ProfileDao;
 import org.springframework.test.util.ReflectionTestUtils;
 

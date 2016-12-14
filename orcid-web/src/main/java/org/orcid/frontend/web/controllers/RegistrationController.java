@@ -81,7 +81,7 @@ import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -987,7 +987,7 @@ public class RegistrationController extends BaseController {
             return claim;
         }
 
-        Map<String, String> emails = emailManager.findOricdIdsByCommaSeparatedEmails(decryptedEmail);
+        Map<String, String> emails = emailManager.findIdsByCommaSeparatedEmails(decryptedEmail);
         String orcid = emails.get(decryptedEmail);
 
         if (PojoUtil.isEmpty(orcid)) {
@@ -1201,9 +1201,10 @@ public class RegistrationController extends BaseController {
         String orcid = emailManager.findOrcidIdByEmail(email);
         LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
         String password = reactivation.getPassword().getValue();
-        //Reactivate user
-        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password);
-        //Verify email used to reactivate
+        // Reactivate user
+        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
+                reactivation.getActivitiesVisibilityDefault().getVisibility());
+        // Verify email used to reactivate
         emailManager.verifyEmail(email);
         logUserIn(request, response, orcid, password);
     }
