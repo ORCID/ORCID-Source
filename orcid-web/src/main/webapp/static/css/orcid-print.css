@@ -87,8 +87,11 @@
         widows: 3;
     }
 
+    h1,
     h2,
-    h3 {
+    h3,
+    h4,
+    h5 {
         page-break-after: avoid;
     }
 
@@ -243,13 +246,7 @@
         content: none;
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5 {
-        page-break-after: avoid;
-    }
+    
 
     .workspace-accordion-content .workspace-title .journaltitle {
         font-style: italic;

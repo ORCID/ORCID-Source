@@ -135,23 +135,31 @@
 Print public record
 ============================================================*/
 function printPublicRecord(url){
-    $('#printRecord').click(function(evt) {
-        evt.preventDefault();
-        $('body').append('<iframe src="' + url + '" id="printRecordFrame" name="printRecordFrame"></iframe>');
-        $('#printRecordFrame').bind('load', 
-            function() { 
-                window.frames['printRecordFrame'].focus(); 
-                window.frames['printRecordFrame'].print(); 
-            }
-        );
+    $('#printRecord').on(
+        'click',
+        function(evt) {
+            evt.preventDefault();
+            $(".printRecordFrameContainer").remove();
 
-        window.onfocus = function () { 
-            setTimeout(
-                function () { 
-                    $("#printRecordFrame").remove();
-                }, 
-                500
-            ); 
+            if( $(".printRecordFrameContainer").length <= 0 ){
+                $('body').append('<iframe src="' + url + '" id="printRecordFrame" class="printRecordFrameContainer" name="printRecordFrame"></iframe>');
+            }
+
+            $('#printRecordFrame').bind(
+                'load', 
+                function() { 
+                    window.frames['printRecordFrame'].focus(); 
+                    window.frames['printRecordFrame'].print(); 
+                    setTimeout(
+                        function () { 
+                            $('#printRecordFrame').unbind('load');
+                            $(".printRecordFrameContainer").remove();
+                        }, 
+                        500
+                    ); 
+                }
+            );
+
         }
-    }); 
+    ); 
 }
