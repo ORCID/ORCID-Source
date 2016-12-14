@@ -6165,13 +6165,17 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         });
     };
 
-    $scope.openBibTextWizard = function () {    	
-        $scope.bibtexParsingError = false;
-        $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
-        $scope.bulkEditShow = false;
-        $scope.worksFromBibtex = null;
-        $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;        
+    $scope.openBibTextWizard = function () {
+        if(emailVerified === true){
+            $scope.bibtexParsingError = false;
+            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
+            $scope.bulkEditShow = false;
+            $scope.worksFromBibtex = null;
+            $scope.workImportWizard = false;
+            $scope.showBibtexExport = false;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.bibtextCancel = function(){
