@@ -408,7 +408,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(request.getLocale()).thenReturn(java.util.Locale.US);
         HashMap<String, String> data = new HashMap<String, String>();
         data.put(email, "0000-0000-0000-0001");
-        when(emailManager.findIdsByCommaSeparatedEmails(email)).thenReturn(data);       
+        when(emailManager.findOricdIdsByCommaSeparatedEmails(email)).thenReturn(data);       
         when(profileEntityManager.claimProfileAndUpdatePreferences(any(String.class), any(String.class), any(Locale.class), any(Claim.class))).thenReturn(true);
         
         Claim claim = new Claim();

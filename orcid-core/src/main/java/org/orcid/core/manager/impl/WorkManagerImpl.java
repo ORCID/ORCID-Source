@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,59 +26,40 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.activities.ActivitiesGroup;
-import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc4.Item;
 import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
-import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Works;
 import org.orcid.jaxb.model.record_rc4.BulkElement;
 import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.GroupAble;
-import org.orcid.jaxb.model.record_rc4.GroupableActivity;
 import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.jaxb.model.record_rc4.WorkBulk;
-import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
-public class WorkManagerImpl implements WorkManager {
+public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
-
-    @Resource
-    private WorkDao workDao;
-
-    @Resource
-    private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
     @Resource
     private SourceManager sourceManager;
@@ -88,17 +68,8 @@ public class WorkManagerImpl implements WorkManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager; 
-    
-    @Resource
-    private WorkEntityCacheManager workEntityCacheManager;
-
     @Resource
     private NotificationManager notificationManager;
     
@@ -120,37 +91,6 @@ public class WorkManagerImpl implements WorkManager {
     @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
     
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-
-    /**
-     * Find the works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
-        return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
-    }
-
-    /**
-     * Find the public works for a specific user
-     * 
-     * @param orcid
-     *            the Id of the user
-     * @return the list of works associated to the specific user
-     * */
-    @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<Work> findPublicWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, lastModified);
-        return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
-    }
-
     /**
      * Updates the visibility of an existing work
      * 
@@ -196,28 +136,6 @@ public class WorkManagerImpl implements WorkManager {
         return workDao.updateToMaxDisplay(orcid, workId);
     }
 
-    /**
-     * Get the given Work from the database
-     * 
-     * @param orcid
-     *            The work owner
-     * @param workId
-     *            The work id
-     * */
-    @Override
-    @Cacheable(value = "single-work", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
-    public Work getWork(String orcid, Long workId, long lastModified) {
-        WorkEntity work = workDao.getWork(orcid, workId);
-        return jpaJaxbWorkAdapter.toWork(work);
-    }
-
-    @Override
-    @Cacheable(value = "single-work-summary", key = "#orcid.concat('-').concat(#workId).concat('-').concat(#lastModified)")
-    public WorkSummary getWorkSummary(String orcid, Long workId, long lastModified) {
-        WorkEntity work = workDao.getWork(orcid, workId);
-        return jpaJaxbWorkAdapter.toWorkSummary(work);
-    }
-
     @Override
     @Transactional
     public Work createWork(String orcid, Work work, boolean isApiRequest) {
@@ -228,8 +146,7 @@ public class WorkManagerImpl implements WorkManager {
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                Date lastModified = profileEntityManager.getLastModified(orcid);
-                long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+                long lastModifiedTime = getLastModified(orcid);
                 List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
@@ -360,8 +277,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = getLastModified(orcid);
         List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);    
         for(Work work : existingWorks) {
             //If it is the same source
@@ -403,10 +319,8 @@ public class WorkManagerImpl implements WorkManager {
         String existingClientSourceId = workEntity.getClientSourceId();
         
         if (isApiRequest) {
-            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());
-            
-            Date lastModified = profileEntityManager.getLastModified(orcid);
-            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());                        
+            long lastModifiedTime = getLastModified(orcid);
             List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
             
             for (Work existing : existingWorks) {
@@ -461,69 +375,6 @@ public class WorkManagerImpl implements WorkManager {
         }
     }
 
-    /**
-     * Get the list of works that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of works that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
-        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
-    }
-    
-    /**
-     * Generate a grouped list of works with the given list of works
-     * 
-     * @param works
-     *          The list of works to group
-     * @param justPublic
-     *          Specify if we want to group only the public elements in the given list
-     * @return Works element with the WorkSummary elements grouped                  
-     * */
-    @Override
-    public Works groupWorks(List<WorkSummary> works, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Works result = new Works();
-        // Group all works
-        for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC)) {
-                // If it is just public and the work is not public, just ignore
-                // it
-            } else {
-                groupGenerator.group(work);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            WorkGroup workGroup = new WorkGroup();
-            // Fill the work groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID workExtId = (ExternalID) extId;
-                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
-            }
-
-            // Fill the work group with the list of activities
-            for (GroupableActivity activity : activities) {
-                WorkSummary workSummary = (WorkSummary) activity;
-                workGroup.getWorkSummary().add(workSummary);
-            }
-
-            // Sort the works
-            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
-            result.getWorkGroup().add(workGroup);
-        }
-        return result;
-    }
-
     private Item createItem(WorkEntity workEntity) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
@@ -531,5 +382,4 @@ public class WorkManagerImpl implements WorkManager {
         item.setPutCode(String.valueOf(workEntity.getId()));
         return item;
     }
-
 }

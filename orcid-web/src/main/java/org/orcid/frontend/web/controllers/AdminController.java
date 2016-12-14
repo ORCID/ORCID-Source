@@ -399,7 +399,7 @@ public class AdminController extends BaseController {
     public Map<String, String> findIdByEmailHelper(String csvEmails) {
         if (StringUtils.isBlank(csvEmails))
             return new HashMap<String, String>();
-        return emailManager.findIdsByCommaSeparatedEmails(csvEmails);
+        return emailManager.findOricdIdsByCommaSeparatedEmails(csvEmails);
     }
 
     /**
@@ -528,7 +528,7 @@ public class AdminController extends BaseController {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             emailManager.verifyEmail(email);
-            Map<String, String> ids = emailManager.findIdsByCommaSeparatedEmails(email);
+            Map<String, String> ids = emailManager.findOricdIdsByCommaSeparatedEmails(email);
             orcidProfileManager.updateLastModifiedDate(ids.get(email));
         } else {
             result = getMessage("admin.verify_email.fail", email);

@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -97,5 +98,23 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertEquals("Updated Given Names", updatedRecordName.getGivenNames());
         assertEquals("Updated Family Name", updatedRecordName.getFamilyName());
         assertEquals(Visibility.PUBLIC, updatedRecordName.getVisibility());         
+    }
+    
+    @Test
+    public void testExists() {
+        assertTrue(recordNameDao.exists("4444-4444-4444-4441"));
+        assertTrue(recordNameDao.exists("4444-4444-4444-4443"));
+        assertTrue(recordNameDao.exists("4444-4444-4444-4445"));
+        assertTrue(recordNameDao.exists("4444-4444-4444-4497"));
+        assertTrue(recordNameDao.exists("0000-0000-0000-0001"));
+        assertTrue(recordNameDao.exists("0000-0000-0000-0002"));
+        assertTrue(recordNameDao.exists("0000-0000-0000-0003"));
+        assertTrue(recordNameDao.exists("0000-0000-0000-0004"));
+        
+        assertFalse(recordNameDao.exists("0000-0000-0000-0000"));
+        assertFalse(recordNameDao.exists("0000-0000-0000-000X"));
+        assertFalse(recordNameDao.exists("0000-0000-0000-1000"));
+        assertFalse(recordNameDao.exists("0000-0000-0000-1001"));
+        assertFalse(recordNameDao.exists("0000-0000-0000-1002"));
     }
 }

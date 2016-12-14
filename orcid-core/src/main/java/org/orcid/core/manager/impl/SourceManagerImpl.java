@@ -48,7 +48,7 @@ public class SourceManagerImpl implements SourceManager {
     private ProfileDao profileDao;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
+    private ClientDetailsManager clientDetailsManager;    
 
     @Override
     public String retrieveSourceOrcid() {

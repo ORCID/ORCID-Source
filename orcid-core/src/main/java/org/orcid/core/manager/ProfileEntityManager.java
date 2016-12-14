@@ -17,41 +17,30 @@
 package org.orcid.core.manager;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
 
-import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc4.Person;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 
 /**
  * User: Declan Newman (declan) Date: 10/02/2012 </p>
  */
-public interface ProfileEntityManager {
+public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
-    ProfileEntity findByOrcid(String orcid);
-    
     String findByCreditName(String creditName);
-
+    
     boolean orcidExists(String orcid);
 
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
 
-    boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
-
-    Long getConfirmedProfileCount();
+    boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
 
     boolean deprecateProfile(String deprecated, String primary);
-
-    List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
 
     boolean enableDeveloperTools(OrcidProfile profile);
 
@@ -61,15 +50,7 @@ public interface ProfileEntityManager {
     
     boolean isProfileClaimedByEmail(String email);
 
-    ClientType getClientType(String orcid);
-
-    MemberType getGroupType(String orcid);
-
-    ActivitiesSummary getActivitiesSummary(String orcid);
-
-    ActivitiesSummary getPublicActivitiesSummary(String orcid);
-
-    Date getLastModified(String orcid);
+    MemberType getGroupType(String orcid);    
 
     boolean isDeactivated(String deactivated);
 
@@ -84,10 +65,6 @@ public interface ProfileEntityManager {
     String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
     
     String retrivePublicDisplayName(String orcid);
-    
-    Person getPersonDetails(String orcid);
-    
-    Person getPublicPersonDetails(String orcid);
     
     boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
     
