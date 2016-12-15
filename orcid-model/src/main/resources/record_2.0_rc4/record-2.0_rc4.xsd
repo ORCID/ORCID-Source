@@ -5,9 +5,9 @@
 	xmlns:person="http://www.orcid.org/ns/person" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:work="http://www.orcid.org/ns/work" xmlns:funding="http://www.orcid.org/ns/funding"
 	xmlns:education="http://www.orcid.org/ns/education" xmlns:employment="http://www.orcid.org/ns/employment"
-	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:activities="http://www.orcid.org/ns/activities"
-	xmlns:history="http://www.orcid.org/ns/history" xmlns:record="http://www.orcid.org/ns/record"
-	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:peer-review="http://www.orcid.org/ns/peer-review">
+	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:history="http://www.orcid.org/ns/history"
+	xmlns:record="http://www.orcid.org/ns/record" xmlns:preferences="http://www.orcid.org/ns/preferences"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
 	<xs:annotation>
 		<xs:documentation>
 			=============================================================================
@@ -42,14 +42,10 @@
 		schemaLocation="activities-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/person"
 		schemaLocation="person-2.0_rc4.xsd" />
-    <xs:import namespace="http://www.orcid.org/ns/common"
-        schemaLocation="../common_2.0_rc4/common-2.0_rc4.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/deprecated"
-		schemaLocation="deprecated-2.0_rc4.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_2.0_rc4/common-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"
 		schemaLocation="history-2.0_rc4.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/internal"
-		schemaLocation="internal-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/preferences"
 		schemaLocation="preferences-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/work"
@@ -59,7 +55,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/education"
 		schemaLocation="education-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/employment"
-		schemaLocation="employment-2.0_rc4.xsd" />		
+		schemaLocation="employment-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/peer-review"
 		schemaLocation="peer-review-2.0_rc4.xsd" />
 
@@ -87,8 +83,6 @@
 			<xs:sequence>
 				<xs:element ref="common:orcid-identifier" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element ref="deprecated:deprecated" minOccurs="0"
-					maxOccurs="1" />
 				<xs:element ref="preferences:preferences" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="history:history" minOccurs="0"
@@ -96,8 +90,6 @@
 				<xs:element ref="person:person" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="activities:activities-summary"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element ref="internal:internal" minOccurs="0"
-					maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

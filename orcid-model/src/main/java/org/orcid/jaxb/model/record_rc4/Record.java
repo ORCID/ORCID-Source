@@ -29,19 +29,22 @@ import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidIdentifier", "deprecated", "preferences", "history", "person", "activitiesSummary" })
+@XmlType(propOrder = { "orcidIdentifier", "preferences", "history", "person", "activitiesSummary" })
 @XmlRootElement(name = "record", namespace = "http://www.orcid.org/ns/record")
 public class Record implements Serializable {
     private static final long serialVersionUID = 1086932594400451295L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "orcid-identifier")
     protected OrcidIdentifier orcidIdentifier;
-    @XmlElement(namespace = "http://www.orcid.org/ns/deprecated", name = "deprecated")
+    @XmlTransient
+    @JsonIgnore
     protected Deprecated deprecated;
     @XmlElement(namespace = "http://www.orcid.org/ns/preferences", name = "preferences")
     protected Preferences preferences;

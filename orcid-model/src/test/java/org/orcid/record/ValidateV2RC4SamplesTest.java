@@ -510,28 +510,6 @@ public class ValidateV2RC4SamplesTest {
     }
     
     @Test
-    public void testUnmarshallDeprecated() throws SAXException, URISyntaxException {
-        Deprecated deprecated = (Deprecated) unmarshallFromPath("/record_2.0_rc4/samples/deprecated-2.0_rc4.xml", Deprecated.class,
-                "/record_2.0_rc4/deprecated-2.0_rc4.xsd");
-        assertNotNull(deprecated);
-        assertNotNull(deprecated.getPrimaryRecord());
-        assertNotNull(deprecated.getPrimaryRecord().getOrcidIdentifier());
-        assertEquals("http://orcid.org/8888-8888-8888-8880", deprecated.getPrimaryRecord().getOrcidIdentifier().getUri());
-        assertEquals("8888-8888-8888-8880", deprecated.getPrimaryRecord().getOrcidIdentifier().getPath());
-        assertEquals("orcid.org", deprecated.getPrimaryRecord().getOrcidIdentifier().getHost());
-        assertNotNull(deprecated.getDeprecatedDate());
-        assertEquals(2001, deprecated.getDeprecatedDate().getValue().getYear());
-        assertEquals(12, deprecated.getDeprecatedDate().getValue().getMonth());
-        assertEquals(31, deprecated.getDeprecatedDate().getValue().getDay());        
-    }
-    
-    @Test
-    public void testMarshallDeprecated() throws JAXBException, SAXException, URISyntaxException {
-        Deprecated object = (Deprecated) unmarshallFromPath("/record_2.0_rc4/samples/deprecated-2.0_rc4.xml", Deprecated.class);
-        marshall(object, "/record_2.0_rc4/deprecated-2.0_rc4.xsd");
-    }
-    
-    @Test
     public void testUnmarshallPreferences() throws SAXException, URISyntaxException {
         Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0_rc4/samples/preferences-2.0_rc4.xml", Preferences.class,
                 "/record_2.0_rc4/preferences-2.0_rc4.xsd");
