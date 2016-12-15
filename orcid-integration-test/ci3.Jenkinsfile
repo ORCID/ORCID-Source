@@ -1,11 +1,11 @@
 node {
 
-    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '1', daysToKeepStr: '1', numToKeepStr: '1')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: 'build specific branch by name', name: 'branch_to_build')]), pipelineTriggers([])])
+    git url: 'git@github.com:ORCID/ORCID-Source.git', credentialsId: 'de5bdda8-0230-4a87-8a8c-c3fd333ddf7e', branch: "${env.BRANCH_NAME}"
     
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${branch_to_build}"
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     
     stage('Fetch Code') {
-        echo "triggered by modification on ${branch_to_build} ---------------------------------------------------------------------------"
+        echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
     }
     
     stage('Build Dependencies') {
@@ -13,7 +13,7 @@ node {
         try {
             do_maven("clean install -Dmaven.test.skip=true")
         } catch(Exception err) {
-            orcid_notify("Compilation ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
@@ -49,12 +49,12 @@ node {
             junit '**/target/surefire-reports/*.xml'
         } catch(Exception err) {
             junit '**/target/surefire-reports/*.xml'            
-            orcid_notify("Build ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
-        }
+        }        
     }
     stage('Notify Completed'){
-        orcid_notify("Pipeline ${branch_to_build}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
         deleteDir()
     }
 }
