@@ -2,7 +2,7 @@ node {
 
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '1', daysToKeepStr: '1', numToKeepStr: '1')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: 'build specific branch by name', name: 'branch_to_build')]), pipelineTriggers([])])
     
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${branch_to_build}"
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
     stage('Fetch Code') {
         echo "triggered by modification on ${branch_to_build} ---------------------------------------------------------------------------"

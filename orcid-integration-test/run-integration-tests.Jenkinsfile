@@ -1,6 +1,6 @@
 node {
     properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '2', daysToKeepStr: '', numToKeepStr: '3')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: '', name: 'branch_to_build')]), pipelineTriggers([])])
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${branch_to_build}"
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     def tomcat_home = '/opt/tomcat/apache-tomcat-8.0.21'
     def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
     stage('Build and Pack'){
