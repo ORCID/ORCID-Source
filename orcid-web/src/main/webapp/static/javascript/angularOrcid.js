@@ -18,9 +18,9 @@
 /*
  * Structure of this file:
  * 
- *  - Random functions
- *  - Groupings logic
- *  - Angular Services
+ *  - 1 - Utility functions
+ *  - 2 - Groupings logic
+ *  - 3 - Angular Services
  *  - Angular Controllers
  *  - Angular Filters
  *  - Angular Directives
@@ -29,7 +29,7 @@
  */
 
 /*
- * Utility FUNCTIONS
+ * 1 - Utility functions
  */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
@@ -501,9 +501,9 @@ ActSortState.prototype.sortBy = function(key) {
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
-/*
- * SERVICES
- */
+/*************************************************
+ * 3 - Angular Services
+ *************************************************/
 
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
@@ -1516,13 +1516,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     return worksSrvc;
 }]);
 
-orcidNgModule.factory("emailSrvc", function ($rootScope) {
+orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
     var serv = {
         emails: null,            
-        inputEmail: null,
         delEmail: null,
-        primaryEmail: null,
+        displayModalWarningFlag: false,
+        inputEmail: null,
         popUp: false,
+        primaryEmail: null,
+        
         addEmail: function() {            	
             $.ajax({
                 url: getBaseUri() + '/account/addEmail.json',
@@ -1543,29 +1545,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
-        getEmails: function(callback) {
-        	
-            $.ajax({
-                url: getBaseUri() + '/account/emails.json',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {                    	
-                    serv.emails = data;
-                    for (var i in data.emails){
-                        if (data.emails[i].primary){
-                            serv.primaryEmail = data.emails[i];
-                        }
-                    }                                                
-                    $rootScope.$apply();
-                    if (callback)
-                       callback(data);
-                }
-            }).fail(function(e) {
-                // something bad is happening!
-                console.log("error with multi email");
-                logAjaxError(e);
-            });
-        },
+        
         deleteEmail: function (callback) {
             $.ajax({
                 url: getBaseUri() + '/account/deleteEmail.json',
@@ -1583,23 +1563,84 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("emailSrvc.deleteEmail() error");
             });
         },
-        initInputEmail: function () {
+        
+        getEmails: function(callback) {
+        	serv.displayModalWarning();
+            $.ajax({
+                url: getBaseUri() + '/account/emails.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {                    	
+                    serv.emails = data;
+                    for (var i in data.emails){
+                        if (data.emails[i].primary){
+                            serv.primaryEmail = data.emails[i];
+                        }
+                    }                                                
+                    $rootScope.$apply();
+                    if (callback) {
+                       callback(data);
+                    }
+                }
+            }).fail(function(e) {
+                // something bad is happening!
+                console.log("error with multi email");
+                logAjaxError(e);
+            });
+        },
+        
+        getEmailsObj: function(){
+            if( serv.emails == null ){
+                serv.getEmails();
+            }
+            return serv.emails;
+        },
+
+        initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
         },
-        setPrivacy: function(email, priv) {
-            email.visibility = priv;
-            serv.saveEmail();
-        },
-        setPrimary: function(email) {
-            for (i in serv.emails.emails) {
-                if (serv.emails.emails[i] == email) {
-                    serv.emails.emails[i].primary = true;
-                } else {
-                    serv.emails.emails[i].primary = false;
-                }
+
+        //aaaaaaaaaaaaaaa
+        isEmailVerified: function( data ) {
+            console.log("data", data);
+            var accountVerified = false;
+            
+            /*
+            if( serv.emails == null ){
+                serv.getEmails( serv.isEmailVerified );
+                return;
             }
-            serv.saveEmail();
+            */
+            
+            if( data != null && data != undefined ){
+                serv.emails = data;
+            }
+            $timeout(
+                function(){
+                    serv.emails.forEach(
+                        function(element){
+                            if(element.verified == true) {
+                                accountVerified = true;
+                            }
+                        }
+                    );
+                    return accountVerified;
+                    
+                },
+                1000
+            );
         },
+
+        displayModalWarning: function(){
+            displayModalWarningFlag = $location.search();
+            if( displayModalWarningFlag ){
+
+            }
+            displayModalWarningFlag = true;
+            //console.log("displayModalWarning", displayModalWarningFlag);
+            return displayModalWarningFlag;
+        },
+
         saveEmail: function(callback) {
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
@@ -1618,6 +1659,23 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
+
+        setPrimary: function(email) {
+            for (i in serv.emails.emails) {
+                if (serv.emails.emails[i] == email) {
+                    serv.emails.emails[i].primary = true;
+                } else {
+                    serv.emails.emails[i].primary = false;
+                }
+            }
+            serv.saveEmail();
+        },
+        
+        setPrivacy: function(email, priv) {
+            email.visibility = priv;
+            serv.saveEmail();
+        },
+        
         verifyEmail: function(email, callback) {
             $.ajax({
                 url: getBaseUri() + '/account/verifyEmail.json',
@@ -5974,7 +6032,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     $scope.worksSrvc = worksSrvc;
     $scope.workType = ['All'];
 
-
+    //bbbbbbbbbbbbbbb
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
     /////////////////////// Begin of verified email logic for work
@@ -11765,16 +11823,20 @@ orcidNgModule.directive(
         '$compile',
         '$rootScope',
         '$timeout',
-        function( $compile, $rootScope, $timeout ) {
-
-            var emailVerifiedObj = null;
+        'emailSrvc',
+        function( $compile, $rootScope, $timeout, emailSrvc ) {
+            //ccccccccccccccccc
+            var _emailSrvc = emailSrvc;
+            var emailVerified = _emailSrvc.isEmailVerified();
+            var emailVerifiedObj = _emailSrvc.getEmailsObj();
+            console.log("directive", emailVerified, emailVerifiedObj);
 
             var closeModal = function(){
                 $.colorbox.remove();
                 $('modal-email-un-verified').html('<div id="modal-email-unverified-container"></div>');
             }
 
-            var openModal = function( scope, data ){
+            var openModal = function( scope ){
                 emailVerifiedObj = data;
                 $.colorbox(
                     {
