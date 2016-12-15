@@ -1,16 +1,11 @@
 node {
 
-    def failed_modules = ''
-
-    git url: 'git@github.com:ORCID/ORCID-Source.git', credentials: 'orcid-machine', branch: "${env.BRANCH_NAME}"
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${env.BRANCH_NAME}"
     
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
     
-    stage('Fetch Code') {
+    stage('Fetch Code and Build') {
         echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
-    }
-    
-    stage('Build Dependencies') {
         echo "Lets build the core"
         try {
             do_maven("clean install -Dmaven.test.skip=true")
@@ -19,7 +14,7 @@ node {
             throw err
         }
     }
-    stage('Build & Test') {
+    stage('Execute Tests') {
         try {
             parallel activemq: {
                 do_maven(" -f orcid-activemq/pom.xml test")
@@ -53,11 +48,9 @@ node {
             junit '**/target/surefire-reports/*.xml'            
             orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
-        }        
-    }
-    stage('Notify Completed'){
+        }
         orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()
+        deleteDir()        
     }
 }
 

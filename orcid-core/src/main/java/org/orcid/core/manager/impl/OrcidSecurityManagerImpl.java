@@ -106,18 +106,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private int claimWaitPeriodDays;
 
     @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
-    @Override
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
-
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-
+    private String baseUrl;        
+    
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();

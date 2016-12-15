@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -39,9 +40,11 @@ import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -65,7 +68,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        externalIdentifierManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", sourceManager);
     }
 
     @AfterClass
@@ -158,6 +161,46 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         
         assertNotNull(extId1);
         assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
+    }
+    
+    @Test
+    public void getAllTest() {
+        String orcid = "0000-0000-0000-0003";
+        PersonExternalIdentifiers elements = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getExternalIdentifiers());
+        assertEquals(5, elements.getExternalIdentifiers().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(PersonExternalIdentifier element : elements.getExternalIdentifiers()) {
+            if(13 == element.getPutCode()){
+                found1 = true;
+            } else if(14 == element.getPutCode()){
+                found2 = true;
+            } else if(15 == element.getPutCode()){
+                found3 = true;
+            } else if(16 == element.getPutCode()){
+                found4 = true;
+            } else if(17 == element.getPutCode()){
+                found5 = true;
+            } else {
+                fail("Invalid put code found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void getPublicTest() {
+        String orcid = "0000-0000-0000-0003";        
+        PersonExternalIdentifiers elements = externalIdentifierManager.getPublicExternalIdentifiers(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getExternalIdentifiers());
+        assertEquals(1, elements.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), elements.getExternalIdentifiers().get(0).getPutCode());
     }
     
     private PersonExternalIdentifier getExternalIdentifier() {

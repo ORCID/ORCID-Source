@@ -21,7 +21,6 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessControlException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
@@ -46,6 +46,7 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.PersonDetailsManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -186,10 +187,15 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Resource
     private SourceUtils sourceUtils;
-
+    
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
+    
+    @Resource
+    private PersonDetailsManager personDetailsManager;
+    
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+        return profileEntityManager.getLastModified(orcid);
     }
 
     @Override
@@ -231,12 +237,12 @@ public class MemberV2ApiServiceDelegatorImpl
         ActivitiesSummary as = null;
         try {
             checkClientAccessAndScope(orcid, ScopePathType.ACTIVITIES_READ_LIMITED);
-            as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);
+            as = visibilityFilter.filter(activitiesSummaryManager.getActivitiesSummary(orcid), orcid);
         } catch (AccessControlException e) {
             // If the user have the READ_PUBLIC scope, return him the list of
             // public activities.
             if (orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                as = profileEntityManager.getPublicActivitiesSummary(orcid);
+                as = activitiesSummaryManager.getPublicActivitiesSummary(orcid);
             } else {
                 throw e;
             }
@@ -1032,13 +1038,13 @@ public class MemberV2ApiServiceDelegatorImpl
         Biography bio = null;
         try {
             checkClientAccessAndScope(orcid, ScopePathType.ORCID_BIO_READ_LIMITED);
-            bio = biographyManager.getBiography(orcid);
+            bio = biographyManager.getBiography(orcid, getLastModifiedTime(orcid));
             orcidSecurityManager.checkBiographicalVisibility(bio, orcid);
         } catch (AccessControlException e) {
             // If the user have the READ_PUBLIC scope, return him the list of
             // public elements.
             if (orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                bio = biographyManager.getPublicBiography(orcid);
+                bio = biographyManager.getPublicBiography(orcid, getLastModifiedTime(orcid));
                 if (bio == null) {
                     throw new OrcidUnauthorizedException("The biography is not public");
                 }
@@ -1077,13 +1083,13 @@ public class MemberV2ApiServiceDelegatorImpl
         Person person = null;
         try {
             checkClientAccessAndScope(orcid, ScopePathType.ORCID_BIO_READ_LIMITED);
-            person = profileEntityManager.getPersonDetails(orcid);
+            person = personDetailsManager.getPersonDetails(orcid);
             person = visibilityFilter.filter(person, orcid);
         } catch (AccessControlException e) {
             // If the user have the READ_PUBLIC scope, return him the public
             // element.
             if (orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                person = profileEntityManager.getPublicPersonDetails(orcid);
+                person = personDetailsManager.getPublicPersonDetails(orcid);
             } else {
                 throw e;
             }
