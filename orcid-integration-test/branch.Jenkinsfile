@@ -1,20 +1,23 @@
 node {
 
-    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${env.BRANCH_NAME}"
+    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '1', daysToKeepStr: '1', numToKeepStr: '1')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: 'build specific branch by name', name: 'branch_to_build')]), pipelineTriggers([])])
     
-    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
+    git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
-    stage('Fetch Code and Build') {
-        echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"
+    stage('Fetch Code') {
+        echo "triggered by modification on ${branch_to_build} ---------------------------------------------------------------------------"
+    }
+    
+    stage('Build Dependencies') {
         echo "Lets build the core"
         try {
             do_maven("clean install -Dmaven.test.skip=true")
         } catch(Exception err) {
-            orcid_notify("Compilation ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Compilation ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
     }
-    stage('Execute Tests') {
+    stage('Build & Test') {
         try {
             parallel activemq: {
                 do_maven(" -f orcid-activemq/pom.xml test")
@@ -46,11 +49,13 @@ node {
             junit '**/target/surefire-reports/*.xml'
         } catch(Exception err) {
             junit '**/target/surefire-reports/*.xml'            
-            orcid_notify("Build ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
+            orcid_notify("Build ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
-        orcid_notify("Pipeline ${env.BRANCH_NAME}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()        
+    }
+    stage('Notify Completed'){
+        orcid_notify("Pipeline ${branch_to_build}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
+        deleteDir()
     }
 }
 
