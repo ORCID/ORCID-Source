@@ -56,7 +56,7 @@
                                     grant_type: 'authorization_code',
                                     client_id: localStorage['client_id'],
                                     client_secret: localStorage['client_secret'],
-                                    redirect_uri: 'http://localhost:8080/orcid-web/oauth/playground',
+                                    redirect_uri: 'https://localhost:8443/orcid-web/oauth/playground',
                                     scope: localStorage['scope'],
                                     code: $('#code').html()
                                 },
@@ -113,7 +113,7 @@
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         }
         function setAuthorizeLink(){
-            $('#authorize').prop('href', '/orcid-web/oauth/authorize?client_id=' + localStorage['client_id'] + '&response_type=code&scope=' + localStorage['scope'] +'&redirect_uri=http://localhost:8080/orcid-web/oauth/playground');
+            $('#authorize').prop('href', '/orcid-web/oauth/authorize?client_id=' + localStorage['client_id'] + '&response_type=code&scope=' + localStorage['scope'] +'&redirect_uri=https://localhost:8443/orcid-web/oauth/playground');
         }
     </script>
 </head>

@@ -20,7 +20,7 @@ import org.jsoup.helper.StringUtil;
 import org.orcid.jaxb.model.record_rc4.GroupAble;
 
 public class PeerReviewGroupKey implements GroupAble {    
-    public static String KEY_NAME = "PEER-REVIEW"; 
+    public static String KEY_NAME = "peer-review"; 
     protected String groupId;
     
     public String getGroupId() {
