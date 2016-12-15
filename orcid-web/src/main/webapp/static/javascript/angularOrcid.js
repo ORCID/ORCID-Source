@@ -18,9 +18,9 @@
 /*
  * Structure of this file:
  * 
- *  - Random functions
- *  - Groupings logic
- *  - Angular Services
+ *  - 1 - Utility functions
+ *  - 2 - Groupings logic
+ *  - 3 - Angular Services
  *  - Angular Controllers
  *  - Angular Filters
  *  - Angular Directives
@@ -29,7 +29,7 @@
  */
 
 /*
- * Utility FUNCTIONS
+ * 1 - Utility functions
  */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
@@ -501,9 +501,34 @@ ActSortState.prototype.sortBy = function(key) {
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
-/*
- * SERVICES
- */
+/*************************************************
+ * 3 - Angular Services
+ *************************************************/
+
+
+orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
+    var configValues = {
+        modalManualEditVerificationEnabled: false
+    };
+    var locationObj = $location.search();
+
+    if( locationObj.verifyEdit ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+            configValues.modalManualEditVerificationEnabled = true;
+        } else {
+            configValues.modalManualEditVerificationEnabled = false;
+        }
+    }
+
+    var initialConfigService = {
+        getInitialConfiguration: function(){
+            return configValues;
+        }
+    };
+    return initialConfigService;
+}]);
+
 
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
@@ -1516,13 +1541,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     return worksSrvc;
 }]);
 
-orcidNgModule.factory("emailSrvc", function ($rootScope) {
+orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
     var serv = {
         emails: null,            
-        inputEmail: null,
         delEmail: null,
-        primaryEmail: null,
+        displayModalWarningFlag: false,
+        inputEmail: null,
         popUp: false,
+        primaryEmail: null,
+        
         addEmail: function() {            	
             $.ajax({
                 url: getBaseUri() + '/account/addEmail.json',
@@ -1543,29 +1570,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
-        getEmails: function(callback) {
-        	
-            $.ajax({
-                url: getBaseUri() + '/account/emails.json',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {                    	
-                    serv.emails = data;
-                    for (var i in data.emails){
-                        if (data.emails[i].primary){
-                            serv.primaryEmail = data.emails[i];
-                        }
-                    }                                                
-                    $rootScope.$apply();
-                    if (callback)
-                       callback(data);
-                }
-            }).fail(function(e) {
-                // something bad is happening!
-                console.log("error with multi email");
-                logAjaxError(e);
-            });
-        },
+        
         deleteEmail: function (callback) {
             $.ajax({
                 url: getBaseUri() + '/account/deleteEmail.json',
@@ -1583,23 +1588,36 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("emailSrvc.deleteEmail() error");
             });
         },
-        initInputEmail: function () {
+        
+        getEmails: function(callback) {
+            $.ajax({
+                url: getBaseUri() + '/account/emails.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {                    	
+                    serv.emails = data;
+                    for (var i in data.emails){
+                        if (data.emails[i].primary){
+                            serv.primaryEmail = data.emails[i];
+                        }
+                    }                                                
+                    $rootScope.$apply();
+                    if (callback) {
+                       callback(data);
+                    }
+                }
+            }).fail(function(e) {
+                // something bad is happening!
+                console.log("error with multi email");
+                logAjaxError(e);
+            });
+        },
+        
+
+        initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
         },
-        setPrivacy: function(email, priv) {
-            email.visibility = priv;
-            serv.saveEmail();
-        },
-        setPrimary: function(email) {
-            for (i in serv.emails.emails) {
-                if (serv.emails.emails[i] == email) {
-                    serv.emails.emails[i].primary = true;
-                } else {
-                    serv.emails.emails[i].primary = false;
-                }
-            }
-            serv.saveEmail();
-        },
+
         saveEmail: function(callback) {
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
@@ -1618,6 +1636,23 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
+
+        setPrimary: function(email) {
+            for (i in serv.emails.emails) {
+                if (serv.emails.emails[i] == email) {
+                    serv.emails.emails[i].primary = true;
+                } else {
+                    serv.emails.emails[i].primary = false;
+                }
+            }
+            serv.saveEmail();
+        },
+        
+        setPrivacy: function(email, priv) {
+            email.visibility = priv;
+            serv.saveEmail();
+        },
+        
         verifyEmail: function(email, callback) {
             $.ajax({
                 url: getBaseUri() + '/account/verifyEmail.json',
@@ -2839,7 +2874,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     
 }]);
 
-orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
 
     $scope.commonSrvc = commonSrvc;
@@ -2854,6 +2889,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     $scope.websitesForm = null;
     
     /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
 
@@ -3045,7 +3081,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
         
     $scope.openEditModal = function(){
-        if(emailVerified === true){
+        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
             $.colorbox({
                 scrolling: true,
@@ -3112,7 +3149,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     $scope.getWebsitesForm();
 }]);
 
-orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc) {
+orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
@@ -3127,7 +3164,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     $scope.showElement = {};
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;var emails = {};
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -3277,7 +3317,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     };
     
     $scope.openEditModal = function(){
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	$scope.modal = true;    	
             $.colorbox({
@@ -3596,14 +3636,42 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.getOtherNamesForm();
 }]);
 
-orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope, $compile) {
-    $scope.showEdit = false;
+orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
     $scope.biographyForm = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.lengthError = false;
+    $scope.showEdit = false;
     $scope.showElement = {};
 
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();;
+    var emails = {};
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.toggleEdit = function() {
-        $scope.showEdit = !$scope.showEdit;
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            $scope.showEdit = !$scope.showEdit;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.close = function() {
@@ -3681,7 +3749,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.countryForm = null;
@@ -3698,7 +3766,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
 
 
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;var emails = {};
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -3831,7 +3902,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     
     $scope.openEditModal = function() {
     	
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	
             $.colorbox({
@@ -4802,7 +4873,7 @@ orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }]);
 
-orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc){
+orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.editAffiliation;
     $scope.emailSrvc = emailSrvc;
@@ -4814,7 +4885,10 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     $scope.workspaceSrvc = workspaceSrvc;
 
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;var emails = {};
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -4979,7 +5053,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
             $scope.addAffType = type;
             if(affiliation === undefined) {
                 $scope.removeDisambiguatedAffiliation();
@@ -5124,7 +5198,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
 /**
  * Fundings Controller
  * */
-orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc) {
+orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
     $scope.addingFunding = false;
     $scope.disambiguatedFunding = null;
     $scope.displayURLPopOver = {};
@@ -5142,7 +5216,11 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     $scope.workspaceSrvc = workspaceSrvc;
     
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;var emails = {};
+    var configuration = initialConfigService.getInitialConfiguration();
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -5242,7 +5320,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };
 
     $scope.addFundingModal = function(data){
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
             if(data == undefined) {
                 $scope.removeDisambiguatedFunding();
                 $.ajax({
@@ -5905,8 +5983,8 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
-                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
+                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
     actBulkSrvc.initScope($scope);
    
     $scope.badgesRequested = {};
@@ -5948,11 +6026,14 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     $scope.worksSrvc = worksSrvc;
     $scope.workType = ['All'];
 
-
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
+
     /////////////////////// Begin of verified email logic for work
-    var emailVerified = false;var emails = {};
+    var configuration = initialConfigService.getInitialConfiguration();
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -5986,7 +6067,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
     $scope.toggleBulkEdit = function() {
 
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
             if (!$scope.bulkEditShow) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;
@@ -6139,13 +6220,17 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         });
     };
 
-    $scope.openBibTextWizard = function () {    	
-        $scope.bibtexParsingError = false;
-        $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
-        $scope.bulkEditShow = false;
-        $scope.worksFromBibtex = null;
-        $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;        
+    $scope.openBibTextWizard = function () {
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            $scope.bibtexParsingError = false;
+            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
+            $scope.bulkEditShow = false;
+            $scope.worksFromBibtex = null;
+            $scope.workImportWizard = false;
+            $scope.showBibtexExport = false;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.bibtextCancel = function(){
@@ -6327,7 +6412,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     }
     
     $scope.addWorkModal = function(data){
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
             if (data == undefined) {
                 worksSrvc.getBlankWork(function(data) {
                     $scope.editWork = data;
@@ -6352,7 +6437,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };       
 
     $scope.putWork = function(){
-        if(emailVerified === true){
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
             if ($scope.addingWork) {
                 return; // don't process if adding work
             }
@@ -11736,8 +11821,6 @@ orcidNgModule.directive(
         '$rootScope',
         '$timeout',
         function( $compile, $rootScope, $timeout ) {
-
-            var emailVerifiedObj = null;
 
             var closeModal = function(){
                 $.colorbox.remove();
