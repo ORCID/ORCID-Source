@@ -506,10 +506,21 @@ var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.mu
  *************************************************/
 
 
-orcidNgModule.factory("initialConfigService", ['$rootScope', function ($rootScope) {
+orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
-        modalManualEditVerificationEnabled: true
+        modalManualEditVerificationEnabled: false
     };
+    var locationObj = $location.search();
+
+    if( locationObj.verifyEdit ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+            configValues.modalManualEditVerificationEnabled = true;
+        } else {
+            configValues.modalManualEditVerificationEnabled = false;
+        }
+    }
+
     var initialConfigService = {
         getInitialConfiguration: function(){
             return configValues;
@@ -1579,7 +1590,6 @@ orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
         },
         
         getEmails: function(callback) {
-        	serv.displayModalWarning();
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
                 type: 'GET',
@@ -1603,56 +1613,9 @@ orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
             });
         },
         
-        getEmailsObj: function(){
-            if( serv.emails == null ){
-                serv.getEmails();
-            }
-            return serv.emails;
-        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
-        },
-
-        //aaaaaaaaaaaaaaa
-        isEmailVerified: function( data ) {
-            console.log("data", data);
-            var accountVerified = false;
-            
-            /*
-            if( serv.emails == null ){
-                serv.getEmails( serv.isEmailVerified );
-                return;
-            }
-            */
-            
-            if( data != null && data != undefined ){
-                serv.emails = data;
-            }
-            $timeout(
-                function(){
-                    serv.emails.forEach(
-                        function(element){
-                            if(element.verified == true) {
-                                accountVerified = true;
-                            }
-                        }
-                    );
-                    return accountVerified;
-                    
-                },
-                1000
-            );
-        },
-
-        displayModalWarning: function(){
-            displayModalWarningFlag = $location.search();
-            if( displayModalWarningFlag ){
-
-            }
-            displayModalWarningFlag = true;
-            //console.log("displayModalWarning", displayModalWarningFlag);
-            return displayModalWarningFlag;
         },
 
         saveEmail: function(callback) {
@@ -3118,6 +3081,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
         
     $scope.openEditModal = function(){
+        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
         if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
             $.colorbox({
@@ -6065,7 +6029,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
 
-    //bbbbbbbbbbbbbbb
     /////////////////////// Begin of verified email logic for work
     var configuration = initialConfigService.getInitialConfiguration();
     var configuration = initialConfigService.getInitialConfiguration();
@@ -11857,13 +11820,7 @@ orcidNgModule.directive(
         '$compile',
         '$rootScope',
         '$timeout',
-        'emailSrvc',
-        function( $compile, $rootScope, $timeout, emailSrvc ) {
-            //ccccccccccccccccc
-            var _emailSrvc = emailSrvc;
-            var emailVerified = _emailSrvc.isEmailVerified();
-            var emailVerifiedObj = _emailSrvc.getEmailsObj();
-            console.log("directive", emailVerified, emailVerifiedObj);
+        function( $compile, $rootScope, $timeout ) {
 
             var closeModal = function(){
                 $.colorbox.remove();
