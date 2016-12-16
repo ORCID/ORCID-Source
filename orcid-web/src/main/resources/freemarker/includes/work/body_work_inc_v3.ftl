@@ -147,7 +147,7 @@
                              <ul class="id-details">
                                  <li class="url-work">
                                     <ul class="id-details">
-                                        <li ng-repeat='ie in work.workExternalIdentifiers' class="url-popover">
+                                        <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierId.value"]' class="url-popover">
                                             <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
                                         </li>
                                     </ul>                                   

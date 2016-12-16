@@ -511,7 +511,14 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     var configValues = {
         modalManualEditVerificationEnabled: false
     };
+
     var locationObj = $location.search();
+
+    var initialConfigService = {
+        getInitialConfiguration: function(){
+            return configValues;
+        }
+    };
 
     if( locationObj.verifyEdit ){
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
@@ -521,11 +528,6 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
         }
     }
 
-    var initialConfigService = {
-        getInitialConfiguration: function(){
-            return configValues;
-        }
-    };
     return initialConfigService;
 }]);
 
@@ -11555,29 +11557,39 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
             isPartOf = true;        
-        if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
+        if (workExternalIdentifier == null){
+            return output;
+        } 
+        if (workExternalIdentifier.workExternalIdentifierId == null) {
+            return output;        
+        }
         
         id = workExternalIdentifier.workExternalIdentifierId.value;
         type;
         
-        if (workExternalIdentifier.workExternalIdentifierType != null)
+        if (workExternalIdentifier.workExternalIdentifierType != null) {
             type = workExternalIdentifier.workExternalIdentifierType.value;        
+        }
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();
-            if(isPartOf)
+            if(isPartOf) {
                 output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-            else 
+            }
+            else {
                 output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+            }
         }
         
-        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '') {
         	link = workExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type);	
-        if (link != null){        	
+        }
+        else {
+            link = workIdLinkJs.getLink(id,type);	
+        }
+        if (link != null) {        	
             link = $filter('urlProtocol')(link);        	
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
-        }else{
+        } else {
             output = output + id.escapeHtml();        
         }
         
