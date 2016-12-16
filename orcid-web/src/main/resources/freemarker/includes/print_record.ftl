@@ -18,8 +18,7 @@
 -->
 <#if RequestParameters['print']??>
 	<div class="print-orcid-record">
-		<!--using hard-coded based url temporarily for local testing - need to replace with var for https version of base URL-->
-		<a id="printRecord" onclick="printPublicRecord('https://localhost:8443/orcid-web/${(effectiveUserOrcid)!}')"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>		
+		<a id="printRecord" onclick="printPublicRecord('${baseUri}/${(effectiveUserOrcid)!}')"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>		
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
         <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
