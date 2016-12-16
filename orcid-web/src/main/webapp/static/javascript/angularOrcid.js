@@ -1389,18 +1389,21 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             return null;
         },
         deleteGroupWorks: function(putCodes) {
-            var rmWorks = new Array();
-            var rmGroups = new Array();
-            for (var idj in putCodes)
-                for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCodes[idj])) {
-                        rmGroups.push(idx);
-                        for (var idj in worksSrvc.groups[idx].activities)
-                            rmWorks.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+            var rmWorks = [];
+            var rmGroups = [];
+            for (var i in putCodes) {
+                for (var j in worksSrvc.groups) {
+                    if (worksSrvc.groups[j].hasPut(putCodes[i])) {
+                        rmGroups.push(j);
+                        for (var k in worksSrvc.groups[j].activities){
+                            rmWorks.push(worksSrvc.groups[j].activities[k].putCode.value);
+                        }
                     };
                 }
-            while (rmGroups.length > 0) 
+            }
+            while (rmGroups.length > 0) {
                 worksSrvc.groups.splice(rmGroups.pop(),1);
+            }
             worksSrvc.removeWorks(rmWorks);
         },
         deleteWork: function(putCode) {
