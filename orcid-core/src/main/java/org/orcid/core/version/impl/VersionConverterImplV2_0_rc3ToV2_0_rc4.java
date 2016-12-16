@@ -13,7 +13,7 @@
  * the software.
  *
  * =============================================================================
- */ 
+ */
 package org.orcid.core.version.impl;
 
 import javax.annotation.Resource;
