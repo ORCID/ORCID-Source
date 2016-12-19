@@ -196,7 +196,7 @@ public class BBBUtil {
     }
     
     public static void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
-        int wait = 20;
+        int wait = 10;
         int pollingInterval = 250;
         waitFor(wait, pollingInterval, expectedCondition, webDriver, true);
     }
