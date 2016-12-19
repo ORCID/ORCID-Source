@@ -19,14 +19,20 @@ package org.orcid.integration.blackbox.api.security;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
 import org.orcid.jaxb.model.error_rc4.OrcidError;
@@ -65,6 +71,25 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
+    @Test
+    public void testInvalidTokenResponse() throws IOException {
+    	ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), "invalid_token");
+    	assertNotNull(response);
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        InputStream stream = response.getEntityInputStream();
+        
+        String result = null;
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(stream))) {
+            result = buffer.lines().collect(Collectors.joining("\n"));
+        }
+        
+        assertNotNull(result);
+        OrcidError error = JsonUtils.readObjectFromJsonString(result, OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9038), error.getErrorCode());
+        assertEquals("Access token is invalid", error.getDeveloperMessage());
+    }
+    
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
