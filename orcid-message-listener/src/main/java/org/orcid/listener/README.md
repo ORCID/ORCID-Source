@@ -10,7 +10,8 @@ Have at least the following: a tomcat running withapps deployed: message-listene
 update message-listener.properties
 	org.orcid.message-listener.s3.accessKey=xxx
 	org.orcid.message-listener.s3.secretKey=xxx
-	org.orcid.persistence.messaging.dump_indexing.enabled=true
+	org.orcid.message-listener.api12Enabled=true
+	org.orcid.message-listener.api20Enabled=false
 
 create a member token with /read-public scope and put it in
 	org.orcid.message-listener.api.read_public_access_token=xxx
