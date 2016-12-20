@@ -2,7 +2,7 @@
 
 This directory contains java properties files needed for i18n support. 
 
-For each resource (api, email, messages, javascript), a separate properties file for each language, named with the corresponding [locale code](http://www.oracle.com/technetwork/java/javase/locales-137662.html), contains translations. Additionally, we use codes xx, lr and rl for testing.
+For each resource (api, email, messages, javascript, identifiers), a separate properties file for each language, named with the corresponding [locale code](http://www.oracle.com/technetwork/java/javase/locales-137662.html), contains translations. Additionally, we use codes xx, lr and rl for testing.
 
 In most cases, only en, xx, lr, and rl files should be edited directly. We use the following tools to manage files for other lanuages:
 
