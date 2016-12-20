@@ -11949,7 +11949,7 @@ orcidNgModule.directive('ngEnterSubmit', function($document) {
         link: function(scope, element, attr) {
         	$document.bind("keydown keypress", function(event) {
                 if (event.which === 13) {
-                   element.submit();
+                   //element.submit();
                 }
             });
 
@@ -11992,7 +11992,7 @@ orcidNgModule.directive('ngEnter', function() {
         element.bind("keydown keypress", function(event) {
             if(event.which === 13) {            	
                 scope.$apply(function(){
-                    scope.$eval(attrs.ngEnter, {'event': event});
+                    //scope.$eval(attrs.ngEnter, {'event': event});
                 });
                 event.preventDefault();
                 event.stopPropagation();
