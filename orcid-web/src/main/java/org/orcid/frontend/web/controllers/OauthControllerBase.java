@@ -253,6 +253,7 @@ public class OauthControllerBase extends BaseController {
 
         // If client details is ok, continue
         String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
+        String clientEmailRequestReason = clientDetails.getEmailAccessReason() == null ? "" : clientDetails.getEmailAccessReason();
         String clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         String memberName = "";
 
@@ -297,6 +298,7 @@ public class OauthControllerBase extends BaseController {
         infoForm.setClientId(clientId);
         infoForm.setClientDescription(clientDescription);
         infoForm.setClientName(clientName);
+        infoForm.setClientEmailRequestReason(clientEmailRequestReason);
         infoForm.setMemberName(memberName);
         infoForm.setRedirectUrl(redirectUri);
         infoForm.setStateParam(stateParam);
@@ -305,7 +307,11 @@ public class OauthControllerBase extends BaseController {
         return infoForm;
     }
     
-    protected void fillOauthParams(RequestInfoForm requestInfoForm, Map<String, String> params, Map<String, String> approvalParams, boolean userEnabledPersistentTokens) {
+    protected void fillOauthParams(RequestInfoForm requestInfoForm, Map<String, String> params, Map<String, String> approvalParams, boolean userEnabledPersistentTokens, boolean allowEmailAccess) {
+        if (requestInfoForm.containsEmailReadPrivateScope() && !allowEmailAccess) {
+            requestInfoForm.removeEmailReadPrivateScope();
+        }
+        
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())) {
             params.put(OrcidOauth2Constants.SCOPE_PARAM, requestInfoForm.getScopesAsString());
         }
