@@ -54,6 +54,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc4.Organization;
 import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
@@ -124,6 +125,7 @@ import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -155,21 +157,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test    
-    public void testViewActitivies() {
+    public void testViewActitivies() {    	
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
-        assertNotNull(response);
+        assertNotNull(response);        
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
-        
+        verifyLastModified(summary.getLastModifiedDate());
         // Check works
         assertNotNull(summary.getWorks());
+        verifyLastModified(summary.getWorks().getLastModifiedDate());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
         boolean foundPrivateWork = false;
         for(WorkGroup group : summary.getWorks().getWorkGroup()) {
-            assertNotNull(group.getWorkSummary());
+        	verifyLastModified(group.getLastModifiedDate());
+        	assertNotNull(group.getWorkSummary());
             assertEquals(1, group.getWorkSummary().size());
             WorkSummary work = group.getWorkSummary().get(0);
+            verifyLastModified(work.getLastModifiedDate());            
             assertThat(work.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
             assertThat(work.getPath(),
                     anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
@@ -179,18 +184,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
                 foundPrivateWork = true;
             } 
-        }
-        
+        }        
         assertTrue(foundPrivateWork);
         
         // Check fundings
         assertNotNull(summary.getFundings());
+        verifyLastModified(summary.getFundings().getLastModifiedDate());        
         assertEquals(3, summary.getFundings().getFundingGroup().size());
         boolean foundPrivateFunding = false;
         for (FundingGroup group : summary.getFundings().getFundingGroup()) {
             assertNotNull(group.getFundingSummary());
+            verifyLastModified(group.getLastModifiedDate());            
             assertEquals(1, group.getFundingSummary().size());
             FundingSummary funding = group.getFundingSummary().get(0);
+            verifyLastModified(funding.getLastModifiedDate());
             assertThat(funding.getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5)), is(Long.valueOf(8))));
             assertThat(funding.getPath(),
                     anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5"), is("/4444-4444-4444-4446/funding/8")));
@@ -206,11 +213,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         // Check Educations
         assertNotNull(summary.getEducations());
+        verifyLastModified(summary.getLastModifiedDate());        
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(3, summary.getEducations().getSummaries().size());
         
         boolean foundPrivateEducation = false;
         for(EducationSummary education : summary.getEducations().getSummaries()) {
+        	verifyLastModified(education.getLastModifiedDate());
             assertThat(education.getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7)), is(Long.valueOf(9))));
             assertThat(education.getPath(),
                     anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
@@ -227,12 +236,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         // Check Employments
         assertNotNull(summary.getEmployments());
+        verifyLastModified(summary.getEmployments().getLastModifiedDate());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(3, summary.getEmployments().getSummaries().size());
         
         boolean foundPrivateEmployment = false;
         
         for(EmploymentSummary employment : summary.getEmployments().getSummaries()) {
+        	verifyLastModified(employment.getLastModifiedDate());
             assertThat(employment.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8)), is(Long.valueOf(11))));
             assertThat(employment.getPath(),
                     anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
@@ -248,13 +259,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         // Check Peer reviews
         assertNotNull(summary.getPeerReviews());
+        verifyLastModified(summary.getPeerReviews().getLastModifiedDate());
         assertEquals(3, summary.getPeerReviews().getPeerReviewGroup().size());
         
         boolean foundPrivatePeerReview = false;
         for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
             assertNotNull(group.getPeerReviewSummary());
+            verifyLastModified(group.getLastModifiedDate());
             assertEquals(1, group.getPeerReviewSummary().size());
             PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            verifyLastModified(peerReview.getLastModifiedDate());
             assertThat(peerReview.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(4))));
             assertThat(peerReview.getGroupId(), anyOf(is("issn:0000001"), is("issn:0000002"), is("issn:0000003")));
             if(peerReview.getPutCode().equals(4L)) {
@@ -268,10 +282,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testCleanEmptyFieldsOnActivities() {
-        Works works = new Works();
-        WorkGroup group = new WorkGroup();
+    	LastModifiedDate lmd = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis()));
+    	Works works = new Works();
+        works.setLastModifiedDate(lmd);
+        WorkGroup group = new WorkGroup();        
+        group.setLastModifiedDate(lmd);
         for (int i = 0; i < 5; i++) {
             WorkSummary summary = new WorkSummary();
+            summary.setLastModifiedDate(lmd);
             WorkTitle title = new WorkTitle();
             title.setTitle(new Title("Work " + i));
             title.setTranslatedTitle(new TranslatedTitle("", ""));
@@ -286,11 +304,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         assertNotNull(as);
         assertNotNull(as.getWorks());
+        verifyLastModified(as.getWorks().getLastModifiedDate());
         assertNotNull(as.getWorks().getWorkGroup());
         assertEquals(1, as.getWorks().getWorkGroup().size());
         assertNotNull(as.getWorks().getWorkGroup().get(0).getWorkSummary());
+        verifyLastModified(as.getWorks().getWorkGroup().get(0).getLastModifiedDate());
         assertEquals(5, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
         for (WorkSummary summary : as.getWorks().getWorkGroup().get(0).getWorkSummary()) {
+        	verifyLastModified(summary.getLastModifiedDate());
             assertNotNull(summary.getTitle());
             assertNotNull(summary.getTitle().getTitle());
             assertTrue(summary.getTitle().getTitle().getContent().startsWith("Work "));
@@ -309,6 +330,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
@@ -324,6 +346,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 6L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
+        verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article B", work.getWorkTitle().getTitle().getContent());
@@ -341,6 +364,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 7L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
+        verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("Journal article C", work.getWorkTitle().getTitle().getContent());
@@ -371,17 +395,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         Works works = (Works)r.getEntity();
         assertNotNull(works);
+        verifyLastModified(works.getLastModifiedDate());
         assertNotNull(works.getWorkGroup());
         assertEquals(4, works.getWorkGroup().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         
         for(WorkGroup workGroup : works.getWorkGroup()) {
+        	verifyLastModified(workGroup.getLastModifiedDate());
             assertNotNull(workGroup.getIdentifiers());
             assertNotNull(workGroup.getIdentifiers().getExternalIdentifier());
             assertEquals(1, workGroup.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(workGroup.getWorkSummary());
             assertEquals(1, workGroup.getWorkSummary().size());
             WorkSummary summary = workGroup.getWorkSummary().get(0);
+            verifyLastModified(summary.getLastModifiedDate());
             assertNotNull(summary.getTitle());
             assertNotNull(summary.getTitle().getTitle());
             switch(workGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
@@ -407,10 +434,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 break;
             default:
                 fail("Invalid external id found: " + workGroup.getIdentifiers().getExternalIdentifier().get(0).getValue());
-            }
-            
-        }
-        
+            }           
+        }        
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
@@ -419,7 +444,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testCleanEmptyFieldsOnWorks() {
-        Work work = new Work();
+    	LastModifiedDate lmd = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis()));
+    	Work work = new Work();
+    	work.setLastModifiedDate(lmd);
         work.setWorkCitation(new Citation("", CitationType.FORMATTED_UNSPECIFIED));
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("My Work"));
@@ -430,6 +457,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ActivityUtils.cleanEmptyFields(work);
 
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
         assertNotNull(work.getWorkTitle().getSubtitle());
@@ -447,11 +475,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());
         // Check works
         assertNotNull(summary.getWorks());
         assertNotNull(summary.getWorks().getWorkGroup());
         assertEquals(1, summary.getWorks().getWorkGroup().size());
+        verifyLastModified(summary.getWorks().getLastModifiedDate());
         assertNotNull(summary.getWorks().getWorkGroup().get(0));
+        verifyLastModified(summary.getWorks().getWorkGroup().get(0).getLastModifiedDate());
         assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
 
@@ -466,6 +497,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());        
         // Check works
         assertNotNull(summary.getWorks());
         assertNotNull(summary.getWorks().getWorkGroup());
@@ -475,9 +507,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         boolean haveNew = false;
 
         for (WorkGroup group : summary.getWorks().getWorkGroup()) {
-            assertNotNull(group.getWorkSummary());
+        	verifyLastModified(group.getLastModifiedDate());            
+        	assertNotNull(group.getWorkSummary());
             assertNotNull(group.getWorkSummary().get(0));
             WorkSummary workSummary = group.getWorkSummary().get(0);
+            verifyLastModified(workSummary.getLastModifiedDate());            
             assertNotNull(workSummary.getTitle());
             assertNotNull(workSummary.getTitle().getTitle());
             if ("A Book With Contributors JSON".equals(workSummary.getTitle().getTitle().getContent())) {
@@ -486,10 +520,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 haveNew = true;
             }
         }
-
         assertTrue(haveOld);
-        assertTrue(haveNew);
-        
+        assertTrue(haveNew);        
         //Delete them
         serviceDelegator.deleteWork("4444-4444-4444-4445", putCode);
     }
@@ -523,13 +555,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         bulk = (WorkBulk) response.getEntity();
-
         assertNotNull(bulk);
         assertEquals(5, bulk.getBulk().size());
 
         for (int i = 0; i < 5; i++) {
             assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
             Work w = (Work) bulk.getBulk().get(i);
+            verifyLastModified(w.getLastModifiedDate());
             assertNotNull(w.getPutCode());
             assertTrue(0L < w.getPutCode());
             assertEquals("Bulk work " + i + " " + time, w.getWorkTitle().getTitle().getContent());
@@ -555,6 +587,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertEquals(Long.valueOf(1), work.getPutCode());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
@@ -573,6 +606,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         work = (Work) response.getEntity();
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertEquals(Long.valueOf(1), work.getPutCode());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
@@ -594,6 +628,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertEquals(Long.valueOf(2), work.getPutCode());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
@@ -638,7 +673,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 10L);
         assertNotNull(response);
         Work work = (Work) response.getEntity(); 
-        assertNotNull(work);
+        assertNotNull(work);        
         assertEquals(Visibility.PUBLIC, work.getVisibility());
         
         work.setVisibility(null);
@@ -648,6 +683,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         work = (Work) response.getEntity();
         assertNotNull(work);
+        verifyLastModified(work.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, work.getVisibility());
     }
 
@@ -683,6 +719,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
+        verifyLastModified(funding.getLastModifiedDate());        
         assertNotNull(funding.getTitle());
         assertNotNull(funding.getTitle().getTitle());
         assertEquals(Long.valueOf(5), funding.getPutCode());
@@ -698,6 +735,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
+        verifyLastModified(funding.getLastModifiedDate());
         assertNotNull(funding.getTitle());
         assertNotNull(funding.getTitle().getTitle());
         assertEquals(Long.valueOf(1), funding.getPutCode());
@@ -715,6 +753,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Funding funding = (Funding) response.getEntity();
         assertNotNull(funding);
+        verifyLastModified(funding.getLastModifiedDate());
         assertNotNull(funding.getTitle());
         assertNotNull(funding.getTitle().getTitle());
         assertEquals(Long.valueOf(4), funding.getPutCode());
@@ -745,18 +784,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         Fundings fundings = (Fundings) r.getEntity();
         assertNotNull(fundings);
+        verifyLastModified(fundings.getLastModifiedDate());
         assertNotNull(fundings.getFundingGroup());
         assertEquals(4, fundings.getFundingGroup().size());
         
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         
         for(FundingGroup fundingGroup : fundings.getFundingGroup()) {
+        	verifyLastModified(fundingGroup.getLastModifiedDate());
             assertNotNull(fundingGroup.getIdentifiers());
             assertNotNull(fundingGroup.getIdentifiers().getExternalIdentifier());
             assertEquals(1, fundingGroup.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(fundingGroup.getFundingSummary());
             assertEquals(1, fundingGroup.getFundingSummary().size());
             FundingSummary summary = fundingGroup.getFundingSummary().get(0);
+            verifyLastModified(summary.getLastModifiedDate());
             assertNotNull(summary.getTitle());
             assertNotNull(summary.getTitle().getTitle());
             switch(fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
@@ -782,10 +824,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 break;
             default:
                 fail("Invalid external id found: " + fundingGroup.getIdentifiers().getExternalIdentifier().get(0).getValue());
-            }
-            
-        }
-        
+            }           
+        }        
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
@@ -799,12 +839,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getFundings());
+        verifyLastModified(summary.getFundings().getLastModifiedDate());
         assertNotNull(summary.getFundings().getFundingGroup());
         assertNotNull(summary.getFundings().getFundingGroup().get(0));
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary());
         assertEquals(1, summary.getFundings().getFundingGroup().get(0).getFundingSummary().size());
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0));
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle());
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
         assertEquals("Public Funding # 1", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
@@ -819,6 +863,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getFundings());
         assertNotNull(summary.getFundings().getFundingGroup());
         assertEquals(2, summary.getFundings().getFundingGroup().size());
@@ -852,6 +897,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Public Funding # 1", funding.getTitle().getTitle().getContent());
         assertEquals("This is the description for funding with id 6", funding.getDescription());
 
+        LastModifiedDate before = funding.getLastModifiedDate();
+        
         funding.getTitle().getTitle().setContent("Updated funding title");
         funding.setDescription("This is an updated description");
         ExternalID fExtId = new ExternalID();
@@ -870,6 +917,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         funding = (Funding) response.getEntity();
         assertNotNull(funding);
+        verifyLastModified(funding.getLastModifiedDate());        
+        assertTrue(funding.getLastModifiedDate().after(before));
         assertEquals("Updated funding title", funding.getTitle().getTitle().getContent());
         assertEquals("This is an updated description", funding.getDescription());
 
@@ -969,6 +1018,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
+        verifyLastModified(education.getLastModifiedDate());        
         assertEquals(Long.valueOf(7L), education.getPutCode());
         assertEquals("/4444-4444-4444-4446/education/7", education.getPath());
         assertEquals("Education Dept # 2", education.getDepartmentName());
@@ -982,6 +1032,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
+        verifyLastModified(education.getLastModifiedDate());
         assertEquals(Long.valueOf(9L), education.getPutCode());
         assertEquals("/4444-4444-4444-4446/education/9", education.getPath());
         assertEquals("Education Dept # 3", education.getDepartmentName());
@@ -995,6 +1046,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Education education = (Education) response.getEntity();
         assertNotNull(education);
+        verifyLastModified(education.getLastModifiedDate());        
         assertEquals(Long.valueOf(6L), education.getPutCode());
         assertEquals("/4444-4444-4444-4446/education/6", education.getPath());
         assertEquals("Education Dept # 1", education.getDepartmentName());
@@ -1023,10 +1075,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);        
         Educations educations = (Educations) r.getEntity();
         assertNotNull(educations);
+        verifyLastModified(educations.getLastModifiedDate());        
         assertNotNull(educations.getSummaries());
         assertEquals(4, educations.getSummaries().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for(EducationSummary summary : educations.getSummaries()) {
+        	verifyLastModified(summary.getLastModifiedDate());            
             if(Long.valueOf(20).equals(summary.getPutCode())) {
                 assertEquals("PUBLIC Department", summary.getDepartmentName());
                 found1 = true;
@@ -1056,9 +1110,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getEducations());
+        verifyLastModified(summary.getEducations().getLastModifiedDate());
         assertNotNull(summary.getEducations().getSummaries());
         assertNotNull(summary.getEducations().getSummaries().get(0));
+        verifyLastModified(summary.getEducations().getSummaries().get(0).getLastModifiedDate());        
         assertEquals(Long.valueOf(1), summary.getEducations().getSummaries().get(0).getPutCode());
        
         response = serviceDelegator.createEducation("4444-4444-4444-4442", getEducation());
@@ -1074,7 +1131,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());        
         assertNotNull(summary.getEducations());
+        verifyLastModified(summary.getEducations().getLastModifiedDate());        
         assertNotNull(summary.getEducations().getSummaries());
 
         boolean haveOld = false;
@@ -1082,6 +1141,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         for (EducationSummary educationSummary : summary.getEducations().getSummaries()) {
             assertNotNull(educationSummary.getPutCode());
+            verifyLastModified(educationSummary.getLastModifiedDate());            
             if (educationSummary.getPutCode() == 1L) {
                 assertEquals("A Department", educationSummary.getDepartmentName());
                 haveOld = true;
@@ -1105,7 +1165,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(education);
         assertEquals("Another Department", education.getDepartmentName());
         assertEquals("Student", education.getRoleTitle());
-
+        verifyLastModified(education.getLastModifiedDate());        
+        
+        LastModifiedDate before = education.getLastModifiedDate();
+        
         education.setDepartmentName("Updated department name");
         education.setRoleTitle("The updated role title");
 
@@ -1117,6 +1180,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         education = (Education) response.getEntity();
         assertNotNull(education);
+        verifyLastModified(education.getLastModifiedDate());        
+        assertTrue(education.getLastModifiedDate().after(before));
         assertEquals("Updated department name", education.getDepartmentName());
         assertEquals("The updated role title", education.getRoleTitle());
 
@@ -1209,6 +1274,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
+        verifyLastModified(employment.getLastModifiedDate());        
         assertEquals(Long.valueOf(5L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
@@ -1222,6 +1288,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
+        verifyLastModified(employment.getLastModifiedDate());        
         assertEquals(Long.valueOf(11L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/11", employment.getPath());
         assertEquals("Employment Dept # 4", employment.getDepartmentName());
@@ -1235,6 +1302,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Employment employment = (Employment) response.getEntity();
         assertNotNull(employment);
+        verifyLastModified(employment.getLastModifiedDate());        
         assertEquals(Long.valueOf(5L), employment.getPutCode());
         assertEquals("/4444-4444-4444-4446/employment/5", employment.getPath());
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
@@ -1262,10 +1330,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);        
         Employments employments = (Employments) r.getEntity();
         assertNotNull(employments);
+        verifyLastModified(employments.getLastModifiedDate());        
         assertNotNull(employments.getSummaries());
         assertEquals(4, employments.getSummaries().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for(EmploymentSummary summary : employments.getSummaries()) {
+        	verifyLastModified(summary.getLastModifiedDate());            
             if(Long.valueOf(17).equals(summary.getPutCode())) {
                 assertEquals("PUBLIC Department", summary.getDepartmentName());
                 found1 = true;
@@ -1313,20 +1383,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());        
         assertNotNull(summary.getEmployments());
+        verifyLastModified(summary.getEmployments().getLastModifiedDate());        
         assertNotNull(summary.getEmployments().getSummaries());
 
         boolean haveOld = false;
         boolean haveNew = false;
 
-        for (EmploymentSummary EmploymentSummary : summary.getEmployments().getSummaries()) {
-            assertNotNull(EmploymentSummary.getPutCode());
-            if (EmploymentSummary.getPutCode() == 13L) {
-                assertEquals("Employment Dept # 1", EmploymentSummary.getDepartmentName());
+        for (EmploymentSummary eSummary : summary.getEmployments().getSummaries()) {        	
+            assertNotNull(eSummary.getPutCode());
+            verifyLastModified(eSummary.getLastModifiedDate());            
+            if (eSummary.getPutCode() == 13L) {
+                assertEquals("Employment Dept # 1", eSummary.getDepartmentName());
                 haveOld = true;
             } else {
-                assertEquals(putCode, EmploymentSummary.getPutCode());
-                assertEquals("My department name", EmploymentSummary.getDepartmentName());
+                assertEquals(putCode, eSummary.getPutCode());
+                assertEquals("My department name", eSummary.getDepartmentName());
                 haveNew = true;
             }
         }
@@ -1344,7 +1417,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(employment);
         assertEquals("Employment Dept # 1", employment.getDepartmentName());
         assertEquals("Researcher", employment.getRoleTitle());
-
+        verifyLastModified(employment.getLastModifiedDate());        
+        LastModifiedDate before = employment.getLastModifiedDate();
+        
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
 
@@ -1356,6 +1431,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         employment = (Employment) response.getEntity();
         assertNotNull(employment);
+        verifyLastModified(employment.getLastModifiedDate());        
+        assertTrue(employment.getLastModifiedDate().after(before));
         assertEquals("Updated department name", employment.getDepartmentName());
         assertEquals("The updated role title", employment.getRoleTitle());
 
@@ -1447,6 +1524,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        verifyLastModified(peerReview.getLastModifiedDate());        
         assertEquals(Long.valueOf(1L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
@@ -1475,6 +1553,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        verifyLastModified(peerReview.getLastModifiedDate());        
         assertEquals(Long.valueOf(3L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
@@ -1492,6 +1571,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        verifyLastModified(peerReview.getLastModifiedDate());        
         assertEquals(Long.valueOf(4L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
@@ -1523,6 +1603,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PeerReviewSummary peerReview = (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
+        verifyLastModified(peerReview.getLastModifiedDate());        
         assertEquals(Long.valueOf("1"), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
@@ -1540,16 +1621,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
         assertNotNull(peerReviews);
+        verifyLastModified(peerReviews.getLastModifiedDate());        
         assertNotNull(peerReviews.getPeerReviewGroup());
         assertEquals(4, peerReviews.getPeerReviewGroup().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+        	verifyLastModified(group.getLastModifiedDate());
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(group.getPeerReviewSummary());
             assertEquals(1, group.getPeerReviewSummary().size());
             PeerReviewSummary summary = group.getPeerReviewSummary().get(0);
+            verifyLastModified(summary.getLastModifiedDate());            
             switch(group.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
             case "issn:0000009":
                 assertEquals("issn:0000009", summary.getGroupId());
@@ -1589,6 +1673,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        verifyLastModified(peerReview.getLastModifiedDate());        
+        
+        LastModifiedDate before = peerReview.getLastModifiedDate();
+        
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
         response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
@@ -1598,6 +1686,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
         PeerReview updatedPeerReview = (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
+        verifyLastModified(updatedPeerReview.getLastModifiedDate());        
+        assertTrue(updatedPeerReview.getLastModifiedDate().after(before));
         assertEquals("http://updated.com/url", updatedPeerReview.getUrl().getValue());
         assertEquals("Updated Title", updatedPeerReview.getSubjectName().getTitle().getContent());
     }
@@ -1693,7 +1783,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getPeerReviews());
+        verifyLastModified(summary.getLastModifiedDate());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup());
         assertEquals(2, summary.getPeerReviews().getPeerReviewGroup().size());
 
@@ -1701,6 +1793,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         boolean haveNew = false;
 
         for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+        	verifyLastModified(group.getLastModifiedDate());
+            verifyLastModified(group.getPeerReviewSummary().get(0).getLastModifiedDate());
             if ("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
                 haveOld = true;
             } else {
@@ -1708,7 +1802,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 haveNew = true;
             }
         }
-
         assertTrue(haveOld);
         assertTrue(haveNew);
         
@@ -1734,7 +1827,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testAddPeerReviewWithSameExtIdValueButDifferentExtIdType() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-
         PeerReview peerReview1 = new PeerReview();
         ExternalIDs weis1 = new ExternalIDs();
         ExternalID wei1 = new ExternalID();
@@ -1830,6 +1922,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
+        verifyLastModified(groupIdRecord.getLastModifiedDate());        
         assertEquals(Long.valueOf(2), groupIdRecord.getPutCode());
         assertEquals("issn:0000002", groupIdRecord.getGroupId());
         assertEquals("TestGroup2", groupIdRecord.getName());
@@ -1853,6 +1946,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
+        verifyLastModified(groupIdRecord.getLastModifiedDate());        
+        LastModifiedDate before = groupIdRecord.getLastModifiedDate();
         // Verify the name
         assertEquals(groupIdRecord.getName(), "TestGroup3");
         // Set a new name for update
@@ -1864,6 +1959,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         GroupIdRecord groupIdRecordNew = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecordNew);
+        verifyLastModified(groupIdRecordNew.getLastModifiedDate());        
+        assertTrue(groupIdRecordNew.getLastModifiedDate().after(before));
         // Verify the name
         assertEquals(groupIdRecordNew.getName(), "TestGroup33");
     }
@@ -1914,12 +2011,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
         assertNotNull(researcherUrls);
+        verifyLastModified(researcherUrls.getLastModifiedDate());
         assertEquals("/4444-4444-4444-4443/researcher-urls", researcherUrls.getPath());
         assertNotNull(researcherUrls.getResearcherUrls());
         assertEquals(5, researcherUrls.getResearcherUrls().size());
         for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             assertThat(rUrl.getPutCode(),
                     anyOf(equalTo(Long.valueOf(2)), equalTo(Long.valueOf(3)), equalTo(Long.valueOf(5)), equalTo(Long.valueOf(7)), equalTo(Long.valueOf(8))));
+            verifyLastModified(researcherUrls.getLastModifiedDate());            
             assertNotNull(rUrl.getSource());
             assertFalse(PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath()));
             assertNotNull(rUrl.getUrl());
@@ -1938,6 +2037,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=1", researcherUrl.getUrl().getValue());
         assertEquals("443_1", researcherUrl.getUrlName());
@@ -1951,6 +2051,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
         assertEquals("443_6", researcherUrl.getUrlName());
@@ -1964,7 +2065,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
-
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=7", researcherUrl.getUrl().getValue());
         assertEquals("443_5", researcherUrl.getUrlName());
@@ -2001,6 +2102,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My researcher Url", researcherUrl.getUrlName());
@@ -2014,6 +2116,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
+        LastModifiedDate before = researcherUrl.getLastModifiedDate();
         assertNotNull(researcherUrl.getUrl());
         assertEquals("http://www.researcherurl2.com?id=5", researcherUrl.getUrl().getValue());
         assertEquals("443_3", researcherUrl.getUrlName());
@@ -2029,6 +2133,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        verifyLastModified(researcherUrl.getLastModifiedDate());        
+        assertTrue(researcherUrl.getLastModifiedDate().after(before));
         assertNotNull(researcherUrl.getUrl());
         assertEquals("http://theNewResearcherUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My Updated Researcher Url", researcherUrl.getUrlName());
@@ -2128,22 +2234,30 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Emails emails = (Emails) response.getEntity();
         assertNotNull(emails);
+        verifyLastModified(emails.getLastModifiedDate());        
         assertNotNull(emails.getEmails());
         assertEquals(3, emails.getEmails().size());
         for (Email email : emails.getEmails()) {
+        	verifyLastModified(email.getLastModifiedDate());            
             assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
             switch (email.getEmail()) {
             case "teddybass2@semantico.com":
                 assertEquals(Visibility.LIMITED, email.getVisibility());
                 assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                assertEquals(false, email.isVerified());
+                assertEquals(false, email.isPrimary());
                 break;
             case "teddybass3public@semantico.com":
                 assertEquals(Visibility.PUBLIC, email.getVisibility());
                 assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                assertEquals(false, email.isVerified());
+                assertEquals(false, email.isPrimary());
                 break;
             case "teddybass3private@semantico.com":
                 assertEquals(Visibility.PRIVATE, email.getVisibility());
                 assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                assertEquals(true, email.isVerified());
+                assertEquals(true, email.isPrimary());
                 break;
             }
         }
@@ -2159,9 +2273,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
+        verifyLastModified(otherNames.getLastModifiedDate());        
         assertNotNull(otherNames.getOtherNames());
         assertEquals(3, otherNames.getOtherNames().size());
         for (OtherName otherName : otherNames.getOtherNames()) {
+        	verifyLastModified(otherName.getLastModifiedDate());            
             assertThat(otherName.getPutCode(), anyOf(is(5L), is(6L), is(8L)));
             assertThat(otherName.getContent(), anyOf(is("Other Name # 1"), is("Other Name # 2"), is("Other Name # 4")));
             if (otherName.getPutCode() == 5L) {
@@ -2184,6 +2300,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 1", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
         assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
@@ -2196,6 +2313,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 2", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
         assertEquals("4444-4444-4444-4446", otherName.getSource().retrieveSourcePath());
@@ -2208,6 +2326,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 4", otherName.getContent());
         assertEquals(Visibility.PRIVATE, otherName.getVisibility());
         assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
@@ -2244,12 +2363,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         OtherName newOtherName = (OtherName) response.getEntity();
         assertNotNull(newOtherName);
+        verifyLastModified(newOtherName.getLastModifiedDate());
         assertEquals("New Other Name", newOtherName.getContent());
         assertEquals(Visibility.PUBLIC, newOtherName.getVisibility());
         assertNotNull(newOtherName.getSource());
         assertEquals("APP-5555555555555555", newOtherName.getSource().retrieveSourcePath());
         assertNotNull(newOtherName.getCreatedDate());
-        assertNotNull(newOtherName.getLastModifiedDate());
+        verifyLastModified(newOtherName.getLastModifiedDate());
     }
 
     @Test
@@ -2259,6 +2379,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        verifyLastModified(otherName.getLastModifiedDate());
+        LastModifiedDate before = otherName.getLastModifiedDate();
         assertEquals("Slibberdy Slabinah", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
 
@@ -2272,6 +2394,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         OtherName updatedOtherName = (OtherName) response.getEntity();
         assertNotNull(updatedOtherName);
+        verifyLastModified(updatedOtherName.getLastModifiedDate());
+        assertTrue(updatedOtherName.getLastModifiedDate().after(before));
         assertEquals("Updated Other Name", updatedOtherName.getContent());
         assertEquals(Visibility.PUBLIC, updatedOtherName.getVisibility());
     }
@@ -2362,11 +2486,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
+        verifyLastModified(extIds.getLastModifiedDate());
         List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
         assertEquals(3, extIdsList.size());
 
         for (PersonExternalIdentifier extId : extIdsList) {
+        	verifyLastModified(extId.getLastModifiedDate());
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertThat(extId.getValue(), anyOf(is("abc123"), is("abc456"), is("abc012")));
             assertNotNull(extId.getUrl());
@@ -2394,17 +2520,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(2), extId.getPutCode());
         assertEquals("abc123", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC, extId.getVisibility());
-
         assertNotNull(extId.getSource());
         assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
         assertNotNull(extId.getCreatedDate());
-        assertNotNull(extId.getLastModifiedDate());
+        verifyLastModified(extId.getLastModifiedDate());
     }
 
     @Test
@@ -2414,17 +2540,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(3), extId.getPutCode());
         assertEquals("abc456", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
         assertEquals(Visibility.LIMITED, extId.getVisibility());
-
         assertNotNull(extId.getSource());
         assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
         assertNotNull(extId.getCreatedDate());
-        assertNotNull(extId.getLastModifiedDate());
+        verifyLastModified(extId.getLastModifiedDate());
     }
 
     @Test
@@ -2434,17 +2560,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(5), extId.getPutCode());
         assertEquals("abc012", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
         assertEquals(Visibility.PRIVATE, extId.getVisibility());
-
         assertNotNull(extId.getSource());
         assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
         assertNotNull(extId.getCreatedDate());
-        assertNotNull(extId.getLastModifiedDate());
+        verifyLastModified(extId.getLastModifiedDate());
     }
 
     @Test(expected = OrcidVisibilityException.class)
@@ -2490,10 +2616,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
+        verifyLastModified(extIds.getLastModifiedDate());
         assertNotNull(extIds.getExternalIdentifiers());
         assertEquals(2, extIds.getExternalIdentifiers().size());
 
         for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
+        	verifyLastModified(extId.getLastModifiedDate());
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
@@ -2517,6 +2645,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        verifyLastModified(extId.getLastModifiedDate());
+        LastModifiedDate before = extId.getLastModifiedDate();
         assertEquals("Facebook", extId.getType());
         assertEquals("abc123", extId.getValue());
         assertNotNull(extId.getUrl());
@@ -2531,11 +2661,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifier updatedExtId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(updatedExtId);
+        verifyLastModified(updatedExtId.getLastModifiedDate());
+        assertTrue(updatedExtId.getLastModifiedDate().after(before));
         assertEquals("updated-common-name", updatedExtId.getType());
         assertEquals("updated-reference", updatedExtId.getValue());
         assertNotNull(updatedExtId.getUrl());
         assertEquals("http://updatedUrl.com", updatedExtId.getUrl().getValue());
-
         // Revert changes so other tests still works
         extId.setType("Facebook");
         extId.setValue("abc123");
@@ -2645,10 +2776,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Keywords keywords = (Keywords) response.getEntity();
         assertNotNull(keywords);
+        verifyLastModified(keywords.getLastModifiedDate());
         assertNotNull(keywords.getKeywords());
         assertEquals(3, keywords.getKeywords().size());
 
         for (Keyword keyword : keywords.getKeywords()) {
+        	verifyLastModified(keyword.getLastModifiedDate());
             assertThat(keyword.getPutCode(), anyOf(is(1L), is(2L), is(4L)));
             assertThat(keyword.getContent(), anyOf(is("tea making"), is("coffee making"), is("what else can we make?")));
             if (keyword.getPutCode() == 1L) {
@@ -2669,8 +2802,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewKeyword("4444-4444-4444-4443", 1L);
         assertNotNull(response);
-        Keyword keyword = (Keyword) response.getEntity();
+        Keyword keyword = (Keyword) response.getEntity();       
         assertNotNull(keyword);
+        verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("tea making", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
         assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
@@ -2683,6 +2817,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("coffee making", keyword.getContent());
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
         assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
@@ -2695,6 +2830,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("what else can we make?", keyword.getContent());
         assertEquals(Visibility.PRIVATE, keyword.getVisibility());
         assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
@@ -2731,12 +2867,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keyword newKeyword = (Keyword) response.getEntity();
         assertNotNull(newKeyword);
+        verifyLastModified(newKeyword.getLastModifiedDate());
         assertEquals("New keyword", newKeyword.getContent());
         assertEquals(Visibility.PUBLIC, newKeyword.getVisibility());
         assertNotNull(newKeyword.getSource());
         assertEquals("APP-5555555555555555", newKeyword.getSource().retrieveSourcePath());
         assertNotNull(newKeyword.getCreatedDate());
-        assertNotNull(newKeyword.getLastModifiedDate());
+        verifyLastModified(newKeyword.getLastModifiedDate());
     }
 
     @Test
@@ -2746,6 +2883,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        verifyLastModified(keyword.getLastModifiedDate());
+        LastModifiedDate before = keyword.getLastModifiedDate();
         assertEquals("keyword-2", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
 
@@ -2759,6 +2898,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        verifyLastModified(keyword.getLastModifiedDate());
+        assertTrue(keyword.getLastModifiedDate().after(before));
         assertEquals("Updated keyword", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
     }
@@ -2851,10 +2992,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
+        verifyLastModified(addresses.getLastModifiedDate());
         assertNotNull(addresses.getAddress());
         assertEquals(3, addresses.getAddress().size());
 
         for (Address address : addresses.getAddress()) {
+        	verifyLastModified(address.getLastModifiedDate());
             assertThat(address.getPutCode(), anyOf(is(2L), is(3L), is(4L)));
             assertThat(address.getCountry().getValue(), anyOf(is(Iso3166Country.CR), is(Iso3166Country.US)));
             if (address.getPutCode() == 2L) {
@@ -2877,6 +3020,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
         assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
@@ -2889,6 +3033,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.LIMITED, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
@@ -2901,6 +3046,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PRIVATE, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
@@ -2937,12 +3083,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Address newAddress = (Address) response.getEntity();
         assertNotNull(newAddress);
+        verifyLastModified(newAddress.getLastModifiedDate());
         assertEquals(Iso3166Country.ES, newAddress.getCountry().getValue());
         assertEquals(Visibility.LIMITED, newAddress.getVisibility());
         assertNotNull(newAddress.getSource());
         assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
-        assertNotNull(newAddress.getLastModifiedDate());
+        verifyLastModified(newAddress.getLastModifiedDate());
 
         // Remove it
         response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
@@ -2957,6 +3104,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        verifyLastModified(address.getLastModifiedDate());
+        LastModifiedDate before = address.getLastModifiedDate();
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
 
@@ -2970,6 +3119,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         address = (Address) response.getEntity();
         assertNotNull(address);
+        verifyLastModified(address.getLastModifiedDate());
+        assertTrue(address.getLastModifiedDate().after(before));
         assertEquals(Iso3166Country.PA, address.getCountry().getValue());
 
         // Set it back to US again
@@ -3064,17 +3215,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Person person = (Person) response.getEntity();
         assertNotNull(person);
+        verifyLastModified(person.getLastModifiedDate());
         assertNotNull(person.getName());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
+        verifyLastModified(person.getName().getLastModifiedDate());
         assertEquals("Credit Name", person.getName().getCreditName().getContent());
         assertEquals("Family Name", person.getName().getFamilyName().getContent());
         assertEquals("Given Names", person.getName().getGivenNames().getContent());
 
         assertNotNull(person.getAddresses());
+        verifyLastModified(person.getAddresses().getLastModifiedDate());
         assertNotNull(person.getAddresses().getAddress());
-        assertEquals(1, person.getAddresses().getAddress().size());
+        assertEquals(1, person.getAddresses().getAddress().size());        
         assertNotNull(person.getAddresses().getAddress().get(0).getCreatedDate());
-        assertNotNull(person.getAddresses().getAddress().get(0).getLastModifiedDate());
+        verifyLastModified(person.getAddresses().getAddress().get(0).getLastModifiedDate());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
         assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());       
         assertEquals(Long.valueOf(1), person.getAddresses().getAddress().get(0).getPutCode());
@@ -3084,23 +3238,27 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
+        verifyLastModified(person.getBiography().getLastModifiedDate());        
         assertEquals("Biography for 4444-4444-4444-4442",
                 person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
+        verifyLastModified(person.getEmails().getLastModifiedDate());
         assertNotNull(person.getEmails().getEmails());
         assertEquals(1, person.getEmails().getEmails().size());
+        verifyLastModified(person.getEmails().getEmails().get(0).getLastModifiedDate());
         assertEquals("michael@bentine.com", person.getEmails().getEmails().get(0).getEmail());
         assertEquals(Visibility.LIMITED, person.getEmails().getEmails().get(0).getVisibility());
         assertNotNull(person.getEmails().getEmails().get(0).getSource());
         assertEquals("4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retrieveSourcePath());
         assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", person.getEmails().getEmails().get(0).getSource().retriveSourceUri());
         assertNull(person.getEmails().getEmails().get(0).getPutCode());
-        assertNotNull(person.getEmails().getEmails().get(0).getLastModifiedDate());
+        verifyLastModified(person.getEmails().getEmails().get(0).getLastModifiedDate());
         assertNotNull(person.getEmails().getEmails().get(0).getCreatedDate());
 
         assertNotNull(person.getExternalIdentifiers());
+        verifyLastModified(person.getExternalIdentifiers().getLastModifiedDate());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
         assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
@@ -3108,9 +3266,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifiers();
         for (PersonExternalIdentifier extId : extIds) {
+        	verifyLastModified(extId.getLastModifiedDate());
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertNotNull(extId.getCreatedDate());
-            assertNotNull(extId.getLastModifiedDate());
+            verifyLastModified(extId.getLastModifiedDate());
             assertNotNull(extId.getSource());
             if (extId.getPutCode() == 2L) {
                 assertEquals("Facebook", extId.getType());
@@ -3142,23 +3301,27 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(found2 && found3 && found5);
 
         assertNotNull(person.getKeywords());
+        verifyLastModified(person.getKeywords().getLastModifiedDate());
         assertNotNull(person.getKeywords().getKeywords());
         assertEquals(1, person.getKeywords().getKeywords().size());
+        verifyLastModified(person.getKeywords().getKeywords().get(0).getLastModifiedDate());
         assertEquals("My keyword", person.getKeywords().getKeywords().get(0).getContent());
         assertEquals(Long.valueOf(7), person.getKeywords().getKeywords().get(0).getPutCode());
         assertEquals("APP-5555555555555555", person.getKeywords().getKeywords().get(0).getSource().retrieveSourcePath());
         assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", person.getKeywords().getKeywords().get(0).getSource().retriveSourceUri());
         assertEquals(Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
         assertNotNull(person.getKeywords().getKeywords().get(0).getCreatedDate());
-        assertNotNull(person.getKeywords().getKeywords().get(0).getLastModifiedDate());
+        verifyLastModified(person.getKeywords().getKeywords().get(0).getLastModifiedDate());
 
         assertNotNull(person.getOtherNames());
+        verifyLastModified(person.getOtherNames().getLastModifiedDate());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(2, person.getOtherNames().getOtherNames().size());
 
         boolean found9 = false, found10 = false;
 
         for (OtherName otherName : person.getOtherNames().getOtherNames()) {
+        	verifyLastModified(otherName.getLastModifiedDate());
             assertThat(otherName.getPutCode(), anyOf(is(10L), is(11L)));
             assertNotNull(otherName.getSource());
             assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
@@ -3177,6 +3340,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(found9 && found10);
 
         assertNotNull(person.getResearcherUrls());
+        verifyLastModified(person.getResearcherUrls().getLastModifiedDate());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(3, person.getResearcherUrls().getResearcherUrls().size());
 
@@ -3185,8 +3349,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         boolean found12 = false;
 
         for (ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
+        	verifyLastModified(rUrl.getLastModifiedDate());
             assertNotNull(rUrl.getCreatedDate());
-            assertNotNull(rUrl.getLastModifiedDate());
+            verifyLastModified(rUrl.getLastModifiedDate());
             assertNotNull(rUrl.getSource());
             assertThat(rUrl.getPutCode(), anyOf(is(9L), is(10L), is(12L)));
             assertNotNull(rUrl.getUrl());
@@ -3253,7 +3418,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(history.getCompletionDate());
         assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
         assertNull(history.getDeactivationDate());
-        assertNotNull(history.getLastModifiedDate());
+        verifyLastModified(history.getLastModifiedDate());
         assertNotNull(history.getSource());
         assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
         assertNotNull(history.getSubmissionDate());                
@@ -3263,25 +3428,39 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }    
     
     private void testActivities(ActivitiesSummary as, String orcid) {
-        //This is more an utility that will work only for 0000-0000-0000-0003
+        //This is more an utility that will work only for 0000-0000-0000-0003    	
         assertEquals("0000-0000-0000-0003", orcid);
         assertNotNull(as);
+        verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
         assertEquals(1, as.getEducations().getSummaries().size());
+        verifyLastModified(as.getEducations().getLastModifiedDate());
+        verifyLastModified(as.getEducations().getSummaries().get(0).getLastModifiedDate());
         assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
         assertNotNull(as.getEmployments());
         assertEquals(1, as.getEmployments().getSummaries().size());
+        verifyLastModified(as.getEmployments().getLastModifiedDate());
+        verifyLastModified(as.getEmployments().getSummaries().get(0).getLastModifiedDate());
         assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
         assertNotNull(as.getFundings());
         assertEquals(1, as.getFundings().getFundingGroup().size());
+        verifyLastModified(as.getFundings().getLastModifiedDate());
+        verifyLastModified(as.getFundings().getFundingGroup().get(0).getLastModifiedDate());
+        verifyLastModified(as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate());
         assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
         assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
         assertNotNull(as.getPeerReviews());
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        verifyLastModified(as.getPeerReviews().getLastModifiedDate());
+        verifyLastModified(as.getPeerReviews().getPeerReviewGroup().get(0).getLastModifiedDate());
+        verifyLastModified(as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
         assertNotNull(as.getWorks());
         assertEquals(1, as.getWorks().getWorkGroup().size());
+        verifyLastModified(as.getWorks().getLastModifiedDate());
+        verifyLastModified(as.getWorks().getWorkGroup().get(0).getLastModifiedDate());
+        verifyLastModified(as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getLastModifiedDate());
         assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
         assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
     }
@@ -3435,24 +3614,26 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
         assertNotNull(personalDetails);
+        verifyLastModified(personalDetails.getLastModifiedDate());
         assertNotNull(personalDetails.getBiography());
+        verifyLastModified(personalDetails.getBiography().getLastModifiedDate());
         assertEquals("Biography for 0000-0000-0000-0003", personalDetails.getBiography().getContent());
-        assertNotNull(personalDetails.getBiography().getLastModifiedDate());
         assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());
-        assertNotNull(personalDetails.getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());        
         assertNotNull(personalDetails.getName());
+        verifyLastModified(personalDetails.getName().getLastModifiedDate());
         assertNotNull(personalDetails.getName().getCreatedDate().getValue());
         assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
         assertEquals("Family Name", personalDetails.getName().getFamilyName().getContent());
         assertEquals("Given Names", personalDetails.getName().getGivenNames().getContent());
         assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
-        assertNotNull(personalDetails.getName().getLastModifiedDate());
         assertNotNull(personalDetails.getOtherNames());
-        assertNotNull(personalDetails.getOtherNames().getLastModifiedDate());
+        verifyLastModified(personalDetails.getOtherNames().getLastModifiedDate());
+        verifyLastModified(personalDetails.getOtherNames().getLastModifiedDate());
         assertEquals(4, personalDetails.getOtherNames().getOtherNames().size());
         
         for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+        	verifyLastModified(otherName.getLastModifiedDate());
             if(otherName.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals("Other Name PUBLIC", otherName.getContent());
                 assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
@@ -3655,7 +3836,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testViewRecordWrongScope() {        
+    public void testViewRecordWrongScope() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         Response response = serviceDelegator.viewRecord(ORCID);
         //Verify everything inside is public
@@ -4029,7 +4210,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(history.getCompletionDate());
         assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
         assertNull(history.getDeactivationDate());
-        assertNotNull(history.getLastModifiedDate());
+        verifyLastModified(history.getLastModifiedDate());
         assertNotNull(history.getSource());
         assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
         assertNotNull(history.getSubmissionDate());                
@@ -4039,14 +4220,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         //Validate person
         Person person = record.getPerson();
         assertNotNull(person);
-        assertNotNull(person.getLastModifiedDate());
+        verifyLastModified(person.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/person", person.getPath());
         assertNotNull(person.getAddresses());
-        assertNotNull(person.getAddresses().getLastModifiedDate());
+        verifyLastModified(person.getAddresses().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/address", person.getAddresses().getPath());
         assertEquals(4, person.getAddresses().getAddress().size());
         for(Address address : person.getAddresses().getAddress()) {
-            assertNotNull(address.getLastModifiedDate());
+            verifyLastModified(address.getLastModifiedDate());
             if(address.getPutCode().equals(Long.valueOf(9))) {                
                 assertEquals(Iso3166Country.US, address.getCountry().getValue());
                 assertEquals(Long.valueOf(0), address.getDisplayIndex());                
@@ -4077,16 +4258,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(person.getBiography());
-        assertNotNull(person.getBiography().getLastModifiedDate());
+        verifyLastModified(person.getBiography().getLastModifiedDate());
         assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());
         assertEquals("Biography for 0000-0000-0000-0003", person.getBiography().getContent());
         
         assertNotNull(person.getEmails());
-        assertNotNull(person.getEmails().getLastModifiedDate());
+        verifyLastModified(person.getEmails().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
         assertEquals(4, person.getEmails().getEmails().size());
         for(Email email : person.getEmails().getEmails()) {
-            assertNotNull(email.getLastModifiedDate());
+            verifyLastModified(email.getLastModifiedDate());
             if(email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {                
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
                 assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
@@ -4105,11 +4286,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
+        verifyLastModified(person.getExternalIdentifiers().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
         assertEquals(4, person.getExternalIdentifiers().getExternalIdentifiers().size());
         for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifiers()) {
-            assertNotNull(extId.getLastModifiedDate());
+            verifyLastModified(extId.getLastModifiedDate());
             if(extId.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals(Long.valueOf(0), extId.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
@@ -4148,11 +4329,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         assertNotNull(person.getKeywords());
-        assertNotNull(person.getKeywords().getLastModifiedDate());
+        verifyLastModified(person.getKeywords().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/keywords", person.getKeywords().getPath());
         assertEquals(4, person.getKeywords().getKeywords().size());
         for(Keyword keyword : person.getKeywords().getKeywords()) {
-            assertNotNull(keyword.getLastModifiedDate());
+            verifyLastModified(keyword.getLastModifiedDate());
             if(keyword.getPutCode().equals(Long.valueOf(9))) {
                 assertEquals("PUBLIC", keyword.getContent());
                 assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
@@ -4183,18 +4364,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(person.getName());
-        assertNotNull(person.getName().getLastModifiedDate());
+        verifyLastModified(person.getName().getLastModifiedDate());
         assertEquals("Credit Name", person.getName().getCreditName().getContent());
         assertEquals("Family Name", person.getName().getFamilyName().getContent());
         assertEquals("Given Names", person.getName().getGivenNames().getContent());        
         assertEquals(Visibility.PUBLIC.value(), person.getName().getVisibility().value());
         
         assertNotNull(person.getOtherNames());
-        assertNotNull(person.getOtherNames().getLastModifiedDate());
+        verifyLastModified(person.getOtherNames().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/other-names", person.getOtherNames().getPath());
         assertEquals(4, person.getOtherNames().getOtherNames().size());
         for(OtherName otherName : person.getOtherNames().getOtherNames()) {
-            assertNotNull(otherName.getLastModifiedDate());
+            verifyLastModified(otherName.getLastModifiedDate());
             if(otherName.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals("Other Name PUBLIC", otherName.getContent());
                 assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
@@ -4225,11 +4406,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(person.getResearcherUrls());
-        assertNotNull(person.getResearcherUrls().getLastModifiedDate());
+        verifyLastModified(person.getResearcherUrls().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/researcher-urls", person.getResearcherUrls().getPath());
         assertEquals(4, person.getResearcherUrls().getResearcherUrls().size());
         for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
-            assertNotNull(rUrl.getLastModifiedDate());
+            verifyLastModified(rUrl.getLastModifiedDate());
             if(rUrl.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
@@ -4266,13 +4447,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         //Validate activities
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities);
-        assertNotNull(activities.getLastModifiedDate());        
+        verifyLastModified(activities.getLastModifiedDate());        
         
         assertNotNull(activities.getEducations());
-        assertNotNull(activities.getEducations().getLastModifiedDate());
+        verifyLastModified(activities.getEducations().getLastModifiedDate());
         assertEquals(4, activities.getEducations().getSummaries().size());
         for(EducationSummary education : activities.getEducations().getSummaries()) {
-            assertNotNull(education.getLastModifiedDate());
+            verifyLastModified(education.getLastModifiedDate());
             assertNotNull(education.getStartDate());
             assertEquals("2016", education.getStartDate().getYear().getValue());
             assertEquals("04", education.getStartDate().getMonth().getValue());
@@ -4311,10 +4492,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(activities.getEmployments());
-        assertNotNull(activities.getEmployments().getLastModifiedDate());
+        verifyLastModified(activities.getEmployments().getLastModifiedDate());
         assertEquals(4, activities.getEmployments().getSummaries().size());
         for(EmploymentSummary employment : activities.getEmployments().getSummaries()) {
-            assertNotNull(employment.getLastModifiedDate());
+            verifyLastModified(employment.getLastModifiedDate());
             if(employment.getPutCode().equals(Long.valueOf(17))) {
                 assertEquals("PUBLIC Department", employment.getDepartmentName());
                 assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
@@ -4345,17 +4526,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         assertNotNull(activities.getFundings());
-        assertNotNull(activities.getFundings().getLastModifiedDate());
+        verifyLastModified(activities.getFundings().getLastModifiedDate());
         assertEquals(4, activities.getFundings().getFundingGroup().size());
         for(FundingGroup group : activities.getFundings().getFundingGroup()) {
-            assertNotNull(group.getLastModifiedDate());
+            verifyLastModified(group.getLastModifiedDate());
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(group.getFundingSummary());
             assertEquals(1, group.getFundingSummary().size());
             FundingSummary funding = group.getFundingSummary().get(0);
-            assertNotNull(funding.getLastModifiedDate());
+            verifyLastModified(funding.getLastModifiedDate());
             if(funding.getPutCode().equals(Long.valueOf(10))) {
                 assertEquals("0", funding.getDisplayIndex());
                 assertNotNull(funding.getExternalIdentifiers());
@@ -4402,17 +4583,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(activities.getPeerReviews());
-        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        verifyLastModified(activities.getPeerReviews().getLastModifiedDate());
         assertEquals(4, activities.getPeerReviews().getPeerReviewGroup().size());
         for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
-            assertNotNull(group.getLastModifiedDate());
+            verifyLastModified(group.getLastModifiedDate());
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(group.getPeerReviewSummary());            
             assertEquals(1, group.getPeerReviewSummary().size());
             PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
-            assertNotNull(peerReview.getLastModifiedDate());
+            verifyLastModified(peerReview.getLastModifiedDate());
             assertNotNull(peerReview.getCompletionDate());
             assertEquals("2016", peerReview.getCompletionDate().getYear().getValue());
             assertEquals("02", peerReview.getCompletionDate().getMonth().getValue());
@@ -4454,17 +4635,17 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         assertNotNull(activities.getWorks());
-        assertNotNull(activities.getWorks().getLastModifiedDate());
+        verifyLastModified(activities.getWorks().getLastModifiedDate());
         assertEquals(4, activities.getWorks().getWorkGroup().size());
         for(WorkGroup group : activities.getWorks().getWorkGroup()) {
-            assertNotNull(group.getLastModifiedDate());
+            verifyLastModified(group.getLastModifiedDate());
             assertNotNull(group.getIdentifiers());
             assertNotNull(group.getIdentifiers().getExternalIdentifier());
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(group.getWorkSummary());
             assertEquals(1, group.getWorkSummary().size());
             WorkSummary work = group.getWorkSummary().get(0);
-            assertNotNull(work.getLastModifiedDate());
+            verifyLastModified(work.getLastModifiedDate());
             if(work.getPutCode().equals(Long.valueOf(11))) {
                 assertEquals("0", work.getDisplayIndex());
                 assertNotNull(work.getExternalIdentifiers());
@@ -4638,7 +4819,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(OtherNames.class.getName(), r.getEntity().getClass().getName());
         OtherNames o = (OtherNames) r.getEntity();
         assertNotNull(o);
-        assertNotNull(o.getLastModifiedDate());
+        verifyLastModified(o.getLastModifiedDate());
         assertEquals(1, o.getOtherNames().size());
         assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
         
@@ -4676,7 +4857,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Keywords.class.getName(), r.getEntity().getClass().getName());
         Keywords k = (Keywords) r.getEntity();
         assertNotNull(k);
-        assertNotNull(k.getLastModifiedDate());
+        verifyLastModified(k.getLastModifiedDate());
         assertEquals(1, k.getKeywords().size());
         assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
         
@@ -4714,7 +4895,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
         Addresses a = (Addresses) r.getEntity();
         assertNotNull(a);
-        assertNotNull(a.getLastModifiedDate());
+        verifyLastModified(a.getLastModifiedDate());
         assertEquals(1, a.getAddress().size());
         assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
         
@@ -4752,7 +4933,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
-        assertNotNull(p.getLastModifiedDate());
+        verifyLastModified(p.getLastModifiedDate());
         assertEquals(1, p.getExternalIdentifiers().size());
         assertEquals(Long.valueOf(13), p.getExternalIdentifiers().get(0).getPutCode());
         
@@ -4789,7 +4970,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
         assertNotNull(email);
-        assertNotNull(email.getLastModifiedDate());
+        verifyLastModified(email.getLastModifiedDate());
         assertEquals(1, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
     }
@@ -4821,7 +5002,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(ResearcherUrls.class.getName(), r.getEntity().getClass().getName());
         ResearcherUrls ru = (ResearcherUrls) r.getEntity();
         assertNotNull(ru);
-        assertNotNull(ru.getLastModifiedDate());
+        verifyLastModified(ru.getLastModifiedDate());
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         
@@ -4874,6 +5055,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         PersonalDetails p = (PersonalDetails) r.getEntity();
+        verifyLastModified(p.getLastModifiedDate());
+        verifyLastModified(p.getBiography().getLastModifiedDate());
+        verifyLastModified(p.getName().getLastModifiedDate());
+        verifyLastModified(p.getOtherNames().getLastModifiedDate());
         assertEquals("Biography for 0000-0000-0000-0003", p.getBiography().getContent());
         assertEquals("Credit Name", p.getName().getCreditName().getContent());
         assertEquals("Given Names", p.getName().getGivenNames().getContent());
@@ -4907,25 +5092,29 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         //This is more an utility that will work only for 0000-0000-0000-0003
         assertEquals("0000-0000-0000-0003", orcid);
         assertNotNull(p);
+        verifyLastModified(p.getLastModifiedDate());        
         //Address
         assertNotNull(p.getAddresses());
-        Addresses a = p.getAddresses();
+        Addresses a = p.getAddresses();        
         assertNotNull(a);
-        assertNotNull(a.getLastModifiedDate());
+        verifyLastModified(a.getLastModifiedDate());
         assertEquals(1, a.getAddress().size());
+        verifyLastModified(a.getAddress().get(0).getLastModifiedDate());
         assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
                 
         //Biography
         assertNotNull(p.getBiography());
         Biography b = p.getBiography();
         assertNotNull(b);
+        verifyLastModified(b.getLastModifiedDate());
+        
         assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
         
         //Email
         assertNotNull(p.getEmails());
         Emails email = p.getEmails();
-        assertNotNull(email);
-        assertNotNull(email.getLastModifiedDate());
+        assertNotNull(email);        
+        verifyLastModified(email.getLastModifiedDate());
         assertEquals(1, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
         
@@ -4933,7 +5122,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getExternalIdentifiers());
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
-        assertNotNull(extIds.getLastModifiedDate());
+        verifyLastModified(extIds.getLastModifiedDate());
         assertEquals(1, extIds.getExternalIdentifiers().size());
         assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
                 
@@ -4941,7 +5130,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getKeywords());
         Keywords k = p.getKeywords();
         assertNotNull(k);
-        assertNotNull(k.getLastModifiedDate());
+        verifyLastModified(k.getLastModifiedDate());
         assertEquals(1, k.getKeywords().size());
         assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
         
@@ -4955,7 +5144,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getOtherNames());
         OtherNames o = p.getOtherNames();
         assertNotNull(o);
-        assertNotNull(o.getLastModifiedDate());
+        verifyLastModified(o.getLastModifiedDate());        
         assertEquals(1, o.getOtherNames().size());
         assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
         
@@ -4963,7 +5152,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getResearcherUrls());
         ResearcherUrls ru = p.getResearcherUrls();
         assertNotNull(ru);
-        assertNotNull(ru.getLastModifiedDate());
+        verifyLastModified(ru.getLastModifiedDate());        
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         
@@ -5698,6 +5887,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }    
         
+    private void verifyLastModified(LastModifiedDate l) {
+    	assertNotNull(l);
+    	assertNotNull(l.getValue());
+    }
+    
     private Address getAddress() {
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);

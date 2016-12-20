@@ -16,8 +16,6 @@
  */
 package org.orcid.core.salesforce.cache;
 
-import java.util.Collection;
-
 import javax.annotation.Resource;
 
 import org.orcid.core.salesforce.dao.SalesForceDao;
@@ -36,9 +34,8 @@ public class ContactsCacheEntryFactory implements CacheEntryFactory {
 
     @Override
     public Object createEntry(Object key) throws Exception {
-        @SuppressWarnings("unchecked")
-        Collection<String> opportunityIds = (Collection<String>) key;
-        return salesForceDao.retrieveContactsByOpportunityId(opportunityIds);
+        String accountId = (String) key;
+        return salesForceDao.retrieveContactsByAccountId(accountId);
     }
 
 }

@@ -47,7 +47,7 @@ public class FilterInvalidXmlCharsOutputStreamWriter extends OutputStreamWriter 
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        for (int i = off; i < len; i++) {
+        for (int i = off; i < len + off; i++) {
             write(cbuf[i]);
         }
     }

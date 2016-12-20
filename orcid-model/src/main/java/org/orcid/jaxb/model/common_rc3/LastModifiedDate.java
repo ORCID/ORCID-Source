@@ -106,4 +106,16 @@ public class LastModifiedDate implements Serializable {
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+    
+    public boolean after(LastModifiedDate other) {
+    	if(this.value == null) {
+    		return false;
+    	}
+    	
+    	if(other == null || other.getValue() == null) {
+    		return true;
+    	}
+    	
+    	return other.getValue().compare(this.value) < 0;
+    }
 }

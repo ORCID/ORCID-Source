@@ -55,6 +55,9 @@
 
       <#include "includes/print_record.ftl"/>
 
+
+      <modal-email-un-verified></modal-email-un-verified>
+
       <div class="qrcode-container">
         <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
           <div class="popover-help-container">

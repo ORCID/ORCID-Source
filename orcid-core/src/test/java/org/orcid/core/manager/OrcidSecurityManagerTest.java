@@ -56,6 +56,7 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 /**
  * 
@@ -75,8 +76,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
             
     @Before
     public void before() {
-        orcidSecurityManager.setSourceManager(sourceManager);
-        orcidSecurityManager.setProfileEntityCacheManager(profileEntityCacheManager);
+    	TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
+    	TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);        
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
     }
     

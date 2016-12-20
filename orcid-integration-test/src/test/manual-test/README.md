@@ -134,7 +134,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 49. Read the record with 2.0, check that it is returned:
  
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/[orcid id]/record' -L -i -k
     ```
 
 50. Read the record without a version, check that it is returned: 
@@ -255,17 +255,12 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 
 84. Find and replace [2.0 refresh] in this document with the refresh token
 
-### Browse to your local copy of https://github.com/ORCID/ORCID-Source/
-
-**Sample xml files**
-
-* orcid-integration-test/src/test/manual-test
-* orcid-model/src/main/resources/record_2.0_rc2/samples
+### Browse to your local copy of https://github.com/ORCID/ORCID-Source/orcid-integration-test/src/test/manual-test or update file paths to reflect where your local copy of files are held
 
 85. Post the ma test work 2: 
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work' -L -i -k
     ```
     
 86. Check that the work appears at https://qa.orcid.org/my-orcid and is grouped with the manually added work. (You will need to click on the sources section of the manually added to work to see the version that was just posted)
@@ -275,7 +270,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 88. Update the work with JSON: 
 
     ```
-    curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]' -d '{
+    curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work/[put-code]' -d '{
 "put-code":"[put-code]",
 "title": {"title": "API Test Title"},
 "type": "JOURNAL_ARTICLE",
@@ -291,45 +286,45 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 90. Delete the work:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -X DELETE 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -X DELETE 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work/[put-code]' -L -i -k
     ```
 91. Check that the work is no longer listed at https://qa.orcid.org/my-orcid
 
 92. Post an education item:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_edu.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/education' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_edu.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/education' -L -i -k
     ```
 
 93. Post a funding item:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_fund2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/funding' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_fund2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/funding' -L -i -k
     ```
 
 94. Post a peer-review item:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_peer2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/peer-review' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_peer2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/peer-review' -L -i -k
     ```
 
 95. Check that the education, funding and peer-review item appear at https://qa.orcid.org/my-orcid
     
 96. Post a keyword:
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_keyword.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/keywords' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_keyword.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/keywords' -L -i -k
     ```
 
 97. Post a personal external identifier:
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_identifier.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/external-identifiers' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_identifier.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/external-identifiers' -L -i -k
     ```
 98. Check that the keyword and external identifier appear at https://qa.orcid.org/my-orcid and no other personal information was changed
 
 99. Post a notification
 
     ```
-    curl -i -H 'Authorization: Bearer eafafe49-b5bf-41db-9fb5-ad3a6cba575b' -H 'Content-Type: application/orcid+xml' -X POST -d '@notify.xml' https://api.qa.orcid.org/v2.0_rc2/[orcid id]/notification-permission -k
+    curl -i -H 'Authorization: Bearer eafafe49-b5bf-41db-9fb5-ad3a6cba575b' -H 'Content-Type: application/orcid+xml' -X POST -d '@notify.xml' https://api.qa.orcid.org/v2.0_rc3/[orcid id]/notification-permission -k
     ```
     
 100. Go to https://qa.orcid.org/inbox
@@ -424,23 +419,23 @@ In this section all calls are expected to fail.
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/0000-0002-2619-0514/orcid-works' -L -i -k
     ```
     
-113. Attempt to access the wrong record in 2.0_rc2. Check that an 401 Unauthorized error is returned with the message "Invalid access token..."
+113. Attempt to access the wrong record in 2.0_rc3. Check that an 401 Unauthorized error is returned with the message "Invalid access token..."
     
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-2619-0514/orcid-works' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/0000-0002-2619-0514/orcid-works' -L -i -k
     ```
 
 
 114. Attempt to post to a record without a token. Check that a 403 Forbidden error is returned.
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work' -L -i -k
     ```
 
 115. Attempt to update an item without a token.  Check that a 403 Forbidden error is returned.
 
     ```
-    curl -H 'Content-Type: application/orcid+json' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]' -d '{
+    curl -H 'Content-Type: application/orcid+json' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work/[put-code]' -d '{
 "put-code":"[put-code]",
 "title": {"title": "API Test Title"},
 "type": "JOURNAL_ARTICLE",
@@ -454,7 +449,7 @@ In this section all calls are expected to fail.
 116. Attempt to update an item you are not the source of. (If these directions have been followed exactly you can replace the given put-code in both the call and the JSON with one that is three less and it will be for a work that was created manually). Check that a 403 Forbidden error is returned.
 
     ```
-    curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]-3' -d '{
+    curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work/[put-code]-3' -d '{
 "put-code":"[put-code]-3",
 "title": {"title": "API Test Title"},
 "type": "JOURNAL_ARTICLE",
@@ -480,13 +475,13 @@ Check that you are sent to https://developers.google.com/oauthplayground with th
 119. Use the newly generated refreshed token to post the test work
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work' -L -i -k
     ```
 
 120. Check that the original token still works by reading the record
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/record' -L -i -k
     ```
 
 121. Generate a new token with a short lifespan, only /read-limited scope and revoke the original token    
@@ -500,19 +495,19 @@ Check that you are sent to https://developers.google.com/oauthplayground with th
 123. Check the new token can't be used to post items by attempting to post the test work. A 403 Forbidden error with the message "Insufficient or wrong scope [/read-limited]" should be returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work' -L -i -k
     ```
 
 124. Check the original token was revoked by attempting to post the test work. A 401 Unauthorized error with the message "Invalid access token...: should be returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/work' -L -i -k
     ```
 
 125. Check that the new token can be used to read the record. The full record should be returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc3/[orcid id]/record' -L -i -k
     ```
 
 126. Check that you can't generate a refresh token using a revoked token. You should get an error message "Parent token is disabled"
@@ -551,10 +546,10 @@ This record has every field set to public. Access this record via the API and UI
     curl -H 'Accept: application/orcid+xml' 'http://pub.qa.orcid.org/v1.2/0000-0002-3874-7658/orcid-profile' -L -i -k
     ```
 
-131. Read with Public API 2.0_rc2. Check that the record is returned
+131. Read with Public API 2.0_rc3. Check that the record is returned
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer a8ac4d85-df2b-4de2-9411-1b94491f463b' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer a8ac4d85-df2b-4de2-9411-1b94491f463b' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0002-3874-7658/record' -L -i -k
     ```
 
 132. Read with Member API 1.2. Check that the record is returned
@@ -563,24 +558,24 @@ This record has every field set to public. Access this record via the API and UI
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer eba7892b-4f4a-4651-9c47-f0c74fae61c5' -X GET 'https://api.qa.orcid.org/v1.2/0000-0002-3874-7658/orcid-profile' -L -i -k
     ```
 
-133. Read with Member API 2.0_rc2 record. Check that all fields are returned
+133. Read with Member API 2.0_rc3 record. Check that all fields are returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer eba7892b-4f4a-4651-9c47-f0c74fae61c5' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/record' -L -i -k
-    ```
-
-
-134. Read with Member API 2.0_rc2 person. Check that personal information fields are returned
-
-    ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer eba7892b-4f4a-4651-9c47-f0c74fae61c5' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/person' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer eba7892b-4f4a-4651-9c47-f0c74fae61c5' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0002-3874-7658/record' -L -i -k
     ```
 
 
-135. Read with Member API 2.0_rc2 activities. Check that affiliations, funding, peer-review and work summaries are returned
+134. Read with Member API 2.0_rc3 person. Check that personal information fields are returned
+
+    ```
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer eba7892b-4f4a-4651-9c47-f0c74fae61c5' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0002-3874-7658/person' -L -i -k
+    ```
+
+
+135. Read with Member API 2.0_rc3 activities. Check that affiliations, funding, peer-review and work summaries are returned
  
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 0658713c-5b6d-4fa4-a3da-73db9c7ab16c' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/activities' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 0658713c-5b6d-4fa4-a3da-73db9c7ab16c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0002-3874-7658/activities' -L -i -k
     ```
 
 
@@ -599,23 +594,23 @@ This record has ever field set to limited, check that nothing is visible in the 
     ```
 
 
-139. Read the record with Public API 2.0_rc2. Check that the bio and activities sections are not returned
+139. Read the record with Public API 2.0_rc3. Check that the bio and activities sections are not returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
 
-140. Read a single work with Public API 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+140. Read a single work with Public API 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
     ```
     
-141. Read email with Public API 2.0_rc2. Check that no content is retruned
+141. Read email with Public API 2.0_rc3. Check that no content is retruned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```
 
 
@@ -625,22 +620,22 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Accept: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'http://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-143. Read record with /read-public token API 2.0_rc2. Check that the bio and activities sections are not returned
+143. Read record with /read-public token API 2.0_rc3. Check that the bio and activities sections are not returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-144. Read a single work with /read-public token 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+144. Read a single work with /read-public token 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
     ```
 
-145. Read email with /read-public token API 2.0_rc2. Check that no content is returned
+145. Read email with /read-public token API 2.0_rc3. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```
 
 146. Read with revoked access token  1.2. Check that an 401 Unauthorized error is returned with the message "Invalid access token..."
@@ -649,10 +644,10 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 63409312-5ef6-4051-988c-f33b0fcea09f' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-147. Read with revoked access token  2.0_rc2. Check that an 401 Unauthorized error is returned with the message "Invalid access token..." 
+147. Read with revoked access token  2.0_rc3. Check that an 401 Unauthorized error is returned with the message "Invalid access token..." 
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 63409312-5ef6-4051-988c-f33b0fcea09f' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 63409312-5ef6-4051-988c-f33b0fcea09f' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
 148. Read with an access token for another record 1.2. Check that an 403 Forbidden error is returned with the message "Security problem : You do not have the required permissions." 
@@ -661,64 +656,64 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-149. Read record with access token for another record 2.0_rc2. Check that a 401 Unauthorized error is returned with the message "Access token is for a different record"
+149. Read record with access token for another record 2.0_rc3. Check that a 401 Unauthorized error is returned with the message "Access token is for a different record"
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-150. Read a single work with an access token for another record 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+150. Read a single work with an access token for another record 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
     ```
 
-151. Read email with access token for another record 2.0_rc2. Check that nothing is returned.
+151. Read email with access token for another record 2.0_rc3. Check that nothing is returned.
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```
 
-152. Read record with access token with activities/update scope 1.2. Check that no content is returned
+152. Read record with access token with activities/update scope 1.2. Check that an empty record is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-153. Read record with access token with activities/update scope 2.0_rc2. Check that no content is returned.
+153. Read record with access token with activities/update scope 2.0_rc3. Check that an empty record is returned.
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-154. Read a single work with activities/update 2.0_rc2. Check that you get a 401 Unauthorized error with the message "The activity is not public" (Currently broken - information is returned)
+154. Read a single work with activities/update 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public" (Currently broken - information is returned)
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
     ```
 
-155. Read with access token with orcid-profile/create scope 1.2. Check that no content is returned
+155. Read with access token with orcid-profile/create scope 1.2. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-156. Read record with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
+156. Read record with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-157. Read a single work with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
+157. Read a single work with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
     ```
 
-158. Read email section with access token with orcid-profile/create scope 2.0_rc2. Check that you get a 401 Unauthorized error with the message "Incorrect token for claimed record"
+158. Read email section with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 262192b4-3dac-4d29-9897-b02823ac3618' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```
 
 159. Read the record with a working token 1.2. Check that all fields are returned
@@ -727,22 +722,22 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-160. Read record with a working token 2.0_rc2. Check that all fields are returned
+160. Read record with a working token 2.0_rc3. Check that all fields are returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-161. Read a single work with a working token 2.0_rc2. Check that the work is returned
+161. Read a single work with a working token 2.0_rc3. Check that the work is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/person' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/person' -L -i -k
     ```
 
-162. Read email with a working token 2.0_rc2. Check that the email address is returned
+162. Read email with a working token 2.0_rc3. Check that the email address is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```	
 
 ### Private Record
@@ -753,46 +748,46 @@ This record has every fields set to private. Check that no information is displa
 
 164. Check that no information is displayed other than the ORCID iD
 
-165. Read with public API 1.2. Check that no content is returned
+165. Read with public API 1.2. Check that an empty record is returned
 
     ```
     curl -H 'Accept: application/orcid+xml' 'http://pub.qa.orcid.org/v1.2/0000-0003-2366-2712/orcid-works' -L -i -k
     ```
 
-166. Read record with public API 2.0_rc2. Check that no content is returned
+166. Read record with public API 2.0_rc3. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/record' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/record' -L -i -k
     ```
 
-167. Read record with /read-limited token API 1.2. Check that no content is returned
+167. Read record with /read-limited token API 1.2. Check that an empty record is returned
 
     ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v1.2/0000-0003-2366-2712/orcid-profile' -L -i -k
     ```
 
-168. Read record with /read-limited token API 2.0_rc2. Check that no content is returned
+168. Read record with /read-limited token API 2.0_rc3. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/record' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/record' -L -i -k
     ```
 
-169. Read person with /read-limited token API 2.0_rc2. Check that no content is returned
+169. Read person with /read-limited token API 2.0_rc3. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/person' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/person' -L -i -k
     ```
 
-170. Read activities with /read-limited token API 2.0_rc2. Check that no content is returned 
+170. Read activities with /read-limited token API 2.0_rc3. Check that an empty record is returned 
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/activities' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/activities' -L -i -k
     ```
 
-171. Read email with /read-limited token API 2.0_rc2. Check that no content is returned
+171. Read email with /read-limited token API 2.0_rc3. Check that an empty record is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/email' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/email' -L -i -k
     ```
 
 ## Scopes/Methods

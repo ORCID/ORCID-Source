@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -126,15 +125,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
     private IdentifierTypeManager identifierTypeManager;
     
-    private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+    private long getLastModifiedTime(String orcid) {        
+        return profileEntityManager.getLastModified(orcid);
     }
     
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)

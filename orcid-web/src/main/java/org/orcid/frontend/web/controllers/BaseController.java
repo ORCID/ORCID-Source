@@ -51,6 +51,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -155,6 +156,9 @@ public class BaseController {
 
     @Resource
     protected CsrfTokenRepository csrfTokenRepository;
+    
+    @Resource
+    protected RecordNameManager recordNameManager;
 
     protected static final String EMPTY = "empty";
 

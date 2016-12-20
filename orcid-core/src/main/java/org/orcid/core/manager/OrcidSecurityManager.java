@@ -35,10 +35,6 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
  */
 public interface OrcidSecurityManager {
 
-    void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager);
-    
-    void setSourceManager(SourceManager sourceManager);
-    
     void checkVisibility(Filterable filterable, String orcid);   
     
     void checkBiographicalVisibility(VisibilityType visibilityType, String orcid);

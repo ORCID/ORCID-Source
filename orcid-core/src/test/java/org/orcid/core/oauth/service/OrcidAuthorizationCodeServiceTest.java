@@ -67,7 +67,7 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
-    @Resource
+    @Resource(name = "clientDetailsManager")
     private ClientDetailsService clientDetailsService;
     
     private OAuth2RequestFactory oAuth2RequestFactory;

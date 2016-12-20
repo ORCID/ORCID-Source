@@ -18,8 +18,6 @@ package org.orcid.core.utils;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.SourceName;
@@ -58,10 +56,13 @@ import org.orcid.jaxb.model.record_rc4.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class SourceUtils {
-    @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
-    public void setSourceName(SourceAware sourceAware) {
+    public void setSourceNameCacheManager(SourceNameCacheManager sourceNameCacheManager) {
+		this.sourceNameCacheManager = sourceNameCacheManager;
+	}
+
+	public void setSourceName(SourceAware sourceAware) {
         if(sourceAware != null) {
             Source source = sourceAware.getSource();
             if(source != null) {

@@ -113,7 +113,7 @@
             $(".header .navigation > .menu").css({"background":"#338caf"});
         });
     };
-   
+    
     /*============================================================
         Page initialisation
     ============================================================*/
@@ -130,3 +130,36 @@
     init();
 
 })(jQuery);
+
+/*============================================================
+Print public record
+============================================================*/
+function printPublicRecord(url){
+    $('#printRecord').on(
+        'click',
+        function(evt) {
+            evt.preventDefault();
+            $(".printRecordFrameContainer").remove();
+
+            if( $(".printRecordFrameContainer").length <= 0 ){
+                $('body').append('<iframe src="' + url + '" id="printRecordFrame" class="printRecordFrameContainer" name="printRecordFrame"></iframe>');
+            }
+
+            $('#printRecordFrame').bind(
+                'load', 
+                function() { 
+                    window.frames['printRecordFrame'].focus(); 
+                    window.frames['printRecordFrame'].print(); 
+                    setTimeout(
+                        function () { 
+                            $('#printRecordFrame').unbind('load');
+                            $(".printRecordFrameContainer").remove();
+                        }, 
+                        500
+                    ); 
+                }
+            );
+
+        }
+    ); 
+}

@@ -48,18 +48,132 @@
 	<bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
+	<!-- Profile last modified aspect -->
+	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
+		<property name="profileDao" ref="profileDao" />
+		<property name="enabled" value="true" />
+	</bean>
+
+	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
+		<property name="profileDao" ref="profileDaoReadOnly" />
+		<property name="enabled" value="false" />
+		<property name="name" value="read_only" />
+	</bean>
+
+	<!-- Person DAO's -->
+	<bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
+	
+	<bean id="recordNameDaoReadOnly" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="biographyDao" class="org.orcid.persistence.dao.impl.BiographyDaoImpl" />
+	
+	<bean id="biographyDaoReadOnly" class="org.orcid.persistence.dao.impl.BiographyDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
+	
+	<bean id="addressDaoReadOnly" class="org.orcid.persistence.dao.impl.AddressDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+	<bean id="otherNameDao" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl" />
+	
+	<bean id="otherNameDaoReadOnly" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+	<bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />
+	
+	<bean id="profileKeywordDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
+     
+     <bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
+     
+     <bean id="externalIdentifierDaoReadOnly" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl">
+     	<property name="entityManager" ref="entityManagerReadOnly" />
+     </bean>
     
-    <bean id="profileKeywordDao" class="org.orcid.persistence.dao.impl.ProfileKeywordDaoImpl" />
+	<bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
+	
+	<bean id="emailDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>    		
+    
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
-    <bean id="otherNameDao" class="org.orcid.persistence.dao.impl.OtherNameDaoImpl" />
     
-    <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
+    <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+    
+    <!-- Activities DAO's -->
+	<bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
+	
+	<bean id="workDaoReadOnly" class="org.orcid.persistence.dao.impl.WorkDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
 
+	<bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
+	
+	<bean id="profileFundingDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="orgAffiliationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />
+	
+	<bean id="orgAffiliationRelationDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+	<bean id="peerReviewDao" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl" />
+	
+	<bean id="peerReviewDaoReadOnly" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl">	
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+	<!-- Client details DAO's -->
+	<bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
+	
+	<bean id="clientDetailsDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+    
+    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
+    
+    <bean id="clientSecretDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+	<bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
+	
+	<bean id="clientRedirectDaoReadOnly" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+
+	<!-- Other DAO's -->
+	<bean id="groupIdRecordDao" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl" />
+	
+	<bean id="groupIdRecordDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
+	
+
+
+	
+
+
+
+
+	
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
     </bean>
@@ -70,13 +184,7 @@
 
     <bean id="subjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SubjectEntity" />
-    </bean>
-
-    <bean id="workDao" class="org.orcid.persistence.dao.impl.WorkDaoImpl" />
-    
-    <bean id="clientDetailsDao" class="org.orcid.persistence.dao.impl.ClientDetailsDaoImpl" />
-    
-    <bean id="clientSecretDao" class="org.orcid.persistence.dao.impl.ClientSecretDaoImpl" />
+    </bean>        
 
     <bean id="clientAuthorisedGrantTypeDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity" />
@@ -103,9 +211,7 @@
 
     <bean id="solrDao" class="org.orcid.persistence.dao.impl.SolrDaoImpl" />
     
-    <bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />
-    
-    <bean id="clientRedirectDao" class="org.orcid.persistence.dao.impl.ClientRedirectDaoImpl" />
+    <bean id="orgDisambiguatedSolrDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedSolrDaoImpl" />        
 
     <bean id="isoCountryReferenceDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
@@ -119,28 +225,19 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />
     </bean>    
     
-    <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />
-    
-    <bean id="addressDao" class="org.orcid.persistence.dao.impl.AddressDaoImpl" />
+    <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
      
     <!-- Statistics Generation DAO -->
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
 	
-	
 	<!-- Statistics DAO -->
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />
-     
-	<bean id="externalIdentifierDao" class="org.orcid.persistence.dao.impl.ExternalIdentifierDaoImpl" />
-	
-    <bean id="orgAffilationRelationDao" class="org.orcid.persistence.dao.impl.OrgAffiliationRelationDaoImpl" />     
+	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     		        
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
-    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
-            
-     <bean id="profileFundingDao" class="org.orcid.persistence.dao.impl.ProfileFundingDaoImpl" />
+    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />                 
     
 	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
@@ -156,26 +253,16 @@
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
 	
-	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
+	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />		
 	
-	<bean id="peerReviewDao" class="org.orcid.persistence.dao.impl.PeerReviewDaoImpl" />
-	
-	<bean id="groupIdRecordDao" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl" />
-	
-	<bean id="peerReviewSubjectDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.PeerReviewSubjectEntity" />
-    </bean>  
-
 	<bean id="shibbolethAccountDao" class="org.orcid.persistence.dao.impl.ShibbolethAccountDaoImpl" />
 
     <bean id="userConnectionDao" class="org.orcid.persistence.dao.impl.UserConnectionDaoImpl" />
     
-    <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
+    <bean id="salesForceConnectionDao" class="org.orcid.persistence.dao.impl.SalesForceConnectionDaoImpl" />
     
-    <bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
-
-	<bean id="biographyDao" class="org.orcid.persistence.dao.impl.BiographyDaoImpl" />
-
+    <bean id="internalSSODao" class="org.orcid.persistence.dao.impl.InternalSSODaoImpl" />
+            
     <bean id="identityProviderDao" class="org.orcid.persistence.dao.impl.IdentityProviderDaoImpl" />
 
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />

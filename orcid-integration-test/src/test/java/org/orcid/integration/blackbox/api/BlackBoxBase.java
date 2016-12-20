@@ -429,8 +429,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement : webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteOtherName(otherName)']")));
-            waitForAngular();
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteOtherName(otherName)']")), true);            
         }
     }
 
@@ -472,9 +471,9 @@ public class BlackBoxBase {
     }
 
     public static void saveKeywordsModal() {
-        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));        
-        waitForElementVisibility(By.id("open-edit-keywords"));
+        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));  
         waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-keywords"));        
     }        
 
     public static void changeKeywordsVisibility(Visibility visibility) {
@@ -505,7 +504,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteKeyword(keyword)']")));            
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteKeyword(keyword)']")), true);            
         }
     }
     
@@ -554,8 +553,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteCountry(country)']")));
-            waitForAngular();
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteCountry(country)']")), true);            
         }
     }        
     
@@ -605,8 +603,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteWebsite(website)']")));
-            waitForAngular();
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteWebsite(website)']")), true);            
         }
     }
     
@@ -666,7 +663,7 @@ public class BlackBoxBase {
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
+            ngAwareClick(webElement.findElement(By.xpath("//div[@ng-click='deleteExternalIdentifier(externalIdentifier)']")), true);
         }          
     }
     

@@ -16,7 +16,6 @@
  */
 package org.orcid.api.common.delegator.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,6 +27,7 @@ import org.orcid.api.common.cerif.Cerif16Builder;
 import org.orcid.api.common.cerif.CerifTypeTranslator;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -64,12 +64,13 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     private WorkManager workManager;
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+        return profileEntityManager.getLastModified(orcid);
     }
     
     /**
@@ -96,7 +97,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         @SuppressWarnings("unchecked")
         List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
 
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
+        ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as, orcid);
 
@@ -121,8 +122,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws, orcid);

@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.FundingContributors;
 import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
@@ -82,6 +83,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -324,6 +326,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
         emailClassMap.field("email", "id");
+        emailClassMap.field("primary", "primary");
+        emailClassMap.field("verified", "verified");
         addV2DateFields(emailClassMap);
         registerSourceConverters(mapperFactory, emailClassMap);
         emailClassMap.register();
@@ -583,6 +587,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
 
+    public MapperFacade getNameMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
+        addV2DateFields(nameClassMap);        
+        nameClassMap.field("creditName.content", "creditName");
+        nameClassMap.field("givenNames.content", "givenNames");
+        nameClassMap.field("familyName.content", "familyName");
+        nameClassMap.field("path", "profile.id");
+        nameClassMap.byDefault();
+        nameClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }

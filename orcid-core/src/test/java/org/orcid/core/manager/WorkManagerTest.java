@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -55,6 +56,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -81,7 +83,7 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        workManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
     }
     
     @AfterClass
@@ -543,6 +545,70 @@ public class WorkManagerTest extends BaseTest {
         assertEquals("ext-id-2", works.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(1, works.getWorkGroup().get(1).getWorkSummary().size());
         assertEquals("Public 3", works.getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testGetAll() {
+        List<Work> elements = workManager.findWorks("0000-0000-0000-0003", System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(Work element : elements) {
+            if(11 == element.getPutCode()) {
+                found1 = true;
+            } else if(12 == element.getPutCode()) {
+                found2 = true;
+            } else if(13 == element.getPutCode()) {
+                found3 = true;
+            } else if(14 == element.getPutCode()) {
+                found4 = true;
+            } else if(15 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid element found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void testGetAllSummaries() {
+        List<WorkSummary> elements = workManager.getWorksSummaryList("0000-0000-0000-0003", System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(WorkSummary element : elements) {
+            if(11 == element.getPutCode()) {
+                found1 = true;
+            } else if(12 == element.getPutCode()) {
+                found2 = true;
+            } else if(13 == element.getPutCode()) {
+                found3 = true;
+            } else if(14 == element.getPutCode()) {
+                found4 = true;
+            } else if(15 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid element found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void testGetPublic() {
+        List<Work> elements = workManager.findPublicWorks("0000-0000-0000-0003", System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(1, elements.size());
+        assertEquals(Long.valueOf(11), elements.get(0).getPutCode());
     }
     
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
