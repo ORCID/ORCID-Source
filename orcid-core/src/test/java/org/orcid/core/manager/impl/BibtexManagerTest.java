@@ -89,6 +89,7 @@ public class BibtexManagerTest extends BaseTest{
         ExternalID id = new ExternalID();
         id.setType("doi");
         id.setValue("111");
+        w.getExternalIdentifiers().getExternalIdentifier().add(id);
         String bib = bibtexManager.generateBibtex(ORCID, w);
         Assert.assertEquals("OK",bib);
     }
