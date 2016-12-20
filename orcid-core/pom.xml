@@ -191,6 +191,29 @@
             <artifactId>activemq-broker</artifactId>
             <version>5.13.3</version>
         </dependency>
+        
+        		<!-- citeproc support -->
+		<dependency>
+			<groupId>de.undercouch</groupId>
+			<artifactId>citeproc-java</artifactId>
+			<version>0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.citationstyles</groupId>
+			<artifactId>styles</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.citationstyles</groupId>
+			<artifactId>locales</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.mozilla</groupId>
+		    <artifactId>rhino</artifactId>
+		    <version>1.7.7.1</version>
+		</dependency>
+
         <!-- Test dependencies -->
 
     </dependencies>

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
@@ -88,6 +89,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private BibtexManager bibtexManager;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody
@@ -790,4 +794,10 @@ public class WorksController extends BaseWorkspaceController {
         }
         return types;
     }
+    
+    @RequestMapping(value = "/works.bib", method = RequestMethod.GET)
+    public @ResponseBody String fetchBibtex(){
+        return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());        
+    }
+    
 }
