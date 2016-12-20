@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc4.Organization;
+import org.orcid.jaxb.model.common_rc4.OrganizationHolder;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.common_rc4.VisibilityType;
@@ -39,9 +41,9 @@ import org.orcid.jaxb.model.record_rc4.GroupableActivity;
 import org.orcid.jaxb.model.record_rc4.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate","organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
+public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
 
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
@@ -60,6 +62,8 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name="created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
+    @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
+    protected Organization organization;
 
     @XmlAttribute(name="put-code")
     protected Long putCode;
@@ -133,6 +137,14 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     public void setCreatedDate(CreatedDate createdDate) {
         this.createdDate = createdDate;
     }
+    
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 
     public Long getPutCode() {
         return putCode;
@@ -193,6 +205,7 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         result = prime * result + ((title == null) ? 0 : title.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -249,6 +262,12 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
             return false;
         if (visibility != other.visibility)
             return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
+            return false;
+        
         return true;
     }
 

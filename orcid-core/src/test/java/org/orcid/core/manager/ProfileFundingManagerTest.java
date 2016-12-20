@@ -397,6 +397,15 @@ public class ProfileFundingManagerTest extends BaseTest {
         extId.setValue(extIdValue);               
         extIds.getExternalIdentifier().add(extId);
         summary.setExternalIdentifiers(extIds);
+        
+        Organization org = new Organization();
+        org.setName("org-name");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org.setAddress(address);
+        summary.setOrganization(org);
+        
         return summary;
     }
     
