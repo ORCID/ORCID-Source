@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.ExternalIDs;
+import org.orcid.jaxb.model.record_rc4.Relationship;
 
 public class FundingExternalIdentifiers implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.FundingExternalIdentifiers, ExternalIDs> {
 

@@ -16,7 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 
 /**

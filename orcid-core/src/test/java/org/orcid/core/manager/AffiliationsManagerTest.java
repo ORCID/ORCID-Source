@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -34,22 +36,25 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc3.Day;
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Month;
-import org.orcid.jaxb.model.common_rc3.Organization;
-import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.common_rc4.Day;
+import org.orcid.jaxb.model.common_rc4.FuzzyDate;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Month;
+import org.orcid.jaxb.model.common_rc4.Organization;
+import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.Year;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class AffiliationsManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
@@ -68,8 +73,7 @@ public class AffiliationsManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        affiliationsManager.setSourceManager(sourceManager);
-        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
     }
     
     @AfterClass
@@ -123,6 +127,64 @@ public class AffiliationsManagerTest extends BaseTest {
         
         assertNotNull(employment);
         assertEquals(Visibility.LIMITED, employment.getVisibility());
+    }
+    
+    @Test
+    public void testGetAllEducations() {
+        String orcid = "0000-0000-0000-0003";
+        List<EducationSummary> elements = affiliationsManager.getEducationSummaryList(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false; 
+        for(EducationSummary element : elements) {
+            if(20 == element.getPutCode()) {
+                found1 = true;
+            } else if(21 == element.getPutCode()) {
+                found2 = true;
+            } else if(22 == element.getPutCode()) {
+                found3 = true;
+            } else if(25 == element.getPutCode()) {
+                found4 = true;
+            } else if(26 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid element found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void testGetAllEmployments() {
+        String orcid = "0000-0000-0000-0003";
+        List<EmploymentSummary> elements = affiliationsManager.getEmploymentSummaryList(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false; 
+        for(EmploymentSummary element : elements) {
+            if(17 == element.getPutCode()) {
+                found1 = true;
+            } else if(18 == element.getPutCode()) {
+                found2 = true;
+            } else if(19 == element.getPutCode()) {
+                found3 = true;
+            } else if(23 == element.getPutCode()) {
+                found4 = true;
+            } else if(24 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid element found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
     }
     
     private Education getEducation() {

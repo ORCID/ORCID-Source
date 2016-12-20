@@ -65,7 +65,7 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
         openEditOtherNamesModal();        
         createOtherName(otherName1);
         createOtherName(otherName2);
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();                
     }
     
@@ -86,7 +86,7 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
     public void testGetOtherNamesWithMembersAPI() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditOtherNamesModal();                
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         saveOtherNamesModal();                
         
         String accessToken = getAccessToken();
@@ -118,11 +118,11 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         
         showMyOrcidPage();
         openEditOtherNamesModal();       
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
         
         String accessToken = getAccessToken();
@@ -222,8 +222,9 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
      */
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
+        showMyOrcidPage();
         openEditOtherNamesModal();       
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
         
         ClientResponse response = publicV2ApiClient.viewOtherNamesXML(getUser1OrcidId());

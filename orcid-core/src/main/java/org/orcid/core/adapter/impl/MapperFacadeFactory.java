@@ -35,33 +35,34 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
-import org.orcid.jaxb.model.common_rc3.PublicationDate;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc3.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.FundingContributors;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkContributors;
-import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.common_rc4.FuzzyDate;
+import org.orcid.jaxb.model.common_rc4.PublicationDate;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.notification.amended_rc4.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_rc4.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc4.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.FundingContributors;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkContributors;
+import org.orcid.model.notification.institutional_sign_in_rc4.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
@@ -82,6 +83,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -324,6 +326,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<Email, EmailEntity> emailClassMap = mapperFactory.classMap(Email.class, EmailEntity.class);
         emailClassMap.byDefault();
         emailClassMap.field("email", "id");
+        emailClassMap.field("primary", "primary");
+        emailClassMap.field("verified", "verified");
         addV2DateFields(emailClassMap);
         registerSourceConverters(mapperFactory, emailClassMap);
         emailClassMap.register();
@@ -583,6 +587,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
 
+    public MapperFacade getNameMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
+        addV2DateFields(nameClassMap);        
+        nameClassMap.field("creditName.content", "creditName");
+        nameClassMap.field("givenNames.content", "givenNames");
+        nameClassMap.field("familyName.content", "familyName");
+        nameClassMap.field("path", "profile.id");
+        nameClassMap.byDefault();
+        nameClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }

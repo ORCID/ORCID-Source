@@ -16,18 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import java.util.List;
-
+import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
-public interface ProfileFundingManager {
-
-    void setSourceManager(SourceManager sourceManager);
-    
+public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
     /**
      * Removes the relationship that exists between a funding and a profile.
      * 
@@ -54,28 +48,7 @@ public interface ProfileFundingManager {
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);
-
-    /**
-     * Updates an existing profile funding relationship between an organization and a
-     * profile.
-     * 
-     * @param updatedProfileFundingEntity
-     *            The object to be persisted
-     * @return the updated profileFundingEntity
-     * */
-    ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity);
-    
-    /**
-     * Creates a new profile funding relationship between an organization and a
-     * profile.
-     * 
-     * @param newProfileFundingEntity
-     *            The object to be persisted
-     * @return the created newProfileFundingEntity with the id assigned on
-     *         database
-     * */
-    ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity);
+    boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility);    
         
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes
@@ -85,15 +58,7 @@ public interface ProfileFundingManager {
     /**
      * A process that will process all funding subtypes, filter and index them. 
      * */
-    void indexFundingSubTypes();
-    
-    /**
-     * Looks for the org defined funding subtypes that matches a given pattern
-     * @param subtype pattern to look for
-     * @param limit the max number of results to look for
-     * @return a list of all org defined funding subtypes that matches the given pattern
-     * */
-    List<String> getIndexedFundingSubTypes(String subtype, int limit);
+    void indexFundingSubTypes();        
     
     /**
      * Get the funding associated with the given profileFunding id
@@ -103,30 +68,11 @@ public interface ProfileFundingManager {
      * 
      * @return the ProfileFundingEntity object
      * */
+    @Deprecated
     ProfileFundingEntity getProfileFundingEntity(Long profileFundingId);
     
     boolean updateToMaxDisplay(String orcid, Long fundingId);
-    
-    /**
-     * Get a funding based on the orcid and funding id
-     * @param orcid
-     *          The funding owner
-     * @param fundingId
-     *          The funding id
-     * @return the Funding          
-     * */
-    Funding getFunding(String orcid, Long fundingId);
-    
-    /**
-     * Get a funding summary based on the orcid and funding id
-     * @param orcid
-     *          The funding owner
-     * @param fundingId
-     *          The funding id
-     * @return the FundingSummary          
-     * */
-    FundingSummary getSummary(String orcid, Long fundingId);
-    
+        
     /**
      * Add a new funding to the given user
      * @param orcid
@@ -155,36 +101,5 @@ public interface ProfileFundingManager {
      *          The funding id                 
      * @return true if the funding was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, Long fundingId);   
-    
-    /**
-     * Get the list of fundings summaries that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of fundings that belongs to this user
-     * */
-    List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified);
-    
-    /**
-     * Get the list of fundings that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of fundings that belongs to this user
-     * */
-    List<Funding> getFundingList(String userOrcid, long lastModified);
-    
-    /**
-     * Generate a grouped list of funding with the given list of funding
-     * 
-     * @param fundings
-     *          The list of fundings to group
-     * @param justPublic
-     *          Specify if we want to group only the public elements in the given list
-     * @return Fundings element with the FundingSummary elements grouped                  
-     * */
-    Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic);
+    boolean checkSourceAndDelete(String orcid, Long fundingId);           
 }

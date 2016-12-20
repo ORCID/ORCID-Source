@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 import ma.glasnost.orika.MapperFacade;

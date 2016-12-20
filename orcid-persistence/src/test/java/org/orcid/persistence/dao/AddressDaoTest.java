@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;

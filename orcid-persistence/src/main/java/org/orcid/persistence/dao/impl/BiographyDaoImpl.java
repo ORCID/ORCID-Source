@@ -22,7 +22,7 @@ import java.util.Date;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.orcid.pojo.IdentifierType;
 
@@ -26,6 +28,6 @@ public interface IdentifierTypeManager {
     public void setSecurityManager(OrcidSecurityManager manager);
     public IdentifierType createIdentifierType(IdentifierType id);
     public IdentifierType updateIdentifierType(IdentifierType id);
-    public IdentifierType fetchIdentifierTypeByDatabaseName(String name);
-    public Map<String,IdentifierType> fetchIdentifierTypesByAPITypeName();
+    IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc);
+    Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc);
 }

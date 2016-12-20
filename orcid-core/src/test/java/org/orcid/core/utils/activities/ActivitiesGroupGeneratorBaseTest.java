@@ -23,9 +23,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record_rc3.ExternalIdentifiersContainer;
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc4.ExternalIdentifiersContainer;
+import org.orcid.jaxb.model.record_rc4.GroupAble;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
 
 public class ActivitiesGroupGeneratorBaseTest {
     /**

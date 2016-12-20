@@ -22,12 +22,12 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -145,7 +145,7 @@ public class Cerif16Builder {
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfTitle(titleString));
 
         if (ws.getTitle().getTranslatedTitle() != null) {
-            org.orcid.jaxb.model.common_rc3.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            org.orcid.jaxb.model.common_rc4.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());
@@ -196,7 +196,7 @@ public class Cerif16Builder {
         prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfName(titleString));
 
         if (ws.getTitle().getTranslatedTitle() != null) {
-            org.orcid.jaxb.model.common_rc3.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
+            org.orcid.jaxb.model.common_rc4.TranslatedTitle trans = ws.getTitle().getTranslatedTitle();
             CfMLangStringType transTitle = objectFactory.createCfMLangStringType();
             titleString.setValue(trans.getContent());
             titleString.setCfLangCode(trans.getLanguageCode());

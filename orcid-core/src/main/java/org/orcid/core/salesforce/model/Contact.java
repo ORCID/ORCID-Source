@@ -30,6 +30,7 @@ public class Contact implements Serializable {
     private String name;
     private String email;
     private String role;
+    private String orcid;
 
     public String getName() {
         return name;
@@ -53,6 +54,14 @@ public class Contact implements Serializable {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
+import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;

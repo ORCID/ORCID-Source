@@ -43,7 +43,7 @@ import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.error_rc1.OrcidError;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
@@ -162,7 +162,7 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         gotEducation.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEducation);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
@@ -238,7 +238,7 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         gotEmployment.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEmployment);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
@@ -332,7 +332,7 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotFunding);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Funding gotAfterUpdateFunding = getAfterUpdateResponse.getEntity(Funding.class);
@@ -424,7 +424,7 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         gotPeerReview.getSubjectName().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotPeerReview);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         PeerReview gotAfterUpdatePeerReview = getAfterUpdateResponse.getEntity(PeerReview.class);

@@ -14,160 +14,240 @@
  *
  * =============================================================================
  */
-@media print{
-.workspace-body-list > li, .workspace-accordion-content > li, .workspace-border-box{
-	border: none;
-	box-shadow: none;
-}
 
-body{
-	color: #000;
-	font-size: 12px;
+@media print {
+    /*Begin of boilerplate default styles for printing */
+    *,
+    *:before,
+    *:after,
+    p:first-letter,
+    div:first-letter,
+    blockquote:first-letter,
+    li:first-letter,
+    p:first-line,
+    div:first-line,
+    blockquote:first-line,
+    li:first-line {
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #000 !important; /* Black prints faster:                           http://www.sanbeiji.com/archives/953 */
+        text-shadow: none !important;
+    }
 
-}
-*, .workspace-left, .full-name, .orcid-id, h3.workspace-title{
-	margin: 0;
-	padding: 0;
-	font-family: Helvetica, Arial, sans-serif;
-}
+    a,
+    a:visited {
+        text-decoration: none;
+    }
 
-.main{
-	margin: 0;
-}
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
 
-.alert, 
-.footer, 
-.container .header, 
-.id-banner-header, 
-.orcid-id-options, 
-.mini-orcid-icon,
-.action-button-bar, 
-.workspace-private-toolbar, 
-.source-line, 
-.gray-button, 
-.qrcode-container,
-.id-banner .row .col-md-3,
-.glyphicon-pencil,
-.workspace-profile span.glyphicon-pencil,
-.print-orcid-record,
-.bio-edit,
-.names-edit,
-.other-names-edit,
-.keywords-edit,
-.websites-edit,
-.country-edit,
-.biography-edit,
-.popover-help-container,
-.divisor,
-i.glyphicon-chevron-down,
-.workspace-toolbar{
-	display: none;
-}
-.left-aside, .col-md-3, .col-sm-3, .col-xs-12{
-	width: 100%;
-}
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
 
-.id-banner .oid{
-	border: 0;
-}
+    /*
+     * Don't show links that are fragment identifiers,
+     * or use the `javascript:` pseudo protocol
+     */
 
-.workspace-accordion-header, .id-banner .oid .orcid-id-container{
-	border: 0;
-	background-color: #fff;
-	margin: 0;
-	padding: 0;
-}
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
+        content: "";
+    }
 
-.work-title a.toggle-text, 
-.workspace-accordion-header .row, 
-#workspace-personal .row:first-child{
-	color: #000;
-	border-bottom: 1px solid #000;
-	width: 100%;
-	font-size: 14px;
-	font-weight: bold;
-	line-height: normal;
-	height: inherit;
-	margin-bottom: 16px;
-}
+    pre {
+        white-space: pre-wrap !important;
+    }
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
 
-h3.workspace-title{
-	border: 0;
-	font-size: 16px;
-	font-weight: bold;
-}
+    /*
+     * Printing Tables:
+     * http://css-discuss.incutio.com/wiki/Printing_Tables
+     */
 
-.full-name{
-	font-size: 32px;
-}
+    thead {
+        display: table-header-group;
+    }
 
-#orcid-id{
-	font-size: 14px;
-}
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
 
-#orcid-id:before{
-	content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
-	width: 16px;
-	height: 16px;
-	display: block;
-	float: left;
-	margin-right: 4px;
-}
-.workspace-profile .workspace-section{
-	margin: 4px;
-	padding: 0;
-	display: block;
-	float: left;
-}
-.workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
-	float: left;
-	font-weight: bold;
-	margin-right: 4px;
-}
-.mobile-box{
-	padding: 0;
-}
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
 
-.workspace-accordion-content, .info-detail{
-	font-size: 12px;
-	line-height: normal;
-}
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        page-break-after: avoid;
+    }
 
-.workspace-accordion-content .workspace-title span{
-	font-size: 12px;
-	font-weight: bold;
-	line-height: normal;
-}
+    /*End of boilerplate default styles for printing */
 
-.bottom-margin-medium,
-.bottomBuffer{
-	margin: 0;
-}
+    body {
+        font-size: 12px;
+    }
 
-ul.sources-edit-list > li{
-	border: 0;
-}
+    #orcid-id {
+        font-size: 14px;
+    }
 
-a.toggle-text[href]:after {
-    content: none;
-}
+    #orcid-id:before {
+        content: url('https://orcid.org/sites/default/files/files/ID_symbol_B-W_16x16.png');
+        display: block;
+        float: left;
+        height: 16px;
+        margin-right: 4px;
+        width: 16px;
+    }
 
-h1, h2, h3, h4, h5 {
-  page-break-after: avoid;
-}
+    ul.sources-edit-list > li,
+    .id-banner .oid,
+    .workspace-body-list > li,
+    .workspace-accordion-content > li,
+    .workspace-border-box {
+        border: 0;
+    }
 
-.workspace-accordion-content .workspace-title .journaltitle{
-	font-weight: normal;
-	font-style: italic;
-}
+    *,
+    .full-name,
+    .orcid-id,
+    .workspace-left,
+    h3.workspace-title {
+        font-family: Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
 
-.affiliation-date::after{
-	content: " | ";
-}
+    .bottom-margin-medium,
+    .bottomBuffer,
+    .main {
+        margin: 0;
+    }
 
-.role{
-	margin-left: 4px;
-}
+    i.glyphicon-chevron-down,
+    .action-button-bar,
+    .alert,
+    .bio-edit,
+    .biography-edit,
+    .container .header,
+    .country-edit,
+    .divisor,
+    .footer,
+    .glyphicon-pencil,
+    .gray-button,
+    .id-banner .row .col-md-3,
+    .id-banner-header,
+    .keywords-edit,
+    .mini-orcid-icon,
+    .names-edit,
+    .orcid-id-options,
+    .other-names-edit,
+    .popover-help-container,
+    .print-orcid-record,
+    .qrcode-container,
+    .source-line,
+    .websites-edit,
+    .workspace-private-toolbar,
+    .workspace-profile span.glyphicon-pencil,
+    .workspace-toolbar {
+        display: none;
+    }
 
+    .col-md-3,
+    .col-sm-3,
+    .col-xs-12,
+    .left-aside {
+        width: 100%;
+    }
 
+    .id-banner .oid .orcid-id-container,
+    .workspace-accordion-header {
+        background-color: #fff;
+        border: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .work-title a.toggle-text,
+    .workspace-accordion-header .row,
+    #workspace-personal .row:first-child {
+        border-bottom: 1px solid #000;
+        color: #000;
+        font-size: 14px;
+        font-weight: bold;
+        height: inherit;
+        line-height: normal;
+        margin-bottom: 16px;
+        width: 100%;
+    }
+
+    h3.workspace-title {
+        border: 0;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .full-name {
+        font-size: 32px;
+    }
+
+    .workspace-profile .workspace-section {
+        display: block;
+        float: left;
+        margin: 4px;
+        padding: 0;
+    }
+    
+    .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
+        float: left;
+        font-weight: bold;
+        margin-right: 4px;
+    }
+    
+    .mobile-box {
+        padding: 0;
+    }
+
+    .info-detail, 
+    .workspace-accordion-content,
+    .workspace-accordion-content .workspace-title {
+        font-size: 12px;
+        line-height: normal;
+    }
+
+    .workspace-accordion-content .workspace-title span {
+        font-weight: bold;
+    }
+       
+    
+    a.toggle-text[href]:after {
+        content: none;
+    }
+
+    .workspace-accordion-content .workspace-title .journaltitle {
+        font-style: italic;
+        font-weight: normal;
+    }
+    
+    .affiliation-date::after {
+        content: " | ";
+    }
+    
+    .role {
+        margin-left: 4px;
+    }
 }

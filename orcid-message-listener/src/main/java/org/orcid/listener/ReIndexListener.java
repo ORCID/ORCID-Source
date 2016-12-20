@@ -17,10 +17,8 @@
 package org.orcid.listener;
 
 import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
-
 import org.orcid.listener.common.LastModifiedMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
@@ -28,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
-
 import com.amazonaws.AmazonClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 

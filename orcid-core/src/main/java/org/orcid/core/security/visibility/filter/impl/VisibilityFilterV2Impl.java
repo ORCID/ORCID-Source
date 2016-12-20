@@ -27,24 +27,24 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.common_rc3.Filterable;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.Group;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.common_rc4.Filterable;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Educations;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Employments;
+import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
+import org.orcid.jaxb.model.record_rc4.Group;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
 import org.springframework.stereotype.Component;
 
 /**
@@ -174,7 +174,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     public PersonalDetails filter(PersonalDetails personalDetails, String orcid) {
         if(personalDetails.getName() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getName(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(personalDetails.getName(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setName(null);
             }
@@ -182,7 +182,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         
         if(personalDetails.getBiography() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getBiography(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(personalDetails.getBiography(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setBiography(null);
             }
@@ -236,7 +236,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         // If it is private
         try {
             if (person.getBiography() != null) {
-                orcidSecurityManager.checkVisibility(person.getBiography(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(person.getBiography(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setBiography(null);
@@ -244,7 +244,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
         try {
             if (person.getName() != null) {
-                orcidSecurityManager.checkVisibility(person.getName(), orcid);
+                orcidSecurityManager.checkBiographicalVisibility(person.getName(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setName(null);

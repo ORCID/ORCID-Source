@@ -16,11 +16,13 @@
  */
 package org.orcid.core.manager;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.AnyOf.anyOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -36,28 +38,29 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Organization;
-import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc3.Title;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.FundingTitle;
-import org.orcid.jaxb.model.record_rc3.FundingType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Organization;
+import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
+import org.orcid.jaxb.model.common_rc4.Title;
+import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.ExternalIDs;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.FundingTitle;
+import org.orcid.jaxb.model.record_rc4.FundingType;
+import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class ProfileFundingManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+            "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml");
     
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
@@ -79,7 +82,7 @@ public class ProfileFundingManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        profileFundingManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);
     }
     
     @AfterClass
@@ -316,6 +319,68 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertEquals("ext-id-2", fundings.getFundingGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(1, fundings.getFundingGroup().get(1).getFundingSummary().size());
         assertEquals("Public 3", fundings.getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent());
+    }
+    
+    @Test
+    public void testGetAll() {
+        String orcid = "0000-0000-0000-0003"; 
+        List<Funding> elements = profileFundingManager.getFundingList(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        
+        for(Funding element : elements) {
+            if(10 == element.getPutCode()) {
+                found1 = true;
+            } else if(11 == element.getPutCode()) {
+                found2 = true;
+            } else if(12 == element.getPutCode()) {
+                found3 = true;
+            } else if(13 == element.getPutCode()) {
+                found4 = true;
+            } else if(14 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid put code found: " + element.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);        
+    }
+    
+    @Test
+    public void testGetPublic() {
+        String orcid = "0000-0000-0000-0003"; 
+        List<FundingSummary> elements = profileFundingManager.getFundingSummaryList(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertEquals(5, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        
+        for(FundingSummary element : elements) {
+            if(10 == element.getPutCode()) {
+                found1 = true;
+            } else if(11 == element.getPutCode()) {
+                found2 = true;
+            } else if(12 == element.getPutCode()) {
+                found3 = true;
+            } else if(13 == element.getPutCode()) {
+                found4 = true;
+            } else if(14 == element.getPutCode()) {
+                found5 = true;
+            } else {
+                fail("Invalid put code found: " + element.getPutCode());
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5); 
     }
     
     private FundingSummary getFundingSummary(String titleValue, String extIdValue, Visibility visibility) {

@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,98 +23,37 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.persistence.dao.OtherNameDao;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-public class OtherNameManagerImpl implements OtherNameManager {
-
-    @Resource
-    private OtherNameDao otherNameDao;
-
-    @Resource
-    private JpaJaxbOtherNameAdapter jpaJaxbOtherNameAdapter;
+public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implements OtherNameManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private SourceManager sourceManager;
+    private SourceManager sourceManager;     
     
     @Resource
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-    
-    @Override
-    @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getOtherNames(String orcid, long lastModified) {
-        return getOtherNames(orcid, null);
-    }
-    
-    @Override
-    @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getPublicOtherNames(String orcid, long lastModified) {
-        return getOtherNames(orcid, Visibility.PUBLIC);        
-    }
-    
-    private OtherNames getOtherNames(String orcid, Visibility visibility) {
-        List<OtherNameEntity> otherNameEntityList = new ArrayList<OtherNameEntity>();
-        if(visibility == null) {
-            otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
-        } else {
-            otherNameEntityList = otherNameDao.getOtherNames(orcid, visibility);
-        }
+    private ProfileEntityCacheManager profileEntityCacheManager;        
         
-        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
-        return result;
-    }
-    
     @Override
-    @Cacheable(value = "minimized-other-names", key = "#orcid.concat('-').concat(#lastModified)")
-    public OtherNames getMinimizedOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
-        return jpaJaxbOtherNameAdapter.toMinimizedOtherNameList(otherNameEntityList);
-    }
-    
-
-    @Override
-    public OtherName getOtherName(String orcid, Long putCode) {        
-        OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        return jpaJaxbOtherNameAdapter.toOtherName(otherNameEntity);
-    }
-
-    @Override
+    @Transactional
     public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {        
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         
@@ -132,6 +70,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override    
+    @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the otherName
@@ -165,6 +104,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
+    @Transactional
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
@@ -255,8 +195,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     
                 }
             }
-        }
-        
+        }        
         return otherNames;
     }
 
@@ -271,15 +210,14 @@ public class OtherNameManagerImpl implements OtherNameManager {
         }
         return false;
     }
-
     
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingOtherNameVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed()) {            
             entity.setVisibility(defaultOtherNamesVisibility);            
         } else if (incomingOtherNameVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }
 }

@@ -49,9 +49,9 @@ import org.orcid.utils.DateUtils;
 
 public class Api2_0_rc2_LastModifiedDatesHelper {
 
-    public static Date calculateLatest(ActivitiesContainer actContainerRc3) {
+    public static Date calculateLatest(ActivitiesContainer actContainerRc2) {
         Date latestAct = null;
-        Collection<? extends Activity> activities = actContainerRc3.retrieveActivities();
+        Collection<? extends Activity> activities = actContainerRc2.retrieveActivities();
         if (activities != null && !activities.isEmpty()) {
             Iterator<? extends Activity> activitiesIterator = activities.iterator();
             XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
@@ -61,7 +61,7 @@ public class Api2_0_rc2_LastModifiedDatesHelper {
                     latest = activity.getLastModifiedDate().getValue();
                 }
             }
-            actContainerRc3.setLastModifiedDate(new LastModifiedDate(latest));
+            actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
             latestAct = latest.toGregorianCalendar().getTime();
         }
         return latestAct;

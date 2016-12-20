@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,88 +24,34 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
-import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ProfileKeywordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
-import org.orcid.persistence.dao.ProfileKeywordDao;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 
-public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
-
-    @Resource
-    private ProfileKeywordDao profileKeywordDao;
+public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl implements ProfileKeywordManager {
 
     @Resource
     private SourceManager sourceManager;
 
     @Resource
-    private JpaJaxbKeywordAdapter adapter;
-
-    @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource
-    private ProfileEntityManager profileEntityManager;
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-    
-    @Override
-    @Cacheable(value = "keywords", key = "#orcid.concat('-').concat(#lastModified)")
-    public Keywords getKeywords(String orcid, long lastModified) {
-        return getKeywords(orcid, null);
-    }
-
-    @Override
-    @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
-    public Keywords getPublicKeywords(String orcid, long lastModified) {
-        return getKeywords(orcid, Visibility.PUBLIC);
-    }
-
-    private Keywords getKeywords(String orcid, Visibility visibility) {
-        List<ProfileKeywordEntity> entities = new ArrayList<ProfileKeywordEntity>();
-        if(visibility == null) {
-            entities = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
-        } else {
-            entities = profileKeywordDao.getProfileKeywors(orcid, Visibility.PUBLIC);
-        }
-        
-        Keywords result = adapter.toKeywords(entities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
-        return result;
-    }       
-
-    @Override
-    public Keyword getKeyword(String orcid, Long putCode) {
-        ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-        return adapter.toKeyword(entity);
-    }
-
     @Override
     public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
@@ -258,7 +203,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         return keywords;
     }
 
-    private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc3.Keyword keyword, SourceEntity source) {
+    private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc4.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();             
             if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
@@ -271,12 +216,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingKeywordVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }
 }

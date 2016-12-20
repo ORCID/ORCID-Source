@@ -20,67 +20,23 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_rc3.CreatedDate;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.persistence.dao.BiographyDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.core.manager.read_only.impl.BiographyManagerReadOnlyImpl;
+import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class BiographyManagerImpl implements BiographyManager {
+public class BiographyManagerImpl extends BiographyManagerReadOnlyImpl implements BiographyManager {
 
     @Resource
-    private BiographyDao biographyDao;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Override
-    public Biography getBiography(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Biography bio = new Biography();
-        bio.setVisibility(Visibility.fromValue(profile.getActivitiesVisibilityDefault() == null ? 
-                OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getActivitiesVisibilityDefault().value()));
-        if(profile.getBiographyEntity() != null) {
-            bio.setContent(profile.getBiographyEntity().getBiography());
-            if(profile.getBiographyEntity().getVisibility() != null) {
-                bio.setVisibility(profile.getBiographyEntity().getVisibility());
-            } 
-            //This should never be null
-            if(profile.getBiographyEntity().getLastModified() != null) {
-                bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getLastModified())));
-            } else {
-                bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
-            }  
-            
-            //This should never be null
-            if(profile.getBiographyEntity().getDateCreated() != null) {
-                bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getDateCreated())));
-            } 
-        }         
-        return bio;
-    }
-    
-    @Override
-    public Biography getPublicBiography(String orcid) {
-        Biography bio = getBiography(orcid);
-        if(bio != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(bio.getVisibility())) {
-            return bio;
-        }
-        return null;
-    }
+    private ProfileEntityCacheManager profileEntityCacheManager;        
     
     @Override
     public boolean updateBiography(String orcid, Biography bio) {
-        if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
+        if (bio == null || bio.getVisibility() == null) {
             return false;
         }
         return biographyDao.updateBiography(orcid, bio.getContent(), bio.getVisibility());
@@ -91,6 +47,11 @@ public class BiographyManagerImpl implements BiographyManager {
         if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
             return;
         }
+        
+        if(biographyDao.exists(orcid)) {
+            throw new IllegalArgumentException("The biography for " + orcid + " already exists");
+        }
+        
         biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility());
     }
 }

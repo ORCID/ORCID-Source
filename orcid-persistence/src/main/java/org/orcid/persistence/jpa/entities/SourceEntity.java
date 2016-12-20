@@ -96,7 +96,7 @@ public class SourceEntity implements Serializable {
             if (sourceProfile.getRecordNameEntity() != null) {
                 // If it is a user, check if it have a credit name and is
                 // visible
-                if (org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(sourceProfile.getRecordNameEntity().getVisibility())) {
+                if (org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(sourceProfile.getRecordNameEntity().getVisibility())) {
                     if (!StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getCreditName())) {
                         return sourceProfile.getRecordNameEntity().getCreditName();
                     } else {

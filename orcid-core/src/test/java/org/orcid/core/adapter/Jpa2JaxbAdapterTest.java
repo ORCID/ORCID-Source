@@ -41,7 +41,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -92,7 +92,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
     @Resource
     private Jpa2JaxbAdapter adapter;
 
-    @Resource
+    @Resource(name = "workEntityCacheManager")
     private WorkEntityCacheManager realWorkEntityCacheManager;
 
     @Mock
@@ -242,20 +242,20 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         name.setCreditName("My credit name");
         name.setFamilyName("My family name");
         name.setGivenNames("My given names");
-        name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        name.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         profile.setRecordNameEntity(name);
 
         // Set biography
         BiographyEntity bio = new BiographyEntity();
         bio.setBiography("This is my biography");
-        bio.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        bio.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         profile.setBiographyEntity(bio);
 
         // Set other names
         TreeSet<OtherNameEntity> otherNames = new TreeSet<OtherNameEntity>();
         OtherNameEntity otherName = new OtherNameEntity();
         otherName.setDisplayName("My other name");
-        otherName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        otherName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         otherName.setDisplayIndex(20000L);
         otherName.setClientSourceId(clientId);
         otherName.setId(24816L);
@@ -266,7 +266,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         Set<AddressEntity> addresses = new HashSet<AddressEntity>();
         AddressEntity address = new AddressEntity();
         address.setIso2Country(Iso3166Country.US);
-        address.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        address.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         address.setDisplayIndex(20000L);
         address.setClientSourceId(clientId);
         address.setId(24816L);
@@ -277,7 +277,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         TreeSet<ProfileKeywordEntity> keywords = new TreeSet<ProfileKeywordEntity>();
         ProfileKeywordEntity keyword = new ProfileKeywordEntity();
         keyword.setKeywordName("My keyword");
-        keyword.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        keyword.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         keyword.setDisplayIndex(20000L);
         keyword.setClientSourceId(clientId);
         keyword.setId(24816L);
@@ -289,7 +289,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ResearcherUrlEntity rUrl = new ResearcherUrlEntity();
         rUrl.setUrl("http://orcid.org");
         rUrl.setUrlName("My rUrl");
-        rUrl.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        rUrl.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         rUrl.setDisplayIndex(20000L);
         rUrl.setClientSourceId(clientId);
         rUrl.setId(24816L);
@@ -302,7 +302,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         extId.setExternalIdCommonName("My common name");
         extId.setExternalIdReference("My refrence");
         extId.setExternalIdUrl("http://orcid.org");
-        extId.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        extId.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         extId.setDisplayIndex(20000L);
         extId.setClientSourceId(clientId);
         extId.setId(24816L);

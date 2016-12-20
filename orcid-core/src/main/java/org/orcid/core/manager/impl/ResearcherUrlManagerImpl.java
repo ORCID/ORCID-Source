@@ -23,65 +23,38 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ResearcherUrlManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.ResearcherUrlDao;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
+public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl implements ResearcherUrlManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResearcherUrlManagerImpl.class);
-
-    @Resource
-    private ResearcherUrlDao researcherUrlDao;
-
-    @Resource
-    private ProfileDao profileDao;
 
     @Resource
     private SourceManager sourceManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
-    
-    @Resource
     private OrcidSecurityManager orcidSecurityManager;        
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
     
     @Override
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
@@ -170,55 +143,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }
         
         return researcherUrls;
-    }
-
-    /**
-     * Return the list of public researcher urls associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of public researcher urls associated with the orcid profile
-     * */
-    @Override
-    @Cacheable(value = "public-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
-    public ResearcherUrls getPublicResearcherUrls(String orcid, long lastModified) {
-        return getResearcherUrls(orcid, Visibility.PUBLIC);
-    }
-    
-    /**
-     * Return the list of researcher urls associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of researcher urls associated with the orcid profile
-     * */
-    @Override
-    @Cacheable(value = "researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
-    public ResearcherUrls getResearcherUrls(String orcid, long lastModified) {
-        return getResearcherUrls(orcid, null);
-    }
-    
-    /**
-     * Return the list of researcher urls associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of researcher urls associated with the orcid profile
-     * */
-    private ResearcherUrls getResearcherUrls(String orcid, Visibility visibility) {
-        List<ResearcherUrlEntity> researcherUrlEntities = null; 
-        if(visibility == null) {
-            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
-        } else {
-            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
-        }       
-        
-        ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(rUrls);
-        return rUrls;
-    }
-
-    @Override
-    public org.orcid.jaxb.model.record_rc3.ResearcherUrl getResearcherUrl(String orcid, long id) {
-        ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, id);        
-        return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
     }
 
     @Override
@@ -310,12 +234,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingWorkVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultResearcherUrlsVisibility);
         } else if (incomingWorkVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }        
 }

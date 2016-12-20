@@ -16,56 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import java.util.List;
-
-import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Employment;
 
-public interface AffiliationsManager {
-
-    void setSourceManager(SourceManager sourceManager);
-    
-    /**
-     * 
-     * */
-    OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId);
-    
-    /**
-     * 
-     * */
-    List<OrgAffiliationRelationEntity> findAffiliationsByType(AffiliationType type);
-    
-    /**
-     * 
-     * */
-    List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type);
-    
-    /**
-     * Get an education based on the orcid and education id
-     * @param orcid
-     *          The education owner
-     * @param affiliationId
-     *          The affiliation id
-     * @return the education
-     * */
-    Education getEducationAffiliation(String userOrcid, Long affiliationId);
-    
-    /**
-     * Get a summary of an education affiliation based on the orcid and education id
-     * @param orcid
-     *          The education owner
-     * @param affiliationId
-     *          The affiliation id
-     * @return the education summary
-     * */
-    EducationSummary getEducationSummary(String userOrcid, Long affiliationId);
-    
+public interface AffiliationsManager extends AffiliationsManagerReadOnly {
     /**
      * Add a new education to the given user
      * @param orcid
@@ -85,27 +41,7 @@ public interface AffiliationsManager {
      * @return the updated education
      * */
     Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest);
-    
-    /**
-     * Get an employment based on the orcid and education id
-     * @param orcid
-     *          The employment owner
-     * @param employmentId
-     *          The employment id
-     * @return the employment
-     * */
-    Employment getEmploymentAffiliation(String userOrcid, Long employmentId);
-    
-    /**
-     * Get a summary of an employment affiliation based on the orcid and education id
-     * @param orcid
-     *          The employment owner
-     * @param employmentId
-     *          The employment id
-     * @return the employment summary
-     * */
-    EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId);
-    
+        
     /**
      * Add a new employment to the given user
      * @param orcid
@@ -134,29 +70,7 @@ public interface AffiliationsManager {
      *          The affiliation id                 
      * @return true if the affiliation was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, Long affiliationId);
+    boolean checkSourceAndDelete(String orcid, Long affiliationId);        
     
-    /**
-     * Get the list of employments that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of employments that belongs to this user
-     * */
-    List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified);
-    
-    /**
-     * Get the list of educations that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of educations that belongs to this user
-     * */
-    List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);
-    
-    List<AffiliationForm> getAffiliations(String orcid);
-    
-    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
+    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);        
 }

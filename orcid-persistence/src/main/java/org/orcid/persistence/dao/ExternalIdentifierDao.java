@@ -18,7 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEntity, Long> {

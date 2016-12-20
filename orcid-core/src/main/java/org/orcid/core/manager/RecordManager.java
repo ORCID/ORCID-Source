@@ -16,15 +16,13 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public interface RecordManager {
-    Record getPublicRecord(String orcid);
-
-    Record getRecord(String orcid);
+public interface RecordManager extends RecordManagerReadOnly {
+    
 }

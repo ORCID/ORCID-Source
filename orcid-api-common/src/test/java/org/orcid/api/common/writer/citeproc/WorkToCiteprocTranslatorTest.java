@@ -18,11 +18,11 @@ package org.orcid.api.common.writer.citeproc;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.Citation;
-import org.orcid.jaxb.model.record_rc3.CitationType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc4.Citation;
+import org.orcid.jaxb.model.record_rc4.CitationType;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.ExternalIDs;
+import org.orcid.jaxb.model.record_rc4.Work;
 
 import de.undercouch.citeproc.csl.CSLItemData;
 import org.junit.Assert;

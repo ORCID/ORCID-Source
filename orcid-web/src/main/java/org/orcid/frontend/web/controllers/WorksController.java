@@ -34,15 +34,13 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.CitationType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkCategory;
-import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkCategory;
+import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.KeyValue;
-import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -196,17 +194,7 @@ public class WorksController extends BaseWorkspaceController {
             Text jt = new Text();
             jt.setRequired(false);
             w.setJournalTitle(jt);
-        }
-
-        if (w.getCitation() == null) {
-            Citation c = new Citation();
-            Text ctText = new Text();
-            ctText.setValue(CitationType.FORMATTED_UNSPECIFIED.value());
-            c.setCitationType(ctText);
-            Text cText = Text.valueOf(StringUtils.EMPTY);
-            c.setCitation(cText);
-            w.setCitation(c);
-        }
+        }        
 
         if (PojoUtil.isEmpty(w.getWorkCategory())) {
             Text wCategoryText = new Text();
@@ -291,8 +279,7 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(getEffectiveUserOrcid());
         Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId, lastModifiedTime);
 
         if (work != null) {
@@ -685,9 +672,7 @@ public class WorksController extends BaseWorkspaceController {
         // Citations must have a type if citation text has a value
         if (PojoUtil.isEmpty(work.getCitation().getCitationType()) && !PojoUtil.isEmpty(work.getCitation().getCitation())) {
             setError(work.getCitation().getCitationType(), "NotBlank.manualWork.citationType");
-        } else if (work.getCitation().getCitationType().getValue() != null
-                && !work.getCitation().getCitationType().getValue().trim().equals(CitationType.FORMATTED_UNSPECIFIED.value())
-                && !PojoUtil.isEmpty(work.getCitation().getCitationType())) {
+        } else if (!PojoUtil.isEmpty(work.getCitation().getCitationType())) {
             // citation should not be blank if citation type is set
             if (PojoUtil.isEmpty(work.getCitation().getCitation())) {
                 setError(work.getCitation().getCitation(), "NotBlank.manualWork.citation");
@@ -697,9 +682,8 @@ public class WorksController extends BaseWorkspaceController {
         return work;
     }
 
-    public WorkForm validateWorkId(WorkForm work) {
-        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
-        List<Work> works = workManager.findWorks(getEffectiveUserOrcid(), lastModified.getTime());
+    public WorkForm validateWorkId(WorkForm work) {        
+        List<Work> works = workManager.findWorks(getEffectiveUserOrcid(), profileEntityManager.getLastModified(getEffectiveUserOrcid()));
         if (works == null || works.isEmpty()) {
             setError(work, "manual_work_form_contents.edit_work.invalid_id");
         } else if (PojoUtil.isEmpty(work.getPutCode())) {
@@ -738,9 +722,8 @@ public class WorksController extends BaseWorkspaceController {
      * 
      */
     private List<String> createWorksIdList(HttpServletRequest request) {
-        String orcid = getEffectiveUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        List<Work> works = workManager.findWorks(orcid, lastModified.getTime());
+        String orcid = getEffectiveUserOrcid();        
+        List<Work> works = workManager.findWorks(orcid, profileEntityManager.getLastModified(orcid));
         HashMap<Long, WorkForm> worksMap = new HashMap<Long, WorkForm>();
         List<String> workIds = new ArrayList<String>();
         if (works != null) {

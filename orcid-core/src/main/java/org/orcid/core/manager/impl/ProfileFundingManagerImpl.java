@@ -18,39 +18,27 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.activities.ActivitiesGroup;
-import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.persistence.dao.FundingSubTypeSolrDao;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
+import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
-import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -58,24 +46,14 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ProfileFundingManagerImpl implements ProfileFundingManager {
+public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileFundingManagerImpl.class);
     
-    @Resource
-    private ProfileFundingDao profileFundingDao;
-    
     @Resource 
     private FundingSubTypeToIndexDao fundingSubTypeToIndexDao;
-    
-    @Resource
-    private FundingSubTypeSolrDao fundingSubTypeSolrDao;
-    
-    @Resource
-    private JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
     
     @Resource
     private OrgManager orgManager;
@@ -91,11 +69,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
     
     @Resource
     private NotificationManager notificationManager;
@@ -130,42 +103,14 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibility(clientOrcid, profileFundingId, visibility);
-    }
-
-    /**
-     * Creates a new profile funding relationship between an organization and a
-     * profile.
-     * 
-     * @param newProfileFundingEntity
-     *            The object to be persisted
-     * @return the created newProfileFundingEntity with the id assigned on
-     *         database
-     * */
-    public ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity) {
-        return profileFundingDao.addProfileFunding(newProfileFundingEntity);
-    }
+    }    
     
     /**
      * Add a new funding subtype to the list of pending for indexing subtypes
      * */
     public void addFundingSubType(String subtype, String orcid) {
         fundingSubTypeToIndexDao.addSubTypes(subtype, orcid);
-    }
-    
-    /**
-     * Looks for the org defined funding subtypes that matches a given pattern
-     * @param subtype pattern to look for
-     * @param limit the max number of results to look for
-     * @return a list of all org defined funding subtypes that matches the given pattern
-     * */
-    public List<String> getIndexedFundingSubTypes(String subtype, int limit) {
-        List<OrgDefinedFundingTypeSolrDocument> types = fundingSubTypeSolrDao.getFundingTypes(subtype, 0, 100); 
-        List<String> result = new ArrayList<String>();
-        for (OrgDefinedFundingTypeSolrDocument type : types) {
-            result.add(type.getOrgDefinedFundingType());
-        }
-        return result; 
-    }
+    }        
     
     /**
      * A process that will process all funding subtypes, filter and index them. 
@@ -204,64 +149,12 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             }                        
         }
         LOGGER.info("Funding subtypes have been correcly indexed");
-    }
-    
-    /**
-     * Get the funding associated with the given profileFunding id
-     * 
-     * @param profileFundingId
-     *            The id of the ProfileFundingEntity object
-     * 
-     * @return the ProfileFundingEntity object
-     * */
-    public ProfileFundingEntity getProfileFundingEntity(Long profileFundingId) {
-        return profileFundingDao.getProfileFundingEntity(profileFundingId);
-    }
-    
-    /**
-     * Update an existing profile funding relationship between an organization and a
-     * profile.
-     * 
-     * @param updatedProfileFundingEntity
-     *            The object to be persisted
-     * @return the updated profileFundingEntity
-     * */
-    public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity updatedProfileFundingEntity) {
-        return profileFundingDao.updateProfileFunding(updatedProfileFundingEntity);
-    }
+    }              
     
     public boolean updateToMaxDisplay(String orcid, Long fundingId) {
         return profileFundingDao.updateToMaxDisplay(orcid, fundingId);
     }
-    
-    /**
-     * Get a funding based on the orcid and funding id
-     * @param orcid
-     *          The funding owner
-     * @param fundingId
-     *          The funding id
-     * @return the Funding          
-     * */
-    @Override
-    public Funding getFunding(String orcid, Long fundingId) {
-        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId); 
-        return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
-    }
-    
-    /**
-     * Get a funding summary based on the orcid and funding id
-     * @param orcid
-     *          The funding owner
-     * @param fundingId
-     *          The funding id
-     * @return the FundingSummary          
-     * */
-    @Override
-    public FundingSummary getSummary(String orcid, Long fundingId) {
-        ProfileFundingEntity profileFundingEntity = profileFundingDao.getProfileFunding(orcid, fundingId);
-        return jpaJaxbFundingAdapter.toFundingSummary(profileFundingEntity);
-    }
-    
+        
     /**
      * Add a new funding to the given user
      * @param orcid
@@ -391,95 +284,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
         notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, item);
         return result;
-    }
-
-    
-    /**
-     * Get the list of fundings summaries that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of fundings that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "fundings-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified) {
-        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
-        return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
-    }
-    
-    /**
-     * Get the list of fundings that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of fundings that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<Funding> getFundingList(String userOrcid, long lastModified) {
-        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
-        return jpaJaxbFundingAdapter.toFunding(fundingEntities);
-    }
-    
-    
+    }    
+        
     private Item createItem(ProfileFundingEntity profileFundingEntity) {
         Item item = new Item();
         item.setItemName(profileFundingEntity.getTitle());
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
         return item;
-    }
-    
-    /**
-     * Generate a grouped list of funding with the given list of funding
-     * 
-     * @param fundings
-     *          The list of fundings to group
-     * @param justPublic
-     *          Specify if we want to group only the public elements in the given list
-     * @return Fundings element with the FundingSummary elements grouped                  
-     * */
-    @Override
-    public Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Fundings result = new Fundings();
-        for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
-                // If it is just public and the funding is not public, just
-                // ignore it
-            } else {
-                groupGenerator.group(funding);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            FundingGroup fundingGroup = new FundingGroup();
-
-            // Fill the funding groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID fundingExtId = (ExternalID) extId;
-                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
-            }
-
-            // Fill the funding group with the list of activities
-            for (GroupableActivity activity : activities) {
-                FundingSummary fundingSummary = (FundingSummary) activity;
-                fundingGroup.getFundingSummary().add(fundingSummary);
-            }
-
-            // Sort the fundings
-            Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
-
-            result.getFundingGroup().add(fundingGroup);
-        }
-
-        return result;
-    }
+    }        
 }

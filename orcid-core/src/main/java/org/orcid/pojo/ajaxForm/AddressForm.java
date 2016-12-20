@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc3.Country;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.common_rc4.Country;
+import org.orcid.jaxb.model.common_rc4.Source;
+import org.orcid.jaxb.model.record_rc4.Address;
 
 public class AddressForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -96,7 +96,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
         }
        
         if (this.visibility != null && this.visibility.getVisibility() != null) {
-            address.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            address.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {

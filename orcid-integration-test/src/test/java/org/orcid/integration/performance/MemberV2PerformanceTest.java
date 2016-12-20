@@ -29,21 +29,21 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
+import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -56,7 +56,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MemberV2PerformanceTest extends BlackBoxBaseRC3 {    
+public class MemberV2PerformanceTest extends BlackBoxBaseRC4 {    
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
@@ -75,7 +75,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC3 {
             StopWatch singleWorkStopWatch = new StopWatch();
             singleWorkStopWatch.start();
             long time = System.currentTimeMillis();
-            Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
+            Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
             workToCreate.setPutCode(null);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
             ExternalID wExtId = new ExternalID();
@@ -100,7 +100,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC3 {
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             String locationPath = postResponse.getLocation().getPath();
             assertTrue("Location header path should match pattern, but was " + locationPath,
-                    locationPath.matches(".*/v2.0_rc3/" + this.getUser1OrcidId() + "/work/\\d+"));
+                    locationPath.matches(".*/v2.0_rc4/" + this.getUser1OrcidId() + "/work/\\d+"));
             ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
             assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
             Work gotWork = getResponse.getEntity(Work.class);

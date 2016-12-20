@@ -45,7 +45,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -59,10 +59,9 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -251,7 +250,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
             profileEntityManager.updateLastModifed(delegateOrcid);
-            Date delegateLastModified = profileEntityManager.getLastModified(delegateOrcid);
+            Date delegateLastModified = profileEntityManager.getLastModifiedDate(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
@@ -769,8 +768,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());        
         
@@ -832,7 +830,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
-        Name name = personalDetailsManager.getName(getCurrentUserOrcid());
+        String currentOrcid = getCurrentUserOrcid();
+        Name name = recordNameManager.getRecordName(currentOrcid, profileEntityManager.getLastModified(currentOrcid));        
         NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
@@ -860,8 +859,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         copyErrors(nf.getGivenNames(), nf);
         if (nf.getErrors().size() > 0)
             return nf;
-        PersonalDetails personalDetails = nf.toPersonalDetails();
-        orcidProfileManager.updateNames(getCurrentUserOrcid(), personalDetails);
+        Name name = nf.toName();
+        
+        String orcid = getCurrentUserOrcid();
+        if(recordNameManager.exists(orcid)) {
+            recordNameManager.updateRecordName(orcid, name);
+        } else {
+            recordNameManager.createRecordName(orcid, name);
+        }
+        
         return nf;
     }
 
@@ -875,7 +881,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
     public @ResponseBody BiographyForm setBiographyFormJson(@RequestBody BiographyForm bf) {
         bf.setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(bf.getBiography())) {
+        if (bf.getBiography() != null) {
             validateBiography(bf.getBiography());
             copyErrors(bf.getBiography(), bf);
             if (bf.getErrors().size() > 0)
@@ -886,15 +892,15 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if(bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.common_rc3.Visibility v = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+                org.orcid.jaxb.model.common_rc4.Visibility v = org.orcid.jaxb.model.common_rc4.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
                 bio.setVisibility(v);
             }
             
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            if(profile.getBiographyEntity() != null) {
-                biographyManager.updateBiography(getCurrentUserOrcid(), bio);
+            String orcid = getCurrentUserOrcid();
+            if(biographyManager.exists(orcid)) {
+                biographyManager.updateBiography(orcid, bio);
             } else {
-                biographyManager.createBiography(getCurrentUserOrcid(), bio);    
+                biographyManager.createBiography(orcid, bio);    
             }            
         }
         return bf;
@@ -979,7 +985,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         // the granting
                         // user is visible to them immediately
                         profileEntityManager.updateLastModifed(trustedOrcid);
-                        Date delegateLastModified = profileEntityManager.getLastModified(trustedOrcid);
+                        Date delegateLastModified = profileEntityManager.getLastModifiedDate(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
                         permission.setGiver(managedOrcid);
                         ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
@@ -1047,6 +1053,5 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-    }
-
+    }         
 }

@@ -122,6 +122,9 @@
     <bean id="publicV2ApiServiceDelegatorRc3" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="2.0_rc3" />
     </bean>
+    <bean id="publicV2ApiServiceDelegatorRc4" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="2.0_rc4" />
+    </bean>
     
     <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc1">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc1"/>
@@ -134,6 +137,10 @@
     <bean id="publicV2ApiServiceImplV2_0_rc3" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc3">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc3"/>
     </bean>    
+    
+    <bean id="publicV2ApiServiceImplV2_0_rc4" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc4">
+        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc4"/>
+    </bean> 
     
     <!--  Statistics API -->
     <bean id="statsApiServiceDelegator" class="org.orcid.api.t1.stats.delegator.impl.StatsApiServiceDelegatorImpl" />

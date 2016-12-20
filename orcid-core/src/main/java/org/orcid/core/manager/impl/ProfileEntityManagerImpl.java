@@ -19,7 +19,6 @@ package org.orcid.core.manager.impl;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -53,36 +51,22 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.CreditName;
+import org.orcid.jaxb.model.record_rc4.FamilyName;
+import org.orcid.jaxb.model.record_rc4.GivenNames;
+import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
@@ -103,23 +87,15 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
  */
-@Service("profileEntityManager")
-public class ProfileEntityManagerImpl implements ProfileEntityManager {
+public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
-    
-    @Resource
-    private ProfileDao profileDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);    
 
-    @Resource    
-    private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
@@ -163,13 +139,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private EmailManager emailManager;
     
     @Resource
-    private OrgAffiliationRelationDao orgRelationAffiliationDao;    
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;    
     
     @Resource
-    private OtherNameManager otherNamesManager;
-    
-    @Resource
-    private RecordNameManager recordNameManager;
+    private OtherNameManager otherNamesManager;        
     
     @Resource
     private BiographyManager biographyManager;
@@ -198,24 +171,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private LocaleManager localeManager;
     
-    /**
-     * Fetch a ProfileEntity from the database Instead of calling this function,
-     * use the cache profileEntityCacheManager whenever is possible
-     */
-    @Override
-    public ProfileEntity findByOrcid(String orcid) {
-        return profileDao.find(orcid);
-    }
-
-    @Override
-    public String findByCreditName(String creditName) {
-        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
-        if(recordName == null) {
-            return null;
-        }
-        return recordName.getProfile().getId();
-    }
-
+    @Resource
+    private RecordNameManager recordNameManager;            
+    
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -226,15 +184,20 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.hasBeenGivenPermissionTo(giverOrcid, receiverOrcid);
     }
 
+    @Override
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
         return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
-    }
+    }    
 
     @Override
-    public Long getConfirmedProfileCount() {
-        return profileDao.getConfirmedProfileCount();
+    public String findByCreditName(String creditName) {
+        Name name = recordNameManager.findByCreditName(creditName);
+        if(name == null) {
+            return null;
+        }
+        return name.getPath();
     }
-
+    
     /**
      * Deprecates a profile
      * 
@@ -266,7 +229,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             // Remove affiliations
             if (deprecated.getOrgAffiliationRelations() != null) {
                 for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
-                    orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
+                    orgAffiliationRelationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
                 }
             }
             
@@ -298,28 +261,23 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 }                                                        
             }
             
-            //Remove biography
-            Biography deprecatedBio = new Biography();
-            deprecatedBio.setContent(null);
-            deprecatedBio.setVisibility(Visibility.PRIVATE);
-            
-            BiographyEntity bioEntity = deprecated.getBiographyEntity();
-            if(bioEntity != null) {
+            //Remove biography                        
+            if(biographyManager.exists(deprecatedOrcid)) {
+                Biography deprecatedBio = new Biography();
+                deprecatedBio.setContent(null);
+                deprecatedBio.setVisibility(Visibility.PRIVATE);
                 biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
-            } else {
-                biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
-            }
-            
-            
+            } 
+                        
             //Set the deactivated names
-            RecordNameEntity recordName = deprecated.getRecordNameEntity();
-            if(recordName != null) {
-                recordName.setCreditName(null);
-                recordName.setGivenNames("Given Names Deactivated");
-                recordName.setFamilyName("Family Name Deactivated");
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
-                recordName.setProfile(new ProfileEntity(deprecatedOrcid));
-                recordNameManager.updateRecordName(recordName);                
+            if(recordNameManager.exists(deprecatedOrcid)) {
+                Name name = new Name();
+                name.setCreditName(new CreditName());
+                name.setGivenNames(new GivenNames("Given Names Deactivated"));
+                name.setFamilyName(new FamilyName("Family Name Deactivated"));
+                name.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+                name.setPath(deprecatedOrcid);
+                recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
                                                         
             // Move all emails to the primary email
@@ -338,20 +296,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         
         return false; 
-    }
-
-    /**
-     * Return the list of profiles that belongs to the provided OrcidType
-     * 
-     * @param type
-     *            OrcidType that indicates the profile type we want to fetch
-     * @return the list of profiles that belongs to the specified type
-     */
-    @Override
-    public List<ProfileEntity> findProfilesByOrcidType(OrcidType type) {
-        if (type == null)
-            return new ArrayList<ProfileEntity>();
-        return profileDao.findProfilesByOrcidType(type);
     }
 
     /**
@@ -383,19 +327,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public boolean isProfileClaimed(String orcid) {
         return profileDao.getClaimedStatus(orcid);
-    }
-
-    /**
-     * Get the client type of a profile
-     * 
-     * @param orcid
-     *            The profile to look for
-     * @return the client type, null if it is not a client
-     */
-    @Override
-    public ClientType getClientType(String orcid) {
-        return profileDao.getClientType(orcid);
-    }
+    }    
 
     /**
      * Get the group type of a profile
@@ -409,90 +341,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.getGroupType(orcid);
     }
 
-    @Override
-    @Transactional
-    public ActivitiesSummary getActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, false);
-    }
-
-    @Override
-    @Transactional
-    public ActivitiesSummary getPublicActivitiesSummary(String orcid) {
-        return getActivitiesSummary(orcid, true);
-    }
-
-    public ActivitiesSummary getActivitiesSummary(String orcid, boolean justPublic) {
-        if (!orcidExists(orcid)) {
-            throw new NoResultException();
-        }
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = lastModified.getTime();
-        ActivitiesSummary activities = new ActivitiesSummary();
-
-        // Set educations
-        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
-        if (!educationsList.isEmpty()) {
-            Educations educations = new Educations();
-            for (EducationSummary summary : educationsList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        educations.getSummaries().add(summary);
-                    }
-                } else {
-                    educations.getSummaries().add(summary);
-                }
-            }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
-            activities.setEducations(educations);
-        }
-
-        // Set employments
-        List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
-        if (!employmentList.isEmpty()) {
-            Employments employments = new Employments();
-            for (EmploymentSummary summary : employmentList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        employments.getSummaries().add(summary);
-                    }
-                } else {
-                    employments.getSummaries().add(summary);
-                }
-            }
-            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
-            activities.setEmployments(employments);
-        }
-
-        // Set fundings
-        List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
-        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
-        activities.setFundings(fundings);
-
-        // Set peer reviews
-        List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
-        activities.setPeerReviews(peerReviews);
-
-        // Set works
-        List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works works = workManager.groupWorks(workSummaries, justPublic);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
-        activities.setWorks(works);
-
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
-        return activities;
-    }    
-
-    /** Returns the date cached in the request scope. 
-     * 
-     */
-    public Date getLastModified(String orcid) {
-        return profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
-    }
-
-    /** Updates the DB and the cached value in the request scope.
+    /** 
+     * Updates the DB and the cached value in the request scope.
      * 
      */
     @Override
@@ -651,90 +501,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     @Transactional
-    public Person getPersonDetails(String orcid) {        
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        Person person = new Person();
-        Biography biography = biographyManager.getBiography(orcid);
-        if(biography != null) {
-            person.setBiography(biography);
-        } 
-        
-        person.setName(personalDetailsManager.getName(orcid));
-        
-        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
-        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
-        
-        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);    
-        return person;
-    }
-
-    @Override
-    @Transactional
-    public Person getPublicPersonDetails(String orcid) {
-        Person person = new Person();
-        
-        Biography bio = biographyManager.getPublicBiography(orcid);        
-        if(bio != null) {
-            person.setBiography(bio);
-        } 
-        
-        Name name = personalDetailsManager.getName(orcid);
-        if(Visibility.PUBLIC.equals(name.getVisibility())) {
-            person.setName(name);
-        }
-		
-        Date lastModified = getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
-        LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
-        
-        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
-        LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        temp = person.getKeywords().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
-        temp = person.getOtherNames().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
-        temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-
-        person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
-        temp = person.getEmails().getLastModifiedDate();
-        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setLastModifiedDate(latest);
-        return person;
-    }
-
-    @Override
-    @Transactional
     public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
         //Verify the email
         boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
@@ -757,7 +523,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 
         //Update the visibility for every bio element to the visibility selected by the user
         //Update the bio
-        org.orcid.jaxb.model.common_rc3.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        org.orcid.jaxb.model.common_rc4.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc4.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if(profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
@@ -860,7 +626,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);                                      
         }
         
         Set<EmailEntity> emails = toClear.getEmails();
@@ -893,24 +659,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.getClaimedStatusByEmail(email);
     }
 
-    public void reactivate(String orcid, String givenNames, String familyName, String password) {
+    @Override
+    public void reactivate(String orcid, String givenNames, String familyName, String password, org.orcid.jaxb.model.message.Visibility defaultVisibility) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
         profileEntity.setClaimed(true);
         profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(password));
+        profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
         RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
     }
-}
-
-class GroupableActivityComparator implements Comparator<GroupableActivity> {
-
-    @Override
-    public int compare(GroupableActivity o1, GroupableActivity o2) {
-        return o1.compareTo(o2);
-    }
-
 }

@@ -146,7 +146,8 @@ public class OauthLoginController extends OauthControllerBase {
                     willBeRedirected = true;
                 } catch (AuthenticationException ae) {
                     if(ae.getCause() instanceof DisabledException){
-                        form.getErrors().add(getMessage("orcid.frontend.security.orcid_deactivated"));
+                        // Handle this message in angular to allow AJAX action
+                        form.getErrors().add("orcid.frontend.security.orcid_deactivated");
                     } else if(ae.getCause() instanceof UnclaimedProfileExistsException) {
                         String email = PojoUtil.isEmpty(form.getUserName()) ? null : form.getUserName().getValue();
                         String resendEmailUrl = createResendClaimUrl(email, request);

@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 
 public class Iso2Country implements ErrorsInterface, Required, Serializable {
     /**

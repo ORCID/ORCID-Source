@@ -68,7 +68,7 @@ public class WorksTest extends BlackBoxBaseRC3 {
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -129,7 +129,7 @@ public class WorksTest extends BlackBoxBaseRC3 {
     public void testWorksWithPartOfRelationshipDontGetGrouped () throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         String accessTokenForClient1 = getAccessToken();
-        String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         work1.setPutCode(null);
@@ -263,7 +263,7 @@ public class WorksTest extends BlackBoxBaseRC3 {
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);

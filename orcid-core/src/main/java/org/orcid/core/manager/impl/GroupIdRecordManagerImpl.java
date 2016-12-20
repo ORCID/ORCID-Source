@@ -17,40 +17,28 @@
 package org.orcid.core.manager.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
-import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
-import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.SourceClientId;
-import org.orcid.jaxb.model.common_rc3.SourceOrcid;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
-import org.orcid.persistence.dao.GroupIdRecordDao;
+import org.orcid.jaxb.model.common_rc4.Source;
+import org.orcid.jaxb.model.common_rc4.SourceClientId;
+import org.orcid.jaxb.model.common_rc4.SourceOrcid;
+import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
-public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
-
-    @Resource
-    private GroupIdRecordDao groupIdRecordDao;
+public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
     @Resource
     private SourceManager sourceManager;
-
-    @Resource
-    private JpaJaxbGroupIdRecordAdapter jpaJaxbGroupIdRecordAdapter;
 
     @Resource
     private LocaleManager localeManager;
@@ -61,35 +49,6 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     @Resource 
     private ActivityValidator activityValidator;
 
-    @Override
-    public GroupIdRecord getGroupIdRecord(Long putCode) {
-        GroupIdRecordEntity groupIdRecordEntity = groupIdRecordDao.find(putCode);
-        if (groupIdRecordEntity == null) {
-            throw new GroupIdRecordNotFoundException();
-        }
-        return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(groupIdRecordEntity);
-    }
-
-    @Override
-    public Optional<GroupIdRecord> findByGroupId(String groupId) {
-        try {
-            GroupIdRecordEntity entity = groupIdRecordDao.findByGroupId(groupId);
-            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
-        } catch(NoResultException nre) {
-            return Optional.empty();
-        }
-    }
-    
-    @Override
-    public Optional<GroupIdRecord> findGroupIdRecordByName(String name) {
-        try {
-            GroupIdRecordEntity entity = groupIdRecordDao.findByName(name);
-            return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
-        } catch(NoResultException nre) {
-            return Optional.empty();
-        }
-    }
-    
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -146,41 +105,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         } else {
             throw new GroupIdRecordNotFoundException();
         }
-    }
-
-    @Override
-    public GroupIdRecords getGroupIdRecords(String pageSize, String pageNum) {
-        int pageNumInt = convertToInteger(pageNum);
-        int pageSizeInt = convertToInteger(pageSize);
-        GroupIdRecords records = new GroupIdRecords();
-        records.setPage(pageNumInt);
-        records.setPageSize(pageSizeInt);
-        List<GroupIdRecordEntity> recordEntities = groupIdRecordDao.getGroupIdRecords(pageSizeInt, pageNumInt);
-        List<GroupIdRecord> recordsReturned = jpaJaxbGroupIdRecordAdapter.toGroupIdRecords(recordEntities);
-        if (recordsReturned != null) {
-            records.setTotal(recordsReturned.size());
-            records.getGroupIdRecord().addAll(recordsReturned);
-        } else {
-            records.setTotal(0);
-        }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(records);
-        return records;
-    }
-
-    @Override
-    public boolean exists(String groupId) {
-        return groupIdRecordDao.exists(groupId);
-    }
-    
-    private int convertToInteger(String param) {
-        int returnVal = 0;
-        try {
-            returnVal = Integer.valueOf(param);
-        } catch (NumberFormatException e) {
-            throw new OrcidValidationException();
-        }
-        return returnVal;
-    }
+    }    
 
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
         List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();

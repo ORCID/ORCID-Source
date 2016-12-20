@@ -186,7 +186,7 @@
     <bean name="xmlMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
-                <value>org.orcid.jaxb.model.error_rc3.OrcidError</value>
+                <value>org.orcid.jaxb.model.error_rc4.OrcidError</value>
             </list>
         </property>
         <property name="marshallerProperties">

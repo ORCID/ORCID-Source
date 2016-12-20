@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,11 +35,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class ResearcherUrlManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -60,7 +64,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        researcherUrlManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", sourceManager);
     }
 
     @AfterClass
@@ -118,6 +122,46 @@ public class ResearcherUrlManagerTest extends BaseTest {
                 
         assertNotNull(rUrl);
         assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+    }
+    
+    @Test
+    public void getAllTest() {
+        String orcid = "0000-0000-0000-0003";
+        ResearcherUrls elements = researcherUrlManager.getResearcherUrls(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getResearcherUrls());
+        assertEquals(5, elements.getResearcherUrls().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(ResearcherUrl element : elements.getResearcherUrls()) {
+            if(13 == element.getPutCode()){
+                found1 = true;
+            } else if(14 == element.getPutCode()){
+                found2 = true;
+            } else if(15 == element.getPutCode()){
+                found3 = true;
+            } else if(16 == element.getPutCode()){
+                found4 = true;
+            } else if(17 == element.getPutCode()){
+                found5 = true;
+            } else {
+                fail("Invalid element found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void getPublicTest() {
+        String orcid = "0000-0000-0000-0003";        
+        ResearcherUrls elements = researcherUrlManager.getPublicResearcherUrls(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getResearcherUrls());
+        assertEquals(1, elements.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), elements.getResearcherUrls().get(0).getPutCode());
     }
     
     private ResearcherUrl getResearcherUrl() {

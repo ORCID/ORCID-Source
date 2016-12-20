@@ -16,14 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
-import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.MemberDetails;
 
 /**
  * 
@@ -42,9 +40,15 @@ public interface SalesForceManager {
 
     MemberDetails retrieveDetails(String memberId);
 
-    List<Contact> retrieveContactsByOpportunityId(String opportunityId);
+    List<Contact> retrieveContactsByAccountId(String accountId);
 
-    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
+    void addOrcidsToContacts(List<Contact> contacts);
+
+    void enableAccess(String accountId, List<Contact> contactsList);
+
+    String retriveAccountIdByOrcid(String orcid);
+    
+    void updateMember(Member member);
 
     /**
      * Clear caches

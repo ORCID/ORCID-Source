@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
  */
 public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK, WORK_BULK, ADDRESS, KEYWORD> {
 
-    static final String LATEST_V2_VERSION = "2.0_rc3";
+    static final String LATEST_V2_VERSION = "2.0_rc4";
 
     Response viewStatusText();
 

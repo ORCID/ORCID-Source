@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -32,31 +30,23 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ExternalIdentifierManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
-import org.orcid.persistence.dao.ExternalIdentifierDao;
+import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 
-public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
+public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerReadOnlyImpl implements ExternalIdentifierManager {
 
     @Value("${org.orcid.core.validations.requireRelationship:false}")
     private boolean requireRelationshipOnExternalIdentifier;
     
-    @Resource
-    private ExternalIdentifierDao externalIdentifierDao;
-
-    @Resource
-    private JpaJaxbExternalIdentifierAdapter jpaJaxbExternalIdentifierAdapter;
-
     @Resource
     private SourceManager sourceManager;
 
@@ -69,47 +59,6 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-    
-    @Override
-    @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
-    public PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified) {
-        return getExternalIdentifies(orcid, Visibility.PUBLIC);
-    }
-
-    @Override
-    @Cacheable(value = "external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
-    public PersonExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified) {
-        return getExternalIdentifies(orcid, null);
-    }
-
-    private PersonExternalIdentifiers getExternalIdentifies(String orcid, Visibility visibility) {
-        List<ExternalIdentifierEntity> externalIdentifiers = new ArrayList<ExternalIdentifierEntity>();
-        if (visibility == null) {
-            externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
-        } else {
-            externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, visibility);
-        }
-
-        PersonExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(extIds);
-        return extIds;
-    }
-
-    @Override
-    public PersonExternalIdentifier getExternalIdentifier(String orcid, Long id) {  
-        ExternalIdentifierEntity entity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
-        return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
-    }
-
     @Override
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -198,12 +147,12 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc3.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc3.Visibility defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc4.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc4.Visibility defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultExternalIdentifierVisibility);            
         } else if (incomingExternalIdentifierVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
     }    
 

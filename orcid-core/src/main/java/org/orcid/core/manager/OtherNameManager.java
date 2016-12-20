@@ -16,20 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 
-public interface OtherNameManager {
-    void setSourceManager(SourceManager sourceManager);  
-    
-    OtherNames getOtherNames(String orcid, long lastModified);
-    
-    OtherNames getPublicOtherNames(String orcid, long lastModified);
-    
-    OtherNames getMinimizedOtherNames(String orcid, long lastModified);
-    
-    OtherName getOtherName(String orcid, Long putCode);
-
+public interface OtherNameManager extends OtherNameManagerReadOnly {
     boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);
 
     OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest);

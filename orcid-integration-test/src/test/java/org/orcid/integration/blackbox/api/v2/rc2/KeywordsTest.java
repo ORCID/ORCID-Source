@@ -64,7 +64,7 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         openEditKeywordsModal();        
         createKeyword(keyword1);
         createKeyword(keyword2);
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();                
     }
     
@@ -88,7 +88,7 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();       
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         saveKeywordsModal();
         
         String accessToken = getAccessToken();
@@ -119,11 +119,11 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         
         showMyOrcidPage();
         openEditKeywordsModal();       
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
         
         String accessToken = getAccessToken();
@@ -228,7 +228,7 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     @Test
     public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
         openEditKeywordsModal();       
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
         
         ClientResponse response = publicV2ApiClient.viewKeywordsXML(getUser1OrcidId());

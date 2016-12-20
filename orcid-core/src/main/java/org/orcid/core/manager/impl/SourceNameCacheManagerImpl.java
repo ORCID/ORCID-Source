@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -40,13 +40,7 @@ import net.sf.ehcache.Element;
  */
 public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceNameCacheManagerImpl.class);
-    
-    @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource
-    private ClientDetailsDao clientDetailsDao;
-    
+        
     @Resource(name = "sourceNameCache")
     private Cache sourceNameCache;
 
@@ -54,7 +48,19 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     private String releaseName = ReleaseNameUtils.getReleaseName();    
     
-    @Override    
+    private RecordNameDao recordNameDao;
+    
+    private ClientDetailsDao clientDetailsDao;            
+    
+    public void setRecordNameDao(RecordNameDao recordNameDao) {
+		this.recordNameDao = recordNameDao;
+	}
+
+	public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
+		this.clientDetailsDao = clientDetailsDao;
+	}
+
+	@Override    
     public String retrieve(String sourceId) throws IllegalArgumentException {
         String cacheKey = getCacheKey(sourceId);
         String sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));

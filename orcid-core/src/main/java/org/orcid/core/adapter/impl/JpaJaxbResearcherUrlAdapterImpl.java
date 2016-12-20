@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 import ma.glasnost.orika.MapperFacade;

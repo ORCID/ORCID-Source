@@ -17,41 +17,13 @@
 package org.orcid.core.manager;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
+import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
 
-public interface PeerReviewManager {
+public interface PeerReviewManager extends PeerReviewManagerReadOnly {
     
-    void setSourceManager(SourceManager sourceManager);
-    
-    /**
-     * Get a peerReview based on the orcid and peerReview id
-     * 
-     * @param orcid
-     *            The peerReview owner
-     * @param peerReviewId
-     *            The peerReview id
-     * @return the PeerReview
-     * */
-    PeerReview getPeerReview(String orcid, Long peerReviewId);
-
-    /**
-     * Get a peerReview summary based on the orcid and peerReview id
-     * 
-     * @param orcid
-     *            The peerReview owner
-     * @param peerReviewId
-     *            The peerReview id
-     * @return the PeerReviewSummary
-     * */
-    PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId);
-
     /**
      * Add a new peerReview to the given user
      * 
@@ -88,16 +60,7 @@ public interface PeerReviewManager {
      *            The peerReview id
      * @return true if the peerReview was deleted, false otherwise
      * */
-    boolean checkSourceAndDelete(String orcid, Long peerReviewId);
-
-    /**
-     * Transforms a collection of peer review entities into a PeerReview list
-     * 
-     * @param peerReviews
-     *            The collection of PeerReviewEntities
-     * @return a list of PeerReview objects
-     * */
-    List<PeerReview> toPeerReviewList(Collection<PeerReviewEntity> peerReviews);
+    boolean checkSourceAndDelete(String orcid, Long peerReviewId);    
 
     /**
      * Deletes a given peerReview if and only if it belongs to the given user.
@@ -132,35 +95,4 @@ public interface PeerReviewManager {
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
-
-    /**
-     * Return the list of peer reviews that belongs to a specific user
-     * 
-     * @param orcid
-     *            the peerReview owner
-     * @param lastModified
-     * @return a list containing the user peer reviews
-     * */
-    List<PeerReview> findPeerReviews(String orcid, long lastModified);
-    
-    /**
-     * Get the list of peer reivews that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
-     * @return the list of peer reviews that belongs to this user
-     * */
-    List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified);
-    
-    /**
-     * Generate a grouped list of peer reviews with the given list of peer reviews
-     * 
-     * @param peerReviews
-     *          The list of peer reviews to group
-     * @param justPublic
-     *          Specify if we want to group only the public elements in the given list
-     * @return PeerReviews element with the PeerReviewSummary elements grouped                  
-     * */
-    PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic);
 }

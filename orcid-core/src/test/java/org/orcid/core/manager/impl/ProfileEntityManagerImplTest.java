@@ -32,8 +32,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.manager.BiographyManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
@@ -71,16 +74,23 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
+    @Resource
+    private EmailManager emailManager;
+    
+    @Resource
+    private RecordNameManager recordNameManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -97,7 +107,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
+    	ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
@@ -132,34 +142,34 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
         assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, a.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
         assertEquals(3, profile.getExternalIdentifiers().size());
         for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, e.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, e.getVisibility());
         }
         assertNotNull(profile.getKeywords());
         assertEquals(3, profile.getKeywords().size());
         for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, k.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, k.getVisibility());
         }
         
         assertNotNull(profile.getOtherNames());
         assertEquals(3, profile.getOtherNames().size());
         for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, o.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, o.getVisibility());
         }
         
         assertNotNull(profile.getResearcherUrls());
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, r.getVisibility());
+            assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, r.getVisibility());
         }        
     }
     

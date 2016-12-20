@@ -24,13 +24,14 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
@@ -40,6 +41,9 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Resource
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private ProfileFundingManager profileFundingManager;
     
     @Resource
     private WorkManager workManager;
@@ -61,7 +65,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
-                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+                    if(peerReview.getVisibility().equals(Visibility.PUBLIC)) {
                         peerReviewMap.put(peerReview.getPutCode(), peerReview);
                     }
                 }
@@ -70,16 +74,16 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return peerReviewMap;
     }
     
-    @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-funding-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified) {
+    	List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified);
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getFundings() != null) {
-                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings())
-                    if (Visibility.PUBLIC.equals(funding.getVisibility()))
-                        fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
-            }
-        }
+		if (fundings != null) {
+			for (Funding funding : fundings) {
+				if (funding.getVisibility().equals(Visibility.PUBLIC))
+					fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
+			}
+		}
         return fundingMap;
     }
 
@@ -89,7 +93,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         if (profile.getOrcidActivities() != null) {
             if (profile.getOrcidActivities().getAffiliations() != null) {
                 for (Affiliation aff:profile.getOrcidActivities().getAffiliations().getAffiliation())
-                    if (Visibility.PUBLIC.equals(aff.getVisibility()))
+                    if (org.orcid.jaxb.model.message.Visibility.PUBLIC.equals(aff.getVisibility()))
                         affiliationMap.put(Long.valueOf(aff.getPutCode()), aff);
             }
         }
@@ -119,7 +123,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     public String getPublicCreditName(ProfileEntity profile) {
         String publicCreditName = null;
         if(profile != null) {
-            if(profile.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
+            if(profile.getRecordNameEntity() != null && Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
                 if(!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
                     publicCreditName = profile.getRecordNameEntity().getCreditName();
                 } else {

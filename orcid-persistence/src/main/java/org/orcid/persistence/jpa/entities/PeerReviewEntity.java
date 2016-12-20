@@ -36,8 +36,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_rc4.PeerReviewType;
+import org.orcid.jaxb.model.record_rc4.Role;
 import org.orcid.utils.OrcidStringUtils;
 
 @Entity

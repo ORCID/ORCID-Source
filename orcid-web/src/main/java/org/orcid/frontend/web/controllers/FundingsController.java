@@ -41,8 +41,8 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc4.Funding;
+import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -96,7 +96,7 @@ public class FundingsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
@@ -211,8 +211,7 @@ public class FundingsController extends BaseWorkspaceController {
     private List<String> createFundingIdList(HttpServletRequest request) {
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);        
         String orcid = getEffectiveUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);        
-        List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified.getTime());                
+        List<Funding> fundings = profileFundingManager.getFundingList(orcid, profileEntityManager.getLastModified(orcid));                
         HashMap<String, FundingForm> fundingsMap = new HashMap<String, FundingForm>();
         List<String> fundingIds = new ArrayList<String>();
         if (fundings != null) {

@@ -40,7 +40,7 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -59,9 +59,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
-
-    @Resource(name = "publicV2ApiServiceDelegatorRc3")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+    
+	@Resource(name = "publicV2ApiServiceDelegatorRc4")
+	PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
     @Resource
     private ProfileDao profileDao;

@@ -66,7 +66,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return d;
     }
     
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.FuzzyDate fuzzyDate) {
+    public static Date valueOf(org.orcid.jaxb.model.common_rc4.FuzzyDate fuzzyDate) {
         Date d = new Date();
         if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
             d.setDay(fuzzyDate.getDay().getValue());
@@ -98,14 +98,14 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return newDate;
     }
 
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.CreatedDate date) {
+    public static Date valueOf(org.orcid.jaxb.model.common_rc4.CreatedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
         return newDate;
     }
 
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.LastModifiedDate date) {
+    public static Date valueOf(org.orcid.jaxb.model.common_rc4.LastModifiedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());

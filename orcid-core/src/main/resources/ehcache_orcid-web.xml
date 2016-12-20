@@ -251,7 +251,7 @@
 		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
-	</cache>			
+	</cache>		
 	
 	<cache name="minimized-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
 		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
@@ -326,6 +326,18 @@
 	</cache>			
 			
 	<cache name="record-name" maxElementsInMemory="2000" timeToLiveSeconds="43200"
+		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	
+	<cache name="biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>
+				
+	<cache name="public-biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
 		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />

@@ -17,52 +17,33 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.Map;
 
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.persistence.jpa.entities.EmailEntity;
+
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface EmailManager {
-
-    boolean emailExists(String email);
+public interface EmailManager extends EmailManagerReadOnly {
 
     void updateEmails(String orcid, Collection<Email> emails);
 
     void addEmail(String orcid, Email email);
     
-    void addEmail(String orcid, EmailEntity email);
-
     void removeEmail(String orcid, String email);
 
-    void removeEmail(String orcid, String email, boolean removeIfPrimary);
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);        
 
-    String findOrcidIdByEmail(String email);
-
-    Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail);
-    
     void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email);
     
-    boolean isPrimaryEmailVerified(String orcid);
-    
     boolean verifyPrimaryEmail(String orcid);
     
     boolean moveEmailToOtherAccount(String email, String origin, String destination);
-    
-    Emails getEmails(String orcid, long lastModified);
-    
-    Emails getPublicEmails(String orcid, long lastModified);
-    
-    boolean haveAnyEmailVerified(String orcid);
-    
-    org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid);
     
     boolean verifySetCurrentAndPrimary(String orcid, String email);
 

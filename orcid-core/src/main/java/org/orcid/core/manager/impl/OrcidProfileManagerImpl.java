@@ -112,13 +112,14 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
+import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc4.Item;
+import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -132,7 +133,6 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
@@ -171,7 +171,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private ProfileDao profileDao;
 
     @Resource
-    private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     @Resource
     private ProfileFundingDao profileFundingDao;
@@ -933,35 +933,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
             orcidProfileCacheManager.put(cachedProfile);
         }
-    }
-
-    @Override
-    @Transactional    
-    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails) {
-        String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
-        String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
-        String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
-        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-        
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-
-        RecordNameEntity recordName = recordNameManager.getRecordName(orcid, (lastModified == null ? 0 : lastModified.getTime()));
-        if(recordName != null) {
-            recordName.setCreditName(creditName);
-            recordName.setFamilyName(familyName);
-            recordName.setGivenNames(givenNames);
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(namesVisibility.value()));
-            recordNameManager.updateRecordName(recordName);
-        } else {
-            recordName = new RecordNameEntity();
-            recordName.setCreditName(creditName);
-            recordName.setFamilyName(familyName);
-            recordName.setGivenNames(givenNames);
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(namesVisibility.value()));
-            recordName.setProfile(new ProfileEntity(orcid));
-            recordNameManager.createRecordName(recordName);
-        }
-    }            
+    }    
 
     @Override
     @Transactional    
@@ -1359,7 +1331,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
                         if(profile.getRecordNameEntity() != null) {
-                            if (org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
+                            if (org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
                                 contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
                             }
                         }                         
@@ -1373,7 +1345,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                        if(profileEntity.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
+                        if(profileEntity.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
                         } else {
                             contributor.setCreditName(null);
@@ -1764,7 +1736,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity profileEntity = profileDao.find(orcid);
         for (Affiliation updatedAffiliation : updatedAffiliationsList) {
             OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(updatedAffiliation, profileEntity);
-            orgAffilationRelationDao.persist(orgAffiliationRelationEntity);
+            orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
         }
         orcidProfileCacheManager.remove(orcid);
     }
@@ -2191,7 +2163,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (profileEntity != null) {
             //Names should be public by default
             if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() == null) {
-                profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
             }
             
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
@@ -2204,16 +2176,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             
             if(profileEntity.getRecordNameEntity() != null) {
                 if(profileEntity.getRecordNameEntity().getVisibility() == null) {
-                    profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                    profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
                 }
             }
             
             if(profileEntity.getBiographyEntity() != null) {                
                 if(profileEntity.getBiographyEntity().getVisibility() == null) {
                     if(defaultVisibility != null) {
-                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(defaultVisibility.value()));
+                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(defaultVisibility.value()));
                     } else {
-                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                     }                    
                 }
             }
