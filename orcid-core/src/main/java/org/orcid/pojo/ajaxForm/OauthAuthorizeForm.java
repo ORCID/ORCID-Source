@@ -28,6 +28,7 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     private boolean approved = false;
     private boolean persistentTokenEnabled = false;
     private String redirectUrl;
+    private boolean emailAccessAllowed = false;
 
     @Override
     public List<String> getErrors() {
@@ -77,5 +78,14 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
-    }        
+    }
+
+    public boolean isEmailAccessAllowed() {
+        return emailAccessAllowed;
+    }
+
+    public void setEmailAccessAllowed(boolean emailAccessAllowed) {
+        this.emailAccessAllowed = emailAccessAllowed;
+    }
+    
 }

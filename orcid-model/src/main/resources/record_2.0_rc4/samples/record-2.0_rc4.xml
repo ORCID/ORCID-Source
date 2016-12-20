@@ -7,28 +7,17 @@
 	xmlns:keyword="http://www.orcid.org/ns/keyword"
 	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
 	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
-	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:education="http://www.orcid.org/ns/education"
-	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:history="http://www.orcid.org/ns/history"
-	xmlns:internal="http://www.orcid.org/ns/internal" xmlns:person="http://www.orcid.org/ns/person"
-	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record" 
-	xmlns:peer-review="http://www.orcid.org/ns/peer-review"
-	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:education="http://www.orcid.org/ns/education" xmlns:funding="http://www.orcid.org/ns/funding"
+	xmlns:history="http://www.orcid.org/ns/history" xmlns:person="http://www.orcid.org/ns/person"
+	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc4.xsd ">
 	<common:orcid-identifier>
 		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>
 		<common:host>orcid.org</common:host>
 	</common:orcid-identifier>
-	<deprecated:deprecated>
-		<deprecated:deprecated-date>2001-12-31T12:00:00</deprecated:deprecated-date>
-		<deprecated:primary-record>
-			<common:orcid-identifier>
-				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-				<common:path>8888-8888-8888-8880</common:path>
-				<common:host>orcid.org</common:host>
-			</common:orcid-identifier>
-		</deprecated:primary-record>
-	</deprecated:deprecated>
 	<preferences:preferences>
 		<preferences:locale>en</preferences:locale>
 	</preferences:preferences>
@@ -53,15 +42,18 @@
 	</history:history>
 	<person:person path="http://orcid.org/8888-8888-8888-8880">
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-		<person:name visibility="public"  path="http://orcid.org/8888-8888-8888-8880/personal-details"> 	
+		<person:name visibility="public"
+			path="http://orcid.org/8888-8888-8888-8880/personal-details">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<personal-details:given-names>give-names</personal-details:given-names>
 			<personal-details:family-name>family-name</personal-details:family-name>
-			<personal-details:credit-name>credit-name</personal-details:credit-name>			
+			<personal-details:credit-name>credit-name</personal-details:credit-name>
 		</person:name>
-		<other-name:other-names path="http://orcid.org/8888-8888-8888-8880/other-names">
+		<other-name:other-names
+			path="http://orcid.org/8888-8888-8888-8880/other-names">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<other-name:other-name visibility="public" put-code="1" display-index="0">
+			<other-name:other-name visibility="public"
+				put-code="1" display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
@@ -72,17 +64,20 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<other-name:content>other-name-1</other-name:content>				
+				<other-name:content>other-name-1</other-name:content>
 			</other-name:other-name>
 		</other-name:other-names>
-		<person:biography visibility="public" path="http://orcid.org/8888-8888-8888-8880/biography">
-			<common:created-date>2001-12-31T12:00:00</common:created-date>						
+		<person:biography visibility="public"
+			path="http://orcid.org/8888-8888-8888-8880/biography">
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<personal-details:content>biography</personal-details:content>
 		</person:biography>
-		<researcher-url:researcher-urls path="http://orcid.org/8888-8888-8888-8880/researcher-urls">
+		<researcher-url:researcher-urls
+			path="http://orcid.org/8888-8888-8888-8880/researcher-urls">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<researcher-url:researcher-url put-code="1248" visibility="public" display-index="0">
+			<researcher-url:researcher-url
+				put-code="1248" visibility="public" display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
@@ -94,12 +89,12 @@
 					<common:source-name />
 				</common:source>
 				<researcher-url:url-name>url-name-1</researcher-url:url-name>
-				<researcher-url:url>http://url.com/</researcher-url:url>				
+				<researcher-url:url>http://url.com/</researcher-url:url>
 			</researcher-url:researcher-url>
 		</researcher-url:researcher-urls>
 		<email:emails path="http://orcid.org/8888-8888-8888-8880/email">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<email:email visibility="public" put-code="0">				
+			<email:email visibility="public" put-code="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
@@ -114,8 +109,9 @@
 			</email:email>
 		</email:emails>
 		<address:addresses path="http://orcid.org/8888-8888-8888-8880/address">
-			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>			
-			<address:address visibility="public" put-code="1" display-index="0">				
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<address:address visibility="public" put-code="1"
+				display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
@@ -131,10 +127,10 @@
 		</address:addresses>
 		<keyword:keywords path="http://orcid.org/8888-8888-8888-8880/keywords">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<keyword:keyword visibility="public" put-code="1" display-index="0">				
+			<keyword:keyword visibility="public" put-code="1"
+				display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
-				<common:last-modified-date>2001-12-31T12:00:00
-				</common:last-modified-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
 						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -146,12 +142,13 @@
 				<keyword:content>keyword1</keyword:content>
 			</keyword:keyword>
 		</keyword:keywords>
-		<external-identifier:external-identifiers path="http://orcid.org/8888-8888-8888-8880/external-identifiers">
+		<external-identifier:external-identifiers
+			path="http://orcid.org/8888-8888-8888-8880/external-identifiers">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<external-identifier:external-identifier visibility="public" put-code="1" display-index="0">		
+			<external-identifier:external-identifier
+				visibility="public" put-code="1" display-index="0">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
-				<common:last-modified-date>2001-12-31T12:00:00
-				</common:last-modified-date>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
 						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -160,10 +157,10 @@
 					</common:source-orcid>
 					<common:source-name />
 				</common:source>
-				<common:external-id-type>type-1</common:external-id-type>				
-				<common:external-id-value>value-1</common:external-id-value>				
+				<common:external-id-type>type-1</common:external-id-type>
+				<common:external-id-value>value-1</common:external-id-value>
 				<common:external-id-url>http://url.com/1</common:external-id-url>
-				<common:external-id-relationship>part-of</common:external-id-relationship>						
+				<common:external-id-relationship>part-of</common:external-id-relationship>
 			</external-identifier:external-identifier>
 		</external-identifier:external-identifiers>
 	</person:person>
@@ -171,7 +168,8 @@
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:educations>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-			<education:education-summary put-code="0" visibility="private">
+			<education:education-summary put-code="0"
+				visibility="private">
 				<common:created-date>2001-12-31T12:00:00</common:created-date>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
@@ -277,7 +275,7 @@
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>grant_number</common:external-id-type>
-							<common:external-id-value>external-id-value</common:external-id-value>							
+							<common:external-id-value>external-id-value</common:external-id-value>
 							<common:external-id-url>http://tempuri.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -293,6 +291,18 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:end-date>
+					<funding:organization>
+						<common:name>common:name</common:name>
+						<common:address>
+							<common:city>common:city</common:city>
+							<common:region>common:region</common:region>
+							<common:country>AF</common:country>
+						</common:address>
+						<common:disambiguated-organization>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+						</common:disambiguated-organization>
+					</funding:organization>
 				</funding:summary>
 			</activities:group>
 		</activities:fundings>
@@ -303,12 +313,13 @@
 				<common:external-ids>
 					<common:external-id>
 						<common:external-id-type>something</common:external-id-type>
-						<common:external-id-value>external-id-value</common:external-id-value>			
+						<common:external-id-value>external-id-value</common:external-id-value>
 						<common:external-id-url>http://orcid.org</common:external-id-url>
 						<common:external-id-relationship>self</common:external-id-relationship>
 					</common:external-id>
 				</common:external-ids>
-				<peer-review:summary put-code="12345" visibility="private" display-index="0">
+				<peer-review:summary put-code="12345"
+					visibility="private" display-index="0">
 					<common:created-date>2001-12-31T12:00:00</common:created-date>
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
@@ -317,12 +328,12 @@
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
 						</common:source-orcid>
-						<common:source-name/>
+						<common:source-name />
 					</common:source>
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>something</common:external-id-type>
-							<common:external-id-value>external-id-value</common:external-id-value>			
+							<common:external-id-value>external-id-value</common:external-id-value>
 							<common:external-id-url>http://orcid.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -353,11 +364,11 @@
 			<activities:group>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:external-ids>
-					<common:external-id>						
-						<common:external-id-type>agr</common:external-id-type>						
+					<common:external-id>
+						<common:external-id-type>agr</common:external-id-type>
 						<common:external-id-value>external-id-value</common:external-id-value>
 						<common:external-id-url>http://orcid.org</common:external-id-url>
-						<common:external-id-relationship>part-of</common:external-id-relationship>						
+						<common:external-id-relationship>part-of</common:external-id-relationship>
 					</common:external-id>
 				</common:external-ids>
 				<work:work-summary put-code="0" visibility="private">
@@ -379,7 +390,7 @@
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>agr</common:external-id-type>
-							<common:external-id-value>external-id-value</common:external-id-value>							
+							<common:external-id-value>external-id-value</common:external-id-value>
 							<common:external-id-url>http://tempuri.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -394,27 +405,4 @@
 			</activities:group>
 		</activities:works>
 	</activities:activities-summary>
-	<internal:internal visibility="private">
-		<internal:security-details>
-			<internal:encrypted-password />
-			<internal:security-question-id>0</internal:security-question-id>
-			<internal:encrypted-security-answer />
-			<internal:encrypted-verification-code />
-		</internal:security-details>
-		<internal:preferences>
-			<internal:send-email-frequency-days>internal:send-email-frequency-days</internal:send-email-frequency-days>
-			<internal:send-change-notifications>true</internal:send-change-notifications>
-			<internal:send-orcid-news>true</internal:send-orcid-news>
-			<internal:send-member-update-requests>true</internal:send-member-update-requests>
-			<internal:activities-visibility-default>private</internal:activities-visibility-default>
-			<internal:developer-tools-enabled>true</internal:developer-tools-enabled>
-		</internal:preferences>
-		<common:group-orcid-identifier>
-			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-			<common:path>8888-8888-8888-8880</common:path>
-			<common:host>orcid.org</common:host>
-		</common:group-orcid-identifier>
-		<internal:referred-by>internal:referred-by</internal:referred-by>
-		<internal:salesforce-id>123456789012345</internal:salesforce-id>
-	</internal:internal>
 </record:record>

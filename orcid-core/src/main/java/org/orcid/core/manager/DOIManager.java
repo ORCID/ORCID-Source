@@ -14,8 +14,10 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc4;
+package org.orcid.core.manager;
 
-public class Internal {
+public interface DOIManager {
+
+    public String fetchDOIBibtex(String doi);
 
 }

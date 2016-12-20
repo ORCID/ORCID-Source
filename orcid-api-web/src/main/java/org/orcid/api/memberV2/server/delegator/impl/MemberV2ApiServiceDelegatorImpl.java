@@ -731,19 +731,25 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = null;
         long lastModified = getLastModifiedTime(orcid);
+        
         try {
-            checkClientAccessAndScope(orcid, ScopePathType.ORCID_BIO_READ_LIMITED);
+            // return all emails if client has /email/read-private scope
+            checkClientAccessAndScope(orcid, ScopePathType.EMAIL_READ_PRIVATE);            
             emails = emailManager.getEmails(orcid, lastModified);
-            emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));
-        } catch (AccessControlException e) {
-            // If the user have the READ_PUBLIC scope, return him the list of
-            // public elements.
-            if (orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                emails = emailManager.getPublicEmails(orcid, lastModified);
-            } else {
-                throw e;
+        } catch(AccessControlException e) {
+            try {
+                checkClientAccessAndScope(orcid, ScopePathType.ORCID_BIO_READ_LIMITED);            
+                emails = emailManager.getEmails(orcid, lastModified);
+                emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));            
+            } catch(AccessControlException ex) {
+                if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                    emails = emailManager.getPublicEmails(orcid, lastModified);
+                } else {
+                    throw ex;
+                }
             }
         }
+        
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);

@@ -20,6 +20,7 @@ public class OauthRegistrationForm extends Registration {
     private static final long serialVersionUID = 1L;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
+    boolean emailAccessAllowed = false;
     private String redirectUrl;
 
     public OauthRegistrationForm() {
@@ -65,5 +66,14 @@ public class OauthRegistrationForm extends Registration {
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
-    }       
+    }
+
+    public boolean isEmailAccessAllowed() {
+        return emailAccessAllowed;
+    }
+
+    public void setEmailAccessAllowed(boolean emailAccessAllowed) {
+        this.emailAccessAllowed = emailAccessAllowed;
+    }     
+    
 }

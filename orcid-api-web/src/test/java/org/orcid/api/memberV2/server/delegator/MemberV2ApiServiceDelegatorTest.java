@@ -4976,6 +4976,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testReadEmailPrivate() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.EMAIL_READ_PRIVATE);
+        Response r = serviceDelegator.viewEmails("4444-4444-4444-4497");
+        assertNotNull(r);
+        assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
+        Emails email = (Emails) r.getEntity();
+        assertNotNull(email);
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(3, email.getEmails().size());
+        assertEquals("public_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, email.getEmails().get(0).getVisibility());
+        assertEquals("limited_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(1).getEmail());
+        assertEquals(Visibility.LIMITED, email.getEmails().get(1).getVisibility());
+        assertEquals("private_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(2).getEmail());
+        assertEquals(Visibility.PRIVATE, email.getEmails().get(2).getVisibility());
+    }
+    
+    @Test
     public void testReadPublicScope_ResearcherUrls() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
         //Public works

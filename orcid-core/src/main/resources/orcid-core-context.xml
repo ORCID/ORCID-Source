@@ -624,7 +624,7 @@
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/notranslate" />
+		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 	</bean>
@@ -901,6 +901,20 @@
         </property>
     </bean>
     
+    <bean id="doiBibtexCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="doi-bibtex" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="5000" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="strategy" value="NONE" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+        <property name="cacheEntryFactory">
+            <bean class="org.orcid.core.manager.impl.DoiBibtexCacheEntryFactory" />
+        </property>
+    </bean>
+    
     <!-- 
     <bean id="identifierTypesCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identifierTypes" />
@@ -1085,5 +1099,8 @@
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />		
 	
-	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />	
+	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />
+	
+	<bean id="doiManager" class="org.orcid.core.manager.impl.DOIManagerImpl" />
+	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />	
 </beans>

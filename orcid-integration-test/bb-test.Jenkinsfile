@@ -3,14 +3,25 @@ node {
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     def tomcat_home = '/opt/tomcat/apache-tomcat-8.0.21'
     def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
-    
+    def firefox_home = '/usr/bin/firefox'
     stage('Build and Pack'){
         echo "Packaging..."
         do_maven("clean install -Dmaven.test.skip=true")
     }
     
     stage('Setup Client and Users'){
-        def setup_users = input message: 'Would you like to setup clients and users ?', ok: 'Run', parameters: [booleanParam(defaultValue: true, description: '', name: 'run')]
+        def setup_users = false
+        try {
+            timeout(time:30,unit:'SECONDS'){
+                setup_users = input message: 'Would you like to setup clients and users ?', 
+                                            ok: 'Continue', 
+                                    parameters: [
+                                        booleanParam(defaultValue: true, description: '', name: 'run')
+                                    ]
+            }
+        } catch(err){
+            echo err.toString()
+        }
         if (setup_users) {                
             echo "Installing required users for blackbox tests"
             do_maven("test -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -DfailIfNoTests=false -Dorg.orcid.config.file='file:///opt/tomcat/orcid-ci2.properties'")                
@@ -37,7 +48,7 @@ node {
     }
     stage('Execute Black-Box Tests'){
         try {
-            do_maven("test -f orcid-integration-test/pom.xml -Dtest=${bb_test_name} -Dorg.orcid.config.file='classpath:test-client.properties,classpath:test-web.properties' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=/opt/firefox/firefox-bin")
+            do_maven("test -f orcid-integration-test/pom.xml -Dtest=${bb_test_name} -Dorg.orcid.config.file='classpath:test-client.properties,classpath:test-web.properties' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home")
         } catch(Exception err) {
             def err_msg = err.getMessage()
             echo "Tests problem: $err_msg"

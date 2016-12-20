@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -263,10 +264,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveIdTypesAsMap() {
         
         Map<String,String> map = new TreeMap<String,String>();
-            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName();
+            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
             for (String type : types.keySet()) {
                 try{
-                    map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString()), type);
+                    map.put(types.get(type).getDescription(), type);
                 }catch (NoSuchMessageException e){
                     //we will skip these from UI for now.
                     //map.put(type, type);                    
