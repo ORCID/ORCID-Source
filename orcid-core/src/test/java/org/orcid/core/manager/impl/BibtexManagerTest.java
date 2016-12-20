@@ -66,7 +66,6 @@ public class BibtexManagerTest extends BaseTest{
     @Test
     public void testGenerateBibtex(){
         String bib = bibtexManager.generateBibtexReferenceList(ORCID);
-        System.out.println(bib);
         Assert.assertEquals(bibtex,bib);
     }
     
