@@ -62,8 +62,8 @@ node {
 def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
-        sh "export MAVEN_OPTS='-XX:MaxPermSize=512m -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError'"
-        sh "$MAVEN/bin/mvn $mvn_task"
+        sh "export MAVEN_OPTS='-XX:MaxPermSize=2048m -Xms128m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError'"
+        sh "$MAVEN/bin/mvn -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dcom.mailgun.testmode=yes $mvn_task"
     } catch(Exception err) {
         throw err
     }
