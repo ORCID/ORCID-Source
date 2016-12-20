@@ -1,0 +1,61 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="ID-TYPE-ADD-PRIMARY-USE" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="identifier_type" columnName="primary_use"/>
+            </not>            
+		</preConditions>
+		<!-- Indicates the number of times it have failed to be sent to S3 -->
+		<sql>ALTER TABLE identifier_type ADD primary_use varchar(20) NOT NULL DEFAULT 'work';</sql>
+		<sql>UPDATE identifier_type SET primary_use = 'funding' WHERE id_name = 'GRANT_NUMBER';</sql>
+	</changeSet>
+	
+	<changeSet id="ADD-TYPE-URL-PREFIXES" author="Tom Demeranville">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="0">select count(*) from identifier_type where id_resolution_prefix IS NOT NULL OR id_resolution_prefix='';</sqlCheck>
+		</preConditions>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://arxiv.org/abs/' WHERE id_name = 'ARXIV';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.amazon.com/dp/' WHERE id_name = 'ASIN';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://adsabs.harvard.edu/abs/' WHERE id_name = 'BIBCODE';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://doi.org/' WHERE id_name = 'DOI';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://ethos.bl.uk/OrderDetails.do?uin=' WHERE id_name = 'ETHOS';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.worldcat.org/isbn/' WHERE id_name = 'ISBN';</sql> <!-- + id.replace(/\-/g, ''); -->
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://zbmath.org/?format=complete&amp;q=an%3A' WHERE id_name = 'JFM';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.jstor.org/stable/' WHERE id_name = 'JSTOR';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://lccn.loc.gov/' WHERE id_name = 'LCCN';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.ams.org/mathscinet-getitem?mr=' WHERE id_name = 'MR';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.worldcat.org/oclc/' WHERE id_name = 'OCLC';</sql>
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://openlibrary.org/b/' WHERE id_name = 'OL';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.osti.gov/energycitations/product.biblio.jsp?osti_id=' WHERE id_name = 'OSTI';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://europepmc.org/articles/' WHERE id_name = 'PMC';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.ncbi.nlm.nih.gov/pubmed/' WHERE id_name = 'PMID';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.rfc-editor.org/rfc/' WHERE id_name = 'RFC';</sql> <!-- + '.txt'; -->
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://papers.ssrn.com/abstract_id=' WHERE id_name = 'SSRN';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://zbmath.org/?format=complete&amp;q=' WHERE id_name = 'ZBL';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://koreamed.org/SearchBasic.php?RID=' WHERE id_name = 'KUID';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'https://www.lens.org/' WHERE id_name = 'LENSID';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://identifiers.org/pdb/' WHERE id_name = 'PDB';</sql> 
+	</changeSet>
+    
+</databaseChangeLog>
+   
