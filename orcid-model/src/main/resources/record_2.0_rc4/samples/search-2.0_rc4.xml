@@ -294,6 +294,20 @@
 								<common:month>02</common:month>
 								<common:day>02</common:day>
 							</common:end-date>
+							
+							<funding:organization>
+								<common:name>common:name</common:name>
+								<common:address>
+									<common:city>common:city</common:city>
+									<common:region>common:region</common:region>
+									<common:country>AF</common:country>
+								</common:address>
+								<common:disambiguated-organization>
+									<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+									<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+								</common:disambiguated-organization>
+							</funding:organization>
+						
 						</funding:summary>
 					</activities:group>
 				</activities:fundings>

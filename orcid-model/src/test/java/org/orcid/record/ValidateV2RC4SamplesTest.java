@@ -846,6 +846,12 @@ public class ValidateV2RC4SamplesTest {
         assertEquals("02", funding.getStartDate().getMonth().getValue());
         assertEquals("1848", funding.getStartDate().getYear().getValue());
         
+        assertNotNull(funding.getOrganization());
+        assertEquals("common:name", funding.getOrganization().getName());
+        assertEquals("common:city", funding.getOrganization().getAddress().getCity());        
+        assertEquals("common:region", funding.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, funding.getOrganization().getAddress().getCountry());
+        
         assertNotNull(activities.getPeerReviews());
         assertNotNull(activities.getPeerReviews().getLastModifiedDate());
         assertNotNull(activities.getPeerReviews().getPeerReviewGroup());
