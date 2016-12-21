@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -43,46 +44,8 @@ public class IdentifierApiServiceDelegatorImpl implements IdentifierApiServiceDe
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getIdentifierTypes(String locale) {
-        Collection<IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName().values();
-        List<IdentifierTypeWithDescription> typesWithDescriptions = new ArrayList<IdentifierTypeWithDescription>();        
-        Locale loc = LocaleUtils.toLocale(locale);
-        for (IdentifierType type : types){
-            IdentifierTypeWithDescription td = new IdentifierTypeWithDescription();
-            td.setDateCreated(type.getDateCreated());
-            td.setDeprecated(type.getDeprecated());
-            td.setLastModified(type.getLastModified());
-            td.setDeprecated(type.getDeprecated());
-            td.setName(type.getName());
-            td.setPutCode(type.getPutCode());
-            td.setSourceClient(type.getSourceClient());
-            td.setValidationRegex(type.getValidationRegex());
-            td.setResolutionPrefix(type.getResolutionPrefix());
-            td.setDescription(getMessage(type.getName(), loc));
-            typesWithDescriptions.add(td);
-        }
-        return Response.ok(typesWithDescriptions).build();
+        Collection<IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(LocaleUtils.toLocale(locale)).values();
+        return Response.ok(types).build();
     }
-    
-    private String getMessage(String type, Locale locale) {
-        try {
-            String key = new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString();
-            return localeManager.resolveMessage(key, locale, type);
-        }catch(Exception e){
-            return type.replace('_', ' ');
-        }
-    }
-    
-    public static class IdentifierTypeWithDescription extends IdentifierType{
-        private static final long serialVersionUID = 1L;
-        public String description;
 
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }        
-    }
-    
 }

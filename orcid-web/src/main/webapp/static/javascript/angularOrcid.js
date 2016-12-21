@@ -10604,6 +10604,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.registrationForm = {};
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
+    $scope.allowEmailAccess = true;
     $scope.showLongDescription = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
@@ -10635,7 +10636,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
             	angular.forEach(data.scopes, function (scope) {
-            		if(scope.value.endsWith('/create')) {
+            	    if (scope.value == "/email/read-private") {
+            	        $scope.emailRequested = true;
+            	    } else if(scope.value.endsWith('/create')) {
             			$scope.showCreateIcon = true;
             		} else if(scope.value.endsWith('/update')) {
             			$scope.showUpdateIcon = true;
@@ -10709,6 +10712,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
         }        
+        if($scope.allowEmailAccess) {
+            $scope.authorizationForm.emailAccessAllowed = true;
+        }
+        console.log(angular.toJson($scope.authorizationForm));
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -10797,8 +10804,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     };
     
     $scope.register = function() {
-        if($scope.enablePersistentToken)
+        if($scope.enablePersistentToken) {
             $scope.registrationForm.persistentTokenEnabled=true;
+        }
+    
+        if ($scope.allowEmailAccess) {
+            $scope.registrationForm.allowEmailAccess = true;
+        }
+        
         $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
         
@@ -10973,6 +10986,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken) {
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
+        }
+        if($scope.allowEmailAccess) {
+            $scope.authorizationForm.emailAccessAllowed = true;
         }
         var is_authorize = $scope.authorizationForm.approved;
         $.ajax({

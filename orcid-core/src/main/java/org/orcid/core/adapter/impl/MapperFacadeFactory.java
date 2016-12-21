@@ -449,6 +449,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.field("title.translatedTitle.content", "translatedTitle");
         fundingSummaryClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         fundingSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
+        
+        fundingSummaryClassMap.fieldBToA("org.name", "organization.name");
+        fundingSummaryClassMap.fieldBToA("org.city", "organization.address.city");
+        fundingSummaryClassMap.fieldBToA("org.region", "organization.address.region");
+        fundingSummaryClassMap.fieldBToA("org.country", "organization.address.country");
+        fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
+        fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
+
         fundingSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();

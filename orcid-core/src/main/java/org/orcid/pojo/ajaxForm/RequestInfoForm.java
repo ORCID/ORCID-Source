@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.orcid.jaxb.model.message.ScopePathType;
 
 public class RequestInfoForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,6 +32,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String clientDescription;
     private String clientId;
     private String clientName;
+    private String clientEmailRequestReason;
     private String memberName;
     private String redirectUrl;
     private String responseType;
@@ -38,8 +42,8 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String userOrcid;
     private String userEmail;
     private String userGivenNames;
-    private String userFamilyNames; 
-    
+    private String userFamilyNames;
+
     private boolean clientHavePersistentTokens = false;
 
     public List<String> getErrors() {
@@ -129,15 +133,15 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-        
+
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }    
-    
+    }
+
     public String getUserOrcid() {
         return userOrcid;
     }
@@ -145,7 +149,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     public void setUserOrcid(String userOrcid) {
         this.userOrcid = userOrcid;
     }
-    
+
     public String getUserEmail() {
         return userEmail;
     }
@@ -170,6 +174,14 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
         this.userFamilyNames = userFamilyNames;
     }
 
+    public String getClientEmailRequestReason() {
+        return clientEmailRequestReason;
+    }
+
+    public void setClientEmailRequestReason(String clientEmailRequestReason) {
+        this.clientEmailRequestReason = clientEmailRequestReason;
+    }
+
     public String getScopesAsString() {
         String result = new String();
         for (ScopeInfoForm form : scopes) {
@@ -177,4 +189,18 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
         }
         return result.trim();
     }
+
+    public boolean containsEmailReadPrivateScope() {
+        for (ScopeInfoForm scope : scopes) {
+            if (ScopePathType.EMAIL_READ_PRIVATE.name().equals(scope.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeEmailReadPrivateScope() {
+        scopes = scopes.stream().filter(s -> !ScopePathType.EMAIL_READ_PRIVATE.name().equals(s.getName())).collect(Collectors.toSet());
+    }
+
 }

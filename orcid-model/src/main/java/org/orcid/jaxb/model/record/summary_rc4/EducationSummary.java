@@ -178,6 +178,7 @@ public class EducationSummary implements Filterable, Activity, Serializable, Sou
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -231,6 +232,11 @@ public class EducationSummary implements Filterable, Activity, Serializable, Sou
         } else if (!startDate.equals(other.startDate))
             return false;
         if (visibility != other.visibility)
+            return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
             return false;
         return true;
     }

@@ -706,6 +706,68 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testReadPrivateEmailsOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.EMAIL_READ_PRIVATE);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        
+        List<Email> emails = p.getOrcidBio().getContactDetails().getEmail();
+        assertEquals(3, emails.size());
+
+        boolean privateFound = false;
+        boolean publicFound = false;
+        boolean limitedFound = false;
+        
+        for (Email email : emails) {
+            if ("public_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PUBLIC.equals(email.getVisibility())) {
+                publicFound = true;
+            } else if ("limited_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.LIMITED.equals(email.getVisibility())) {
+                limitedFound = true;
+            } else if ("private_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PRIVATE.equals(email.getVisibility())) {
+                privateFound = true;
+            }
+        }
+        
+        assertTrue(publicFound);
+        assertTrue(limitedFound);
+        assertTrue(privateFound);
+    }
+    
+    @Test
+    public void testReadNonPrivateEmailsOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.ORCID_BIO_READ_LIMITED);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        
+        List<Email> emails = p.getOrcidBio().getContactDetails().getEmail();
+        assertEquals(2, emails.size());
+
+        boolean publicFound = false;
+        boolean limitedFound = false;
+        
+        for (Email email : emails) {
+            if ("public_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PUBLIC.equals(email.getVisibility())) {
+                publicFound = true;
+            } else if ("limited_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.LIMITED.equals(email.getVisibility())) {
+                limitedFound = true;
+            }
+        }
+        
+        assertTrue(publicFound);
+        assertTrue(limitedFound);
+    }
+    
+    @Test
     public void testReadPrivacyOnBio2(){
         /*Example B List:
         Item 1 Limited
