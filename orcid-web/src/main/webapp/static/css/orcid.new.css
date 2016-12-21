@@ -6528,14 +6528,6 @@ a:hover .mozilla-badge {
 
 /* EDIT PROFILE */
 
-.fixed-area {
-    /* Global class for edit profile */
-    width: 100%;
-    height: 350px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
 .record-buttons {
     margin-top: 30px;
     height: 35px;
@@ -6611,6 +6603,7 @@ a:hover .mozilla-badge {
     color: #494a4c;
 }
 
+
 .record-settings div {
     margin: 0 5px;
     cursor: pointer;
@@ -6627,11 +6620,44 @@ a:hover .mozilla-badge {
     background: #a6ce39;
     color: #FFF;
 }
+/********************/
+.fixed-area {
+    /* Global class for edit profile */
+    /*height: 350px;*/
+    min-height: 350px;
+    /*overflow-y: scroll;*/
+    overflow: visible;
+    /*overflow-x: hidden;*/
+    width: 100%;
+}
+
+.record-settings > li {
+    position: relative;
+}
+
+.record-settings div.glyphicon + div {
+    left: 0;
+    position: absolute;
+    top: 0;
+}
+
+.record-settings div.glyphicon + div .popover-tooltip {
+    left: 0!important;
+    pointer-events: none;
+    top: -40px!important;
+    transform: translateX(-50%);
+}
+
+.edit-record .popover .arrow {
+    left: 50%!important;
+}
+
+/*
+*/
 
 .fixed-area ul.record-settings li .glyphicon-trash:hover {
     color: #a6ce39;
 }
-
 .record-buttons .cancel-option {
     margin: 5px 15px 0 0;
 }
