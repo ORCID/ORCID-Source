@@ -11949,7 +11949,7 @@ orcidNgModule.directive('ngEnterSubmit', function($document) {
         link: function(scope, element, attr) {
         	$document.bind("keydown keypress", function(event) {
                 if (event.which === 13) {
-                   //element.submit();
+                   element.submit();
                 }
             });
 
@@ -11972,14 +11972,19 @@ orcidNgModule.directive('fnForm', function($document) {
         scope: {
             updateFn: '&'
         },
-        link: function(scope, elm, attrs) { 
-            $document.bind("keydown", function(event) {
-                if (event.which === 13) {
-                      scope.updateFn();                      
-                      event.stopPropagation();
+        link: function(scope, elm, attrs) {
+
+            $(document).unbind("keydown.keydownUpfateFn");
+
+            $document.bind(
+                "keydown.keydownUpfateFn",
+                function(event) {
+                    if (event.which === 13) {
+                        scope.updateFn();                 
+                        event.stopPropagation();
+                    }
                 }
-            });
-                    
+            );                   
         }
     }
 });
@@ -11992,7 +11997,7 @@ orcidNgModule.directive('ngEnter', function() {
         element.bind("keydown keypress", function(event) {
             if(event.which === 13) {            	
                 scope.$apply(function(){
-                    //scope.$eval(attrs.ngEnter, {'event': event});
+                    scope.$eval(attrs.ngEnter, {'event': event});
                 });
                 event.preventDefault();
                 event.stopPropagation();
