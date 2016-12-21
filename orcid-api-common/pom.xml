@@ -113,17 +113,7 @@
 			<groupId>de.undercouch</groupId>
 			<artifactId>citeproc-java</artifactId>
 			<version>0.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.citationstyles</groupId>
-			<artifactId>styles</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.citationstyles</groupId>
-			<artifactId>locales</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>		
 		
         <!-- Test dependencies -->
 
