@@ -29,29 +29,15 @@ import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc4.Person;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface OrcidSecurityManager {
-
-	void checkScopes(ScopePathType requiredScope);
-	
-	void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope);
-	
-	void checkAndFilter(VisibilityType element, ScopePathType requiredScope);
-	
-	void checkAndFilter(Collection<? extends VisibilityType> elements, ScopePathType requiredScope);
-	
-	void checkAndFilter(ActivitiesSummary activities, ScopePathType requiredScope);
-	
-	void checkAndFilter(PersonalDetails personalDetails, ScopePathType requiredScope);
-	
-	void checkAndFilter(Person person, ScopePathType requiredScope);
-	
-	void checkAndFilter(Record record, ScopePathType requiredScope);
+public interface OrcidSecurityManager {	
 	
 	boolean isAdmin();
 
@@ -60,4 +46,24 @@ public interface OrcidSecurityManager {
     String getClientIdFromAPIRequest();
     
     void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
+    
+    void checkSource(SourceAwareEntity<?> existingEntity);
+    
+    void checkSource(IdentifierTypeEntity existingEntity);
+    
+    void checkScopes(ScopePathType requiredScope);
+	
+	void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, Person person, ScopePathType requiredScope);
+	
+	void checkAndFilter(String orcid, Record record, ScopePathType requiredScope);
 }

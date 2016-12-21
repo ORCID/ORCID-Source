@@ -198,7 +198,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewRecord(String orcid) {
         Record record = recordManager.getRecord(orcid);
-        orcidSecurityManager.checkAndFilter(record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, record, ScopePathType.READ_LIMITED);
         if (record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtils.setSourceName(record.getPerson());
@@ -215,7 +215,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
-        orcidSecurityManager.checkAndFilter(as, ScopePathType.ACTIVITIES_READ_LIMITED);         
+        orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.ACTIVITIES_READ_LIMITED);         
+        //TODO!!!!!! regenerate the list of ext ids on every group, since those might have changed after filtering
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
@@ -226,7 +227,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManager.getWork(orcid, putCode, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(w, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
@@ -236,7 +237,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorks(String orcid) {
         List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
         Works works = workManager.groupWorks(worksList, false);        
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(works);
         ActivityUtils.cleanEmptyFields(works);
@@ -248,7 +249,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
         sourceUtils.setSourceName(ws);
@@ -299,7 +300,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewFunding(String orcid, Long putCode) {
         Funding f = profileFundingManager.getFunding(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(f, ScopePathType.FUNDING_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
@@ -308,7 +309,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewFundings(String orcid) {
         List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);               
         ActivityUtils.setPathToFundings(fundings, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(fundings);
@@ -319,7 +320,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(fs, ScopePathType.FUNDING_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
         sourceUtils.setSourceName(fs);
         return Response.ok(fs).build();
@@ -361,7 +362,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEducation(String orcid, Long putCode) {
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
@@ -370,7 +371,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEducations(String orcid) {
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(educationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, educationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Educations educations = new Educations(educationsList);
         ActivityUtils.setPathToEducations(educations, orcid);
         sourceUtils.setSourceName(educations);        
@@ -381,7 +382,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
@@ -416,7 +417,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(e, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
@@ -425,7 +426,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmployments(String orcid) {
         List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(employmentsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, employmentsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Employments employments = new Employments(employmentsList);
         ActivityUtils.setPathToEmployments(employments, orcid);
         sourceUtils.setSourceName(employments);
@@ -436,7 +437,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {        
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(es, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
@@ -478,7 +479,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {        
         PeerReview p = peerReviewManager.getPeerReview(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(p, ScopePathType.PEER_REVIEW_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, p, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(p, orcid);
         sourceUtils.setSourceName(p);
         return Response.ok(p).build();
@@ -487,7 +488,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReviews(String orcid) {
         List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);               
         ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(peerReviews);
@@ -498,7 +499,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
         PeerReviewSummary ps = peerReviewManager.getPeerReviewSummary(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
         sourceUtils.setSourceName(ps);
         return Response.ok(ps).build();
@@ -598,7 +599,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewResearcherUrls(String orcid) {
     	ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(researcherUrls.getResearcherUrls(), ScopePathType.ORCID_BIO_READ_LIMITED);        
+        orcidSecurityManager.checkAndFilter(orcid, researcherUrls.getResearcherUrls(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtils.setSourceName(researcherUrls);
@@ -607,7 +608,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         sourceUtils.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
@@ -650,7 +651,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmails(String orcid) {
     	Emails emails = emailManager.getEmails(orcid, getLastModifiedTime(orcid));
-    	orcidSecurityManager.checkAndFilter(emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
+    	orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -660,7 +661,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewOtherNames(String orcid) {    	
     	OtherNames otherNames = otherNameManager.getOtherNames(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(otherNames.getOtherNames(), ScopePathType.ORCID_BIO_READ_LIMITED);        
+        orcidSecurityManager.checkAndFilter(orcid, otherNames.getOtherNames(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtils.setSourceName(otherNames);
@@ -670,7 +671,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
         OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToOtherName(otherName, orcid);
         sourceUtils.setSourceName(otherName);
         return Response.ok(otherName).build();
@@ -714,7 +715,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifiers(String orcid) {
     	PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(extIds.getExternalIdentifiers(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, extIds.getExternalIdentifiers(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtils.setSourceName(extIds);
@@ -724,7 +725,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(extId, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtils.setSourceName(extId);
         return Response.ok(extId).build();
@@ -766,7 +767,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywords(orcid, getLastModifiedTime(orcid));        
-        orcidSecurityManager.checkAndFilter(keywords.getKeywords(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, keywords.getKeywords(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeywords(keywords, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(keywords);
         sourceUtils.setSourceName(keywords);
@@ -776,7 +777,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
         Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);
         return Response.ok(keyword).build();
@@ -820,7 +821,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));      
-        orcidSecurityManager.checkAndFilter(addresses.getAddress(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, addresses.getAddress(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddresses(addresses, orcid);
         //Set the latest last modified
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(addresses);
@@ -831,7 +832,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewAddress(String orcid, Long putCode) {
         Address address = addressManager.getAddress(orcid, putCode);
-        orcidSecurityManager.checkAndFilter(address, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, address, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtils.setSourceName(address);
         return Response.ok(address).build();
@@ -875,7 +876,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewBiography(String orcid) {
         Biography bio = biographyManager.getBiography(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
@@ -883,7 +884,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
-        orcidSecurityManager.checkAndFilter(personalDetails, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, personalDetails, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtils.setSourceName(personalDetails);
@@ -893,7 +894,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPerson(String orcid) {
         Person person = personDetailsManager.getPersonDetails(orcid);
-        orcidSecurityManager.checkAndFilter(person, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, person, ScopePathType.ORCID_BIO_READ_LIMITED);
+        //TODO!!!!!! regenerate the list of ext ids on every activity and for every group, since those might have changed after filtering
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);
