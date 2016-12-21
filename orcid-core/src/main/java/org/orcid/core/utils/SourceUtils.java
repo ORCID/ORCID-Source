@@ -258,6 +258,22 @@ public class SourceUtils {
         }
     }
     
+    public void setSourceName(Educations educations) {
+        if(educations != null) {            
+            for(EducationSummary summary : educations.getSummaries()) {
+                setSourceName(summary);
+            }                            
+        }
+    }
+    
+    public void setSourceName(Employments employments) {
+        if(employments != null) {            
+            for(EmploymentSummary summary : employments.getSummaries()) {
+                setSourceName(summary);
+            }                            
+        }
+    }
+    
     public void setSourceName(Works works) {
         if(works != null) {
             for(WorkGroup group : works.getWorkGroup()) {
