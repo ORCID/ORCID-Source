@@ -75,6 +75,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
           
     private final String ORCID_1 = "0000-0000-0000-0001";
+    private final String ORCID_2 = "0000-0000-0000-0002";
     
     private final String CLIENT_1 = "APP-0000000000000001";
     private final String CLIENT_2 = "APP-0000000000000002";
@@ -91,13 +92,16 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
     
-    @Test
-    public void testThrowExceptionWhenTokenIsForOtherUser() {
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void test_ThrowException_When_TokenIsForOtherUser() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+    	Work work = createWork(Visibility.PRIVATE, CLIENT_1);
+    	orcidSecurityManager.checkAndFilter(ORCID_2, work, ScopePathType.ACTIVITIES_READ_LIMITED);
     	fail();
     }
     
     @Test
-    public void testCheck_Can_ReadElementWhen_IsSource_RegardlessOfVisibility() {        
+    public void test_Can_ReadElement_When_IsSource_RegardlessOfVisibility() {        
     	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Work work = createWork(Visibility.PRIVATE, CLIENT_1);
         orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
@@ -110,10 +114,21 @@ public class OrcidSecurityManagerTest extends BaseTest {
         
         otherName = createOtherName(Visibility.LIMITED, CLIENT_1);
         orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+        
+        work = createWork(Visibility.PUBLIC, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        
+        otherName = createOtherName(Visibility.PUBLIC, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test
+    public void test_Cant_ReadElement_When_IsNotSource_IsPrivate() {
+    	fail();
     }
 
     @Test
-    public void testCheck_Can_ReadElementWhen_IsPublic_IsNOTSource_HaveReadPublicScope() {
+    public void test_Can_ReadElement_When_IsPublic_HaveReadPublicScope() {
     	Visibility v = Visibility.PUBLIC;
     	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Work work = createWork(v, CLIENT_2);
@@ -123,7 +138,14 @@ public class OrcidSecurityManagerTest extends BaseTest {
         orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
     
+    @Test
+    public void test_Cant_ReadElement_When_IsPublic_DontHaveReadPublicScope() {
+    	fail(); //Hard to test, all tokens now have READ_PUBLIC
+    }
     
+    //Test having having scope
+    //Test without having required scope
+    //Test all different types of visibilityes
     
     
     
