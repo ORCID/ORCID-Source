@@ -73,7 +73,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
     
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
-            
+          
+    private final String ORCID_1 = "0000-0000-0000-0001";
+    
+    private final String CLIENT_1 = "APP-0000000000000001";
+    private final String CLIENT_2 = "APP-0000000000000002";
+    
     @Before
     public void before() {
     	TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
@@ -87,13 +92,77 @@ public class OrcidSecurityManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPublicAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Work work = createWork();
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
+    public void testThrowExceptionWhenTokenIsForOtherUser() {
+    	fail();
+    }
+    
+    @Test
+    public void testCheck_Can_ReadElementWhen_IsSource_RegardlessOfVisibility() {        
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        Work work = createWork(Visibility.PRIVATE, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        
+        OtherName otherName = createOtherName(Visibility.PRIVATE, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+        
+        work = createWork(Visibility.LIMITED, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        
+        otherName = createOtherName(Visibility.LIMITED, CLIENT_1);
+        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
+    @Test
+    public void testCheck_Can_ReadElementWhen_IsPublic_IsNOTSource_HaveReadPublicScope() {
+    	Visibility v = Visibility.PUBLIC;
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+        Work work = createWork(v, CLIENT_2);
+        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        
+        OtherName otherName = createOtherName(v, CLIENT_2);
+        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsLimitedAndIsSource() {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
@@ -205,14 +274,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         assertTrue(caughtException);
     }
 
-    private Work createWork() {
-        Work work = new Work();
-        work.setVisibility(Visibility.PUBLIC);
-        Source source = new Source();
-        work.setSource(source);
-        source.setSourceClientId(new SourceClientId("APP-5555555555555555"));
-        return work;
-    }
+    
 
     @Test
     public void testCheckVisibilityOfNameUsingReadLimited() {
@@ -521,13 +583,25 @@ public class OrcidSecurityManagerTest extends BaseTest {
         return new Biography("Biography", Visibility.PUBLIC);
     }
 
-    private OtherName createOtherName() {
+    private OtherName createOtherName(Visibility v, String sourceId) {
         OtherName otherName = new OtherName();
         otherName.setContent("other-name");
-        otherName.setVisibility(Visibility.PUBLIC);
+        otherName.setVisibility(v);
+        Source source = new Source();        
+        source.setSourceClientId(new SourceClientId(sourceId));
+        otherName.setSource(source);
         return otherName;
     }
 
+    private Work createWork(Visibility v, String sourceId) {
+        Work work = new Work();
+        work.setVisibility(v);
+        Source source = new Source();        
+        source.setSourceClientId(new SourceClientId(sourceId));
+        work.setSource(source);
+        return work;
+    }
+    
     private ProfileEntity createProfileEntity() {
         ProfileEntity entity = new ProfileEntity();
         entity.setClaimed(true);
