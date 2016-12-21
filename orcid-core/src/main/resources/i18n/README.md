@@ -17,11 +17,12 @@ In most cases, only en, xx, lr, and rl files should be edited directly. We use t
 
 ##Workflows
 - [Add new strings](#add-new-strings)
-- [Update existing string(s) - English only](#update-existing-strings-english-only)
+- [Update existing string(s) - English only OR English + other languages](#update-existing-strings-english-only)
 - [Update existing string(s) - non-English only](#update-existing-strings-non-english-only)
 - [Add new language](#add-new-language)
+- [Remove a resource](#remove-resource)
 
-##Add new strings
+##<a id="add-new-strings"></a>Add new strings
 ###Developers
 New properties are added to English, \_xx, \_lr, and \_rl files only - files for other languages are updated via Transifex. **Do not edit properties files for other languages!**
 
@@ -100,7 +101,7 @@ If Github deployment was not successful, translated property files can be pushed
 ####Release translations
 Translated properties files are pushed directly to [ORCID-Source master](https://github.com/ORCID/ORCID-Source) by TXGH, so translations become live on QA, Sandbox or Prod during the normal ORCID release process.
 
-##Update existing string(s) -  English only OR English + other languages
+##<a id="update-existing-strings-english-only"></a>Update existing string(s) -  English only OR English + other languages
 
 ###Developers
 
@@ -125,7 +126,7 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
 9. Repeated steps 6-8 for any other typos that were corrected
 10. Repeat steps 3-9 for each language
 
-##Update existing string(s) -  non-English only
+##<a id="update-existing-strings-non-english-only"></a>Update existing string(s) -  non-English only
 
 ###Developers/Other ORCID team members
 
@@ -145,7 +146,7 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
 9. In the middle column delete the incorrect translation and add the new correct version. Click "Save" and then "Review"
 10. Move the Trello card to the QA Testing list
 
-##Add new language
+##<a id="add-new-language"></a>Add new language
 ###Transifex Project Maintainer
 #####Transifex API
 1. Add a language and assign Transifex users as translators using a POST request per http://docs.transifex.com/api/languages/#post
@@ -172,6 +173,20 @@ When translation status for each resource in the new language reaches 100%, the 
 1. Add a Trello card to [Current Development](https://trello.com/b/iuJwm8A6/orcid-current-development) requesting that the new language be added to the language picker (this must be done on both the Registry and Drupal sites)
 2. When the language picker changes have been release to QA, contact community translators for this language and ask them to review the translation
 3. After translators have reviewed the language, move the card to Launchpad and notify the appropriate developer, who will unhide the new language in the language picker so that it becomes visible in Prod.
+
+##<a id="remove-resource"></a>Remove a Resource
+1. Remove the entry for the resource from [.tx/config](https://github.com/ORCID/ORCID-Source/blob/master/.tx/config)
+2. Remove properties files for the resource from [orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
+        
+        rm [resource name]_[lang code].properties
+
++ **If the resource is still in use, but no longer being translated:** delete all properties files for the resource EXCEPT [resource name]_en.properties
++ **If the resource is no longer used at all:** delete all [resource name]_[lang code].properties files, including xx, lr, and rl
+
+3. Delete the resource from Transifex
+
+        tx delete -r registry.[resource name]
+(or [delete via Transifex UI](https://docs.transifex.com/projects/deleting-content))
 
 ##Push/Pull to/from Transifex manually
 If automatic push/pull between Transifex and Github via TXGH fails, files can be transferred manually, via the Transifex client or the Transifex API.
