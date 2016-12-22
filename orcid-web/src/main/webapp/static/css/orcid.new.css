@@ -8458,6 +8458,3 @@ a:hover .mozilla-badge {
         max-width: 960px;
     }
 }
-
-@media only screen and (-webkit-min-device-pixel-ratio: 2),
-only screen and (min-device-pixel-ratio: 2) {}
