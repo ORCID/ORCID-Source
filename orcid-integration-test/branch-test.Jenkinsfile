@@ -49,10 +49,9 @@ def orcid_notify(message, level){
     if(level == 'SUCCESS'){
         color = "#36a64f"
     }
-    //slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
     try{
         slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid'
     } catch(Exception err) {
         echo err.toString()
-    }    
+    }
 }
