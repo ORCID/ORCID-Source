@@ -16,33 +16,7 @@ node {
     }
     stage('Execute Tests') {
         try {
-            parallel activemq: {
-                do_maven(" -f orcid-activemq/pom.xml test")
-            },utils: {
-                do_maven(" -f orcid-utils/pom.xml test")
-            },core: {
-                do_maven(" -f orcid-core/pom.xml test")
-            },model: {
-                do_maven(" -f orcid-model/pom.xml test")
-            },persistence: {
-                do_maven(" -f orcid-persistence/pom.xml test")
-            },apicommon: {
-                do_maven(" -f orcid-api-common/pom.xml test")
-            },web: {
-                do_maven(" -f orcid-web/pom.xml test")
-            },pubweb: {
-                do_maven(" -f orcid-pub-web/pom.xml test")
-            },apiweb: {
-                do_maven(" -f orcid-api-web/pom.xml test")
-            },solr: {
-                do_maven(" -f orcid-solr-web/pom.xml test")
-            },scheduler: {
-                do_maven(" -f orcid-scheduler-web/pom.xml test")
-            },internalapi: {
-                do_maven(" -f orcid-internal-api/pom.xml test")
-            },messagelistener: {
-                do_maven(" -f orcid-message-listener/pom.xml test")
-            }
+            do_maven("test")
             junit '**/target/surefire-reports/*.xml'
         } catch(Exception err) {
             junit '**/target/surefire-reports/*.xml'            

@@ -541,6 +541,11 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
+        By countryList = By.xpath("(//select[@ng-model='country.iso2Country.value'])");
+        waitForElementVisibility(countryList);
+        waitForAngular();
+        ngAwareClick(findElement(countryList));
+        waitForAngular();
         By emptyInput = By.xpath("(//select[@ng-model='country.iso2Country.value'])[last()]");
         waitForElementVisibility(emptyInput);
         Select input = new Select(findElement(emptyInput));
@@ -758,13 +763,11 @@ public class BlackBoxBase {
     public static void createEducation(String institutionName) {
         String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
-        WebElement affiliationNameInput = findElement(By.xpath(institutionNameXpath));
-        affiliationNameInput.sendKeys(institutionName);
+        BBBUtil.ngAwareSendKeys(institutionName, "affiliationName", webDriver);
         
         String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
-        WebElement cityInput = findElement(By.xpath(cityXpath));
-        cityInput.sendKeys("Test land");
+        BBBUtil.ngAwareSendKeys("Test land", "city", webDriver);
         
         String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
@@ -816,13 +819,11 @@ public class BlackBoxBase {
     public static void createEmployment(String institutionName) {
         String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
-        WebElement affiliationNameInput = findElement(By.xpath(institutionNameXpath));
-        affiliationNameInput.sendKeys(institutionName);
+        BBBUtil.ngAwareSendKeys(institutionName, "affiliationName", webDriver);
         
         String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
-        WebElement cityInput = findElement(By.xpath(cityXpath));
-        cityInput.sendKeys("Test land");
+        BBBUtil.ngAwareSendKeys("Test land", "city", webDriver);
         
         String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
@@ -881,20 +882,17 @@ public class BlackBoxBase {
         //Funding title
         String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
-        WebElement fundingTitleInput = findElement(By.xpath(fundingTitleXpath));
-        fundingTitleInput.sendKeys(fundingTitle);
+        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingTitle", webDriver);
         
         //Institution name
         String institutionNameXpath = "//input[@ng-model='editFunding.fundingName.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
-        WebElement fundingInstitutionNameInput = findElement(By.xpath(institutionNameXpath));
-        fundingInstitutionNameInput.sendKeys(fundingTitle);
+        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingName", webDriver);
         
         //City
         String cityXpath = "//input[@ng-model='editFunding.city.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
-        WebElement cityInput = findElement(By.xpath(cityXpath));
-        cityInput.sendKeys("Test land");
+        BBBUtil.ngAwareSendKeys("Test land", "city", webDriver);
         
         //Country
         String countryXpath = "//select[@ng-model='editFunding.country.value']";
