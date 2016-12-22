@@ -19,6 +19,8 @@ package org.orcid.core.manager;
 import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -72,34 +74,34 @@ public class OrcidSecurityManagerTest {
 		SecurityContextTestUtils.setUpSecurityContextForAnonymous();
 	}
 
-	// Scopes tests
+	// checkScopes test's
 	@Test
 	public void testCheckScopes_ReadPublic() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -108,27 +110,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.AUTHENTICATE);
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -137,27 +139,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.AFFILIATIONS_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -166,27 +168,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.AFFILIATIONS_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -195,27 +197,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.AFFILIATIONS_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -224,27 +226,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.FUNDING_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -253,27 +255,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.FUNDING_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -282,27 +284,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.FUNDING_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -311,27 +313,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_PATENTS_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -340,27 +342,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_PATENTS_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -369,27 +371,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_PATENTS_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -398,27 +400,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.PEER_REVIEW_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -427,27 +429,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.PEER_REVIEW_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -456,27 +458,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.PEER_REVIEW_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -485,27 +487,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_WORKS_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -514,27 +516,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_WORKS_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -543,27 +545,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_WORKS_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -577,22 +579,22 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.PEER_REVIEW_READ_LIMITED);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_WORKS_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -612,16 +614,16 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.PEER_REVIEW_CREATE);
 		orcidSecurityManager.checkScopes(ScopePathType.ACTIVITIES_UPDATE);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -638,20 +640,20 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_LIMITED);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_PROFILE_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -667,20 +669,20 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_BIO_READ_LIMITED);
 		orcidSecurityManager.checkScopes(ScopePathType.READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -690,27 +692,27 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_BIO_UPDATE);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
 	}
 
 	@Test
@@ -719,28 +721,28 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_BIO_READ_LIMITED);
 
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 	}
 
 	@Test
@@ -750,42 +752,61 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
 		orcidSecurityManager.checkScopes(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
 
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.READ_LIMITED);
-		assetItThrowAccessControlException(ScopePathType.AUTHENTICATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
-		assetItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
-		assetItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PROFILE_READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.READ_LIMITED);
+		assertItThrowAccessControlException(ScopePathType.AUTHENTICATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_WORKS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.FUNDING_CREATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.AFFILIATIONS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_PATENTS_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.PEER_REVIEW_CREATE);
+		assertItThrowAccessControlException(ScopePathType.ACTIVITIES_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_UPDATE);
+		assertItThrowAccessControlException(ScopePathType.ORCID_BIO_READ_LIMITED);
+	}	
+	
+	private void assertItFailForOtherScopes(ScopePathType ... goodOnes) {
+		List<ScopePathType> list = Arrays.asList(goodOnes);
+		for(ScopePathType s : ScopePathType.values()) {
+			if(!list.contains(s)) {
+				assertItThrowAccessControlException(s);
+			} else {
+				orcidSecurityManager.checkScopes(s);
+			}
+		}
 	}
 
-	private void assetItThrowAccessControlException(ScopePathType s) {
-		try {
-			orcidSecurityManager.checkScopes(s);
-			fail();
-		} catch (AccessControlException e) {
-			return;
-		} catch (Exception e) {
-			fail();
-		}
+	// checkClientAccessAndScopes test's
+	@Test(expected = OrcidUnauthorizedException.class)
+	public void testCheckClientAccessAndScopes_When_TokenIsForOtherUser() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+		orcidSecurityManager.checkClientAccessAndScopes(ORCID_2, ScopePathType.ORCID_BIO_UPDATE);
 		fail();
 	}
-
+	
+	@Test
+	public void testCheckClientAccessAndScopes_CheckScopes() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+		//Should work
+		orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.READ_PUBLIC);
+		orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.ORCID_BIO_UPDATE);
+		
+		//Should not work
+		assertItThrowAccessControlException(ORCID_1, ScopePathType.ORCID_BIO_UPDATE);
+		
+	}
+	
 	// Name element tests
 	@Test
 	public void testName_CanRead_When_ReadPublicToken_IsPublic() {
@@ -926,9 +947,29 @@ public class OrcidSecurityManagerTest {
 	
 	
 	
+	private void assertItThrowAccessControlException(String orcid, ScopePathType s) {
+		try {
+			orcidSecurityManager.checkClientAccessAndScopes(orcid, s);
+			fail();
+		} catch (AccessControlException e) {
+			return;
+		} catch (Exception e) {
+			fail();
+		}
+		fail();
+	}
 	
-	
-	
+	private void assertItThrowAccessControlException(ScopePathType s) {
+		try {
+			orcidSecurityManager.checkScopes(s);
+			fail();
+		} catch (AccessControlException e) {
+			return;
+		} catch (Exception e) {
+			fail();
+		}
+		fail();
+	}
 	
 	private Biography createBiography(Visibility v) {
 		return new Biography("Biography", v);
