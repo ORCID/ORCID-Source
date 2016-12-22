@@ -454,7 +454,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 	 * */
 	@Override
 	public void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope) {
-		checkAndFilter(orcid, element, requiredScope, true);
+		checkAndFilter(orcid, element, requiredScope, false);
 	}
 		
 	/**

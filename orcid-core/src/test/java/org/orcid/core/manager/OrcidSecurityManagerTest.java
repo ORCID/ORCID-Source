@@ -16,28 +16,18 @@
  */
 package org.orcid.core.manager;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
 
 import java.security.AccessControlException;
-import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.junit.After;
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
-import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.CreditName;
 import org.orcid.jaxb.model.common_rc4.Source;
@@ -51,12 +41,8 @@ import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.test.TargetProxyHelper;
 
 /**
  * 
@@ -68,12 +54,6 @@ public class OrcidSecurityManagerTest extends BaseTest {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
     
-    @Mock
-    private SourceManager sourceManager;
-    
-    @Mock
-    private ProfileEntityCacheManager profileEntityCacheManager;
-          
     private final String ORCID_1 = "0000-0000-0000-0001";
     private final String ORCID_2 = "0000-0000-0000-0002";
     
@@ -82,9 +62,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
     
     @Before
     public void before() {
-    	TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
-    	TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);        
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+    	
     }
     
     @After
@@ -92,506 +70,73 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
     
+    // Name element tests
     @Test(expected = OrcidUnauthorizedException.class)
-    public void test_ThrowException_When_TokenIsForOtherUser() {
-    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
-    	Work work = createWork(Visibility.PRIVATE, CLIENT_1);
-    	orcidSecurityManager.checkAndFilter(ORCID_2, work, ScopePathType.ACTIVITIES_READ_LIMITED);
+    public void testName_ThrowException_When_TokenIsForOtherUser() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Name name = createName(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_2, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     	fail();
     }
     
     @Test
-    public void test_Can_ReadElement_When_IsSource_RegardlessOfVisibility() {        
-    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
-        Work work = createWork(Visibility.PRIVATE, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        
-        OtherName otherName = createOtherName(Visibility.PRIVATE, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
-        
-        work = createWork(Visibility.LIMITED, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        
-        otherName = createOtherName(Visibility.LIMITED, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
-        
-        work = createWork(Visibility.PUBLIC, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        
-        otherName = createOtherName(Visibility.PUBLIC, CLIENT_1);
-        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    public void testName_CanRead_When_DontHaveReadScope_IsPublic() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Name name = createName(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test(expected = AccessControlException.class)
+    public void testName_CantRead_When_DontHaveReadScope_IsLimited() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Name name = createName(Visibility.LIMITED);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test(expected = AccessControlException.class)
+    public void testName_CantRead_When_DontHaveReadScope_IsPrivate() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Name name = createName(Visibility.PRIVATE);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
     
     @Test
-    public void test_Cant_ReadElement_When_IsNotSource_IsPrivate() {
-    	fail();
-    }
-
-    @Test
-    public void test_Can_ReadElement_When_IsPublic_HaveReadPublicScope() {
-    	Visibility v = Visibility.PUBLIC;
-    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
-        Work work = createWork(v, CLIENT_2);
-        orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        
-        OtherName otherName = createOtherName(v, CLIENT_2);
-        orcidSecurityManager.checkAndFilter(ORCID_1, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
+    public void testName_CanRead_When_HaveReadScope_IsPublic() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Name name = createName(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
     
     @Test
-    public void test_Cant_ReadElement_When_IsPublic_DontHaveReadPublicScope() {
-    	fail(); //Hard to test, all tokens now have READ_PUBLIC
+    public void testName_CanRead_When_HaveReadScope_IsLimited() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Name name = createName(Visibility.LIMITED);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
+    
+    @Test(expected = OrcidVisibilityException.class)
+    public void testName_CantRead_When_HaveReadScope_IsPrivate() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Name name = createName(Visibility.PRIVATE);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     //Test having having scope
     //Test without having required scope
     //Test all different types of visibilityes
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsLimitedAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Work work = createWork();
-        work.setVisibility(Visibility.LIMITED);
-        try {
-            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-            fail();
-        } catch (OrcidUnauthorizedException e) {
-
-        }
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPrivateAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Work work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        try {
-            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-            fail();
-        } catch (OrcidUnauthorizedException e) {
-
-        }
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPrivateAndIsNotSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Work work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
-        boolean caughtException = false;
-        try {
-            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException e) {
-            caughtException = true;
-        }
-        assertTrue(caughtException);
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPublicAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        Work work = createWork();
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
-        work = createWork();
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsLimitedAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        Work work = createWork();
-        work.setVisibility(Visibility.LIMITED);
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
-        work = createWork();
-        work.setVisibility(Visibility.LIMITED);
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPrivateAndIsSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        Work work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
-        work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        // There should be no exceptions
-    }
-
-    @Test
-    public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPrivateAndIsNotSource() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        Work work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
-        boolean caughtException = false;
-        try {
-            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException e) {
-            caughtException = true;
-        }
-        assertTrue(caughtException);
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
-        work = createWork();
-        work.setVisibility(Visibility.PRIVATE);
-        work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
-        caughtException = false;
-        try {
-            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException e) {
-            caughtException = true;
-        }
-        assertTrue(caughtException);
-    }
-
-    
-
-    @Test
-    public void testCheckVisibilityOfNameUsingReadLimited() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Name name = createName();
-        // Check public with any scope
-        orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
-        name.setVisibility(Visibility.LIMITED);
-        try {
-            // Check limited with any scope
-            orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
-            fail();
-        } catch (OrcidUnauthorizedException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        // Check limited with read_limited scope
-        orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
-
-        name.setVisibility(Visibility.PRIVATE);
-        try {
-            // Check private always fail
-            orcidSecurityManager.checkBiographicalVisibility(name, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void testCheckVisibilityOfBiography() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        Biography bio = createBiography();
-        // Check public with any scope
-        orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
-        bio.setVisibility(Visibility.LIMITED);
-        try {
-            // Check limited with any scope
-            orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
-            fail();
-        } catch (OrcidUnauthorizedException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        // Check limited with read_limited scope
-        orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
-
-        bio.setVisibility(Visibility.PRIVATE);
-        try {
-            // Check private always fail
-            orcidSecurityManager.checkBiographicalVisibility(bio, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void testOtherName() {
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        OtherName otherName = createOtherName();
-
-        // Check public with any scope
-        orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
-        otherName.setVisibility(Visibility.LIMITED);
-        try {
-            // Check limited with any scope
-            orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
-            fail();
-        } catch (OrcidUnauthorizedException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
-        // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
-
-        otherName.setVisibility(Visibility.PRIVATE);
-        try {
-            // Check private always fail
-            orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
-        } catch (OrcidVisibilityException ua) {
-
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    public void testCheckPermissionsOnEveryScope() {
-        String userOrcid = "4444-4444-4444-4441";
-        for (ScopePathType scopeToTest : ScopePathType.values()) {
-            SecurityContextTestUtils.setUpSecurityContext(userOrcid, scopeToTest);
-            checkScopes(userOrcid, scopeToTest);
-        }
-    }
-
-    @Test 
-    public void testCheckSourceForIdentifierTypeEntity() {
-        //Setup for APP-0001
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-0001");        
-        //Check source on IdentifierTypeEntity
-        IdentifierTypeEntity entity = new IdentifierTypeEntity();
-        ClientDetailsEntity client = new ClientDetailsEntity("APP-0001");
-        entity.setSourceClient(client);
-        //Should work
-        orcidSecurityManager.checkSource(entity);
-        
-        //Should fail
-        try {
-            client.setId("APP-0002");
-            entity.setSourceClient(client);
-            orcidSecurityManager.checkSource(entity);
-            fail();
-        } catch(WrongSourceException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Should fail
-        try {
-            client.setId("APP-0003");
-            entity.setSourceClient(client);
-            orcidSecurityManager.checkSource(entity);
-            fail();
-        } catch(WrongSourceException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }   
-        
-        try {
-            //Set up anonymous authentication
-            when(sourceManager.retrieveSourceOrcid()).thenReturn(null);
-            client.setId("APP-0001");
-            entity.setSourceClient(client);
-            orcidSecurityManager.checkSource(entity);
-            fail();
-        } catch(WrongSourceException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Should work again
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-0001");
-        
-        client.setId("APP-0001");
-        entity.setSourceClient(client);
-        orcidSecurityManager.checkSource(entity);
-    }
-    
-    @Test 
-    public void testCheckSourceForSourceAwareEntity() {
-        //Setup for APP-0001
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-0001");        
-        
-        //Try with any kind of source aware
-        SourceAwareEntity<?> entity = new OtherNameEntity();
-        
-        //Should fail for a user
-        try {
-            entity.setSourceId("0000-0000-0000-0001");
-            orcidSecurityManager.checkSource(entity);
-            fail();
-        } catch(WrongSourceException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Should fail for other client
-        try {
-            entity.setSourceId(null);
-            entity.setClientSourceId("APP-0002");
-            orcidSecurityManager.checkSource(entity);
-            fail();
-        } catch(WrongSourceException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
-        
-        //Should work for that client
-        entity.setSourceId(null);
-        entity.setClientSourceId("APP-0001");
-        orcidSecurityManager.checkSource(entity);
-    }
-    
-    @Test(expected = LockedException.class)
-    public void testLockedRecord() {
-        ProfileEntity entity = createProfileEntity();
-        entity.setRecordLocked(true);        
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);        
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-        fail();
-    }
-    
-    @Test(expected = OrcidDeprecatedException.class)
-    public void testDeprecatedRecord() {
-        ProfileEntity entity = createProfileEntity();
-        entity.setPrimaryRecord(new ProfileEntity("0000-0000-0000-0001"));
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0001")).thenReturn(entity);
-        orcidSecurityManager.checkProfile("0000-0000-0000-0001");
-        fail();
-    }
-    
-    @Test(expected = OrcidNotClaimedException.class)
-    public void testUnclaimedRecord() {
-        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
-        ProfileEntity entity = createProfileEntity();
-        entity.setSubmissionDate(new Date());
-        entity.setClaimed(false);
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-        fail();
-    }
-    
-    @Test
-    public void testUnclaimedRecordAfterClaimPeriod() {
-        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
-        ProfileEntity entity = createProfileEntity();
-        entity.setSubmissionDate(DateUtils.addDays(new Date(), -11));
-        entity.setClaimed(false);
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-    }
-    
-    @Test
-    public void testUnclaimedRecordOnClaimPeriodButAccessedByCreator() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-0000000000000000")));
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-0000000000000000");
-        ProfileEntity entity = createProfileEntity();
-        entity.setSubmissionDate(new Date());
-        entity.setClaimed(false);
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-    }
-    
-    @Test(expected = OrcidNotClaimedException.class)
-    public void testUnclaimedRecordOnClaimPeriodButAccessedByAnyMember() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-1111111111111111")));
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-1111111111111111");
-        ProfileEntity entity = createProfileEntity();
-        entity.setSubmissionDate(new Date());
-        entity.setClaimed(false);
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-        fail();
-    }
-    
-    @Test(expected = NoResultException.class)
-    public void testNoResultException() {
-        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenThrow(new IllegalArgumentException());
-        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
-        fail();
-    }
-    
-    public void checkScopes(String userOrcid, ScopePathType scopeThatShouldWork) {
-        if (ScopePathType.READ_PUBLIC.equals(scopeThatShouldWork)) {
-            System.out.println("Debug here");
-        }
-        for (ScopePathType scope : ScopePathType.values()) {
-            if (scopeThatShouldWork.combined().contains(scope)) {
-                try {
-                    orcidSecurityManager.checkClientCanAccessRecord(userOrcid);
-                    orcidSecurityManager.checkScopes(scope);
-                } catch (Exception e) {
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
-                }
-            } else {
-                try {
-                    orcidSecurityManager.checkClientCanAccessRecord(userOrcid);
-                    orcidSecurityManager.checkScopes(scope);
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should fail");
-                } catch (AccessControlException ace) {
-
-                } catch (Exception e) {
-                    fail("Testing scope '" + scopeThatShouldWork.value() + "' Invalid exception thrown for scope '" + scope.value());
-                }
-            }
-        }
-    }
-
     private Name createName() {
         Name name = new Name();
         name.setCreditName(new CreditName("Credit Name"));
@@ -622,6 +167,13 @@ public class OrcidSecurityManagerTest extends BaseTest {
         source.setSourceClientId(new SourceClientId(sourceId));
         work.setSource(source);
         return work;
+    }
+    
+    private Name createName(Visibility v) {
+    	Name name = new Name();
+    	name.setVisibility(v);
+    	name.setCreditName(new CreditName("Credit Name"));
+    	return name;
     }
     
     private ProfileEntity createProfileEntity() {
