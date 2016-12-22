@@ -121,7 +121,56 @@ public class OrcidSecurityManagerTest extends BaseTest {
     	orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
     
+    //Biography element tests
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testBio_ThrowException_When_TokenIsForOtherUser() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Biography bio = createBiography(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_2, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	fail();
+    }
     
+    @Test
+    public void testBio_CanRead_When_DontHaveReadScope_IsPublic() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Biography bio = createBiography(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test(expected = AccessControlException.class)
+    public void testBio_CantRead_When_DontHaveReadScope_IsLimited() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Biography bio = createBiography(Visibility.LIMITED);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test(expected = AccessControlException.class)
+    public void testBio_CantRead_When_DontHaveReadScope_IsPrivate() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
+    	Biography bio = createBiography(Visibility.PRIVATE);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test
+    public void testBio_CanRead_When_HaveReadScope_IsPublic() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Biography bio = createBiography(Visibility.PUBLIC);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test
+    public void testBio_CanRead_When_HaveReadScope_IsLimited() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Biography bio = createBiography(Visibility.LIMITED);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidVisibilityException.class)
+    public void testBio_CantRead_When_HaveReadScope_IsPrivate() {
+    	SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Biography bio = createBiography(Visibility.PRIVATE);
+    	orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
+    }
     
     
     
@@ -146,8 +195,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
         return name;
     }
 
-    private Biography createBiography() {
-        return new Biography("Biography", Visibility.PUBLIC);
+    private Biography createBiography(Visibility v) {
+        return new Biography("Biography", v);
     }
 
     private OtherName createOtherName(Visibility v, String sourceId) {
