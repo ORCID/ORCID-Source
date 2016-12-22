@@ -1,6 +1,15 @@
 node {
 
-    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '2', daysToKeepStr: '', numToKeepStr: '3')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: '', name: 'branch_to_build')]), pipelineTriggers([])])
+    properties([
+        buildDiscarder(
+            logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '2', daysToKeepStr: '', numToKeepStr: '3')
+        ),
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+        parameters([
+            string(defaultValue: 'master', description: '', name: 'branch_to_build')
+        ]), 
+        pipelineTriggers([])
+    ])
     
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
@@ -14,6 +23,8 @@ node {
     }
     stage('Copy Apps'){
         echo "Installing new *.war files..."
+        sh "rm -rf $tomcat_home/webapps/*.war"
+        sh "rm -rf $tomcat_home/webapps/orcid-api-web $tomcat_home/webapps/orcid-internal-api $tomcat_home/webapps/orcid-pub-web $tomcat_home/webapps/orcid-scheduler-web $tomcat_home/webapps/orcid-solr-web $tomcat_home/webapps/orcid-web"        
         for (int i = 0; i < modules_to_build.size(); i++) {    
             def module_name = modules_to_build.get(i)
             sh "cp ${module_name}/target/${module_name}.war ${tomcat_home}/webapps/"
