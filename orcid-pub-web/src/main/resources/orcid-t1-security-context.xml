@@ -84,5 +84,6 @@
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
     </bean>	    
          
+	<bean id="publicAPISecurityManagerV2" class="org.orcid.api.publicV2.server.security.impl.PublicAPISecurityManagerV2Impl" />
     <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />        
 </beans>      
