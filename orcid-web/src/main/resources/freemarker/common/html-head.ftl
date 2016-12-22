@@ -70,6 +70,7 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
       orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
+      orcidVar.isPasswordConfirmationManualEditRequired = ${isPasswordConfirmationManualEditRequired?string};
       orcidVar.version = "${ver}";
     </script>
 

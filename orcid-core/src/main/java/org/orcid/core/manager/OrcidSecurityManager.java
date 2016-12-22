@@ -50,6 +50,8 @@ public interface OrcidSecurityManager {
     boolean isAdmin();
 
     boolean isPasswordConfirmationRequired();
+
+    boolean isPasswordConfirmationManualEditRequired();
     
     boolean hasScope(ScopePathType scope);
 
