@@ -16,9 +16,13 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -725,6 +729,196 @@ public class OrcidSecurityManagerTest {
 		fail();
 	}
 
+	// ---- COLLECTIONS OF ELEMENTS ----
+	@Test(expected = OrcidUnauthorizedException.class)
+	public void testCollection_When_TokenIsForOtherUser() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		list.add(createOtherName(Visibility.PUBLIC, CLIENT_1));
+		list.add(createOtherName(Visibility.PUBLIC, CLIENT_1));
+		list.add(createOtherName(Visibility.PUBLIC, CLIENT_1));
+		orcidSecurityManager.checkAndFilter(ORCID_2, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		fail();
+	}
+	
+	@Test
+	public void testCollection_When_SourceOfAll_ReadPublicScope() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(3, list.size());
+		assertTrue(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertTrue(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_SourceOfAll_ReadLimitedScope() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(3, list.size());
+		assertTrue(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertTrue(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_NotSource_ReadPublicScope() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(o1));
+		assertFalse(list.contains(o2));
+		assertFalse(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_SourceOfPrivate_ReadPublicScope() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(2, list.size());
+		assertTrue(list.contains(o1));
+		assertFalse(list.contains(o2));
+		assertTrue(list.contains(o3));
+	}
+		
+	@Test
+	public void testCollection_When_SourceOfLimitedAndPrivate_ReadPublicScope() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(3, list.size());
+		assertTrue(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertTrue(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_NotSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(2, list.size());
+		assertTrue(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertFalse(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_NotSource_WrongReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_WORKS_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(1, list.size());
+		assertTrue(list.contains(o1));
+		assertFalse(list.contains(o2));
+		assertFalse(list.contains(o3));
+	}
+	
+	@Test
+	public void testCollection_When_NotSource_ReadLimitedToken_NothingPublic() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o4 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o5 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		list.add(o4);
+		list.add(o5);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(2, list.size());
+		assertFalse(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertFalse(list.contains(o3));
+		assertTrue(list.contains(o4));
+		assertFalse(list.contains(o5));
+	}
+	
+	@Test
+	public void testCollection_When_NotSource_ReadLimitedToken_AllPrivate() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o4 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o5 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		list.add(o4);
+		list.add(o5);
+		assertFalse(list.isEmpty());
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertTrue(list.isEmpty());
+	}
+	
+	@Test
+	public void testCollection_When_SourceOfPrivate_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		List<OtherName> list = new ArrayList<OtherName>();
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		list.add(o1);
+		list.add(o2);
+		list.add(o3);
+		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertEquals(3, list.size());
+		assertTrue(list.contains(o1));
+		assertTrue(list.contains(o2));
+		assertTrue(list.contains(o3));
+	}
+	
 	/**
 	 * Utilities
 	 */
@@ -758,7 +952,7 @@ public class OrcidSecurityManagerTest {
 
 	private OtherName createOtherName(Visibility v, String sourceId) {
 		OtherName otherName = new OtherName();
-		otherName.setContent("other-name");
+		otherName.setContent("other-name-" + System.currentTimeMillis());
 		otherName.setVisibility(v);
 		Source source = new Source();
 		source.setSourceClientId(new SourceClientId(sourceId));
@@ -780,17 +974,5 @@ public class OrcidSecurityManagerTest {
 		name.setVisibility(v);
 		name.setCreditName(new CreditName("Credit Name"));
 		return name;
-	}
-
-	private ProfileEntity createProfileEntity() {
-		ProfileEntity entity = new ProfileEntity();
-		entity.setClaimed(true);
-		entity.setDeactivationDate(null);
-		entity.setDeprecatedDate(null);
-		entity.setId("0000-0000-0000-0000");
-		entity.setRecordLocked(false);
-		entity.setSource(new SourceEntity(new ClientDetailsEntity("APP-0000000000000000")));
-		entity.setSubmissionDate(null);
-		return entity;
 	}
 }
