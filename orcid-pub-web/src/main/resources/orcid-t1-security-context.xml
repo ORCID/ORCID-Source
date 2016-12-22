@@ -31,7 +31,7 @@
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
-        <sec:http-basic entry-point-ref="orcidOauthAuthenticationEntryPoint" />
+        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
         <!-- include this only if you need to authenticate clients via request parameters -->
         <sec:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
@@ -58,7 +58,7 @@
     </sec:user-service>
 
 	<!-- Create for the filtering of Oauth2 resources -->
-    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="orcidOauthAuthenticationEntryPoint"/>
+    <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
 	
 	<!-- User web expressions to aid the syntax of protection -->
     <oauth2:web-expression-handler id="oauthWebExpressionHandler" />		
@@ -70,22 +70,19 @@
 
 	<!-- Add in order for it to be referenced in the filter order -->
 	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidT1Oauth2TokenEndPointFilter">
-        <property name="authenticationEntryPoint" ref="orcidOauthAuthenticationEntryPoint"/>
+        <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
 
 	<bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
 		<property name="userDetailsService" ref="clientDetailsUserService" />
-	</bean>	
-    
-    <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
+	</bean>
+
+	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T1 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>
-    
+    </bean>	    
          
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />   
-    
-    <bean id="publicAPISecurityManagerV2" class="org.orcid.api.publicV2.server.security.impl.PublicAPISecurityManagerV2Impl" />     
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />        
 </beans>      

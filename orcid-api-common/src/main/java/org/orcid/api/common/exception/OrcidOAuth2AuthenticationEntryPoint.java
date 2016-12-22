@@ -18,17 +18,14 @@ package org.orcid.api.common.exception;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer;
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator;
@@ -48,10 +45,7 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
  */
 public class OrcidOAuth2AuthenticationEntryPoint extends OAuth2AuthenticationEntryPoint implements AccessDeniedHandler, AuthenticationEntryPoint {
 
-	@Resource
-    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
-	
-	private WebResponseExceptionTranslator exceptionTranslator = new DefaultWebResponseExceptionTranslator();
+    private WebResponseExceptionTranslator exceptionTranslator = new DefaultWebResponseExceptionTranslator();
 
     private OAuth2ExceptionRenderer exceptionRenderer = new DefaultOAuth2ExceptionRenderer();
 
@@ -74,44 +68,14 @@ public class OrcidOAuth2AuthenticationEntryPoint extends OAuth2AuthenticationEnt
 
     public void handleAsOrcidError(HttpServletRequest request, HttpServletResponse response, Exception authException) throws IOException, ServletException {
         try {
-        	//As of now we only handle InvalidTokenException, all others are handled as legacy errors
-            if(authException != null && authException.getCause() != null && authException.getCause() instanceof InvalidTokenException) {
-            	ResponseEntity<OAuth2Exception> result = exceptionTranslator.translate(authException);
-                result = enhanceResponse(result, authException);            	
-            	OrcidError error = orcidCoreExceptionMapper.getOrcidError(authException.getCause());            	            	
-            	ResponseEntity<OrcidError> errorResponseEntity = new ResponseEntity<>(error, result.getHeaders(), result.getStatusCode());
-                exceptionRenderer.handleHttpEntityResponse(errorResponseEntity, new ServletWebRequest(request, response));            	            	
-            } else {
-            	handleLegacyError(request, response, authException);
-            }   
-            response.flushBuffer();
-        } catch (ServletException e) {
-            // Re-use some of the default Spring dispatcher behaviour - the
-            // exception came from the filter chain and
-            // not from an MVC handler so it won't be caught by the dispatcher
-            // (even if there is one)
-            if (handlerExceptionResolver.resolveException(request, response, this, e) == null) {
-                throw e;
-            }
-        } catch (IOException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            // Wrap other Exceptions. These are not expected to happen
-            throw new RuntimeException(e);
-        }
-    }
-    
-    private void handleLegacyError(HttpServletRequest request, HttpServletResponse response, Exception authException) throws IOException, ServletException {
-    	try {
             ResponseEntity<OAuth2Exception> result = exceptionTranslator.translate(authException);
             result = enhanceResponse(result, authException);
             OrcidError orcidError = new OrcidError();
             orcidError.setResponseCode(result.getStatusCode().value());
             orcidError.setDeveloperMessage(result.getBody().getLocalizedMessage());
             ResponseEntity<OrcidError> errorResponseEntity = new ResponseEntity<>(orcidError, result.getHeaders(), result.getStatusCode());
-            exceptionRenderer.handleHttpEntityResponse(errorResponseEntity, new ServletWebRequest(request, response));            
+            exceptionRenderer.handleHttpEntityResponse(errorResponseEntity, new ServletWebRequest(request, response));
+            response.flushBuffer();
         } catch (ServletException e) {
             // Re-use some of the default Spring dispatcher behaviour - the
             // exception came from the filter chain and
