@@ -27,6 +27,7 @@ import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -36,18 +37,33 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.CreditName;
+import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.SourceClientId;
+import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.jaxb.model.record_rc4.FamilyName;
 import org.orcid.jaxb.model.record_rc4.GivenNames;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc4.SourceAware;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,7 +84,7 @@ public class OrcidSecurityManagerTest {
 	private final String ORCID_2 = "0000-0000-0000-0002";
 
 	private final String CLIENT_1 = "APP-0000000000000001";
-	private final String CLIENT_2 = "APP-0000000000000002";	
+	private final String CLIENT_2 = "APP-0000000000000002";
 
 	@After
 	public void after() {
@@ -737,7 +753,7 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkAndFilter(ORCID_2, list, ScopePathType.ORCID_BIO_READ_LIMITED);
 		fail();
 	}
-	
+
 	@Test
 	public void testCollection_When_SourceOfAll_ReadPublicScope() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -754,7 +770,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o2));
 		assertTrue(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_SourceOfAll_ReadLimitedScope() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -771,7 +787,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o2));
 		assertTrue(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_NotSource_ReadPublicScope() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -788,7 +804,7 @@ public class OrcidSecurityManagerTest {
 		assertFalse(list.contains(o2));
 		assertFalse(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_SourceOfPrivate_ReadPublicScope() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -805,7 +821,7 @@ public class OrcidSecurityManagerTest {
 		assertFalse(list.contains(o2));
 		assertTrue(list.contains(o3));
 	}
-		
+
 	@Test
 	public void testCollection_When_SourceOfLimitedAndPrivate_ReadPublicScope() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -822,7 +838,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o2));
 		assertTrue(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_NotSource_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -839,7 +855,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o2));
 		assertFalse(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_NotSource_WrongReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_WORKS_READ_LIMITED);
@@ -856,7 +872,7 @@ public class OrcidSecurityManagerTest {
 		assertFalse(list.contains(o2));
 		assertFalse(list.contains(o3));
 	}
-	
+
 	@Test
 	public void testCollection_When_NotSource_ReadLimitedToken_NothingPublic() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -879,7 +895,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o4));
 		assertFalse(list.contains(o5));
 	}
-	
+
 	@Test
 	public void testCollection_When_NotSource_ReadLimitedToken_AllPrivate() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -898,7 +914,7 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkAndFilter(ORCID_1, list, ScopePathType.ORCID_BIO_READ_LIMITED);
 		assertTrue(list.isEmpty());
 	}
-	
+
 	@Test
 	public void testCollection_When_SourceOfPrivate_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -915,8 +931,8 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o2));
 		assertTrue(list.contains(o3));
 	}
-	
-	// ---- COLLECTIONS OF ELEMENTS ----
+
+	// ---- PERSONAL DETAILS ----
 	@Test(expected = OrcidUnauthorizedException.class)
 	public void testPersonalDetails_When_TokenForOtherUser() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -924,7 +940,7 @@ public class OrcidSecurityManagerTest {
 		orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.ORCID_BIO_READ_LIMITED);
 		fail();
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPublic_ReadPublicToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -950,7 +966,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_SomeLimited_ReadPublicToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -974,9 +990,9 @@ public class OrcidSecurityManagerTest {
 		assertEquals(1, p.getOtherNames().getOtherNames().size());
 		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
-		assertFalse(p.getOtherNames().getOtherNames().contains(o3));		
+		assertFalse(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_SomePrivate_ReadPublicToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -1000,9 +1016,9 @@ public class OrcidSecurityManagerTest {
 		assertEquals(1, p.getOtherNames().getOtherNames().size());
 		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
 		assertFalse(p.getOtherNames().getOtherNames().contains(o2));
-		assertTrue(p.getOtherNames().getOtherNames().contains(o3));		
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPrivate_NoSource_ReadPublicToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -1021,11 +1037,11 @@ public class OrcidSecurityManagerTest {
 		assertNotNull(p);
 		assertNull(p.getName());
 		assertNull(p.getBiography());
-		assertNotNull(p.getOtherNames());		
-		assertNull(p.getOtherNames().getOtherNames());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
 		assertTrue(p.getOtherNames().getOtherNames().isEmpty());
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPrivate_Source_ReadPublicToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
@@ -1049,9 +1065,9 @@ public class OrcidSecurityManagerTest {
 		assertEquals(3, p.getOtherNames().getOtherNames().size());
 		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
-		assertTrue(p.getOtherNames().getOtherNames().contains(o3));	
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPublic_NoSource_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1075,9 +1091,9 @@ public class OrcidSecurityManagerTest {
 		assertEquals(3, p.getOtherNames().getOtherNames().size());
 		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
-		assertTrue(p.getOtherNames().getOtherNames().contains(o3));		
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_SomeLimited_NoSource_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1103,7 +1119,7 @@ public class OrcidSecurityManagerTest {
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_SomePrivate_NoSource_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1127,9 +1143,9 @@ public class OrcidSecurityManagerTest {
 		assertEquals(2, p.getOtherNames().getOtherNames().size());
 		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
-		assertTrue(p.getOtherNames().getOtherNames().contains(o3));	
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPrivate_NoSource_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1148,11 +1164,11 @@ public class OrcidSecurityManagerTest {
 		assertNotNull(p);
 		assertNull(p.getName());
 		assertNull(p.getBiography());
-		assertNotNull(p.getOtherNames());		
+		assertNotNull(p.getOtherNames());
 		assertNotNull(p.getOtherNames().getOtherNames());
 		assertTrue(p.getOtherNames().getOtherNames().isEmpty());
 	}
-	
+
 	@Test
 	public void testPersonalDetails_When_AllPrivate_Source_ReadLimitedToken() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1176,17 +1192,878 @@ public class OrcidSecurityManagerTest {
 		assertEquals(3, p.getOtherNames().getOtherNames().size());
 		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
 		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
-		assertTrue(p.getOtherNames().getOtherNames().contains(o3));			
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
 	}
-	
+
 	@Test
-	public void testPersonalDetails_When_AllPrivate_Source_ReadLimitedToken_EmptyElement() {
+	public void testPersonalDetails_When_ReadLimitedToken_EmptyElement() {
 		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
 		PersonalDetails p = new PersonalDetails();
 		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
 		assertNotNull(p);
 	}
-	
+
+	// ---- PERSON ----
+	@Test(expected = OrcidUnauthorizedException.class)
+	public void testPerson_When_TokenForOtherUser() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Person p = new Person();
+		orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.PERSON_READ_LIMITED);
+		fail();
+	}
+
+	@Test
+	public void testPerson_When_AllPublic_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PUBLIC);
+
+		Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a2 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a3 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e2 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e3 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		// Check addresses
+		assertEquals(3, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(3, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(3, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_SomeLimited_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.LIMITED);
+		Biography bio = createBiography(Visibility.PUBLIC);
+
+		Address a1 = createAddress(Visibility.LIMITED, CLIENT_2);
+		Address a2 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a3 = createAddress(Visibility.LIMITED, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.LIMITED, CLIENT_2);
+		Email e2 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e3 = createEmail(Visibility.LIMITED, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.LIMITED, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.LIMITED, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertEquals(bio, p.getBiography());
+		// Check addresses
+		assertEquals(1, p.getAddresses().getAddress().size());
+		assertFalse(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertFalse(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(1, p.getEmails().getEmails().size());
+		assertFalse(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertFalse(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(1, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(1, p.getKeywords().getKeywords().size());
+		assertFalse(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertFalse(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(1, p.getOtherNames().getOtherNames().size());
+		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(1, p.getResearcherUrls().getResearcherUrls().size());
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_SomePrivate_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PRIVATE);
+
+		Address a1 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a3 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e3 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertNull(p.getBiography());
+		// Check addresses
+		assertEquals(1, p.getAddresses().getAddress().size());
+		assertFalse(p.getAddresses().getAddress().contains(a1));
+		assertFalse(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(1, p.getEmails().getEmails().size());
+		assertFalse(p.getEmails().getEmails().contains(e1));
+		assertFalse(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(1, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(1, p.getKeywords().getKeywords().size());
+		assertFalse(p.getKeywords().getKeywords().contains(k1));
+		assertFalse(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(1, p.getOtherNames().getOtherNames().size());
+		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(1, p.getResearcherUrls().getResearcherUrls().size());
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_AllPrivate_NoSource_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+
+		Address a1 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e3 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		// Check addresses
+		assertEquals(0, p.getAddresses().getAddress().size());
+		// Check emails
+		assertEquals(0, p.getEmails().getEmails().size());
+		// Check ext ids
+		assertEquals(0, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		// Check keywords
+		assertEquals(0, p.getKeywords().getKeywords().size());
+		// Check other names
+		assertEquals(0, p.getOtherNames().getOtherNames().size());
+		// Check researcher urls
+		assertEquals(0, p.getResearcherUrls().getResearcherUrls().size());
+	}
+
+	@Test
+	public void testPerson_When_AllPrivate_Source_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+
+		Address a1 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Address a3 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Email e3 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		// Check addresses
+		assertEquals(3, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(3, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(3, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_AllPublic_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PUBLIC);
+
+		Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a2 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a3 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e2 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e3 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		// Check addresses
+		assertEquals(3, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(3, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(3, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_SomeLimited_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Name name = createName(Visibility.LIMITED);
+		Biography bio = createBiography(Visibility.LIMITED);
+
+		Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a2 = createAddress(Visibility.LIMITED, CLIENT_2);
+		Address a3 = createAddress(Visibility.LIMITED, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e2 = createEmail(Visibility.LIMITED, CLIENT_2);
+		Email e3 = createEmail(Visibility.LIMITED, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.LIMITED, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.LIMITED, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.LIMITED, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.LIMITED, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		// Check addresses
+		assertEquals(3, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(3, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(3, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_SomePrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PUBLIC);
+
+		Address a1 = createAddress(Visibility.PUBLIC, CLIENT_2);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PUBLIC, CLIENT_2);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e3 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PUBLIC, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PUBLIC, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PUBLIC, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertEquals(bio, p.getBiography());
+		// Check addresses
+		assertEquals(1, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertFalse(p.getAddresses().getAddress().contains(a2));
+		assertFalse(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(1, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertFalse(p.getEmails().getEmails().contains(e2));
+		assertFalse(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(1, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertFalse(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(1, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertFalse(p.getKeywords().getKeywords().contains(k2));
+		assertFalse(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(1, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o2));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(1, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertFalse(p.getResearcherUrls().getResearcherUrls().contains(r3));
+	}
+
+	@Test
+	public void testPerson_When_AllPrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+
+		Address a1 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Address a3 = createAddress(Visibility.PRIVATE, CLIENT_2);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Email e3 = createEmail(Visibility.PRIVATE, CLIENT_2);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_2);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_2);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_2);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		// Check addresses
+		assertEquals(0, p.getAddresses().getAddress().size());
+		// Check emails
+		assertEquals(0, p.getEmails().getEmails().size());
+		// Check ext ids
+		assertEquals(0, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		// Check keywords
+		assertEquals(0, p.getKeywords().getKeywords().size());
+		// Check other names
+		assertEquals(0, p.getOtherNames().getOtherNames().size());
+		// Check researcher urls
+		assertEquals(0, p.getResearcherUrls().getResearcherUrls().size());
+	}
+
+	@Test
+	public void testPerson_When_AllPrivate_Source_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+
+		Address a1 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Address a2 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Address a3 = createAddress(Visibility.PRIVATE, CLIENT_1);
+		Addresses addresses = new Addresses();
+		addresses.setAddress(new ArrayList<Address>(Arrays.asList(a1, a2, a3)));
+
+		Email e1 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Email e2 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Email e3 = createEmail(Visibility.PRIVATE, CLIENT_1);
+		Emails emails = new Emails();
+		emails.setEmails(new ArrayList<Email>(Arrays.asList(e1, e2, e3)));
+
+		Keyword k1 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keyword k2 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keyword k3 = createKeyword(Visibility.PRIVATE, CLIENT_1);
+		Keywords keywords = new Keywords();
+		keywords.setKeywords(new ArrayList<Keyword>(Arrays.asList(k1, k2, k3)));
+
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+
+		PersonExternalIdentifier ext1 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifier ext2 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifier ext3 = createPersonExternalIdentifier(Visibility.PRIVATE, CLIENT_1);
+		PersonExternalIdentifiers extIds = new PersonExternalIdentifiers();
+		extIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(Arrays.asList(ext1, ext2, ext3)));
+
+		ResearcherUrl r1 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrl r2 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrl r3 = createResearcherUrl(Visibility.PRIVATE, CLIENT_1);
+		ResearcherUrls researcherUrls = new ResearcherUrls();
+		researcherUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(Arrays.asList(r1, r2, r3)));
+
+		Person p = new Person();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setAddresses(addresses);
+		p.setEmails(emails);
+		p.setExternalIdentifiers(extIds);
+		p.setKeywords(keywords);
+		p.setOtherNames(otherNames);
+		p.setResearcherUrls(researcherUrls);
+
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		// Check addresses
+		assertEquals(3, p.getAddresses().getAddress().size());
+		assertTrue(p.getAddresses().getAddress().contains(a1));
+		assertTrue(p.getAddresses().getAddress().contains(a2));
+		assertTrue(p.getAddresses().getAddress().contains(a3));
+		// Check emails
+		assertEquals(3, p.getEmails().getEmails().size());
+		assertTrue(p.getEmails().getEmails().contains(e1));
+		assertTrue(p.getEmails().getEmails().contains(e2));
+		assertTrue(p.getEmails().getEmails().contains(e3));
+		// Check ext ids
+		assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext1));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext2));
+		assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().contains(ext3));
+		// Check keywords
+		assertEquals(3, p.getKeywords().getKeywords().size());
+		assertTrue(p.getKeywords().getKeywords().contains(k1));
+		assertTrue(p.getKeywords().getKeywords().contains(k2));
+		assertTrue(p.getKeywords().getKeywords().contains(k3));
+		// Check other names
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+		// Check researcher urls
+		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));		
+	}
+
+	@Test
+	public void testPerson_When_ReadLimitedToken_EmptyElement() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
+		Person p = new Person();
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+		assertNotNull(p);
+	}
+
 	/**
 	 * Utilities
 	 */
@@ -1218,14 +2095,58 @@ public class OrcidSecurityManagerTest {
 		return new Biography("Biography", v);
 	}
 
+	private Address createAddress(Visibility v, String sourceId) {
+		Address a = new Address();
+		a.setVisibility(v);
+		Iso3166Country[] all = Iso3166Country.values();
+		Random r = new Random();
+		int index = r.nextInt(all.length);
+		if (index < 0 || index >= all.length) {
+			index = 0;
+		}
+		a.setCountry(new Country(all[index]));
+		setSource(a, sourceId);
+		return a;
+	}
+
 	private OtherName createOtherName(Visibility v, String sourceId) {
 		OtherName otherName = new OtherName();
 		otherName.setContent("other-name-" + System.currentTimeMillis());
 		otherName.setVisibility(v);
-		Source source = new Source();
-		source.setSourceClientId(new SourceClientId(sourceId));
-		otherName.setSource(source);
+		setSource(otherName, sourceId);
 		return otherName;
+	}
+
+	private PersonExternalIdentifier createPersonExternalIdentifier(Visibility v, String sourceId) {
+		PersonExternalIdentifier p = new PersonExternalIdentifier();
+		p.setValue("ext-id-" + System.currentTimeMillis());
+		p.setVisibility(v);
+		setSource(p, sourceId);
+		return p;
+	}
+
+	private ResearcherUrl createResearcherUrl(Visibility v, String sourceId) {
+		ResearcherUrl r = new ResearcherUrl();
+		r.setUrl(new Url("http://orcid.org/test/" + System.currentTimeMillis()));
+		r.setVisibility(v);
+		setSource(r, sourceId);
+		return r;
+	}
+
+	private Email createEmail(Visibility v, String sourceId) {
+		Email email = new Email();
+		email.setEmail("test-email-" + System.currentTimeMillis() + "@test.orcid.org");
+		email.setVisibility(v);
+		setSource(email, sourceId);
+		return email;
+	}
+
+	private Keyword createKeyword(Visibility v, String sourceId) {
+		Keyword k = new Keyword();
+		k.setContent("keyword-" + System.currentTimeMillis());
+		k.setVisibility(v);
+		setSource(k, sourceId);
+		return k;
 	}
 
 	private Work createWork(Visibility v, String sourceId) {
@@ -1244,5 +2165,11 @@ public class OrcidSecurityManagerTest {
 		name.setFamilyName(new FamilyName("Family Name"));
 		name.setGivenNames(new GivenNames("Given Names"));
 		return name;
+	}
+
+	private void setSource(SourceAware element, String sourceId) {
+		Source source = new Source();
+		source.setSourceClientId(new SourceClientId(sourceId));
+		element.setSource(source);
 	}
 }
