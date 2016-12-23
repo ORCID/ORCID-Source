@@ -11835,69 +11835,7 @@ orcidNgModule.filter('startsWithLetter', function() {
     });
 
 
-/*
- * 6 - Angular Directives
- */
-
-
-//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
-orcidNgModule.directive('compile', function($compile) {
-    // directive factory creates a link function
-    return function(scope, element, attrs) {
-      scope.$watch(
-        function(scope) {
-           // watch the 'compile' expression for changes
-          return scope.$eval(attrs.compile);
-        },
-        function(value) {
-          // when the 'compile' expression changes
-          // assign it into the current DOM
-          element.html(value);
-
-          // compile the new DOM and link it to the current
-          // scope.
-          // NOTE: we only compile .childNodes so that
-          // we don't get into infinite loop compiling ourselves
-          $compile(element.contents())(scope);
-        }
-      );
-    };
-  });
-
-orcidNgModule.directive('resize', function ($window) {
-	return function ($scope, element) {
-		var w = angular.element($window);
-		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
-		$scope.getWindowWidth = function () {
-			return { 'w': getWindowWidth() };
-		};
-		$scope.$watch($scope.getWindowWidth, function (newValue, oldValue) {			
-            
-			$scope.windowWidth = newValue.w;
-			
-            
-            if($scope.windowWidth > 767){ /* Desktop view */
-            	$scope.menuVisible = true;
-            	$scope.searchVisible = true;
-            	$scope.settingsVisible = true;
-            }else{
-            	$scope.menuVisible = false;
-            	$scope.searchVisible = false;
-            	$scope.settingsVisible = false;
-            }
-            
-		}, true);
-	
-		w.bind('resize', function () {
-			$scope.$apply();
-		});
-	}
-});
-
-
-
-
-/* Angular Multi-selectbox */
+/* 7 - Angular Multiselect Module */
 angular.module('ui.multiselect', [])
 
 .factory('optionParser', ['$parse', function ($parse) {

@@ -1,0 +1,17 @@
+<div id="modal-email-unverified-container">
+    <div class="lightbox-container" id="modal-email-unverified">
+        <div class="row">
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <h4>{{content.your_primary_email}}</h4>
+                <p>{{content.ensure_future_access}}</p>
+                <p>{{content.ensure_future_access2}}
+                    <br />
+                    <a href="mailto:{{content.emailValue}}" target="_blank">{{content.emailValue}}</a>.
+                </p>
+                <p>{{content.ensure_future_access3}} <a target="_blank" href="{{content.knowledgebase}}'">{{content.ensure_future_access4}}</a> {{content.ensure_future_access5}} <a target="_blank" href="mailto:{{content.support}}">{{content.support}}</a>.</p>
+                <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">{{content.send_verification}}</button>
+                <a class="cancel-option inner-row" ng-click="closeColorBox()">{{btncancel}}</a>
+            </div>
+        </div>
+    </div>
+</div>
