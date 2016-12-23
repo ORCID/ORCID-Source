@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -70,9 +71,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 	protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     //Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
@@ -105,7 +105,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 
 	@Test
 	public void testViewResearcherUrlReadPublic() {
-		SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+		SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
 		Response r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
 		ResearcherUrl element = (ResearcherUrl) r.getEntity();
 		assertNotNull(element);
@@ -114,11 +114,15 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 
 	@Test
 	public void testViewResearcherUrlsReadPublic() {
-		SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+		SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
 		Response r = serviceDelegator.viewResearcherUrls(ORCID);
-		ResearcherUrls element = (ResearcherUrls) r.getEntity();
-		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		ResearcherUrls elements = (ResearcherUrls) r.getEntity();
+		assertNotNull(elements);
+		for(ResearcherUrl element : elements.getResearcherUrls()) {
+			if(!element.retrieveSourcePath().equals("APP-5555555555555555") && !Visibility.PUBLIC.equals(element.getVisibility())) {
+				fail("Element " + element.getPutCode() + " is not source of APP-5555555555555555 and is not public");
+			}
+		}
 	}
 
 	@Test
@@ -343,7 +347,6 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 		// Public works
 		Response r = serviceDelegator.viewResearcherUrls(ORCID);
 		assertNotNull(r);
-		assertEquals(ResearcherUrls.class.getName(), r.getEntity().getClass().getName());
 		ResearcherUrls ru = (ResearcherUrls) r.getEntity();
 		assertNotNull(ru);
 		Utils.verifyLastModified(ru.getLastModifiedDate());
@@ -374,7 +377,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 		try {
 			serviceDelegator.viewResearcherUrl(ORCID, 16L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
@@ -386,7 +389,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 		try {
 			serviceDelegator.viewResearcherUrl(ORCID, 17L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
