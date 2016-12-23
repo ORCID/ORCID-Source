@@ -209,9 +209,9 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                             // include all emails if present
                             try {
                                 Authentication authentication = getAuthentication();
-                                if (authentication != null) {
+                                if (authentication != null && messageToBeFiltered.getOrcidProfile() != null) {
                                     permissionChecker.checkPermissions(getAuthentication(), ScopePathType.EMAIL_READ_PRIVATE, messageToBeFiltered.getOrcidProfile()
-                                            .getOrcidIdentifier().getPath());
+                                            .retrieveOrcidPath());
                                     decision = TreeCleaningDecision.IGNORE;
                                 }
                             } catch (AccessControlException e) {
