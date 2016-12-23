@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,7 +31,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -41,12 +42,13 @@ import org.orcid.jaxb.model.common_rc4.SourceClientId;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.FamilyName;
+import org.orcid.jaxb.model.record_rc4.GivenNames;
 import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -66,12 +68,7 @@ public class OrcidSecurityManagerTest {
 	private final String ORCID_2 = "0000-0000-0000-0002";
 
 	private final String CLIENT_1 = "APP-0000000000000001";
-	private final String CLIENT_2 = "APP-0000000000000002";
-
-	@Before
-	public void before() {
-
-	}
+	private final String CLIENT_2 = "APP-0000000000000002";	
 
 	@After
 	public void after() {
@@ -919,6 +916,277 @@ public class OrcidSecurityManagerTest {
 		assertTrue(list.contains(o3));
 	}
 	
+	// ---- COLLECTIONS OF ELEMENTS ----
+	@Test(expected = OrcidUnauthorizedException.class)
+	public void testPersonalDetails_When_TokenForOtherUser() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		PersonalDetails p = new PersonalDetails();
+		orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		fail();
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPublic_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PUBLIC);
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+	}
+	
+	@Test
+	public void testPersonalDetails_When_SomeLimited_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.LIMITED);
+		Biography bio = createBiography(Visibility.PUBLIC);
+		OtherName o1 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertEquals(bio, p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(1, p.getOtherNames().getOtherNames().size());
+		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o3));		
+	}
+	
+	@Test
+	public void testPersonalDetails_When_SomePrivate_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PRIVATE);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertNull(p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(1, p.getOtherNames().getOtherNames().size());
+		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
+		assertFalse(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));		
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPrivate_NoSource_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		assertNotNull(p.getOtherNames());		
+		assertNull(p.getOtherNames().getOtherNames());
+		assertTrue(p.getOtherNames().getOtherNames().isEmpty());
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPrivate_Source_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));	
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPublic_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Name name = createName(Visibility.PUBLIC);
+		Biography bio = createBiography(Visibility.PUBLIC);
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));		
+	}
+	
+	@Test
+	public void testPersonalDetails_When_SomeLimited_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Name name = createName(Visibility.LIMITED);
+		Biography bio = createBiography(Visibility.LIMITED);
+		OtherName o1 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.LIMITED, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertEquals(name, p.getName());
+		assertEquals(bio, p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));
+	}
+	
+	@Test
+	public void testPersonalDetails_When_SomePrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PUBLIC);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PUBLIC, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertEquals(bio, p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(2, p.getOtherNames().getOtherNames().size());
+		assertFalse(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));	
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_2);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		assertNotNull(p.getOtherNames());		
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertTrue(p.getOtherNames().getOtherNames().isEmpty());
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPrivate_Source_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		Name name = createName(Visibility.PRIVATE);
+		Biography bio = createBiography(Visibility.PRIVATE);
+		OtherName o1 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o2 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherName o3 = createOtherName(Visibility.PRIVATE, CLIENT_1);
+		OtherNames otherNames = new OtherNames();
+		otherNames.setOtherNames(new ArrayList<OtherName>(Arrays.asList(o1, o2, o3)));
+		PersonalDetails p = new PersonalDetails();
+		p.setBiography(bio);
+		p.setName(name);
+		p.setOtherNames(otherNames);
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+		assertNull(p.getName());
+		assertNull(p.getBiography());
+		assertNotNull(p.getOtherNames());
+		assertNotNull(p.getOtherNames().getOtherNames());
+		assertEquals(3, p.getOtherNames().getOtherNames().size());
+		assertTrue(p.getOtherNames().getOtherNames().contains(o1));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o2));
+		assertTrue(p.getOtherNames().getOtherNames().contains(o3));			
+	}
+	
+	@Test
+	public void testPersonalDetails_When_AllPrivate_Source_ReadLimitedToken_EmptyElement() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		PersonalDetails p = new PersonalDetails();
+		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+		assertNotNull(p);
+	}
+	
 	/**
 	 * Utilities
 	 */
@@ -973,6 +1241,8 @@ public class OrcidSecurityManagerTest {
 		Name name = new Name();
 		name.setVisibility(v);
 		name.setCreditName(new CreditName("Credit Name"));
+		name.setFamilyName(new FamilyName("Family Name"));
+		name.setGivenNames(new GivenNames("Given Names"));
 		return name;
 	}
 }
