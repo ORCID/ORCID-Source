@@ -306,13 +306,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 			while (groupIt.hasNext()) {
 				PeerReviewGroup group = groupIt.next();
 				// Filter the list of elements
-				checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope);
-				// Clean external identifiers
-				if (group.getPeerReviewSummary().isEmpty()) {
-					groupIt.remove();
-				} else {
-					filterExternalIdentifiers(group);
-				}
+				checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope);				
 			}
 		}
 

@@ -36,6 +36,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.CreditName;
@@ -45,11 +48,24 @@ import org.orcid.jaxb.model.common_rc4.SourceClientId;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Educations;
+import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Employments;
+import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Fundings;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc4.Works;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.ExternalIDs;
 import org.orcid.jaxb.model.record_rc4.FamilyName;
 import org.orcid.jaxb.model.record_rc4.GivenNames;
 import org.orcid.jaxb.model.record_rc4.Keyword;
@@ -86,6 +102,20 @@ public class OrcidSecurityManagerTest {
 	private final String CLIENT_1 = "APP-0000000000000001";
 	private final String CLIENT_2 = "APP-0000000000000002";
 
+	private final String EXTID_1 = "extId1";
+	private final String EXTID_2 = "extId2";
+	private final String EXTID_3 = "extId3";
+	private final String EXTID_SHARED = "shared";
+	
+	@Resource
+	private WorkManagerReadOnly workManagerReadOnly;
+	
+	@Resource
+	private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+	
+	@Resource
+	private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+	
 	@After
 	public void after() {
 		SecurityContextTestUtils.setUpSecurityContextForAnonymous();
@@ -1206,7 +1236,7 @@ public class OrcidSecurityManagerTest {
 	// ---- PERSON ----
 	@Test(expected = OrcidUnauthorizedException.class)
 	public void testPerson_When_TokenForOtherUser() {
-		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
 		Person p = new Person();
 		orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.PERSON_READ_LIMITED);
 		fail();
@@ -2053,7 +2083,7 @@ public class OrcidSecurityManagerTest {
 		assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
 		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r1));
 		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r2));
-		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));		
+		assertTrue(p.getResearcherUrls().getResearcherUrls().contains(r3));
 	}
 
 	@Test
@@ -2062,6 +2092,397 @@ public class OrcidSecurityManagerTest {
 		Person p = new Person();
 		orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
 		assertNotNull(p);
+	}
+
+	// ---- ACTIVITIES ----
+	@Test(expected = OrcidUnauthorizedException.class)
+	public void testActivitiesSummary_When_TokenForOtherUser() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		ActivitiesSummary as = new ActivitiesSummary();
+		orcidSecurityManager.checkAndFilter(ORCID_2, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPublic_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		//Check educations
+		assertEquals(3, as.getEducations().getSummaries().size());
+		//Check employments
+		assertEquals(3, as.getEmployments().getSummaries().size());
+		//Check fundings
+		assertEquals(1, as.getFundings().getFundingGroup().size());
+		assertEquals(3, as.getFundings().getFundingGroup().get(0).getActivities().size());
+		assertTrue(as.getFundings().getFundingGroup().get(0).getActivities().contains(f1));
+		assertTrue(as.getFundings().getFundingGroup().get(0).getActivities().contains(f2));
+		assertTrue(as.getFundings().getFundingGroup().get(0).getActivities().contains(f3));
+		assertEquals(4, as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+		assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_1)));
+		assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_2)));
+		assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_3)));
+		assertTrue(as.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
+		//Check peer reviews
+		assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+		assertEquals(3, as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().size());
+		assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p1));
+		assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p2));
+		assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getActivities().contains(p3));
+		assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+		assertTrue(as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED, "peer-review")));
+		//Check works
+		assertEquals(1, as.getWorks().getWorkGroup().size());
+		assertEquals(3, as.getWorks().getWorkGroup().get(0).getActivities().size());
+		assertTrue(as.getWorks().getWorkGroup().get(0).getActivities().contains(w1));
+		assertTrue(as.getWorks().getWorkGroup().get(0).getActivities().contains(w2));
+		assertTrue(as.getWorks().getWorkGroup().get(0).getActivities().contains(w3));
+		assertEquals(4, as.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+		assertTrue(as.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_1)));
+		assertTrue(as.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_2)));
+		assertTrue(as.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_3)));
+		assertTrue(as.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().contains(getExtId(EXTID_SHARED)));
+	}
+
+	@Test
+	public void testActivitiesSummary_When_SomeLimited_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_SomePrivate_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPrivate_NoSource_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPrivate_Source_ReadPublicToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPublic_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_SomeLimited_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_SomePrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPrivate_NoSource_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_AllPrivate_Source_ReadLimitedToken() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		EducationSummary e1 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e2 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		EducationSummary e3 = createEducationSummary(Visibility.PUBLIC, CLIENT_2);
+		
+		EmploymentSummary em1 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em2 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);
+		EmploymentSummary em3 = createEmploymentSummary(Visibility.PUBLIC, CLIENT_2);		
+		
+		FundingSummary f1 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		FundingSummary f2 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		FundingSummary f3 = createFundingSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);				
+		
+		PeerReviewSummary p1 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		PeerReviewSummary p2 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		PeerReviewSummary p3 = createPeerReviewSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		WorkSummary w1 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_1);
+		WorkSummary w2 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_2);
+		WorkSummary w3 = createWorkSummary(Visibility.PUBLIC, CLIENT_2, EXTID_3);
+		
+		ActivitiesSummary as = new ActivitiesSummary();
+		as.setEducations(createEducations(e1, e2, e3));
+		as.setEmployments(createEmployments(em1, em2, em3));
+		as.setFundings(createFundings(f1,f2,f3));
+		as.setPeerReviews(createPeerReviews(p1,p2,p3));
+		as.setWorks(createWorks(w1,w2,w3));
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
+		fail();
+	}
+
+	@Test
+	public void testActivitiesSummary_When_ReadLimitedToken_EmptyElement() {
+		SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ACTIVITIES_READ_LIMITED);
+		ActivitiesSummary as = new ActivitiesSummary();
+		orcidSecurityManager.checkAndFilter(ORCID_1, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+		assertNotNull(as);
 	}
 
 	/**
@@ -2089,6 +2510,15 @@ public class OrcidSecurityManagerTest {
 			fail();
 		}
 		fail();
+	}
+
+	private Name createName(Visibility v) {
+		Name name = new Name();
+		name.setVisibility(v);
+		name.setCreditName(new CreditName("Credit Name"));
+		name.setFamilyName(new FamilyName("Family Name"));
+		name.setGivenNames(new GivenNames("Given Names"));
+		return name;
 	}
 
 	private Biography createBiography(Visibility v) {
@@ -2152,21 +2582,112 @@ public class OrcidSecurityManagerTest {
 	private Work createWork(Visibility v, String sourceId) {
 		Work work = new Work();
 		work.setVisibility(v);
-		Source source = new Source();
-		source.setSourceClientId(new SourceClientId(sourceId));
-		work.setSource(source);
+		setSource(work, sourceId);
 		return work;
 	}
 
-	private Name createName(Visibility v) {
-		Name name = new Name();
-		name.setVisibility(v);
-		name.setCreditName(new CreditName("Credit Name"));
-		name.setFamilyName(new FamilyName("Family Name"));
-		name.setGivenNames(new GivenNames("Given Names"));
-		return name;
+	private WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
+		WorkSummary work = new WorkSummary();
+		work.setVisibility(v);
+		ExternalID extId = new ExternalID();
+		extId.setValue(extIdValue);
+		ExternalIDs extIds = new ExternalIDs();
+		extIds.getExternalIdentifier().add(extId);
+		work.setExternalIdentifiers(extIds);
+		addSharedExtId(extIds);
+		setSource(work, sourceId);
+		return work;
 	}
 
+	private Works createWorks(WorkSummary ... elements) {
+		return workManagerReadOnly.groupWorks(new ArrayList<WorkSummary>(Arrays.asList(elements)), false);
+	} 
+	
+	private FundingSummary createFundingSummary(Visibility v, String sourceId, String extIdValue) {
+		FundingSummary f = new FundingSummary();
+		f.setVisibility(v);
+		setSource(f, sourceId);
+		ExternalID extId = new ExternalID();
+		extId.setValue(extIdValue);
+		ExternalIDs extIds = new ExternalIDs();
+		extIds.getExternalIdentifier().add(extId);
+		addSharedExtId(extIds);
+		f.setExternalIdentifiers(extIds);
+		return f;
+	}
+
+	private Fundings createFundings(FundingSummary ... elements) {
+		return profileFundingManagerReadOnly.groupFundings(new ArrayList<FundingSummary>(Arrays.asList(elements)), false);
+	}
+	
+	private PeerReviewSummary createPeerReviewSummary(Visibility v, String sourceId, String extIdValue) {
+		PeerReviewSummary p = new PeerReviewSummary();
+		p.setVisibility(v);
+		p.setGroupId(EXTID_SHARED);
+		setSource(p, sourceId);
+		ExternalID extId = new ExternalID();
+		extId.setValue(extIdValue);		
+		ExternalIDs extIds = new ExternalIDs();
+		extIds.getExternalIdentifier().add(extId);
+		addSharedExtId(extIds);
+		p.setExternalIdentifiers(extIds);
+		return p;
+	}
+
+	private PeerReviews createPeerReviews(PeerReviewSummary ... elements) {
+		return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)), true);
+	}
+	
+	private EducationSummary createEducationSummary(Visibility v, String sourceId) {
+		EducationSummary e = new EducationSummary();
+		e.setVisibility(v);
+		setSource(e, sourceId);
+		return e;
+
+	}
+
+	private Educations createEducations(EducationSummary ... elements) {
+		Educations e = new Educations();
+		for(EducationSummary s : elements) {
+			e.getSummaries().add(s);
+		}
+		return e;
+	} 
+	
+	private EmploymentSummary createEmploymentSummary(Visibility v, String sourceId) {
+		EmploymentSummary e = new EmploymentSummary();
+		e.setVisibility(v);
+		setSource(e, sourceId);
+		return e;
+	}
+
+	private Employments createEmployments(EmploymentSummary ... elements) {
+		Employments e = new Employments();
+		for(EmploymentSummary s : elements) {
+			e.getSummaries().add(s);
+		}
+		return e;
+	} 
+	
+	private void addSharedExtId(ExternalIDs extIds) {
+		ExternalID extId = new ExternalID();
+		extId.setValue(EXTID_SHARED);
+		extIds.getExternalIdentifier().add(extId);
+	}
+	
+	private ExternalID getExtId(String value) {
+		ExternalID extId = new ExternalID();
+		extId.setValue(value);
+		return extId;
+	}
+	
+	private ExternalID getExtId(String value, String type) {
+		ExternalID extId = new ExternalID();
+		extId.setValue(value);
+		extId.setType(type);
+		return extId;
+	}
+	
 	private void setSource(SourceAware element, String sourceId) {
 		Source source = new Source();
 		source.setSourceClientId(new SourceClientId(sourceId));
