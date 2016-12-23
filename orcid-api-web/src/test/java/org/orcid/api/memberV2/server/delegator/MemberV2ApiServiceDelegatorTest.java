@@ -3577,9 +3577,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(FundingSummary.class.getName(), r.getEntity().getClass().getName());        
                 
-        //Limited fail
+        //Limited that am the source of should work
+        serviceDelegator.viewFunding(ORCID, 11L);
+        serviceDelegator.viewFundingSummary(ORCID, 11L);
+        
+        //Limited that am not the source of should fail
         try {
-            serviceDelegator.viewFunding(ORCID, 11L);
+            serviceDelegator.viewFunding(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3588,7 +3592,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(ORCID, 11L);
+            serviceDelegator.viewFundingSummary(ORCID, 13L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -3596,9 +3600,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        //Private fail
+        //Private that am the source of should work
+        serviceDelegator.viewFunding(ORCID, 12L);
+        serviceDelegator.viewFundingSummary(ORCID, 12L);
+        
+        //Private am not the source of should fail
         try {
-            serviceDelegator.viewFunding(ORCID, 12L);
+            serviceDelegator.viewFunding(ORCID, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(ORCID, 14L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -4771,39 +4788,47 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(WorkSummary.class.getName(), r.getEntity().getClass().getName());        
                 
-        //Limited fail
-        try {
-            serviceDelegator.viewWork(ORCID, 12L);
+        //Limited where source is me, should work
+        serviceDelegator.viewWork(ORCID, 12L);
+        serviceDelegator.viewWorkSummary(ORCID, 12L);
+             
+        //Limited with other source should fail
+        try {        	
+            serviceDelegator.viewWork(ORCID, 14L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewWorkSummary(ORCID, 12L);
+            serviceDelegator.viewWorkSummary(ORCID, 14L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Private fail
+        //Private where am the source should work
+        serviceDelegator.viewWork(ORCID, 13L);
+        serviceDelegator.viewWorkSummary(ORCID, 13L);
+        
+        //Private with other source should fail
         try {
-            serviceDelegator.viewWork(ORCID, 13L);
+            serviceDelegator.viewWork(ORCID, 15L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewWork(ORCID, 13L);
+            serviceDelegator.viewWork(ORCID, 15L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
@@ -4827,21 +4852,26 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(OtherName.class.getName(), r.getEntity().getClass().getName());
         
-        //Limited fail
+        //Limited where am the source should work
+        serviceDelegator.viewOtherName(ORCID, 14L);
+        
+        //Limited where am not the source of should fail
         try {
-            serviceDelegator.viewOtherName(ORCID, 14L);
+            serviceDelegator.viewOtherName(ORCID, 16L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Private fail
+        //Private where am the source should work
+        serviceDelegator.viewOtherName(ORCID, 15L);
+        //Private where am not the source should work
         try {
-            serviceDelegator.viewOtherName(ORCID, 15L);
+            serviceDelegator.viewOtherName(ORCID, 17L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
@@ -4858,28 +4888,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Keywords k = (Keywords) r.getEntity();
         assertNotNull(k);
         verifyLastModified(k.getLastModifiedDate());
-        assertEquals(1, k.getKeywords().size());
-        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        assertEquals(3, k.getKeywords().size());
+        boolean found1 = false, found2 = false, found3 = false;
+        for(Keyword element : k.getKeywords()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 9) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 10) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 11) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
         
         r = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(r);
         assertEquals(Keyword.class.getName(), r.getEntity().getClass().getName());
         
-        //Limited fail
+        //Limited where am the source of should work
+        serviceDelegator.viewKeyword(ORCID, 10L);        
+        //Limited where am not the source of should fail
         try {
-            serviceDelegator.viewKeyword(ORCID, 10L);
+            serviceDelegator.viewKeyword(ORCID, 12L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Private fail
+        //Private where am the source of should work
+        serviceDelegator.viewKeyword(ORCID, 11L);
+        //Private where am not the source of should fail
         try {
-            serviceDelegator.viewKeyword(ORCID, 11L);
+            serviceDelegator.viewKeyword(ORCID, 13L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
@@ -4896,28 +4946,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Addresses a = (Addresses) r.getEntity();
         assertNotNull(a);
         verifyLastModified(a.getLastModifiedDate());
-        assertEquals(1, a.getAddress().size());
-        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+        assertEquals(3, a.getAddress().size());
+        boolean found9 = false, found10 = false, found11 = false;
+        for(Address address : a.getAddress()) {
+        	if(address.getPutCode() == 9) {
+        		found9 = true;
+        	} else if (address.getPutCode() == 10) {
+        		found10 = true;
+        	} else if (address.getPutCode() == 11) {
+        		found11 = true;
+        	} else {
+        		fail("Invalid put code " + address.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found9);
+        assertTrue(found10);
+        assertTrue(found11);
         
         r = serviceDelegator.viewAddress(ORCID, 9L);
         assertNotNull(r);
         assertEquals(Address.class.getName(), r.getEntity().getClass().getName());
         
-        //Limited fail
+        //Limited where am the source should work
+        serviceDelegator.viewAddress(ORCID, 10L);
+                
         try {
-            serviceDelegator.viewAddress(ORCID, 10L);
+        	//Limited am not the source should fail
+            serviceDelegator.viewAddress(ORCID, 12L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Private fail
+        //Private where am the source should work
+        serviceDelegator.viewAddress(ORCID, 11L);
         try {
-            serviceDelegator.viewAddress(ORCID, 11L);
+        	//Private am not the source should fail
+            serviceDelegator.viewAddress(ORCID, 13L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
@@ -4934,28 +5004,48 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
         verifyLastModified(p.getLastModifiedDate());
-        assertEquals(1, p.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), p.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, p.getExternalIdentifiers().size());
+        boolean found13 = false, found14 = false, found15 = false;
+        for(PersonExternalIdentifier element : p.getExternalIdentifiers()) {
+        	if(element.getPutCode() == 13) {
+        		found13 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found14 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found15 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found13);
+        assertTrue(found14);
+        assertTrue(found15);
         
         r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         assertNotNull(r);
         assertEquals(PersonExternalIdentifier.class.getName(), r.getEntity().getClass().getName());
         
+        //Limited am the source of should work
+        serviceDelegator.viewExternalIdentifier(ORCID, 14L);
+        
         //Limited fail
         try {
-            serviceDelegator.viewExternalIdentifier(ORCID, 14L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 16L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
         }
         
+        //Private am the source of should work
+        serviceDelegator.viewExternalIdentifier(ORCID, 15L);
         //Private fail
         try {
-            serviceDelegator.viewExternalIdentifier(ORCID, 15L);
+            serviceDelegator.viewExternalIdentifier(ORCID, 17L);
             fail();
-        } catch(OrcidUnauthorizedException e) {
+        } catch(AccessControlException e) {
             
         } catch(Exception e) {
             fail();
@@ -5003,16 +5093,32 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ResearcherUrls ru = (ResearcherUrls) r.getEntity();
         assertNotNull(ru);
         verifyLastModified(ru.getLastModifiedDate());
-        assertEquals(1, ru.getResearcherUrls().size());
-        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        assertEquals(3, ru.getResearcherUrls().size());
+        boolean found13 = false, found14 = false, found15 = false;
+        for(ResearcherUrl element : ru.getResearcherUrls()) {
+        	if(element.getPutCode() == 13) {
+        		found13 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found14 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found15 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found13);
+        assertTrue(found14);
+        assertTrue(found15);
         
         r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(r);
         assertEquals(ResearcherUrl.class.getName(), r.getEntity().getClass().getName());
-        
-        //Limited fail
+        //Limited am the source of should work
+        serviceDelegator.viewResearcherUrl(ORCID, 14L);
+        //Limited am not the source of should fail
         try {
-            serviceDelegator.viewResearcherUrl(ORCID, 14L);
+            serviceDelegator.viewResearcherUrl(ORCID, 16L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -5020,9 +5126,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
-        //Private fail
+        //Private am the source of should work
+        serviceDelegator.viewResearcherUrl(ORCID, 15L);
+        //Private am not the source of should fail
         try {
-            serviceDelegator.viewResearcherUrl(ORCID, 15L);
+            serviceDelegator.viewResearcherUrl(ORCID, 17L);
             fail();
         } catch(OrcidUnauthorizedException e) {
             
@@ -5063,9 +5171,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Credit Name", p.getName().getCreditName().getContent());
         assertEquals("Given Names", p.getName().getGivenNames().getContent());
         assertEquals("Family Name", p.getName().getFamilyName().getContent());
-        assertEquals(1, p.getOtherNames().getOtherNames().size());
-        assertEquals(Long.valueOf(13), p.getOtherNames().getOtherNames().get(0).getPutCode());
-        assertEquals("Other Name PUBLIC", p.getOtherNames().getOtherNames().get(0).getContent());
+        assertEquals(3, p.getOtherNames().getOtherNames().size());
+        
+        boolean found13 = false, found14 = false, found15 = false;
+        for(OtherName element : p.getOtherNames().getOtherNames()) {
+        	if(element.getPutCode() == 13) {
+        		found13 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found14 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found15 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found13);
+        assertTrue(found14);
+        assertTrue(found15);
         
         String otherOrcid = "0000-0000-0000-0002";
         SecurityContextTestUtils.setUpSecurityContext(otherOrcid, ScopePathType.READ_PUBLIC);
@@ -5098,9 +5221,25 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Addresses a = p.getAddresses();        
         assertNotNull(a);
         verifyLastModified(a.getLastModifiedDate());
-        assertEquals(1, a.getAddress().size());
-        verifyLastModified(a.getAddress().get(0).getLastModifiedDate());
-        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+        assertEquals(3, a.getAddress().size());
+        
+        boolean found1 = false, found2 = false, found3 = false;
+        for(Address element : a.getAddress()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 9) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 10) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 11) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);               
                 
         //Biography
         assertNotNull(p.getBiography());
@@ -5123,16 +5262,52 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
-                
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+        found1 = false;
+        found2 = false;
+        found3 = false;
+        for(PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 13) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        
         //Keywords
         assertNotNull(p.getKeywords());
         Keywords k = p.getKeywords();
         assertNotNull(k);
         verifyLastModified(k.getLastModifiedDate());
-        assertEquals(1, k.getKeywords().size());
-        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        assertEquals(3, k.getKeywords().size());
+        found1 = false;
+        found2 = false;
+        found3 = false;
+        for(Keyword element : k.getKeywords()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 9) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 10) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 11) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
         
         //Name
         assertNotNull(p.getName());
@@ -5145,16 +5320,52 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         OtherNames o = p.getOtherNames();
         assertNotNull(o);
         verifyLastModified(o.getLastModifiedDate());        
-        assertEquals(1, o.getOtherNames().size());
-        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        assertEquals(3, o.getOtherNames().size());
+        found1 = false;
+        found2 = false;
+        found3 = false;
+        for(OtherName element : o.getOtherNames()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 13) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
         
         //Researcher urls
         assertNotNull(p.getResearcherUrls());
         ResearcherUrls ru = p.getResearcherUrls();
         assertNotNull(ru);
         verifyLastModified(ru.getLastModifiedDate());        
-        assertEquals(1, ru.getResearcherUrls().size());
-        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        assertEquals(3, ru.getResearcherUrls().size());
+        found1 = false;
+        found2 = false;
+        found3 = false;
+        for(ResearcherUrl element : ru.getResearcherUrls()) {
+        	verifyLastModified(element.getLastModifiedDate());
+        	if(element.getPutCode() == 13) {
+        		found1 = true;
+        	} else if (element.getPutCode() == 14) {
+        		found2 = true;
+        	} else if (element.getPutCode() == 15) {
+        		found3 = true;
+        	} else {
+        		fail("Invalid put code " + element.getPutCode());
+        	}
+        	
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);        
         
         assertNotNull(p.getPath());
     }

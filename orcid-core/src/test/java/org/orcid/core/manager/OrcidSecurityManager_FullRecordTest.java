@@ -25,46 +25,23 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
-import javax.annotation.Resource;
-
-import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
-import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.Country;
-import org.orcid.jaxb.model.common_rc4.CreditName;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Source;
-import org.orcid.jaxb.model.common_rc4.SourceClientId;
-import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Educations;
 import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Employments;
 import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Fundings;
 import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Works;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.FamilyName;
-import org.orcid.jaxb.model.record_rc4.GivenNames;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.jaxb.model.record_rc4.Name;
@@ -76,46 +53,13 @@ import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc4.SourceAware;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class OrcidSecurityManager_fullRecordTest {
-
-	@Resource
-	private OrcidSecurityManager orcidSecurityManager;
-
-	private final String ORCID_1 = "0000-0000-0000-0001";
-	private final String ORCID_2 = "0000-0000-0000-0002";
-
-	private final String CLIENT_1 = "APP-0000000000000001";
-	private final String CLIENT_2 = "APP-0000000000000002";
-
-	private final String EXTID_1 = "extId1";
-	private final String EXTID_2 = "extId2";
-	private final String EXTID_3 = "extId3";
-	private final String EXTID_SHARED = "shared";
-
-	@Resource
-	private WorkManagerReadOnly workManagerReadOnly;
-
-	@Resource
-	private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
-
-	@Resource
-	private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
-
-	@After
-	public void after() {
-		SecurityContextTestUtils.setUpSecurityContextForAnonymous();
-	}
+public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTestBase {
 
 	@Test
 	public void testIShouldFail() {
@@ -1913,181 +1857,5 @@ public class OrcidSecurityManager_fullRecordTest {
 		Record record = new Record();
 		orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
 		assertNotNull(record);
-	}	
-
-	private Name createName(Visibility v) {
-		Name name = new Name();
-		name.setVisibility(v);
-		name.setCreditName(new CreditName("Credit Name"));
-		name.setFamilyName(new FamilyName("Family Name"));
-		name.setGivenNames(new GivenNames("Given Names"));
-		return name;
-	}
-
-	private Biography createBiography(Visibility v) {
-		return new Biography("Biography", v);
-	}
-
-	private Address createAddress(Visibility v, String sourceId) {
-		Address a = new Address();
-		a.setVisibility(v);
-		Iso3166Country[] all = Iso3166Country.values();
-		Random r = new Random();
-		int index = r.nextInt(all.length);
-		if (index < 0 || index >= all.length) {
-			index = 0;
-		}
-		a.setCountry(new Country(all[index]));
-		setSource(a, sourceId);
-		return a;
-	}
-
-	private OtherName createOtherName(Visibility v, String sourceId) {
-		OtherName otherName = new OtherName();
-		otherName.setContent("other-name-" + System.currentTimeMillis());
-		otherName.setVisibility(v);
-		setSource(otherName, sourceId);
-		return otherName;
-	}
-
-	private PersonExternalIdentifier createPersonExternalIdentifier(Visibility v, String sourceId) {
-		PersonExternalIdentifier p = new PersonExternalIdentifier();
-		p.setValue("ext-id-" + System.currentTimeMillis());
-		p.setVisibility(v);
-		setSource(p, sourceId);
-		return p;
-	}
-
-	private ResearcherUrl createResearcherUrl(Visibility v, String sourceId) {
-		ResearcherUrl r = new ResearcherUrl();
-		r.setUrl(new Url("http://orcid.org/test/" + System.currentTimeMillis()));
-		r.setVisibility(v);
-		setSource(r, sourceId);
-		return r;
-	}
-
-	private Email createEmail(Visibility v, String sourceId) {
-		Email email = new Email();
-		email.setEmail("test-email-" + System.currentTimeMillis() + "@test.orcid.org");
-		email.setVisibility(v);
-		setSource(email, sourceId);
-		return email;
-	}
-
-	private Keyword createKeyword(Visibility v, String sourceId) {
-		Keyword k = new Keyword();
-		k.setContent("keyword-" + System.currentTimeMillis());
-		k.setVisibility(v);
-		setSource(k, sourceId);
-		return k;
-	}	
-
-	private WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
-		WorkSummary work = new WorkSummary();
-		work.setVisibility(v);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		work.setExternalIdentifiers(extIds);
-		addSharedExtId(extIds);
-		setSource(work, sourceId);
-		return work;
-	}
-
-	private Works createWorks(WorkSummary... elements) {
-		return workManagerReadOnly.groupWorks(new ArrayList<WorkSummary>(Arrays.asList(elements)), false);
-	}
-
-	private FundingSummary createFundingSummary(Visibility v, String sourceId, String extIdValue) {
-		FundingSummary f = new FundingSummary();
-		f.setVisibility(v);
-		setSource(f, sourceId);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		addSharedExtId(extIds);
-		f.setExternalIdentifiers(extIds);
-		return f;
-	}
-
-	private Fundings createFundings(FundingSummary... elements) {
-		return profileFundingManagerReadOnly.groupFundings(new ArrayList<FundingSummary>(Arrays.asList(elements)),
-				false);
-	}
-
-	private PeerReviewSummary createPeerReviewSummary(Visibility v, String sourceId, String extIdValue) {
-		PeerReviewSummary p = new PeerReviewSummary();
-		p.setVisibility(v);
-		p.setGroupId(EXTID_SHARED);
-		setSource(p, sourceId);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		addSharedExtId(extIds);
-		p.setExternalIdentifiers(extIds);
-		return p;
-	}
-
-	private PeerReviews createPeerReviews(PeerReviewSummary... elements) {
-		return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)),
-				false);
-	}
-
-	private EducationSummary createEducationSummary(Visibility v, String sourceId) {
-		EducationSummary e = new EducationSummary();
-		e.setVisibility(v);
-		setSource(e, sourceId);
-		return e;
-	}
-
-	private Educations createEducations(EducationSummary... elements) {
-		Educations e = new Educations();
-		for (EducationSummary s : elements) {
-			e.getSummaries().add(s);
-		}
-		return e;
-	}
-
-	private EmploymentSummary createEmploymentSummary(Visibility v, String sourceId) {
-		EmploymentSummary e = new EmploymentSummary();
-		e.setVisibility(v);
-		setSource(e, sourceId);
-		return e;
-	}
-
-	private Employments createEmployments(EmploymentSummary... elements) {
-		Employments e = new Employments();
-		for (EmploymentSummary s : elements) {
-			e.getSummaries().add(s);
-		}
-		return e;
-	}
-
-	private void addSharedExtId(ExternalIDs extIds) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(EXTID_SHARED);
-		extIds.getExternalIdentifier().add(extId);
-	}
-
-	private ExternalID getExtId(String value) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(value);
-		return extId;
-	}
-
-	private ExternalID getExtId(String value, String type) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(value);
-		extId.setType(type);
-		return extId;
-	}
-
-	private void setSource(SourceAware element, String sourceId) {
-		Source source = new Source();
-		source.setSourceClientId(new SourceClientId(sourceId));
-		element.setSource(source);
-	}
+	}		
 }
