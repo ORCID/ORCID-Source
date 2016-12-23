@@ -547,11 +547,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 	}
 	
 	private boolean isNonClientCredentialScope(OAuth2Authentication oAuth2Authentication) {
-        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-        Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
-        for (ScopePathType scope : requestedScopes) {            
-            if (!scope.isClientCreditalScope()) {
-                return true;    
+		OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+        for (String scopeName : requestedScopes) {
+            ScopePathType scopePathType = ScopePathType.fromValue(scopeName);
+            if (!scopePathType.isClientCreditalScope()) {
+                return true;
             }
         }
         return false;
