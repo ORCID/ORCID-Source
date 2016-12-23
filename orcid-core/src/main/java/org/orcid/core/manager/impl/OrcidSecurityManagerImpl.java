@@ -594,6 +594,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
         
         String clientId = sourceManager.retrieveSourceOrcid();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
             Object principal = userAuthentication.getPrincipal();
@@ -605,11 +606,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             } else {
                 throw new OrcidUnauthorizedException("Missing user authentication");
             }
-        } else if (isNonClientCredentialScope(oAuth2Authentication)) {
-        	ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        	if(!clientIsProfileSource(clientId, profile)) {
-        		throw new IllegalStateException("Non client credential scope found in client request");
-        	}            
+        } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {        	        	
+        	throw new IllegalStateException("Non client credential scope found in client request");        	           
         }
     }
 }
