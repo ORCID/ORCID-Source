@@ -45,8 +45,6 @@ import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
@@ -231,12 +229,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
 	@Override
 	public void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope) {
+		checkAndFilter(orcid, elements, requiredScope, false);
+	}
+		
+	private void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
 		if(elements == null) {
 			return;
 		}
 		
 		//Check the token
-		isMyToken(orcid);
+		if(!tokenAlreadyChecked) {
+			isMyToken(orcid);
+		}		
 		
 		Iterator<? extends VisibilityType> it = elements.iterator();
 		while(it.hasNext()) {
@@ -246,7 +250,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 			} catch(Exception e) {
 				it.remove();
 			}
-		}		
+		}	
 	}
 
 	@Override
@@ -260,28 +264,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
 		// Educations
 		if (activities.getEducations() != null) {
-			Iterator<EducationSummary> it = activities.getEducations().getSummaries().iterator();
-			while (it.hasNext()) {
-				EducationSummary element = it.next();
-				try {
-					checkAndFilter(orcid, element, requiredScope, true);
-				} catch (Exception e) {
-					it.remove();
-				}
-			}
+			checkAndFilter(orcid, activities.getEducations().getSummaries(), requiredScope, true);
 		}
 
 		// Employments
 		if (activities.getEmployments() != null) {
-			Iterator<EmploymentSummary> it = activities.getEmployments().getSummaries().iterator();
-			while (it.hasNext()) {
-				EmploymentSummary element = it.next();
-				try {
-					checkAndFilter(orcid, element, requiredScope, true);
-				} catch (Exception e) {
-					it.remove();
-				}
-			}
+			checkAndFilter(orcid, activities.getEmployments().getSummaries(), requiredScope, true);			
 		}
 
 		// Funding
@@ -290,7 +278,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 			while (groupIt.hasNext()) {
 				FundingGroup group = groupIt.next();
 				// Filter the list of elements
-				checkAndFilter(orcid, group.getFundingSummary(), requiredScope);
+				checkAndFilter(orcid, group.getFundingSummary(), requiredScope, true);
 				// Clean external identifiers
 				if (group.getFundingSummary().isEmpty()) {
 					groupIt.remove();
@@ -306,7 +294,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 			while (groupIt.hasNext()) {
 				PeerReviewGroup group = groupIt.next();
 				// Filter the list of elements
-				checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope);	
+				checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope, true);	
 				if(group.getPeerReviewSummary().isEmpty()) {
 					groupIt.remove();
 				}
@@ -319,7 +307,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 			while (groupIt.hasNext()) {
 				WorkGroup group = groupIt.next();
 				// Filter the list of elements
-				checkAndFilter(orcid, group.getWorkSummary(), requiredScope);
+				checkAndFilter(orcid, group.getWorkSummary(), requiredScope, true);
 				// Clean external identifiers
 				if (group.getWorkSummary().isEmpty()) {
 					groupIt.remove();
@@ -340,7 +328,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 		isMyToken(orcid);				
 		
 		if(personalDetails.getOtherNames() != null) {
-			checkAndFilter(orcid, personalDetails.getOtherNames().getOtherNames(), requiredScope);
+			checkAndFilter(orcid, personalDetails.getOtherNames().getOtherNames(), requiredScope, true);
 		}
 		
 		if(personalDetails.getBiography() != null) {
@@ -370,7 +358,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 		isMyToken(orcid);
 		
 		if(person.getAddresses() != null) {
-			checkAndFilter(orcid, person.getAddresses().getAddress(), requiredScope);
+			checkAndFilter(orcid, person.getAddresses().getAddress(), requiredScope, true);
 		}
 		
 		if(person.getBiography() != null) {
@@ -382,31 +370,31 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 		}
 		
 		if(person.getEmails() != null) {
-			checkAndFilter(orcid, person.getEmails().getEmails(), requiredScope);
+			checkAndFilter(orcid, person.getEmails().getEmails(), requiredScope, true);
 		}
 		
 		if(person.getExternalIdentifiers() != null) {
-			checkAndFilter(orcid, person.getExternalIdentifiers().getExternalIdentifiers(), requiredScope);
+			checkAndFilter(orcid, person.getExternalIdentifiers().getExternalIdentifiers(), requiredScope, true);
 		}
 		
 		if(person.getKeywords() != null) {
-			checkAndFilter(orcid, person.getKeywords().getKeywords(), requiredScope);
+			checkAndFilter(orcid, person.getKeywords().getKeywords(), requiredScope, true);
 		}
 		
 		if(person.getName() != null) {
 			try {
-				checkAndFilter(orcid, person.getName(), requiredScope);
+				checkAndFilter(orcid, person.getName(), requiredScope, true);
 			} catch(Exception e) {
 				person.setName(null);
 			}
 		}
 		
 		if(person.getOtherNames() != null) {
-			checkAndFilter(orcid, person.getOtherNames().getOtherNames(), requiredScope);
+			checkAndFilter(orcid, person.getOtherNames().getOtherNames(), requiredScope, true);
 		}
 		
 		if(person.getResearcherUrls() != null) {
-			checkAndFilter(orcid, person.getResearcherUrls().getResearcherUrls(), requiredScope);
+			checkAndFilter(orcid, person.getResearcherUrls().getResearcherUrls(), requiredScope, true);
 		}
 	}
 
@@ -415,6 +403,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 		if(record == null) {
 			return;
 		}
+		
+		//Check the token
+		isMyToken(orcid);
 		
 		if(record.getActivitiesSummary() != null) {
 			checkAndFilter(orcid, record.getActivitiesSummary(), requiredScope);

@@ -121,6 +121,11 @@ public class OrcidSecurityManagerTest {
 		SecurityContextTestUtils.setUpSecurityContextForAnonymous();
 	}
 
+	@Test
+	public void testIShouldFail() {
+		fail();
+	}
+	
 	/**
 	 * =================== checkScopes test's ===================
 	 */
@@ -3203,7 +3208,6 @@ public class OrcidSecurityManagerTest {
 		e.setVisibility(v);
 		setSource(e, sourceId);
 		return e;
-
 	}
 
 	private Educations createEducations(EducationSummary... elements) {
