@@ -24,8 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
@@ -33,6 +37,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.integration.api.helper.APIRequestType;
+import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
 import org.orcid.jaxb.model.error_rc4.OrcidError;
@@ -51,6 +57,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -61,6 +68,9 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
 
+	@Resource
+    private OauthHelper oauthHelper;
+	
     @BeforeClass
     public static void beforeClass() {
         BBBUtil.revokeApplicationsAccess(webDriver);
@@ -71,6 +81,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testInvalidTokenResponse() throws IOException {
     	ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), "invalid_token");
@@ -84,10 +95,28 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         }
         
         assertNotNull(result);
-        OrcidError error = JsonUtils.readObjectFromJsonString(result, OrcidError.class);
+        HashMap<String, String> error = JsonUtils.readObjectFromJsonString(result, HashMap.class);
         assertNotNull(error);
-        assertEquals(Integer.valueOf(9038), error.getErrorCode());
-        assertEquals("Access token is invalid", error.getDeveloperMessage());
+        assertEquals("invalid_token", error.get("error"));
+        assertEquals("Invalid access token: invalid_token", error.get("error_description"));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testInvalidClientResponse() throws IOException {
+    	MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", "APP-0000000000000000");
+        params.add("client_secret", "clientSecret");
+        params.add("grant_type", "client_credentials");
+        params.add("scope", "/read-public");
+        ClientResponse response = oauthHelper.getResponse(params, APIRequestType.MEMBER);        
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        String result = response.getEntity(String.class);
+        assertNotNull(result);        
+		HashMap<String, String> error = JsonUtils.readObjectFromJsonString(result, HashMap.class);
+        assertNotNull(error);
+        assertEquals("invalid_client", error.get("error"));
+        assertEquals("Client not found: APP-0000000000000000", error.get("error_description"));
     }
     
     @Test
