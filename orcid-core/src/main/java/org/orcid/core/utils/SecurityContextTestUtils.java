@@ -38,6 +38,8 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
 
 public class SecurityContextTestUtils {
 
+	public final static String DEFAULT_CLIENT_ID = "APP-5555555555555555"; 
+	
     static public void setUpSecurityContext() {
         setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
     }
@@ -47,7 +49,7 @@ public class SecurityContextTestUtils {
     }
        
     static public void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
-        setUpSecurityContext(userOrcid, "APP-5555555555555555", scopePathTypes);
+        setUpSecurityContext(userOrcid, DEFAULT_CLIENT_ID, scopePathTypes);
     }
     
     static public void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {

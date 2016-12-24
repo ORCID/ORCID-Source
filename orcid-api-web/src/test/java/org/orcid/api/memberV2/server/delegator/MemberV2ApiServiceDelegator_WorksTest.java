@@ -123,7 +123,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 		Response r = serviceDelegator.viewWork(ORCID, 11L);
 		Work element = (Work) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 		Response r = serviceDelegator.viewWorkSummary(ORCID, 11L);
 		WorkSummary element = (WorkSummary) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

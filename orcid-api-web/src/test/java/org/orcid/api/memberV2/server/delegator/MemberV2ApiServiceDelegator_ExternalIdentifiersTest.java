@@ -107,7 +107,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
 		Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
 		PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -116,7 +116,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
 		Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
 		PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

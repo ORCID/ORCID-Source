@@ -109,7 +109,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
 		ResearcherUrl element = (ResearcherUrl) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, SecurityContextTestUtils.DEFAULT_CLIENT_ID);
 	}
 
 	@Test

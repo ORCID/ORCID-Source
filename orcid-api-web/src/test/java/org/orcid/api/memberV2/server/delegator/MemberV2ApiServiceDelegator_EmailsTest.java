@@ -94,7 +94,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEmails(ORCID);
 		Emails element = (Emails) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 
 	}
 

@@ -106,7 +106,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEducation(ORCID, 20L);
 		Education element = (Education) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test(expected = OrcidUnauthorizedException.class)
@@ -121,7 +121,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEducations(ORCID);
 		Educations element = (Educations) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEducationSummary(ORCID, 20L);
 		EducationSummary element = (EducationSummary) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

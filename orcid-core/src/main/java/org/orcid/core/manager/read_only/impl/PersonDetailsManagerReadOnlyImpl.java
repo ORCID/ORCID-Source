@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
+import java.util.ArrayList;
+
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
@@ -26,9 +28,21 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherName;
+import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
     
@@ -86,13 +100,48 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Person person = new Person();        
         person.setName(recordNameManager.getRecordName(orcid, lastModifiedTime));
         person.setBiography(biographyManager.getBiography(orcid, lastModifiedTime));
-        
-        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
-        person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
-        person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
-        person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
-        person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
-        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));                   
+                
+        Addresses addresses = addressManager.getAddresses(orcid, lastModifiedTime);
+        if(addresses.getAddress() != null) {
+        	Addresses filteredAddresses = new Addresses();
+        	filteredAddresses.setAddress(new ArrayList<Address>(addresses.getAddress()));
+        	person.setAddresses(filteredAddresses);
+        }                
+                
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
+        if(extIds.getExternalIdentifiers() != null) {
+        	PersonExternalIdentifiers filteredExtIds = new PersonExternalIdentifiers();
+        	filteredExtIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()));
+        	person.setExternalIdentifiers(filteredExtIds);
+        }        
+                
+        Keywords keywords = profileKeywordManager.getKeywords(orcid, lastModifiedTime); 
+        if(keywords.getKeywords() != null) {
+        	Keywords filteredKeywords = new Keywords();
+        	filteredKeywords.setKeywords(new ArrayList<Keyword>(keywords.getKeywords()));
+        	person.setKeywords(filteredKeywords);
+        }        
+                
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
+        if(otherNames.getOtherNames() != null) {
+        	OtherNames filteredOtherNames = new OtherNames();
+        	filteredOtherNames.setOtherNames(new ArrayList<OtherName>(otherNames.getOtherNames()));
+        	person.setOtherNames(filteredOtherNames);
+        }        
+                
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime);
+        if(rUrls.getResearcherUrls() != null) {
+        	ResearcherUrls filteredRUrls = new ResearcherUrls();
+        	filteredRUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(rUrls.getResearcherUrls()));
+        	person.setResearcherUrls(filteredRUrls);  
+        }        
+                
+        Emails emails = emailManager.getEmails(orcid, lastModifiedTime);
+        if(emails.getEmails() != null) {
+        	Emails filteredEmails = new Emails();
+        	filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+        	person.setEmails(filteredEmails);
+        }                
         return person;
     }
 
@@ -110,13 +159,49 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if(bio != null) {
             person.setBiography(bio);
         }
-                        
-        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
-        person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
-        person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
-        person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
-        person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
-        person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
+        
+        Addresses addresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        if(addresses.getAddress() != null) {
+        	Addresses filteredAddresses = new Addresses();
+        	filteredAddresses.setAddress(new ArrayList<Address>(addresses.getAddress()));
+        	person.setAddresses(filteredAddresses);
+        }                
+                
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        if(extIds.getExternalIdentifiers() != null) {
+        	PersonExternalIdentifiers filteredExtIds = new PersonExternalIdentifiers();
+        	filteredExtIds.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()));
+        	person.setExternalIdentifiers(filteredExtIds);
+        }        
+                
+        Keywords keywords = profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime); 
+        if(keywords.getKeywords() != null) {
+        	Keywords filteredKeywords = new Keywords();
+        	filteredKeywords.setKeywords(new ArrayList<Keyword>(keywords.getKeywords()));
+        	person.setKeywords(filteredKeywords);
+        }        
+                
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        if(otherNames.getOtherNames() != null) {
+        	OtherNames filteredOtherNames = new OtherNames();
+        	filteredOtherNames.setOtherNames(new ArrayList<OtherName>(otherNames.getOtherNames()));
+        	person.setOtherNames(filteredOtherNames);
+        }        
+                
+        ResearcherUrls rUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
+        if(rUrls.getResearcherUrls() != null) {
+        	ResearcherUrls filteredRUrls = new ResearcherUrls();
+        	filteredRUrls.setResearcherUrls(new ArrayList<ResearcherUrl>(rUrls.getResearcherUrls()));
+        	person.setResearcherUrls(filteredRUrls);  
+        }        
+                
+        Emails emails = emailManager.getPublicEmails(orcid, lastModifiedTime);
+        if(emails.getEmails() != null) {
+        	Emails filteredEmails = new Emails();
+        	filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+        	person.setEmails(filteredEmails);
+        }
+        
         return person;
     }
 }

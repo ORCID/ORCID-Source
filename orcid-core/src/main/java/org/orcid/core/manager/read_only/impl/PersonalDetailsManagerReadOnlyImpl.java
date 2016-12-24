@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
@@ -26,6 +28,7 @@ import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.utils.DateUtils;
@@ -71,8 +74,12 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         }
                 
         OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);        
-        if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {            
-            personalDetails.setOtherNames(otherNames);            
+        if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {                    	
+        	//Lets copy the list so we don't modify the cached collection 
+        	List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());         	        
+        	OtherNames filteredOtherNames = new OtherNames();
+        	filteredOtherNames.setOtherNames(filteredList);
+        	personalDetails.setOtherNames(filteredOtherNames);            
         }                       
                 
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {                       
@@ -102,7 +109,11 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         
         OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);        
         if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
-            personalDetails.setOtherNames(otherNames);  
+        	//Lets copy the list so we don't modify the cached collection 
+        	List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());         	
+        	OtherNames filteredOtherNames = new OtherNames();
+        	filteredOtherNames.setOtherNames(filteredList);
+        	personalDetails.setOtherNames(filteredOtherNames);   
         }                
         
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
@@ -110,5 +121,5 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         }
         
         return personalDetails;
-    }        
+    }                
 }

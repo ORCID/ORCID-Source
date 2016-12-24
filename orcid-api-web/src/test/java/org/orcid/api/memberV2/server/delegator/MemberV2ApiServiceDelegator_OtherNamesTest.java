@@ -106,7 +106,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
 		Response r = serviceDelegator.viewOtherName(ORCID, 13L);
 		OtherName element = (OtherName) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -115,7 +115,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
 		Response r = serviceDelegator.viewOtherNames(ORCID);
 		OtherNames element = (OtherNames) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

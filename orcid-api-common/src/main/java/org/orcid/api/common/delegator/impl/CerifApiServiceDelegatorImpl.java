@@ -16,6 +16,7 @@
  */
 package org.orcid.api.common.delegator.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -92,7 +93,10 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
         List<PersonExternalIdentifier> extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifiers();
-        orcidSecurityManager.checkAndFilter(orcid, extIds, ScopePathType.READ_LIMITED);
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<PersonExternalIdentifier> filteredExtIds = new ArrayList<PersonExternalIdentifier>(extIds); 
+        orcidSecurityManager.checkAndFilter(orcid, filteredExtIds, ScopePathType.READ_LIMITED);
         
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
         
@@ -102,7 +106,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         
         return Response.ok(
                 new Cerif16Builder()
-                .addPerson(orcid, given, family, creditname, extIds)
+                .addPerson(orcid, given, family, creditname, filteredExtIds)
                 .concatPublications(as, orcid, false)
                 .concatProducts(as, orcid, false).build()).build();
     }

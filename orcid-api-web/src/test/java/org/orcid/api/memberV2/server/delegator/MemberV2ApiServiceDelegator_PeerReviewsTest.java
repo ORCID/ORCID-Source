@@ -116,7 +116,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
 		PeerReview element = (PeerReview) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
 		PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

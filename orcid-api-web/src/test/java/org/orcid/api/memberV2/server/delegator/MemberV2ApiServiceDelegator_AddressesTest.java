@@ -108,7 +108,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 		Response r = serviceDelegator.viewAddresses(ORCID);
 		Addresses element = (Addresses) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -117,7 +117,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 		Response r = serviceDelegator.viewAddress(ORCID, 9L);
 		Address element = (Address) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

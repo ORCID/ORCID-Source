@@ -16,9 +16,9 @@
  */
 package org.orcid.test.helper;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.common_rc4.Country;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
@@ -70,99 +71,108 @@ import org.orcid.jaxb.model.record_rc4.WorkTitle;
 import org.orcid.jaxb.model.record_rc4.WorkType;
 
 public class Utils {
-	public static void assertIsPublic(VisibilityType v) {
-    	assertEquals(Visibility.PUBLIC, v.getVisibility());
+	public static void assertIsPublicOrSource(VisibilityType v, String sourceId) {
+		if(v instanceof Filterable) {
+			Filterable f = (Filterable) v;
+			if(f.retrieveSourcePath().equals(sourceId)) {
+				return;
+			}
+		}
+		
+		if(!Visibility.PUBLIC.equals(v.getVisibility())) {
+			fail("Not public nor source");			
+		}    	
     }
     
-    public static void assertIsPublic(ActivitiesContainer c) {
+    public static void assertIsPublicOrSource(ActivitiesContainer c, String sourceId) {
     	Collection<? extends Activity> activities = c.retrieveActivities();
     	for(Activity a : activities) {
-    		assertIsPublic(a);
+    		assertIsPublicOrSource(a, sourceId);
     	}
     }
     
-    public static void assertIsPublic(Addresses elements) {
+    public static void assertIsPublicOrSource(Addresses elements, String sourceId) {
     	if(elements == null || elements.getAddress() == null) {
     		return;    		
     	}
     	
     	for(Address e : elements.getAddress()) {
-    		assertIsPublic(e);
+    		assertIsPublicOrSource(e, sourceId);
     	}
     }
     
-	public static void assertIsPublic(Keywords elements) {
+	public static void assertIsPublicOrSource(Keywords elements, String sourceId) {
 		if(elements == null || elements.getKeywords() == null) {
     		return;    		
     	}
     	
     	for(Keyword e : elements.getKeywords()) {
-    		assertIsPublic(e);
+    		assertIsPublicOrSource(e, sourceId);
     	}
 	}
 	
-	public static void assertIsPublic(ResearcherUrls elements) {
+	public static void assertIsPublicOrSource(ResearcherUrls elements, String sourceId) {
 		if(elements == null || elements.getResearcherUrls() == null) {
     		return;    		
     	}
     	
     	for(ResearcherUrl e : elements.getResearcherUrls()) {
-    		assertIsPublic(e);
+    		assertIsPublicOrSource(e, sourceId);
     	}
 	}
 	
-	public static void assertIsPublic(PersonExternalIdentifiers elements) {
+	public static void assertIsPublicOrSource(PersonExternalIdentifiers elements, String sourceId) {
 		if(elements == null || elements.getExternalIdentifiers() == null) {
     		return;    		
     	}
     	
     	for(PersonExternalIdentifier e : elements.getExternalIdentifiers()) {
-    		assertIsPublic(e);
+    		assertIsPublicOrSource(e, sourceId);
     	}
 	}
 	
-	public static void assertIsPublic(Emails elements) {
+	public static void assertIsPublicOrSource(Emails elements, String sourceId) {
 		if (elements == null || elements.getEmails() == null) {
 			return;
 		}
 
 		for (Email e : elements.getEmails()) {
-			assertIsPublic(e);
+			assertIsPublicOrSource(e, sourceId);
 		}
 	}
 
-	public static void assertIsPublic(OtherNames elements) {
+	public static void assertIsPublicOrSource(OtherNames elements, String sourceId) {
 		if (elements == null || elements.getOtherNames() == null) {
 			return;
 		}
 
 		for (OtherName e : elements.getOtherNames()) {
-			assertIsPublic(e);
+			assertIsPublicOrSource(e, sourceId);
 		}
 	}
 
-	public static void assertIsPublic(PersonalDetails p) {
+	public static void assertIsPublicOrSource(PersonalDetails p, String sourceId) {
 		if (p == null) {
 			return;
 		}
 
-		assertIsPublic(p.getBiography());
-		assertIsPublic(p.getOtherNames());
-		assertIsPublic(p.getName());
+		assertIsPublicOrSource(p.getBiography(), sourceId);
+		assertIsPublicOrSource(p.getOtherNames(), sourceId);
+		assertIsPublicOrSource(p.getName(), sourceId);
 	}
 
-	public static void assertIsPublic(Person p) {
+	public static void assertIsPublicOrSource(Person p, String sourceId) {
 		if (p == null) {
 			return;
 		}
-		assertIsPublic(p.getAddresses());
-		assertIsPublic(p.getBiography());
-		assertIsPublic(p.getEmails());
-		assertIsPublic(p.getExternalIdentifiers());
-		assertIsPublic(p.getKeywords());
-		assertIsPublic(p.getName());
-		assertIsPublic(p.getOtherNames());
-		assertIsPublic(p.getResearcherUrls());
+		assertIsPublicOrSource(p.getAddresses(), sourceId);
+		assertIsPublicOrSource(p.getBiography(), sourceId);
+		assertIsPublicOrSource(p.getEmails(), sourceId);
+		assertIsPublicOrSource(p.getExternalIdentifiers(), sourceId);
+		assertIsPublicOrSource(p.getKeywords(), sourceId);
+		assertIsPublicOrSource(p.getName(), sourceId);
+		assertIsPublicOrSource(p.getOtherNames(), sourceId);
+		assertIsPublicOrSource(p.getResearcherUrls(), sourceId);
 	}
     
     public static void verifyLastModified(LastModifiedDate l) {

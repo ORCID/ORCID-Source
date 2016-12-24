@@ -124,8 +124,8 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		// Verify everything inside is public
 		Record record = (Record) response.getEntity();
 		assertNotNull(record);
-		Utils.assertIsPublic(record.getActivitiesSummary());
-		Utils.assertIsPublic(record.getPerson());
+		Utils.assertIsPublicOrSource(record.getActivitiesSummary(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
+		Utils.assertIsPublicOrSource(record.getPerson(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
 	}
 
 	@Test
@@ -134,8 +134,8 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		Response r = serviceDelegator.viewRecord(ORCID);
 		Record record = (Record) r.getEntity();
 		assertNotNull(record);
-		Utils.assertIsPublic(record.getActivitiesSummary());
-		Utils.assertIsPublic(record.getPerson());
+		Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "some-client");
+		Utils.assertIsPublicOrSource(record.getPerson(), "some-client");
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		Response r = serviceDelegator.viewActivities(ORCID);
 		ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
 		assertNotNull(as);
-		Utils.assertIsPublic(as);
+		Utils.assertIsPublicOrSource(as, "some-client");
 	}
 
 	@Test(expected = OrcidUnauthorizedException.class)
@@ -345,7 +345,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		Response r = serviceDelegator.viewPersonalDetails(ORCID);
 		PersonalDetails element = (PersonalDetails) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -354,7 +354,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		Response r = serviceDelegator.viewPerson(ORCID);
 		Person element = (Person) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -1214,44 +1214,117 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 	}
 
 	private void testActivities(ActivitiesSummary as, String orcid) {
+		boolean found1 = false, found2 = false, found3 = false;
 		// This is more an utility that will work only for 0000-0000-0000-0003
 		assertEquals("0000-0000-0000-0003", orcid);
+		
 		assertNotNull(as);
 		Utils.verifyLastModified(as.getLastModifiedDate());
 		assertNotNull(as.getEducations());
-		assertEquals(1, as.getEducations().getSummaries().size());
-		Utils.verifyLastModified(as.getEducations().getLastModifiedDate());
-		Utils.verifyLastModified(as.getEducations().getSummaries().get(0).getLastModifiedDate());
-		assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+		assertEquals(3, as.getEducations().getSummaries().size());
+		
+		for(EducationSummary element : as.getEducations().getSummaries()) {
+			if(element.getPutCode().equals(Long.valueOf(20))) {
+				found1 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(21))) {
+				found2 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(22))) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		found1 = found2 = found3 = false;
+		
 		assertNotNull(as.getEmployments());
-		assertEquals(1, as.getEmployments().getSummaries().size());
-		Utils.verifyLastModified(as.getEmployments().getLastModifiedDate());
-		Utils.verifyLastModified(as.getEmployments().getSummaries().get(0).getLastModifiedDate());
-		assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+		assertEquals(3, as.getEmployments().getSummaries().size());
+		
+		for(EmploymentSummary element : as.getEmployments().getSummaries()) {
+			if(element.getPutCode().equals(Long.valueOf(17))) {
+				found1 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(18))) {
+				found2 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(19))) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		found1 = found2 = found3 = false;
+		
 		assertNotNull(as.getFundings());
-		assertEquals(1, as.getFundings().getFundingGroup().size());
-		Utils.verifyLastModified(as.getFundings().getLastModifiedDate());
-		Utils.verifyLastModified(as.getFundings().getFundingGroup().get(0).getLastModifiedDate());
-		Utils.verifyLastModified(as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate());
-		assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
-		assertEquals(Long.valueOf(10),
-				as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+		assertEquals(3, as.getFundings().getFundingGroup().size());
+		
+		for(FundingGroup group : as.getFundings().getFundingGroup()) {
+			assertEquals(1, group.getFundingSummary().size());
+			FundingSummary element = group.getFundingSummary().get(0);
+			if(element.getPutCode().equals(Long.valueOf(10))) {
+				found1 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(11))) {
+				found2 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(12))) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		found1 = found2 = found3 = false;
+		
 		assertNotNull(as.getPeerReviews());
-		assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-		Utils.verifyLastModified(as.getPeerReviews().getLastModifiedDate());
-		Utils.verifyLastModified(as.getPeerReviews().getPeerReviewGroup().get(0).getLastModifiedDate());
-		Utils.verifyLastModified(
-				as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
-		assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
-		assertEquals(Long.valueOf(9),
-				as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+		assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
+		
+		for(PeerReviewGroup group : as.getPeerReviews().getPeerReviewGroup()) {
+			assertEquals(1, group.getPeerReviewSummary().size());
+			PeerReviewSummary element = group.getPeerReviewSummary().get(0);
+			if(element.getPutCode().equals(Long.valueOf(9))) {
+				found1 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(10))) {
+				found2 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(11))) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		found1 = found2 = found3 = false;
+		
 		assertNotNull(as.getWorks());
-		assertEquals(1, as.getWorks().getWorkGroup().size());
-		Utils.verifyLastModified(as.getWorks().getLastModifiedDate());
-		Utils.verifyLastModified(as.getWorks().getWorkGroup().get(0).getLastModifiedDate());
-		Utils.verifyLastModified(as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getLastModifiedDate());
-		assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-		assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+		assertEquals(3, as.getWorks().getWorkGroup().size());
+		
+		for(WorkGroup group : as.getWorks().getWorkGroup()) {
+			assertEquals(1, group.getWorkSummary().size());
+			WorkSummary element = group.getWorkSummary().get(0);
+			if(element.getPutCode().equals(Long.valueOf(11))) {
+				found1 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(12))) {
+				found2 = true;
+			} else if(element.getPutCode().equals(Long.valueOf(13))) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		found1 = found2 = found3 = false;
 	}
 
 	private void testPerson(Person p, String orcid) {
@@ -1297,9 +1370,29 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 		Emails email = p.getEmails();
 		assertNotNull(email);
 		Utils.verifyLastModified(email.getLastModifiedDate());
-		assertEquals(1, email.getEmails().size());
+		assertEquals(3, email.getEmails().size());
 		assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
 
+		found1 = false;
+		found2 = false;
+		found3 = false;
+		
+		for(Email element : email.getEmails()) {
+			if(element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
+				found1 = true;
+			} else if(element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+				found2 = true;
+			} else if(element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+				found3 = true;
+			} else {
+				fail("Invalid email " + element.getEmail());
+			}
+		}
+		
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
+		
 		// External identifiers
 		assertNotNull(p.getExternalIdentifiers());
 		PersonExternalIdentifiers extIds = p.getExternalIdentifiers();

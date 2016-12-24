@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,7 @@ import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Education;
+import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
@@ -216,7 +218,6 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
         orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.ACTIVITIES_READ_LIMITED);         
-        //TODO!!!!!! regenerate the list of ext ids on every group, since those might have changed after filtering
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
@@ -237,6 +238,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorks(String orcid) {
         List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<WorkSummary> filteredList = null;
+        if(worksList != null) {
+        	filteredList = new ArrayList<WorkSummary>(worksList); 
+        }        
+        worksList = filteredList;
+        
         orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
         Works works = workManager.groupWorks(worksList, false);        
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(works);
@@ -309,6 +318,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewFundings(String orcid) {
         List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<FundingSummary> filteredList = null;
+        if(fundingSummaries != null) {
+        	filteredList = new ArrayList<FundingSummary>(fundingSummaries); 
+        }        
+        fundingSummaries = filteredList;
+        
         orcidSecurityManager.checkAndFilter(orcid, fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);               
         ActivityUtils.setPathToFundings(fundings, orcid);
@@ -371,6 +388,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEducations(String orcid) {
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+      
+        //Lets copy the list so we don't modify the cached collection 
+        List<EducationSummary> filteredList = null;
+        if(educationsList != null) {
+        	filteredList = new ArrayList<EducationSummary>(educationsList); 
+        }        
+        educationsList = filteredList;        
+        
         orcidSecurityManager.checkAndFilter(orcid, educationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Educations educations = new Educations(educationsList);
         ActivityUtils.setPathToEducations(educations, orcid);
@@ -426,6 +451,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmployments(String orcid) {
         List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<EmploymentSummary> filteredList = null;
+        if(employmentsList != null) {
+        	filteredList = new ArrayList<EmploymentSummary>(employmentsList); 
+        }        
+        employmentsList = filteredList;
+        
         orcidSecurityManager.checkAndFilter(orcid, employmentsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Employments employments = new Employments(employmentsList);
         ActivityUtils.setPathToEmployments(employments, orcid);
@@ -488,6 +521,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewPeerReviews(String orcid) {
         List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<PeerReviewSummary> filteredList = null;
+        if(peerReviewList != null) {
+        	filteredList = new ArrayList<PeerReviewSummary>(peerReviewList); 
+        }        
+        peerReviewList = filteredList;
+        
         orcidSecurityManager.checkAndFilter(orcid, peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);               
         ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
@@ -599,7 +640,15 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewResearcherUrls(String orcid) {
     	ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(orcid, researcherUrls.getResearcherUrls(), ScopePathType.ORCID_BIO_READ_LIMITED);        
+        
+    	//Lets copy the list so we don't modify the cached collection 
+    	List<ResearcherUrl> filteredList = null;
+    	if(researcherUrls.getResearcherUrls() != null) {
+    		filteredList = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrls()); 
+    	}        
+    	researcherUrls.setResearcherUrls(filteredList);
+    	
+    	orcidSecurityManager.checkAndFilter(orcid, researcherUrls.getResearcherUrls(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtils.setSourceName(researcherUrls);
@@ -651,6 +700,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmails(String orcid) {
     	Emails emails = emailManager.getEmails(orcid, getLastModifiedTime(orcid));
+    	
+    	//Lets copy the list so we don't modify the cached collection 
+        List<Email> filteredList = null;
+        if(emails.getEmails() != null) {
+        	filteredList = new ArrayList<Email>(emails.getEmails()); 
+        }        
+        emails.setEmails(filteredList);
+    	
     	orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
@@ -661,7 +718,15 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewOtherNames(String orcid) {    	
     	OtherNames otherNames = otherNameManager.getOtherNames(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(orcid, otherNames.getOtherNames(), ScopePathType.ORCID_BIO_READ_LIMITED);        
+        
+    	//Lets copy the list so we don't modify the cached collection 
+    	List<OtherName> filteredList = null;
+    	if(otherNames.getOtherNames() != null) {
+    		filteredList = new ArrayList<OtherName>(otherNames.getOtherNames()); 
+    	}        
+    	otherNames.setOtherNames(filteredList);
+    	
+    	orcidSecurityManager.checkAndFilter(orcid, otherNames.getOtherNames(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtils.setSourceName(otherNames);
@@ -715,7 +780,15 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifiers(String orcid) {
     	PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
-        orcidSecurityManager.checkAndFilter(orcid, extIds.getExternalIdentifiers(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        
+    	//Lets copy the list so we don't modify the cached collection 
+    	List<PersonExternalIdentifier> filteredList = null;
+    	if(extIds.getExternalIdentifiers() != null) {
+    		filteredList = new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()); 
+    	}        
+    	extIds.setExternalIdentifiers(filteredList);
+    	
+    	orcidSecurityManager.checkAndFilter(orcid, extIds.getExternalIdentifiers(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtils.setSourceName(extIds);
@@ -767,6 +840,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywords(orcid, getLastModifiedTime(orcid));        
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<Keyword> filteredList = null;
+        if(keywords.getKeywords() != null) {
+        	filteredList = new ArrayList<Keyword>(keywords.getKeywords()); 
+        }        
+        keywords.setKeywords(filteredList);
+        
         orcidSecurityManager.checkAndFilter(orcid, keywords.getKeywords(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeywords(keywords, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(keywords);
@@ -820,7 +901,15 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));      
+        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid)); 
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<Address> filteredAddresses = null;
+        if(addresses.getAddress() != null) {
+        	filteredAddresses = new ArrayList<Address>(addresses.getAddress()); 
+        }        
+        addresses.setAddress(filteredAddresses);
+        
         orcidSecurityManager.checkAndFilter(orcid, addresses.getAddress(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddresses(addresses, orcid);
         //Set the latest last modified
@@ -895,7 +984,6 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = personDetailsManager.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person, ScopePathType.ORCID_BIO_READ_LIMITED);
-        //TODO!!!!!! regenerate the list of ext ids on every activity and for every group, since those might have changed after filtering
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);

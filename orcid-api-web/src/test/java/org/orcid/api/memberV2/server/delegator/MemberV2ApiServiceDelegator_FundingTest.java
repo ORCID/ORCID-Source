@@ -112,7 +112,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
 		Response r = serviceDelegator.viewFunding(ORCID, 10L);
 		Funding element = (Funding) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
 		Response r = serviceDelegator.viewFundingSummary(ORCID, 10L);
 		FundingSummary element = (FundingSummary) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test

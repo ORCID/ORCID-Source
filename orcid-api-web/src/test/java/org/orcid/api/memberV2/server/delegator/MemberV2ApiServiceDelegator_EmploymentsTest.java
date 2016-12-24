@@ -110,7 +110,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEmployments(ORCID);
 		Employments element = (Employments) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEmployment(ORCID, 17L);
 		Employment element = (Employment) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 		Response r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
 		EmploymentSummary element = (EmploymentSummary) r.getEntity();
 		assertNotNull(element);
-		Utils.assertIsPublic(element);
+		Utils.assertIsPublicOrSource(element, "some-client");
 	}
 
 	@Test
