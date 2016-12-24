@@ -67,9 +67,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
 	protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     //Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
@@ -337,8 +336,24 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
 		OtherNames o = (OtherNames) r.getEntity();
 		assertNotNull(o);
 		Utils.verifyLastModified(o.getLastModifiedDate());
-		assertEquals(1, o.getOtherNames().size());
-		assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+		assertEquals(3, o.getOtherNames().size());
+		boolean found1 = false, found2 = false, found3 = false;
+		for (OtherName element : o.getOtherNames()) {
+			Utils.verifyLastModified(element.getLastModifiedDate());
+			if (element.getPutCode() == 13) {
+				found1 = true;
+			} else if (element.getPutCode() == 14) {
+				found2 = true;
+			} else if (element.getPutCode() == 15) {
+				found3 = true;
+			} else {
+				fail("Invalid put code " + element.getPutCode());
+			}
+
+		}
+		assertTrue(found1);
+		assertTrue(found2);
+		assertTrue(found3);
 
 		r = serviceDelegator.viewOtherName(ORCID, 13L);
 		assertNotNull(r);

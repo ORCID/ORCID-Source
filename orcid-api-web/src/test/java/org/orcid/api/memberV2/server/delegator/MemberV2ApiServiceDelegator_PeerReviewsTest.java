@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -77,8 +78,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 	protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml",
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     //Now on, for any new test, PLAESE USER THIS ORCID ID
@@ -293,40 +294,45 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 		r = serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
 		assertNotNull(r);
 		assertEquals(PeerReviewSummary.class.getName(), r.getEntity().getClass().getName());
-
-		// Limited fail
+		// Limited where am the source of should work
+		serviceDelegator.viewPeerReview(ORCID, 10L);
+		serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
+		// Limited where am not the source of should fail
 		try {
-			serviceDelegator.viewPeerReview(ORCID, 10L);
+			serviceDelegator.viewPeerReview(ORCID, 12L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
 		}
 
 		try {
-			serviceDelegator.viewPeerReviewSummary(ORCID, 10L);
+			serviceDelegator.viewPeerReviewSummary(ORCID, 12L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
 		}
 
-		// Private fail
+		// Limited where am the source of should work
+		serviceDelegator.viewPeerReview(ORCID, 11L);
+		serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
+		// Limited where am not the source of should fail
 		try {
-			serviceDelegator.viewPeerReview(ORCID, 11L);
+			serviceDelegator.viewPeerReview(ORCID, 13L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
 		}
 
 		try {
-			serviceDelegator.viewPeerReviewSummary(ORCID, 11L);
+			serviceDelegator.viewPeerReviewSummary(ORCID, 13L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();

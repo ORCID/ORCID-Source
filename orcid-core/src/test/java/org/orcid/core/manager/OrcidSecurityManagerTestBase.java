@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.security.AccessControlException;
 import java.util.ArrayList;
@@ -26,7 +27,10 @@ import java.util.Random;
 import javax.annotation.Resource;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
@@ -63,7 +67,9 @@ import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.SourceAware;
 import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -98,6 +104,24 @@ public class OrcidSecurityManagerTestBase {
 	@Resource
 	protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
+	@Mock
+	protected ProfileEntityCacheManager profileEntityCacheManager;
+	
+	@Before
+	public void before() {
+		MockitoAnnotations.initMocks(this);
+		TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager); 
+		ProfileEntity p1 = new ProfileEntity();
+		p1.setClaimed(true);
+		p1.setId(ORCID_1);
+		
+		ProfileEntity p2 = new ProfileEntity();
+		p2.setClaimed(true);
+		p2.setId(ORCID_2);
+		when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
+		when(profileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
+	}
+	
 	@After
 	public void after() {
 		SecurityContextTestUtils.setUpSecurityContextForAnonymous();

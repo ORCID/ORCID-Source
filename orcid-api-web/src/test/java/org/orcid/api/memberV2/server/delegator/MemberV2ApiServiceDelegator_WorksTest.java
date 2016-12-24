@@ -531,17 +531,17 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
 	@Test(expected = VisibilityMismatchException.class)
 	public void testUpdateWorkChangingVisibilityTest() {
-		SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED,
+		SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.READ_LIMITED,
 				ScopePathType.ACTIVITIES_UPDATE);
-		Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 10L);
+		Response response = serviceDelegator.viewWork("4444-4444-4444-4445", 3L);
 		assertNotNull(response);
 		Work work = (Work) response.getEntity();
 		assertNotNull(work);
-		assertEquals(Visibility.PUBLIC, work.getVisibility());
+		assertEquals(Visibility.LIMITED, work.getVisibility());
 
 		work.setVisibility(Visibility.PRIVATE);
 
-		response = serviceDelegator.updateWork("4444-4444-4444-4447", 10L, work);
+		response = serviceDelegator.updateWork("4444-4444-4444-4445", 3L, work);
 		fail();
 	}
 

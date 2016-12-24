@@ -48,11 +48,6 @@ import org.orcid.jaxb.model.record_rc4.Work;
  */
 public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBase {
 
-	@Test
-	public void testIShouldFail() {
-		fail();
-	}
-	
 	/**
 	 * =================== checkScopes test's ===================
 	 */

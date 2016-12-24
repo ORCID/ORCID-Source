@@ -59,12 +59,7 @@ import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
  * @author Will Simpson
  *
  */
-public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTestBase {
-
-	@Test
-	public void testIShouldFail() {
-		fail();
-	}
+public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTestBase {	
 	
 	// ---- RECORD ----
 	@Test(expected = OrcidUnauthorizedException.class)

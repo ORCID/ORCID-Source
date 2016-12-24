@@ -40,11 +40,6 @@ import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
  *
  */
 public class OrcidSecurityManager_ActivitiesSummaryTest extends OrcidSecurityManagerTestBase {
-
-	@Test
-	public void testIShouldFail() {
-		fail();
-	}
 	
 	// ---- ACTIVITIES ----
 	@Test(expected = OrcidUnauthorizedException.class)

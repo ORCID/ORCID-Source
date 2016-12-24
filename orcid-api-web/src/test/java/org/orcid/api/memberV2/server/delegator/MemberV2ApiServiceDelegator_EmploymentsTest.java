@@ -22,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.helper.Utils;
+
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -238,18 +240,18 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 		serviceDelegator.viewEmploymentSummary(ORCID, 18L);
 		// Limited that am not the source of should fail
 		try {
-			serviceDelegator.viewEmployment(ORCID, 20L);
+			serviceDelegator.viewEmployment(ORCID, 23L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
 		}
 
 		try {
-			serviceDelegator.viewEmploymentSummary(ORCID, 20L);
+			serviceDelegator.viewEmploymentSummary(ORCID, 23L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
@@ -260,18 +262,18 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 		serviceDelegator.viewEmploymentSummary(ORCID, 19L);
 		// Private that am not the source of should fail
 		try {
-			serviceDelegator.viewEmployment(ORCID, 21L);
+			serviceDelegator.viewEmployment(ORCID, 24L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();
 		}
 
 		try {
-			serviceDelegator.viewEmploymentSummary(ORCID, 21L);
+			serviceDelegator.viewEmploymentSummary(ORCID, 24L);
 			fail();
-		} catch (OrcidUnauthorizedException e) {
+		} catch (AccessControlException e) {
 
 		} catch (Exception e) {
 			fail();

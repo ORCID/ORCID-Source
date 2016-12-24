@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -641,12 +642,12 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewResearcherUrls(String orcid) {
     	ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, getLastModifiedTime(orcid));
         
-    	//Lets copy the list so we don't modify the cached collection 
-    	List<ResearcherUrl> filteredList = null;
+    	//Lets copy the list so we don't modify the cached collection     	
     	if(researcherUrls.getResearcherUrls() != null) {
-    		filteredList = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrls()); 
-    	}        
-    	researcherUrls.setResearcherUrls(filteredList);
+    		List<ResearcherUrl> filteredList = new ArrayList<ResearcherUrl>(researcherUrls.getResearcherUrls());
+    		researcherUrls = new ResearcherUrls();
+    		researcherUrls.setResearcherUrls(filteredList);
+    	}    	
     	
     	orcidSecurityManager.checkAndFilter(orcid, researcherUrls.getResearcherUrls(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
@@ -699,16 +700,28 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmails(String orcid) {
-    	Emails emails = emailManager.getEmails(orcid, getLastModifiedTime(orcid));
-    	
-    	//Lets copy the list so we don't modify the cached collection 
-        List<Email> filteredList = null;
-        if(emails.getEmails() != null) {
-        	filteredList = new ArrayList<Email>(emails.getEmails()); 
-        }        
-        emails.setEmails(filteredList);
-    	
-    	orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
+    	Emails emails = null;
+        long lastModified = getLastModifiedTime(orcid);
+        
+        try {
+            // return all emails if client has /email/read-private scope
+        	orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);                       
+            emails = emailManager.getEmails(orcid, lastModified);
+            //Lets copy the list so we don't modify the cached collection 
+            List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
+            emails = new Emails();
+            emails.setEmails(filteredList);            
+        } catch(AccessControlException e) {
+        	emails = emailManager.getEmails(orcid, lastModified);
+        	//Lets copy the list so we don't modify the cached collection 
+        	List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
+            emails = new Emails();
+            emails.setEmails(filteredList);
+            
+        	//Filter just in case client doesn't have the /email/read-private scope
+        	orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        }               
+    	    	
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -719,12 +732,12 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewOtherNames(String orcid) {    	
     	OtherNames otherNames = otherNameManager.getOtherNames(orcid, getLastModifiedTime(orcid));
         
-    	//Lets copy the list so we don't modify the cached collection 
-    	List<OtherName> filteredList = null;
-    	if(otherNames.getOtherNames() != null) {
-    		filteredList = new ArrayList<OtherName>(otherNames.getOtherNames()); 
-    	}        
-    	otherNames.setOtherNames(filteredList);
+    	//Lets copy the list so we don't modify the cached collection     	
+    	if(otherNames.getOtherNames() != null) {    		
+    		List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
+    		otherNames = new OtherNames();
+    		otherNames.setOtherNames(filteredList);
+    	}    	
     	
     	orcidSecurityManager.checkAndFilter(orcid, otherNames.getOtherNames(), ScopePathType.ORCID_BIO_READ_LIMITED);        
         ElementUtils.setPathToOtherNames(otherNames, orcid);
@@ -781,12 +794,12 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewExternalIdentifiers(String orcid) {
     	PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
         
-    	//Lets copy the list so we don't modify the cached collection 
-    	List<PersonExternalIdentifier> filteredList = null;
+    	//Lets copy the list so we don't modify the cached collection     	
     	if(extIds.getExternalIdentifiers() != null) {
-    		filteredList = new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers()); 
-    	}        
-    	extIds.setExternalIdentifiers(filteredList);
+    		List<PersonExternalIdentifier> filteredList = new ArrayList<PersonExternalIdentifier>(extIds.getExternalIdentifiers());
+    		extIds = new PersonExternalIdentifiers();
+    		extIds.setExternalIdentifiers(filteredList);
+    	}            	
     	
     	orcidSecurityManager.checkAndFilter(orcid, extIds.getExternalIdentifiers(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
@@ -841,12 +854,12 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewKeywords(String orcid) {
         Keywords keywords = keywordsManager.getKeywords(orcid, getLastModifiedTime(orcid));        
         
-        //Lets copy the list so we don't modify the cached collection 
-        List<Keyword> filteredList = null;
+        //Lets copy the list so we don't modify the cached collection         
         if(keywords.getKeywords() != null) {
-        	filteredList = new ArrayList<Keyword>(keywords.getKeywords()); 
-        }        
-        keywords.setKeywords(filteredList);
+        	List<Keyword> filteredList = new ArrayList<Keyword>(keywords.getKeywords());
+        	keywords = new Keywords();
+        	keywords.setKeywords(filteredList);
+        }                
         
         orcidSecurityManager.checkAndFilter(orcid, keywords.getKeywords(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeywords(keywords, orcid);
@@ -903,12 +916,12 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewAddresses(String orcid) {
         Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid)); 
         
-        //Lets copy the list so we don't modify the cached collection 
-        List<Address> filteredAddresses = null;
+        //Lets copy the list so we don't modify the cached collection         
         if(addresses.getAddress() != null) {
-        	filteredAddresses = new ArrayList<Address>(addresses.getAddress()); 
-        }        
-        addresses.setAddress(filteredAddresses);
+        	List<Address> filteredAddresses = new ArrayList<Address>(addresses.getAddress());
+        	addresses = new Addresses();
+        	addresses.setAddress(filteredAddresses);
+        }                
         
         orcidSecurityManager.checkAndFilter(orcid, addresses.getAddress(), ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddresses(addresses, orcid);
