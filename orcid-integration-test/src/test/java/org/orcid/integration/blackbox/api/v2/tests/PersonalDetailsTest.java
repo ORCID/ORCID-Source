@@ -426,7 +426,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
     public void testGetWithMemberAPI_rc3() throws Exception {
         String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);        
@@ -470,7 +470,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         
         //Verify they are still visible
-        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);        
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);        
@@ -521,7 +521,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         
         //Check nothing is visible
-        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);

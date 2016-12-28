@@ -511,7 +511,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
+        ClientResponse response = memberV2ApiClient_rc4.viewKeywords(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         org.orcid.jaxb.model.record_rc4.Keywords keywords = response.getEntity(org.orcid.jaxb.model.record_rc4.Keywords.class);
         assertNotNull(keywords);
@@ -548,7 +548,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         newKeyword.setContent("keyword-3");
         newKeyword.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         //Create
-        ClientResponse response = memberV2ApiClient.createKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        ClientResponse response = memberV2ApiClient_rc4.createKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -559,7 +559,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         
         //Get all and verify
-        response = memberV2ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
+        response = memberV2ApiClient_rc4.viewKeywords(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         org.orcid.jaxb.model.record_rc4.Keywords keywords = response.getEntity(org.orcid.jaxb.model.record_rc4.Keywords.class);
         assertNotNull(keywords);
@@ -589,7 +589,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         assertTrue(foundNew);
                
         //Get it
-        response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
+        response = memberV2ApiClient_rc4.viewKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         newKeyword = response.getEntity(org.orcid.jaxb.model.record_rc4.Keyword.class);
         assertNotNull(newKeyword);
@@ -606,7 +606,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         
         //Verify you cant update the visibility
         newKeyword.setVisibility(updatedVisibility);              
-        ClientResponse putResponse = memberV2ApiClient.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        ClientResponse putResponse = memberV2ApiClient_rc4.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         org.orcid.jaxb.model.error_rc4.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.error_rc4.OrcidError.class);
         assertNotNull(error);
@@ -617,10 +617,10 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         
         //Update 
         newKeyword.setContent("keyword-3-updated");
-        response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        response = memberV2ApiClient_rc4.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
+        response = memberV2ApiClient_rc4.viewKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         org.orcid.jaxb.model.record_rc4.Keyword updatedKeyword = response.getEntity(org.orcid.jaxb.model.record_rc4.Keyword.class);
         assertNotNull(updatedKeyword);
@@ -629,7 +629,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         assertEquals(originalDisplayIndex, updatedKeyword.getDisplayIndex());        
         
         //Delete
-        response = memberV2ApiClient.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
+        response = memberV2ApiClient_rc4.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());                
     }
@@ -681,7 +681,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         keyword.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);       
         keyword.setPutCode(1234567890L);
         
-        ClientResponse response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
+        ClientResponse response = memberV2ApiClient_rc4.updateKeyword(getUser1OrcidId(), keyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
