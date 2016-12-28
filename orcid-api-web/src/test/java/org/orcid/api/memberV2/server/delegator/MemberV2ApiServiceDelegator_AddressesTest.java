@@ -69,9 +69,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 	protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     //Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
@@ -315,7 +313,8 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 		address = (Address) response.getEntity();
 		assertNotNull(address);
 		Utils.verifyLastModified(address.getLastModifiedDate());
-		assertTrue(address.getLastModifiedDate().after(before));
+		LastModifiedDate after = address.getLastModifiedDate();
+		assertTrue(after.after(before));
 		assertEquals(Iso3166Country.PA, address.getCountry().getValue());
 
 		// Set it back to US again
@@ -323,6 +322,14 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 		response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
 		assertNotNull(response);
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+		response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+		address = (Address) response.getEntity();
+		assertNotNull(address);
+		Utils.verifyLastModified(address.getLastModifiedDate());
+		assertNotNull(address.getLastModifiedDate());
+		assertTrue(address.getLastModifiedDate().after(after));
+		assertEquals(Iso3166Country.US, address.getCountry().getValue());
+		assertEquals(Visibility.PUBLIC, address.getVisibility());
 	}
 
 	@Test(expected = WrongSourceException.class)
