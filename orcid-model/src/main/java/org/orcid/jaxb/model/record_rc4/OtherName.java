@@ -16,8 +16,6 @@
  */
 package org.orcid.jaxb.model.record_rc4;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,7 +30,8 @@ import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 

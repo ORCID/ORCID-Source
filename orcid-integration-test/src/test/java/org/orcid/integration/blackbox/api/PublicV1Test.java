@@ -111,7 +111,7 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
         assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
     public void testViewPublicProfileUsingInvalidToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
@@ -122,8 +122,8 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
         String errorMessage = response.getEntity(String.class);
         assertFalse(PojoUtil.isEmpty(errorMessage));
         Map<String, Object> error = JsonUtils.<HashMap> readObjectFromJsonString(errorMessage, HashMap.class);
-        assertEquals(Integer.valueOf("401"), error.get("responseCode"));
-        assertEquals("Access token is invalid", error.get("developerMessage"));
+        assertEquals("invalid_token", error.get("error"));
+        assertEquals("Invalid access token: " + accessToken, error.get("error_description"));
     }
     
     
