@@ -18,8 +18,8 @@ package org.orcid.core.adapter;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface JpaJaxbResearcherUrlAdapter {

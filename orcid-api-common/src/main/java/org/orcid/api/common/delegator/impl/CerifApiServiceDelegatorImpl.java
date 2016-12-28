@@ -34,10 +34,10 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
 
 import com.google.common.base.Optional;
 

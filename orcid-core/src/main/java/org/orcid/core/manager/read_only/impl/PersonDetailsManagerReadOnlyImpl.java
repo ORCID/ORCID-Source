@@ -25,10 +25,10 @@ import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Name;
-import org.orcid.jaxb.model.record_rc4.Person;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.record_v2.Person;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
     

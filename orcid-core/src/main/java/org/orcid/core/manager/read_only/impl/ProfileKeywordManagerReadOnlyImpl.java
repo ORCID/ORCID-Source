@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;

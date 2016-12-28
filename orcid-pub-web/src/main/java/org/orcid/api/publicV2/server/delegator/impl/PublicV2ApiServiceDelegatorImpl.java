@@ -49,7 +49,6 @@ import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
-import org.orcid.core.version.impl.Api2_0_v2_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;

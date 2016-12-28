@@ -28,13 +28,13 @@ import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Works;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.GroupAble;
-import org.orcid.jaxb.model.record_rc4.GroupableActivity;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.GroupAble;
+import org.orcid.jaxb.model.record_v2.GroupableActivity;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -136,7 +136,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {

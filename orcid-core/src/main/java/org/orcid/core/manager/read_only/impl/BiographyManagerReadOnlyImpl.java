@@ -17,9 +17,9 @@
 package org.orcid.core.manager.read_only.impl;
 
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.CreatedDate;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.common_v2.CreatedDate;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.utils.DateUtils;
@@ -65,7 +65,7 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     @Cacheable(value = "public-biography", key = "#orcid.concat('-').concat(#lastModified)")
     public Biography getPublicBiography(String orcid, long lastModified) {
         Biography bio = getBiography(orcid, lastModified);
-        if(bio != null && org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(bio.getVisibility())) {
+        if(bio != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }
         return null;

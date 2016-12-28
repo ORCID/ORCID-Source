@@ -27,8 +27,8 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -117,7 +117,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         } else {
             entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         }
-        List<org.orcid.jaxb.model.record_rc4.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.record_v2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);        
         return emails;
