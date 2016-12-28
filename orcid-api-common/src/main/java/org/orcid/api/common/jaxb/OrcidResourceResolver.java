@@ -44,7 +44,9 @@ public class OrcidResourceResolver implements LSResourceResolver {
             return systemId.substring(2, systemId.length());
         }
         // XXX Going to have to this properly at some point!
-        else if (systemId.endsWith("-2.0_rc1.xsd")) {
+        else if(systemId.endsWith("-2.0.xsd")) {
+            return "/record_2.0/" + systemId;
+        } else if (systemId.endsWith("-2.0_rc1.xsd")) {
             return "/record_2.0_rc1/" + systemId;
         } else if(systemId.endsWith("-2.0_rc2.xsd")) {
             return "/record_2.0_rc2/" + systemId;

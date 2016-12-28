@@ -32,7 +32,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.notification_v2.Notification;
 
 /**
  * 
