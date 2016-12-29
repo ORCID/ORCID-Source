@@ -115,6 +115,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         
         if(!PojoUtil.isEmpty(apiVersion)) {
             switch (apiVersion) {
+            case OrcidCoreExceptionMapper.V2:
+            	return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
             case OrcidCoreExceptionMapper.V2_RC1:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC1);
             case OrcidCoreExceptionMapper.V2_RC2:
@@ -122,16 +124,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             case OrcidCoreExceptionMapper.V2_RC3:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC3);      
             case OrcidCoreExceptionMapper.V2_RC4:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);
-            case OrcidCoreExceptionMapper.V2:
-            	return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);            
             }
         } 
         
         //If there was no api version, check if it is notifications or a 1.2 error type
         switch (getApiSection()) {
         case NOTIFICATIONS:
-            return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC1);
+            return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
         default:
             return legacyErrorResponse(t);
         }

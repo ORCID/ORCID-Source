@@ -17,8 +17,8 @@
 package org.orcid.api.common.cerif;
 
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.WorkType;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.WorkType;
 
 /**
  * Maps ORCID-CERIF work/identifier types and distinguishes between Publications
