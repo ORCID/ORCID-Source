@@ -34,34 +34,34 @@ import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 
 public interface PublicAPISecurityManagerV2 {
-	void checkIsPublic(Filterable filterable);
-    
-	void checkIsPublic(VisibilityType visibilityType);
-	
+    void checkIsPublic(Filterable filterable);
+
+    void checkIsPublic(VisibilityType visibilityType);
+
     void checkIsPublic(Biography biography);
-    
+
     void checkIsPublic(Name name);
-    
+
     void filter(ActivitiesSummary activitiesSummary);
-    
-    void filter(ActivitiesContainer container);        
-    
+
+    void filter(ActivitiesContainer container);
+
     void filter(GroupsContainer container);
-    
+
     void filter(Addresses addresses);
-    
+
     void filter(Emails emails);
-    
+
     void filter(Keywords keywords);
-    
+
     void filter(OtherNames otherNames);
-    
+
     void filter(PersonExternalIdentifiers extIds);
-    
+
     void filter(ResearcherUrls researcherUrls);
-    
+
     void filter(PersonalDetails personalDetails);
-    
+
     void filter(Person person);
 
     void filter(Record record);
