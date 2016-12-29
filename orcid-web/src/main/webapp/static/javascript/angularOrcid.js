@@ -84,13 +84,15 @@ function formColorBoxWidth() {
 }
 
 function formColorBoxResize() {
-    if (isMobile())
-        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-    else
-        // IE8 and below doesn't take auto height
-        // however the default div height
-        // is auto anyway
-        $.colorbox.resize({width:'800px'});
+  if (isMobile()){
+    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+  }
+  else {  
+    // IE8 and below doesn't take auto height
+    // however the default div height
+    // is auto anyway
+    $.colorbox.resize({width:'800px'});
+  }
 }
 
 function fixZindexIE7(target, zindex){
@@ -112,30 +114,32 @@ function emptyTextField(field) {
 }
 
 function addComma(str) {
-    if (str.length > 0) return str + ', ';
-    return str;
+  if (str.length > 0){
+    return str + ', ';
+  } 
+  return str;
 }
 
 function removeBadContributors(dw) {
-    for (var idx in dw.contributors) {
-        if (dw.contributors[idx].contributorSequence == null
-            && dw.contributors[idx].email == null
-            && dw.contributors[idx].orcid == null
-            && dw.contributors[idx].creditName == null
-            && dw.contributors[idx].contributorRole == null
-            && dw.contributors[idx].creditNameVisibility == null) {
-                dw.contributors.splice(idx,1);
-            }
+  for (var idx in dw.contributors) {
+    if (dw.contributors[idx].contributorSequence == null
+      && dw.contributors[idx].email == null
+      && dw.contributors[idx].orcid == null
+      && dw.contributors[idx].creditName == null
+      && dw.contributors[idx].contributorRole == null
+      && dw.contributors[idx].creditNameVisibility == null) {
+          dw.contributors.splice(idx,1);
+      }
     }
 }
 
 function removeBadExternalIdentifiers(dw) {
-    for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
-        }
+  for(var idx in dw.workExternalIdentifiers) {
+    if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
+        && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+        dw.workExternalIdentifiers.splice(idx,1);
     }
+  }
 }
 
 function isEmail(email) {
@@ -144,10 +148,10 @@ function isEmail(email) {
 }
 
 function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      results = regex.exec(location.search);
+  return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 /*
@@ -163,25 +167,28 @@ var GroupedActivitiesUtil = function() {};
 GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
     var matches = new Array();
     // there are no possible keys for affiliations    
-    if (type != GroupedActivities.AFFILIATION);
-       for (var idx in groupsArray) {          
-           if (groupsArray[idx].keyMatch(activity))
-               matches.push(groupsArray[idx]);
-       }           
+    if (type != GroupedActivities.AFFILIATION){
+      for (var idx in groupsArray) {          
+        if (groupsArray[idx].keyMatch(activity)){
+          matches.push(groupsArray[idx]);
+        }
+      }                 
+    }
     if (matches.length == 0) {
         var newGroup = new GroupedActivities(type);
         newGroup.add(activity);
         groupsArray.push(newGroup);
-    }  else {
+    } else {
         var firstMatch = matches.shift();
         firstMatch.add(activity);
         // combine any remaining groups into the first group we found.
         for (var idx in matches) {
-            var matchIndex = groupsArray.indexOf(matches[idx]);
-            var curMatch = groupsArray[matchIndex];
-            for (var idj in curMatch.activities)
-                firstMatch.add(curMatch.activities[idj]);
-            groupsArray.splice(matchIndex, 1);
+          var matchIndex = groupsArray.indexOf(matches[idx]);
+          var curMatch = groupsArray[matchIndex];
+          for (var idj in curMatch.activities){
+            firstMatch.add(curMatch.activities[idj]);
+          }
+          groupsArray.splice(matchIndex, 1);
         }
     }
 };
@@ -190,12 +197,14 @@ GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
     for (var idx in groupsArray) {
         if (groupsArray[idx].hasPut(putCode)) {
            groupsArray[idx].rmByPut(putCode);
-           if (groupsArray[idx].activitiesCount == 0)
-               groupsArray.splice(idx,1);
+           if (groupsArray[idx].activitiesCount == 0) {
+              groupsArray.splice(idx,1);
+           }
            else {
-               var orphans = groupsArray[idx].unionCheck();
-               for (var idj in orphans)
-                   groupedActivitiesUtil.group(orphans[idj], type, groupsArray);
+              var orphans = groupsArray[idx].unionCheck();
+              for (var idj in orphans){
+                groupedActivitiesUtil.group(orphans[idj], type, groupsArray);  
+              }
            }
         }
     }
@@ -204,17 +213,21 @@ GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
 var groupedActivitiesUtil = new GroupedActivitiesUtil();
 
 var GroupedActivities = function(type) {
-    if (GroupedActivities.count == undefined)
-        GroupedActivities.count = 1;
-    else
-        GroupedActivities.count ++;
+    if (GroupedActivities.count == undefined){
+      GroupedActivities.count = 1;
+    }
+    else {
+      GroupedActivities.count ++;
+    }
 
     function getInstantiateCount() {
-           var id = 0; // This is the private persistent value
-           // The outer function returns a nested function that has access
-           // to the persistent value.  It is this nested function we're storing
-           // in the variable uniqueID above.
-           return function() { return id++; };  // Return and increment
+      var id = 0; // This is the private persistent value
+      // The outer function returns a nested function that has access
+      // to the persistent value.  It is this nested function we're storing
+      // in the variable uniqueID above.
+      return function() { 
+        return id++; 
+      };  // Return and increment
     }
 
     this.type = type;
@@ -261,10 +274,13 @@ GroupedActivities.prototype.add = function(activity) {
 };
 
 GroupedActivities.prototype.addKey = function(key) {
-    if (this.hasKey(key)) return;
+    if (this.hasKey(key)) {
+      return;
+    }
     this._keySet[key] = true;
-    if (this.type == GroupedActivities.PEER_REVIEW)
-        this.groupRealId = key;
+    if (this.type == GroupedActivities.PEER_REVIEW){
+      this.groupRealId = key;
+    }
     return;
 };
 
@@ -282,26 +298,34 @@ GroupedActivities.prototype.getByPut = function(putCode) {
 
 GroupedActivities.prototype.consistentVis = function() {
     var vis = null;
-    if (this.type == GroupedActivities.FUNDING)
-        vis = this.getDefault().visibility.visibility;
-    else
-        vis = this.getDefault().visibility;
+    if (this.type == GroupedActivities.FUNDING){
+      vis = this.getDefault().visibility.visibility;
+    }
+    else{
+      vis = this.getDefault().visibility;
+    }
 
-    for (var idx in this.activities)
-        
-        if (this.type == GroupedActivities.FUNDING) {
-            if (this.activities[idx].visibility.visibility != vis)
-                return false;
-        } else {
-            if (this.activities[idx].visibility != vis)
-                return false;
-        }
+    for (var idx in this.activities){
+      if (this.type == GroupedActivities.FUNDING) {
+          if (this.activities[idx].visibility.visibility != vis){
+            return false;
+          }
+      } else {
+          if (this.activities[idx].visibility != vis){
+            return false;
+          }
+      }
+    }
     return true;
 };
 
 GroupedActivities.prototype.getIdentifiersPath = function() {
-    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
-    if (this.type == GroupedActivities.PEER_REVIEW) return 'groupId';
+    if (this.type == GroupedActivities.ABBR_WORK) {
+      return 'workExternalIdentifiers';
+    }
+    if (this.type == GroupedActivities.PEER_REVIEW) {
+      return 'groupId';
+    }
     return 'externalIdentifiers';
 };
 
@@ -310,34 +334,41 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
 */
 
 GroupedActivities.prototype.hasKey = function(key) {
-    if (key in this._keySet)
-        return true;
+    if (key in this._keySet){
+      return true;
+    }
     return false;
 };
 
 GroupedActivities.prototype.hasKeys = function(key) {
-    if (Object.keys(this._keySet).length > 0)
-        return true;
+    if (Object.keys(this._keySet).length > 0){
+      return true;
+    }
     return false;
 };
 
 GroupedActivities.prototype.hasUserVersion = function() {
-    for (var idx in this.activities)
-        if (this.activities[idx].source == orcidVar.orcidId)
-            return true;
+    for (var idx in this.activities){
+      if (this.activities[idx].source == orcidVar.orcidId){
+        return true;
+      }
+    }
     return false;
 };
 
 GroupedActivities.prototype.hasPut = function(putCode) {
-    if (this.activities[putCode] !== undefined)
-                return true;
-        return false;
+    if (this.activities[putCode] !== undefined){
+      return true;  
+    }
+    return false;
 };
 
 GroupedActivities.prototype.key = function(activityIdentifiers) {
     var idPath;
     var idTypePath;
+    var key = '';
     var relationship = 'relationship';
+    
     if (this.type == GroupedActivities.ABBR_WORK) {
         idPath = 'workExternalIdentifierId';
         idTypePath = 'workExternalIdentifierType';
@@ -353,7 +384,6 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idTypePath = 'value';
     }
     
-    var key = '';
     
     if (this.type ==  GroupedActivities.PEER_REVIEW) {
         if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
@@ -368,8 +398,6 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
             key = activityIdentifiers[idTypePath].value;
             // Removed conversion to lower case as per card: https://trello.com/c/b7jLWgNq/3070-api-groups-are-case-sensitive-ui-groups-are-not
             key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : '';
-            
-            
         }
     }
     return key;
@@ -383,24 +411,31 @@ GroupedActivities.prototype.keyMatch = function(activity) {
         if(this.key(activity[identifiersPath]) in this._keySet)
             return true;
     } else {
-        for (var idx in activity[identifiersPath]) {                        
-            if (this.key(activity[identifiersPath][idx]) == '') continue;
-            if (this.key(activity[identifiersPath][idx]) in this._keySet)
-                return true;        
+      for (var idx in activity[identifiersPath]) {                        
+        if (this.key(activity[identifiersPath][idx]) == '') {
+          continue;
         }
+        if (this.key(activity[identifiersPath][idx]) in this._keySet){
+          return true;              
+        }
+      }
     }   
     return false;
 };
 
 GroupedActivities.prototype.highestVis = function() {
     var vis = this.getDefault().visibility;
-    for (var idx in this.activities)
-        if (vis == PRIVACY.PUBLIC)
-            return vis;
-        else if (this.activities[putCode].visibility == PRIVACY.PUBLIC)
-            return PRIVACY.PUBLIC;
-        else if (this.activities[putCode].visibility == PRIVACY.LIMITED)
-            vis = PRIVACY.LIMITED;
+    for (var idx in this.activities){ 
+      if (vis == PRIVACY.PUBLIC){ 
+        return vis;
+      }
+      else if (this.activities[putCode].visibility == PRIVACY.PUBLIC){
+        return PRIVACY.PUBLIC;
+      }
+      else if (this.activities[putCode].visibility == PRIVACY.LIMITED){
+        vis = PRIVACY.LIMITED;
+      }
+    }
     return vis;
 };
 
