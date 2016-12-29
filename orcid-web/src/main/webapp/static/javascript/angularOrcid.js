@@ -54,17 +54,17 @@ function contains(arr, obj) {
 }
 
 function formatDate(oldDate) {
-	var date = new Date(oldDate);
-	var day = date.getDate();
-	var month = date.getMonth() + 1;
-	var year = date.getFullYear();
-	if(month < 10) {
-		month = '0' + month;
-	}
-	if(day < 10) {
-		day = '0' + day;
-	}
-	return (year + '-' + month + '-' + day);
+    var date = new Date(oldDate);
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    if(month < 10) {
+        month = '0' + month;
+    }
+    if(day < 10) {
+        day = '0' + day;
+    }
+    return (year + '-' + month + '-' + day);
 }
 
 function getScripts(scripts, callback) {
@@ -188,7 +188,7 @@ GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
 
 GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
     for (var idx in groupsArray) {
-    	if (groupsArray[idx].hasPut(putCode)) {
+        if (groupsArray[idx].hasPut(putCode)) {
            groupsArray[idx].rmByPut(putCode);
            if (groupsArray[idx].activitiesCount == 0)
                groupsArray.splice(idx,1);
@@ -237,19 +237,19 @@ GroupedActivities.ABBR_WORK = 'abbrWork';
 GroupedActivities.PEER_REVIEW = 'peerReview';
 GroupedActivities.AFFILIATION = 'affiliation';
 
-GroupedActivities.prototype.add = function(activity) {		
+GroupedActivities.prototype.add = function(activity) {      
     // assumes works are added in the order of the display index desc
     // subsorted by the created date asc
     var identifiersPath = null;
     identifiersPath = this.getIdentifiersPath();        
     
     if(this.type == GroupedActivities.PEER_REVIEW) {    
-    	var key = this.key(activity[identifiersPath]);
-    	this.addKey(key);
+        var key = this.key(activity[identifiersPath]);
+        this.addKey(key);
     } else {
-    	for (var idx in activity[identifiersPath]) {
-    		this.addKey(this.key(activity[identifiersPath][idx]));
-    	}
+        for (var idx in activity[identifiersPath]) {
+            this.addKey(this.key(activity[identifiersPath][idx]));
+        }
     }    
     
     this.activities[activity.putCode.value] = activity;
@@ -264,7 +264,7 @@ GroupedActivities.prototype.addKey = function(key) {
     if (this.hasKey(key)) return;
     this._keySet[key] = true;
     if (this.type == GroupedActivities.PEER_REVIEW)
-    	this.groupRealId = key;
+        this.groupRealId = key;
     return;
 };
 
@@ -282,13 +282,13 @@ GroupedActivities.prototype.getByPut = function(putCode) {
 
 GroupedActivities.prototype.consistentVis = function() {
     var vis = null;
-	if (this.type == GroupedActivities.FUNDING)
+    if (this.type == GroupedActivities.FUNDING)
         vis = this.getDefault().visibility.visibility;
     else
         vis = this.getDefault().visibility;
 
     for (var idx in this.activities)
-    	
+        
         if (this.type == GroupedActivities.FUNDING) {
             if (this.activities[idx].visibility.visibility != vis)
                 return false;
@@ -349,22 +349,22 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         idPath = null;
         idTypePath = null;
     } else if (this.type == GroupedActivities.PEER_REVIEW) {
-    	idPath = 'value';
+        idPath = 'value';
         idTypePath = 'value';
     }
     
     var key = '';
     
     if (this.type ==  GroupedActivities.PEER_REVIEW) {
-    	if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
-    		key += activityIdentifiers[idPath];
-	} else if (activityIdentifiers[idTypePath]) {    
-    	// ISSN is misused too often to identify a work
-    	if (activityIdentifiers[idTypePath].value != 'issn'
-        		&& (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
-        		&& activityIdentifiers[idPath] != null
-        		&& activityIdentifiers[idPath].value != null
-        		&& activityIdentifiers[idPath].value != '') {    		
+        if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
+            key += activityIdentifiers[idPath];
+    } else if (activityIdentifiers[idTypePath]) {    
+        // ISSN is misused too often to identify a work
+        if (activityIdentifiers[idTypePath].value != 'issn'
+                && (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
+                && activityIdentifiers[idPath] != null
+                && activityIdentifiers[idPath].value != null
+                && activityIdentifiers[idPath].value != '') {           
             key = activityIdentifiers[idTypePath].value;
             // Removed conversion to lower case as per card: https://trello.com/c/b7jLWgNq/3070-api-groups-are-case-sensitive-ui-groups-are-not
             key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : '';
@@ -376,15 +376,15 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 };
 
 GroupedActivities.prototype.keyMatch = function(activity) {
-	var identifiersPath = null;
+    var identifiersPath = null;
     identifiersPath = this.getIdentifiersPath();
-    if(this.type == GroupedActivities.PEER_REVIEW) {    	
-    	if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
-    	if(this.key(activity[identifiersPath]) in this._keySet)
-    		return true;
+    if(this.type == GroupedActivities.PEER_REVIEW) {        
+        if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
+        if(this.key(activity[identifiersPath]) in this._keySet)
+            return true;
     } else {
-    	for (var idx in activity[identifiersPath]) {    	    	        
-        	if (this.key(activity[identifiersPath][idx]) == '') continue;
+        for (var idx in activity[identifiersPath]) {                        
+            if (this.key(activity[identifiersPath][idx]) == '') continue;
             if (this.key(activity[identifiersPath][idx]) in this._keySet)
                 return true;        
         }
@@ -488,7 +488,7 @@ sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
-ActSortState.prototype.sortBy = function(key) {	
+ActSortState.prototype.sortBy = function(key) { 
     if (this.predicateKey == key){
        this.reverse = !this.reverse;
        this.reverseKey[key] = !this.reverseKey[key];           
@@ -534,12 +534,12 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
 
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
-    	initScope: function($scope) {
-    		$scope.bulkEditShow = false;
+        initScope: function($scope) {
+            $scope.bulkEditShow = false;
             $scope.bulkEditMap = {};
             $scope.bulkChecked = false;
             $scope.bulkDisplayToggle = false;
-            $scope.toggleSelectMenu = function(){                	
+            $scope.toggleSelectMenu = function(){                   
                 $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
             };
         }
@@ -550,12 +550,12 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
 orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
     var bioBulkSrvc = {
         initScope: function($scope) {
-        	$scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
+            $scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
             $scope.bulkEditShow = false;
             $scope.bulkEditMap = {};
             $scope.bulkChecked = false;
             $scope.bulkDisplayToggle = false;
-            $scope.toggleSelectMenu = function(){            	
+            $scope.toggleSelectMenu = function(){               
                 $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
             };
         }
@@ -565,15 +565,15 @@ orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
     var commonSrvc = {
-    	copyErrorsLeft: function (data1, data2) {
-    		for (var key in data1) {
-    			if (key == 'errors') {
-    				data1.errors = data2.errors;
+        copyErrorsLeft: function (data1, data2) {
+            for (var key in data1) {
+                if (key == 'errors') {
+                    data1.errors = data2.errors;
                 } else {
-                	if (data1[key] != null && data1[key].errors !== undefined)
+                    if (data1[key] != null && data1[key].errors !== undefined)
                         data1[key].errors = data2[key].errors;
                 };
-    		};
+            };
         },
         shownElement: [],        
         showPrivacyHelp: function(elem, event, offsetArrow){
@@ -623,7 +623,7 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
 
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
-    	educations: new Array(),
+        educations: new Array(),
         employments: new Array(),
         loading: false,
         affiliationsToAddIds: null,
@@ -761,8 +761,8 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
         toggleWorks: function() {
             serv.displayWorks = !serv.displayWorks;
         },
-        togglePeerReview: function() {            	
-        	serv.displayPeerReview = !serv.displayPeerReview;
+        togglePeerReview: function() {              
+            serv.displayPeerReview = !serv.displayPeerReview;
         },
         openEducation: function() {
             serv.displayEducation = true;
@@ -783,7 +783,7 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
             serv.displayPeerReview = true;
         },
         togglePeerReviews : function() {
-        	serv.displayPeerReview = !serv.displayPeerReview;
+            serv.displayPeerReview = !serv.displayPeerReview;
         }   
     };
     return serv;
@@ -1528,19 +1528,19 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             });
         },
         getUniqueDois : function(putCode){
-        	var dois = [];            	
-        	var group = worksSrvc.getGroup(putCode);
-        	for (var idx in group.activities) {            		
-        		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-        			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-        				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-        					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
-        				}
-        			}
-        		}
+            var dois = [];              
+            var group = worksSrvc.getGroup(putCode);
+            for (var idx in group.activities) {                 
+                for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+                        }
+                    }
+                }
             }
-        	
-        	return dois;
+            
+            return dois;
         }
     };
     return worksSrvc;
@@ -1555,7 +1555,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
         popUp: false,
         primaryEmail: null,
         
-        addEmail: function() {            	
+        addEmail: function() {              
             $.ajax({
                 url: getBaseUri() + '/account/addEmail.json',
                 data:  angular.toJson(serv.inputEmail),
@@ -1599,7 +1599,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
                 url: getBaseUri() + '/account/emails.json',
                 type: 'GET',
                 dataType: 'json',
-                success: function(data) {                    	
+                success: function(data) {                       
                     serv.emails = data;
                     for (var i in data.emails){
                         if (data.emails[i].primary){
@@ -1756,7 +1756,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                     else{
                         serv.areMoreFlag = true;
                     }
-                    for(var i = 0; i < data.length; i++){                    	
+                    for(var i = 0; i < data.length; i++){                       
                         serv.notifications.push(data[i]);
                     }
                     serv.loading = false;
@@ -1773,12 +1773,12 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             });
         },
         getNotificationAlerts: function(){
-        	$.ajax({
+            $.ajax({
                 url: getBaseUri() + '/inbox/notification-alerts.json',
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
-                	serv.notificationAlerts = data;
+                    serv.notificationAlerts = data;
                 }
             }).fail(function(e) {
                 // something bad is happening!
@@ -1808,10 +1808,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             });
         },
         resizeIframes: function(){
-        	var activeViews = serv.displayBody;
-			for (key in activeViews){
-				iframeResize(key);				
-			}
+            var activeViews = serv.displayBody;
+            for (key in activeViews){
+                iframeResize(key);              
+            }
         },
         getUnreadCount: function() {
             return serv.unreadCount;
@@ -1825,9 +1825,9 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             return serv.areMoreFlag;
         },
         flagAsRead: function(notificationId) {
-        	
-        	console.log(notificationId);
-        	
+            
+            console.log(notificationId);
+            
             $.ajax({
                 url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
                 type: 'POST',
@@ -1848,7 +1848,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 console.log("error flagging notification as read");
             });
         },
-        archive: function(notificationId) {        	
+        archive: function(notificationId) {         
             $.ajax({
                 url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
                 type: 'POST',
@@ -1877,7 +1877,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             serv.showArchived = !serv.showArchived;
             serv.reloadNotifications();
         },
-        swapbulkChangeAll: function(){        	
+        swapbulkChangeAll: function(){          
             serv.bulkChecked = !serv.bulkChecked;
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
@@ -1933,7 +1933,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 if (serv.notifications[i].archivedDate == null)
                     totalNotifications++;            
             
-            totalNotifications == count ? serv.bulkChecked = true :	serv.bulkChecked = false;
+            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;
         }
     };
     return serv;
@@ -1941,7 +1941,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
 
 orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     var widgetSrvc = {
-		locale: 'en',
+        locale: 'en',
         setLocale: function (locale) {
             widgetSrvc.locale = locale;
         }
@@ -2095,9 +2095,9 @@ orcidNgModule.factory("clearMemberListFilterSrvc", ['$rootScope', function ($roo
 
 orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
-    		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-    		groups: new Array(),    		
-    		loading: false,
+            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+            groups: new Array(),            
+            loading: false,
             loadingDetails: false,
             quickRef: {},            
             loadingDetails: false,
@@ -2106,35 +2106,35 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             peerReviewsToAddIds: null,
             peerReviewGroupDetailsRequested: new Array(),
             getBlankPeerReview: function(callback) {
-            	 // if cached return clone of blank
+                 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
                     callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
-    			$.ajax({
+                $.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     dataType: 'json',
                     success: function(data) {
-                    	callback(data);
+                        callback(data);
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     console.log("Error fetching blank Peer Review");
                 });                
             },
-            postPeerReview: function(peer_review, successFunc, failFunc) {            	
-            	$.ajax({
+            postPeerReview: function(peer_review, successFunc, failFunc) {              
+                $.ajax({
                     url: getBaseUri() + '/peer-reviews/peer-review.json',
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     type: 'POST',
                     data: angular.toJson(peer_review),
                     success: function(data) {
-                    	successFunc(data);
+                        successFunc(data);
                     }
                 }).fail(function(){
                     failFunc();
                 });
-    		},
-    		createNew: function(peerReview) {
+            },
+            createNew: function(peerReview) {
                 var cloneF = JSON.parse(JSON.stringify(peerReview));
                 cloneF.source = null;
                 cloneF.putCode = null;
@@ -2142,21 +2142,21 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     cloneF.externalIdentifiers[idx].putCode = null;
                 return cloneF;
             },                   
-    		loadPeerReviews: function(access_type) {
-    			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {    				
-    				peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
-    				peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
+            loadPeerReviews: function(access_type) {
+                if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {                    
+                    peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
+                    peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
                 } else {
-                	peerReviewSrvc.peerReviewsToAddIds = null;
-                	peerReviewSrvc.loading = true;
-                	peerReviewSrvc.groups = new Array();
-                	peerReviewSrvc.details = new Object();
+                    peerReviewSrvc.peerReviewsToAddIds = null;
+                    peerReviewSrvc.loading = true;
+                    peerReviewSrvc.groups = new Array();
+                    peerReviewSrvc.details = new Object();
                     $.ajax({
                         url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
                         dataType: 'json',
                         success: function(data) {
-                        	peerReviewSrvc.peerReviewsToAddIds = data;                        	
-                        	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
+                            peerReviewSrvc.peerReviewsToAddIds = data;                          
+                            peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
                             $rootScope.$apply();
                         }
                     }).fail(function(e){
@@ -2165,14 +2165,14 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         logAjaxError(e);
                     });
                 };
-    		},    		
-    		addPeerReviewsToScope: function(type) {
+            },          
+            addPeerReviewsToScope: function(type) {
                 if (type == peerReviewSrvc.constants.access_type.USER)
                     var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
                 else // use the anonymous url
                     var url = getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
                 if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
-                	peerReviewSrvc.loading = true;
+                    peerReviewSrvc.loading = true;
                     var peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
                     $.ajax({
                         'url': url + peerReviewIds,
@@ -2186,24 +2186,24 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                                 };
                             });
                             if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
-                            	peerReviewSrvc.loading = false;
+                                peerReviewSrvc.loading = false;
                                 $rootScope.$apply();
                             } else {
                                 $rootScope.$apply();
                                 setTimeout(function(){
-                                	peerReviewSrvc.addPeerReviewsToScope(type);
+                                    peerReviewSrvc.addPeerReviewsToScope(type);
                                 },50);
                             }
                         }
                     }).fail(function(e) {
                         //$rootScope.$apply(function() {
-                        	peerReviewSrvc.loading = false;
+                            peerReviewSrvc.loading = false;
                         //});
                         console.log("Error fetching Peer Review: " + peerReviewIds);
                         logAjaxError(e);
                     });
                 } else {
-                	peerReviewSrvc.loading = false;
+                    peerReviewSrvc.loading = false;
                 };
             },
             getGroup: function(putCode) {
@@ -2229,8 +2229,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     }
                     if (bestMatch == null) 
                         bestMatch = peerReviewSrvc.createNew(peerReview);
-                    	callback(bestMatch);
-                	};
+                        callback(bestMatch);
+                    };
             },
             getPeerReview: function(putCode) {
                 for (var idx in peerReviewSrvc.groups) {
@@ -2251,14 +2251,14 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         };
                     }
                 while (rmGroups.length > 0) 
-                	peerReviewSrvc.groups.splice(rmGroups.pop(),1);
+                    peerReviewSrvc.groups.splice(rmGroups.pop(),1);
                 peerReviewSrvc.removePeerReview(rmPeerReview);
             },
             deletePeerReview: function(putCode) {
-            	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
+                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
             },
             makeDefault: function(group, putCode) {
-            	group.makeDefault(putCode);
+                group.makeDefault(putCode);
                 $.ajax({
                     url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
                     type: 'GET',
@@ -2278,7 +2278,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     dataType: 'json',
                     success: function(data) {
                         if (putCodes.length > 0) 
-                        	peerReviewSrvc.removePeerReview(putCodes,callback);
+                            peerReviewSrvc.removePeerReview(putCodes,callback);
                         else if (callback)
                             callback(data);
                     }
@@ -2296,7 +2296,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 peerReviewSrvc.updateVisibility(putCodes, priv);
             },
             setPrivacy: function(putCode, priv) {
-            	peerReviewSrvc.updateVisibility([putCode], priv);
+                peerReviewSrvc.updateVisibility([putCode], priv);
             },
             updateVisibility: function(putCodes, priv) {
                 $.ajax({
@@ -2306,7 +2306,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     dataType: 'json',
                     success: function(data) {
                         if (putCodes.length > 0)
-                        	peerReviewSrvc.updateVisibility(putCodes, priv);
+                            peerReviewSrvc.updateVisibility(putCodes, priv);
                     }
                 }).fail(function() {
                     console.log("Error updating profile Peer Review.");
@@ -2320,26 +2320,26 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
-            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
-            		var group = peerReviewSrvc.getGroup(putCode);
-            		$.ajax({
+                if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
+                    peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
+                    var group = peerReviewSrvc.getGroup(putCode);
+                    $.ajax({
                         url: getBaseUri() + '/public/group/' + groupIDPutCode,
                         dataType: 'json',
                         contentType: 'application/json;charset=UTF-8',
                         type: 'GET',
                         success: function(data) {
-                        	$rootScope.$apply(function(){
-                        		group.groupName = data.name;
-                        		group.groupDescription = data.description;
-                        		group.groupType = data.type;
-                        	});
+                            $rootScope.$apply(function(){
+                                group.groupName = data.name;
+                                group.groupDescription = data.description;
+                                group.groupType = data.type;
+                            });
                         }
                     }).fail(function(xhr, status, error){
                         console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
                     });
-            		
-            	}
+                    
+                }
             }
     };
     return peerReviewSrvc;
@@ -2496,8 +2496,8 @@ orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc'
 }]);
 
 orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
-	$scope.getEmailFrequencies = function() {
-		$.ajax({
+    $scope.getEmailFrequencies = function() {
+        $.ajax({
             url: window.location.href + '/email-frequencies.json',
             type: 'GET',
             dataType: 'json',
@@ -2508,8 +2508,8 @@ orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', functi
         }).fail(function() {
             console.log("error with frequency");
         });
-	};
-	
+    };
+    
     $scope.saveEmailFrequencies = function() {
         $.ajax({
             url: window.location.href + '/email-frequencies.json',
@@ -2592,7 +2592,7 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
         $.ajax({
             url: getBaseUri() + '/account/security-question.json',
             dataType: 'json',
-            success: function(data) {            	
+            success: function(data) {               
                 $scope.securityQuestionPojo = data;
                 $scope.$apply();
             }
@@ -2626,7 +2626,7 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	
+                
                 if(data.errors.length != 0) {
                     $scope.errors=data.errors;
                 } else {
@@ -2690,7 +2690,7 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
 }]);
 
 orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
-	bioBulkSrvc.initScope($scope);
+    bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
@@ -2760,11 +2760,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     };
 
     $scope.closeModal = function() {
-    	
-    	angular.element('#cboxLoadedContent').css({	  		
-  			overflow: 'auto'
-	  	});
-    	
+        
+        angular.element('#cboxLoadedContent').css({         
+            overflow: 'auto'
+        });
+        
         $.colorbox.close();
     };
     
@@ -2798,13 +2798,13 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
         emailSrvc.delEmail = email;
         
         $scope.$watch(
-			function () {
-			   	return document.getElementsByClassName('delete-email-box').length; 
-			},
-			function (newValue, oldValue) {				
-				$.colorbox.resize();
-		    }
-		);
+            function () {
+                return document.getElementsByClassName('delete-email-box').length; 
+            },
+            function (newValue, oldValue) {             
+                $.colorbox.resize();
+            }
+        );
     };
 
     $scope.deleteEmail = function () {
@@ -2835,20 +2835,20 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
         }
     };
     
-    $scope.showTooltip = function(el, event){    	
-    	$scope.position = angular.element(event.target.parentNode).parent().position();
-	  	angular.element('.edit-record-emails .popover-help-container').css({	  		
-  			top: $scope.position.top + 33,
-  			left: $scope.position.left
-	  	});
-	  	angular.element('#cboxLoadedContent').css({	  		
-  			overflow: 'visible'
-	  	});
-    	$scope.showElement[el] = true;
+    $scope.showTooltip = function(el, event){       
+        $scope.position = angular.element(event.target.parentNode).parent().position();
+        angular.element('.edit-record-emails .popover-help-container').css({            
+            top: $scope.position.top + 33,
+            left: $scope.position.left
+        });
+        angular.element('#cboxLoadedContent').css({         
+            overflow: 'visible'
+        });
+        $scope.showElement[el] = true;
     };
     
     $scope.hideTooltip = function(el){
-    	$scope.showElement[el] = false;
+        $scope.showElement[el] = false;
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
@@ -2880,7 +2880,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
 }]);
 
 orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
-	bioBulkSrvc.initScope($scope);
+    bioBulkSrvc.initScope($scope);
 
     $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
@@ -2927,13 +2927,13 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     };
 
     $scope.updateDisplayIndex = function() {
-    	for (var idx in $scope.websitesForm.websites)
+        for (var idx in $scope.websitesForm.websites)
             $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
     };
     
     $scope.addNew = function() {
-    	$scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "1" });
-    	$scope.updateDisplayIndex();
+        $scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "1" });
+        $scope.updateDisplayIndex();
     };
     
     $scope.addNewModal = function() {         
@@ -2956,7 +2956,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
                 // -> see if they have the same visibility, to set the default visibility element
                 // -> set the default protocol when needed
                 if(len > 0) {
-                	while (len--) {
+                    while (len--) {
                         if(websites[len].url != null) {
                             if (!websites[len].url.toLowerCase().startsWith('http')) {
                                 websites[len].url = 'http://' + websites[len].url;
@@ -2964,36 +2964,36 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
                         }     
                         
                         var itemVisibility = null;
-                		if(websites[len].visibility != null && websites[len].visibility.visibility) {
-                			itemVisibility = websites[len].visibility.visibility;
-                		}
-                		/**
-                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-                		 * 
-                		 * Rules: 
-                		 * - If the default visibility is null:
-                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
-                		 * - If the default visibility is not null:
-                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                		 * */
-                		if($scope.defaultVisibility == null) {
-                			if(itemVisibility != null) {
-                				$scope.defaultVisibility = itemVisibility;
-                			}                			
-                		} else {
-                			if(itemVisibility != null) {
-                				if($scope.defaultVisibility != itemVisibility) {
-                					$scope.defaultVisibility = null;
-                    				break;
-                				}
-                			} else {
-                				$scope.defaultVisibility = null;
-                				break;
-                			}
-                		}                        
+                        if(websites[len].visibility != null && websites[len].visibility.visibility) {
+                            itemVisibility = websites[len].visibility.visibility;
+                        }
+                        /**
+                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                         * 
+                         * Rules: 
+                         * - If the default visibility is null:
+                         *  - If the item visibility is not null, set the default visibility to the item visibility
+                         * - If the default visibility is not null:
+                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                         * */
+                        if($scope.defaultVisibility == null) {
+                            if(itemVisibility != null) {
+                                $scope.defaultVisibility = itemVisibility;
+                            }                           
+                        } else {
+                            if(itemVisibility != null) {
+                                if($scope.defaultVisibility != itemVisibility) {
+                                    $scope.defaultVisibility = null;
+                                    break;
+                                }
+                            } else {
+                                $scope.defaultVisibility = null;
+                                break;
+                            }
+                        }                        
                     }
                 } else {
-                	$scope.defaultVisibility = $scope.websitesForm.visibility.visibility;
+                    $scope.defaultVisibility = $scope.websitesForm.visibility.visibility;
                 }
                                 
                 $scope.$apply();
@@ -3016,7 +3016,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
 
     $scope.setWebsitesForm = function(){
         $scope.websitesForm.visibility = null;
-    	        
+                
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
@@ -3062,7 +3062,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
         }
     };
     
-    $scope.showTooltip = function(elem, event){    	
+    $scope.showTooltip = function(elem, event){     
         $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
         $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
         $scope.$watch('scrollTop', function (value) {
@@ -3082,13 +3082,13 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
     
     $scope.hideTooltip = function(elem){
-    	$scope.showElement[elem] = false;
+        $scope.showElement[elem] = false;
     }
         
     $scope.openEditModal = function(){
         console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
         if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
-        	$scope.bulkEditShow = false;
+            $scope.bulkEditShow = false;
             $.colorbox({
                 scrolling: true,
                 html: $compile($('#edit-websites').html())($scope),
@@ -3097,11 +3097,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
                     if ($scope.websitesForm.websites.length == 0){
                         $scope.addNewModal();
                     } else {
-                    	if ($scope.websitesForm.websites.length == 1){
-                        	if($scope.websitesForm.websites[0].source == null){
-                        		$scope.websitesForm.websites[0].source = $scope.orcidId;
-                        		$scope.websitesForm.websites[0].sourceName = "";
-                        	}
+                        if ($scope.websitesForm.websites.length == 1){
+                            if($scope.websitesForm.websites[0].source == null){
+                                $scope.websitesForm.websites[0].source = $scope.orcidId;
+                                $scope.websitesForm.websites[0].sourceName = "";
+                            }
                         }
                         $scope.updateDisplayIndex();
                     }                
@@ -3148,14 +3148,14 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     
     $scope.setBulkGroupPrivacy = function(priv) {
         for (var idx in $scope.websitesForm.websites)
-        	$scope.websitesForm.websites[idx].visibility.visibility = priv;        
+            $scope.websitesForm.websites[idx].visibility.visibility = priv;        
     };
     
     $scope.getWebsitesForm();
 }]);
 
 orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
-	bioBulkSrvc.initScope($scope);
+    bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
     $scope.emailSrvc = emailSrvc;
@@ -3203,13 +3203,13 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     };
 
     $scope.updateDisplayIndex = function(){
-    	for (var idx in $scope.keywordsForm.keywords)
-    		$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
+        for (var idx in $scope.keywordsForm.keywords)
+            $scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
     };
     
     $scope.addNew = function() {
-    	$scope.keywordsForm.keywords.push({content: "", displayIndex: "1"});    	
-    	$scope.updateDisplayIndex();
+        $scope.keywordsForm.keywords.push({content: "", displayIndex: "1"});        
+        $scope.updateDisplayIndex();
     };
     
     $scope.addNewModal = function() {                
@@ -3228,38 +3228,38 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
                 $scope.newElementDefaultVisibility = $scope.keywordsForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element                
                 if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null && $scope.keywordsForm.keywords.length > 0) {
-                	for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
-                		var itemVisibility = null;
-                		if($scope.keywordsForm.keywords[i].visibility != null && $scope.keywordsForm.keywords[i].visibility.visibility) {
-                			itemVisibility = $scope.keywordsForm.keywords[i].visibility.visibility;
-                		}
-                		/**
-                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-                		 * 
-                		 * Rules: 
-                		 * - If the default visibility is null:
-                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
-                		 * - If the default visibility is not null:
-                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                		 * */
-                		if($scope.defaultVisibility == null) {
-                			if(itemVisibility != null) {
-                				$scope.defaultVisibility = itemVisibility;
-                			}                			
-                		} else {
-                			if(itemVisibility != null) {
-                				if($scope.defaultVisibility != itemVisibility) {
-                					$scope.defaultVisibility = null;
-                    				break;
-                				}
-                			} else {
-                				$scope.defaultVisibility = null;
-                				break;
-                			}
-                		}                		
+                    for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
+                        var itemVisibility = null;
+                        if($scope.keywordsForm.keywords[i].visibility != null && $scope.keywordsForm.keywords[i].visibility.visibility) {
+                            itemVisibility = $scope.keywordsForm.keywords[i].visibility.visibility;
+                        }
+                        /**
+                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                         * 
+                         * Rules: 
+                         * - If the default visibility is null:
+                         *  - If the item visibility is not null, set the default visibility to the item visibility
+                         * - If the default visibility is not null:
+                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                         * */
+                        if($scope.defaultVisibility == null) {
+                            if(itemVisibility != null) {
+                                $scope.defaultVisibility = itemVisibility;
+                            }                           
+                        } else {
+                            if(itemVisibility != null) {
+                                if($scope.defaultVisibility != itemVisibility) {
+                                    $scope.defaultVisibility = null;
+                                    break;
+                                }
+                            } else {
+                                $scope.defaultVisibility = null;
+                                break;
+                            }
+                        }                       
                     }
                 } else {
-                	$scope.defaultVisibility = $scope.keywordsForm.visibility.visibility;
+                    $scope.defaultVisibility = $scope.keywordsForm.visibility.visibility;
                 }
                                                                 
                 $scope.$apply();
@@ -3291,7 +3291,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
                 $scope.keywordsForm = data;
                 
                 if(data.errors.length == 0){
-                	$scope.close();
+                    $scope.close();
                     $.colorbox.close();
                 }                   
                 $scope.$apply();
@@ -3323,8 +3323,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     
     $scope.openEditModal = function(){
         if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
-        	$scope.bulkEditShow = false;
-        	$scope.modal = true;    	
+            $scope.bulkEditShow = false;
+            $scope.modal = true;        
             $.colorbox({
                 scrolling: true,
                 html: $compile($('#edit-keyword').html())($scope),
@@ -3335,7 +3335,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
                         $scope.newInput = true;
                         
                     } else{
-                    	$scope.updateDisplayIndex();
+                        $scope.updateDisplayIndex();
                     }
                 },
                 width: formColorBoxResize(),
@@ -3380,7 +3380,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     
     $scope.setBulkGroupPrivacy = function(priv) {
         for (var idx in $scope.keywordsForm.keywords)      
-        	$scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+            $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
     };
     
     $scope.getKeywordsForm();
@@ -3442,7 +3442,7 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
 }]);
 
 orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
-	bioBulkSrvc.initScope($scope);	
+    bioBulkSrvc.initScope($scope);  
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
@@ -3464,17 +3464,17 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     };
 
     $scope.updateDisplayIndex = function(){
-    	for (var idx in $scope.otherNamesForm.otherNames) {        	
-        	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
+        for (var idx in $scope.otherNamesForm.otherNames) {         
+            $scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
         }
     };
     
     $scope.addNew = function() {
-    	$scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "1" });
-    	$scope.updateDisplayIndex();   	        
+        $scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "1" });
+        $scope.updateDisplayIndex();            
     };
     
-    $scope.addNewModal = function() {    	    	
+    $scope.addNewModal = function() {               
         var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 1};        
         $scope.otherNamesForm.otherNames.push(tmpObj);        
         $scope.updateDisplayIndex();          
@@ -3490,38 +3490,38 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
                 $scope.newElementDefaultVisibility = $scope.otherNamesForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null && $scope.otherNamesForm.otherNames.length > 0) {
-                	for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
-                		var itemVisibility = null;
-                		if($scope.otherNamesForm.otherNames[i].visibility != null && $scope.otherNamesForm.otherNames[i].visibility.visibility) {
-                			itemVisibility = $scope.otherNamesForm.otherNames[i].visibility.visibility;
-                		}
-                		/**
-                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-                		 * 
-                		 * Rules: 
-                		 * - If the default visibility is null:
-                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
-                		 * - If the default visibility is not null:
-                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                		 * */
-                		if($scope.defaultVisibility == null) {
-                			if(itemVisibility != null) {
-                				$scope.defaultVisibility = itemVisibility;
-                			}                			
-                		} else {
-                			if(itemVisibility != null) {
-                				if($scope.defaultVisibility != itemVisibility) {
-                					$scope.defaultVisibility = null;
-                    				break;
-                				}
-                			} else {
-                				$scope.defaultVisibility = null;
-                				break;
-                			}
-                		}                		
+                    for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
+                        var itemVisibility = null;
+                        if($scope.otherNamesForm.otherNames[i].visibility != null && $scope.otherNamesForm.otherNames[i].visibility.visibility) {
+                            itemVisibility = $scope.otherNamesForm.otherNames[i].visibility.visibility;
+                        }
+                        /**
+                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                         * 
+                         * Rules: 
+                         * - If the default visibility is null:
+                         *  - If the item visibility is not null, set the default visibility to the item visibility
+                         * - If the default visibility is not null:
+                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                         * */
+                        if($scope.defaultVisibility == null) {
+                            if(itemVisibility != null) {
+                                $scope.defaultVisibility = itemVisibility;
+                            }                           
+                        } else {
+                            if(itemVisibility != null) {
+                                if($scope.defaultVisibility != itemVisibility) {
+                                    $scope.defaultVisibility = null;
+                                    break;
+                                }
+                            } else {
+                                $scope.defaultVisibility = null;
+                                break;
+                            }
+                        }                       
                     }
                 } else {
-                	$scope.defaultVisibility = $scope.otherNamesForm.visibility.visibility;
+                    $scope.defaultVisibility = $scope.otherNamesForm.visibility.visibility;
                 }               
                 
                 $scope.$apply();                                
@@ -3554,8 +3554,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             success: function(data) {                
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
-                    $scope.close();                	
-                	$.colorbox.close(); 
+                    $scope.close();                 
+                    $.colorbox.close(); 
                 $scope.$apply();                
             }
         }).fail(function() {
@@ -3583,7 +3583,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     };
     
     $scope.openEditModal = function(){
-    	$scope.bulkEditShow = false;    	
+        $scope.bulkEditShow = false;        
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-aka').html())($scope),
@@ -3593,7 +3593,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
                     $scope.addNewModal();
                     $scope.newInput = true;
                 }   else {
-                	$scope.updateDisplayIndex();
+                    $scope.updateDisplayIndex();
                 } 
             },
             width: formColorBoxResize(),
@@ -3607,7 +3607,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         $.colorbox.resize();
     }
     
-    $scope.closeEditModal = function(){    	
+    $scope.closeEditModal = function(){     
         $.colorbox.close();     
     }
     
@@ -3634,7 +3634,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-    	for (var idx in $scope.otherNamesForm.otherNames)            
+        for (var idx in $scope.otherNamesForm.otherNames)            
             $scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
     };
            
@@ -3743,11 +3743,11 @@ orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'em
     };
     
     $scope.showTooltip = function(tp){
-    	$scope.showElement[tp] = true;
+        $scope.showElement[tp] = true;
     };
     
     $scope.hideTooltip = function(tp){
-    	$scope.showElement[tp] = false;
+        $scope.showElement[tp] = false;
     };
 
     $scope.getBiographyForm();
@@ -3755,7 +3755,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'em
 }]);
 
 orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
-	bioBulkSrvc.initScope($scope);
+    bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.countryForm = null;
     $scope.defaultVisibility = null;
@@ -3803,47 +3803,47 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
                 $scope.newElementDefaultVisibility = $scope.countryForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.countryForm != null && $scope.countryForm.addresses != null && $scope.countryForm.addresses.length > 0) {
-                	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
-                		var itemVisibility = null;
-                		if($scope.countryForm.addresses[i].visibility != null && $scope.countryForm.addresses[i].visibility.visibility) {
-                			itemVisibility = $scope.countryForm.addresses[i].visibility.visibility;
-                		}
-                		/**
-                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-                		 * 
-                		 * Rules: 
-                		 * - If the default visibility is null:
-                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
-                		 * - If the default visibility is not null:
-                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-                		 * */
-                		if($scope.defaultVisibility == null) {
-                			if(itemVisibility != null) {
-                				$scope.defaultVisibility = itemVisibility;
-                			}                			
-                		} else {
-                			if(itemVisibility != null) {
-                				if($scope.defaultVisibility != itemVisibility) {
-                					$scope.defaultVisibility = null;
-                    				break;
-                				}
-                			} else {
-                				$scope.defaultVisibility = null;
-                				break;
-                			}
-                		}                 		                		                	
+                    for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
+                        var itemVisibility = null;
+                        if($scope.countryForm.addresses[i].visibility != null && $scope.countryForm.addresses[i].visibility.visibility) {
+                            itemVisibility = $scope.countryForm.addresses[i].visibility.visibility;
+                        }
+                        /**
+                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                         * 
+                         * Rules: 
+                         * - If the default visibility is null:
+                         *  - If the item visibility is not null, set the default visibility to the item visibility
+                         * - If the default visibility is not null:
+                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                         * */
+                        if($scope.defaultVisibility == null) {
+                            if(itemVisibility != null) {
+                                $scope.defaultVisibility = itemVisibility;
+                            }                           
+                        } else {
+                            if(itemVisibility != null) {
+                                if($scope.defaultVisibility != itemVisibility) {
+                                    $scope.defaultVisibility = null;
+                                    break;
+                                }
+                            } else {
+                                $scope.defaultVisibility = null;
+                                break;
+                            }
+                        }                                                                   
                     }
-                	var highestDisplayIndex = null;
-	            	//We have to iterate on them again to select the primary address
-                	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
-	                	//Set the primary element based on the display index
-	            		if($scope.primaryElementIndex == null || highestDisplayIndex < $scope.countryForm.addresses[i].displayIndex) {
-	            			$scope.primaryElementIndex = i;
-	            			highestDisplayIndex = $scope.countryForm.addresses[i].displayIndex;
-	            		}
-                	}
+                    var highestDisplayIndex = null;
+                    //We have to iterate on them again to select the primary address
+                    for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
+                        //Set the primary element based on the display index
+                        if($scope.primaryElementIndex == null || highestDisplayIndex < $scope.countryForm.addresses[i].displayIndex) {
+                            $scope.primaryElementIndex = i;
+                            highestDisplayIndex = $scope.countryForm.addresses[i].displayIndex;
+                        }
+                    }
                 } else {
-                	$scope.defaultVisibility = $scope.countryForm.visibility.visibility;                	
+                    $scope.defaultVisibility = $scope.countryForm.visibility.visibility;                    
                 }     
                 $scope.$apply();                
             }
@@ -3884,7 +3884,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
         });
     };
     
-    $scope.closeModal = function(){    	
+    $scope.closeModal = function(){     
         $.colorbox.close();
     }
 
@@ -3906,25 +3906,25 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     };
     
     $scope.openEditModal = function() {
-    	
+        
         if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
-        	$scope.bulkEditShow = false;
-        	
+            $scope.bulkEditShow = false;
+            
             $.colorbox({
                 scrolling: true,
                 html: $compile($('#edit-country').html())($scope),
                 onLoad: function() {
                     $('#cboxClose').remove();
-                    if ($scope.countryForm.addresses.length == 0){                	
+                    if ($scope.countryForm.addresses.length == 0){                  
                         $scope.addNewModal();
                     } else {
-                    	if ($scope.countryForm.addresses.length == 1){
+                        if ($scope.countryForm.addresses.length == 1){
                             if($scope.countryForm.addresses[0].source == null){
-                            	$scope.countryForm.addresses[0].source = $scope.orcidId;
-                            	$scope.countryForm.addresses[0].sourceName = "";
+                                $scope.countryForm.addresses[0].source = $scope.orcidId;
+                                $scope.countryForm.addresses[0].sourceName = "";
                             }
                         }
-                    	$scope.updateDisplayIndex();
+                        $scope.updateDisplayIndex();
                     }                
                 },
      
@@ -3958,11 +3958,11 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     };
     
     $scope.updateDisplayIndex = function(){
-    	for (var idx in $scope.countryForm.addresses)
-        	$scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;                       
+        for (var idx in $scope.countryForm.addresses)
+            $scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;                       
     };
     
-    $scope.addNewModal = function() {    	
+    $scope.addNewModal = function() {       
         var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":$scope.orcidId,"sourceName":""};
         $scope.countryForm.addresses.push(tmpObj);
         $scope.updateDisplayIndex();
@@ -3992,7 +3992,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-    	for (var idx in $scope.countryForm.addresses)      
+        for (var idx in $scope.countryForm.addresses)      
             $scope.countryForm.addresses[idx].visibility.visibility = priv;        
     };
      
@@ -4000,8 +4000,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
 }]);
 
 orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
-	bioBulkSrvc.initScope($scope);
-	$scope.externalIdentifiersForm = null;
+    bioBulkSrvc.initScope($scope);
+    $scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
     $scope.showElement = [];
@@ -4024,7 +4024,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
         });
     }
 
-    $scope.setExternalIdentifiersForm = function(){    	
+    $scope.setExternalIdentifiersForm = function(){     
         $scope.externalIdentifiersForm.visibility = null;
         $.ajax({
             url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
@@ -4067,8 +4067,8 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
     };  
     
     
-    $scope.openEditModal = function(){    	
-    	$scope.bulkEditShow = false;
+    $scope.openEditModal = function(){      
+        $scope.bulkEditShow = false;
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-external-identifiers').html())($scope),
@@ -4156,18 +4156,18 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
    
    //To fix displayIndex values that comes with -1
    $scope.displayIndexInit = function(){
-	   for (var idx in $scope.externalIdentifiersForm.externalIdentifiers) {        	
-		   $scope.externalIdentifiersForm.externalIdentifiers[idx]['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers.length - idx;
+       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers) {            
+           $scope.externalIdentifiersForm.externalIdentifiers[idx]['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers.length - idx;
        }       
    };
     
    $scope.closeEditModal = function(){
-	   $.colorbox.close();
+       $.colorbox.close();
    };
    
    $scope.setBulkGroupPrivacy = function(priv) {
        for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)     
-    	   $scope.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;        
+           $scope.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;        
    };
 
    //init
@@ -4211,14 +4211,14 @@ orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc
 }]);
 
 orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
-	$scope.privacyHelp = {};
+    $scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
     $scope.showDeactivatedError = false;
     $scope.showReactivationSent = false;
     
     $scope.model = {
-    	key: orcidVar.recaptchaKey
+        key: orcidVar.recaptchaKey
     };
     
     var loadDate = new Date();
@@ -4284,12 +4284,12 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             success: function(data) {
                 $scope.duplicates = data;
                 $scope.$apply();
-            	var diffDate = new Date();
-            	// reg was filled out to fast reload the page
-            	if ($scope.loadTime + 5000 > diffDate.getTime()) {
-            		window.location.reload();
-            		return;
-            	}
+                var diffDate = new Date();
+                // reg was filled out to fast reload the page
+                if ($scope.loadTime + 5000 > diffDate.getTime()) {
+                    window.location.reload();
+                    return;
+                }
                 if ($scope.duplicates.length > 0 ) {
                     $scope.showDuplicatesColorBox();
                 } else {
@@ -4332,17 +4332,17 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	console.log(data);
-            	$scope.register = data;            	
-            	$scope.$apply();                
-            	if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
+                console.log(data);
+                $scope.register = data;             
+                $scope.$apply();                
+                if ($scope.register.errors == undefined || $scope.register.errors == undefined || $scope.register.errors.length == 0) {
                     if ($scope.register.errors.length == 0) {
-                    	
+                        
                         $scope.showProcessingColorBox();
                         $scope.getDuplicates();
                     }
-            	} else {
-            		if ($scope.register.grecaptcha.errors.length == 0) angular.element(document.querySelector('#recaptcha')).remove();
+                } else {
+                    if ($scope.register.grecaptcha.errors.length == 0) angular.element(document.querySelector('#recaptcha')).remove();
                 }
             }
         }).fail(function() {
@@ -4365,21 +4365,21 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	if(data != null && data.errors != null && data.errors.length > 0) {
-            		$scope.generalRegistrationError = data.errors[0];
-            		console.log($scope.generalRegistrationError);
-            		$scope.$apply();
-            		$.colorbox.close();
-            	} else {
-            		if (basePath.startsWith(baseUrl + 'oauth')) {
+                if(data != null && data.errors != null && data.errors.length > 0) {
+                    $scope.generalRegistrationError = data.errors[0];
+                    console.log($scope.generalRegistrationError);
+                    $scope.$apply();
+                    $.colorbox.close();
+                } else {
+                    if (basePath.startsWith(baseUrl + 'oauth')) {
                         var clientName = $('div#RegistrationCtr input[name="client_name"]').val();
                         var clientGroupName = $('div#RegistrationCtr input[name="client_group_name"]').val();
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString(clientGroupName, clientName)]);
                     } else {
-                    	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
                     }                        
                     orcidGA.windowLocationHrefDelay(data.url);
-            	}                
+                }                
             }
         }).fail(function() {
             // something bad is happening!
@@ -4445,7 +4445,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     };
         
     $scope.setRecaptchaWidgetId = function (widgetId) {  
-    	$scope.recaptchaWidgetId = widgetId;
+        $scope.recaptchaWidgetId = widgetId;
     };
 
     $scope.setRecatchaResponse = function (response) {
@@ -4814,7 +4814,7 @@ orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter
     $scope.moreInfo = {};
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {    	
+    $scope.sort = function(key) {       
         $scope.sortState.sortBy(key);
     };
 
@@ -4914,7 +4914,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
-    $scope.sort = function(key) {    	
+    $scope.sort = function(key) {       
         $scope.sortState.sortBy(key);
     };
 
@@ -5191,11 +5191,11 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
         $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
     };
     
-    $scope.showTooltip = function (element){    	
+    $scope.showTooltip = function (element){        
         $scope.showElement[element] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
+    $scope.hideTooltip = function (element){        
         $scope.showElement[element] = false;
     };
 }]);
@@ -5251,7 +5251,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };
 
     $scope.getEmptyExtId = function() {
-    	return {
+        return {
                 "errors": [],
                 "type": {
                     "errors": [],
@@ -5273,11 +5273,11 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
                 },
                 "putCode": null,
                 "relationship": {
-        			"errors": [],
-        			"value": "self",
-        			"required": true,
-        			"getRequiredMessage": null
-        		}
+                    "errors": [],
+                    "value": "self",
+                    "required": true,
+                    "getRequiredMessage": null
+                }
             };
     }
     
@@ -5332,7 +5332,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
                     url: getBaseUri() + '/fundings/funding.json',
                     dataType: 'json',
                     success: function(data) {
-                        $scope.$apply(function() {                    	
+                        $scope.$apply(function() {                      
                             $scope.editFunding = data;
                             $scope.showAddModal();
                         });
@@ -5697,11 +5697,11 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };    
     
     $scope.showFundingImportWizard =  function() {
-    	$scope.fundingImportWizard = !$scope.fundingImportWizard;    	    	
+        $scope.fundingImportWizard = !$scope.fundingImportWizard;               
     };
     
     $scope.toggleWizardDesc = function(id){
-    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+        $scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     }
     
     $scope.showTooltip = function (key){
@@ -5719,15 +5719,15 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };
     
     $scope.hideURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = false;
+        $scope.displayURLPopOver[id] = false;
     };
     
     $scope.showURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = true;
+        $scope.displayURLPopOver[id] = true;
     };
     
     $scope.moreInfoActive = function(groupID){
-    	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+        if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
     }
     
 }]);
@@ -5758,7 +5758,7 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
             $scope.moreInfo[key]=true;
     };
 
-    $scope.showDetailsMouseClick = function(key, $event) {    	    	
+    $scope.showDetailsMouseClick = function(key, $event) {              
         $event.stopPropagation();
         $scope.moreInfo[key] = !$scope.moreInfo[key];
     };
@@ -5782,7 +5782,7 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
         $scope.showElement[key] = true;
     };
 
-    $scope.hideTooltip = function (key){    	
+    $scope.hideTooltip = function (key){        
         $scope.showElement[key] = false;
     };
     
@@ -5796,55 +5796,55 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
     };
     
     $scope.hideURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = false;
-	};
-	
-	$scope.showURLPopOver = function(id){
-		$scope.displayURLPopOver[id] = true;
-	};
+        $scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+        $scope.displayURLPopOver[id] = true;
+    };
 
 }]);
 
 orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
-	 $scope.peerReviewSrvc = peerReviewSrvc;
-	 $scope.workspaceSrvc  = workspaceSrvc;
-	 $scope.showDetails = {};
-	 $scope.showElement = {};
-	 $scope.showPeerReviewDetails = new Array();
-	 $scope.sortHideOption = true;
-	 
-	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+     $scope.peerReviewSrvc = peerReviewSrvc;
+     $scope.workspaceSrvc  = workspaceSrvc;
+     $scope.showDetails = {};
+     $scope.showElement = {};
+     $scope.showPeerReviewDetails = new Array();
+     $scope.sortHideOption = true;
      
-	 $scope.sort = function(key) {
+     $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+     
+     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
      };
-	 
+     
      $scope.showDetailsMouseClick = function(groupId, $event){
-     	$event.stopPropagation();
-     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+        $event.stopPropagation();
+        $scope.showDetails[groupId] = !$scope.showDetails[groupId];
      };
     
-    $scope.showTooltip = function (element){    	
+    $scope.showTooltip = function (element){        
         $scope.showElement[element] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
+    $scope.hideTooltip = function (element){        
         $scope.showElement[element] = false;
     };
     
     
     $scope.showMoreDetails = function(putCode){  
-    	$scope.showPeerReviewDetails.length = 0;
-    	$scope.showPeerReviewDetails[putCode] = true;   
+        $scope.showPeerReviewDetails.length = 0;
+        $scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
-    	$scope.showPeerReviewDetails.length = 0;
-    	$scope.showPeerReviewDetails[putCode] = false;
+        $scope.showPeerReviewDetails.length = 0;
+        $scope.showPeerReviewDetails[putCode] = false;
     };
     
     //Init
-    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);	 	 
+    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);       
 }]);
 
 orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
@@ -5941,44 +5941,44 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
         $('.work-more-info-container').css('display', 'none');
     };
 
-    $scope.showTooltip = function (element){    	
+    $scope.showTooltip = function (element){        
         $scope.showElement[element] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
+    $scope.hideTooltip = function (element){        
         $scope.showElement[element] = false;
     };
     
     $scope.hideURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = false;
-	};
-	
-	$scope.showURLPopOver = function(id){
-		$scope.displayURLPopOver[id] = true;
-	};
-	
-	$scope.showMozillaBadges = function(putCode){
-		$scope.$watch(
-			function () { 
-			   	return document.getElementsByClassName('badge-container-' + putCode).length; 
-			},
-			function (newValue, oldValue) {
-				if (newValue !== oldValue) {
-			    	if ($scope.badgesRequested[putCode] == null){
-				    	var dois = worksSrvc.getUniqueDois(putCode);
-				    	var c = document.getElementsByClassName('badge-container-' + putCode);
-				    	for (i = 0; i <= dois.length - 1; i++){
-				    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-				    		var s = document.createElement('script');
-				            s.type = 'text/javascript';
-				            try {
-				              s.appendChild(document.createTextNode(code));
-				              c[0].appendChild(s);
-				            } catch (e) {
-				              s.text = code;
-				              c[0].appendChild(s);
-				            }
-				    	}
+        $scope.displayURLPopOver[id] = false;
+    };
+    
+    $scope.showURLPopOver = function(id){
+        $scope.displayURLPopOver[id] = true;
+    };
+    
+    $scope.showMozillaBadges = function(putCode){
+        $scope.$watch(
+            function () { 
+                return document.getElementsByClassName('badge-container-' + putCode).length; 
+            },
+            function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if ($scope.badgesRequested[putCode] == null){
+                        var dois = worksSrvc.getUniqueDois(putCode);
+                        var c = document.getElementsByClassName('badge-container-' + putCode);
+                        for (i = 0; i <= dois.length - 1; i++){
+                            var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+                            var s = document.createElement('script');
+                            s.type = 'text/javascript';
+                            try {
+                              s.appendChild(document.createTextNode(code));
+                              c[0].appendChild(s);
+                            } catch (e) {
+                              s.text = code;
+                              c[0].appendChild(s);
+                            }
+                        }
                         $scope.badgesRequested[putCode] = true;
                     }
                 }
@@ -6173,8 +6173,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
                             newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
                     };
                     worksSrvc.worksValidate(newWorks, function(data) {
-                        for (i in data) {                        	
-                        	$scope.worksFromBibtex.push(data[i]);
+                        for (i in data) {                           
+                            $scope.worksFromBibtex.push(data[i]);
                         }
                         $scope.$apply();
                     });
@@ -6201,9 +6201,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
     
     $scope.addWorkFromBibtex = function(work) {
-        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);    	
+        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);     
         $scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
-        $scope.bibtextWork = true;    	        
+        $scope.bibtextWork = true;              
         $scope.putWork();        
     };
     
@@ -6366,48 +6366,48 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
 
     $scope.showWorkImportWizard =  function() {
-    	if(!$scope.workImportWizard) {
-    		loadWorkImportWizardList();
-    	}
-    	$scope.workImportWizard = !$scope.workImportWizard;
+        if(!$scope.workImportWizard) {
+            loadWorkImportWizardList();
+        }
+        $scope.workImportWizard = !$scope.workImportWizard;
     };   
 
     function loadWorkImportWizardList() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	if(data == null || data.length == 0) {
-                	$scope.noLinkFlag = false;
+                if(data == null || data.length == 0) {
+                    $scope.noLinkFlag = false;
                 }
-            	
-            	$scope.selectedWorkType = 'Articles';
+                
+                $scope.selectedWorkType = 'Articles';
                 $scope.selectedGeoArea = 'Global';
-            	$scope.workImportWizardsOriginal = data;
-            	$scope.bulkEditShow = false;
-            	$scope.showBibtexImportWizard = false;
-            	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-            		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
-            			$scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
-            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-            				if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
-            					$scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
-            			}
-            			
-            			for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-            				if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
-            					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
-            			}
-            		}
-            	}            	
-            	if(getParameterByName('import_works_wizard') != 'true') {
-            		$scope.selectedWorkType = 'All';
+                $scope.workImportWizardsOriginal = data;
+                $scope.bulkEditShow = false;
+                $scope.showBibtexImportWizard = false;
+                for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+                    for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
+                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
+                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
+                            if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
+                                $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
+                        }
+                        
+                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
+                            if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
+                                $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
+                        }
+                    }
+                }               
+                if(getParameterByName('import_works_wizard') != 'true') {
+                    $scope.selectedWorkType = 'All';
                     $scope.selectedGeoArea = 'All';
-            	}
-            	$scope.$apply();
+                }
+                $scope.$apply();
             }
         }).fail(function(e) {
             // something bad is happening!
@@ -6438,7 +6438,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
 
     $scope.openEditWork = function(putCode){
-    	worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
     };       
 
     $scope.putWork = function(){
@@ -6562,13 +6562,13 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
 
     $scope.fillUrl = function(extId) {
-    	if(extId != null) {
-    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-    		if(extId.url == null) {
-    			extId.url = {value:""};
-    		}
-    		extId.url.value=url;
-    	}
+        if(extId != null) {
+            var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+            if(extId.url == null) {
+                extId.url = {value:""};
+            }
+            extId.url.value=url;
+        }
     };
     
     //init
@@ -6667,8 +6667,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
     
     $scope.openImportWizardUrlFilter = function(url, param) {
-    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-    	openImportWizardUrl(url);
+        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+        openImportWizardUrl(url);
     };
 
     $scope.setAddWorkPrivacy = function(priv, $event) {
@@ -6711,61 +6711,61 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         $scope.editWork.workType.errors = [];
     };
     
-    $scope.showTooltip = function (key){    	
-        $scope.showElement[key] = true;    	
+    $scope.showTooltip = function (key){        
+        $scope.showElement[key] = true;     
     };
     
-    $scope.hideTooltip = function (key){    	
-    	$scope.showElement[key] = false;
+    $scope.hideTooltip = function (key){        
+        $scope.showElement[key] = false;
     };
     
     $scope.openFileDialog = function(){
-    	$scope.textFiles = [];
-    	$scope.bibtexParsingError = false;
-    	$timeout(function() { //To avoid '$apply already in progress' error
-    	    angular.element('#inputBibtex').trigger('click');
-    	}, 0);
+        $scope.textFiles = [];
+        $scope.bibtexParsingError = false;
+        $timeout(function() { //To avoid '$apply already in progress' error
+            angular.element('#inputBibtex').trigger('click');
+        }, 0);
     };
     
     $scope.toggleWizardDesc = function(id){
-    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+        $scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
     
-    $scope.showURLPopOver = function(id){    	
-    	$scope.displayURLPopOver[id] = true;
+    $scope.showURLPopOver = function(id){       
+        $scope.displayURLPopOver[id] = true;
     }
     
-    $scope.hideURLPopOver = function(id){    	
-    	$scope.displayURLPopOver[id] = false;
+    $scope.hideURLPopOver = function(id){       
+        $scope.displayURLPopOver[id] = false;
     }
     
     $scope.showMozillaBadges = function(putCode){
-    	$scope.$watch(
-		    function () { 
-		    	return document.getElementsByClassName('badge-container-' + putCode).length; 
-		    },
-			function (newValue, oldValue) {
-			      if (newValue !== oldValue) {
-			    	  if ($scope.badgesRequested[putCode] == null){
-						var dois = worksSrvc.getUniqueDois(putCode);
-						var c = document.getElementsByClassName('badge-container-' + putCode);
-						for (i = 0; i <= dois.length - 1; i++){
-							var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-							var s = document.createElement('script');
-						    s.type = 'text/javascript';
-						    try {
-						      s.appendChild(document.createTextNode(code));
-						      c[0].appendChild(s);
-						    } catch (e) {
-						      s.text = code;
-						      c[0].appendChild(s);
-						    }
-						}
-						$scope.badgesRequested[putCode] = true;
-			      	}
-			    }
-		    }
-		);
+        $scope.$watch(
+            function () { 
+                return document.getElementsByClassName('badge-container-' + putCode).length; 
+            },
+            function (newValue, oldValue) {
+                  if (newValue !== oldValue) {
+                      if ($scope.badgesRequested[putCode] == null){
+                        var dois = worksSrvc.getUniqueDois(putCode);
+                        var c = document.getElementsByClassName('badge-container-' + putCode);
+                        for (i = 0; i <= dois.length - 1; i++){
+                            var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+                            var s = document.createElement('script');
+                            s.type = 'text/javascript';
+                            try {
+                              s.appendChild(document.createTextNode(code));
+                              c[0].appendChild(s);
+                            } catch (e) {
+                              s.text = code;
+                              c[0].appendChild(s);
+                            }
+                        }
+                        $scope.badgesRequested[putCode] = true;
+                    }
+                }
+            }
+        );
     };
     
     $scope.toggleBibtexExport = function(){
@@ -6835,45 +6835,45 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
-	$scope.workspaceSrvc = workspaceSrvc;
-	$scope.peerReviewSrvc = peerReviewSrvc;
-	$scope.editPeerReview = null;
-	$scope.disambiguatedOrganization = null;
-	$scope.addingPeerReview = false;
-	$scope.editTranslatedTitle = false;
-	$scope.editSources = {};
-	$scope.showDetails = {};
-	$scope.showPeerReviewDetails = new Array();
-	$scope.showElement = {};
-	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
-	$scope.sortHideOption = true;
-	$scope.displayURLPopOver = {};
-	$scope.peerReviewImportWizard = false;
-	$scope.wizardDescExpanded = {};
-	$scope.noLinkFlag = true;
-	
+    $scope.workspaceSrvc = workspaceSrvc;
+    $scope.peerReviewSrvc = peerReviewSrvc;
+    $scope.editPeerReview = null;
+    $scope.disambiguatedOrganization = null;
+    $scope.addingPeerReview = false;
+    $scope.editTranslatedTitle = false;
+    $scope.editSources = {};
+    $scope.showDetails = {};
+    $scope.showPeerReviewDetails = new Array();
+    $scope.showElement = {};
+    $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+    $scope.sortHideOption = true;
+    $scope.displayURLPopOver = {};
+    $scope.peerReviewImportWizard = false;
+    $scope.wizardDescExpanded = {};
+    $scope.noLinkFlag = true;
+    
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
-	
-	$scope.addPeerReviewModal = function(data){
-		if (data == undefined) {
-	    	peerReviewSrvc.getBlankPeerReview(function(data) {
-		        $scope.editPeerReview = data;
-		        $scope.$apply(function() {                    
-		            $scope.showAddPeerReviewModal();
-		            $scope.bindTypeaheadForOrgs();
-		        });
-		    });
-		}else{
-			$scope.editPeerReview = data;
-			$scope.showAddPeerReviewModal();	
-		}       
+    
+    $scope.addPeerReviewModal = function(data){
+        if (data == undefined) {
+            peerReviewSrvc.getBlankPeerReview(function(data) {
+                $scope.editPeerReview = data;
+                $scope.$apply(function() {                    
+                    $scope.showAddPeerReviewModal();
+                    $scope.bindTypeaheadForOrgs();
+                });
+            });
+        }else{
+            $scope.editPeerReview = data;
+            $scope.showAddPeerReviewModal();    
+        }       
     };
     
     $scope.showAddPeerReviewModal = function(data){
         $scope.editTranslatedTitle = false;
-    	$.colorbox({
+        $.colorbox({
             scrolling: true,
             html: $compile($('#add-peer-review-modal').html())($scope),
             onLoad: function() {$('#cboxClose').remove();},
@@ -6890,13 +6890,13 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.addAPeerReview = function() {
-    	if ($scope.addingPeerReview) return; 
+        if ($scope.addingPeerReview) return; 
         $scope.addingPeerReview = true;
         $scope.editPeerReview.errors.length = 0;
         peerReviewSrvc.postPeerReview($scope.editPeerReview,
-            function(data){        	    
+            function(data){             
                 if (data.errors.length == 0) {
-            	    $scope.addingPeerReview = false;
+                    $scope.addingPeerReview = false;
                     $scope.$apply();
                     $.colorbox.close();
                     $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);                    
@@ -6916,7 +6916,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.openEditPeerReview = function(putCode){
-    	peerReviewSrvc.getEditable(putCode, function(data) {$scope.addPeerReviewModal(data);});        
+        peerReviewSrvc.getEditable(putCode, function(data) {$scope.addPeerReviewModal(data);});        
     };
     
     $scope.closeModal = function() {
@@ -6995,7 +6995,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
             if(datum.city)
                 $scope.editPeerReview.city.errors = [];
             if(datum.region)
-            	$scope.editPeerReview.region.value = datum.region;
+                $scope.editPeerReview.region.value = datum.region;
 
             if(datum.country != undefined && datum.country != null) {
                 $scope.editPeerReview.country.value = datum.country;
@@ -7038,7 +7038,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
     
     $scope.addSubjectExternalIdentifier = function () {
-    	$scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+        $scope.editPeerReview.subjectForm.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
     
     $scope.deleteExternalIdentifier = function(obj) {
@@ -7052,18 +7052,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     };
    
     $scope.showDetailsMouseClick = function(groupId, $event){
-    	$event.stopPropagation();
-    	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
+        $event.stopPropagation();
+        $scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
     
     $scope.showMoreDetails = function(putCode){
-    	$scope.showPeerReviewDetails.length = 0;
-    	$scope.showPeerReviewDetails[putCode] = true;   
+        $scope.showPeerReviewDetails.length = 0;
+        $scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
-    	$scope.showPeerReviewDetails.length = 0;
-    	$scope.showPeerReviewDetails[putCode] = false;
+        $scope.showPeerReviewDetails.length = 0;
+        $scope.showPeerReviewDetails[putCode] = false;
     };
     
     $scope.deletePeerReviewConfirm = function(putCode, deleteGroup) {
@@ -7091,7 +7091,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         if (deleteGroup)
            peerReviewSrvc.deleteGroupPeerReview(putCode);
         else
-        	peerReviewSrvc.deletePeerReview(putCode);
+            peerReviewSrvc.deletePeerReview(putCode);
         $.colorbox.close();
     };
     
@@ -7101,50 +7101,50 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         return false;
     };
     
-    $scope.showTooltip = function (element){    	
+    $scope.showTooltip = function (element){        
         $scope.showElement[element] = true;
     };
 
-    $scope.hideTooltip = function (element){    	
+    $scope.hideTooltip = function (element){        
         $scope.showElement[element] = false;
     };
     
     $scope.fillUrl = function(extId) {
-    	if(extId != null) {
-    		var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);    		
-    		if(extId.url == null) {
-    			extId.url = {value:""};
-    		}
-    		extId.url.value=url;
-    	}
+        if(extId != null) {
+            var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);           
+            if(extId.url == null) {
+                extId.url = {value:""};
+            }
+            extId.url.value=url;
+        }
     };
     
     $scope.hideURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = false;
+        $scope.displayURLPopOver[id] = false;
     };
     
     $scope.showURLPopOver = function(id){
-    	$scope.displayURLPopOver[id] = true;
+        $scope.displayURLPopOver[id] = true;
     };
     
     $scope.moreInfoActive = function(groupID){
-    	if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+        if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
     };
     
     $scope.showPeerReviewImportWizard = function(){
-    	if(!$scope.peerReviewImportWizard) {
-    		loadPeerReviewLinks();
-    	}
-    	$scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
+        if(!$scope.peerReviewImportWizard) {
+            loadPeerReviewLinks();
+        }
+        $scope.peerReviewImportWizard = !$scope.peerReviewImportWizard;
     };
     
     $scope.toggleWizardDesc = function(id){
-    	$scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+        $scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
     };
     
     $scope.openImportWizardUrlFilter = function(url, param) {
-    	url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-    	openImportWizardUrl(url);
+        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+        openImportWizardUrl(url);
     };
         
     //Init
@@ -7152,7 +7152,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     loadPeerReviewLinks();
     
     function loadPeerReviewLinks() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri() + '/workspace/retrieve-peer-review-import-wizards.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
@@ -7160,18 +7160,18 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
             success: function(data) {
                 $scope.peerReviewImportWizardList = data;
                 if(data == null || data.length == 0) {
-                	$scope.noLinkFlag = false;
+                    $scope.noLinkFlag = false;
                 }
-            	$scope.peerReviewImportWizardList.sort(function(obj1, obj2){
-            		if(obj1.displayName < obj2.displayName) {
-        				return -1;
-        			}
-        			if(obj1.displayName > obj2.displayName) {
-        				return 1;
-        			}
-        			return 0;
-        		});
-            	$scope.$apply();
+                $scope.peerReviewImportWizardList.sort(function(obj1, obj2){
+                    if(obj1.displayName < obj2.displayName) {
+                        return -1;
+                    }
+                    if(obj1.displayName > obj2.displayName) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                $scope.$apply();
             }
         }).fail(function(e) {
             // something bad is happening!
@@ -7358,9 +7358,9 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
                 }
                 var tempResults = $scope.results;
                 for(var index = 0; index < tempResults.length; index ++) {
-                	if($scope.results[index]['orcid-profile']['orcid-bio']['personal-details'] == null) {
-                		$scope.results.splice(index, 1);
-                	} 
+                    if($scope.results[index]['orcid-profile']['orcid-bio']['personal-details'] == null) {
+                        $scope.results.splice(index, 1);
+                    } 
                 }
                 $scope.numFound = $scope.results.length;
                 if(!$scope.numFound){
@@ -7416,13 +7416,13 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
         var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
         var name = "";
         if(personalDetails != null) {
-        	var creditName = personalDetails['credit-name'];
+            var creditName = personalDetails['credit-name'];
             if(creditName != null){
                 return creditName.value;
             }
             name = personalDetails['given-names'].value;
             if(personalDetails['family-name'] != null) {
-            	name = name + ' ' + personalDetails['family-name'].value;
+                name = name + ' ' + personalDetails['family-name'].value;
             }
         }
         return name;
@@ -7768,7 +7768,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     
     $scope.$watch(function () { return notificationsSrvc.bulkChecked }, function (newVal, oldVal) {
         if (typeof newVal !== 'undefined') {
-        	$scope.bulkChecked = notificationsSrvc.bulkChecked;
+            $scope.bulkChecked = notificationsSrvc.bulkChecked;
         }
     });
 
@@ -8000,8 +8000,8 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
         typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
         angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
             if (value.value == locale_v3){
-            	$scope.language = $scope.languages[key];
-            	$scope.widgetSrvc.locale = $scope.language.value; 
+                $scope.language = $scope.languages[key];
+                $scope.widgetSrvc.locale = $scope.language.value; 
             }
         });
     };
@@ -8206,32 +8206,32 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
 }]);
 
 orcidNgModule.controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
-	$scope.orcidsToDeactivate = "";
-	$scope.showSection = false;
+    $scope.orcidsToDeactivate = "";
+    $scope.showSection = false;
 
     $scope.toggleSection = function(){
         $scope.showSection = !$scope.showSection;
         $('#deactivation_modal').toggle();
     };
 
-	
-	$scope.deactivateOrcids = function() {
-		$.ajax({
+    
+    $scope.deactivateOrcids = function() {
+        $.ajax({
             url: getBaseUri()+'/admin-actions/deactivate-profiles.json',
             type: 'POST',
             dataType: 'json',
             data: $scope.orcidsToDeactivate,
             contentType: 'application/json;charset=UTF-8',
             success: function(data){
-            	$scope.$apply(function(){
-            		$scope.result = data;
+                $scope.$apply(function(){
+                    $scope.result = data;
                 });
             }
         }).fail(function(error) {
             // something bad is happening!
             console.log("Error re-sending claim emails");
         });
-	}
+    }
 }]);
 
 orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
@@ -8417,22 +8417,22 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
     };
 
     $scope.closeModal = function() {
-    	$scope.deprecated_verified = false;
+        $scope.deprecated_verified = false;
         $scope.primary_verified = false;
         $scope.deprecatedAccount = null;
         $scope.primaryAccount = null;
-        $scope.showModal = false;    	
+        $scope.showModal = false;       
         $.colorbox.close();
     };
 }]);
 
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     
-	$scope.applicationSummary = null;
-	$scope.applicationSummaryList = null;
-	
-	$scope.confirmRevoke = function(applicationSummary){
-		$scope.applicationSummary = applicationSummary;
+    $scope.applicationSummary = null;
+    $scope.applicationSummaryList = null;
+    
+    $scope.confirmRevoke = function(applicationSummary){
+        $scope.applicationSummary = applicationSummary;
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -8464,23 +8464,23 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
     };
     
     $scope.getApplications = function() {
-	    $.ajax({
-	        url: getBaseUri()+'/account/get-trusted-orgs.json',
-	        type: 'GET',
-	        dataType: 'json',
-	        success: function(data){	        	
-	        	$scope.$apply(function(){
-	        		for(var index1 = 0; index1 < data.length; index1 ++) {
-	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);	        			
-	            	}
-	        		$scope.applicationSummaryList = data;	        		
-	        		
-	        	});
-	        }
-	    }).fail(function(error) {
-	        // something bad is happening!
-	        console.log("Error finding the information");
-	    });
+        $.ajax({
+            url: getBaseUri()+'/account/get-trusted-orgs.json',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){                
+                $scope.$apply(function(){
+                    for(var index1 = 0; index1 < data.length; index1 ++) {
+                        data[index1].approvalDate = formatDate(data[index1].approvalDate);                      
+                    }
+                    $scope.applicationSummaryList = data;                   
+                    
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error finding the information");
+        });
     }
     
     $scope.getApplicationUrlLink = function(application) {
@@ -8512,8 +8512,8 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.newMember = null;
     $scope.groups = [];
     $scope.importWorkWizard = {
-    	'actTypeList' : ['Articles','Books','Data','Student Publications'],
-		'geoAreaList' : ['Global', 'Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']
+        'actTypeList' : ['Articles','Books','Data','Student Publications'],
+        'geoAreaList' : ['Global', 'Africa', 'Asia', 'Australia', 'Europe', 'North America', 'South America']
     };
 
     $scope.toggleGroupsModal = function() {
@@ -8530,24 +8530,24 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
      * FIND
      * */
     $scope.findAny = function() {
-    	success_edit_member_message = null;
-    	success_message = null;
-    	$.ajax({
+        success_edit_member_message = null;
+        success_message = null;
+        $.ajax({
             url: getBaseUri()+'/manage-members/find.json?id=' + encodeURIComponent($scope.any_id),
             type: 'GET',
             dataType: 'json',
             success: function(data){
-            	$scope.$apply(function(){  
-                	if(data.client == true) {
-                    	$scope.client = data.clientObject;
-                    	$scope.member = null;
-                    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
-                    		$scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
-                    		$scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
-                    	}
+                $scope.$apply(function(){  
+                    if(data.client == true) {
+                        $scope.client = data.clientObject;
+                        $scope.member = null;
+                        for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
+                            $scope.client.redirectUris[i].actType.value = JSON.parse($scope.client.redirectUris[i].actType.value);
+                            $scope.client.redirectUris[i].geoArea.value = JSON.parse($scope.client.redirectUris[i].geoArea.value);
+                        }
                     } else {
-                    	$scope.client = null;
-                    	$scope.member = data.memberObject;
+                        $scope.client = null;
+                        $scope.member = data.memberObject;
                     }
                 });
             }
@@ -8698,7 +8698,7 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
             rUri.scopes.push('/orcid-profile/read-limited');
             rUri.scopes.push('/peer-review/create');
         } else if(rUri.type.value == 'institutional-sign-in') {
-        	rUri.scopes.push('/authenticate');
+            rUri.scopes.push('/authenticate');
         }
     };
 
@@ -8719,11 +8719,11 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
 
     //Update client
     $scope.updateClient = function() {
-    	var clientClone = JSON.parse(JSON.stringify($scope.client));
-    	for(var i = 0; i < clientClone.redirectUris.length; i ++) {
-    		clientClone.redirectUris[i].actType.value = JSON.stringify(clientClone.redirectUris[i].actType.value);
-    		clientClone.redirectUris[i].geoArea.value = JSON.stringify(clientClone.redirectUris[i].geoArea.value);
-    	}
+        var clientClone = JSON.parse(JSON.stringify($scope.client));
+        for(var i = 0; i < clientClone.redirectUris.length; i ++) {
+            clientClone.redirectUris[i].actType.value = JSON.stringify(clientClone.redirectUris[i].actType.value);
+            clientClone.redirectUris[i].geoArea.value = JSON.stringify(clientClone.redirectUris[i].geoArea.value);
+        }
         $.ajax({
             url: getBaseUri() + '/manage-members/update-client.json',
             type: 'POST',
@@ -8814,7 +8814,7 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     };
     
     $scope.selectAll = function($event){
-    	$event.target.select();
+        $event.target.select();
     };
 }]);
 
@@ -9142,12 +9142,12 @@ orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function 
 }]);
 
 orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
-	$scope.orcidToLock = '';
-	$scope.orcidToUnlock = '';
-	$scope.showLockModal = false;
-	$scope.showUnlockModal = false;
-	
-	$scope.toggleLockModal = function(){
+    $scope.orcidToLock = '';
+    $scope.orcidToUnlock = '';
+    $scope.showLockModal = false;
+    $scope.showUnlockModal = false;
+    
+    $scope.toggleLockModal = function(){
         $scope.showLockModal = !$scope.showLockModal;
         $('#lock_modal').toggle();
     };
@@ -9158,7 +9158,7 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
     };
     
     $scope.lockAccount = function() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri()+'/admin-actions/lock-accounts.json',
             type: 'POST',
             data: $scope.orcidToLock,
@@ -9176,16 +9176,16 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
     };
     
     $scope.unlockAccount = function() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri()+'/admin-actions/unlock-accounts.json',
             type: 'POST',
             data: $scope.orcidToUnlock,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){   
-            	$scope.result = data;            	
-            	$scope.orcidToUnlock = '';
-            	$scope.$apply();
+                $scope.result = data;               
+                $scope.orcidToUnlock = '';
+                $scope.$apply();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -9199,12 +9199,12 @@ orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($
 }]);
 
 orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
-	$scope.orcidToReview = '';
-	$scope.orcidToUnreview = '';
-	$scope.showReviewModal = false;
-	$scope.showUnreviewModal = false;
-	
-	$scope.toggleReviewModal = function(){
+    $scope.orcidToReview = '';
+    $scope.orcidToUnreview = '';
+    $scope.showReviewModal = false;
+    $scope.showUnreviewModal = false;
+    
+    $scope.toggleReviewModal = function(){
         $scope.showReviewModal = !$scope.showReviewModal;
         $('#review_modal').toggle();
     };
@@ -9215,16 +9215,16 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
     };
     
     $scope.reviewAccount = function() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri()+'/admin-actions/review-accounts.json',
             type: 'POST',
             data: $scope.orcidToReview,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){   
-            	$scope.result = data;            	
-            	$scope.orcidToReview = '';
-            	$scope.$apply();
+                $scope.result = data;               
+                $scope.orcidToReview = '';
+                $scope.$apply();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -9233,16 +9233,16 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
     };
     
     $scope.unreviewAccount = function() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri()+'/admin-actions/unreview-accounts.json',
             type: 'POST',
             data: $scope.orcidToUnreview,
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){   
-            	$scope.result = data;            	
-            	$scope.orcidToUnreview = '';
-            	$scope.$apply();
+                $scope.result = data;               
+                $scope.orcidToUnreview = '';
+                $scope.$apply();
             }
         }).fail(function(error) {
             // something bad is happening!
@@ -9274,7 +9274,7 @@ orcidNgModule.controller('lookupIdOrEmailCtrl',['$scope','$compile', function fi
             contentType: 'application/json;charset=UTF-8',
             success: function(data){
                 $scope.$apply(function(){
-                	console.log(data);
+                    console.log(data);
                     $scope.result = data;
                     $scope.idOrEmails='';
                     $scope.showEmailIdsModal();
@@ -9305,32 +9305,32 @@ orcidNgModule.controller('lookupIdOrEmailCtrl',['$scope','$compile', function fi
 }]);
 
 orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
-	$scope.emailIds = "";
-	$scope.showSection = false;
+    $scope.emailIds = "";
+    $scope.showSection = false;
 
     $scope.toggleSection = function(){
         $scope.showSection = !$scope.showSection;
         $('#batch_resend_section').toggle();
     };
 
-	
-	$scope.resendClaimEmails = function() {
-		$.ajax({
+    
+    $scope.resendClaimEmails = function() {
+        $.ajax({
             url: getBaseUri()+'/admin-actions/resend-claim.json',
             type: 'POST',
             dataType: 'json',
             data: $scope.emailIds,
             contentType: 'application/json;charset=UTF-8',
             success: function(data){
-            	$scope.$apply(function(){
-            		$scope.result = data;
+                $scope.$apply(function(){
+                    $scope.result = data;
                 });
             }
         }).fail(function(error) {
             // something bad is happening!
             console.log("Error re-sending claim emails");
         });
-	}
+    }
 }]);
 
 orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
@@ -9364,8 +9364,8 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         var funct = function() {
             $scope.verifyEmailObject = emailSrvc.primaryEmail;
             emailSrvc.verifyEmail(emailSrvc.primaryEmail,function(data) {
-            	$scope.verifyEmailSent = true;    
-            	$scope.$apply();                    
+                $scope.verifyEmailSent = true;    
+                $scope.$apply();                    
            });            
        };
        if (emailSrvc.primaryEmail == null)
@@ -9379,9 +9379,9 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     };
 
     $scope.acceptTerms = function() {
-    	$scope.mustAcceptTerms = false;
-    	$scope.accepted = false;
-    	$.colorbox({
+        $scope.mustAcceptTerms = false;
+        $scope.accepted = false;
+        $.colorbox({
             html : $compile($('#terms-and-conditions-modal').html())($scope),
                 scrolling: true,
                 onLoad: function() {
@@ -9394,9 +9394,9 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     };
     
     $scope.enableDeveloperTools = function() {
-    	if($scope.accepted == true) {
-    		$scope.mustAcceptTerms = false;
-    		$.ajax({
+        if($scope.accepted == true) {
+            $scope.mustAcceptTerms = false;
+            $.ajax({
                 url: getBaseUri()+'/developer-tools/enable-developer-tools.json',
                 contentType: 'application/json;charset=UTF-8',
                 type: 'POST',
@@ -9409,9 +9409,9 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
                 // something bad is happening!
                 console.log("Error enabling developer tools");
             });
-    	} else {
-    		$scope.mustAcceptTerms = true;
-    	}        
+        } else {
+            $scope.mustAcceptTerms = true;
+        }        
     };
 
     $scope.confirmDisableDeveloperTools = function() {
@@ -9463,7 +9463,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
                         $scope.updateSelectedRedirectUri();
                         $scope.setHtmlTrustedNameAndDescription();
                     } else {
-                    	$scope.createCredentialsLayout();
+                        $scope.createCredentialsLayout();
                         $scope.noCredentialsYet = true;
                     }
                 });
@@ -9710,7 +9710,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         $.colorbox.resize({width:"415px" , height:"250px"});
     };
 
-    $scope.resetClientSecret = function() {    	
+    $scope.resetClientSecret = function() {     
         $.ajax({
             url: getBaseUri() + '/developer-tools/reset-client-secret.json',
             type: 'POST',
@@ -9744,15 +9744,15 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     };
     
     $scope.inputTextAreaSelectAll = function($event){
-    	$event.target.select();
+        $event.target.select();
     }
     
     $scope.expand =  function(){
-    	$scope.expanded = true;
+        $scope.expanded = true;
     }
     
     $scope.collapse = function(){
-    	$scope.expanded = false;
+        $scope.expanded = false;
     }
     
     $scope.getClientUrl = function(userCredentials) {
@@ -9968,8 +9968,8 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
             if(!$scope.newClient.redirectUris[j].value){
                 $scope.newClient.redirectUris.splice(j, 1);
             } else {
-    			$scope.newClient.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
-    			$scope.newClient.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
+                $scope.newClient.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
+                $scope.newClient.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
             }
         }
 
@@ -10001,8 +10001,8 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
             if(!$scope.clientToEdit.redirectUris[j].value){
                 $scope.clientToEdit.redirectUris.splice(j, 1);
             } else if($scope.clientToEdit.redirectUris[j].actType.value == "") {
-    			$scope.clientToEdit.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
-    			$scope.clientToEdit.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
+                $scope.clientToEdit.redirectUris[j].actType.value = JSON.stringify({"import-works-wizard" : ["Articles"]});
+                $scope.clientToEdit.redirectUris[j].geoArea.value = JSON.stringify({"import-works-wizard" : ["Global"]});
             }
         }
         //Submit the edited client
@@ -10217,15 +10217,15 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     };
     
     $scope.inputTextAreaSelectAll = function($event){
-    	$event.target.select();
+        $event.target.select();
     }
     
     $scope.expand =  function(){
-    	$scope.expanded = true;
+        $scope.expanded = true;
     }
     
     $scope.collapse = function(){
-    	$scope.expanded = false;
+        $scope.expanded = false;
     }
     
     $scope.getClientUrl = function(client) {
@@ -10256,8 +10256,8 @@ orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scop
     $scope.clientId = null;
     
     $scope.init = function(client_id) {
-    	$scope.clientId = client_id;
-    	$scope.getCustomEmails();
+        $scope.clientId = client_id;
+        $scope.getCustomEmails();
     };
     
     $scope.getCustomEmails = function() {
@@ -10422,15 +10422,15 @@ orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,
             dataType: 'json',
             success: function(data){
                 $scope.$apply(function(){
-                	if(!$.isEmptyObject(data)) {
-                		if(!$.isEmptyObject(data.errorMessg)) {
-                        	$scope.orcidMap = data;
-                        	$scope.showSwitchErrorModal();
+                    if(!$.isEmptyObject(data)) {
+                        if(!$.isEmptyObject(data.errorMessg)) {
+                            $scope.orcidMap = data;
+                            $scope.showSwitchErrorModal();
                         } else {
-                        	window.location.replace("./account/admin-switch-user?orcid\=" + data.orcid);
+                            window.location.replace("./account/admin-switch-user?orcid\=" + data.orcid);
                         }
                     } else {
-                    	$scope.showSwitchInvalidModal();
+                        $scope.showSwitchInvalidModal();
                     }
                     $scope.orcidOrEmail='';
                 });
@@ -10451,8 +10451,8 @@ orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,
         scrolling: false
     });
 
-	    setTimeout(function(){$.colorbox.resize({width:"575px"});},100);
-	};
+        setTimeout(function(){$.colorbox.resize({width:"575px"});},100);
+    };
     
     $scope.showSwitchErrorModal = function() {
         $.colorbox({
@@ -10621,7 +10621,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.showReactivationSent = false;
     
     $scope.model = {
-		key: orcidVar.recaptchaKey
+        key: orcidVar.recaptchaKey
     };
     
     $scope.toggleClientDescription = function() {
@@ -10629,29 +10629,29 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     };
     
     $scope.loadRequestInfoForm = function() {
-    	$.ajax({
+        $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	angular.forEach(data.scopes, function (scope) {
-            	    if (scope.value == "/email/read-private") {
-            	        $scope.emailRequested = true;
-            	    } else if(scope.value.endsWith('/create')) {
-            			$scope.showCreateIcon = true;
-            		} else if(scope.value.endsWith('/update')) {
-            			$scope.showUpdateIcon = true;
-            		} else if(scope.value.endsWith('/read-limited')) {
-            			$scope.showLimitedIcon = true;
-            		} else {
-            			$scope.showBulletIcon = true;
-            		}
-            	})
-            	            	            	            		            		            	
-            	$scope.requestInfoForm = data;            	
-            	$scope.gaString = orcidGA.buildClientString($scope.requestInfoForm.memberName, $scope.requestInfoForm.clientName);            	
-            	$scope.$apply();
+                angular.forEach(data.scopes, function (scope) {
+                    if (scope.value == "/email/read-private") {
+                        $scope.emailRequested = true;
+                    } else if(scope.value.endsWith('/create')) {
+                        $scope.showCreateIcon = true;
+                    } else if(scope.value.endsWith('/update')) {
+                        $scope.showUpdateIcon = true;
+                    } else if(scope.value.endsWith('/read-limited')) {
+                        $scope.showLimitedIcon = true;
+                    } else {
+                        $scope.showBulletIcon = true;
+                    }
+                })
+                                                                                                        
+                $scope.requestInfoForm = data;              
+                $scope.gaString = orcidGA.buildClientString($scope.requestInfoForm.memberName, $scope.requestInfoForm.clientName);              
+                $scope.$apply();
             }
         }).fail(function() {
             console.log("An error occured initializing the form.");
@@ -10671,7 +10671,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 $scope.authorizationForm = data;                                
                 if($scope.authorizationForm.userName.value) {
-                	$scope.isOrcidPresent = true;
+                    $scope.isOrcidPresent = true;
                     $scope.showRegisterForm = false;                    
                 }
                 // #show_login - legacy fragment id, we should remove this sometime
@@ -10769,8 +10769,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                                 
                 // special handling of deactivation error
                 $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
-                	$scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
-                	$scope.showReactivationSent = false;
+                    $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                    $scope.showReactivationSent = false;
                 }); // initialize the watch                     
             }
         }).fail(function() {
@@ -10897,14 +10897,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	$scope.requestInfoForm = data;
-            	if($scope.requestInfoForm.errors.length > 0) {                	                
-                	$scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
-                	console.log($scope.generalRegistrationError);
-                	$scope.$apply();
-                	$.colorbox.close();
+                $scope.requestInfoForm = data;
+                if($scope.requestInfoForm.errors.length > 0) {                                  
+                    $scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
+                    console.log($scope.generalRegistrationError);
+                    $scope.$apply();
+                    $.colorbox.close();
                 } else {
-                	orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
+                    orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
                     if($scope.registrationForm.approved) {
                         for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
                             orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
@@ -10914,7 +10914,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                         orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
                     }
                     orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
-                }            	            	
+                }                               
             }
         }).fail(function() {
             // something bad is happening!
@@ -11016,7 +11016,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.switchForm = function() {
         $scope.showRegisterForm = !$scope.showRegisterForm;
         if (!$scope.personalLogin) 
-        	$scope.personalLogin = true;
+            $scope.personalLogin = true;
     };
 
     $scope.showProcessingColorBox = function () {
@@ -11038,23 +11038,23 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.showRegisterForm = false;
     };
 
-    $scope.toggleLongDescription = function(orcid_scope) {    	    	
-    	$scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
+    $scope.toggleLongDescription = function(orcid_scope) {              
+        $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
     };
 
     document.onkeydown = function(e) {
-	    e = e || window.event;
-	    if (e.keyCode == 13) {	    	
-	    	if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ //There is no clientID information		    	
-	    		if ($scope.showRegisterForm == true){
-		    		$scope.registerAndAuthorize();		    		
-		    	} else{
-		    		$scope.loginAndAuthorize();		    		
-		    	}		    	
-			} else{
-	    		$scope.authorize();
-	    	}
-	    }
+        e = e || window.event;
+        if (e.keyCode == 13) {          
+            if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ //There is no clientID information             
+                if ($scope.showRegisterForm == true){
+                    $scope.registerAndAuthorize();                  
+                } else{
+                    $scope.loginAndAuthorize();                 
+                }               
+            } else{
+                $scope.authorize();
+            }
+        }
     };
     
     //---------------------
@@ -11259,51 +11259,51 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     
 }]);
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){	
-	$scope.emailSrvc = emailSrvc;
-	$scope.showEdit = false;
-	$scope.showElement = {};
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
+    $scope.emailSrvc = emailSrvc;
+    $scope.showEdit = false;
+    $scope.showElement = {};
 
-	emailSrvc.getEmails();
-	
-	$scope.openEdit = function(){
-		$scope.showEdit = true;
-	}
-	
-	$scope.close = function(){	    
-		$scope.showEdit = false;
-		prefsSrvc.saved = false;
-	    $.colorbox.close();
-	}
-	
-	$scope.openEditModal = function(){
-		
-	    var HTML = '<div class="lightbox-container" style="position: static">\
-	    				<div class="edit-record edit-record-emails" style="position: static">\
-	    					<div class="row">\
-	    						<div class="col-md-12 col-sm-12 col-xs-12">\
-	    								<h1 class="lightbox-title pull-left">'+ om.get("manage.edit.emails") +'</h1>\
-	    						</div>\
-	    					</div>\
-	    					<div class="row">\
-	    						<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">\
-	    							<table class="settings-table" style="position: static">\
-	    								<tr>' +
-	    									$('#edit-emails').html()
-	    							  +'</tr>\
-	    							</table>\
-	    						</div>\
-	    					</div>\
-	    					<div class="row">\
-	    						<div class="col-md-12 col-sm-12 col-xs-12">\
-	    							<a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a>\
-	    						</div>\
-	    					</div>\
-	    				</div>\
-	    			</div>';  
-	    
-	    $scope.emailSrvc.popUp = true;
-	    
+    emailSrvc.getEmails();
+    
+    $scope.openEdit = function(){
+        $scope.showEdit = true;
+    }
+    
+    $scope.close = function(){      
+        $scope.showEdit = false;
+        prefsSrvc.saved = false;
+        $.colorbox.close();
+    }
+    
+    $scope.openEditModal = function(){
+        
+        var HTML = '<div class="lightbox-container" style="position: static">\
+                        <div class="edit-record edit-record-emails" style="position: static">\
+                            <div class="row">\
+                                <div class="col-md-12 col-sm-12 col-xs-12">\
+                                        <h1 class="lightbox-title pull-left">'+ om.get("manage.edit.emails") +'</h1>\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-12 col-xs-12 col-sm-12" style="position: static">\
+                                    <table class="settings-table" style="position: static">\
+                                        <tr>' +
+                                            $('#edit-emails').html()
+                                      +'</tr>\
+                                    </table>\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-12 col-sm-12 col-xs-12">\
+                                    <a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a>\
+                                </div>\
+                            </div>\
+                        </div>\
+                    </div>';  
+        
+        $scope.emailSrvc.popUp = true;
+        
         $.colorbox({
             scrolling: true,
             html: $compile(HTML)($scope),
@@ -11319,117 +11319,117 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
             }            
         });
     }
-	
+    
 }]);
 
-orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){	
-	
-	$scope.searchFilterChanged = false;
-	$scope.filterActive = false;
-	$scope.conditionsActive = false;
-	$scope.menuVisible = false;
-	$scope.secondaryMenuVisible = {};
-	$scope.tertiaryMenuVisible = {};
-	$scope.searchVisible = false;
-	$scope.settingsVisible = false;
-	
-	$scope.searchFocus = function(){
-		$scope.filterActive = true;
-		$scope.conditionsActive = true;
-	}
-	
-	$scope.searchBlur = function(){		
-		$scope.hideSearchFilter();
-		$scope.conditionsActive = false;		
-	}
-	
-	$scope.filterChange = function(){
-		$scope.searchFilterChanged = true;
-	}
-	
-	$scope.hideSearchFilter = function(){
-		var searchInputValue = document.getElementById("search-input").value;
-		if (searchInputValue === ""){
-			setTimeout(function() {
+orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
+    
+    $scope.searchFilterChanged = false;
+    $scope.filterActive = false;
+    $scope.conditionsActive = false;
+    $scope.menuVisible = false;
+    $scope.secondaryMenuVisible = {};
+    $scope.tertiaryMenuVisible = {};
+    $scope.searchVisible = false;
+    $scope.settingsVisible = false;
+    
+    $scope.searchFocus = function(){
+        $scope.filterActive = true;
+        $scope.conditionsActive = true;
+    }
+    
+    $scope.searchBlur = function(){     
+        $scope.hideSearchFilter();
+        $scope.conditionsActive = false;        
+    }
+    
+    $scope.filterChange = function(){
+        $scope.searchFilterChanged = true;
+    }
+    
+    $scope.hideSearchFilter = function(){
+        var searchInputValue = document.getElementById("search-input").value;
+        if (searchInputValue === ""){
+            setTimeout(function() {
                 if ($scope.searchFilterChanged === false) {
-                	$scope.filterActive = false;
+                    $scope.filterActive = false;
                 }
             }, 3000);
-		}
-	}
-	
-	
-	$scope.toggleMenu = function(){
-		$scope.menuVisible = !$scope.menuVisible;
-		$scope.searchVisible = false;
-		$scope.settingsVisible = false;		
-	}
-	
-	$scope.toggleSecondaryMenu = function(submenu){
-		$scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
-	}
-	
-	$scope.toggleTertiaryMenu = function(submenu){
-		$scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
-	}
-	
-	$scope.toggleSearch = function(){
-		$scope.searchVisible = !$scope.searchVisible;
-		$scope.menuVisible = false;		
-		$scope.settingsVisible = false;
-	}
-	
-	$scope.toggleSettings = function(){
-		$scope.settingsVisible = !$scope.settingsVisible;
-		$scope.menuVisible = false;
-		$scope.searchVisible = false;
-	}	
-	
-	$scope.handleMobileMenuOption = function($event){
-		$event.preventDefault();
-		var w = getWindowWidth();			
-		if(w > 767) {				
-			window.location = $event.target.getAttribute('href');
-		}
-	}
-	
+        }
+    }
+    
+    
+    $scope.toggleMenu = function(){
+        $scope.menuVisible = !$scope.menuVisible;
+        $scope.searchVisible = false;
+        $scope.settingsVisible = false;     
+    }
+    
+    $scope.toggleSecondaryMenu = function(submenu){
+        $scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
+    }
+    
+    $scope.toggleTertiaryMenu = function(submenu){
+        $scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
+    }
+    
+    $scope.toggleSearch = function(){
+        $scope.searchVisible = !$scope.searchVisible;
+        $scope.menuVisible = false;     
+        $scope.settingsVisible = false;
+    }
+    
+    $scope.toggleSettings = function(){
+        $scope.settingsVisible = !$scope.settingsVisible;
+        $scope.menuVisible = false;
+        $scope.searchVisible = false;
+    }   
+    
+    $scope.handleMobileMenuOption = function($event){
+        $event.preventDefault();
+        var w = getWindowWidth();           
+        if(w > 767) {               
+            window.location = $event.target.getAttribute('href');
+        }
+    }
+    
 }]);
 
 orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
-	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
-	$scope.showCode = false;
-	$scope.widgetSrvc = widgetSrvc;
-	
-	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
-	
-	$scope.inputTextAreaSelectAll = function($event){
-    	$event.target.select();
+    $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
+    $scope.showCode = false;
+    $scope.widgetSrvc = widgetSrvc;
+    
+    $scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
+    
+    $scope.inputTextAreaSelectAll = function($event){
+        $event.target.select();
     }
-	
-	$scope.toggleCopyWidget = function(){
-		$scope.showCode = !$scope.showCode;
-	}
-	
-	$scope.hideWidgetCode = function(){
-		$scope.showCode = false;
-	}
-	
+    
+    $scope.toggleCopyWidget = function(){
+        $scope.showCode = !$scope.showCode;
+    }
+    
+    $scope.hideWidgetCode = function(){
+        $scope.showCode = false;
+    }
+    
 }]);
 
 orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
-	$scope.showSources = new Array();
-	$scope.showPopover = new Array();
-	$scope.toggleSourcesDisplay = function(section){		
-		$scope.showSources[section] = !$scope.showSources[section];		
-	}
-	
-	$scope.showPopover = function(section){
-		$scope.showPopover[section] = true;
-	}	
-	
-	$scope.hidePopover = function(section){
-		$scope.showPopover[section] = false;	
-	}
+    $scope.showSources = new Array();
+    $scope.showPopover = new Array();
+    $scope.toggleSourcesDisplay = function(section){        
+        $scope.showSources[section] = !$scope.showSources[section];     
+    }
+    
+    $scope.showPopover = function(section){
+        $scope.showPopover[section] = true;
+    }   
+    
+    $scope.hidePopover = function(section){
+        $scope.showPopover[section] = false;    
+    }
 }]);
 
 /*
@@ -11438,64 +11438,64 @@ orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($sco
 
 orcidNgModule.filter('formatBibtexOutput', function () {
     return function (text) {
-		var str = text.replace(/[\-?_?]/, ' ');
-		return str.toUpperCase();
+        var str = text.replace(/[\-?_?]/, ' ');
+        return str.toUpperCase();
     };
 });
 
 
 orcidNgModule.filter('orderObjectBy', function() {
-	  return function(items, field, reverse) {
-	    var filtered = [];
-	    angular.forEach(items, function(item) {
-	      filtered.push(item);
-	    });
-	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
-	    });
-	    if(reverse) filtered.reverse();
-	    return filtered;
-	 };
+      return function(items, field, reverse) {
+        var filtered = [];
+        angular.forEach(items, function(item) {
+          filtered.push(item);
+        });
+        filtered.sort(function (a, b) {
+          return (a[field] > b[field] ? 1 : -1);
+        });
+        if(reverse) filtered.reverse();
+        return filtered;
+     };
 });
 
-orcidNgModule.filter("filterImportWizards", function(){	
+orcidNgModule.filter("filterImportWizards", function(){ 
     return function(input, selectedWorkType, selectedGeoArea) {
-    	var output = [];    	
-    	if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
-    		output = input;
-    	}else{
-    		for(var i = 0; i < input.length; i ++) {
-        		for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
-    				if (selectedWorkType == 'All'){
-    					if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-    						output.push(input[i]);
-    					}
-    				}else if(selectedGeoArea == 'All'){
-    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
-    						output.push(input[i]);
-    					}    					
-    				}else{    				   					
-    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-        					output.push(input[i]);
-        				}
-    				}
-        		}
-        	}    		
-    	}
-    	return output;
+        var output = [];        
+        if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
+            output = input;
+        }else{
+            for(var i = 0; i < input.length; i ++) {
+                for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
+                    if (selectedWorkType == 'All'){
+                        if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+                            output.push(input[i]);
+                        }
+                    }else if(selectedGeoArea == 'All'){
+                        if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
+                            output.push(input[i]);
+                        }                       
+                    }else{                                      
+                        if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+                            output.push(input[i]);
+                        }
+                    }
+                }
+            }           
+        }
+        return output;
     };
 });
 
 
 orcidNgModule.filter('urlProtocol', function(){
     return function(url){
-    	if (url == null) return url;
-    	if(!url.startsWith('http')) {    			
-            if (url.startsWith('//')){            	
-            	url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
-          	} else {
-          	    url = 'http://' + url;    
-          	}
+        if (url == null) return url;
+        if(!url.startsWith('http')) {               
+            if (url.startsWith('//')){              
+                url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
+            } else {
+                url = 'http://' + url;    
+            }
         }
         return url;
     }
@@ -11514,22 +11514,22 @@ orcidNgModule.filter('latex', function(){
 
 orcidNgModule.filter('ajaxFormDateToISO8601', function(){
     return function(input){
-    	if (typeof input != 'undefined'){
-	        var str = '';
-	        if (input.year) str += input.year;
-	        if (input.month) {
-	            if (str.length > 0) str += '-';
-	            str += Number(input.month).pad(2);
-	        }
-	        if (input.day) {
-	            if (str.length > 0)
-	                str += '-';
-	            str += Number(input.day).pad(2);
-	        }
-	        return str;
-    	} else {
-    		return false;
-    	}
+        if (typeof input != 'undefined'){
+            var str = '';
+            if (input.year) str += input.year;
+            if (input.month) {
+                if (str.length > 0) str += '-';
+                str += Number(input.month).pad(2);
+            }
+            if (input.day) {
+                if (str.length > 0)
+                    str += '-';
+                str += Number(input.day).pad(2);
+            }
+            return str;
+        } else {
+            return false;
+        }
     };
 });
 
@@ -11600,13 +11600,13 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         }
         
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '') {
-        	link = workExternalIdentifier.url.value;
+            link = workExternalIdentifier.url.value;
         }
         else {
-            link = workIdLinkJs.getLink(id,type);	
+            link = workIdLinkJs.getLink(id,type);   
         }
-        if (link != null) {        	
-            link = $filter('urlProtocol')(link);        	
+        if (link != null) {         
+            link = $filter('urlProtocol')(link);            
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
         } else {
             output = output + id.escapeHtml();        
@@ -11614,15 +11614,15 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         
         if( link != null ) {
             output += '<div class="popover-pos">\
-    			<div class="popover-help-container">\
-    	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
-    					<div class="arrow"></div>\
-    					<div class="popover-content">\
-    				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-    				    </div>\
-    				</div>\
-    			</div>\
-    	  </div>';
+                <div class="popover-help-container">\
+                    <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+                        <div class="arrow"></div>\
+                        <div class="popover-content">\
+                            <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+                        </div>\
+                    </div>\
+                </div>\
+          </div>';
        }
             
        return output;
@@ -11632,9 +11632,9 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 //Currently being used in Fundings only
 orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
-    	var isPartOf = false;
+        var isPartOf = false;
         var link = null;
-    	var ngclass = '';
+        var ngclass = '';
         var output = '';
         var value = null;        
 
@@ -11670,41 +11670,41 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         }
  
         if(link != null) {
-        	link = $filter('urlProtocol')(link);
-        	
-        	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
-        	} else {
-        		if(type != null) {
-        			if (moreInfo == false || typeof moreInfo == 'undefined') {
+            link = $filter('urlProtocol')(link);
+            
+            if(value != null) {
+                output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
+            } else {
+                if(type != null) {
+                    if (moreInfo == false || typeof moreInfo == 'undefined') {
                         ngclass = 'truncate-anchor';
                     }
-        			
-        			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-        			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-        			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-        			}
-        			
-        		}        		
-        	}
+                    
+                    if(type.value == 'grant') {
+                        output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                    } else if(type.value == 'contract') {
+                        output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                    } else {
+                        output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
+                    }
+                    
+                }               
+            }
         } else if(value != null) {
-        	output = output + " " + value.escapeHtml();
+            output = output + " " + value.escapeHtml();
         }
         
         if( link != null ) {            
             output += '<div class="popover-pos">\
-        				<div class="popover-help-container">\
-				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
-								<div class="arrow"></div>\
-								<div class="popover-content">\
-							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-							    </div>\
-							</div>\
-						</div>\
-				  </div>';
+                        <div class="popover-help-container">\
+                            <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+                                <div class="arrow"></div>\
+                                <div class="popover-content">\
+                                    <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+                                </div>\
+                            </div>\
+                        </div>\
+                  </div>';
         }
         
         return output;
@@ -11713,8 +11713,8 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 
 orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
-    	
-    	var id = null;
+        
+        var id = null;
         var output = '';
         var ngclass = '';
         var isPartOf = false;
@@ -11725,26 +11725,26 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         if (peerReviewExternalIdentifier == null) return output;
         
         if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;
+            isPartOf = true;
         
         if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
         id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
         
         if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
-	        if (type != null) {
-	        	if(isPartOf)
-	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
-	        	else 
-	        		output += "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
-	        }
+            if (type != null) {
+                if(isPartOf)
+                    output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
+                else 
+                    output += "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
+            }
         
         if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
-        	link = peerReviewExternalIdentifier.url.value;
+            link = peerReviewExternalIdentifier.url.value;
         else link = workIdLinkJs.getLink(id,type); 
-        	
+            
         if (link != null){
-        	link = $filter('urlProtocol')(link);
+            link = $filter('urlProtocol')(link);
             output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
             output += id.escapeHtml();        
@@ -11757,19 +11757,19 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         if (link != null){
             output += '\
             <div class="popover-pos">\
-    			<div class="popover-help-container">\
-    	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
-    					<div class="arrow"></div>\
-    					<div class="popover-content">\
-    				    	<a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
-    				    </div>\
-    				</div>\
-    			</div>\
-    	   </div>';
+                <div class="popover-help-container">\
+                    <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
+                        <div class="arrow"></div>\
+                        <div class="popover-content">\
+                            <a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
+                        </div>\
+                    </div>\
+                </div>\
+           </div>';
         }
         
        if(own)
-        	output = '<br/>' + output;
+            output = '<br/>' + output;
         
        return output;      
       
