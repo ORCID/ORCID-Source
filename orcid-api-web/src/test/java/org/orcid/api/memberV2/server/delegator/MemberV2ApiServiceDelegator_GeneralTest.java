@@ -134,8 +134,10 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         try {
             serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
         } catch (OrcidAccessControlException e) {
-            assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_UPDATE", e.getMessage());
-        }
+            
+        } catch(Exception e) {
+            fail();
+        } 
     }
 
     @Test
@@ -299,13 +301,17 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         try {
             serviceDelegator.viewGroupIdRecord(1L);
         } catch (OrcidAccessControlException e) {
-            assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_READ", e.getMessage());
-        }
+            
+        } catch(Exception e) {
+            fail();
+        } 
         try {
             serviceDelegator.viewGroupIdRecords("10", "0");
         } catch (OrcidAccessControlException e) {
-            assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_READ", e.getMessage());
-        }
+            
+        } catch(Exception e) {
+            fail();
+        } 
     }
 
     @Test
