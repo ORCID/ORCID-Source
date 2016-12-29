@@ -209,7 +209,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         List<ScopePathType> list = Arrays.asList(goodOnes);
         for (ScopePathType s : ScopePathType.values()) {
             if (!list.contains(s)) {
-                assertItThrowAccessControlException(s);
+                assertItThrowOrcidAccessControlException(s);
             } else {
                 orcidSecurityManager.checkScopes(s);
             }
@@ -386,7 +386,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         List<ScopePathType> list = Arrays.asList(goodOnes);
         for (ScopePathType s : ScopePathType.values()) {
             if (!list.contains(s)) {
-                assertItThrowAccessControlException(orcid, s);
+                assertItThrowOrcidAccessControlException(orcid, s);
             } else {
                 orcidSecurityManager.checkClientAccessAndScopes(orcid, s);
             }

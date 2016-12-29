@@ -23,7 +23,6 @@ import static org.junit.Assert.fail;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.helper.Utils;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -242,7 +242,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         try {
             serviceDelegator.viewEmployment(ORCID, 23L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -251,7 +251,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         try {
             serviceDelegator.viewEmploymentSummary(ORCID, 23L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -264,7 +264,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         try {
             serviceDelegator.viewEmployment(ORCID, 24L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -273,7 +273,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         try {
             serviceDelegator.viewEmploymentSummary(ORCID, 24L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -274,7 +274,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         try {
             serviceDelegator.viewWork(ORCID, 14L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -283,7 +283,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         try {
             serviceDelegator.viewWorkSummary(ORCID, 14L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -297,7 +297,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         try {
             serviceDelegator.viewWork(ORCID, 15L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -306,7 +306,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         try {
             serviceDelegator.viewWork(ORCID, 15L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();

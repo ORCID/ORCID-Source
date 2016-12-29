@@ -19,7 +19,6 @@ package org.orcid.core.manager;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -31,6 +30,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
@@ -130,11 +130,11 @@ public class OrcidSecurityManagerTestBase {
     /**
      * Utilities
      */
-    protected void assertItThrowAccessControlException(String orcid, ScopePathType s) {
+    protected void assertItThrowOrcidAccessControlException(String orcid, ScopePathType s) {
         try {
             orcidSecurityManager.checkClientAccessAndScopes(orcid, s);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
             return;
         } catch (Exception e) {
             fail();
@@ -142,11 +142,11 @@ public class OrcidSecurityManagerTestBase {
         fail();
     }
 
-    protected void assertItThrowAccessControlException(ScopePathType s) {
+    protected void assertItThrowOrcidAccessControlException(ScopePathType s) {
         try {
             orcidSecurityManager.checkScopes(s);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
             return;
         } catch (Exception e) {
             fail();

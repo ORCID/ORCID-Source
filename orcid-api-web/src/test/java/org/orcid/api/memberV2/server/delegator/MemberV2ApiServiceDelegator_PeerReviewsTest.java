@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,13 +29,13 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
@@ -71,7 +70,9 @@ import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.jaxb.model.record_rc4.WorkBulk;
 import org.orcid.jaxb.model.record_rc4.WorkTitle;
 import org.orcid.jaxb.model.record_rc4.WorkType;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -296,7 +297,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         try {
             serviceDelegator.viewPeerReview(ORCID, 12L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -305,7 +306,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 12L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -318,7 +319,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         try {
             serviceDelegator.viewPeerReview(ORCID, 13L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -327,7 +328,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 13L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();

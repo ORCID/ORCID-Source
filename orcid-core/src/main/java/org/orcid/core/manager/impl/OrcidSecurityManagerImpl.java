@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -225,7 +226,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 return;
             }
         }
-        throw new AccessControlException("Your request doesn't have the required scope " + requiredScope);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("requiredScope", requiredScope.value());
+        throw new OrcidAccessControlException(params);
     }
 
     @Override
@@ -437,7 +440,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
      * @throws OrcidUnauthorizedException
      *             In case the token used was not issued for the owner of the
      *             element
-     * @throws AccessControlException
+     * @throws OrcidAccessControlException
      *             In case the request doesn't have the required scopes
      * @throws OrcidVisibilityException
      *             In case the element is not visible due the visibility
@@ -464,7 +467,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
      * @throws OrcidUnauthorizedException
      *             In case the token used was not issued for the owner of the
      *             element
-     * @throws AccessControlException
+     * @throws OrcidAccessControlException
      *             In case the request doesn't have the required scopes
      * @throws OrcidVisibilityException
      *             In case the element is not visible due the visibility
@@ -501,7 +504,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 // This means it have ScopePathType.READ_PUBLIC scope, so, we
                 // can return it
                 return;
-            } catch (AccessControlException e) {
+            } catch (OrcidAccessControlException e) {
                 // Just continue filtering
             }
         }

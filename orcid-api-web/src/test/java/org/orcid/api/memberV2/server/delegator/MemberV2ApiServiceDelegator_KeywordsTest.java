@@ -24,7 +24,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
@@ -363,7 +363,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         try {
             serviceDelegator.viewKeyword(ORCID, 12L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();
@@ -375,7 +375,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         try {
             serviceDelegator.viewKeyword(ORCID, 13L);
             fail();
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
 
         } catch (Exception e) {
             fail();

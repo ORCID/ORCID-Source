@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
@@ -133,7 +133,7 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         }
         try {
             serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
             assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_UPDATE", e.getMessage());
         }
     }
@@ -298,12 +298,12 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         }
         try {
             serviceDelegator.viewGroupIdRecord(1L);
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
             assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_READ", e.getMessage());
         }
         try {
             serviceDelegator.viewGroupIdRecords("10", "0");
-        } catch (AccessControlException e) {
+        } catch (OrcidAccessControlException e) {
             assertEquals("Your request doesn't have the required scope GROUP_ID_RECORD_READ", e.getMessage());
         }
     }
