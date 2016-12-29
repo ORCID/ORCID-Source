@@ -1,5 +1,5 @@
 //WARNING DUPLICATE CONTROLLER
-orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
+orcidNgModule.controller('resetPasswordCtrlModal',['$scope', '$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.params = {orcidOrEmail:'',password:''};
     $scope.result = '';

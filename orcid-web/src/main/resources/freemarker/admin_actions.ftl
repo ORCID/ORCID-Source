@@ -242,7 +242,7 @@
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		<!-- Switch user -->
 		<a name="switch-user"></a>
-		<div ng-controller="switchUserCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="switchUserModalCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
@@ -278,7 +278,7 @@
 		
 		<!-- Reset password -->
 		<a name="reset-password"></a>
-		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="resetPasswordCtrlModal" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
