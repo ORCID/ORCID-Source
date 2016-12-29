@@ -31,13 +31,13 @@
 		    	<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" /><a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.space /><@emailMacros.msg "email.deactivate.you_have_requested.2" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpointUrl}</a>
+		    	<@emailMacros.msg "email.deactivate.you_have_requested.1" /><a href="${baseUriHttp}/${orcid}?lang=${locale}">${baseUriHttp}/${orcid}</a><@emailMacros.msg "email.deactivate.you_have_requested.2" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpointUrl}</a>
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.deactivate.once_an_account" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		  		<@emailMacros.msg "email.deactivate.if_you_did" />
+		  		<@emailMacros.msg "email.deactivate.if_you_did" /><a target="_blank" href="mailto:<@emailMacros.msg 'email.deactivate.support_email' />"><@emailMacros.msg "email.deactivate.support_email" />.</a>
 		    </p>	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
