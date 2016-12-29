@@ -427,6 +427,11 @@ public class BaseController {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     }
 
+    @ModelAttribute("isPasswordConfirmationManualEditRequired")
+    public boolean isPasswordConfirmationManualEditRequired() {
+        return orcidSecurityManager.isPasswordConfirmationManualEditRequired();
+    }
+
     @ModelAttribute("request")
     public HttpServletRequest getRequest(HttpServletRequest request) {
         return request;
