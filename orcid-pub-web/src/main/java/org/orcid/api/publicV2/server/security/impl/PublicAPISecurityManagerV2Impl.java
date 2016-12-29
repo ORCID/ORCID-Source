@@ -24,7 +24,6 @@ import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.jaxb.model.common_rc4.Filterable;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc4.Activity;
@@ -48,28 +47,21 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
 	@Override
     public void checkIsPublic(Filterable filterable) {
         if(filterable != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(filterable.getVisibility())) {
-            throw new OrcidUnauthorizedException("The activity is not public");
+            throw new OrcidVisibilityException();
         }
-    }
-    
-	@Override
-    public void checkIsPublic(VisibilityType visibilityType) {
-        if(visibilityType != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
-            throw new OrcidUnauthorizedException("The element is not public");
-        }
-    }
+    }    	
 	
     @Override
     public void checkIsPublic(Biography biography) {
         if(biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
-            throw new OrcidUnauthorizedException("The biography is not public");
+            throw new OrcidVisibilityException();
         }
     }
 
     @Override
     public void checkIsPublic(Name name) {
         if(name != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(name.getVisibility())) {
-            throw new OrcidUnauthorizedException("The name is not public");
+            throw new OrcidVisibilityException();
         }
     }
     
