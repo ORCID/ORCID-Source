@@ -81,259 +81,257 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSecurityManagerTestBase {
 
-	@Resource
-	protected OrcidSecurityManager orcidSecurityManager;
+    @Resource
+    protected OrcidSecurityManager orcidSecurityManager;
 
-	protected final String ORCID_1 = "0000-0000-0000-0001";
-	protected final String ORCID_2 = "0000-0000-0000-0002";
+    protected final String ORCID_1 = "0000-0000-0000-0001";
+    protected final String ORCID_2 = "0000-0000-0000-0002";
 
-	protected final String CLIENT_1 = "APP-0000000000000001";
-	protected final String CLIENT_2 = "APP-0000000000000002";
+    protected final String CLIENT_1 = "APP-0000000000000001";
+    protected final String CLIENT_2 = "APP-0000000000000002";
 
-	protected final String EXTID_1 = "extId1";
-	protected final String EXTID_2 = "extId2";
-	protected final String EXTID_3 = "extId3";
-	protected final String EXTID_SHARED = "shared";
+    protected final String EXTID_1 = "extId1";
+    protected final String EXTID_2 = "extId2";
+    protected final String EXTID_3 = "extId3";
+    protected final String EXTID_SHARED = "shared";
 
-	@Resource
-	protected WorkManagerReadOnly workManagerReadOnly;
+    @Resource
+    protected WorkManagerReadOnly workManagerReadOnly;
 
-	@Resource
-	protected ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+    @Resource
+    protected ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
-	@Resource
-	protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+    @Resource
+    protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
-	@Mock
-	protected ProfileEntityCacheManager profileEntityCacheManager;
-	
-	@Before
-	public void before() {
-		MockitoAnnotations.initMocks(this);
-		TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager); 
-		ProfileEntity p1 = new ProfileEntity();
-		p1.setClaimed(true);
-		p1.setId(ORCID_1);
-		
-		ProfileEntity p2 = new ProfileEntity();
-		p2.setClaimed(true);
-		p2.setId(ORCID_2);
-		when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
-		when(profileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
-	}
-	
-	@After
-	public void after() {
-		SecurityContextTestUtils.setUpSecurityContextForAnonymous();
-	}	
-	
-	/**
-	 * Utilities
-	 */
-	protected void assertItThrowAccessControlException(String orcid, ScopePathType s) {
-		try {
-			orcidSecurityManager.checkClientAccessAndScopes(orcid, s);
-			fail();
-		} catch (AccessControlException e) {
-			return;
-		} catch (Exception e) {
-			fail();
-		}
-		fail();
-	}
+    @Mock
+    protected ProfileEntityCacheManager profileEntityCacheManager;
 
-	protected void assertItThrowAccessControlException(ScopePathType s) {
-		try {
-			orcidSecurityManager.checkScopes(s);
-			fail();
-		} catch (AccessControlException e) {
-			return;
-		} catch (Exception e) {
-			fail();
-		}
-		fail();
-	}
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
+        ProfileEntity p1 = new ProfileEntity();
+        p1.setClaimed(true);
+        p1.setId(ORCID_1);
 
-	protected Name createName(Visibility v) {
-		Name name = new Name();
-		name.setVisibility(v);
-		name.setCreditName(new CreditName("Credit Name"));
-		name.setFamilyName(new FamilyName("Family Name"));
-		name.setGivenNames(new GivenNames("Given Names"));
-		return name;
-	}
+        ProfileEntity p2 = new ProfileEntity();
+        p2.setClaimed(true);
+        p2.setId(ORCID_2);
+        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
+        when(profileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
+    }
 
-	protected Biography createBiography(Visibility v) {
-		return new Biography("Biography", v);
-	}
+    @After
+    public void after() {
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+    }
 
-	protected Address createAddress(Visibility v, String sourceId) {
-		Address a = new Address();
-		a.setVisibility(v);
-		Iso3166Country[] all = Iso3166Country.values();
-		Random r = new Random();
-		int index = r.nextInt(all.length);
-		if (index < 0 || index >= all.length) {
-			index = 0;
-		}
-		a.setCountry(new Country(all[index]));
-		setSource(a, sourceId);
-		return a;
-	}
+    /**
+     * Utilities
+     */
+    protected void assertItThrowAccessControlException(String orcid, ScopePathType s) {
+        try {
+            orcidSecurityManager.checkClientAccessAndScopes(orcid, s);
+            fail();
+        } catch (AccessControlException e) {
+            return;
+        } catch (Exception e) {
+            fail();
+        }
+        fail();
+    }
 
-	protected OtherName createOtherName(Visibility v, String sourceId) {
-		OtherName otherName = new OtherName();
-		otherName.setContent("other-name-" + System.currentTimeMillis());
-		otherName.setVisibility(v);
-		setSource(otherName, sourceId);
-		return otherName;
-	}
+    protected void assertItThrowAccessControlException(ScopePathType s) {
+        try {
+            orcidSecurityManager.checkScopes(s);
+            fail();
+        } catch (AccessControlException e) {
+            return;
+        } catch (Exception e) {
+            fail();
+        }
+        fail();
+    }
 
-	protected PersonExternalIdentifier createPersonExternalIdentifier(Visibility v, String sourceId) {
-		PersonExternalIdentifier p = new PersonExternalIdentifier();
-		p.setValue("ext-id-" + System.currentTimeMillis());
-		p.setVisibility(v);
-		setSource(p, sourceId);
-		return p;
-	}
+    protected Name createName(Visibility v) {
+        Name name = new Name();
+        name.setVisibility(v);
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        return name;
+    }
 
-	protected ResearcherUrl createResearcherUrl(Visibility v, String sourceId) {
-		ResearcherUrl r = new ResearcherUrl();
-		r.setUrl(new Url("http://orcid.org/test/" + System.currentTimeMillis()));
-		r.setVisibility(v);
-		setSource(r, sourceId);
-		return r;
-	}
+    protected Biography createBiography(Visibility v) {
+        return new Biography("Biography", v);
+    }
 
-	protected Email createEmail(Visibility v, String sourceId) {
-		Email email = new Email();
-		email.setEmail("test-email-" + System.currentTimeMillis() + "@test.orcid.org");
-		email.setVisibility(v);
-		setSource(email, sourceId);
-		return email;
-	}
+    protected Address createAddress(Visibility v, String sourceId) {
+        Address a = new Address();
+        a.setVisibility(v);
+        Iso3166Country[] all = Iso3166Country.values();
+        Random r = new Random();
+        int index = r.nextInt(all.length);
+        if (index < 0 || index >= all.length) {
+            index = 0;
+        }
+        a.setCountry(new Country(all[index]));
+        setSource(a, sourceId);
+        return a;
+    }
 
-	protected Keyword createKeyword(Visibility v, String sourceId) {
-		Keyword k = new Keyword();
-		k.setContent("keyword-" + System.currentTimeMillis());
-		k.setVisibility(v);
-		setSource(k, sourceId);
-		return k;
-	}
+    protected OtherName createOtherName(Visibility v, String sourceId) {
+        OtherName otherName = new OtherName();
+        otherName.setContent("other-name-" + System.currentTimeMillis());
+        otherName.setVisibility(v);
+        setSource(otherName, sourceId);
+        return otherName;
+    }
 
-	protected Work createWork(Visibility v, String sourceId) {
-		Work work = new Work();
-		work.setVisibility(v);
-		setSource(work, sourceId);
-		return work;
-	}
+    protected PersonExternalIdentifier createPersonExternalIdentifier(Visibility v, String sourceId) {
+        PersonExternalIdentifier p = new PersonExternalIdentifier();
+        p.setValue("ext-id-" + System.currentTimeMillis());
+        p.setVisibility(v);
+        setSource(p, sourceId);
+        return p;
+    }
 
-	protected WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
-		WorkSummary work = new WorkSummary();
-		work.setVisibility(v);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		work.setExternalIdentifiers(extIds);
-		addSharedExtId(extIds);
-		setSource(work, sourceId);
-		return work;
-	}
+    protected ResearcherUrl createResearcherUrl(Visibility v, String sourceId) {
+        ResearcherUrl r = new ResearcherUrl();
+        r.setUrl(new Url("http://orcid.org/test/" + System.currentTimeMillis()));
+        r.setVisibility(v);
+        setSource(r, sourceId);
+        return r;
+    }
 
-	protected Works createWorks(WorkSummary... elements) {
-		return workManagerReadOnly.groupWorks(new ArrayList<WorkSummary>(Arrays.asList(elements)), false);
-	}
+    protected Email createEmail(Visibility v, String sourceId) {
+        Email email = new Email();
+        email.setEmail("test-email-" + System.currentTimeMillis() + "@test.orcid.org");
+        email.setVisibility(v);
+        setSource(email, sourceId);
+        return email;
+    }
 
-	protected FundingSummary createFundingSummary(Visibility v, String sourceId, String extIdValue) {
-		FundingSummary f = new FundingSummary();
-		f.setVisibility(v);
-		setSource(f, sourceId);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		addSharedExtId(extIds);
-		f.setExternalIdentifiers(extIds);
-		return f;
-	}
+    protected Keyword createKeyword(Visibility v, String sourceId) {
+        Keyword k = new Keyword();
+        k.setContent("keyword-" + System.currentTimeMillis());
+        k.setVisibility(v);
+        setSource(k, sourceId);
+        return k;
+    }
 
-	protected Fundings createFundings(FundingSummary... elements) {
-		return profileFundingManagerReadOnly.groupFundings(new ArrayList<FundingSummary>(Arrays.asList(elements)),
-				false);
-	}
+    protected Work createWork(Visibility v, String sourceId) {
+        Work work = new Work();
+        work.setVisibility(v);
+        setSource(work, sourceId);
+        return work;
+    }
 
-	protected PeerReviewSummary createPeerReviewSummary(Visibility v, String sourceId, String extIdValue) {
-		PeerReviewSummary p = new PeerReviewSummary();
-		p.setVisibility(v);
-		p.setGroupId(EXTID_SHARED);
-		setSource(p, sourceId);
-		ExternalID extId = new ExternalID();
-		extId.setValue(extIdValue);
-		ExternalIDs extIds = new ExternalIDs();
-		extIds.getExternalIdentifier().add(extId);
-		addSharedExtId(extIds);
-		p.setExternalIdentifiers(extIds);
-		return p;
-	}
+    protected WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
+        WorkSummary work = new WorkSummary();
+        work.setVisibility(v);
+        ExternalID extId = new ExternalID();
+        extId.setValue(extIdValue);
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(extId);
+        work.setExternalIdentifiers(extIds);
+        addSharedExtId(extIds);
+        setSource(work, sourceId);
+        return work;
+    }
 
-	protected PeerReviews createPeerReviews(PeerReviewSummary... elements) {
-		return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)),
-				false);
-	}
+    protected Works createWorks(WorkSummary... elements) {
+        return workManagerReadOnly.groupWorks(new ArrayList<WorkSummary>(Arrays.asList(elements)), false);
+    }
 
-	protected EducationSummary createEducationSummary(Visibility v, String sourceId) {
-		EducationSummary e = new EducationSummary();
-		e.setVisibility(v);
-		setSource(e, sourceId);
-		return e;
-	}
+    protected FundingSummary createFundingSummary(Visibility v, String sourceId, String extIdValue) {
+        FundingSummary f = new FundingSummary();
+        f.setVisibility(v);
+        setSource(f, sourceId);
+        ExternalID extId = new ExternalID();
+        extId.setValue(extIdValue);
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(extId);
+        addSharedExtId(extIds);
+        f.setExternalIdentifiers(extIds);
+        return f;
+    }
 
-	protected Educations createEducations(EducationSummary... elements) {
-		Educations e = new Educations();
-		for (EducationSummary s : elements) {
-			e.getSummaries().add(s);
-		}
-		return e;
-	}
+    protected Fundings createFundings(FundingSummary... elements) {
+        return profileFundingManagerReadOnly.groupFundings(new ArrayList<FundingSummary>(Arrays.asList(elements)), false);
+    }
 
-	protected EmploymentSummary createEmploymentSummary(Visibility v, String sourceId) {
-		EmploymentSummary e = new EmploymentSummary();
-		e.setVisibility(v);
-		setSource(e, sourceId);
-		return e;
-	}
+    protected PeerReviewSummary createPeerReviewSummary(Visibility v, String sourceId, String extIdValue) {
+        PeerReviewSummary p = new PeerReviewSummary();
+        p.setVisibility(v);
+        p.setGroupId(EXTID_SHARED);
+        setSource(p, sourceId);
+        ExternalID extId = new ExternalID();
+        extId.setValue(extIdValue);
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(extId);
+        addSharedExtId(extIds);
+        p.setExternalIdentifiers(extIds);
+        return p;
+    }
 
-	protected Employments createEmployments(EmploymentSummary... elements) {
-		Employments e = new Employments();
-		for (EmploymentSummary s : elements) {
-			e.getSummaries().add(s);
-		}
-		return e;
-	}
+    protected PeerReviews createPeerReviews(PeerReviewSummary... elements) {
+        return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)), false);
+    }
 
-	protected void addSharedExtId(ExternalIDs extIds) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(EXTID_SHARED);
-		extIds.getExternalIdentifier().add(extId);
-	}
+    protected EducationSummary createEducationSummary(Visibility v, String sourceId) {
+        EducationSummary e = new EducationSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
 
-	protected ExternalID getExtId(String value) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(value);
-		return extId;
-	}
+    protected Educations createEducations(EducationSummary... elements) {
+        Educations e = new Educations();
+        for (EducationSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
 
-	protected ExternalID getExtId(String value, String type) {
-		ExternalID extId = new ExternalID();
-		extId.setValue(value);
-		extId.setType(type);
-		return extId;
-	}
+    protected EmploymentSummary createEmploymentSummary(Visibility v, String sourceId) {
+        EmploymentSummary e = new EmploymentSummary();
+        e.setVisibility(v);
+        setSource(e, sourceId);
+        return e;
+    }
 
-	protected void setSource(SourceAware element, String sourceId) {
-		Source source = new Source();
-		source.setSourceClientId(new SourceClientId(sourceId));
-		element.setSource(source);
-	}
+    protected Employments createEmployments(EmploymentSummary... elements) {
+        Employments e = new Employments();
+        for (EmploymentSummary s : elements) {
+            e.getSummaries().add(s);
+        }
+        return e;
+    }
+
+    protected void addSharedExtId(ExternalIDs extIds) {
+        ExternalID extId = new ExternalID();
+        extId.setValue(EXTID_SHARED);
+        extIds.getExternalIdentifier().add(extId);
+    }
+
+    protected ExternalID getExtId(String value) {
+        ExternalID extId = new ExternalID();
+        extId.setValue(value);
+        return extId;
+    }
+
+    protected ExternalID getExtId(String value, String type) {
+        ExternalID extId = new ExternalID();
+        extId.setValue(value);
+        extId.setType(type);
+        return extId;
+    }
+
+    protected void setSource(SourceAware element, String sourceId) {
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(sourceId));
+        element.setSource(source);
+    }
 }

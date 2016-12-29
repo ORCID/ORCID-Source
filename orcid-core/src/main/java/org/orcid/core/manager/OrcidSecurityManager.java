@@ -37,33 +37,33 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
  * @author Will Simpson
  *
  */
-public interface OrcidSecurityManager {	
-	
-	boolean isAdmin();
+public interface OrcidSecurityManager {
+
+    boolean isAdmin();
 
     boolean isPasswordConfirmationRequired();
-    
+
     String getClientIdFromAPIRequest();
-    
+
     void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
-    
+
     void checkSource(SourceAwareEntity<?> existingEntity);
-    
+
     void checkSource(IdentifierTypeEntity existingEntity);
-    
+
     void checkScopes(ScopePathType requiredScope);
-	
-	void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, Person person, ScopePathType requiredScope);
-	
-	void checkAndFilter(String orcid, Record record, ScopePathType requiredScope);
+
+    void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, Person person, ScopePathType requiredScope);
+
+    void checkAndFilter(String orcid, Record record, ScopePathType requiredScope);
 }

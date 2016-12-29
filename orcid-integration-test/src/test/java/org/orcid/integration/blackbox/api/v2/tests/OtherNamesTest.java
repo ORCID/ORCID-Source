@@ -49,59 +49,59 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class OtherNamesTest extends BlackBoxBaseRC4 {
-	@Resource(name = "memberV2ApiClient_rc2")
-	private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
-	@Resource(name = "publicV2ApiClient_rc2")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc2;
+    @Resource(name = "memberV2ApiClient_rc2")
+    private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
+    @Resource(name = "publicV2ApiClient_rc2")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc2;
 
-	@Resource(name = "memberV2ApiClient_rc3")
-	private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
-	@Resource(name = "publicV2ApiClient_rc3")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc3;
+    @Resource(name = "memberV2ApiClient_rc3")
+    private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
+    @Resource(name = "publicV2ApiClient_rc3")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc3;
 
-	@Resource(name = "memberV2ApiClient_rc4")
-	private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
-	@Resource(name = "publicV2ApiClient_rc4")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc4;
+    @Resource(name = "memberV2ApiClient_rc4")
+    private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
+    @Resource(name = "publicV2ApiClient_rc4")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc4;
 
     private static String otherName1 = "other-name-1-" + System.currentTimeMillis();
     private static String otherName2 = "other-name-2-" + System.currentTimeMillis();
-    
+
     static boolean allSet = false;
-    
+
     @BeforeClass
-    public static void setup(){
-        signin();        
-        openEditOtherNamesModal();        
+    public static void setup() {
+        signin();
+        openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName(otherName1);
         createOtherName(otherName2);
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
     }
-    
+
     @Before
-	public void before() {
-		if (allSet) {
-			return;
-		}
-		changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-		allSet = true;
-	}
-    
+    public void before() {
+        if (allSet) {
+            return;
+        }
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        allSet = true;
+    }
+
     @AfterClass
-    public static void after() {  
+    public static void after() {
         showMyOrcidPage();
-        openEditOtherNamesModal(); 
+        openEditOtherNamesModal();
         deleteOtherNames();
         saveOtherNamesModal();
         signout();
     }
 
     /**
-	 * --------- -- -- -- RC2 -- -- -- ---------
-	 * 
-	 */
+     * --------- -- -- -- RC2 -- -- -- ---------
+     * 
+     */
     /**
      * @throws JSONException
      * @throws InterruptedException
@@ -109,10 +109,10 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetOtherNamesWihtMembersAPI_rc2() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();                
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        saveOtherNamesModal();                
-        
+        saveOtherNamesModal();
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse getResponse = memberV2ApiClient_rc2.viewOtherNames(getUser1OrcidId(), accessToken);
@@ -129,29 +129,29 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
-    public void testCreateGetUpdateAndDeleteOtherName_rc2() throws InterruptedException, JSONException {                
+    public void testCreateGetUpdateAndDeleteOtherName_rc2() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();       
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         org.orcid.jaxb.model.record_rc2.OtherName newOtherName = new org.orcid.jaxb.model.record_rc2.OtherName();
         newOtherName.setContent("other-name-3" + System.currentTimeMillis());
-        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);        
+        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
 
         // Create
         ClientResponse response = memberV2ApiClient_rc2.createOtherName(getUser1OrcidId(), newOtherName, accessToken);
@@ -182,7 +182,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             } else if (otherName2.equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, existingOtherName.getVisibility());
                 found2 = true;
-            } else if(newOtherName.getContent().equals(existingOtherName.getContent())) {                
+            } else if (newOtherName.getContent().equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, existingOtherName.getVisibility());
                 foundNew = true;
             }
@@ -235,7 +235,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
         // Delete
         response = memberV2ApiClient_rc2.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());       
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     /**
@@ -244,11 +244,11 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
      */
     @Test
     public void testGetOtherNamesWithPublicAPI_rc2() throws InterruptedException, JSONException {
-    	showMyOrcidPage();
-    	openEditOtherNamesModal();       
+        showMyOrcidPage();
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         ClientResponse response = publicV2ApiClient_rc2.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         org.orcid.jaxb.model.record_rc2.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.record_rc2.OtherNames.class);
@@ -264,13 +264,13 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
@@ -290,9 +290,9 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     }
 
     /**
-	 * --------- -- -- -- RC3 -- -- -- ---------
-	 * 
-	 */
+     * --------- -- -- -- RC3 -- -- -- ---------
+     * 
+     */
     /**
      * @throws JSONException
      * @throws InterruptedException
@@ -300,10 +300,10 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetOtherNamesWithMembersAPI_rc3() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();                
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        saveOtherNamesModal();                
-        
+        saveOtherNamesModal();
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse getResponse = memberV2ApiClient_rc3.viewOtherNames(getUser1OrcidId(), accessToken);
@@ -320,13 +320,13 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
@@ -334,15 +334,15 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testCreateGetUpdateAndDeleteOtherName_rc3() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();       
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         org.orcid.jaxb.model.record_rc3.OtherName newOtherName = new org.orcid.jaxb.model.record_rc3.OtherName();
         newOtherName.setContent("other-name-3" + System.currentTimeMillis());
-        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);        
+        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
 
         // Create
         ClientResponse response = memberV2ApiClient_rc3.createOtherName(getUser1OrcidId(), newOtherName, accessToken);
@@ -373,7 +373,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             } else if (otherName2.equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, existingOtherName.getVisibility());
                 found2 = true;
-            } else if(newOtherName.getContent().equals(existingOtherName.getContent())) {                
+            } else if (newOtherName.getContent().equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, existingOtherName.getVisibility());
                 foundNew = true;
             }
@@ -426,7 +426,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
         // Delete
         response = memberV2ApiClient_rc3.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());       
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     /**
@@ -436,10 +436,10 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetOtherNamesWithPublicAPI_rc3() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();       
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         ClientResponse response = publicV2ApiClient_rc3.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         org.orcid.jaxb.model.record_rc3.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.record_rc3.OtherNames.class);
@@ -455,13 +455,13 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
@@ -479,11 +479,11 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-    
+
     /**
-	 * --------- -- -- -- RC4 -- -- -- ---------
-	 * 
-	 */
+     * --------- -- -- -- RC4 -- -- -- ---------
+     * 
+     */
     /**
      * @throws JSONException
      * @throws InterruptedException
@@ -491,10 +491,10 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetOtherNamesWithMembersAPI_rc4() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();                
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        saveOtherNamesModal();                
-        
+        saveOtherNamesModal();
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse getResponse = memberV2ApiClient_rc4.viewOtherNames(getUser1OrcidId(), accessToken);
@@ -511,13 +511,13 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
@@ -525,15 +525,15 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testCreateGetUpdateAndDeleteOtherName_rc4() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();       
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         org.orcid.jaxb.model.record_rc4.OtherName newOtherName = new org.orcid.jaxb.model.record_rc4.OtherName();
         newOtherName.setContent("other-name-3" + System.currentTimeMillis());
-        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
+        newOtherName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
 
         // Create
         ClientResponse response = memberV2ApiClient_rc4.createOtherName(getUser1OrcidId(), newOtherName, accessToken);
@@ -564,7 +564,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             } else if (otherName2.equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, existingOtherName.getVisibility());
                 found2 = true;
-            } else if(newOtherName.getContent().equals(existingOtherName.getContent())) {                
+            } else if (newOtherName.getContent().equals(existingOtherName.getContent())) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, existingOtherName.getVisibility());
                 foundNew = true;
             }
@@ -617,7 +617,7 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
         // Delete
         response = memberV2ApiClient_rc4.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());       
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     /**
@@ -627,10 +627,10 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetOtherNamesWithPublicAPI_rc4() throws InterruptedException, JSONException {
         showMyOrcidPage();
-        openEditOtherNamesModal();       
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         ClientResponse response = publicV2ApiClient_rc4.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         org.orcid.jaxb.model.record_rc4.OtherNames otherNames = response.getEntity(org.orcid.jaxb.model.record_rc4.OtherNames.class);
@@ -646,13 +646,13 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
             assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, otherName.getVisibility());
             if (otherName.getContent().equals(otherName1)) {
                 found1 = true;
-                
+
             } else if (otherName.getContent().equals(otherName2)) {
-                found2 = true;                
+                found2 = true;
             }
         }
 
-        assertTrue(found1);        
+        assertTrue(found1);
         assertTrue(found2);
     }
 
@@ -670,8 +670,8 @@ public class OtherNamesTest extends BlackBoxBaseRC4 {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-    
+
     public String getAccessToken() throws InterruptedException, JSONException {
-        return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));        
+        return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
     }
 }

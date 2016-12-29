@@ -34,18 +34,18 @@ import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.utils.DateUtils;
 
 /**
-* 
-* @author Angel Montenegro
-* 
-*/
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonalDetailsManagerReadOnly {
-    
-    protected OtherNameManagerReadOnly otherNameManager;        
-    
+
+    protected OtherNameManagerReadOnly otherNameManager;
+
     protected RecordNameManagerReadOnly recordNameManager;
-    
+
     protected BiographyManagerReadOnly biographyManager;
-        
+
     public void setOtherNameManager(OtherNameManagerReadOnly otherNameManager) {
         this.otherNameManager = otherNameManager;
     }
@@ -63,63 +63,63 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         Date lastModified = getLastModifiedDate(orcid);
         long lastModifiedTime = lastModified.getTime();
         PersonalDetails personalDetails = new PersonalDetails();
-        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);        
-        if(name != null) {
-            personalDetails.setName(name);            
-        }                               
-        
-        Biography bio = biographyManager.getBiography(orcid, lastModifiedTime);        
-        if(bio != null) {
-            personalDetails.setBiography(bio);                       
+        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);
+        if (name != null) {
+            personalDetails.setName(name);
         }
-                
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);        
-        if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {                    	
-        	//Lets copy the list so we don't modify the cached collection 
-        	List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());         	        
-        	OtherNames filteredOtherNames = new OtherNames();
-        	filteredOtherNames.setOtherNames(filteredList);
-        	personalDetails.setOtherNames(filteredOtherNames);            
-        }                       
-                
-        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {                       
+
+        Biography bio = biographyManager.getBiography(orcid, lastModifiedTime);
+        if (bio != null) {
+            personalDetails.setBiography(bio);
+        }
+
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
+        if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
+            // Lets copy the list so we don't modify the cached collection
+            List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
+            OtherNames filteredOtherNames = new OtherNames();
+            filteredOtherNames.setOtherNames(filteredList);
+            personalDetails.setOtherNames(filteredOtherNames);
+        }
+
+        if (personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {
             personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
         }
-        
+
         return personalDetails;
-    }   
-    
+    }
+
     @Override
-    public PersonalDetails getPublicPersonalDetails(String orcid) {        
+    public PersonalDetails getPublicPersonalDetails(String orcid) {
         Date lastModified = getLastModifiedDate(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();        
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         PersonalDetails personalDetails = new PersonalDetails();
-        
-        Biography bio = biographyManager.getPublicBiography(orcid, lastModifiedTime);       
-        if(bio != null) {
-            personalDetails.setBiography(bio);                       
-        }               
-        
-        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);        
-        if(name != null && !Visibility.PUBLIC.equals(name.getVisibility())) {
+
+        Biography bio = biographyManager.getPublicBiography(orcid, lastModifiedTime);
+        if (bio != null) {
+            personalDetails.setBiography(bio);
+        }
+
+        Name name = recordNameManager.getRecordName(orcid, lastModifiedTime);
+        if (name != null && !Visibility.PUBLIC.equals(name.getVisibility())) {
             personalDetails.setName(null);
         } else {
-            personalDetails.setName(name);            
+            personalDetails.setName(name);
         }
-        
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);        
-        if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
-        	//Lets copy the list so we don't modify the cached collection 
-        	List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());         	
-        	OtherNames filteredOtherNames = new OtherNames();
-        	filteredOtherNames.setOtherNames(filteredList);
-        	personalDetails.setOtherNames(filteredOtherNames);   
-        }                
-        
-        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
+
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
+            // Lets copy the list so we don't modify the cached collection
+            List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
+            OtherNames filteredOtherNames = new OtherNames();
+            filteredOtherNames.setOtherNames(filteredList);
+            personalDetails.setOtherNames(filteredOtherNames);
+        }
+
+        if (personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {
             personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
         }
-        
+
         return personalDetails;
-    }                
+    }
 }

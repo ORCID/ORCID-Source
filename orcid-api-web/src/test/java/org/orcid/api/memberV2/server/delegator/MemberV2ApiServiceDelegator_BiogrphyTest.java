@@ -55,14 +55,14 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_BiogrphyTest extends DBUnitTest {
-	protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
-    //Now on, for any new test, PLAESE USER THIS ORCID ID
+    // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
-    
+
     @Resource(name = "memberV2ApiServiceDelegator")
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
@@ -70,42 +70,42 @@ public class MemberV2ApiServiceDelegator_BiogrphyTest extends DBUnitTest {
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);
         removeDBUnitData(DATA_FILES);
-    }    
-	
-	@Test(expected = OrcidUnauthorizedException.class)
-	public void testViewBiographyWrongToken() {
-		SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
-		serviceDelegator.viewBiography(ORCID);
-	}
+    }
 
-	@Test
-	public void testViewBiographyReadPublic() {
-		SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
-		Response r = serviceDelegator.viewBiography(ORCID);
-		Biography element = (Biography) r.getEntity();
-		assertNotNull(element);
-		Utils.assertIsPublicOrSource(element, "some-client");
-	}
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewBiographyWrongToken() {
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewBiography(ORCID);
+    }
 
-	@Test
-	public void testReadPublicScope_Biography() {
-		SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-		Response r = serviceDelegator.viewBiography(ORCID);
-		assertNotNull(r);
-		assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
+    @Test
+    public void testViewBiographyReadPublic() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewBiography(ORCID);
+        Biography element = (Biography) r.getEntity();
+        assertNotNull(element);
+        Utils.assertIsPublicOrSource(element, "some-client");
+    }
 
-		try {
-			// Bio for 0000-0000-0000-0002 should be limited
-			String otherOrcid = "0000-0000-0000-0002";
-			r = serviceDelegator.viewBiography(otherOrcid);
-			fail();
-		} catch (OrcidUnauthorizedException e) {
+    @Test
+    public void testReadPublicScope_Biography() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewBiography(ORCID);
+        assertNotNull(r);
+        assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
 
-		}
-	}
+        try {
+            // Bio for 0000-0000-0000-0002 should be limited
+            String otherOrcid = "0000-0000-0000-0002";
+            r = serviceDelegator.viewBiography(otherOrcid);
+            fail();
+        } catch (OrcidUnauthorizedException e) {
+
+        }
+    }
 }

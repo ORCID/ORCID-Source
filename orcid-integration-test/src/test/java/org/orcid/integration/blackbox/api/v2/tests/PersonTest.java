@@ -46,36 +46,36 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonTest extends BlackBoxBaseRC4 {
-	@Resource(name = "memberV2ApiClient_rc2")
-	private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
-	@Resource(name = "publicV2ApiClient_rc2")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc2;
+    @Resource(name = "memberV2ApiClient_rc2")
+    private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
+    @Resource(name = "publicV2ApiClient_rc2")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc2;
 
-	@Resource(name = "memberV2ApiClient_rc3")
-	private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
-	@Resource(name = "publicV2ApiClient_rc3")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc3;
+    @Resource(name = "memberV2ApiClient_rc3")
+    private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
+    @Resource(name = "publicV2ApiClient_rc3")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc3;
 
-	@Resource(name = "memberV2ApiClient_rc4")
-	private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
-	@Resource(name = "publicV2ApiClient_rc4")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc4;
+    @Resource(name = "memberV2ApiClient_rc4")
+    private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
+    @Resource(name = "publicV2ApiClient_rc4")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc4;
 
     private String limitedEmail = "limited@test.orcid.org";
 
     private static boolean allSet = false;
-    
+
     @Before
-    public void setUpUserInUi() throws Exception {               
-        if(allSet) {
+    public void setUpUserInUi() throws Exception {
+        if (allSet) {
             return;
         }
-        
+
         signin();
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveEditAddressModal();
 
         openEditOtherNamesModal();
@@ -84,21 +84,21 @@ public class PersonTest extends BlackBoxBaseRC4 {
         createOtherName("other-name-2");
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
+
         openEditKeywordsModal();
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
         changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
-        
-        if(hasExternalIdentifiers()) {
-            showMyOrcidPage();        
+
+        if (hasExternalIdentifiers()) {
+            showMyOrcidPage();
             openEditExternalIdentifiersModal();
             deleteExternalIdentifiers();
             saveExternalIdentifiersModal();
         }
-        
+
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
         updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
@@ -108,29 +108,29 @@ public class PersonTest extends BlackBoxBaseRC4 {
         } else {
             addEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         }
-        
+
         String accessToken = getAccessToken(getScopes(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE));
         createExternalIdentifier("A-0001", getUser1OrcidId(), accessToken);
         createExternalIdentifier("A-0002", getUser1OrcidId(), accessToken);
-        
+
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
         updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         saveExternalIdentifiersModal();
-        
-        //Set biography to public
+
+        // Set biography to public
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        
-        //Set names to public
+
+        // Set names to public
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        
+
         allSet = true;
     }
-    
+
     @AfterClass
     public static void afterClass() {
-    	showMyOrcidPage();
+        showMyOrcidPage();
         openEditAddressModal();
         deleteAddresses();
         saveEditAddressModal();
@@ -138,14 +138,14 @@ public class PersonTest extends BlackBoxBaseRC4 {
         openEditOtherNamesModal();
         deleteOtherNames();
         saveOtherNamesModal();
-        
+
         openEditKeywordsModal();
         deleteKeywords();
         saveKeywordsModal();
-                
+
         openEditExternalIdentifiersModal();
         deleteExternalIdentifiers();
-        saveExternalIdentifiersModal();        
+        saveExternalIdentifiersModal();
         signout();
     }
 
@@ -153,7 +153,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
      * 
      * RC2
      * 
-     * */ 
+     */
     @Test
     public void testGetBioFromPublicAPI_rc2() {
         ClientResponse response = publicV2ApiClient_rc2.viewBiographyXML(getUser1OrcidId());
@@ -198,7 +198,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
+                person.getEmails());
         org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -212,7 +213,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
             if ("A-0001".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
-            } else if("A-0002".equals(e.getValue())) {
+            } else if ("A-0002".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
@@ -263,7 +264,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
+                person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -295,12 +297,12 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getName().getVisibility());
     }
-    
+
     /**
      * 
      * RC3
      * 
-     * */ 
+     */
     @Test
     public void testGetBioFromPublicAPI_rc3() {
         ClientResponse response = publicV2ApiClient_rc3.viewBiographyXML(getUser1OrcidId());
@@ -345,7 +347,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
+                person.getEmails());
         org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -359,7 +362,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
             if ("A-0001".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
-            } else if("A-0002".equals(e.getValue())) {
+            } else if ("A-0002".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
@@ -369,7 +372,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertTrue(foundLimited);
 
         assertNotNull(person.getKeywords());
-        assertNotNull(person.getKeywords().getKeywords());        
+        assertNotNull(person.getKeywords().getKeywords());
         assertEquals(2, person.getKeywords().getKeywords().size());
         assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
         assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
@@ -410,7 +413,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
+                person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -442,12 +446,12 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getName().getVisibility());
     }
-    
+
     /**
      * 
      * RC4
      * 
-     * */     
+     */
     @Test
     public void testGetBioFromPublicAPI_rc4() {
         ClientResponse response = publicV2ApiClient_rc4.viewBiographyXML(getUser1OrcidId());
@@ -492,7 +496,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
+                person.getEmails());
         org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -506,7 +511,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
             if ("A-0001".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
-            } else if("A-0002".equals(e.getValue())) {
+            } else if ("A-0002".equals(e.getValue())) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
@@ -557,7 +562,8 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
+                person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());

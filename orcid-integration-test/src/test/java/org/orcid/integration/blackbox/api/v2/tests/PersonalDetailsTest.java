@@ -43,53 +43,53 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonalDetailsTest extends BlackBoxBaseRC4 {
-	@Resource(name = "memberV2ApiClient_rc2")
-	private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
-	@Resource(name = "publicV2ApiClient_rc2")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc2;
+    @Resource(name = "memberV2ApiClient_rc2")
+    private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
+    @Resource(name = "publicV2ApiClient_rc2")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc2;
 
-	@Resource(name = "memberV2ApiClient_rc3")
-	private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
-	@Resource(name = "publicV2ApiClient_rc3")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc3;
+    @Resource(name = "memberV2ApiClient_rc3")
+    private org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl memberV2ApiClient_rc3;
+    @Resource(name = "publicV2ApiClient_rc3")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc3;
 
-	@Resource(name = "memberV2ApiClient_rc4")
-	private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
-	@Resource(name = "publicV2ApiClient_rc4")
-	private PublicV2ApiClientImpl publicV2ApiClient_rc4;
-    
+    @Resource(name = "memberV2ApiClient_rc4")
+    private org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl memberV2ApiClient_rc4;
+    @Resource(name = "publicV2ApiClient_rc4")
+    private PublicV2ApiClientImpl publicV2ApiClient_rc4;
+
     private static String otherName1 = null;
     private static String otherName2 = null;
-    
+
     private static org.orcid.jaxb.model.common_rc4.Visibility otherNamesLastVisibility = null;
-    
+
     @BeforeClass
     public static void before() throws Exception {
-        //Show the workspace
+        // Show the workspace
         signin();
-        
-        //Create public other name
+
+        // Create public other name
         openEditOtherNamesModal();
         deleteOtherNames();
-        String otherName1 = "other-name-1-" + System.currentTimeMillis(); 
+        String otherName1 = "other-name-1-" + System.currentTimeMillis();
         createOtherName(otherName1);
         PersonalDetailsTest.otherName1 = otherName1;
-        
-        String otherName2 = "other-name-2-" + System.currentTimeMillis(); 
+
+        String otherName2 = "other-name-2-" + System.currentTimeMillis();
         createOtherName(otherName2);
         PersonalDetailsTest.otherName2 = otherName2;
-        
+
         otherNamesLastVisibility = org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC;
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveOtherNamesModal();
-        
-        //Set biography to public
+
+        // Set biography to public
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        
-        //Set names to public
+
+        // Set names to public
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-    
+
     @AfterClass
     public static void after() {
         showMyOrcidPage();
@@ -98,24 +98,24 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         saveOtherNamesModal();
         signout();
     }
-    
+
     /**
      * 
      * RC2
      * 
-     * */    
+     */
     @Test
     public void testGetWithPublicAPI_rc2() {
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        //Check bio
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, personalDetails.getBiography().getVisibility());
-        
-        //Check names
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -124,31 +124,31 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //There should be at least one, but all should be public
-        
+        // There should be at least one, but all should be public
+
         boolean found1 = false, found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+
+        for (org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
     }
-    
+
     @Test
     public void changeToLimitedAndCheckWithPublicAPI_rc2() throws Exception {
-        //Change names to limited
+        // Change names to limited
         showMyOrcidPage();
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
@@ -156,25 +156,25 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //all should be public
+        // all should be public
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+        for (org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Change other names to limited        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
-        
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Change other names to limited
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+
         getPersonalDetailsResponse = publicV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
@@ -182,11 +182,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());        
-        
-        //Change bio to limited
+        assertNull(personalDetails.getOtherNames());
+
+        // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         getPersonalDetailsResponse = publicV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
@@ -194,47 +194,48 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNull(personalDetails.getOtherNames());
-        
+
         ////////////////////////////
-        //Rollback to public again//
-        ////////////////////////////                
+        // Rollback to public again//
+        ////////////////////////////
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-    
+
     @Test
     public void testGetWithMemberAPI_rc2() throws Exception {
-        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE),
+                getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
-        assertNotNull(personalDetails.getOtherNames().getOtherNames());        
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+        for (org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -243,49 +244,49 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Change all to LIMITED
+
+        // Change all to LIMITED
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
-        //Verify they are still visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
-        assertNotNull(getPersonalDetailsResponse);        
+
+        // Verify they are still visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
+        assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED.value(), personalDetails.getBiography().getVisibility().value());
-        //Check other names
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        found1 = false; 
+        found1 = false;
         found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+
+        for (org.orcid.jaxb.model.record_rc2.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
+
+            if (otherName.getContent().equals(otherName1)) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, otherName.getVisibility());
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, otherName.getVisibility());
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -294,15 +295,15 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, personalDetails.getName().getVisibility());
-        
-        //Change all to PRIVATE
+
+        // Change all to PRIVATE
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);        
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
-        
-        //Check nothing is visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+
+        // Check nothing is visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc2.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -310,31 +311,31 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Change all to PUBLIC
+
+        // Change all to PUBLIC
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);  
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-        
+
     /**
      * 
      * RC3
      * 
-     * */
+     */
     @Test
     public void testGetWithPublicAPI_rc3() {
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
-        //Check bio
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, personalDetails.getBiography().getVisibility());
-        
-        //Check names
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -343,31 +344,31 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //There should be at least one, but all should be public
-        
+        // There should be at least one, but all should be public
+
         boolean found1 = false, found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+
+        for (org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
     }
-    
+
     @Test
     public void changeToLimitedAndCheckWithPublicAPI_rc3() throws Exception {
-        //Change names to limited
+        // Change names to limited
         showMyOrcidPage();
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
@@ -375,25 +376,25 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //all should be public
+        // all should be public
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+        for (org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Change other names to limited        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
-        
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Change other names to limited
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+
         getPersonalDetailsResponse = publicV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
@@ -401,11 +402,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());        
-        
-        //Change bio to limited
+        assertNull(personalDetails.getOtherNames());
+
+        // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         getPersonalDetailsResponse = publicV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
@@ -413,47 +414,48 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNull(personalDetails.getOtherNames());
-        
+
         ////////////////////////////
-        //Rollback to public again//
-        ////////////////////////////                
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
+        // Rollback to public again//
+        ////////////////////////////
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-    
+
     @Test
     public void testGetWithMemberAPI_rc3() throws Exception {
-        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE),
+                getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
-        assertNotNull(personalDetails.getOtherNames().getOtherNames());        
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+        for (org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -462,49 +464,49 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Change all to LIMITED
+
+        // Change all to LIMITED
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);        
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
-        //Verify they are still visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
-        assertNotNull(getPersonalDetailsResponse);        
+
+        // Verify they are still visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
+        assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED.value(), personalDetails.getBiography().getVisibility().value());
-        //Check other names
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        found1 = false; 
+        found1 = false;
         found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+
+        for (org.orcid.jaxb.model.record_rc3.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
+
+            if (otherName.getContent().equals(otherName1)) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, otherName.getVisibility());
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, otherName.getVisibility());
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -513,15 +515,15 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, personalDetails.getName().getVisibility());
-        
-        //Change all to PRIVATE
+
+        // Change all to PRIVATE
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);        
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
-        
-        //Check nothing is visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+
+        // Check nothing is visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc3.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -529,31 +531,31 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Change all to PUBLIC
+
+        // Change all to PUBLIC
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);  
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-    
+
     /**
      * 
      * RC4
      * 
-     * */
+     */
     @Test
     public void testGetWithPublicAPI_rc4() {
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc4.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
-        //Check bio
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, personalDetails.getBiography().getVisibility());
-        
-        //Check names
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -562,31 +564,31 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //There should be at least one, but all should be public
-        
+        // There should be at least one, but all should be public
+
         boolean found1 = false, found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+
+        for (org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
     }
-    
+
     @Test
     public void changeToLimitedAndCheckWithPublicAPI_rc4() throws Exception {
-        //Change names to limited
+        // Change names to limited
         showMyOrcidPage();
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-               
+
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc4.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
@@ -594,25 +596,25 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //all should be public
+        // all should be public
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
+        for (org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Change other names to limited
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Change other names to limited
         setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         getPersonalDetailsResponse = publicV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
@@ -620,11 +622,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());        
-        
-        //Change bio to limited
+        assertNull(personalDetails.getOtherNames());
+
+        // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
+
         getPersonalDetailsResponse = publicV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
@@ -632,47 +634,48 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNull(personalDetails.getOtherNames());
-        
+
         ////////////////////////////
-        //Rollback to public again//
-        ////////////////////////////                
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
+        // Rollback to public again//
+        ////////////////////////////
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
     }
-    
+
     @Test
     public void testGetWithMemberAPI_rc4() throws Exception {
-        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE),
+                getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         org.orcid.jaxb.model.record_rc4.PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
-        assertNotNull(personalDetails.getOtherNames().getOtherNames());        
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());
         boolean found1 = false, found2 = false;
-        for(org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+        for (org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+
+            if (otherName.getContent().equals(otherName1)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -681,49 +684,49 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, personalDetails.getName().getVisibility());
-        
-        //Change all to LIMITED
+
+        // Change all to LIMITED
         showMyOrcidPage();
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
-        
-        //Verify they are still visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
-        assertNotNull(getPersonalDetailsResponse);        
+
+        // Verify they are still visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
+        assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
-        assertNotNull(personalDetails);        
-        //Check bio
+        assertNotNull(personalDetails);
+        // Check bio
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED.value(), personalDetails.getBiography().getVisibility().value());
-        //Check other names
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Check other names
+
+        // Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        found1 = false; 
+        found1 = false;
         found2 = false;
-        
-        for(org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-            //Assert that PRIVATE ones belongs to himself
-            if(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE.equals(otherName.getVisibility())) {
-                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
+
+        for (org.orcid.jaxb.model.record_rc4.OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            // Assert that PRIVATE ones belongs to himself
+            if (org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE.equals(otherName.getVisibility())) {
+                assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());
             }
-            
-            if(otherName.getContent().equals(otherName1)) {
+
+            if (otherName.getContent().equals(otherName1)) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, otherName.getVisibility());
-                found1 = true;                
-            } else if(otherName.getContent().equals(otherName2)) {
+                found1 = true;
+            } else if (otherName.getContent().equals(otherName2)) {
                 assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, otherName.getVisibility());
                 found2 = true;
             }
         }
-        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
-        
-        //Check names
+        assertTrue("found1: " + found1 + " found2: " + found2, found1 && found2);
+
+        // Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
         assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
@@ -732,15 +735,15 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNotNull(personalDetails.getName().getCreditName());
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, personalDetails.getName().getVisibility());
-        
-        //Change all to PRIVATE
+
+        // Change all to PRIVATE
         showMyOrcidPage();
         changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);        
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
-        
-        //Check nothing is visible
-        getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
+
+        // Check nothing is visible
+        getPersonalDetailsResponse = memberV2ApiClient_rc4.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -748,20 +751,20 @@ public class PersonalDetailsTest extends BlackBoxBaseRC4 {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
-        
-        //Change all to PUBLIC
+
+        // Change all to PUBLIC
         showMyOrcidPage();
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);        
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);  
-    }                                  
-    
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+    }
+
     private void setOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility v) throws Exception {
-    	if(!v.equals(otherNamesLastVisibility)) {
-    		otherNamesLastVisibility = v;
-    		openEditOtherNamesModal();
+        if (!v.equals(otherNamesLastVisibility)) {
+            otherNamesLastVisibility = v;
+            openEditOtherNamesModal();
             changeOtherNamesVisibility(v);
             saveOtherNamesModal();
-    	}    	
+        }
     }
 }
