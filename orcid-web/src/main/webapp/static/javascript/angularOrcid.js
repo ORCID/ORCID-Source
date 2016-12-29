@@ -440,15 +440,23 @@ GroupedActivities.prototype.highestVis = function() {
 };
 
 GroupedActivities.prototype.makeDefault = function(putCode) {
-    this.defaultPutCode = putCode;
-    this.dateSortString = this.activities[putCode].dateSortString;
     var act = this.activities[putCode];
     var title = null;
+    this.defaultPutCode = putCode;
+    this.dateSortString = this.activities[putCode].dateSortString;
     // at some point we should make this easier by making all paths match
-    if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
-    else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
-    else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
-    else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
+    if (this.type == GroupedActivities.ABBR_WORK) {
+      title = act.title;
+    }
+    else if (this.type == GroupedActivities.FUNDING) {
+      title = act.fundingTitle.title;
+    }
+    else if (this.type == GroupedActivities.AFFILIATION) {
+      title = act.affiliationName;
+    }
+    else if (this.type == GroupedActivities.PEER_REVIEW) {
+      title = act.subjectName;
+    }
     this.title =  title != null ? title.value : null;
 };
 
@@ -463,8 +471,9 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
             break;
         }
     }
-    if (putCode == this.activePutCode)
-        this.activePutCode = this.defaultPutCode;
+    if (putCode == this.activePutCode){
+      this.activePutCode = this.defaultPutCode;
+    }
     return activity;
 };
 
@@ -5840,24 +5849,24 @@ orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', '
 
 }]);
 
-orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
-     $scope.peerReviewSrvc = peerReviewSrvc;
-     $scope.workspaceSrvc  = workspaceSrvc;
-     $scope.showDetails = {};
-     $scope.showElement = {};
-     $scope.showPeerReviewDetails = new Array();
-     $scope.sortHideOption = true;
-     
-     $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
-     
-     $scope.sort = function(key) {
-        $scope.sortState.sortBy(key);
-     };
-     
-     $scope.showDetailsMouseClick = function(groupId, $event){
-        $event.stopPropagation();
-        $scope.showDetails[groupId] = !$scope.showDetails[groupId];
-     };
+orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
+    $scope.peerReviewSrvc = peerReviewSrvc;
+    $scope.workspaceSrvc  = workspaceSrvc;
+    $scope.showDetails = {};
+    $scope.showElement = {};
+    $scope.showPeerReviewDetails = new Array();
+    $scope.sortHideOption = true;
+
+    $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+
+    $scope.sort = function(key) {
+      $scope.sortState.sortBy(key);
+    };
+
+    $scope.showDetailsMouseClick = function(groupId, $event){
+      $event.stopPropagation();
+      $scope.showDetails[groupId] = !$scope.showDetails[groupId];
+    };
     
     $scope.showTooltip = function (element){        
         $scope.showElement[element] = true;
@@ -6023,8 +6032,7 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
-                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
     actBulkSrvc.initScope($scope);
    
     $scope.badgesRequested = {};
@@ -9051,6 +9059,7 @@ orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtr
     };
 }]);
 
+//WARNING DUPLICATE CONTROLLER
 orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.params = {orcidOrEmail:'',password:''};
@@ -10440,6 +10449,7 @@ orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scop
     };
 }]);
 
+//WARNING DUPLICATED CONTROLLER
 orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
     $scope.emails = "";
     $scope.orcidOrEmail = "";
