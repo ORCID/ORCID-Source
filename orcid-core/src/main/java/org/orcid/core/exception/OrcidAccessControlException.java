@@ -14,20 +14,15 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.exception;
 
-import java.util.Locale;
 import java.util.Map;
 
-import org.orcid.pojo.IdentifierType;
+public class OrcidAccessControlException extends ApplicationException {
 
-public interface IdentifierTypeManager {
+    private static final long serialVersionUID = 1L;
 
-	public IdentifierType createIdentifierType(IdentifierType id);
-
-	public IdentifierType updateIdentifierType(IdentifierType id);
-
-	IdentifierType fetchIdentifierTypeByDatabaseName(String name, Locale loc);
-
-	Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc);
+    public OrcidAccessControlException(Map<String, String> params) {
+        super(params);
+    }
 }

@@ -71,6 +71,38 @@ public class ActivityUtils {
     }
 
     /**
+     * Set the path attribute to every education inside the Educations element.
+     * 
+     * @param educations
+     *            The educations container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToEducations(Educations educations, String orcid) {
+        if(educations != null) {            
+            for(EducationSummary summary : educations.getSummaries()) {
+                setPathToActivity(summary, orcid);
+            }            
+        }
+    }
+    
+    /**
+     * Set the path attribute to every employment inside the Employments element.
+     * 
+     * @param employments
+     *            The employments container
+     * @param orcid
+     *            The activity owner
+     * */
+    public static void setPathToEmployments(Employments employments, String orcid) {
+        if(employments != null) {            
+            for(EmploymentSummary summary : employments.getSummaries()) {
+                setPathToActivity(summary, orcid);
+            }            
+        }
+    }
+    
+    /**
      * Set the path attribute to every work inside the Works element.
      * 
      * @param Works
