@@ -11877,7 +11877,7 @@ orcidNgModule.filter('startsWithLetter', function() {
         }
         return filtered;
       };
-    });
+});
 
 
 /* 7 - Angular Multiselect Module */
