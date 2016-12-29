@@ -23,12 +23,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -405,7 +405,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testName_CantRead_When_ReadPublicToken_IsLimited() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Name name = createName(Visibility.LIMITED);
@@ -413,7 +413,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testName_CantRead_When_ReadPublicToken_IsPrivate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Name name = createName(Visibility.PRIVATE);
@@ -436,7 +436,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, name, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testName_CantRead_When_DontHaveReadScope_IsLimited() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
         Name name = createName(Visibility.LIMITED);
@@ -444,7 +444,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testName_CantRead_When_DontHaveReadScope_IsPrivate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
         Name name = createName(Visibility.PRIVATE);
@@ -482,7 +482,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testBio_CantRead_When_ReadPublicToken_IsLimited() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Biography bio = createBiography(Visibility.LIMITED);
@@ -490,7 +490,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testBio_CantRead_When_ReadPublicToken_IsPrivate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Biography bio = createBiography(Visibility.PRIVATE);
@@ -513,7 +513,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testBio_CantRead_When_DontHaveReadScope_IsLimited() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
         Biography bio = createBiography(Visibility.LIMITED);
@@ -521,7 +521,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testBio_CantRead_When_DontHaveReadScope_IsPrivate() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_UPDATE);
         Biography bio = createBiography(Visibility.PRIVATE);
@@ -574,7 +574,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testWork_CantRead_When_ReadPublicToken_IsLimited_NotSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Work work = createWork(Visibility.LIMITED, CLIENT_2);
@@ -582,7 +582,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testWork_CantRead_When_ReadPublicToken_IsPrivate_NotSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
         Work work = createWork(Visibility.PRIVATE, CLIENT_2);
@@ -627,7 +627,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, work, ScopePathType.ORCID_WORKS_READ_LIMITED);
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testWork_CantRead_When_DontHaveReadScope_IsLimited_NotSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_WORKS_CREATE);
         Work work = createWork(Visibility.LIMITED, CLIENT_2);
@@ -635,7 +635,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         fail();
     }
 
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void testWork_CantRead_When_DontHaveReadScope_IsPrivate_NotSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_WORKS_CREATE);
         Work work = createWork(Visibility.PRIVATE, CLIENT_2);
