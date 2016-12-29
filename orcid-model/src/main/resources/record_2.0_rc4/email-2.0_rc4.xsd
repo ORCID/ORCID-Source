@@ -68,6 +68,8 @@
 				<xs:sequence>
 					<xs:element name="email" type="common:email" />					
 				</xs:sequence>
+				<xs:attribute name="verified" type="xs:boolean" />
+				<xs:attribute name="primary" type="xs:boolean" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
