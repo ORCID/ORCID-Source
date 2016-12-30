@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_v2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,6 +50,9 @@ public class OtherNames implements Serializable {
     protected String path;
     
     public List<OtherName> getOtherNames() {
+        if(otherNames == null) {
+            otherNames = new ArrayList<>();
+         }
         return otherNames;
     }
 

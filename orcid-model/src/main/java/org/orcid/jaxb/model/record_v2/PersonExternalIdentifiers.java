@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_v2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,6 +43,9 @@ public class PersonExternalIdentifiers implements Serializable {
     protected String path;
 
     public List<PersonExternalIdentifier> getExternalIdentifiers() {
+        if(externalIdentifiers == null) {
+           externalIdentifiers = new ArrayList<>();
+        }
         return externalIdentifiers;
     }
 

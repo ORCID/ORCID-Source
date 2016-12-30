@@ -20,13 +20,14 @@
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
-${baseUriHttp}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />
+${baseUriHttp}/${orcid}?lang=${locale}<@emailMacros.msg "email.deactivate.you_have_requested.2" />
 ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 
 <@emailMacros.msg "email.deactivate.once_an_account" />
 
 <@emailMacros.msg "email.deactivate.if_you_did" />
+<@emailMacros.msg "email.deactivate.support_email" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}

@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_v2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -47,6 +48,9 @@ public class Emails implements Serializable {
     protected String path;
 
     public List<Email> getEmails() {
+        if(emails == null) {
+            emails = new ArrayList<>();
+         }
         return emails;
     }
 

@@ -21,10 +21,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.orcid.core.adapter.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
-import org.orcid.jaxb.model.common_rc4.Url;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Relationship;
 
 public class WorkExternalIdentifiersConversionsTest {
 

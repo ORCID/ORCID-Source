@@ -81,7 +81,7 @@ public class Works implements Serializable, ActivitiesContainer {
      * 
      * 
      */
-    public List<Work> getOrcidWork() {
+    public List<Work> getWorks() {
         if (works == null) {
             works = new ArrayList<Work>();
         }
@@ -102,7 +102,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
     @Override
     public List<Work> retrieveActivities() {
-        return getOrcidWork();
+        return getWorks();
     }
 
 

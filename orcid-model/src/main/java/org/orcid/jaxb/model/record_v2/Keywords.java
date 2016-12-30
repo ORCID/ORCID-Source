@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_v2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,6 +49,9 @@ public class Keywords implements Serializable {
     protected String path;
 
     public List<Keyword> getKeywords() {
+        if(keywords == null) {
+            keywords = new ArrayList<>();
+         }
         return keywords;
     }
 

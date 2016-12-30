@@ -31,11 +31,11 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.DOIManager;
-import org.orcid.jaxb.model.record_rc4.Citation;
-import org.orcid.jaxb.model.record_rc4.CitationType;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_v2.Citation;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.test.TargetProxyHelper;
 
 public class BibtexManagerTest extends BaseTest{

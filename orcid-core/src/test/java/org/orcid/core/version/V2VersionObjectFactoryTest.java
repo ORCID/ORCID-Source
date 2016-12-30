@@ -59,6 +59,14 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testWorkMapping_rc1_to_v2() {
+        org.orcid.jaxb.model.record_rc1.Work workRc1 = new org.orcid.jaxb.model.record_rc1.Work();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc1, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Work);
+    }
+    
+    @Test
     public void testWorkMapping_rc2_to_rc3() {
         org.orcid.jaxb.model.record_rc2.Work workRc2 = new org.orcid.jaxb.model.record_rc2.Work();
         Object result = v2VersionObjectFactory.createEquivalentInstance(workRc2, "2.0_rc3");
@@ -75,11 +83,35 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testWorkMapping_rc2_to_v2() {
+        org.orcid.jaxb.model.record_rc2.Work workRc2 = new org.orcid.jaxb.model.record_rc2.Work();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc2, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Work);
+    }
+    
+    @Test
     public void testWorkMapping_rc3_to_rc4() {
         org.orcid.jaxb.model.record_rc3.Work workRc3 = new org.orcid.jaxb.model.record_rc3.Work();
         Object result = v2VersionObjectFactory.createEquivalentInstance(workRc3, "2.0_rc4");
         assertNotNull(result);
         assertTrue("Result should be rc4", result instanceof org.orcid.jaxb.model.record_rc4.Work);
+    }
+    
+    @Test
+    public void testWorkMapping_rc3_to_v2() {
+        org.orcid.jaxb.model.record_rc3.Work workRc3 = new org.orcid.jaxb.model.record_rc3.Work();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc3, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Work);
+    }
+    
+    @Test
+    public void testWorkMapping_rc4_to_v2() {
+        org.orcid.jaxb.model.record_rc4.Work workRc4 = new org.orcid.jaxb.model.record_rc4.Work();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc4, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Work);
     }
     
     @Test
@@ -107,6 +139,14 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testWorkSummaryMapping_rc1_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc1.WorkSummary workRc1 = new org.orcid.jaxb.model.record.summary_rc1.WorkSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc1, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.WorkSummary);
+    }
+    
+    @Test
     public void testWorkSummaryMapping_rc2_to_rc3() {
         org.orcid.jaxb.model.record.summary_rc2.WorkSummary workRc2 = new org.orcid.jaxb.model.record.summary_rc2.WorkSummary();
         Object result = v2VersionObjectFactory.createEquivalentInstance(workRc2, "2.0_rc3");
@@ -123,11 +163,27 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testWorkSummaryMapping_rc2_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc2.WorkSummary workRc2 = new org.orcid.jaxb.model.record.summary_rc2.WorkSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc2, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.WorkSummary);
+    }
+    
+    @Test
     public void testWorkSummaryMapping_rc3_to_rc4() {
         org.orcid.jaxb.model.record.summary_rc3.WorkSummary workRc3 = new org.orcid.jaxb.model.record.summary_rc3.WorkSummary();
         Object result = v2VersionObjectFactory.createEquivalentInstance(workRc3, "2.0_rc4");
         assertNotNull(result);
         assertTrue("Result should be rc4", result instanceof org.orcid.jaxb.model.record.summary_rc4.WorkSummary);
+    }
+    
+    @Test
+    public void testWorkSummaryMapping_rc4_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc4.WorkSummary workRc4 = new org.orcid.jaxb.model.record.summary_rc4.WorkSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(workRc4, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.WorkSummary);
     }
     
     //FUNDINGS
@@ -156,6 +212,14 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testFundingMapping_rc1_to_v2() {
+        org.orcid.jaxb.model.record_rc1.Funding fundingRc1 = new org.orcid.jaxb.model.record_rc1.Funding();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc1, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Funding);
+    }
+    
+    @Test
     public void testFundingMapping_rc2_to_rc3() {
         org.orcid.jaxb.model.record_rc2.Funding fundingRc2 = new org.orcid.jaxb.model.record_rc2.Funding();        
         Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc2, "2.0_rc3");
@@ -172,12 +236,36 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testFundingMapping_rc2_to_v2() {
+        org.orcid.jaxb.model.record_rc2.Funding fundingRc2 = new org.orcid.jaxb.model.record_rc2.Funding();        
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc2, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Funding);
+    }
+    
+    @Test
     public void testFundingMapping_rc3_to_rc4() {
         org.orcid.jaxb.model.record_rc3.Funding fundingRc3 = new org.orcid.jaxb.model.record_rc3.Funding();        
         Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc3, "2.0_rc4");
         assertNotNull(result);
         assertTrue("Result should be rc4", result instanceof org.orcid.jaxb.model.record_rc4.Funding);
     }    
+    
+    @Test
+    public void testFundingMapping_rc3_to_v2() {
+        org.orcid.jaxb.model.record_rc3.Funding fundingRc3 = new org.orcid.jaxb.model.record_rc3.Funding();        
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc3, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Funding);
+    }
+    
+    @Test
+    public void testFundingMapping_rc4_to_v2() {
+        org.orcid.jaxb.model.record_rc4.Funding fundingRc4 = new org.orcid.jaxb.model.record_rc4.Funding();        
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingRc4, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record_v2.Funding);
+    }
     
     @Test
     public void testFundingSummaryMapping_rc1_to_rc2() {
@@ -204,6 +292,14 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testFundingSummaryMapping_rc1_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc1.FundingSummary fundingSummaryRc1 = new org.orcid.jaxb.model.record.summary_rc1.FundingSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc1, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.FundingSummary);
+    }    
+    
+    @Test
     public void testFundingSummaryMapping_rc2_to_rc3() {
         org.orcid.jaxb.model.record.summary_rc2.FundingSummary fundingSummaryRc2 = new org.orcid.jaxb.model.record.summary_rc2.FundingSummary();
         Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc2, "2.0_rc3");
@@ -220,11 +316,35 @@ public class V2VersionObjectFactoryTest extends BaseTest {
     }
     
     @Test
+    public void testFundingSummaryMapping_rc2_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc2.FundingSummary fundingSummaryRc2 = new org.orcid.jaxb.model.record.summary_rc2.FundingSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc2, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.FundingSummary);
+    }
+    
+    @Test
     public void testFundingSummaryMapping_rc3_to_rc4() {
         org.orcid.jaxb.model.record.summary_rc3.FundingSummary fundingSummaryRc3 = new org.orcid.jaxb.model.record.summary_rc3.FundingSummary();
         Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc3, "2.0_rc4");
         assertNotNull(result);
         assertTrue("Result should be rc4", result instanceof org.orcid.jaxb.model.record.summary_rc4.FundingSummary);
+    }
+    
+    @Test
+    public void testFundingSummaryMapping_rc3_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc3.FundingSummary fundingSummaryRc3 = new org.orcid.jaxb.model.record.summary_rc3.FundingSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc3, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.FundingSummary);
+    }
+    
+    @Test
+    public void testFundingSummaryMapping_rc4_to_v2() {
+        org.orcid.jaxb.model.record.summary_rc4.FundingSummary fundingSummaryRc4 = new org.orcid.jaxb.model.record.summary_rc4.FundingSummary();
+        Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc4, "2.0");
+        assertNotNull(result);
+        assertTrue("Result should be v2", result instanceof org.orcid.jaxb.model.record.summary_v2.FundingSummary);
     }
     
     //EDUCATIONS
