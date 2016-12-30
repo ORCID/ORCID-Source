@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -40,7 +41,7 @@ public class Educations implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
+    @XmlElementWrapper(name = "education-summary", namespace = "http://www.orcid.org/ns/education", required = false)
     private List<EducationSummary> summaries;
 
     public Educations() {

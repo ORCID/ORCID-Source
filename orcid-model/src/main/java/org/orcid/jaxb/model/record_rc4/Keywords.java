@@ -17,12 +17,14 @@
 package org.orcid.jaxb.model.record_rc4;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -41,13 +43,16 @@ public class Keywords implements Serializable {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "keyword", namespace = "http://www.orcid.org/ns/keyword")
+    @XmlElementWrapper(name = "keyword", namespace = "http://www.orcid.org/ns/keyword", required = false)
     List<Keyword> keywords;
 
     @XmlAttribute
     protected String path;
 
     public List<Keyword> getKeywords() {
+        if (keywords == null) {
+            keywords = new ArrayList<>();
+        }
         return keywords;
     }
 
@@ -93,12 +98,12 @@ public class Keywords implements Serializable {
             return false;
         return true;
     }
-    
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

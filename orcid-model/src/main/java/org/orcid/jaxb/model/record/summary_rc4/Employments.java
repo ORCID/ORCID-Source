@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -41,7 +42,7 @@ public class Employments implements ActivitiesContainer, Serializable {
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
 
-    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
+    @XmlElementWrapper(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment", required = false)
     private List<EmploymentSummary> summaries;
 
     public Employments() {

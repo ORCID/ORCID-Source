@@ -17,12 +17,14 @@
 package org.orcid.jaxb.model.record_rc4;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -41,12 +43,15 @@ public class Emails implements Serializable {
     private static final long serialVersionUID = -4412096758081316953L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "email", namespace = "http://www.orcid.org/ns/email")
+    @XmlElementWrapper(name = "email", namespace = "http://www.orcid.org/ns/email", required = false)
     List<Email> emails;
     @XmlAttribute
     protected String path;
 
     public List<Email> getEmails() {
+        if(emails == null) {
+            emails = new ArrayList<Email>();
+        }
         return emails;
     }
 

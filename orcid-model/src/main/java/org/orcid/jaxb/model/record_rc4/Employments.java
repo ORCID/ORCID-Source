@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -58,6 +59,7 @@ public class Employments implements Serializable, ActivitiesContainer {
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
+    @XmlElementWrapper(required = false)
     protected List<Employment> employment;
 
     /**
@@ -83,13 +85,13 @@ public class Employments implements Serializable, ActivitiesContainer {
      * 
      * 
      */
-    public List<Employment> getAffiliation() {
+    public List<Employment> getEmployment() {
         if (employment == null) {
             employment = new ArrayList<Employment>();
         }
         return this.employment;
     }
-
+    
     @Override
     public Map<Long, Employment> retrieveActivitiesAsMap() {
         Map<Long, Employment> affMap = new HashMap<>();
@@ -105,7 +107,7 @@ public class Employments implements Serializable, ActivitiesContainer {
 
     @Override
     public List<? extends Activity> retrieveActivities() {
-        return getAffiliation();
+        return getEmployment();
     }
 
     @Override
@@ -133,7 +135,6 @@ public class Employments implements Serializable, ActivitiesContainer {
 
     @Override
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        // TODO Auto-generated method stub
-
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

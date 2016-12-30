@@ -24,6 +24,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -39,7 +40,7 @@ public class Works implements GroupsContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElementWrapper(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
     private List<WorkGroup> workGroup;
 
     public List<WorkGroup> getWorkGroup() {

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.common_rc3;
+package org.orcid.jaxb.model.common_rc4;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
