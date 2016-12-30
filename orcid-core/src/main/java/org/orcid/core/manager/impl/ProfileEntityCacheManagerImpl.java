@@ -21,11 +21,9 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.sf.ehcache.Cache;
@@ -37,21 +35,22 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
 
     @Resource(name = "profileEntityCache")
     private Cache profileCache;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+    
+    private ProfileEntityManagerReadOnly profileEntityManager;
 
     LockerObjectsManager lockers = new LockerObjectsManager();
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProfileEntityCacheManagerImpl.class);
+    public void setProfileEntityManager(ProfileEntityManagerReadOnly profileEntityManager) {
+        this.profileEntityManager = profileEntityManager;
+    }
 
     @Override
     @Transactional
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
-        Date dbDate = profileEntityManager.getLastModified(orcid);
+        Date dbDate = profileEntityManager.getLastModifiedDate(orcid);
         ProfileEntity profile = toProfileEntity(profileCache.get(key));
         if (needsFresh(dbDate, profile))
             try {

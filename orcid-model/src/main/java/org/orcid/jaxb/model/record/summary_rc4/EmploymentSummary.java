@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
@@ -38,7 +39,7 @@ import org.orcid.jaxb.model.record_rc4.SourceAware;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate", "organization"})
 @XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
-public class EmploymentSummary implements VisibilityType, Activity, Serializable, SourceAware {
+public class EmploymentSummary implements Filterable, Activity, Serializable, SourceAware {
             
     private static final long serialVersionUID = 6988028860521476955L;
     @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/employment")
@@ -179,6 +180,7 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -232,6 +234,11 @@ public class EmploymentSummary implements VisibilityType, Activity, Serializable
         } else if (!startDate.equals(other.startDate))
             return false;
         if (visibility != other.visibility)
+            return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
             return false;
         return true;
     }

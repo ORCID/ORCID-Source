@@ -96,6 +96,7 @@ public class NotificationController extends BaseController {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
         addSubjectToNotifications(notifications);
+        setOverwrittenSourceName(notifications);
         return notifications;
     }
 
@@ -107,6 +108,17 @@ public class NotificationController extends BaseController {
         return notifications;
     }
 
+    private void setOverwrittenSourceName(List<Notification> notifications) {
+    	for(Notification notification : notifications) {
+    		if(notification instanceof NotificationCustom) {
+    			NotificationCustom nc = (NotificationCustom) notification;
+    			if(getMessage("email.subject.auto_deprecate").equals(nc.getSubject())) {
+    				nc.setOverwrittenSourceName("ORCID");    				
+    			}
+    		}
+    	}
+    }
+    
     private void addSubjectToNotifications(List<Notification> notifications) {
         for (Notification notification : notifications) {
             if (notification instanceof NotificationPermission) {

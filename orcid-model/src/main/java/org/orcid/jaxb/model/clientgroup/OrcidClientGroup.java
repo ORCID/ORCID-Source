@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -83,7 +84,7 @@ public class OrcidClientGroup implements Serializable {
     @XmlElement(name = "orcid-client", required = true)
     protected List<OrcidClient> orcidClient;
     @XmlElement(name = "salesforce-id")
-    protected String salesforceId;
+    protected String salesforceId;    
     
     /**
      * Gets the value of the type property.
@@ -188,7 +189,7 @@ public class OrcidClientGroup implements Serializable {
      */
     public void setSalesforceId(String salesforceId) {
         this.salesforceId = salesforceId;
-    }
+    }        
 
     /**
      * Gets the value of the orcidClient property.

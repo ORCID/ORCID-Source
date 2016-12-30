@@ -173,8 +173,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      */
     private List<String> createPeerReviewIdList(HttpServletRequest request) {
         String orcid = getCurrentUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified.getTime());
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, profileEntityManager.getLastModified(orcid));
         
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         HashMap<Long, PeerReviewForm> peerReviewMap = new HashMap<>();
@@ -206,7 +205,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
                     
                     //Set the numeric id (the table id in the group_id_record table) of the group id
                     if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                        GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                        GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
                         form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
                     }                    
                     

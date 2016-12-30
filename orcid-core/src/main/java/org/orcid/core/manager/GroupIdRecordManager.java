@@ -16,22 +16,14 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 
-public interface GroupIdRecordManager {
-
-    GroupIdRecord getGroupIdRecord(Long putCode);
+public interface GroupIdRecordManager extends GroupIdRecordManagerReadOnly {
 
     GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord);
 
     GroupIdRecord updateGroupIdRecord(Long putCode, GroupIdRecord groupIdRecord);
 
-    void deleteGroupIdRecord(Long putCode);
-
-    GroupIdRecords getGroupIdRecords(String pageSize, String pageNum);
-
-    boolean exists(String groupId);
-    
-    GroupIdRecord findByGroupId(String groupId);
+    void deleteGroupIdRecord(Long putCode);    
 }

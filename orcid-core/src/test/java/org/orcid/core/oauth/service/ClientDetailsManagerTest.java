@@ -106,7 +106,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
         ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE,
-                ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
+                ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, true);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
     }
@@ -129,7 +129,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
         clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
-                clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
+                clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, true);
     }
     
     @Test(expected = NoResultException.class)

@@ -25,4 +25,6 @@ public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> 
 
     boolean exists(String groupId);
     GroupIdRecordEntity findByGroupId(String groupId);
+
+    GroupIdRecordEntity findByName(String name);
 }

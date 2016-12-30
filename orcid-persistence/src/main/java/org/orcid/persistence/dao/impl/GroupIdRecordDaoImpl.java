@@ -52,4 +52,12 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         GroupIdRecordEntity result = query.getSingleResult();
         return result;
     }
+
+    @Override
+    public GroupIdRecordEntity findByName(String name) {
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(group_name)) = trim(lower(:group_name))", GroupIdRecordEntity.class);
+        query.setParameter("group_name", name);
+        GroupIdRecordEntity result = query.getSingleResult();
+        return result;
+    }
 }

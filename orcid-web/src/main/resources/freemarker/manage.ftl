@@ -254,12 +254,9 @@
                             
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
                             <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.once")}
-                                <br />
-                                <a
+                                ${springMacroRequestContext.getMessage("deactivate_orcid.once")} <a
                                     href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
-                                    target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}
-                                </a>
+                                    target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
                             </p>
                             
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>

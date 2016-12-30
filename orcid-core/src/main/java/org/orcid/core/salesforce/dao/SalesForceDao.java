@@ -16,9 +16,7 @@
  */
 package org.orcid.core.salesforce.dao;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
@@ -44,7 +42,7 @@ public interface SalesForceDao {
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
 
-    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
+    List<Contact> retrieveContactsByAccountId(String accountId);
 
     /**
      * @return The sales force object id, if valid.
@@ -53,5 +51,7 @@ public interface SalesForceDao {
      *             could contain something malicious.
      */
     String validateSalesForceId(String memberId);
+
+    void updateMember(Member member);
 
 }

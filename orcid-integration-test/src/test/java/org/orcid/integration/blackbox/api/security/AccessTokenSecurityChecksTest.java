@@ -18,55 +18,46 @@ package org.orcid.integration.blackbox.api.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.integration.api.helper.APIRequestType;
+import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
-import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.error_rc4.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.Person;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -77,6 +68,9 @@ import com.sun.jersey.api.client.ClientResponse.Status;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
 
+	@Resource
+    private OauthHelper oauthHelper;
+	
     @BeforeClass
     public static void beforeClass() {
         BBBUtil.revokeApplicationsAccess(webDriver);
@@ -87,6 +81,44 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testInvalidTokenResponse() throws IOException {
+    	ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), "invalid_token");
+    	assertNotNull(response);
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        InputStream stream = response.getEntityInputStream();
+        
+        String result = null;
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(stream))) {
+            result = buffer.lines().collect(Collectors.joining("\n"));
+        }
+        
+        assertNotNull(result);
+        HashMap<String, String> error = JsonUtils.readObjectFromJsonString(result, HashMap.class);
+        assertNotNull(error);
+        assertEquals("invalid_token", error.get("error"));
+        assertEquals("Invalid access token: invalid_token", error.get("error_description"));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testInvalidClientResponse() throws IOException {
+    	MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", "APP-0000000000000000");
+        params.add("client_secret", "clientSecret");
+        params.add("grant_type", "client_credentials");
+        params.add("scope", "/read-public");
+        ClientResponse response = oauthHelper.getResponse(params, APIRequestType.MEMBER);        
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        String result = response.getEntity(String.class);
+        assertNotNull(result);        
+		HashMap<String, String> error = JsonUtils.readObjectFromJsonString(result, HashMap.class);
+        assertNotNull(error);
+        assertEquals("invalid_client", error.get("error"));
+        assertEquals("Client not found: APP-0000000000000000", error.get("error_description"));
+    }
+    
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
@@ -128,7 +160,6 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         Work work = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
         evaluateResponse(memberV2ApiClient.createWorkJson(orcid, work, accessToken));
         evaluateResponse(memberV2ApiClient.createWorkXml(orcid, work, accessToken));
-
         evaluateResponse(memberV2ApiClient.deleteAddress(orcid, putCode, accessToken));
         evaluateResponse(memberV2ApiClient.deleteEducationXml(orcid, putCode, accessToken));
         evaluateResponse(memberV2ApiClient.deleteEmploymentXml(orcid, putCode, accessToken));
@@ -170,164 +201,15 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         work.setPutCode(putCode);
         evaluateResponse(memberV2ApiClient.updateWork(orcid, work, accessToken));
         
-        ClientResponse r = memberV2ApiClient.getResearcherUrls(orcid, accessToken);
-        ResearcherUrls rUrls = r.getEntity(ResearcherUrls.class);
-        if(rUrls != null && rUrls.getResearcherUrls() != null) {
-            for(ResearcherUrl obj : rUrls.getResearcherUrls()) {
-                assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-            }
-        }
-                                
-        r = memberV2ApiClient.viewAddresses(orcid, accessToken);
-        Addresses addresses = r.getEntity(Addresses.class);
-        if(addresses != null && addresses.getAddress() != null) {
-            for(Address obj : addresses.getAddress()) {
-                assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-            }
-        }
-        
-        r = memberV2ApiClient.viewExternalIdentifiers(orcid, accessToken);
-        PersonExternalIdentifiers extIds = r.getEntity(PersonExternalIdentifiers.class);
-        if(extIds != null && extIds.getExternalIdentifiers() != null) {
-            for(PersonExternalIdentifier obj : extIds.getExternalIdentifiers()) {
-                assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-            }
-        }
-        
-        r = memberV2ApiClient.viewKeywords(orcid, accessToken);
-        Keywords keywords = r.getEntity(Keywords.class);
-        if(keywords != null && keywords.getKeywords() != null) {
-            for(Keyword obj : keywords.getKeywords()) {
-                assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-            }
-        }
-                
-        r = memberV2ApiClient.viewOtherNames(orcid, accessToken);
-        OtherNames otherNames = r.getEntity(OtherNames.class);
-        if(otherNames != null && otherNames.getOtherNames() != null) {
-            for(OtherName obj : otherNames.getOtherNames()) {
-                assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-            }
-        }
-                
-        r = memberV2ApiClient.viewBiography(orcid, accessToken);
-        if(Status.OK.getStatusCode() == r.getStatus()) {
-            Biography bio = r.getEntity(Biography.class);
-            if(bio != null) {
-                assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
-            }
-        } else if(Status.UNAUTHORIZED.getStatusCode() == r.getStatus()) {
-            OrcidError error = r.getEntity(OrcidError.class);
-            assertEquals(Integer.valueOf(9017), error.getErrorCode());
-            assertTrue(error.getDeveloperMessage().contains("The biography is not public"));
-        } else {
-            fail("Expecting OK or UNAUTHORIZED, but got " + r.getStatus());
-        }                
-        
-        r = memberV2ApiClient.viewPersonalDetailsXML(orcid, accessToken);
-        PersonalDetails personalDetails = r.getEntity(PersonalDetails.class);
-        if(personalDetails != null) {
-            if(personalDetails.getBiography() != null) {
-                assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
-            }
-            
-            if(personalDetails.getName() != null) {
-                assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
-            } 
-            
-            if(personalDetails.getOtherNames() != null && personalDetails.getOtherNames().getOtherNames() != null) {
-                for(OtherName obj : personalDetails.getOtherNames().getOtherNames()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-        }                
-        
-        r = memberV2ApiClient.viewActivities(orcid, accessToken);
-        ActivitiesSummary summary = r.getEntity(ActivitiesSummary.class);
-        if(summary != null) {
-            if(summary.getEducations() != null && summary.getEducations().getSummaries() != null) {
-                for(EducationSummary obj : summary.getEducations().getSummaries()){
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            
-            if(summary.getEmployments() != null && summary.getEmployments().getSummaries() != null) {
-                for(EmploymentSummary obj : summary.getEmployments().getSummaries()){
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            
-            if(summary.getFundings() != null && summary.getFundings().getFundingGroup() != null) {
-                for(FundingGroup g : summary.getFundings().getFundingGroup()) {
-                    if(g.getFundingSummary() != null) {
-                        for(FundingSummary obj : g.getFundingSummary()) {
-                            assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                        }
-                    }
-                }
-            }
-            
-            if(summary.getPeerReviews() != null && summary.getPeerReviews().getPeerReviewGroup() != null) {
-                for(PeerReviewGroup g : summary.getPeerReviews().getPeerReviewGroup()) {
-                    if(g.getPeerReviewSummary() != null) {
-                        for(PeerReviewSummary obj : g.getPeerReviewSummary()) {
-                            assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                        }
-                    }
-                }
-            }
-            
-            if(summary.getWorks() != null && summary.getWorks().getWorkGroup() != null) {
-                for(WorkGroup g : summary.getWorks().getWorkGroup()) {
-                    if(g.getWorkSummary() != null) {
-                        for(WorkSummary obj : g.getWorkSummary()) {
-                            assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                        }
-                    }
-                }
-            }
-        }
-        
-        r = memberV2ApiClient.viewPerson(orcid, accessToken);           
-        Person person = r.getEntity(Person.class);
-        if(person != null) {
-            if(person.getAddresses() != null && person.getAddresses().getAddress() != null) {
-                for(Address obj : person.getAddresses().getAddress()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            if(person.getBiography() != null) {
-                assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());
-            }
-            if(person.getEmails() != null && person.getEmails().getEmails() != null) {
-                for(Email obj : person.getEmails().getEmails()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            if(person.getExternalIdentifiers() != null && person.getExternalIdentifiers().getExternalIdentifiers() != null) {
-                for(PersonExternalIdentifier obj : person.getExternalIdentifiers().getExternalIdentifiers()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            if(person.getKeywords() != null && person.getKeywords().getKeywords() != null) {
-                for(Keyword obj : person.getKeywords().getKeywords()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            if(person.getName() != null) {
-                assertEquals(Visibility.PUBLIC.value(), person.getName().getVisibility().value());
-            }
-            if(person.getOtherNames() != null && person.getOtherNames().getOtherNames() != null) {
-                for(OtherName obj : person.getOtherNames().getOtherNames()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-            if(person.getResearcherUrls() != null && person.getResearcherUrls().getResearcherUrls() != null) {
-                for(ResearcherUrl obj : person.getResearcherUrls().getResearcherUrls()) {
-                    assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
-                }
-            }
-        }        
+        evaluateResponse(memberV2ApiClient.getResearcherUrls(orcid, accessToken));                                
+        evaluateResponse(memberV2ApiClient.viewAddresses(orcid, accessToken));
+        evaluateResponse(memberV2ApiClient.viewExternalIdentifiers(orcid, accessToken));        
+        evaluateResponse(memberV2ApiClient.viewKeywords(orcid, accessToken));                        
+        evaluateResponse(memberV2ApiClient.viewOtherNames(orcid, accessToken));                
+        evaluateResponse(memberV2ApiClient.viewBiography(orcid, accessToken));        
+        evaluateResponse(memberV2ApiClient.viewPersonalDetailsXML(orcid, accessToken));        
+        evaluateResponse(memberV2ApiClient.viewActivities(orcid, accessToken));                
+        evaluateResponse(memberV2ApiClient.viewPerson(orcid, accessToken));                          
     }
 
     private List<String> getScopes() {

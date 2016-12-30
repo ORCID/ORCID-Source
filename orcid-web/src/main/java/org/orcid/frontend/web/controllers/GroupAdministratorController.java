@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -140,6 +141,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         emptyClient.setClientId(new Text());
         emptyClient.setClientSecret(new Text());
         emptyClient.setType(new Text());
+        emptyClient.setAllowAutoDeprecate(Checkbox.valueOf(false));
         ArrayList<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
         RedirectUri emptyRedirectUri = new RedirectUri();
         emptyRedirectUri.setValue(new Text());

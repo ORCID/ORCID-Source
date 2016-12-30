@@ -25,23 +25,6 @@
 	        <div class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
 	        	<span ng-repeat='error in emailSrvc.emails.errors' ng-bind-html="error"></span>
 	        </div>
-
-			<#if RequestParameters['bulkEdit']??>
-				<div class="row bulk-edit-modal">					
-					<div class="pull-right bulk-privacy-bar">
-						<div style="position: static">
-							<@orcid.privacyToggle3 angularModel="bioModel"
-						    	questionClick="toggleClickPrivacyHelp($index)"
-					        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-					        	publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
-				            	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
-				            	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-				            	elementId="$index" />
-						</div>
-					</div>
-				</div>
-			</#if>
-
 	        <!-- Start -->
 	        <div class="row">
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>

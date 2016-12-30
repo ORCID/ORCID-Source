@@ -59,6 +59,12 @@ Deletes the record with put-code 1000
 
 **View Group-id-records-Paging**
 
-Returns a list of group-id-records which belong to the page number 1, when the given page-size is 5. Also returns other fields('total', 'page', 'page-size') along with the group-id-record list.
+Returns a list of group-id-records which belong to the page number 1, when the given page-size is 5. Also returns other fields('total', 'page', 'page-size') along with the group-id-record list.  page-size defaults to 100, page defaults to 1.
 
 ``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'http://localhost:8080/orcid-api-web/v2.0_rc4/group-id-record?page-size=5&page=1'``
+
+**View Group-id-records-by-name**
+
+Returns a list of group-id-records with name "my-name".
+
+``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'http://localhost:8080/orcid-api-web/v2.0_rc4/group-id-record?name=my-name'``

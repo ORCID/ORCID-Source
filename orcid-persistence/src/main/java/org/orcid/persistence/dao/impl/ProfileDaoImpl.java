@@ -486,10 +486,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
+    public boolean deprecateProfile(String toDeprecate, String primaryOrcid) {
         Query query = entityManager.createQuery(
                 "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
-        query.setParameter("orcid", toDeprecate.getId());
+        query.setParameter("orcid", toDeprecate);
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));        
         query.setParameter("defaultVisibility", Visibility.PRIVATE);
@@ -722,5 +722,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery("SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
         query.setParameter("batchSize", batchSize);        
         return (List<Object[]>) query.getResultList();
+    }
+
+    @Override
+    public boolean getClaimedStatusByEmail(String email) {
+        Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE trim(lower(email)) = trim(lower(:email)))");
+        query.setParameter("email", email);
+        return (Boolean) query.getSingleResult();
     }
 }

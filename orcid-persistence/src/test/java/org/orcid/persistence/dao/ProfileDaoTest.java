@@ -116,9 +116,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(18, all.size());
+        assertEquals(20, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(18), count);
+        assertEquals(Long.valueOf(20), count);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(19), count);
+        assertEquals(Long.valueOf(21), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -166,7 +166,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(19), count);
+        assertEquals(Long.valueOf(21), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -194,7 +194,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(19), count);
+        assertEquals(Long.valueOf(21), count);
     }
 
     @Test
@@ -316,7 +316,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNull(profile);
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(16, all.size());
+        assertEquals(18, all.size());
     }
 
     @Test
@@ -336,7 +336,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(16, results.size());
+        assertEquals(18, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -346,7 +346,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
         List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertEquals(1, resultsList.size());
+        assertEquals(2, resultsList.size());
 
         // test far back
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());
@@ -356,7 +356,7 @@ public class ProfileDaoTest extends DBUnitTest {
         // test range that fits test data
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertEquals(2, resultsList.size());
+        assertEquals(3, resultsList.size());
         assertTrue(resultsList.contains("4444-4444-4444-4447"));
     }
 
@@ -366,7 +366,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNeedingReminder() {
         List<String> results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
         assertNotNull(results);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertTrue(results.contains("4444-4444-4444-4447"));
 
         // Now insert claimed reminder event, result should be excluded
@@ -377,7 +377,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profileEventDao.persist(eventEntity);
 
         results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -403,12 +403,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(18), confirmedProfileCount);
+        assertEquals(Long.valueOf(20), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(17), confirmedProfileCount);
+        assertEquals(Long.valueOf(19), confirmedProfileCount);
     }
 
     @Test
@@ -417,12 +417,24 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile(profileToDeprecate, "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);
         assertNotNull(profileToDeprecate.getPrimaryRecord());
         ProfileEntity primaryRecord = profileToDeprecate.getPrimaryRecord();
         assertEquals("4444-4444-4444-4442", primaryRecord.getId());
+    }
+    
+    @Test
+    public void testGetClaimedStatusByEmail() {
+        assertFalse(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0001@test.orcid.org"));
+        assertFalse(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0001@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0002@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("PUBLIC_0000-0000-0000-0002@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("public_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("pUbLiC_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("limited_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(profileDao.getClaimedStatusByEmail("private_0000-0000-0000-0003@test.orcid.org"));
     }
 }

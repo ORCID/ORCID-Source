@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,9 +27,13 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.MembersManager;
+import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ajaxForm.Client;
+import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -57,7 +62,10 @@ public class ManageMembersController extends BaseController {
     ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private GroupAdministratorController groupAdministratorController;          
+    private GroupAdministratorController groupAdministratorController;
+    
+    @Resource
+    private SalesForceManager salesForceManager;
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {
@@ -218,6 +226,23 @@ public class ManageMembersController extends BaseController {
         rUri.setGeoArea(Text.valueOf(""));
         return rUri;
     }
+    
+    @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
+    public @ResponseBody ConsortiumForm findConsortium(@RequestParam("id") String id) {
+        MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
+        ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
+        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(id);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        consortiumForm.setContactsList(contactsList);
+        return consortiumForm;
+    }
+    
+    @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
+    public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
+        consortium.setErrors(new ArrayList<String>());
+        salesForceManager.enableAccess(consortium.getAccountId(), consortium.getContactsList());
+        return consortium;
+    }
 
     /**
      * MODEL ATTRIBUTES
@@ -262,7 +287,7 @@ public class ManageMembersController extends BaseController {
             String newEmail = group.getEmail().getValue();
             String userOrcid = group.getGroupOrcid().getValue();
             if (emailManager.emailExists(newEmail)) {
-                Map<String, String> ids = emailManager.findIdByEmail(newEmail);
+                Map<String, String> ids = emailManager.findOricdIdsByCommaSeparatedEmails(newEmail);
                 String orcidThatOwnsTheEmail = ids.get(newEmail);
                 // If the email is not the same, it means the member cannot use
                 // that email address

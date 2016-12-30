@@ -42,6 +42,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.EmailManager;
@@ -49,7 +50,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -67,7 +67,6 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -77,6 +76,7 @@ import org.orcid.jaxb.model.record_rc4.Addresses;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.Emails;
+import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
 import org.orcid.jaxb.model.record_rc4.Name;
@@ -176,13 +176,13 @@ public class PublicProfileController extends BaseWorkspaceController {
     private ExternalIdentifierManager externalIdentifierManager;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    @Resource
     private OrcidMessageUtil orcidMessageUtil;
     
     @Resource
     private SourceUtils sourceUtils;
+    
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -590,7 +590,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
-            orcidMessageUtil.setSourceName(funding);
+            sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
@@ -620,7 +620,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         
-        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid).getTime());
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -664,7 +664,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid).getTime());
+        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid));
         sourceUtils.setSourceName(workObj);
         
         if (workObj != null) {
@@ -737,7 +737,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             //Set the numeric id (the table id in the group_id_record table) of the group id
             if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
-                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
                 form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
             }
             
@@ -786,7 +786,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             locale = Locale.US;
         }
 
-        ActivitiesSummary actSummary = profileEntManager.getPublicActivitiesSummary(orcid);
+        ActivitiesSummary actSummary = activitiesSummaryManager.getPublicActivitiesSummary(orcid);
 
         boolean haveActivities = false;
 
@@ -871,10 +871,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.fundingMap(profile);
+    	OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();        
+        return activityCacheManager.fundingMap(orcid, lastModified.getTime());
     }
 
     public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {

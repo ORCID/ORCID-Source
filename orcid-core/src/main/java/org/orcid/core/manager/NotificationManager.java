@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,8 @@ public interface NotificationManager {
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
     void sendPasswordResetEmail(String toEmail, OrcidProfile orcidProfile);
+    
+    void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile);
 
     public String createVerificationUrl(String email, String baseUri);
 
@@ -99,6 +102,8 @@ public interface NotificationManager {
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
+    
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid);
 
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 

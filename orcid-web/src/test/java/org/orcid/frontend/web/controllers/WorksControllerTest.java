@@ -223,6 +223,10 @@ public class WorksControllerTest extends BaseControllerTest {
             work.setPutCode(Text.valueOf(""));
         }
         
+        if(work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
+        	work.getCitation().getCitation().setValue("test");
+        }
+        
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));

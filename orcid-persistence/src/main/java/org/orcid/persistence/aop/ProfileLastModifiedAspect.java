@@ -18,8 +18,6 @@ package org.orcid.persistence.aop;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,7 +29,6 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -41,20 +38,20 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * 
  */
 @Aspect
-@Component(value = "profileLastModifiedAspect")
 public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private static final int PRECEDENCE = 50;
 
     private static String REQUEST_PROFILE_LAST_MODIFIED = "REQUEST_PROFILE_LAST_MODIFIED";
 
-    @Resource
     private ProfileDao profileDao;
 
     private boolean enabled = true;
+    
+    private String name = "default";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);    
+    
     //@formatter:off
     private static final String POINTCUT_DEFINITION_BASE = "(execution(* org.orcid.persistence.dao.*.remove*(..))"
             + "|| execution(* org.orcid.persistence.dao.*.delete*(..))" + "|| execution(* org.orcid.persistence.dao.*.update*(..))"
@@ -63,14 +60,22 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             + "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)"
             + "&& !within(org.orcid.persistence.dao.impl.WebhookDaoImpl)";
 
-    //@formatter:on
-
+    //@formatter:on    
+    
     public boolean isEnabled() {
         return enabled;
     }
 
+    public void setProfileDao(ProfileDao profileDao) {
+        this.profileDao = profileDao;
+    }
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     /** Runs after any method that updates a record.
@@ -96,6 +101,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, ProfileAware profileAware) {
+        if (!enabled) {
+            return;
+        }
         ProfileEntity profile = profileAware.getProfile();
         if (profile != null) {
             String orcid = profile.getId();
@@ -111,8 +119,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     /** Updates the last modified date and clears the request-scope last modified cache.
      * 
      * @param orcid
-     */
+     */    
     public void updateLastModifiedDateAndIndexingStatus(String orcid) {
+        if (!enabled) {
+            return;
+        }
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
@@ -139,7 +150,6 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     }
 
     private String sraKey(String orcid) {
-        return REQUEST_PROFILE_LAST_MODIFIED + '_' + orcid;
+        return REQUEST_PROFILE_LAST_MODIFIED + '_' + name + '_' + orcid;
     }
-
 }

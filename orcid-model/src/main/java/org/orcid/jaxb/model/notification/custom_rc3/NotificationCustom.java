@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification_rc3.Notification;
@@ -80,6 +81,8 @@ public class NotificationCustom extends Notification implements Serializable {
     protected String bodyHtml;
     @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace")
     protected String lang;
+    @XmlTransient
+    protected String overwrittenSourceName;
 
     {
         notificationType = NotificationType.CUSTOM;
@@ -156,4 +159,24 @@ public class NotificationCustom extends Notification implements Serializable {
         this.lang = lang;
     }
 
+    /**
+     * Gets the value of the overwrittenSourceName property.
+     * 
+     * @return possible object is {@link String }
+     * 
+     */
+	public String getOverwrittenSourceName() {
+		return overwrittenSourceName;
+	}
+	
+	/**
+     * Sets the value of the overwrittenSourceName property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+	public void setOverwrittenSourceName(String overwrittenSourceName) {
+		this.overwrittenSourceName = overwrittenSourceName;
+	}       
 }

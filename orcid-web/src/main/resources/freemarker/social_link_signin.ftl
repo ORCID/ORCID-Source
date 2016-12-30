@@ -30,6 +30,10 @@
                     ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank">${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
                 </p>
             </div>
+        <#elseif headerCheckFailed??>
+            <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
+                <p class="alert">${springMacroRequestContext.getMessage("social.link.header.mismatch")}</p>
+            </div>
         <#else>
             <div ng-hide="loadedFeed" class="text-center">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>

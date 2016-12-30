@@ -36,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
@@ -91,6 +92,7 @@ import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
@@ -100,6 +102,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -121,6 +124,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -198,36 +202,11 @@ public class RegistrationController extends BaseController {
     private ProfileEntityManager profileEntityManager;
 
     @Resource
+    private AdminManager adminManager;
+    
+    @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;    
     
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
-
-    public void setNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
-    }
-
-    public void setEncryptionManager(EncryptionManager encryptionManager) {
-        this.encryptionManager = encryptionManager;
-    }
-
-    public void setRegistrationManager(RegistrationManager registrationManager) {
-        this.registrationManager = registrationManager;
-    }
-
-    public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
-        this.orcidSearchManager = orcidSearchManager;
-    }
-
-    public OrcidSearchManager getOrcidSearchManager() {
-        return orcidSearchManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
-
     @ModelAttribute("securityQuestions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
@@ -256,8 +235,9 @@ public class RegistrationController extends BaseController {
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
-        reg.getTermsOfUse().setValue(false);
-        setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
+        reg.getTermsOfUse().setValue(false);        
+        setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
+        
 
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
@@ -419,7 +399,13 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
-        createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        try {        
+            createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        } catch(Exception e) {
+            r.getErrors().add(getMessage("register.error.generalError"));
+            return r;
+        }
+        
         if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
             ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
         } else if ("shibboleth".equals(reg.getLinkType())) {
@@ -506,7 +492,7 @@ public class RegistrationController extends BaseController {
     private void termsOfUserValidate(Checkbox termsOfUser) {
         termsOfUser.setErrors(new ArrayList<String>());
         if (termsOfUser.getValue() != true) {
-            setError(termsOfUser, "AssertTrue.registrationForm.acceptTermsAndConditions");
+            setError(termsOfUser, "validations.acceptTermsAndConditions");
         }
     }
 
@@ -526,11 +512,46 @@ public class RegistrationController extends BaseController {
         if (!isKeyup && (reg.getEmail().getValue() == null || reg.getEmail().getValue().trim().isEmpty())) {
             setError(reg.getEmail(), "Email.registrationForm.email");
         }
-        // validate email
+        String emailAddress = reg.getEmail().getValue();
+        
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-        // make sure there are no dups
-        validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
-
+        // Validate the email address is ok        
+        if(!validateEmailAddress(emailAddress)) {
+            String[] codes = { "Email.personalInfoForm.email" };
+            String[] args = { emailAddress };
+            mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Not vaild"));
+        } else {
+            //Validate duplicates 
+            //If email exists
+            if(emailManager.emailExists(emailAddress)) {
+            	String orcid = emailManager.findOrcidIdByEmail(emailAddress);
+            	String[] args = { emailAddress };
+                //If it is claimed, should return a duplicated exception
+                if(profileEntityManager.isProfileClaimedByEmail(emailAddress)) {                  	                	                	
+                	String[] codes = null;
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                    } else {
+                        codes = new String[] { "orcid.frontend.verify.duplicate_email" };
+                    }                                        
+                    mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));                    
+                } else {
+                	if(profileEntityManager.isDeactivated(orcid)) {
+                		String[] codes = new String[] { "orcid.frontend.verify.deactivated_email" };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Email already exists"));
+                	} else if(!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
+                		//If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
+                		String resendUrl = createResendClaimUrl(emailAddress, request);
+                        String[] codes = { "orcid.frontend.verify.unclaimed_email" };
+                        args = new String[] { emailAddress, resendUrl };
+                		mbr.addError(new FieldError("email", "email", emailAddress, false, codes, args, "Unclaimed record exists"));                        
+                    } else {
+                        LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
+                    }
+                }                                
+            }
+        }
+        
         for (ObjectError oe : mbr.getAllErrors()) {
             Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
@@ -549,7 +570,12 @@ public class RegistrationController extends BaseController {
                     link = "/shibboleth/signin";
                 }
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
-            } else {
+            }
+            else if(oe.getCode().equals("orcid.frontend.verify.deactivated_email")){
+                // Handle this message in angular to allow AJAX action
+                reg.getEmail().getErrors().add(oe.getCode());
+            }
+            else {
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
             }
         }
@@ -661,7 +687,7 @@ public class RegistrationController extends BaseController {
             }
         }
     }
-
+    
     @RequestMapping(value = "/resend-claim", method = RequestMethod.GET)
     public ModelAndView viewResendClaimEmail(@RequestParam(value = "email", required = false) String email) {
         ModelAndView mav = new ModelAndView("resend_claim");
@@ -961,7 +987,7 @@ public class RegistrationController extends BaseController {
             return claim;
         }
 
-        Map<String, String> emails = emailManager.findIdByEmail(decryptedEmail);
+        Map<String, String> emails = emailManager.findOricdIdsByCommaSeparatedEmails(decryptedEmail);
         String orcid = emails.get(decryptedEmail);
 
         if (PojoUtil.isEmpty(orcid)) {
@@ -1063,12 +1089,16 @@ public class RegistrationController extends BaseController {
 
     public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave,
             boolean usedCaptchaVerification) {
-        String password = profileToSave.getPassword();
+    	String unencryptedPassword = profileToSave.getPassword();
+        profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
+        String orcidId = profileToSave.getOrcidIdentifier().getPath();        
+        logUserIn(request, response, orcidId, unencryptedPassword);
+    }
+
+    public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
         UsernamePasswordAuthenticationToken token = null;
         try {
-            profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
-            String orcidId = profileToSave.getOrcidIdentifier().getPath();
-            token = new UsernamePasswordAuthenticationToken(profileToSave.getOrcidIdentifier().getPath(), password);
+            token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -1081,7 +1111,6 @@ public class RegistrationController extends BaseController {
             SecurityContextHolder.getContext().setAuthentication(null);
             LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
         }
-
     }
 
     public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
@@ -1097,5 +1126,86 @@ public class RegistrationController extends BaseController {
                 new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
         return profileToSave;
     }
+    
+    @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void sendReactivation(@RequestParam("email") String email) {
+        OrcidProfile orcidProfile = orcidProfileCacheManager.retrieve(emailManager.findOrcidIdByEmail(email));
+        notificationManager.sendReactivationEmail(email, orcidProfile);
+    }
+    
+    @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)
+    public ModelAndView reactivation(HttpServletRequest request, @PathVariable("resetParams") String resetParams, RedirectAttributes redirectAttributes) {
+        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetParams);
+        ModelAndView mav = new ModelAndView("reactivation");
+        if (isTokenExpired(passwordResetToken)) {
+            mav.addObject("reactivationLinkExpired", true);
+        }
+        mav.addObject("resetParams", resetParams);
+        return mav;
+    }
+    
+    @RequestMapping(value = { "/reactivationConfirm.json", "/shibboleth/reactivationConfirm.json" }, method = RequestMethod.POST)
+    public @ResponseBody Object setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
+            throws UnsupportedEncodingException {
+        Redirect r = new Redirect();
 
+        // Strip any html code from names before validating them
+        if (!PojoUtil.isEmpty(reg.getFamilyNames())) {
+            reg.getFamilyNames().setValue(OrcidStringUtils.stripHtml(reg.getFamilyNames().getValue()));
+        }
+
+        if (!PojoUtil.isEmpty(reg.getGivenNames())) {
+            reg.getGivenNames().setValue(OrcidStringUtils.stripHtml(reg.getGivenNames().getValue()));
+        }
+
+        // make sure validation still passes
+        validateReactivationFields(request, reg);
+        if (reg.getErrors() != null && reg.getErrors().size() > 0) {
+            return reg;
+        }
+
+        if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
+            r.setUrl(getBaseUri() + "/register");
+            return r;
+        }
+
+        reactivateAndLogUserIn(request, response, reg);
+        if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
+            ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+        } else if ("shibboleth".equals(reg.getLinkType())) {
+            ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
+        }
+        String redirectUrl = calculateRedirectUrl(request, response);
+        r.setUrl(redirectUrl);
+        return r;
+    }
+    
+    public void validateReactivationFields(HttpServletRequest request, Registration reg) {
+        reg.setErrors(new ArrayList<String>());
+
+        registerGivenNameValidate(reg);
+        registerPasswordValidate(reg);
+        registerPasswordConfirmValidate(reg);
+        registerTermsOfUseValidate(reg);
+
+        copyErrors(reg.getGivenNames(), reg);
+        copyErrors(reg.getPassword(), reg);
+        copyErrors(reg.getPasswordConfirm(), reg);
+        copyErrors(reg.getTermsOfUse(), reg);
+    }
+
+    public void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
+        PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
+        String email = resetParams.getEmail();
+        String orcid = emailManager.findOrcidIdByEmail(email);
+        LOGGER.info("About to reactivate record, orcid={}, email={}", orcid, email);
+        String password = reactivation.getPassword().getValue();
+        // Reactivate user
+        profileEntityManager.reactivate(orcid, reactivation.getGivenNames().getValue(), reactivation.getFamilyNames().getValue(), password,
+                reactivation.getActivitiesVisibilityDefault().getVisibility());
+        // Verify email used to reactivate
+        emailManager.verifyEmail(email);
+        logUserIn(request, response, orcid, password);
+    }
 }

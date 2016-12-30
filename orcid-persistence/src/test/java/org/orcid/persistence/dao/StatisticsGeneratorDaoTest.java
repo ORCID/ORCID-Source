@@ -65,7 +65,7 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
     public void testStatistics() {
         assertEquals(12, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
         assertEquals(5, statisticsGeneratorDao.getAccountsWithWorks());
-        assertEquals(17, statisticsGeneratorDao.getLiveIds());
+        assertEquals(18, statisticsGeneratorDao.getLiveIds());
         assertEquals(15, statisticsGeneratorDao.getNumberOfWorks());
         //TODO: Restore this test when we know how to make it work on HSQLDB
         //assertEquals(0, statisticsGeneratorDao.getNumberOfUniqueDOIs());

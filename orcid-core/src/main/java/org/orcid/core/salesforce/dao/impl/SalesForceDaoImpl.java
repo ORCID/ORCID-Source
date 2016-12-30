@@ -19,7 +19,6 @@ package org.orcid.core.salesforce.dao.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -121,12 +120,12 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
+    public List<Contact> retrieveContactsByAccountId(String accountId) {
         try {
-            return retrieveContactsFromSalesForce(getAccessToken(), opportunityIds);
+            return retrieveContactsFromSalesForceByAccountId(getAccessToken(), accountId);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
-            return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityIds);
+            return retrieveContactsFromSalesForceByAccountId(getFreshAccessToken(), accountId);
         }
     }
 
@@ -137,6 +136,40 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+
+    @Override
+    public void updateMember(Member member) {
+        try {
+            updateMemberInSalesForce(getAccessToken(), member);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to update member, trying again.", e);
+            updateMemberInSalesForce(getFreshAccessToken(), member);
+        }
+
+    }
+
+    private void updateMemberInSalesForce(String accessToken, Member member) {
+        LOGGER.info("About update member in SalesForce");
+        String accountId = member.getId();
+        validateSalesForceId(accountId);
+        WebResource resource = createUpdateMemberResource(accountId);
+        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
+        // SalesForce doesn't allow the Id in the body
+        memberJson.remove("Id");
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 204) {
+            throw new RuntimeException("Error updating member in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return;
+    }
+
+    private WebResource createUpdateMemberResource(String accountId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/" + validateSalesForceId(accountId)).queryParam("_HttpMethod",
+                "PATCH");
+        return resource;
     }
 
     private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {
@@ -189,7 +222,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createMemberListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
         return resource;
     }
 
@@ -219,7 +252,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createConsortiaListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, Name, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
+                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         return resource;
     }
 
@@ -245,7 +278,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createConsortiumResource(String consortiumId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Id, Account.Name FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
+                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
                         + validateSalesForceId(consortiumId) + "'");
         return resource;
     }
@@ -274,7 +307,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
-            throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+            throw new RuntimeException("Error getting parent org name from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return salesForceAdapter.extractParentOrgNameFromJson(response.getEntity(JSONObject.class));
@@ -282,7 +315,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createParentOrgResource(String consortiumLeadId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
+                "SELECT Public_Display_Name__c from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
         return resource;
     }
 
@@ -318,10 +351,10 @@ public class SalesForceDaoImpl implements SalesForceDao {
      *             expired.
      * 
      */
-    private Map<String, List<Contact>> retrieveContactsFromSalesForce(String accessToken, Collection<String> opportunityIds) throws SalesForceUnauthorizedException {
+    private List<Contact> retrieveContactsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
-        validateSalesForceIdsAndConcatenate(opportunityIds);
-        WebResource resource = createContactsResource(opportunityIds);
+        validateSalesForceId(accountId);
+        WebResource resource = createContactsResource(accountId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
@@ -331,10 +364,9 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
     }
 
-    private WebResource createContactsResource(Collection<String> opportunityIds) {
+    private WebResource createContactsResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('" + MAIN_CONTACT_ROLE + "','" + TECH_LEAD_ROLE
-                        + "')) FROM Opportunity WHERE Id IN (" + validateSalesForceIdsAndConcatenate(opportunityIds) + ")");
+                "Select (Select Id, Contact__r.Name, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='" + accountId + "'");
         return resource;
     }
 

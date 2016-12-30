@@ -26,19 +26,17 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -53,31 +51,26 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ClientDetailsManagerImpl implements ClientDetailsManager {
+public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl implements ClientDetailsManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
 
     @Resource
-    ClientDetailsDao clientDetailsDao;
+    private ClientDetailsDao clientDetailsDao;
 
     @Resource
-    ClientSecretDao clientSecretDao;
+    private ClientSecretDao clientSecretDao;
 
     @Resource
-    ClientRedirectDao clientRedirectDao;
+    private ClientRedirectDao clientRedirectDao;
 
     @Resource
     private EncryptionManager encryptionManager;    
 
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
-    
-    @Resource
-    private Jpa2JaxbAdapter jpaJaxbAdapter;
     
     @Resource
     private JpaJaxbClientAdapter jpaJaxbClientAdapter;
@@ -88,31 +81,6 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Resource
     private ProfileEntityManager profileEntityManager;
     
-    /**
-     * Load a client by the client id. This method must NOT return null.
-     * 
-     * @param clientId
-     *            The client id.
-     * @return The client details.
-     * @throws org.springframework.security.oauth2.common.exceptions.OAuth2Exception
-     *             If the client account is locked, expired, disabled, or for
-     *             any other reason.
-     */
-    @Override
-    public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        ClientDetailsEntity clientDetails = findByClientId(clientId);
-        if (clientDetails != null) {
-            if (!clientDetails.getClientId().equals(clientId))
-                LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getClientId());
-            if (!clientDetails.getId().equals(clientId))
-                LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getId());
-            clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
-            return clientDetails;
-        } else {
-            throw new InvalidClientException("Client not found: " + clientId);
-        }
-    }
-
     /**
      * Creates a new client without any knowledge of the client id or secret.
      * This can be called to create an initial client without the caller having
@@ -139,18 +107,20 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @param clientGrantedAuthorities
      *            the authorities that can be used to. These are likely to be
      *            only "ROLE_CLIENT"
+     * @param allowAutoDeprecate
+     *          Indicates if the client will enable auto deprecating unclaimed records.
      * @return
      */
     @Override
     public ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {        
         if (!profileEntityManager.orcidExists(memberId)) {
             throw new IllegalArgumentException("ORCID does not exist for " + memberId + " cannot continue");
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
             String clientId = appIdGenerationManager.createNewAppId();
             return populateClientDetailsEntity(clientId, memberId, name, description, idp, website, clientSecret, clientType, clientScopes, clientResourceIds,
-                    clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
+                    clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, allowAutoDeprecate);
         }
     }   
 
@@ -221,9 +191,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         return clientAuthorisedGrantTypeEntities;
     }
 
+    @Override
     public ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(clientId);
         clientDetailsEntity.setClientType(clientType);
@@ -240,32 +211,10 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
         clientDetailsEntity.setGroupProfileId(memberId);
+        clientDetailsEntity.setAllowAutoDeprecate(allowAutoDeprecate == null ? false : allowAutoDeprecate);
         clientDetailsDao.persist(clientDetailsEntity);
         return clientDetailsEntity;
-    }
-
-    @Override
-    public ClientDetailsEntity findByClientId(String clientId) {
-        ClientDetailsEntity result = null;
-        try {
-            Date lastModified = clientDetailsDao.getLastModified(clientId);
-            result = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
-            if (result != null) {
-                if (!result.getClientId().equals(clientId))
-                    LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + result.getClientId());
-                if (!result.getId().equals(clientId))
-                    LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + result.getId());
-            }
-        } catch (NoResultException nre) {
-            LOGGER.error("Error getting client by id:" + clientId, nre);
-        }
-        return result;
-    }
-    
-    @Override
-    public OrcidClient toOrcidClient(ClientDetailsEntity clientEntity) {
-    	return jpaJaxbAdapter.toOrcidClient(clientEntity);
-    }
+    }    
 
     @Override
     public void removeByClientId(String clientId) {
@@ -279,12 +228,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         // Evict the name in the source name manager
         sourceNameCacheManager.remove(result.getId());        
         return result;
-    }   
-
-    @Override
-    public List<ClientDetailsEntity> getAll() {
-        return clientDetailsDao.getAll();
-    }
+    }       
 
     @Override
     public void updateLastModified(String clientId) {

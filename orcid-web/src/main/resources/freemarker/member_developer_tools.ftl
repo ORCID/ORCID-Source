@@ -121,6 +121,17 @@
 						</div>															
 					</div>			
 				</div>
+				<!-- Allow auto deprecate -->
+				<div class="row bottomBuffer">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span>
+								<strong class="middle"><@orcid.msg 'manage.developer_tools.group.allow_auto_deprecate' /></strong>
+								<input type="checkbox" class="small-element middle" ng-model="newClient.allowAutoDeprecate.value" />
+							</span>															
+						</div>															
+					</div>
+				</div>
 				<!-- Redirect Uris -->				
 				<div ng-repeat="rUri in newClient.redirectUris" class="margin-bottom-box">
 					<!-- Header -->
@@ -231,6 +242,16 @@
 					</div>							
 				</div>	
 				
+				<div class="row bottomBuffer">
+					<!-- Allow auto deprecate -->
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<span><strong><@orcid.msg 'manage.developer_tools.group.allow_auto_deprecate'/></strong></span>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12">
+						<p><input type="checkbox" disabled="disabled" class="small-element middle" ng-model="clientDetails.allowAutoDeprecate.value" /></p>
+					</div>					
+				</div>
+								
 				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_BASIC_INSTITUTION">																					
 					<div class="row bottomBuffer">
 						<!-- Custom Emails -->
@@ -339,6 +360,17 @@
 							</span>
 						</div>															
 					</div>			
+				</div>
+				<!-- Allow auto deprecate -->
+				<div class="row bottomBuffer">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="inner-row margin-left-fix">
+							<span>
+								<strong class="middle"><@orcid.msg 'manage.developer_tools.group.allow_auto_deprecate' /></strong>
+								<input type="checkbox" class="small-element middle" ng-model="clientToEdit.allowAutoDeprecate.value" />
+							</span>															
+						</div>															
+					</div>
 				</div>
 				<!-- Client secret -->
 				<div class="row bottomBuffer">

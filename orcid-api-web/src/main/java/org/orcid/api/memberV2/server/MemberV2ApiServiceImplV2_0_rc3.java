@@ -57,6 +57,7 @@ import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -110,7 +111,6 @@ import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
-
 
 /**
  * 
@@ -567,7 +567,10 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
-    public Response viewGroupIdRecords(@QueryParam("page-size") String pageSize, @QueryParam("page") String page) {
+    public Response viewGroupIdRecords(@QueryParam("page-size") @DefaultValue( "100" ) String pageSize, @QueryParam("page") @DefaultValue( "1" ) String page, @QueryParam("name") String name) {
+        if (name != null){
+            return serviceDelegator.findGroupIdRecordByName(name);
+        }
         return serviceDelegator.viewGroupIdRecords(pageSize, page);
     }
 

@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,78 +24,33 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
-import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 
-public class AddressManagerImpl implements AddressManager {
-
-    @Resource
-    private AddressDao addressDao;
-    
-    @Resource
-    private JpaJaxbAddressAdapter adapter;
-    
-    @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource
-    private SourceManager sourceManager;
-    
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements AddressManager {
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;    
+    protected OrcidSecurityManager orcidSecurityManager;
     
-    private long getLastModified(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
-    }
+    @Resource
+    protected SourceManager sourceManager;    
     
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-    
-    @Override
-    @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Address getPrimaryAddress(String orcid, long lastModified) {        
-        List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
-        Address address = null;
-        if(addresses != null) {
-            //Look for the address with the largest display index
-            for(AddressEntity entity : addresses) {
-                if(address == null || address.getDisplayIndex() < entity.getDisplayIndex()) {
-                    address = adapter.toAddress(entity);                    
-                } 
-            }
-        }                    
-        return address;
-    }
-
-    @Override
-    public Address getAddress(String orcid, Long putCode) {
-        AddressEntity entity = addressDao.getAddress(orcid, putCode);
-        return adapter.toAddress(entity);
-    }
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager; 
     
     @Override
     @Transactional
@@ -211,34 +165,7 @@ public class AddressManagerImpl implements AddressManager {
         } else if (incomingCountryVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
         }
-    }
-
-    @Override
-    @Cacheable(value = "address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Addresses getAddresses(String orcid, long lastModified) {
-        return getAddresses(orcid, null);        
-    }
-
-    @Override
-    @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
-    public Addresses getPublicAddresses(String orcid, long lastModified) {
-        return getAddresses(orcid, Visibility.PUBLIC);
-    }
-    
-    private Addresses getAddresses(String orcid, Visibility visibility) {
-        List<AddressEntity> addresses = new ArrayList<AddressEntity>();
-        
-        if (visibility == null) {
-            addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
-        } else {
-            addresses = addressDao.getAddresses(orcid, visibility);
-        }           
-        
-        Addresses result = adapter.toAddressList(addresses);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLatest(result);
-        
-        return result;
-    }
+    }    
     
     @Override
     public Addresses updateAddresses(String orcid, Addresses addresses) {
@@ -298,8 +225,7 @@ public class AddressManagerImpl implements AddressManager {
                     
                 }
             }
-        }
-        
+        }        
         return addresses;
     }
 }

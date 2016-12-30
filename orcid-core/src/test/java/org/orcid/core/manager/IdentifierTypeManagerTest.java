@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -42,11 +43,12 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IdentifierTypeManagerTest extends BaseTest{
+public class IdentifierTypeManagerTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";
 
@@ -76,15 +78,15 @@ public class IdentifierTypeManagerTest extends BaseTest{
     
     @Before
     public void before() throws Exception {
-        idTypeMan.setSourceManager(sourceManager);
-        idTypeMan.setSecurityManager(securityManager);
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", sourceManager);
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);        
         doNothing().when(securityManager).checkSource(Matchers.any(IdentifierTypeEntity.class));
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
     }
     
     @Test
     public void test0FetchEntities(){
-        Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName();
+        Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
         assertEquals(34+v2Ids.size(), map.size());
         checkExists(map,"other-id"); 
         for (String id : v2Ids){
@@ -100,10 +102,12 @@ public class IdentifierTypeManagerTest extends BaseTest{
     
     @Test
     public void test1FetchIdentifier(){
-        IdentifierType id = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI");
+        IdentifierType id = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI",Locale.FRANCE);
         assertEquals("doi",id.getName());
-        id = idTypeMan.fetchIdentifierTypeByDatabaseName("OTHER_ID");
+        assertEquals("doi: Identificateur dobjet numérique",id.getDescription());
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("OTHER_ID",null);
         assertEquals("other-id",id.getName());
+        assertEquals("Other identifier type",id.getDescription());
     }
     
     @Test
@@ -114,17 +118,17 @@ public class IdentifierTypeManagerTest extends BaseTest{
         assertNotNull(id);
         assertNotNull(id.getPutCode());
         assertTrue(new Date().after(id.getDateCreated()));
-        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         assertNotNull(id);
         
-        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         Date last = id.getLastModified();
         id.setValidationRegex("test");
         
         id = idTypeMan.updateIdentifierType(id);
         assertTrue(last.before(id.getLastModified()));  
         
-        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1",null);
         assertEquals("test1",id.getName());
         assertEquals("test",id.getValidationRegex());
         assertTrue(last.getTime() < id.getLastModified().getTime()); 

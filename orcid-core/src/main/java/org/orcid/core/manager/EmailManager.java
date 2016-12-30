@@ -17,50 +17,46 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.Map;
 
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.persistence.jpa.entities.EmailEntity;
+
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface EmailManager {
-
-    boolean emailExists(String email);
+public interface EmailManager extends EmailManagerReadOnly {
 
     void updateEmails(String orcid, Collection<Email> emails);
 
     void addEmail(String orcid, Email email);
     
-    void addEmail(String orcid, EmailEntity email);
-
     void removeEmail(String orcid, String email);
 
-    void removeEmail(String orcid, String email, boolean removeIfPrimary);
-    
-    Map<String, String> findIdByEmail(String email);
-    
+    void removeEmail(String orcid, String email, boolean removeIfPrimary);        
+
     void addSourceToEmail(String email, String sourceId);
     
     boolean verifyEmail(String email);
-    
-    boolean isPrimaryEmailVerified(String orcid);
     
     boolean verifyPrimaryEmail(String orcid);
     
     boolean moveEmailToOtherAccount(String email, String origin, String destination);
     
-    Emails getEmails(String orcid, long lastModified);
-    
-    Emails getPublicEmails(String orcid, long lastModified);
-    
-    boolean haveAnyEmailVerified(String orcid);
-    
-    org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid);
-    
     boolean verifySetCurrentAndPrimary(String orcid, String email);
+
+    /***
+     * Indicates if the given email address could be auto deprecated given the
+     * ORCID rules. See
+     * https://trello.com/c/ouHyr0mp/3144-implement-new-auto-deprecate-workflow-
+     * for-members-unclaimed-ids
+     * 
+     * @param email
+     *            Email address
+     * @return true if the email exists in a non claimed record and the
+     *         client source of the record allows auto deprecating records
+     */
+    boolean isAutoDeprecateEnableForEmail(String email);
 }

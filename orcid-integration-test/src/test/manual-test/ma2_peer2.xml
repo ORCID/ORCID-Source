@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<peer-review:peer-review
+    xmlns:common="http://www.orcid.org/ns/common" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/peer-review https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd">
+    <peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
+    <peer-review:review-identifiers>
+        <common:external-id>
+            <common:external-id-type>source-work-id</common:external-id-type>
+            <common:external-id-value>work:external-identifier-id</common:external-id-value>
+            <common:external-id-url>http://orcid.org</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+    </peer-review:review-identifiers>
+    <peer-review:review-type>review</peer-review:review-type>
+    <peer-review:review-completion-date>
+        <common:year>2014</common:year>
+        <common:month>02</common:month>
+        <common:day>02</common:day>
+    </peer-review:review-completion-date>
+    <peer-review:review-group-id>ringgold:385488</peer-review:review-group-id>
+    <peer-review:subject-type>journal-article</peer-review:subject-type>
+    <peer-review:convening-organization>
+        <common:name>The Psychoceramics Society</common:name>
+        <common:address>
+            <common:city>London</common:city>
+            <common:country>GB</common:country>
+        </common:address>
+    </peer-review:convening-organization>
+</peer-review:peer-review>

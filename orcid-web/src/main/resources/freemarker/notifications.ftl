@@ -62,7 +62,8 @@
 	                <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate, archived: notification.archivedDate}">	                	
 	                    <td ng-click="toggleDisplayBody(notification.putCode)">
 	                        <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
-	                        <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName.content}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
+	                        <span ng-show="notification.overwrittenSourceName">{{notification.overwrittenSourceName}}</span>
+	                        <span ng-show="!notification.overwrittenSourceName && notification.source" ng-cloak>{{notification.source.sourceName.content}}</span><span ng-hide="notification.overwrittenSourceName || notification.source" ng-cloak>ORCID</span>
 	                    </td>
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.subject}}</span></td>
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>

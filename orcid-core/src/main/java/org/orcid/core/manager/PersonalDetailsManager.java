@@ -16,18 +16,13 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc4.Name;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
 
 /**
 * 
 * @author Angel Montenegro
 * 
 */
-public interface PersonalDetailsManager {
-    PersonalDetails getPersonalDetails(String orcid);
-
-    PersonalDetails getPublicPersonalDetails(String orcid);
-
-    Name getName(String orcid);
+public interface PersonalDetailsManager extends PersonalDetailsManagerReadOnly {
+    
 }

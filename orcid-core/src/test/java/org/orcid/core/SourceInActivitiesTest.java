@@ -80,6 +80,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,11 +124,11 @@ public class SourceInActivitiesTest extends BaseTest {
     }
 
     @Before
-    public void before() {        
-        workManager.setSourceManager(sourceManager);
-        profileFundingManager.setSourceManager(sourceManager);
-        affiliationsManager.setSourceManager(sourceManager);
-        peerReviewManager.setSourceManager(sourceManager);
+    public void before() {   
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);        
         if (PojoUtil.isEmpty(userOrcid)) {
             OrcidProfile newUser = getMinimalOrcidProfile();
             userOrcid = newUser.getOrcidIdentifier().getPath();

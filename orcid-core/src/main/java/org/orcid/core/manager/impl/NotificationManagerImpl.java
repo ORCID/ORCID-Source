@@ -100,23 +100,23 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class NotificationManagerImpl implements NotificationManager {
 
-    private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
+    private static final String UPDATE_NOTIFY_ORCID_ORG = "ORCID <update@notify.orcid.org>";
 
-    private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
+    private static final String SUPPORT_VERIFY_ORCID_ORG = "ORCID <support@verify.orcid.org>";
 
-    private static final String RESET_NOTIFY_ORCID_ORG = "reset@notify.orcid.org";
+    private static final String RESET_NOTIFY_ORCID_ORG = "ORCID <reset@notify.orcid.org>";
 
-    private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
+    private static final String CLAIM_NOTIFY_ORCID_ORG = "ORCID <claim@notify.orcid.org>";
 
-    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
+    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "ORCID <deactivate@notify.orcid.org>";
 
-    private static final String LOCKED_NOTIFY_ORCID_ORG = "locked@notify.orcid.org";
+    private static final String LOCKED_NOTIFY_ORCID_ORG = "ORCID <locked@notify.orcid.org>";
 
-    private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
+    private static final String AMEND_NOTIFY_ORCID_ORG = "ORCID <amend@notify.orcid.org>";
 
-    private static final String DELEGATE_NOTIFY_ORCID_ORG = "delegate@notify.orcid.org";
+    private static final String DELEGATE_NOTIFY_ORCID_ORG = "ORCID <delegate@notify.orcid.org>";
 
-    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "email-changed@notify.orcid.org";
+    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "ORCID <email-changed@notify.orcid.org>";
 
     private static final String WILDCARD_MEMBER_NAME = "${name}";
 
@@ -517,6 +517,28 @@ public class NotificationManagerImpl implements NotificationManager {
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", orcidProfile), body, htmlBody);
     }
+    
+    @Override
+    public void sendReactivationEmail(String submittedEmail, OrcidProfile orcidProfile) {
+
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", deriveEmailFriendlyName(orcidProfile));
+        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("subject", getSubject("email.subject.reactivation", orcidProfile));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        // Generate body from template
+        String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
+        templateParams.put("reactivationUrl", reactivationUrl);
+
+        addMessageParams(templateParams, orcidProfile);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reactivation", orcidProfile), body, htmlBody);
+    }
 
     @Override
     public void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection) {
@@ -840,10 +862,24 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     private String createResetEmail(OrcidProfile orcidProfile, String baseUri) {
+        String resetParams = createResetParams(orcidProfile);
+        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
+    }
+
+    private String createResetParams(OrcidProfile orcidProfile) {
         String userEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        return createResetParams(userEmail);
+    }
+    
+    private String createResetParams(String userEmail) {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
-        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
+        return resetParams;
+    }
+    
+    private String createReactivationUrl(String userEmail, String baseUri) {
+        String resetParams = createResetParams(userEmail);
+        return createEmailBaseUrl(resetParams, baseUri, "reactivation");
     }
 
     public String createEmailBaseUrl(String unencryptedParams, String baseUri, String path) {
@@ -921,13 +957,18 @@ public class NotificationManagerImpl implements NotificationManager {
 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
-        // Set source id
-        if (sourceEntity.getSourceProfile() != null) {
-            notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        if(sourceEntity != null) {
+            // Set source id
+            if (sourceEntity.getSourceProfile() != null) {
+                notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+    
+            if (sourceEntity.getSourceClient() != null) {
+                notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            }
+        } else {
+            //If we can't find source id, set the user as the source
+            notificationEntity.setSourceId(orcid);
         }
 
         notificationDao.persist(notificationEntity);
@@ -1103,5 +1144,39 @@ public class NotificationManagerImpl implements NotificationManager {
         }
 
         return result;
+    }
+
+    @Override
+    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid) {
+        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+        ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());        
+        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = getSubject("email.subject.auto_deprecate", orcidProfile);
+        String baseUri = orcidUrlManager.getBaseUrl();
+        Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
+        
+        // Create map of template params
+        templateParams.put("primaryId", orcidId);
+        templateParams.put("name", deriveEmailFriendlyName(orcidProfile));        
+        templateParams.put("baseUri", baseUri);        
+        templateParams.put("subject", subject);
+        templateParams.put("clientName", clientDetails.getClientName());
+        templateParams.put("deprecatedAccountCreationDate", deprecatedAccountCreationDate);
+        templateParams.put("deprecatedId", deprecatedOrcid);
+                
+        addMessageParams(templateParams, userLocale);
+        
+        // Generate html from template
+        String html = templateManager.processTemplate("auto_deprecated_account_html.ftl", templateParams);
+        
+        NotificationCustom notification = new NotificationCustom();
+        notification.setNotificationType(NotificationType.CUSTOM);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        createNotification(orcidId, notification);
     }
 }

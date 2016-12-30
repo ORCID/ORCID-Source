@@ -258,8 +258,9 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         V2Convertible result = null;
         if (entity != null) {
             result = v2VersionConverterChain.downgrade(new V2Convertible(entity, PublicV2ApiServiceDelegator.LATEST_V2_VERSION), externalVersion);
+            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
         }
-        return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
+        return response;
     }
 
     private void checkProfileStatus(String orcid) {

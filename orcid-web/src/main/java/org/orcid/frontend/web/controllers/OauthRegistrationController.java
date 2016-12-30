@@ -118,6 +118,10 @@ public class OauthRegistrationController extends OauthControllerBase {
                     // Set the redirect uri
                     if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
                         redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
+                    // remove email access scope if present but not granted
+                    if (requestInfoForm.containsEmailReadPrivateScope() && !form.isEmailAccessAllowed()) {
+                        requestInfoForm.removeEmailReadPrivateScope();
+                    }
                     // Set the scope param
                     if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()))
                         redirectUri += "&scope=" + requestInfoForm.getScopesAsString();
@@ -152,7 +156,12 @@ public class OauthRegistrationController extends OauthControllerBase {
             registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
                 // Register user
-                registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                try {
+                    registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                } catch(Exception e) {
+                    requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
+                    return requestInfoForm;
+                }
                 // Authenticate user
                 String email = form.getEmail().getValue();
                 String password = form.getPassword().getValue();
@@ -163,7 +172,7 @@ public class OauthRegistrationController extends OauthControllerBase {
                 Map<String, String> params = new HashMap<String, String>();
                 Map<String, String> approvalParams = new HashMap<String, String>();                   
                 
-                fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled());
+                fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled(), form.isEmailAccessAllowed());
 
                 // Authorize
                 try {

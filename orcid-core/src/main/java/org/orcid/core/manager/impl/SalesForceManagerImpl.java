@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
@@ -33,12 +32,11 @@ import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
-import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.persistence.dao.SalesForceConnectionDao;
+import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.ReleaseNameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
@@ -48,8 +46,6 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  *
  */
 public class SalesForceManagerImpl implements SalesForceManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceManagerImpl.class);
 
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
@@ -68,6 +64,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource
     private SalesForceDao salesForceDao;
+
+    @Resource
+    private SalesForceConnectionDao salesForceConnectionDao;
+
+    @Resource
+    private EmailManager emailManager;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -103,25 +105,55 @@ public class SalesForceManagerImpl implements SalesForceManager {
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
-            details.setContacts(findContacts(salesForceMember));
             details.setSubMembers(findSubMembers(memberId));
             return details;
         }
         throw new IllegalArgumentException("No member details found for " + memberId);
     }
 
-    @Override
-    public List<Contact> retrieveContactsByOpportunityId(String opportunityId) {
-        List<String> opportunityIds = new ArrayList<>();
-        opportunityIds.add(opportunityId);
-        Map<String, List<Contact>> contacts = retrieveContactsByOpportunityId(opportunityIds);
-        return contacts.get(opportunityId);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
-        return (Map<String, List<Contact>>) salesForceContactsCache.get(opportunityIds).getObjectValue();
+    public List<Contact> retrieveContactsByAccountId(String accountId) {
+        return (List<Contact>) salesForceContactsCache.get(accountId).getObjectValue();
+    }
+
+    @Override
+    public void addOrcidsToContacts(List<Contact> contacts) {
+        List<String> emails = contacts.stream().map(c -> c.getEmail()).collect(Collectors.toList());
+        Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
+        contacts.stream().forEach(c -> {
+            c.setOrcid(emailsToOrcids.get(c.getEmail()));
+        });
+    }
+
+    @Override
+    public void enableAccess(String accountId, List<Contact> contactsList) {
+        contactsList.forEach(c -> {
+            String orcid = c.getOrcid();
+            if (orcid == null) {
+                return;
+            }
+            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(orcid, accountId);
+            if (connection == null) {
+                connection = new SalesForceConnectionEntity();
+                connection.setOrcid(orcid);
+                connection.setSalesForceAccountId(accountId);
+                connection.setEmail(c.getEmail());
+                salesForceConnectionDao.persist(connection);
+            }
+        });
+    }
+
+    @Override
+    public String retriveAccountIdByOrcid(String orcid) {
+        SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
+        return connection != null ? connection.getSalesForceAccountId() : null;
+    }
+
+    @Override
+    public void updateMember(Member member) {
+        salesForceDao.updateMember(member);
+        salesForceMembersListCache.removeAll();
     }
 
     @Override
@@ -133,43 +165,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
         salesForceContactsCache.removeAll();
     }
 
-    private List<Contact> findContacts(Member member) {
-        String memberId = member.getId();
-        String consortiumLeadId = member.getConsortiumLeadId();
-        if (consortiumLeadId != null) {
-            Consortium consortium = retrieveConsortium(consortiumLeadId);
-            Optional<Opportunity> opp = consortium.getOpportunities().stream().filter(e -> memberId.equals(e.getTargetAccountId())).findFirst();
-            if (opp.isPresent()) {
-                String oppId = opp.get().getId();
-                return retrieveContactsByOpportunityId(oppId);
-            }
-        } else {
-            // It might be a consortium
-            Optional<Member> consortium = retrieveConsortia().stream().filter(e -> memberId.equals(e.getId())).findFirst();
-            if (consortium.isPresent()) {
-                String mainOpportunityId = consortium.get().getMainOpportunityId();
-                if (mainOpportunityId != null) {
-                    return retrieveContactsByOpportunityId(mainOpportunityId);
-                }
-            }
-        }
-        return Collections.emptyList();
-    }
-
     private List<SubMember> findSubMembers(String memberId) {
         Consortium consortium = retrieveConsortium(memberId);
         if (consortium != null) {
-            List<String> opportunityIds = consortium.getOpportunities().stream().map(e -> e.getId()).collect(Collectors.toList());
-            Map<String, List<Contact>> contactsMap = retrieveContactsByOpportunityId(opportunityIds);
             List<SubMember> subMembers = consortium.getOpportunities().stream().map(o -> {
                 SubMember subMember = new SubMember();
                 subMember.setOpportunity(o);
                 subMember.setSlug(SlugUtils.createSlug(o.getTargetAccountId(), o.getAccountName()));
-                List<Contact> contactsList = contactsMap.get(o.getId());
-                Optional<Contact> mainContactOptional = contactsList.stream().filter(c -> SalesForceDao.MAIN_CONTACT_ROLE.equals(c.getRole())).findFirst();
-                if (mainContactOptional.isPresent()) {
-                    subMember.setMainContact(mainContactOptional.get());
-                }
                 return subMember;
             }).collect(Collectors.toList());
             return subMembers;

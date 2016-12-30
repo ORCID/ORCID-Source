@@ -101,7 +101,7 @@ public class MembersManagerImpl implements MembersManager {
         Member member = new Member();
         String orcid = memberId;
         if (!OrcidStringUtils.isValidOrcid(memberId)) {
-            Map<String, String> ids = emailManager.findIdByEmail(memberId);
+            Map<String, String> ids = emailManager.findOricdIdsByCommaSeparatedEmails(memberId);
             //Check if it is using the email
             if (ids != null && ids.containsKey(memberId)) {
                 orcid = ids.get(memberId);

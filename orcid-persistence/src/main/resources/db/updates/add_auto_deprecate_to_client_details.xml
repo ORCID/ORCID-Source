@@ -1,0 +1,32 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="ADD-AUTO-DEPRECATE-TO-CLIENT-DETAILS" author="Angel Montenegro">
+        <preConditions>
+        	<not>
+        		<columnExists tableName="client_details" columnName="allow_auto_deprecate"/>
+        	</not>
+		</preConditions>
+		<sql>ALTER TABLE client_details ADD allow_auto_deprecate boolean;</sql>
+		<sql>UPDATE client_details set allow_auto_deprecate=false, last_modified=now();</sql>
+		<sql>ALTER TABLE client_details ALTER COLUMN allow_auto_deprecate SET DEFAULT false;</sql>
+	</changeSet>        
+</databaseChangeLog>

@@ -44,6 +44,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
     private Set<String> scopes;
+    private Checkbox allowAutoDeprecate;
 
     public static Client valueOf(ClientDetailsEntity clientDetails) {
         Client client = new Client();
@@ -71,6 +72,7 @@ public class Client implements ErrorsInterface, Serializable {
             if(!PojoUtil.isEmpty(clientDetails.getAuthenticationProviderId())) {
                 client.setAuthenticationProviderId(Text.valueOf(clientDetails.getAuthenticationProviderId()));
             }
+            client.setAllowAutoDeprecate(Checkbox.valueOf(clientDetails.getAllowAutoDeprecate()));
         }
         return client;
     }
@@ -110,7 +112,7 @@ public class Client implements ErrorsInterface, Serializable {
         }
         
         client.setRedirectUris(redirectUris);
-
+        client.setAllowAutoDeprecate(Checkbox.valueOf(orcidClient.getAllowAutoDeprecate()));
         return client;
     }
 
@@ -138,6 +140,8 @@ public class Client implements ErrorsInterface, Serializable {
         
         if(persistentTokenEnabled != null)
             orcidClient.setPersistentTokenEnabled(persistentTokenEnabled.getValue());
+        
+        orcidClient.setAllowAutoDeprecate(this.getAllowAutoDeprecate() == null ? false : this.getAllowAutoDeprecate().getValue());
         
         return orcidClient;
     }
@@ -244,5 +248,13 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setAuthenticationProviderId(Text authenticationProviderId) {
         this.authenticationProviderId = authenticationProviderId;
+    }
+    
+    public Checkbox getAllowAutoDeprecate() {
+        return allowAutoDeprecate;
+    }
+
+    public void setAllowAutoDeprecate(Checkbox allowAutoDeprecate) {
+        this.allowAutoDeprecate = allowAutoDeprecate;
     }
 }

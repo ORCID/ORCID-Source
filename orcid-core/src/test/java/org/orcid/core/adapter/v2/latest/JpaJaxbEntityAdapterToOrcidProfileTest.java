@@ -455,22 +455,27 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
             switch(email.getValue()) {
             case "teddybass@semantico.com":
                 assertEquals("PRIVATE", email.getVisibility().name());
+                assertFalse(email.isPrimary());
+                assertFalse(email.isVerified());
                 break;
             case "teddybass2@semantico.com":
                 assertEquals("LIMITED", email.getVisibility().name());
+                assertFalse(email.isPrimary());
+                assertFalse(email.isVerified());
                 break;
             case "teddybass3public@semantico.com":
                 assertEquals("PUBLIC", email.getVisibility().name());
+                assertFalse(email.isPrimary());
+                assertFalse(email.isVerified());
                 break;
             case "teddybass3private@semantico.com":
                 assertEquals("PRIVATE", email.getVisibility().name());
+                assertTrue(email.isPrimary());
+                assertTrue(email.isVerified());
                 break;
             }
-            
-            
-            assertFalse(email.isPrimary());
+           
             assertTrue(email.isCurrent());
-            assertFalse(email.isVerified());
         }
 
         Address contactDetailsAddress = contactDetails.getAddress();

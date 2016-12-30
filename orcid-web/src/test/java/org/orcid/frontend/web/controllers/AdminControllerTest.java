@@ -40,18 +40,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
-import org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl;
-import org.orcid.core.manager.impl.ProfileEntityManagerImpl;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
@@ -100,6 +98,12 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     GroupAdministratorController groupAdministratorController;
     
+    @Resource
+    private RecordNameManager recordNameManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
@@ -114,7 +118,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
     
     @Override
@@ -154,78 +158,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), profileDetails.getErrors().get(0));
     }
 
-    @Test
-    public void testDeprecateProfile() throws Exception {        
-        OrcidProfile toDeprecate = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");               
-        OrcidProfile primary = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-
-        boolean containsEmail = false;
-
-        assertNull(toDeprecate.getOrcidDeprecated());
-        assertNotNull(toDeprecate.getOrcidBio());
-        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
-        assertEquals("One", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("User", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertEquals("Credit Name", toDeprecate.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        assertNotNull(toDeprecate.getOrcidBio().getKeywords());
-        assertNotNull(toDeprecate.getOrcidBio().getKeywords().getKeyword());
-        assertEquals(2, toDeprecate.getOrcidBio().getKeywords().getKeyword().size());
-        assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName());
-        assertEquals(2, toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
-        
-        List<Email> emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
-        assertNotNull(emails1);
-        assertEquals(5, emails1.size());
-
-        for (Email email : emails1) {
-            if (email.getValue().equals("1@deprecate.com")) {
-                if (email.isCurrent() == false && email.isVerified() == true) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            } else if (email.getValue().equals("2@deprecate.com")) {
-                if (email.isCurrent() == false && email.isVerified() == false) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            } else if (email.getValue().equals("spike@milligan.com")) {
-                if (email.isCurrent() == true && email.isVerified() == true && email.isPrimary() == true) {
-                    containsEmail = true;
-                } else {
-                    containsEmail = false;
-                    break;
-                }
-            }
-        }
-
-        assertTrue(containsEmail);
-
-        List<Email> emails2 = primary.getOrcidBio().getContactDetails().getEmail();
-        assertNotNull(emails2);
-        assertEquals(2, emails2.size());
-
-        ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
-        
-        assertEquals(0, result.getErrors().size());      
-        
-        
-        Map<String, String> emails = adminController.findIdByEmailHelper("1@deprecate.com,2@deprecate.com,spike@milligan.com,michael@bentine.com");
-        assertEquals("4444-4444-4444-4442", emails.get("1@deprecate.com"));
-        assertEquals("4444-4444-4444-4442", emails.get("2@deprecate.com"));
-        assertEquals("4444-4444-4444-4442", emails.get("spike@milligan.com"));
-        assertEquals("4444-4444-4444-4442", emails.get("michael@bentine.com"));
-                
-        ProfileEntity deprecated = adminController.getProfileEntityManager().findByOrcid("4444-4444-4444-4441");
-                
-        if(deprecated.getRecordNameEntity() != null) {
-            assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
-            assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());
-        } 
-    }
+    
 
     @Test         
     public void tryToDeprecateDeprecatedProfile() throws Exception {        
@@ -385,8 +318,13 @@ public class AdminControllerTest extends BaseControllerTest {
         OrcidProfile unlockedProfile = new OrcidProfile();
         unlockedProfile.setLocked(false);
         unlockedProfile.setOrcidIdentifier("another-id");
+        
+        OrcidProfile reviewedProfile = new OrcidProfile();
+        reviewedProfile.setLocked(false);
+        reviewedProfile.setReviewed(true);
+        reviewedProfile.setOrcidIdentifier("reviewed-id");
 
-        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with,reviewed";
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("some"))).thenReturn(null);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("orcid"))).thenReturn(null);
@@ -404,11 +342,15 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(unlockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(unlockedProfile);
         
+        Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("reviewed"))).thenReturn(reviewedProfile);
+        
         Mockito.when(orcidProfileManager.lockProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
         Mockito.when(orcidProfileManager.lockProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
         
         Mockito.when(orcidProfileManager.lockProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
         Mockito.when(orcidProfileManager.lockProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
+        
+        Mockito.when(orcidProfileManager.lockProfile("reviewed")).thenThrow(new RuntimeException("Controller shouldn't try to lock reviewed profile"));
         
         Mockito.when(orcidProfileManager.lockProfile("emails")).thenReturn(true);
         Mockito.when(orcidProfileManager.lockProfile("to")).thenReturn(true);
@@ -429,6 +371,9 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(results.get("lockSuccessfulList").contains("to"));
         assertTrue(results.get("lockSuccessfulList").contains("test"));
         assertTrue(results.get("lockSuccessfulList").contains("with"));
+        
+        assertEquals(1, results.get("reviewedList").size());
+        assertTrue(results.get("reviewedList").contains("reviewed"));
         
         Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString());
     }

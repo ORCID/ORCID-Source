@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -52,11 +53,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
@@ -69,6 +72,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -88,6 +92,7 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,6 +135,12 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock
     private HttpServletResponse servletResponse;
     
+    @Mock
+    private EmailManager emailManager;
+    
+    @Mock 
+    private ProfileEntityManager profileEntityManager;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -142,12 +153,14 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);
-        registrationController.setRegistrationManager(registrationManager);
-        registrationController.setOrcidSearchManager(orcidSearchManager);
-        registrationController.setOrcidProfileManager(orcidProfileManager);
-        registrationController.setEncryptionManager(encryptionManager);
-        registrationController.setNotificationManager(notificationManager);
+        MockitoAnnotations.initMocks(this);        
+        TargetProxyHelper.injectIntoProxy(registrationController, "registrationManager", registrationManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "orcidSearchManager", orcidSearchManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "notificationManager", notificationManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);                 
     }
 
     @Test
@@ -393,7 +406,11 @@ public class RegistrationControllerTest extends DBUnitTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
         when(request.getLocale()).thenReturn(java.util.Locale.US);
-                
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put(email, "0000-0000-0000-0001");
+        when(emailManager.findOricdIdsByCommaSeparatedEmails(email)).thenReturn(data);       
+        when(profileEntityManager.claimProfileAndUpdatePreferences(any(String.class), any(String.class), any(Locale.class), any(Claim.class))).thenReturn(true);
+        
         Claim claim = new Claim();
         claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PRIVATE));
         claim.setPassword(Text.valueOf("passwordTest1"));
@@ -471,6 +488,121 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertEquals("Family Name", profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());        
     }
     
+    @Test
+    public void regEmailValidateUnclaimedAccountTest() {
+    	String email = "email1@test.orcid.org";
+    	String orcid = "0000-0000-0000-0000";
+    	when(emailManager.emailExists(email)).thenReturn(true); 
+    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+    	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
+    	    	
+    	Registration reg = new Registration();
+    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+    	
+    	assertNotNull(reg);
+    	assertNotNull(reg.getEmail());
+    	assertNotNull(reg.getEmail().getErrors());
+    	//No errors, since the account can be auto deprecated
+    	assertTrue(reg.getEmail().getErrors().isEmpty());    	
+    }
+    
+    @Test
+    public void regEmailValidateUnclaimedAccountButEnableAutoDeprecateDisableOnClientTest() {
+    	String email = "email1@test.orcid.org";
+    	String orcid = "0000-0000-0000-0000";
+    	when(emailManager.emailExists(email)).thenReturn(true); 
+    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+    	//Set enable auto deprecate off
+    	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(false);
+    	when(servletRequest.getScheme()).thenReturn("http");    	
+    	
+    	Registration reg = new Registration();
+    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+    	
+    	assertNotNull(reg);
+    	assertNotNull(reg.getEmail());
+    	assertNotNull(reg.getEmail().getErrors());
+    	assertEquals(1, reg.getEmail().getErrors().size());
+    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href=\"http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org\">resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
+    }
+    
+    @Test
+    public void regEmailValidateDeactivatedAccountTest() {
+    	String email = "email1@test.orcid.org";
+    	String orcid = "0000-0000-0000-0000";
+    	when(emailManager.emailExists(email)).thenReturn(true); 
+    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+    	//Set it as deactivated
+    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+    	    	
+    	Registration reg = new Registration();
+    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+    	
+    	assertNotNull(reg);
+    	assertNotNull(reg.getEmail());
+    	assertNotNull(reg.getEmail().getErrors());
+    	assertEquals(1, reg.getEmail().getErrors().size());
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+    }
+    
+    @Test
+    public void regEmailValidateDeactivatedAndUnclaimedAccountTest() {
+    	String email = "email1@test.orcid.org";
+    	String orcid = "0000-0000-0000-0000";
+    	when(emailManager.emailExists(email)).thenReturn(true); 
+    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+    	//Set it as unclaimed
+    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(false);
+    	//And set it as deactivated
+    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(true);
+    	when(emailManager.isAutoDeprecateEnableForEmail(email)).thenReturn(true);
+    	
+    	Registration reg = new Registration();
+    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+    	
+    	assertNotNull(reg);
+    	assertNotNull(reg.getEmail());
+    	assertNotNull(reg.getEmail().getErrors());
+    	assertEquals(1, reg.getEmail().getErrors().size());
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.deactivated_email"));
+    }
+    
+    @Test
+    public void regEmailValidateClaimedAccountTest() {
+    	String email = "email1@test.orcid.org";
+    	String orcid = "0000-0000-0000-0000";
+    	when(emailManager.emailExists(email)).thenReturn(true); 
+    	when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
+    	//Set it as claimed
+    	when(profileEntityManager.isProfileClaimedByEmail(email)).thenReturn(true);
+    	//And set it as active
+    	when(profileEntityManager.isDeactivated(orcid)).thenReturn(false);
+    	
+    	Registration reg = new Registration();
+    	reg.setEmail(Text.valueOf("email1@test.orcid.org"));
+    	reg.setEmailConfirm(Text.valueOf("email1@test.orcid.org"));
+    	reg = registrationController.regEmailValidate(servletRequest, reg, false, true);
+    	
+    	assertNotNull(reg);
+    	assertNotNull(reg.getEmail());
+    	assertNotNull(reg.getEmail().getErrors());
+    	assertEquals(1, reg.getEmail().getErrors().size());
+    	assertTrue(reg.getEmail().getErrors().get(0).startsWith("email1@test.orcid.org already exists in our system. Would you like to"));    	
+    }
+    
     private OrcidProfile orcidWithSecurityQuestion() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setSecurityQuestionAnswer("Answer");
@@ -543,5 +675,4 @@ public class RegistrationControllerTest extends DBUnitTest {
         profile.setOrcidWorks(orcidWorks);        
         return profile;
     }
-
 }

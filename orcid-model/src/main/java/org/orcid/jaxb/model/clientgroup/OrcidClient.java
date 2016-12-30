@@ -93,6 +93,8 @@ public class OrcidClient implements Serializable {
     protected ClientType type;
     @XmlTransient
     protected boolean persistentTokenEnabled;    
+    @XmlTransient
+    protected Boolean allowAutoDeprecate;
 
     /**
      * Gets the value of the displayName property.
@@ -303,5 +305,13 @@ public class OrcidClient implements Serializable {
      */
     public void setIdp(String idp) {
         this.idp = idp;
+    }
+    
+    public Boolean getAllowAutoDeprecate() {
+        return allowAutoDeprecate;
+    }
+
+    public void setAllowAutoDeprecate(Boolean allowAutoDeprecate) {
+        this.allowAutoDeprecate = allowAutoDeprecate;
     }
 }

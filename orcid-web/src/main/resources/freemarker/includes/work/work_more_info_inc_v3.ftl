@@ -97,11 +97,11 @@
 				
 				
 				<div class="row" ng-if="showBibtex[work.putCode.value]" ng-repeat='bibJSON in worksSrvc.bibtexJson[work.putCode.value]'>						
-					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
-					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
+					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{bibJSON.entryType}}</div>
+					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{bibJSON.citationKey}}</div>								
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
-						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{entKey}}</div>
-						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{entVal | latex}}</div>
+						<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-4">{{entKey}}</div>
+						<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-6">{{entVal | latex}}</div>
 					</div>
 				</div>						
 			</div>

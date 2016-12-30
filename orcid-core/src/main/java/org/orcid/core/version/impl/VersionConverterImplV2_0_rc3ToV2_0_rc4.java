@@ -58,14 +58,19 @@ import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.Work;
 
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 
 public class VersionConverterImplV2_0_rc3ToV2_0_rc4 implements V2VersionConverter {
 
     private static final String LOWER_VERSION = "2.0_rc3";
     private static final String UPPER_VERSION = "2.0_rc4";
+
+    private static final String RC3_PEER_REVIEW_TYPE = "PEER-REVIEW";
+    private static final String RC4_PEER_REVIEW_TYPE = "peer-review";
 
     private final static MapperFacade mapper;
 
@@ -78,7 +83,22 @@ public class VersionConverterImplV2_0_rc3ToV2_0_rc4 implements V2VersionConverte
         
         //ExternalIDs
         mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc4.ExternalIDs.class).byDefault().register();
-        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc4.ExternalID.class).byDefault().register();
+        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc4.ExternalID.class).byDefault()
+                .customize(new CustomMapper<ExternalID, org.orcid.jaxb.model.record_rc4.ExternalID>() {
+                    public void mapAtoB(ExternalID rc3, org.orcid.jaxb.model.record_rc4.ExternalID rc4, MappingContext context) {
+                        String extIdType = rc3.getType();
+                        if (RC3_PEER_REVIEW_TYPE.equals(extIdType)) {
+                            rc4.setType(RC4_PEER_REVIEW_TYPE);
+                        }
+                    }
+
+                    public void mapBtoA(org.orcid.jaxb.model.record_rc4.ExternalID rc4, ExternalID rc3, MappingContext context) {
+                        String extIdType = rc4.getType();
+                        if (RC4_PEER_REVIEW_TYPE.equals(extIdType)) {
+                            rc3.setType(RC3_PEER_REVIEW_TYPE);
+                        }
+                    }
+                }).register();
         
         //Other names
         mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.record_rc4.OtherNames.class).byDefault().register();

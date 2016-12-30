@@ -145,4 +145,30 @@ public class GroupIdRecordTest extends BlackBoxBaseRC3 {
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
         }        
     }
+    
+    @Test
+    public void testGetGroupByName() throws JSONException{
+        String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:1234");
+        g1.setName("Group1234");
+        g1.setType("publisher");
+        
+        ClientResponse checkIfPresent = memberV2ApiClient.getGroupIdByName("Group1234",token);
+        if (checkIfPresent.getStatus() == Response.Status.OK.getStatusCode()){            
+            memberV2ApiClient.deleteGroupIdRecord(checkIfPresent.getEntity(GroupIdRecord.class).getPutCode(), token);
+        }
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);        
+        ClientResponse r2 = memberV2ApiClient.getGroupIdByName("Group1234",token);
+        String r2LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc3/group-id-record/", "");
+        GroupIdRecord record = r2.getEntity(GroupIdRecord.class);
+        assertEquals(r2LocationPutCode,""+record.getPutCode());
+        putsToDelete.add(record.getPutCode());
+
+        ClientResponse r3 = memberV2ApiClient.getGroupIdByName("GroupXXXX",token);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), r3.getStatus());
+
+    }
 }

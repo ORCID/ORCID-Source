@@ -211,8 +211,13 @@
     <include file="/db/updates/insitutional_sign_in_round_trip.xml" />
     <include file="/db/updates/change_refresh_token_scope_length_on_unit_tests.xml"/>
     <include file="/db/updates/federated-idp-name.xml" />	
-    <include file="/db/updates/fix-null-relationship-on-funding-ext-ids.xml" />
+    <include file="/db/updates/consortia-self-service.xml" />
+    <include file="/db/updates/fix-null-relationship-on-funding-ext-ids.xml" />    
     <include file="/db/updates/identifier-types/identifier-type-pdb.xml" />
     <include file="/db/updates/identifier-types/identifier-type-kuid.xml" />
     <include file="/db/updates/identifier-types/identifier-type-36-lensid.xml" />
+    <include file="/db/updates/add_email_access_reason.xml" />
+    <include file="/db/updates/institutional_sign_in_heuristics.xml" />
+	<include file="/db/updates/add_auto_deprecate_to_client_details.xml" />
+	<include file="/db/updates/identifier-types/add-primary-use-and-urls.xml" />
 </databaseChangeLog>

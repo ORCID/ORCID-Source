@@ -76,8 +76,8 @@
         source_id="5555-5555-5555-5558"
     />
                                                 
-    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true"/>
-    <client_details client_details_id="APP-5555555555555556" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 2" client_description="A test source client" client_website="www.5555555555555556.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true"/>
+    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true" allow_auto_deprecate="true" />
+    <client_details client_details_id="APP-5555555555555556" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 2" client_description="A test source client" client_website="www.5555555555555556.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true" allow_auto_deprecate="false" />
     
     <client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
 	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />

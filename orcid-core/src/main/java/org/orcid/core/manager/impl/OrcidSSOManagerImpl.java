@@ -109,7 +109,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
                 redirectUrisSet.add(uri);
             }
             ClientDetailsEntity clientDetailsEntity = clientDetailsManager.createClientDetails(orcid, name, description, null, website, ClientType.PUBLIC_CLIENT, clientScopes,
-                    clientResourceIds, getClientAuthorizedGrantTypes(), getClientRegisteredRedirectUris(redirectUrisSet), getClientGrantedAuthorities());
+                    clientResourceIds, getClientAuthorizedGrantTypes(), getClientRegisteredRedirectUris(redirectUrisSet), getClientGrantedAuthorities(), false);
             clientId = clientDetailsEntity.getId();
         }
 

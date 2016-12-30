@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -57,6 +58,13 @@ import org.orcid.jaxb.model.message.ExternalIdReference;
 import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
@@ -70,6 +78,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -154,7 +163,8 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidActivities.setOrcidWorks(orcidWorks);
         Response response = t2OrcidApiServiceDelegator.addWorks(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
-    }
+        assertEquals(201, response.getStatus());
+    }        
 
     @Test
     @Transactional
@@ -696,6 +706,68 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testReadPrivateEmailsOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.EMAIL_READ_PRIVATE);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        
+        List<Email> emails = p.getOrcidBio().getContactDetails().getEmail();
+        assertEquals(3, emails.size());
+
+        boolean privateFound = false;
+        boolean publicFound = false;
+        boolean limitedFound = false;
+        
+        for (Email email : emails) {
+            if ("public_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PUBLIC.equals(email.getVisibility())) {
+                publicFound = true;
+            } else if ("limited_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.LIMITED.equals(email.getVisibility())) {
+                limitedFound = true;
+            } else if ("private_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PRIVATE.equals(email.getVisibility())) {
+                privateFound = true;
+            }
+        }
+        
+        assertTrue(publicFound);
+        assertTrue(limitedFound);
+        assertTrue(privateFound);
+    }
+    
+    @Test
+    public void testReadNonPrivateEmailsOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497", ScopePathType.ORCID_BIO_READ_LIMITED);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        
+        List<Email> emails = p.getOrcidBio().getContactDetails().getEmail();
+        assertEquals(2, emails.size());
+
+        boolean publicFound = false;
+        boolean limitedFound = false;
+        
+        for (Email email : emails) {
+            if ("public_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.PUBLIC.equals(email.getVisibility())) {
+                publicFound = true;
+            } else if ("limited_4444-4444-4444-4497@test.orcid.org".equals(email.getValue()) && Visibility.LIMITED.equals(email.getVisibility())) {
+                limitedFound = true;
+            }
+        }
+        
+        assertTrue(publicFound);
+        assertTrue(limitedFound);
+    }
+    
+    @Test
     public void testReadPrivacyOnBio2(){
         /*Example B List:
         Item 1 Limited
@@ -849,5 +921,119 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(commonName, newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
         assertEquals("APP-5555555555555555", newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource().retrieveSourcePath());
     }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void testAddWorkToDeprecatedAccount() {
+    	SecurityContextTestUtils.setUpSecurityContext();
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-444X"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        OrcidWork work = new OrcidWork();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Title"));
+        work.setWorkTitle(title);
+        
+        WorkExternalIdentifiers weis = new WorkExternalIdentifiers();
+        WorkExternalIdentifier wei = new WorkExternalIdentifier();
+        wei.setWorkExternalIdentifierId(new WorkExternalIdentifierId("00000001"));
+        wei.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        weis.getWorkExternalIdentifier().add(wei);
+        work.setWorkExternalIdentifiers(weis);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidActivities.setOrcidWorks(orcidWorks);
+        t2OrcidApiServiceDelegator.addWorks(mockedUriInfo, "4444-4444-4444-444X", orcidMessage);        
+    }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void testAddFundingToDeprecatedAccount() {
+    	SecurityContextTestUtils.setUpSecurityContext();
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-444X"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        
+        FundingList fundings = new FundingList();
+        Funding funding = new Funding();
 
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("City");
+        address.setCountry(Iso3166Country.US);
+        
+        Organization org = new Organization();
+        org.setAddress(address);
+        org.setName("Testing org name");
+        
+        funding.setOrganization(org);
+        
+        FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setValue("FExtId");
+        fExtIds.getFundingExternalIdentifier().add(fExtId);
+        funding.setFundingExternalIdentifiers(fExtIds);
+        
+        funding.setType(FundingType.AWARD);        
+        funding.setOrganizationDefinedFundingType(new OrganizationDefinedFundingSubType("fType"));
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Funding title"));
+        funding.setTitle(title);
+        fundings.getFundings().add(funding);
+        orcidActivities.setFundings(fundings);
+        t2OrcidApiServiceDelegator.addFunding(mockedUriInfo, "4444-4444-4444-444X", orcidMessage);  
+    }
+
+    @Test(expected = OrcidDeprecatedException.class)
+    public void testAddAffiliationToDeprecatedAccount() {
+    	SecurityContextTestUtils.setUpSecurityContext();
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-444X"));
+        OrcidActivities orcidActivities = new OrcidActivities();
+        orcidProfile.setOrcidActivities(orcidActivities);
+        
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("City");
+        address.setCountry(Iso3166Country.US);
+        
+        Organization org = new Organization();
+        org.setAddress(address);
+        org.setName("Testing org name");
+        
+        Affiliations affiliations = new Affiliations();
+        Affiliation affiliation = new Affiliation();
+        affiliation.setDepartmentName("Dept name");
+        affiliation.setOrganization(org);
+        affiliation.setType(AffiliationType.EMPLOYMENT);
+        affiliations.getAffiliation().add(affiliation);        
+        orcidActivities.setAffiliations(affiliations);        
+        t2OrcidApiServiceDelegator.addAffiliations(mockedUriInfo, "4444-4444-4444-444X", orcidMessage);  
+    }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void testAddExternalIdentifiersToDeprecatedAccount() {
+    	SecurityContextTestUtils.setUpSecurityContext();
+    	OrcidMessage orcidMessage = new OrcidMessage();
+    	orcidMessage.setMessageVersion("1.2_rc6");
+    	orcidMessage.setOrcidProfile(new OrcidProfile());
+    	orcidMessage.getOrcidProfile().setOrcidBio(new OrcidBio());
+        ExternalIdentifiers extIds = new ExternalIdentifiers();
+        ExternalIdentifier extId1 = new ExternalIdentifier();
+        String commonName = "common-name-1-" + System.currentTimeMillis();
+        extId1.setExternalIdCommonName(new ExternalIdCommonName(commonName));
+        extId1.setExternalIdReference(new ExternalIdReference("ext-id-reference-1"));
+        extId1.setExternalIdUrl(new ExternalIdUrl("http://test.orcid.org/" + System.currentTimeMillis()));
+        extIds.getExternalIdentifier().add(extId1);
+        orcidMessage.getOrcidProfile().getOrcidBio().setExternalIdentifiers(extIds);                
+        t2OrcidApiServiceDelegator.addExternalIdentifiers(mockedUriInfo, "4444-4444-4444-444X", orcidMessage);  
+    }
+    
 }

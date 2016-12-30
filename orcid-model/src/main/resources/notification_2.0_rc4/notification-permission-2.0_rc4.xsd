@@ -5,9 +5,9 @@
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
 	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="../common_2.0_rc3/common-2.0_rc3.xsd" />
+		schemaLocation="../common_2.0_rc4/common-2.0_rc4.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/activities"
-		schemaLocation="../record_2.0_rc3/activities-2.0_rc3.xsd" />
+		schemaLocation="../record_2.0_rc4/activities-2.0_rc4.xsd" />
 	
 	<xs:element name="notifications">
 		<xs:annotation>
