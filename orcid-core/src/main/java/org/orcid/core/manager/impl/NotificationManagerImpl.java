@@ -61,18 +61,18 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
-import org.orcid.jaxb.model.notification.amended_rc4.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc4.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc4.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc4.Item;
-import org.orcid.jaxb.model.notification.permission_rc4.Items;
-import org.orcid.jaxb.model.notification_rc4.Notification;
-import org.orcid.jaxb.model.notification_rc4.NotificationType;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.model.notification.institutional_sign_in_rc4.NotificationInstitutionalConnection;
-import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermission;
-import org.orcid.jaxb.model.notification.permission_rc4.NotificationPermissions;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.Items;
+import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -1104,7 +1104,7 @@ public class NotificationManagerImpl implements NotificationManager {
             if (emails == null || emails.getEmails() == null) {
                 throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
             }
-            for(org.orcid.jaxb.model.record_rc4.Email email : emails.getEmails()) {
+            for(org.orcid.jaxb.model.record_v2.Email email : emails.getEmails()) {
                 if(email.isPrimary()) {
                     primaryEmail = email.getEmail();
                 }

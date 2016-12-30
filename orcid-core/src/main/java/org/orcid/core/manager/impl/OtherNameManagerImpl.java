@@ -32,9 +32,9 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -212,12 +212,12 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     }
     
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc4.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc4.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_v2.Visibility incomingOtherNameVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_v2.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed()) {            
             entity.setVisibility(defaultOtherNamesVisibility);            
         } else if (incomingOtherNameVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }
 }

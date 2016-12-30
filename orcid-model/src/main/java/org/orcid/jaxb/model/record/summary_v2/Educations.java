@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record_v2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_v2.Activity;
 
@@ -43,6 +44,14 @@ public class Educations implements ActivitiesContainer, Serializable {
     @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
     private List<EducationSummary> summaries;
 
+    public Educations() {
+        
+    }
+    
+    public Educations(List<EducationSummary> summaries) {
+        this.summaries = summaries;
+    }
+    
     public List<EducationSummary> getSummaries() {
         if (summaries == null)
             summaries = new ArrayList<>();

@@ -19,8 +19,8 @@ package org.orcid.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orcid.jaxb.model.common_rc4.Source;
-import org.orcid.jaxb.model.notification_rc4.Notification;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.notification_v2.Notification;
 
 /**
  * 
