@@ -1,4 +1,4 @@
-orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
+angular.module('orcidApp').controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
     $scope.customEmail = null;
     $scope.editedCustomEmail = null;
     $scope.customEmailList = [];

@@ -1,4 +1,4 @@
-orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
+angular.module('orcidApp').controller('LoginLayoutController',['$scope', function ($scope){
     
     $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
     $scope.scriptsInjected = false; //Flag to show or not the spinner

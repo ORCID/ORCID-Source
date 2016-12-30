@@ -1,4 +1,4 @@
-orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
+angular.module('orcidApp').controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.getChangePassword = function() {
         $.ajax({
             url: getBaseUri() + '/account/change-password.json',

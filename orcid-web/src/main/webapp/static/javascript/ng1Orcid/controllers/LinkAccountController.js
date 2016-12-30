@@ -1,4 +1,4 @@
-orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
+angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
     
     $scope.loadedFeed = false;
     

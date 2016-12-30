@@ -1,4 +1,4 @@
-orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
+angular.module('orcidApp').controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
     $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
     $scope.showCode = false;
     $scope.widgetSrvc = widgetSrvc;

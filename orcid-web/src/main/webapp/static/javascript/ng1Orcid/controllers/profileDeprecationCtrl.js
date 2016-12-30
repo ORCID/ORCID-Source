@@ -1,4 +1,4 @@
-orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
+angular.module('orcidApp').controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
     $scope.deprecated_verified = false;
     $scope.primary_verified = false;
     $scope.deprecatedAccount = null;

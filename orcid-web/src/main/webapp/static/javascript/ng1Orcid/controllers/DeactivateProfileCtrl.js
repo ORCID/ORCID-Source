@@ -1,4 +1,4 @@
-orcidNgModule.controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
+angular.module('orcidApp').controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
     $scope.orcidsToDeactivate = "";
     $scope.showSection = false;
 

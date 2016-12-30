@@ -1,4 +1,4 @@
-orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
+angular.module('orcidApp').controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
     $scope.fundingSrvc = fundingSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.moreInfo = {};

@@ -19,7 +19,7 @@
  * For modal with email verification validation
  */
 
-orcidNgModule.directive(
+angular.module('orcidApp').directive(
     'modalEmailUnVerified', 
     [
         '$compile',

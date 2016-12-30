@@ -1,4 +1,4 @@
-orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
+angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
     $scope.isDroppedDown = false;
     $scope.searchResultsCache = new Object();
 

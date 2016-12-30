@@ -24,7 +24,7 @@
  * </fn-form>
  * 
  */
-orcidNgModule.directive('fnForm', function($document) {
+angular.module('orcidApp').directive('fnForm', function($document) {
     return {
         restrict: 'E',
         scope: {

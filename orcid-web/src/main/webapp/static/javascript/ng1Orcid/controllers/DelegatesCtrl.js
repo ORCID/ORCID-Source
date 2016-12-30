@@ -1,5 +1,5 @@
 // Controller for delegate permissions that have been granted BY the current user
-orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function DelegatesCtrl($scope, $compile){
+angular.module('orcidApp').controller('DelegatesCtrl',['$scope', '$compile', function DelegatesCtrl($scope, $compile){
     $scope.results = new Array();
     $scope.numFound = 0;
     $scope.input = {};

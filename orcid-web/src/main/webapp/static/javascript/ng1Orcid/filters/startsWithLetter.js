@@ -1,5 +1,5 @@
 //used in alphabetical filter on /members and /consortia
-orcidNgModule.filter('startsWithLetter', function() {
+angular.module('orcidApp').filter('startsWithLetter', function() {
     return function(items, letter) {
 
         var filtered = [];

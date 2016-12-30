@@ -1,4 +1,4 @@
-orcidNgModule.filter("filterImportWizards", function(){ 
+angular.module('orcidApp').filter("filterImportWizards", function(){ 
     return function(input, selectedWorkType, selectedGeoArea) {
         var output = [];        
         if(selectedWorkType == 'All' && selectedGeoArea == 'All'){

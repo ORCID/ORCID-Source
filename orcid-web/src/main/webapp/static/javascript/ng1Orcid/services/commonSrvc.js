@@ -1,4 +1,4 @@
-orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
+angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
     var commonSrvc = {
         copyErrorsLeft: function (data1, data2) {
             for (var key in data1) {

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-orcidNgModule.directive('scroll', function () {
+angular.module('orcidApp').directive('scroll', function () {
     return {
         restrict: 'A',
         link: function ($scope, element, attrs) {

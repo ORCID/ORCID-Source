@@ -1,4 +1,4 @@
-orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
+angular.module('orcidApp').controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
     $scope.orcidToLock = '';
     $scope.orcidToUnlock = '';
     $scope.showLockModal = false;

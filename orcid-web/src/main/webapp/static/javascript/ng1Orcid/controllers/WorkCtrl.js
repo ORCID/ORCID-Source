@@ -1,4 +1,4 @@
-orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
+angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
     actBulkSrvc.initScope($scope);
    
     $scope.badgesRequested = {};

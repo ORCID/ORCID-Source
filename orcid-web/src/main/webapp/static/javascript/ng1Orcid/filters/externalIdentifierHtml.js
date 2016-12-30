@@ -1,5 +1,5 @@
 //Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
+angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
         var isPartOf = false;
         var link = null;

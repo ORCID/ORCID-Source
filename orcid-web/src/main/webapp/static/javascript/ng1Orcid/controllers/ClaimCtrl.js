@@ -1,4 +1,4 @@
-orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
+angular.module('orcidApp').controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.postingClaim = false;
     $scope.getClaim = function(){
         $.ajax({

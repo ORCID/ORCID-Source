@@ -1,4 +1,4 @@
-orcidNgModule.filter('contributorFilter', function(){
+angular.module('orcidApp').filter('contributorFilter', function(){
     return function(ctrb){
         var out = '';
         if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;

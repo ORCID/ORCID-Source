@@ -1,3 +1,3 @@
-orcidNgModule.filter('uri', function() {
+angular.module('orcidApp').filter('uri', function() {
     return window.encodeURIComponent;
 });

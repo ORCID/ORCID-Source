@@ -1,7 +1,7 @@
 /**
  * External consortium controller
  */
-orcidNgModule.controller('externalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
    $scope.consortium = null;
 
    $scope.toggleFindConsortiumModal = function() {

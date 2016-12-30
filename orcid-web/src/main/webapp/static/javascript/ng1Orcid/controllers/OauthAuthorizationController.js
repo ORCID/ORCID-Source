@@ -1,4 +1,4 @@
-orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
+angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
     $scope.isOrcidPresent = false;

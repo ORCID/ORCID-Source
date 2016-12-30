@@ -1,5 +1,5 @@
 // Controller for notifications
-orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
     notificationsSrvc.displayBody = {};    
     $scope.notificationsSrvc = notificationsSrvc;

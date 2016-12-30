@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-orcidNgModule.directive('resize', function ($window) {
+angular.module('orcidApp').directive('resize', function ($window) {
 	return function ($scope, element) {
 		var w = angular.element($window);
 		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */

@@ -1,4 +1,4 @@
-orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
+angular.module('orcidApp').controller('ResendClaimCtrl', ['$scope', function ($scope) {
     $scope.emailIds = "";
     $scope.showSection = false;
 

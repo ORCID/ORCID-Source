@@ -1,7 +1,7 @@
 /**
  * Fundings Controller
  * */
-orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
+angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
     $scope.addingFunding = false;
     $scope.disambiguatedFunding = null;
     $scope.displayURLPopOver = {};

@@ -1,4 +1,4 @@
-orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
+angular.module('orcidApp').controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
     bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;

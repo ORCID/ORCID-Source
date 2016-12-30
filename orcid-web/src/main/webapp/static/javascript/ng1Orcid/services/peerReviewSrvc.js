@@ -1,4 +1,4 @@
-orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
     var peerReviewSrvc = {
             constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
             groups: new Array(),            

@@ -1,4 +1,4 @@
-orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
+angular.module('orcidApp').controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
     $scope.orcidToReview = '';
     $scope.orcidToUnreview = '';
     $scope.showReviewModal = false;

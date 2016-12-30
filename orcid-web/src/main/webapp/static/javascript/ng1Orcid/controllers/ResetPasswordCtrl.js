@@ -1,4 +1,4 @@
-orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {
+angular.module('orcidApp').controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {
     $scope.getResetPasswordForm = function(){
         $.ajax({
             url: getBaseUri() + '/password-reset.json',

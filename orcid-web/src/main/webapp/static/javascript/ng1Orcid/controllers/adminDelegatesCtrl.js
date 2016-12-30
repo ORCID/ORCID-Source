@@ -1,4 +1,4 @@
-orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
+angular.module('orcidApp').controller('adminDelegatesCtrl',['$scope',function ($scope){
     $scope.showSection = false;
     $scope.managed_verified = false;
     $scope.trusted_verified = false;

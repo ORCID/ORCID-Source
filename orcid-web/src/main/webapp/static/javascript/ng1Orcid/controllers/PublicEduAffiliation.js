@@ -1,4 +1,4 @@
-orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.moreInfo = {};

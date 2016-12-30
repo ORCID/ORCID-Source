@@ -18,7 +18,7 @@
 /*
  * Scope: element
  */
-orcidNgModule.directive('ngEnter', function() {
+angular.module('orcidApp').directive('ngEnter', function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
             if(event.which === 13) {            	

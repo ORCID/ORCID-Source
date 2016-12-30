@@ -1,4 +1,4 @@
-orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
     var serv = {
         feed: null,
         getDiscoFeed: function() {

@@ -1,4 +1,4 @@
-orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         displayEducation: true,
         displayEmployment: true,

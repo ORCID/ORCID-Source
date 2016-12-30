@@ -1,5 +1,5 @@
 //used in dropdown filters on /members and /consortia
-orcidNgModule.filter('unique', function () {
+angular.module('orcidApp').filter('unique', function () {
 
     return function (items, filterOn) {
 

@@ -1,4 +1,4 @@
-orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
+angular.module('orcidApp').controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
     
     $scope.searchFilterChanged = false;
     $scope.filterActive = false;

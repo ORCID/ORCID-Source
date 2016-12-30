@@ -1,4 +1,4 @@
-orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
+angular.module('orcidApp').controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
     $scope.emails = "";
     $scope.emailIdsMap = {};
     $scope.showSection = false;

@@ -1,4 +1,4 @@
-orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
+angular.module('orcidApp').controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
     $scope.peerReviewSrvc = peerReviewSrvc;
     $scope.workspaceSrvc  = workspaceSrvc;
     $scope.showDetails = {};

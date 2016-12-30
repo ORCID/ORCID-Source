@@ -1,4 +1,4 @@
-orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
+angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.clients = [];
     $scope.newClient = null;
     $scope.scopeSelectorOpen = false;

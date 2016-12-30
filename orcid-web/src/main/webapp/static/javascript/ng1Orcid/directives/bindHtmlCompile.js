@@ -16,7 +16,7 @@
  */
 
 /*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
-orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($compile) {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {

@@ -1,4 +1,4 @@
-orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.sendDeactivateEmail = function() {
         orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
         $.ajax({

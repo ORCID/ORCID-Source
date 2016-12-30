@@ -1,4 +1,4 @@
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
+angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
     $scope.emailSrvc = emailSrvc;
     $scope.showEdit = false;
     $scope.showElement = {};

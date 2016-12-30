@@ -1,4 +1,4 @@
-orcidNgModule.filter('humanDate', function($filter){
+angular.module('orcidApp').filter('humanDate', function($filter){
     var standardDateFilter = $filter('date');
     return function(input){
         var inputDate = new Date(input);

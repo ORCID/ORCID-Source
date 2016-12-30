@@ -1,4 +1,4 @@
-orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
+angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
     $scope.biographyForm = null;
     $scope.emailSrvc = emailSrvc;
     $scope.lengthError = false;

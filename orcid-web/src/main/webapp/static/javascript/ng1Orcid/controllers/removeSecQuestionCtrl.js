@@ -1,4 +1,4 @@
-orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function ($scope,$compile) {
+angular.module('orcidApp').controller('removeSecQuestionCtrl',['$scope','$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.orcidOrEmail = '';
     $scope.result= '';

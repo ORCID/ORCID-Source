@@ -1,4 +1,4 @@
-orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
+angular.module('orcidApp').controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     
     $scope.applicationSummary = null;
     $scope.applicationSummaryList = null;

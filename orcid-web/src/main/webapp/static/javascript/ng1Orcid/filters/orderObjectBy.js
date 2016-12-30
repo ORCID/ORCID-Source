@@ -1,4 +1,4 @@
-orcidNgModule.filter('orderObjectBy', function() {
+angular.module('orcidApp').filter('orderObjectBy', function() {
       return function(items, field, reverse) {
         var filtered = [];
         angular.forEach(items, function(item) {

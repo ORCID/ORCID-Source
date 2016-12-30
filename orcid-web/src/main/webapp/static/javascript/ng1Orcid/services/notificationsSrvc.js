@@ -1,4 +1,4 @@
-orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
+angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
     var defaultMaxResults = 10;
     var serv = {
         loading: true,

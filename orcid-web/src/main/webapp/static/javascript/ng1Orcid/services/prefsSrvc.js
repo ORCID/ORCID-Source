@@ -1,4 +1,4 @@
-orcidNgModule.factory("prefsSrvc", function ($rootScope) {
+angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
     var serv = {
         prefs: null,
         saved: false,

@@ -1,7 +1,7 @@
 /**
  * Fundings Service
  * */
-orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($rootScope) {
     var fundingSrvc = {
         fundings: new Array(),
         groups: new Array(),

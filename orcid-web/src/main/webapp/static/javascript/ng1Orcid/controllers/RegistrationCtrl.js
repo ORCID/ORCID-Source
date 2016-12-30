@@ -1,4 +1,4 @@
-orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
+angular.module('orcidApp').controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
     $scope.privacyHelp = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;

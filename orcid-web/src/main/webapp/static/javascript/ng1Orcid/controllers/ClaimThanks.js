@@ -1,4 +1,4 @@
-orcidNgModule.controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
+angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
     $scope.showThanks = function () {
         var colorboxHtml;
             if ($scope.sourceGrantReadWizard.url == null)

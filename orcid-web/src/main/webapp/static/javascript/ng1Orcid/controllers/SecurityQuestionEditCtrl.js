@@ -1,4 +1,4 @@
-orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
+angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.errors = null;
     $scope.password = null;
     $scope.securityQuestions = [];

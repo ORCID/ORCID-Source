@@ -1,4 +1,4 @@
-orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     var widgetSrvc = {
         locale: 'en',
         setLocale: function (locale) {

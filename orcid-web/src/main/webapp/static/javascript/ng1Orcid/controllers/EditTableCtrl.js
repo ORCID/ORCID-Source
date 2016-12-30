@@ -1,4 +1,4 @@
-orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
+angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
     // email edit row
     $scope.emailUpdateToggleText = function () {

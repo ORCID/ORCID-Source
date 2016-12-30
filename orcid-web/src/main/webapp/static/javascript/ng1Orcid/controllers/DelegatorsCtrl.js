@@ -1,5 +1,5 @@
 // Controller for delegate permissions that have been granted TO the current user
-orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scope, $compile){
+angular.module('orcidApp').controller('DelegatorsCtrl',['$scope', '$compile', function ($scope, $compile){
 
     $scope.sort = {
             column: 'delegateSummary.creditName.content',

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-orcidNgModule.directive('appFileTextReader', function($q){
+angular.module('orcidApp').directive('appFileTextReader', function($q){
     var slice = Array.prototype.slice;
     return {
         restrict: 'A',

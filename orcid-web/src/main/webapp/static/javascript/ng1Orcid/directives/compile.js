@@ -16,7 +16,7 @@
  */
 
 //Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
-orcidNgModule.directive('compile', function($compile) {
+angular.module('orcidApp').directive('compile', function($compile) {
   // directive factory creates a link function
   return function(scope, element, attrs) {
     scope.$watch(

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-orcidNgModule.directive('focusMe', function($timeout) {
+angular.module('orcidApp').directive('focusMe', function($timeout) {
     return {
       scope: { trigger: '=focusMe' },
       link: function(scope, element) {

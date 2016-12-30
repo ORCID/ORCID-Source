@@ -1,4 +1,4 @@
-orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
+angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
     bioBulkSrvc.initScope($scope);  
     $scope.showEdit = false;
     $scope.otherNamesForm = null;

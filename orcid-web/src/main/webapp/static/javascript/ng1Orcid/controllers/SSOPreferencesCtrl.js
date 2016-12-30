@@ -1,4 +1,4 @@
-orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
+angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
     $scope.noCredentialsYet = true;
     $scope.userCredentials = null;
     $scope.editing = false;

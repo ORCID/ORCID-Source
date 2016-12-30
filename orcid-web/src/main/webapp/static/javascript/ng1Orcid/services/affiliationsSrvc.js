@@ -1,4 +1,4 @@
-orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         educations: new Array(),
         employments: new Array(),

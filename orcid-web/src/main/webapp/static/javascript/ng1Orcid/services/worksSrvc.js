@@ -1,4 +1,4 @@
-orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
         blankWork: null,

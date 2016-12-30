@@ -1,4 +1,4 @@
-orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
+angular.module('orcidApp').controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
     $scope.worksSrvc = worksSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.showBibtex = {};

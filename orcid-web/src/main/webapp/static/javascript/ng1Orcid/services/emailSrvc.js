@@ -1,4 +1,4 @@
-orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
+angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
     var serv = {
         emails: null,            
         delEmail: null,

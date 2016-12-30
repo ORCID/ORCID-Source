@@ -1,4 +1,4 @@
-orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
+angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
         
         var id = null;

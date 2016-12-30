@@ -1,5 +1,5 @@
 //WARNING DUPLICATED CONTROLLER
-orcidNgModule.controller('switchUserModalCtrl',['$scope','$compile',function ($scope,$compile){
+angular.module('orcidApp').controller('switchUserModalCtrl',['$scope','$compile',function ($scope,$compile){
     $scope.emails = "";
     $scope.orcidOrEmail = "";
     $scope.showSection = false;

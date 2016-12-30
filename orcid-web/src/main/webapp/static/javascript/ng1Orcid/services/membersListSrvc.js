@@ -1,4 +1,4 @@
-orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
         memberDetails: {},

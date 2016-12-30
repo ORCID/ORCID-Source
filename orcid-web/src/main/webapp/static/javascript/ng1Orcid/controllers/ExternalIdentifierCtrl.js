@@ -1,4 +1,4 @@
-orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
+angular.module('orcidApp').controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
     bioBulkSrvc.initScope($scope);
     $scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;

@@ -1,4 +1,4 @@
-orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$compile', function ($scope,$compile){
+angular.module('orcidApp').controller('profileDeactivationAndReactivationCtrl',['$scope', '$compile', function ($scope,$compile){
     $scope.orcidToDeactivate = null;
     $scope.orcidToReactivate = null;
     $scope.deactivatedAccount = null;

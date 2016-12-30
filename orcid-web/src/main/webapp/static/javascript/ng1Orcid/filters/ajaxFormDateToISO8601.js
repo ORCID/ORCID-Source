@@ -1,4 +1,4 @@
-orcidNgModule.filter('ajaxFormDateToISO8601', function(){
+angular.module('orcidApp').filter('ajaxFormDateToISO8601', function(){
     return function(input){
         if (typeof input != 'undefined'){
             var str = '';

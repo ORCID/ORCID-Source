@@ -1,4 +1,4 @@
-orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+angular.module('orcidApp').controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
     $scope.getEmailFrequencies = function() {
         $.ajax({
             url: window.location.href + '/email-frequencies.json',

@@ -1,4 +1,4 @@
-orcidNgModule.filter('urlProtocol', function(){
+angular.module('orcidApp').filter('urlProtocol', function(){
     return function(url){
         if (url == null) return url;
         if(!url.startsWith('http')) {               

@@ -1,4 +1,4 @@
-orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', 'commonSrvc', function ($scope, prefsSrvc, commonSrvc) {
+angular.module('orcidApp').controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', 'commonSrvc', function ($scope, prefsSrvc, commonSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.privacyHelp = {};
     $scope.showElement = {};

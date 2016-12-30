@@ -1,4 +1,4 @@
-orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
+angular.module('orcidApp').controller('SocialNetworksCtrl',['$scope',function ($scope){
     $scope.twitter=false;
 
     $scope.checkTwitterStatus = function(){

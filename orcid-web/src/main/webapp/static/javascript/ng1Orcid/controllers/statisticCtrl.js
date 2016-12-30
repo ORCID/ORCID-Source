@@ -1,4 +1,4 @@
-orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
+angular.module('orcidApp').controller('statisticCtrl',['$scope', function ($scope){
     $scope.liveIds = 0;
     $scope.getLiveIds = function(){
         $.ajax({

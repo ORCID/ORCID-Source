@@ -1,4 +1,4 @@
-orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
+angular.module('orcidApp').filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
         var id = null;
         var isPartOf = false;

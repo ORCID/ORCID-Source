@@ -1,4 +1,4 @@
-orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
     $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-orcidNgModule.directive('ngModelOnblur', function() {
+angular.module('orcidApp').directive('ngModelOnblur', function() {
     return {
         restrict: 'A',
         require: 'ngModel',

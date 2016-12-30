@@ -1,4 +1,4 @@
-orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
+angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
     $scope.results = new Array();
     $scope.numFound = 0;

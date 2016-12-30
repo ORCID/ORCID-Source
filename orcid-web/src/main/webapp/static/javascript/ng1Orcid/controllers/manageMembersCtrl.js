@@ -1,7 +1,7 @@
 /**
  * Manage members controller
  * */
-orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {    
+angular.module('orcidApp').controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {    
     $scope.showFindModal = false;
     $scope.success_message = null;
     $scope.client_id = null;

@@ -1,4 +1,4 @@
-orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
+angular.module('orcidApp').controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
     $scope.showLoader = false;
     $scope.sort = {
         column: 'providerUserId',

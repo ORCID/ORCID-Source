@@ -1,4 +1,4 @@
-orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
+angular.module('orcidApp').controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
     $scope.showSection = false;
 
     $scope.toggleSection = function(){
