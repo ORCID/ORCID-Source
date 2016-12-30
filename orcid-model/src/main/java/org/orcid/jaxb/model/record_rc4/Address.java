@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -50,7 +49,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "country" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
-public class Address implements VisibilityType, Filterable, Serializable, Comparable<Address>, SourceAware {
+public class Address implements Filterable, Serializable, Comparable<Address>, SourceAware {
     private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/address", required = true)
     protected Country country;

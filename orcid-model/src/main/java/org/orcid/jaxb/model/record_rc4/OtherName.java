@@ -16,8 +16,6 @@
  */
 package org.orcid.jaxb.model.record_rc4;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,7 +30,8 @@ import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 
@@ -42,7 +41,7 @@ import org.orcid.jaxb.model.common_rc4.VisibilityType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "content" })
 @XmlRootElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
-public class OtherName implements VisibilityType, Filterable, Serializable, Comparable<OtherName>, SourceAware {
+public class OtherName implements Filterable, Serializable, Comparable<OtherName>, SourceAware {
     private static final long serialVersionUID = 1047027166285177589L;
     @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/other-name")
     protected String content;

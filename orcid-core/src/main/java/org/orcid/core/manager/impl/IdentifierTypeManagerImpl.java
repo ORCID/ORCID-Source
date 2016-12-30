@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -69,15 +68,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     private LocaleManager localeManager;
 
     private IdentifierTypePOJOConverter adapter = new IdentifierTypePOJOConverter();
-    private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();
-
-    public void setSourceManager(SourceManager manager) {
-        this.sourceManager = manager;
-    }
-
-    public void setSecurityManager(OrcidSecurityManager manager) {
-        this.securityManager = manager;
-    }
+    private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();    
     
     /**
      * Null locale will result in Locale.ENGLISH
