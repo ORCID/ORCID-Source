@@ -27,7 +27,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.converters.OrcidProfileToSolrDocument;
 import org.orcid.listener.converters.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
