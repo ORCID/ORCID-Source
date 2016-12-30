@@ -1,4 +1,13 @@
-angular.module('orcidApp').controller('adminDelegatesCtrl',['$scope',function ($scope){
+angular.module('orcidApp').controller(
+    'adminDelegatesCtrl',
+    [
+        '$scope',
+        adminDelegatesCtrl
+    ]
+);
+
+function adminDelegatesCtrl($scope){
+    var vm = this;
     $scope.showSection = false;
     $scope.managed_verified = false;
     $scope.trusted_verified = false;
@@ -60,4 +69,4 @@ angular.module('orcidApp').controller('adminDelegatesCtrl',['$scope',function ($
                 console.log("Error getting delegates request");
             });
     };
-}]);
+}
