@@ -44,6 +44,14 @@ public class Employments implements ActivitiesContainer, Serializable {
     @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
     private List<EmploymentSummary> summaries;
 
+    public Employments() {
+    	
+    }
+    
+    public Employments(List<EmploymentSummary> summaries) {
+    	this.summaries = summaries;    
+    }
+    
     public List<EmploymentSummary> getSummaries() {
         if (summaries == null) {
             summaries = new ArrayList<>();

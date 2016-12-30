@@ -23,6 +23,8 @@
 
 package org.orcid.jaxb.model.record_rc4;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc4.Amount;
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
@@ -40,11 +43,8 @@ import org.orcid.jaxb.model.common_rc4.OrganizationHolder;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
-
-import java.io.Serializable;
 
 /**
  * <p>
@@ -60,7 +60,7 @@ import java.io.Serializable;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "type", "organizationDefinedType", "title", "description", "amount", "url",
         "startDate", "endDate", "externalIdentifiers", "contributors", "organization" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
-public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder, SourceAware {
+public class Funding implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
 
     private final static long serialVersionUID = 1L;
 

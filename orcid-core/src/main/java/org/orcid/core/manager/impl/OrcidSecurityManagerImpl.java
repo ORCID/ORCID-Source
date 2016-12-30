@@ -17,11 +17,9 @@
 package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -30,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -38,7 +37,6 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
@@ -47,39 +45,27 @@ import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Email;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Name;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record_rc4.ExternalID;
+import org.orcid.jaxb.model.record_rc4.ExternalIDs;
+import org.orcid.jaxb.model.record_rc4.Group;
+import org.orcid.jaxb.model.record_rc4.GroupableActivity;
 import org.orcid.jaxb.model.record_rc4.Person;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -106,89 +92,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private int claimWaitPeriodDays;
 
     @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;        
-    
-    @Override
-    public void checkVisibility(Filterable filterable, String orcid) {
-        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        // If it is null, it might be a call from the public API
-        Set<String> readLimitedScopes = new HashSet<String>();
-        // If it is null, it might be a call from the public API
-        Set<String> updateScopes = new HashSet<String>();
-        Visibility visibility = filterable.getVisibility();
-        String clientId = null;
-
-        if (oAuth2Authentication != null) {
-            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-            clientId = authorizationRequest.getClientId();
-            readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable, orcid);
-            updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable, orcid);
-        }
-
-        // If we are using a read-limited or update scope and the client is the
-        // source of the object, we should not worry about the visibility
-        if (!readLimitedScopes.isEmpty() || !updateScopes.isEmpty()) {
-            if (!PojoUtil.isEmpty(filterable.retrieveSourcePath())) {
-                if (filterable.retrieveSourcePath().equals(clientId)) {
-                    return;
-                }
-            }
-        }
-
-        if (readLimitedScopes.isEmpty()) {
-            // This client only has permission for read public
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
-                throw new OrcidVisibilityException();
-            }
-            if (visibility.isMoreRestrictiveThan(Visibility.PUBLIC)) {
-                throw new OrcidUnauthorizedException("The activity is not public");
-            }
-        } else {
-            // The client has permission for read limited
-            if ((visibility == null || Visibility.PRIVATE.equals(visibility)) && clientId != null && !clientId.equals(filterable.retrieveSourcePath())) {
-                throw new OrcidVisibilityException();
-            }
-        }
-    }
-
-    /**
-    * Check visibility for Biography or Name object
-    * @param visibilityType
-    * @param orcid
-    */
-    @Override
-    public void checkBiographicalVisibility(VisibilityType visibilityType, String orcid) {
-        if (Visibility.PRIVATE.equals(visibilityType.getVisibility())) {
-            throw new OrcidVisibilityException();
-        }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.ORCID_BIO_READ_LIMITED);
-        if (!hasReadLimitedScope) {
-            if (Visibility.LIMITED.equals(visibilityType.getVisibility())) {
-                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
-            }
-        }
-    }
-
-    @Override
-    public void checkSource(SourceAwareEntity<?> existingEntity) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("activity", "work");
-            throw new WrongSourceException(params);
-        }
-    }
-
-    @Override
-    public void checkSource(IdentifierTypeEntity existingEntity) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId();
-        if (!Objects.equals(sourceIdOfUpdater, existingEntitySourceId)) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("activity", "work");
-            throw new WrongSourceException(params);
-        }
-    }
+    private String baseUrl;
 
     @Override
     public boolean isAdmin() {
@@ -216,86 +120,440 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return null;
     }
 
-    private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
-        Set<String> readLimitedScopes = new HashSet<>();
-        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
-        readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
-        readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
-        if (filterable instanceof Work || filterable instanceof WorkSummary) {
-            readLimitedScopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
-        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
-            readLimitedScopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary
-                || filterable instanceof EmploymentSummary) {
-            readLimitedScopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
-        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
-            readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address
-                || filterable instanceof PersonExternalIdentifier || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person
-                || filterable instanceof Name || filterable instanceof Biography) {
-            readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
-            readLimitedScopes.add(ScopePathType.ORCID_BIO_READ_LIMITED.value());
+    @Override
+    public String getClientIdFromAPIRequest() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
+            return request.getClientId();
         }
-        readLimitedScopes.retainAll(requestedScopes);
-        return readLimitedScopes;
+        return null;
     }
 
-    private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
-        Set<String> updateScopes = new HashSet<>();
-        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
-        updateScopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        updateScopes.add(ScopePathType.PERSON_UPDATE.value());
-        if (filterable instanceof Work || filterable instanceof WorkSummary) {
-            updateScopes.add(ScopePathType.ORCID_WORKS_UPDATE.value());
-        } else if (filterable instanceof Funding || filterable instanceof FundingSummary) {
-            updateScopes.add(ScopePathType.FUNDING_UPDATE.value());
-        } else if (filterable instanceof Education || filterable instanceof Employment || filterable instanceof EducationSummary
-                || filterable instanceof EmploymentSummary) {
-            updateScopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
-        } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
-            updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof PersonExternalIdentifier
-                || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name
-                || filterable instanceof Biography) {
-            updateScopes.add(ScopePathType.PERSON_UPDATE.value());
-            updateScopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
-            if (filterable instanceof PersonExternalIdentifier) {
-                updateScopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
+    /**
+     * Checks a record status and throw an exception indicating if the profile
+     * have any of the following conditions: - The record is not claimed and is
+     * not old enough nor being accessed by its creator - It is locked - It is
+     * deprecated - It is deactivated
+     * 
+     * @throws OrcidDeprecatedException
+     *             in case the account is deprecated
+     * @throws OrcidNotClaimedException
+     *             in case the account is not claimed
+     * @throws LockedException
+     *             in the case the account is locked
+     */
+    @Override
+    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+        ProfileEntity profile = null;
+
+        try {
+            profile = profileEntityCacheManager.retrieve(orcid);
+        } catch (IllegalArgumentException e) {
+            throw new NoResultException();
+        }
+
+        // Check if the user record is deprecated
+        if (profile.getPrimaryRecord() != null) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (profile.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }
+            throw new OrcidDeprecatedException(params);
+        }
+
+        // Check if the profile is not claimed and not old enough
+        if ((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
+            // Let the creator access the profile even if it is not claimed and
+            // not old enough
+            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
+
+            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
+            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+
+            // If the profile doesn't have source or the current source is not
+            // the profile source, throw an exception
+            if (profileSource == null || !Objects.equals(profileSource, currentSource)) {
+                throw new OrcidNotClaimedException();
             }
         }
-        updateScopes.retainAll(requestedScopes);
-        return updateScopes;
+
+        // Check if the record is locked
+        if (!profile.isAccountNonLocked()) {
+            LockedException lockedException = new LockedException();
+            lockedException.setOrcid(profile.getId());
+            throw lockedException;
+        }
     }
 
-    public void checkClientCanAccessRecord(String orcid) {
+    private boolean isOldEnough(ProfileEntity profile) {
+        return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
+    }
+
+    @Override
+    public void checkSource(SourceAwareEntity<?> existingEntity) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "work");
+            throw new WrongSourceException(params);
+        }
+    }
+
+    @Override
+    public void checkSource(IdentifierTypeEntity existingEntity) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId();
+        if (!Objects.equals(sourceIdOfUpdater, existingEntitySourceId)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "work");
+            throw new WrongSourceException(params);
+        }
+    }
+
+    @Override
+    public void checkScopes(ScopePathType requiredScope) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        if (oAuth2Authentication == null) {
-            throw new OrcidUnauthorizedException("No OAuth2 authentication found");
+        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+        Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
+        for (ScopePathType scope : requestedScopes) {
+            if (scope.hasScope(requiredScope)) {
+                return;
+            }
+        }
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("requiredScope", requiredScope.value());
+        throw new OrcidAccessControlException(params);
+    }
+
+    @Override
+    public void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope) {
+        checkAndFilter(orcid, elements, requiredScope, false);
+    }
+
+    private void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
+        if (elements == null) {
+            return;
         }
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        String clientId = sourceManager.retrieveSourceOrcid();
-        Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
-        if (userAuthentication != null) {
-            Object principal = userAuthentication.getPrincipal();
-            if (principal instanceof ProfileEntity) {
-                ProfileEntity profileEntity = (ProfileEntity) principal;
-                if (!orcid.equals(profileEntity.getId())) {
-                    throw new OrcidUnauthorizedException("Access token is for a different record");
-                }
-            } else {
-                throw new OrcidUnauthorizedException("Missing user authentication");
+        // Check the token
+        if (!tokenAlreadyChecked) {
+            isMyToken(orcid);
+        }
+
+        Iterator<? extends VisibilityType> it = elements.iterator();
+        while (it.hasNext()) {
+            VisibilityType element = it.next();
+            try {
+                checkAndFilter(orcid, element, requiredScope, true);
+            } catch (Exception e) {
+                it.remove();
             }
-        } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
-            throw new IllegalStateException("Non client credential scope found in client request");
-        } 
+        }
     }
-    
-    private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
-        Boolean claimed = profile.getClaimed();
-        SourceEntity source = profile.getSource();
-        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
+
+    @Override
+    public void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope) {
+        if (activities == null) {
+            return;
+        }
+
+        // Check the token
+        isMyToken(orcid);
+
+        // Educations
+        if (activities.getEducations() != null) {
+            checkAndFilter(orcid, activities.getEducations().getSummaries(), requiredScope, true);
+        }
+
+        // Employments
+        if (activities.getEmployments() != null) {
+            checkAndFilter(orcid, activities.getEmployments().getSummaries(), requiredScope, true);
+        }
+
+        // Funding
+        if (activities.getFundings() != null) {
+            Iterator<FundingGroup> groupIt = activities.getFundings().getFundingGroup().iterator();
+            while (groupIt.hasNext()) {
+                FundingGroup group = groupIt.next();
+                // Filter the list of elements
+                checkAndFilter(orcid, group.getFundingSummary(), requiredScope, true);
+                // Clean external identifiers
+                if (group.getFundingSummary().isEmpty()) {
+                    groupIt.remove();
+                } else {
+                    filterExternalIdentifiers(group);
+                }
+            }
+        }
+
+        // PeerReviews
+        if (activities.getPeerReviews() != null) {
+            Iterator<PeerReviewGroup> groupIt = activities.getPeerReviews().getPeerReviewGroup().iterator();
+            while (groupIt.hasNext()) {
+                PeerReviewGroup group = groupIt.next();
+                // Filter the list of elements
+                checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope, true);
+                if (group.getPeerReviewSummary().isEmpty()) {
+                    groupIt.remove();
+                }
+            }
+        }
+
+        // Works
+        if (activities.getWorks() != null) {
+            Iterator<WorkGroup> groupIt = activities.getWorks().getWorkGroup().iterator();
+            while (groupIt.hasNext()) {
+                WorkGroup group = groupIt.next();
+                // Filter the list of elements
+                checkAndFilter(orcid, group.getWorkSummary(), requiredScope, true);
+                // Clean external identifiers
+                if (group.getWorkSummary().isEmpty()) {
+                    groupIt.remove();
+                } else {
+                    filterExternalIdentifiers(group);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope) {
+        if (personalDetails == null) {
+            return;
+        }
+
+        // Check the token
+        isMyToken(orcid);
+
+        if (personalDetails.getOtherNames() != null) {
+            checkAndFilter(orcid, personalDetails.getOtherNames().getOtherNames(), requiredScope, true);
+        }
+
+        if (personalDetails.getBiography() != null) {
+            try {
+                checkAndFilter(orcid, personalDetails.getBiography(), requiredScope, true);
+            } catch (Exception e) {
+                personalDetails.setBiography(null);
+            }
+        }
+
+        if (personalDetails.getName() != null) {
+            try {
+                checkAndFilter(orcid, personalDetails.getName(), requiredScope, true);
+            } catch (Exception e) {
+                personalDetails.setName(null);
+            }
+        }
+    }
+
+    @Override
+    public void checkAndFilter(String orcid, Person person, ScopePathType requiredScope) {
+        if (person == null) {
+            return;
+        }
+
+        // Check the token
+        isMyToken(orcid);
+
+        if (person.getAddresses() != null) {
+            checkAndFilter(orcid, person.getAddresses().getAddress(), requiredScope, true);
+        }
+
+        if (person.getBiography() != null) {
+            try {
+                checkAndFilter(orcid, person.getBiography(), requiredScope, true);
+            } catch (Exception e) {
+                person.setBiography(null);
+            }
+        }
+
+        if (person.getEmails() != null) {
+            checkAndFilter(orcid, person.getEmails().getEmails(), requiredScope, true);
+        }
+
+        if (person.getExternalIdentifiers() != null) {
+            checkAndFilter(orcid, person.getExternalIdentifiers().getExternalIdentifiers(), requiredScope, true);
+        }
+
+        if (person.getKeywords() != null) {
+            checkAndFilter(orcid, person.getKeywords().getKeywords(), requiredScope, true);
+        }
+
+        if (person.getName() != null) {
+            try {
+                checkAndFilter(orcid, person.getName(), requiredScope, true);
+            } catch (Exception e) {
+                person.setName(null);
+            }
+        }
+
+        if (person.getOtherNames() != null) {
+            checkAndFilter(orcid, person.getOtherNames().getOtherNames(), requiredScope, true);
+        }
+
+        if (person.getResearcherUrls() != null) {
+            checkAndFilter(orcid, person.getResearcherUrls().getResearcherUrls(), requiredScope, true);
+        }
+    }
+
+    @Override
+    public void checkAndFilter(String orcid, Record record, ScopePathType requiredScope) {
+        if (record == null) {
+            return;
+        }
+
+        // Check the token
+        isMyToken(orcid);
+
+        if (record.getActivitiesSummary() != null) {
+            checkAndFilter(orcid, record.getActivitiesSummary(), requiredScope);
+        }
+
+        if (record.getPerson() != null) {
+            checkAndFilter(orcid, record.getPerson(), requiredScope);
+        }
+    }
+
+    @Override
+    public void checkClientAccessAndScopes(String orcid, ScopePathType requiredScope) {
+        // Check the token belongs to the user
+        isMyToken(orcid);
+        // Check you have the required scopes
+        checkScopes(requiredScope);
+    }
+
+    /**
+     * Check the permissions of a request over an element.
+     * 
+     * @param orcid
+     *            The user owner of the element
+     * @param element
+     *            The element to check
+     * @param requiredScope
+     *            The required scope to access this element
+     * @throws OrcidUnauthorizedException
+     *             In case the token used was not issued for the owner of the
+     *             element
+     * @throws OrcidAccessControlException
+     *             In case the request doesn't have the required scopes
+     * @throws OrcidVisibilityException
+     *             In case the element is not visible due the visibility
+     */
+    @Override
+    public void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope) {
+        checkAndFilter(orcid, element, requiredScope, false);
+    }
+
+    /**
+     * Check the permissions of a request over an element. Private
+     * implementation that will also include a parameter that indicates if we
+     * should check the token or, if it was already checked previously
+     * 
+     * @param orcid
+     *            The user owner of the element
+     * @param element
+     *            The element to check
+     * @param requiredScope
+     *            The required scope to access this element
+     * @param tokenAlreadyChecked
+     *            Indicates if the token was already checked previously, so, we
+     *            don't expend time checking it again
+     * @throws OrcidUnauthorizedException
+     *             In case the token used was not issued for the owner of the
+     *             element
+     * @throws OrcidAccessControlException
+     *             In case the request doesn't have the required scopes
+     * @throws OrcidVisibilityException
+     *             In case the element is not visible due the visibility
+     */
+    private void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope, boolean tokenAlreadyChecked) {
+        if (element == null) {
+            return;
+        }
+
+        // Check the token was issued for this user
+        if (!tokenAlreadyChecked) {
+            isMyToken(orcid);
+        }
+
+        // Check if the client is the source of the element
+        if (element instanceof Filterable) {
+            Filterable filterable = (Filterable) element;
+            OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+            if (oAuth2Authentication != null) {
+                OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
+                String clientId = authorizationRequest.getClientId();
+                if (clientId.equals(filterable.retrieveSourcePath())) {
+                    // The client doing the request is the source of the element
+                    return;
+                }
+            }
+        }
+
+        // Check if the element is public and the token contains the
+        // /read-public scope
+        if (Visibility.PUBLIC.equals(element.getVisibility())) {
+            try {
+                checkScopes(ScopePathType.READ_PUBLIC);
+                // This means it have ScopePathType.READ_PUBLIC scope, so, we
+                // can return it
+                return;
+            } catch (OrcidAccessControlException e) {
+                // Just continue filtering
+            }
+        }
+
+        // Filter
+        filter(element, requiredScope);
+    }
+
+    /**
+     * Filter the group external identifiers to match the external identifiers
+     * that belongs to the activities it have after filtering
+     * 
+     * @param group
+     *            The group we want to filter the external identifiers
+     */
+    private void filterExternalIdentifiers(Group group) {
+        // Iterate over every external identifier and check if it is still
+        // present in the list of filtered elements
+        ExternalIDs extIds = group.getIdentifiers();
+        Iterator<ExternalID> extIdsIt = extIds.getExternalIdentifier().iterator();
+        while (extIdsIt.hasNext()) {
+            ExternalID extId = extIdsIt.next();
+            boolean found = false;
+            for (GroupableActivity summary : group.getActivities()) {
+                if (summary.getExternalIdentifiers() != null) {
+                    if (summary.getExternalIdentifiers().getExternalIdentifier().contains(extId)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            // If the ext id is not found, remove it from the list of ext ids
+            if (!found) {
+                extIdsIt.remove();
+            }
+        }
+    }
+
+    private void filter(VisibilityType element, ScopePathType requiredScope) {
+        // Check the request have the required scope
+        checkScopes(requiredScope);
+
+        if (requiredScope.isReadOnlyScope()) {
+            if (Visibility.PRIVATE.equals(element.getVisibility())) {
+                throw new OrcidVisibilityException();
+            }
+        } else {
+            throw new IllegalArgumentException("Only 'read-only' scopes are allowed");
+        }
     }
 
     private boolean isNonClientCredentialScope(OAuth2Authentication oAuth2Authentication) {
@@ -308,6 +566,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
         return false;
+    }
+
+    private boolean clientIsProfileSource(String clientId, ProfileEntity profile) {
+        Boolean claimed = profile.getClaimed();
+        SourceEntity source = profile.getSource();
+        return source != null && (claimed == null || !claimed) && clientId.equals(source.getSourceId());
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -326,162 +590,35 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                     }
                 }
 
-                throw new AccessControlException("Cannot access method with authentication type " + authentication != null ? authentication.toString()
-                        : ", as it's null!");
+                throw new AccessControlException(
+                        "Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
             }
         } else {
             throw new IllegalStateException("No security context found. This is bad!");
         }
     }
 
-    @Override
-    public String getClientIdFromAPIRequest() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication authentication = context.getAuthentication();
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
-            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
-            return request.getClientId();
-        }
-        return null;
-    }
-
-    public boolean hasScope(ScopePathType scope) {
+    private void isMyToken(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        if (oAuth2Authentication != null) {
-            OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-            Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
-            if (requestedScopes.contains(scope.value())) {
-                return true;
-            }
+        if (oAuth2Authentication == null) {
+            throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
 
-        return false;
-    }
-
-    public void checkScopes(ScopePathType requiredScope) {
-        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-        Set<String> requestedScopes = authorizationRequest.getScope();
-        if (requiredScope.isUserGrantWriteScope()) {
-            OrcidOAuth2Authentication orcidOauth2Authentication = (OrcidOAuth2Authentication) oAuth2Authentication;
-            String activeToken = orcidOauth2Authentication.getActiveToken();
-            if (activeToken != null) {
-                OrcidOauth2TokenDetail tokenDetail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(activeToken);
-                if (removeUserGrantWriteScopePastValitity(tokenDetail)) {
-                    throw new AccessControlException("Write scopes for this token have expired ");
+        String clientId = sourceManager.retrieveSourceOrcid();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+        if (userAuthentication != null) {
+            Object principal = userAuthentication.getPrincipal();
+            if (principal instanceof ProfileEntity) {
+                ProfileEntity profileEntity = (ProfileEntity) principal;
+                if (!orcid.equals(profileEntity.getId())) {
+                    throw new OrcidUnauthorizedException("Access token is for a different record");
                 }
+            } else {
+                throw new OrcidUnauthorizedException("Missing user authentication");
             }
+        } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
+            throw new IllegalStateException("Non client credential scope found in client request");
         }
-        if (!hasScope(requiredScope)) {
-            throw new AccessControlException("Insufficient or wrong scope " + requestedScopes);
-        }
-    }
-
-    public boolean removeUserGrantWriteScopePastValitity(OrcidOauth2TokenDetail tokenDetail) {
-        boolean scopeRemoved = false;
-        if (tokenDetail != null && tokenDetail.getScope() != null) {
-            // Clean the scope if it is not a persistent token
-            if (!tokenDetail.isPersistent()) {
-                Set<String> scopes = OAuth2Utils.parseParameterList(tokenDetail.getScope());
-                List<String> removeScopes = new ArrayList<String>();
-                for (String scope : scopes) {
-                    if (scope != null && !scope.isEmpty()) {
-                        ScopePathType scopePathType = ScopePathType.fromValue(scope);
-                        if (scopePathType.isUserGrantWriteScope()) {
-                            Date now = new Date();
-                            if (now.getTime() > tokenDetail.getDateCreated().getTime() + (writeValiditySeconds * 1000)) {
-                                removeScopes.add(scope);
-                                scopeRemoved = true;
-                            }
-                        }
-                    }
-                }
-                if (scopeRemoved) {
-                    for (String scope : removeScopes)
-                        scopes.remove(scope);
-                    tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
-                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void checkIsPublic(Filterable filterable) {
-        if(filterable != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(filterable.getVisibility())) {
-            throw new OrcidUnauthorizedException("The activity is not public");
-        }
-    }
-
-    @Override
-    public void checkIsPublic(Biography biography) {
-        if(biography != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
-            throw new OrcidUnauthorizedException("The biography is not public");
-        }
-    }
-
-    /**
-     * Checks a record status and throw an exception indicating if the profile
-     * have any of the following conditions: - The record is not claimed and is
-     * not old enough nor being accessed by its creator - It is locked - It is
-     * deprecated - It is deactivated
-     * 
-     * @throws OrcidDeprecatedException
-     *             in case the account is deprecated
-     * @throws OrcidNotClaimedException
-     *             in case the account is not claimed
-     * @throws LockedException
-     *             in the case the account is locked
-     * */
-    @Override
-    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
-        ProfileEntity profile = null;
-
-        try {
-            profile = profileEntityCacheManager.retrieve(orcid);
-        } catch (IllegalArgumentException e) {
-            throw new NoResultException();
-        }
-
-        // Check if the user record is deprecated
-        if(profile.getPrimaryRecord() != null) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (profile.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            }
-            throw new OrcidDeprecatedException(params);
-        }
-        
-        //Check if the profile is not claimed and not old enough
-        if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
-            //Let the creator access the profile even if it is not claimed and not old enough
-            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
-
-            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
-            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
-
-            // If the profile doesn't have source or the current source is not
-            // the profile source, throw an exception
-            if (profileSource == null || !Objects.equals(profileSource, currentSource)) {
-                throw new OrcidNotClaimedException();
-            }                        
-        }                
-        
-        //Check if the record is locked
-        if(!profile.isAccountNonLocked()) {
-            LockedException lockedException = new LockedException();
-            lockedException.setOrcid(profile.getId());
-            throw lockedException;
-        }
-    }
-
-    private boolean isOldEnough(ProfileEntity profile) {
-        return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
     }
 }
