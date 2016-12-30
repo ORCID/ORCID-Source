@@ -26,7 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.notification.permission_rc4.ItemType;
+import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 
 /**
  * 

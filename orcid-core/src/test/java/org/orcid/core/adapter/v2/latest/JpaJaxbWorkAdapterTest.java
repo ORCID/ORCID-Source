@@ -39,9 +39,9 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -121,7 +121,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
         assertNotNull(w.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
-        assertEquals(org.orcid.jaxb.model.common_rc4.Iso3166Country.CR.value(), w.getCountry().getValue().value());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.value(), w.getCountry().getValue().value());
         assertEquals("work:citation", w.getWorkCitation().getCitation());
         assertEquals("work:description", w.getShortDescription());
         assertEquals("work:journalTitle", w.getJournalTitle().getContent());
@@ -170,9 +170,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/work-2.0_rc4.xml";
+        String name = "/record_2.0/samples/work-2.0.xml";
         if (full) {
-            name = "/record_2.0_rc4/samples/work-full-2.0_rc4.xml";
+            name = "/record_2.0/samples/work-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

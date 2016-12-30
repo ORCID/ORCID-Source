@@ -30,9 +30,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -83,7 +83,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/researcher-urls-2.0_rc4.xml";             
+        String name = "/record_2.0/samples/researcher-urls-2.0.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }

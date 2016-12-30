@@ -31,10 +31,10 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.FundingType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingType;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -118,7 +118,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
         assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
         assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
-        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
         assertEquals("funding:description", funding.getDescription());
         assertNotNull(funding.getStartDate());
         assertEquals("01", funding.getStartDate().getDay().getValue());
@@ -159,9 +159,9 @@ public class JpaJaxbFundingAdapterTest {
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/funding-2.0_rc4.xml";
+        String name = "/record_2.0/samples/funding-2.0.xml";
         if(full) {
-            name = "/record_2.0_rc4/samples/funding-full-2.0_rc4.xml";
+            name = "/record_2.0/samples/funding-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);

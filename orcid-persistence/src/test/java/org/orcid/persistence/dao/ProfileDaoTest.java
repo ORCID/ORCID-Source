@@ -107,7 +107,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
         assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
         assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
-        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
     }        
 
     @Test
