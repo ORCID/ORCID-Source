@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -43,7 +42,7 @@ public class ResearcherUrls implements Serializable {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElementWrapper(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url", required = false)
+    @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url", required = false)
     List<ResearcherUrl> researcherUrls;
     @XmlAttribute
     protected String path;

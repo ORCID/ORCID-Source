@@ -24,7 +24,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -40,7 +39,7 @@ public class PeerReviews implements GroupsContainer, Serializable {
     private static final long serialVersionUID = 6779626621503362679L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElementWrapper(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
+    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
     List<PeerReviewGroup> peerReviewGroup;
 
     public List<PeerReviewGroup> getPeerReviewGroup() {
