@@ -18,9 +18,9 @@
 /*
  * Structure of this file:
  * 
- *  - Random functions
- *  - Groupings logic
- *  - Angular Services
+ *  - 1 - Utility functions
+ *  - 2 - Groupings logic
+ *  - 3 - Angular Services
  *  - Angular Controllers
  *  - Angular Filters
  *  - Angular Directives
@@ -29,7 +29,7 @@
  */
 
 /*
- * RANDOM FUNCTIONS
+ * 1 - Utility functions
  */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
@@ -104,8 +104,10 @@ function fixZindexIE7(target, zindex){
 
 function emptyTextField(field) {
     if (field != null
-            && field.value != null
-            && field.value.trim() != '') return false;
+        && field.value != null
+        && field.value.trim() != '') {
+        return false;
+    }
     return true;
 }
 
@@ -156,8 +158,7 @@ PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
 PRIVACY.PRIVATE = 'PRIVATE';
 
-var GroupedActivitiesUtil = function() {
-};
+var GroupedActivitiesUtil = function() {};
 
 GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
     var matches = new Array();
@@ -500,9 +501,36 @@ ActSortState.prototype.sortBy = function(key) {
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
-/*
- * SERVICES
- */
+/*************************************************
+ * 3 - Angular Services
+ *************************************************/
+
+
+orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
+    var configValues = {
+        modalManualEditVerificationEnabled: false
+    };
+
+    var locationObj = $location.search();
+
+    var initialConfigService = {
+        getInitialConfiguration: function(){
+            return configValues;
+        }
+    };
+
+    if( locationObj.verifyEdit ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+            configValues.modalManualEditVerificationEnabled = true;
+        } else {
+            configValues.modalManualEditVerificationEnabled = false;
+        }
+    }
+
+    return initialConfigService;
+}]);
+
 
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
@@ -1363,18 +1391,21 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
             return null;
         },
         deleteGroupWorks: function(putCodes) {
-            var rmWorks = new Array();
-            var rmGroups = new Array();
-            for (var idj in putCodes)
-                for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCodes[idj])) {
-                        rmGroups.push(idx);
-                        for (var idj in worksSrvc.groups[idx].activities)
-                            rmWorks.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+            var rmWorks = [];
+            var rmGroups = [];
+            for (var i in putCodes) {
+                for (var j in worksSrvc.groups) {
+                    if (worksSrvc.groups[j].hasPut(putCodes[i])) {
+                        rmGroups.push(j);
+                        for (var k in worksSrvc.groups[j].activities){
+                            rmWorks.push(worksSrvc.groups[j].activities[k].putCode.value);
+                        }
                     };
                 }
-            while (rmGroups.length > 0) 
+            }
+            while (rmGroups.length > 0) {
                 worksSrvc.groups.splice(rmGroups.pop(),1);
+            }
             worksSrvc.removeWorks(rmWorks);
         },
         deleteWork: function(putCode) {
@@ -1515,13 +1546,15 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     return worksSrvc;
 }]);
 
-orcidNgModule.factory("emailSrvc", function ($rootScope) {
+orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
     var serv = {
         emails: null,            
-        inputEmail: null,
         delEmail: null,
-        primaryEmail: null,
+        displayModalWarningFlag: false,
+        inputEmail: null,
         popUp: false,
+        primaryEmail: null,
+        
         addEmail: function() {            	
             $.ajax({
                 url: getBaseUri() + '/account/addEmail.json',
@@ -1542,29 +1575,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
-        getEmails: function(callback) {
-        	
-            $.ajax({
-                url: getBaseUri() + '/account/emails.json',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {                    	
-                    serv.emails = data;
-                    for (var i in data.emails){
-                        if (data.emails[i].primary){
-                            serv.primaryEmail = data.emails[i];
-                        }
-                    }                                                
-                    $rootScope.$apply();
-                    if (callback)
-                       callback(data);
-                }
-            }).fail(function(e) {
-                // something bad is happening!
-                console.log("error with multi email");
-                logAjaxError(e);
-            });
-        },
+        
         deleteEmail: function (callback) {
             $.ajax({
                 url: getBaseUri() + '/account/deleteEmail.json',
@@ -1582,23 +1593,36 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("emailSrvc.deleteEmail() error");
             });
         },
-        initInputEmail: function () {
+        
+        getEmails: function(callback) {
+            $.ajax({
+                url: getBaseUri() + '/account/emails.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {                    	
+                    serv.emails = data;
+                    for (var i in data.emails){
+                        if (data.emails[i].primary){
+                            serv.primaryEmail = data.emails[i];
+                        }
+                    }                                                
+                    $rootScope.$apply();
+                    if (callback) {
+                       callback(data);
+                    }
+                }
+            }).fail(function(e) {
+                // something bad is happening!
+                console.log("error with multi email");
+                logAjaxError(e);
+            });
+        },
+        
+
+        initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
         },
-        setPrivacy: function(email, priv) {
-            email.visibility = priv;
-            serv.saveEmail();
-        },
-        setPrimary: function(email) {
-            for (i in serv.emails.emails) {
-                if (serv.emails.emails[i] == email) {
-                    serv.emails.emails[i].primary = true;
-                } else {
-                    serv.emails.emails[i].primary = false;
-                }
-            }
-            serv.saveEmail();
-        },
+
         saveEmail: function(callback) {
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
@@ -1617,6 +1641,23 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                 console.log("error with multi email");
             });
         },
+
+        setPrimary: function(email) {
+            for (i in serv.emails.emails) {
+                if (serv.emails.emails[i] == email) {
+                    serv.emails.emails[i].primary = true;
+                } else {
+                    serv.emails.emails[i].primary = false;
+                }
+            }
+            serv.saveEmail();
+        },
+        
+        setPrivacy: function(email, priv) {
+            email.visibility = priv;
+            serv.saveEmail();
+        },
+        
         verifyEmail: function(email, callback) {
             $.ajax({
                 url: getBaseUri() + '/account/verifyEmail.json',
@@ -2669,7 +2710,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
 
     $scope.getEmails = function() {
         emailSrvc.getEmails(function() {
-                    if(isIE() == 7) $scope.fixZindexesIE7();
+            if(isIE() == 7) $scope.fixZindexesIE7();
         });
     };
 
@@ -2838,18 +2879,43 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     
 }]);
 
-orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'commonSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc, commonSrvc) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
-    $scope.showEdit = false;
-    $scope.websitesForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
+
+    $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
+    $scope.privacyHelp = false;
     $scope.scrollTop = 0;
-    $scope.commonSrvc = commonSrvc;
+    $scope.showEdit = false;
+    $scope.showElement = {};
+    $scope.websitesForm = null;
     
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3019,34 +3085,39 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
     	$scope.showElement[elem] = false;
     }
         
-    $scope.openEditModal = function(){    
-    	$scope.bulkEditShow = false;
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#edit-websites').html())($scope),
-            onLoad: function() {
-                $('#cboxClose').remove();
-                if ($scope.websitesForm.websites.length == 0){
-                    $scope.addNewModal();
-                } else {
-                	if ($scope.websitesForm.websites.length == 1){
-                    	if($scope.websitesForm.websites[0].source == null){
-                    		$scope.websitesForm.websites[0].source = $scope.orcidId;
-                    		$scope.websitesForm.websites[0].sourceName = "";
-                    	}
-                    }
-                    $scope.updateDisplayIndex();
-                }                
-            },
-            width: formColorBoxResize(),
-            onComplete: function() {
-                    
-            },
-            onClosed: function() {
-                $scope.getWebsitesForm();
-            }            
-        });
-        $.colorbox.resize();
+    $scope.openEditModal = function(){
+        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        	$scope.bulkEditShow = false;
+            $.colorbox({
+                scrolling: true,
+                html: $compile($('#edit-websites').html())($scope),
+                onLoad: function() {
+                    $('#cboxClose').remove();
+                    if ($scope.websitesForm.websites.length == 0){
+                        $scope.addNewModal();
+                    } else {
+                    	if ($scope.websitesForm.websites.length == 1){
+                        	if($scope.websitesForm.websites[0].source == null){
+                        		$scope.websitesForm.websites[0].source = $scope.orcidId;
+                        		$scope.websitesForm.websites[0].sourceName = "";
+                        	}
+                        }
+                        $scope.updateDisplayIndex();
+                    }                
+                },
+                width: formColorBoxResize(),
+                onComplete: function() {
+                        
+                },
+                onClosed: function() {
+                    $scope.getWebsitesForm();
+                }            
+            });
+            $.colorbox.resize();
+        }else{
+            showEmailVerificationModal();
+        }
     }
     
     $scope.closeEditModal = function(){
@@ -3083,19 +3154,44 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'c
     $scope.getWebsitesForm();
 }]);
 
-orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc',  function ($scope, $compile, bioBulkSrvc, commonSrvc) {
+orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
-    $scope.showEdit = false;
-    $scope.keywordsForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
+    $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
+    $scope.emailSrvc = emailSrvc;
+    $scope.keywordsForm = null;
+    $scope.modal = false;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
-    $scope.modal = false;
+    $scope.privacyHelp = false;
     $scope.scrollTop = 0;    
-    $scope.commonSrvc = commonSrvc;
+    $scope.showEdit = false;
+    $scope.showElement = {};
     
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -3226,30 +3322,34 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc', '
     };
     
     $scope.openEditModal = function(){
-    	$scope.bulkEditShow = false;
-    	$scope.modal = true;    	
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#edit-keyword').html())($scope),
-            onLoad: function() {
-                $('#cboxClose').remove();
-                if ($scope.keywordsForm.keywords.length == 0){
-                    $scope.addNewModal();
-                    $scope.newInput = true;
-                    
-                } else{
-                	$scope.updateDisplayIndex();
-                }
-            },
-            width: formColorBoxResize(),
-            onComplete: function() {
-                    
-            },
-            onClosed: function() {
-                $scope.getKeywordsForm();
-            }            
-        });
-        $.colorbox.resize();
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        	$scope.bulkEditShow = false;
+        	$scope.modal = true;    	
+            $.colorbox({
+                scrolling: true,
+                html: $compile($('#edit-keyword').html())($scope),
+                onLoad: function() {
+                    $('#cboxClose').remove();
+                    if ($scope.keywordsForm.keywords.length == 0){
+                        $scope.addNewModal();
+                        $scope.newInput = true;
+                        
+                    } else{
+                    	$scope.updateDisplayIndex();
+                    }
+                },
+                width: formColorBoxResize(),
+                onComplete: function() {
+                        
+                },
+                onClosed: function() {
+                    $scope.getKeywordsForm();
+                }            
+            });
+            $.colorbox.resize();
+        }else{
+            showEmailVerificationModal();
+        }
     }
     
     $scope.closeEditModal = function(){        
@@ -3541,14 +3641,42 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.getOtherNamesForm();
 }]);
 
-orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope, $compile) {
-    $scope.showEdit = false;
+orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
     $scope.biographyForm = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.lengthError = false;
+    $scope.showEdit = false;
     $scope.showElement = {};
 
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();;
+    var emails = {};
+    var emailVerified = false;
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.toggleEdit = function() {
-        $scope.showEdit = !$scope.showEdit;
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            $scope.showEdit = !$scope.showEdit;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.close = function() {
@@ -3626,19 +3754,45 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc',function ($scope, $compile, bioBulkSrvc, commonSrvc) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	bioBulkSrvc.initScope($scope);
-    $scope.showEdit = false;
-    $scope.countryForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
-    $scope.orcidId = orcidVar.orcidId;
-    $scope.newInput = false;    
-    $scope.defaultVisibility = null;
-    $scope.newElementDefaultVisibility = null;
-    $scope.primaryElementIndex = null;
-    $scope.scrollTop = 0;   
     $scope.commonSrvc = commonSrvc;
+    $scope.countryForm = null;
+    $scope.defaultVisibility = null;
+    $scope.emailSrvc = emailSrvc;
+    $scope.newElementDefaultVisibility = null;
+    $scope.newInput = false;    
+    $scope.orcidId = orcidVar.orcidId;
+    $scope.primaryElementIndex = null;
+    $scope.privacyHelp = false;
+    $scope.scrollTop = 0;   
+    $scope.showEdit = false;
+    $scope.showElement = {};
+
+
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.getCountryForm = function(){
         $.ajax({
@@ -3753,35 +3907,39 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'c
     
     $scope.openEditModal = function() {
     	
-    	$scope.bulkEditShow = false;
-    	
-        $.colorbox({
-            scrolling: true,
-            html: $compile($('#edit-country').html())($scope),
-            onLoad: function() {
-                $('#cboxClose').remove();
-                if ($scope.countryForm.addresses.length == 0){                	
-                    $scope.addNewModal();
-                } else {
-                	if ($scope.countryForm.addresses.length == 1){
-                        if($scope.countryForm.addresses[0].source == null){
-                        	$scope.countryForm.addresses[0].source = $scope.orcidId;
-                        	$scope.countryForm.addresses[0].sourceName = "";
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        	$scope.bulkEditShow = false;
+        	
+            $.colorbox({
+                scrolling: true,
+                html: $compile($('#edit-country').html())($scope),
+                onLoad: function() {
+                    $('#cboxClose').remove();
+                    if ($scope.countryForm.addresses.length == 0){                	
+                        $scope.addNewModal();
+                    } else {
+                    	if ($scope.countryForm.addresses.length == 1){
+                            if($scope.countryForm.addresses[0].source == null){
+                            	$scope.countryForm.addresses[0].source = $scope.orcidId;
+                            	$scope.countryForm.addresses[0].sourceName = "";
+                            }
                         }
-                    }
-                	$scope.updateDisplayIndex();
-                }                
-            },
- 
-            width: formColorBoxResize(),
-            onComplete: function() {
-                    
-            },
-            onClosed: function() {
-                $scope.getCountryForm();
-            }            
-        });
-        $.colorbox.resize();
+                    	$scope.updateDisplayIndex();
+                    }                
+                },
+     
+                width: formColorBoxResize(),
+                onComplete: function() {
+                        
+                },
+                onClosed: function() {
+                    $scope.getCountryForm();
+                }            
+            });
+            $.colorbox.resize();
+        }else{
+            showEmailVerificationModal();
+        }
     }
     
     $scope.closeEditModal = function(){
@@ -4500,7 +4658,9 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                 for (i in $scope.emailsPojo.emails) {
                     if ($scope.emailsPojo.emails[i].primary) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
-                        if ($scope.emailsPojo.emails[i].verified) primeVerified = true;
+                        if ($scope.emailsPojo.emails[i].verified) {
+                            primeVerified = true;
+                        }
                     };
                 };
                 if (!primeVerified && !getBaseUri().contains("sandbox")) {
@@ -4513,8 +4673,8 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                         transition: 'fade',
                         close: '',
                         scrolling: false
-                                });
-                        $.colorbox.resize();
+                    });
+                    $.colorbox.resize();
                 };
                 $scope.loading = false;
                 $scope.$apply();
@@ -4526,6 +4686,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
     };
 
     $scope.verifyEmail = function() {
+        var colorboxHtml = null;
         $.ajax({
             url: getBaseUri() + '/account/verifyEmail.json',
             type: 'get',
@@ -4539,7 +4700,8 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
             // something bad is happening!
             console.log("error with multi email");
         });
-        var colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
+        
+        colorboxHtml = $compile($('#verify-email-modal-sent').html())($scope);
 
         $scope.emailSent = true;
         $.colorbox({
@@ -4716,15 +4878,40 @@ orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }]);
 
-orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
+orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
     $scope.affiliationsSrvc = affiliationsSrvc;
-    $scope.workspaceSrvc = workspaceSrvc;
     $scope.editAffiliation;
-    $scope.privacyHelp = {};
-    $scope.privacyHelpCurKey = null;
+    $scope.emailSrvc = emailSrvc;
     $scope.moreInfo = {};
     $scope.moreInfoCurKey = null;
+    $scope.privacyHelp = {};
+    $scope.privacyHelpCurKey = null;
     $scope.showElement = {};
+    $scope.workspaceSrvc = workspaceSrvc;
+
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {    	
@@ -4771,16 +4958,6 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
         $scope.moreInfo[key]=!$scope.moreInfo[key];
-        /*
-        if (document.documentElement.className.contains('no-touch')) {
-            if ($scope.moreInfoCurKey != null
-                    && $scope.moreInfoCurKey != key) {
-                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
-            }
-            $scope.moreInfoCurKey = key;
-            $scope.moreInfo[key]=true;
-        }
-        */
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -4881,29 +5058,33 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        $scope.addAffType = type;
-        if(affiliation === undefined) {
-            $scope.removeDisambiguatedAffiliation();
-            $.ajax({
-                url: getBaseUri() + '/affiliations/affiliation.json',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.editAffiliation = data;
-                    if (type != null)
-                        $scope.editAffiliation.affiliationType.value = type;
-                    $scope.$apply(function() {
-                        $scope.showAddModal();
-                    });
-                }
-            }).fail(function() {
-                console.log("Error fetching affiliation: " + value);
-            });
-        } else {
-            $scope.editAffiliation = affiliation;
-            if($scope.editAffiliation.orgDisambiguatedId != null)
-                $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            $scope.addAffType = type;
+            if(affiliation === undefined) {
+                $scope.removeDisambiguatedAffiliation();
+                $.ajax({
+                    url: getBaseUri() + '/affiliations/affiliation.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.editAffiliation = data;
+                        if (type != null)
+                            $scope.editAffiliation.affiliationType.value = type;
+                        $scope.$apply(function() {
+                            $scope.showAddModal();
+                        });
+                    }
+                }).fail(function() {
+                    console.log("Error fetching affiliation: " + value);
+                });
+            } else {
+                $scope.editAffiliation = affiliation;
+                if($scope.editAffiliation.orgDisambiguatedId != null)
+                    $scope.getDisambiguatedAffiliation($scope.editAffiliation.orgDisambiguatedId.value);
 
-            $scope.showAddModal();
+                $scope.showAddModal();
+            }
+        }else{
+            showEmailVerificationModal();
         }
     };
 
@@ -5022,22 +5203,47 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
 /**
  * Fundings Controller
  * */
-orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc) {
-    $scope.workspaceSrvc = workspaceSrvc;
-    $scope.fundingSrvc = fundingSrvc;
+orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
     $scope.addingFunding = false;
-    $scope.editFunding = null;
     $scope.disambiguatedFunding = null;
-    $scope.moreInfo = {};
-    $scope.editSources = {};
-    $scope.privacyHelp = {};
-    $scope.editTranslatedTitle = false;
-    $scope.lastIndexedTerm = null;
-    $scope.showElement = {};
-    $scope.fundingImportWizard = false;
-    $scope.wizardDescExpanded = {};
     $scope.displayURLPopOver = {};
+    $scope.editFunding = null;
+    $scope.editSources = {};
+    $scope.editTranslatedTitle = false;
+    $scope.emailSrvc = emailSrvc;
+    $scope.fundingImportWizard = false;
+    $scope.fundingSrvc = fundingSrvc;
+    $scope.lastIndexedTerm = null;
+    $scope.moreInfo = {};
+    $scope.privacyHelp = {};
+    $scope.showElement = {};
+    $scope.wizardDescExpanded = {};
+    $scope.workspaceSrvc = workspaceSrvc;
     
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
@@ -5119,26 +5325,30 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.addFundingModal = function(data){
-        if(data == undefined) {
-            $scope.removeDisambiguatedFunding();
-            $.ajax({
-                url: getBaseUri() + '/fundings/funding.json',
-                dataType: 'json',
-                success: function(data) {
-                    $scope.$apply(function() {                    	
-                        $scope.editFunding = data;
-                        $scope.showAddModal();
-                    });
-                }
-            }).fail(function() {
-                console.log("Error fetching funding: " + value);
-            });
-        } else {
-            $scope.editFunding = data;
-            if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
-                $scope.editFunding.externalIdentifiers.push($scope.getEmptyExtId());
-            }            
-            $scope.showAddModal();
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            if(data == undefined) {
+                $scope.removeDisambiguatedFunding();
+                $.ajax({
+                    url: getBaseUri() + '/fundings/funding.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.$apply(function() {                    	
+                            $scope.editFunding = data;
+                            $scope.showAddModal();
+                        });
+                    }
+                }).fail(function() {
+                    console.log("Error fetching funding: " + value);
+                });
+            } else {
+                $scope.editFunding = data;
+                if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
+                    $scope.editFunding.externalIdentifiers.push($scope.getEmptyExtId());
+                }            
+                $scope.showAddModal();
+            }
+        }else{
+            showEmailVerificationModal();
         }
     };
 
@@ -5769,59 +5979,85 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 				              c[0].appendChild(s);
 				            }
 				    	}
-				    	$scope.badgesRequested[putCode] = true;
-			    	}
-		      	}
-		    }
-		);	
+                        $scope.badgesRequested[putCode] = true;
+                    }
+                }
+            }
+        );  
     };
     
 }]);
 
-orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
-                                      function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
+orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
+                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
     actBulkSrvc.initScope($scope);
-    $scope.canReadFiles = false;
-    $scope.showBibtexImportWizard = false;
-    $scope.textFiles = [];
-    $scope.worksFromBibtex = null;
-    $scope.workspaceSrvc = workspaceSrvc;
-    $scope.worksSrvc = worksSrvc;
-    $scope.showBibtex = {};
-    $scope.editTranslatedTitle = false;
-    $scope.types = null;
-    $scope.privacyHelp = {};
-    $scope.moreInfoOpen = false;
-    $scope.moreInfo = {};
-    $scope.editSources = {};
+   
+    $scope.badgesRequested = {};
+    $scope.bibtexGenerated = false;
+    $scope.bibtexExportError = false;
     $scope.bibtexParsingError = false;
+    $scope.bibtexURL = "";
     $scope.bibtextWork = false;
     $scope.bibtextWorkIndex = null;
-    $scope.showElement = {};
-    $scope.delCountVerify = 0;
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
-    $scope.workImportWizard = false;
-    $scope.wizardDescExpanded = {};
-    $scope.displayURLPopOver = {};
-    $scope.workType = ['All'];
-    $scope.geoArea = ['All'];
-    $scope.badgesRequested = {};
-    $scope.noLinkFlag = true;
-    $scope.showBibtexExport = false;
-    $scope.generatingBibtex = false;
-    $scope.scriptsLoaded = false;
-    $scope.bibtexGenerated = false;
-    $scope.bibtexURL = "";
-    $scope.bibtexExportError = false;
-    $scope.bibtexURL = '';
+    $scope.canReadFiles = false;
     $scope.contentCopy = {
         titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
         titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
     };
-    
+    $scope.delCountVerify = 0;
+    $scope.displayURLPopOver = {};
+    $scope.editSources = {};
+    $scope.editTranslatedTitle = false;
+    $scope.emailSrvc = emailSrvc;
+    $scope.generatingBibtex = false;
+    $scope.geoArea = ['All'];
+    $scope.moreInfo = {};
+    $scope.moreInfoOpen = false;
+    $scope.noLinkFlag = true;
+    $scope.privacyHelp = {};
+    $scope.scriptsLoaded = false;
+    $scope.showBibtex = {};
+    $scope.showBibtexExport = false;
+    $scope.showBibtexImportWizard = false;
+    $scope.showElement = {};
+    $scope.textFiles = [];
+    $scope.types = null;
+    $scope.wizardDescExpanded = {};
+    $scope.workImportWizard = false;
+    $scope.worksFromBibtex = null;
+    $scope.workspaceSrvc = workspaceSrvc;
+    $scope.worksSrvc = worksSrvc;
+    $scope.workType = ['All'];
+
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     
+
+    /////////////////////// Begin of verified email logic for work
+    var configuration = initialConfigService.getInitialConfiguration();
+    var configuration = initialConfigService.getInitialConfiguration();
+    var emailVerified = false;
+    var emails = {};
+
+    var showEmailVerificationModal = function(){
+        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+    };
+    
+    $scope.emailSrvc.getEmails(
+        function(data) {
+            emails = data.emails;
+            data.emails.forEach(
+                function(element){
+                    if(element.verified == true) {
+                        emailVerified = true;
+                    }
+                }
+            );
+        }
+    );
+    /////////////////////// End of verified email logic for work
+
     $scope.applyLabelWorkType = function() {
         var obj = null;
         $timeout(function() {
@@ -5835,17 +6071,23 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };
 
     $scope.toggleBulkEdit = function() {
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in worksSrvc.groups)
-                $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-        $scope.showBibtexImportWizard = false;
-        $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;
+
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            if (!$scope.bulkEditShow) {
+                $scope.bulkEditMap = {};
+                $scope.bulkChecked = false;
+                for (var idx in worksSrvc.groups)
+                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+            };
+            $scope.bulkEditShow = !$scope.bulkEditShow;
+            $scope.showBibtexImportWizard = false;
+            $scope.workImportWizard = false;
+            $scope.showBibtexExport = false;
+        }else{
+            showEmailVerificationModal();
+        }
     };
+
 
     $scope.bulkApply = function(func) {
         for (var idx in worksSrvc.groups)
@@ -5983,13 +6225,17 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         });
     };
 
-    $scope.openBibTextWizard = function () {    	
-        $scope.bibtexParsingError = false;
-        $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
-        $scope.bulkEditShow = false;
-        $scope.worksFromBibtex = null;
-        $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;        
+    $scope.openBibTextWizard = function () {
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            $scope.bibtexParsingError = false;
+            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
+            $scope.bulkEditShow = false;
+            $scope.worksFromBibtex = null;
+            $scope.workImportWizard = false;
+            $scope.showBibtexExport = false;
+        }else{
+            showEmailVerificationModal();
+        }
     };
 
     $scope.bibtextCancel = function(){
@@ -6171,18 +6417,22 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.addWorkModal = function(data){
-        if (data == undefined) {
-            worksSrvc.getBlankWork(function(data) {
-                $scope.editWork = data;
-                $scope.$apply(function() {
-                    $scope.loadWorkTypes();
-                    $scope.showAddWorkModal();
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            if (data == undefined) {
+                worksSrvc.getBlankWork(function(data) {
+                    $scope.editWork = data;
+                    $scope.$apply(function() {
+                        $scope.loadWorkTypes();
+                        $scope.showAddWorkModal();
+                    });
                 });
-            });
+            } else {
+                $scope.editWork = data;            
+                $scope.loadWorkTypes();
+                $scope.showAddWorkModal();
+            }
         } else {
-            $scope.editWork = data;            
-            $scope.loadWorkTypes();
-            $scope.showAddWorkModal();
+            showEmailVerificationModal();
         }
 
     };
@@ -6192,43 +6442,46 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     };       
 
     $scope.putWork = function(){
-        console.log("putWork");
-        if ($scope.addingWork) {
-            return; // don't process if adding work
-        }
-        $scope.addingWork = true;
-        $scope.editWork.errors.length = 0;
-        worksSrvc.putWork($scope.editWork,
-            function(data){
-                if (data.errors.length == 0) {
-                    if ($scope.bibtextWork == false){
-                        $.colorbox.close();
-                        $scope.addingWork = false;
+        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+            if ($scope.addingWork) {
+                return; // don't process if adding work
+            }
+            $scope.addingWork = true;
+            $scope.editWork.errors.length = 0;
+            worksSrvc.putWork($scope.editWork,
+                function(data){
+                    if (data.errors.length == 0) {
+                        if ($scope.bibtextWork == false){
+                            $.colorbox.close();
+                            $scope.addingWork = false;
+                        } else {
+                            $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+                            $scope.bibtextWork = false;
+                            $scope.addingWork = false;
+                            $scope.$apply();
+                            $.colorbox.close();
+                            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        }
                     } else {
-                        $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
-                        $scope.bibtextWork = false;
+                        $scope.editWork = data;                    
+                        commonSrvc.copyErrorsLeft($scope.editWork, data);
+                        
                         $scope.addingWork = false;
                         $scope.$apply();
-                        $.colorbox.close();
-                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+                        // make sure colorbox is shown if there are errors
+                        if (!($("#colorbox").css("display")=="block")) {
+                            $scope.addWorkModal(data);
+                        }
                     }
-                } else {
-                    $scope.editWork = data;                    
-                    commonSrvc.copyErrorsLeft($scope.editWork, data);
-                    
+                },
+                function() {
+                    // something bad is happening!
                     $scope.addingWork = false;
-                    $scope.$apply();
-                    // make sure colorbox is shown if there are errors
-                    if (!($("#colorbox").css("display")=="block")) {
-                        $scope.addWorkModal(data);
-                    }
                 }
-            },
-            function() {
-                // something bad is happening!
-                $scope.addingWork = false;
-            }
-        );
+            );
+        } else {
+            showEmailVerificationModal();
+        }
     };
 
     $scope.closeAllMoreInfo = function() {
@@ -8565,6 +8818,152 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     };
 }]);
 
+/**
+ * Internal consortium controller
+ * */
+orcidNgModule.controller('internalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+    $scope.showFindModal = false;
+    $scope.consortium = null;
+
+    $scope.toggleFindConsortiumModal = function() {
+        $scope.showFindModal = !$scope.showFindModal;
+    };
+    
+    /**
+     * FIND
+     * */
+    $scope.findConsortium = function() {
+        $.ajax({
+            url: getBaseUri()+'/manage-members/find-consortium.json?id=' + encodeURIComponent($scope.salesForceId),
+            type: 'GET',
+            dataType: 'json',
+            success: function(data){
+                $scope.consortium = data;
+                $scope.$apply();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error finding the consortium");
+        });
+    };
+    
+    $scope.confirmUpdateConsortium = function() {
+        $.colorbox({
+            html : $compile($('#confirm-modal-consortium').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
+        });
+
+        $.colorbox.resize({width:"450px" , height:"175px"});
+    };
+    
+    $scope.updateConsortium = function() {
+        $.ajax({
+            url: getBaseUri()+'/manage-members/update-consortium.json',
+            contentType: 'application/json;charset=UTF-8',
+            type: 'POST',
+            dataType: 'json',
+            data: angular.toJson($scope.consortium),
+            success: function(data){
+                $scope.$apply(function(){
+                    if(data.errors.length == 0){
+                        $scope.consortium = null;
+                        $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+                    } else {
+                        $scope.consortium = data;
+                    }
+                });
+                $scope.closeModal();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error updating the consortium");
+        });
+    };
+    
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    
+}]);
+
+/**
+ * External consortium controller
+ */
+orcidNgModule.controller('externalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+   $scope.consortium = null;
+
+   $scope.toggleFindConsortiumModal = function() {
+       $scope.showFindModal = !$scope.showFindModal;
+   };
+   
+   /**
+    * GET
+    * */
+   $scope.getConsortium = function() {
+       $.ajax({
+           url: getBaseUri()+'/manage-consortium/get-consortium.json',
+           type: 'GET',
+           dataType: 'json',
+           success: function(data){
+               $scope.consortium = data;
+               $scope.$apply();
+           }
+       }).fail(function(error) {
+           // something bad is happening!
+           console.log("Error getting the consortium");
+       });
+   };
+   
+   $scope.confirmUpdateConsortium = function() {
+       $.colorbox({
+           html : $compile($('#confirm-modal-consortium').html())($scope),
+               scrolling: true,
+               onLoad: function() {
+               $('#cboxClose').remove();
+           },
+           scrolling: true
+       });
+
+       $.colorbox.resize({width:"450px" , height:"175px"});
+   };
+   
+   $scope.updateConsortium = function() {
+       $.ajax({
+           url: getBaseUri()+'/manage-consortium/update-consortium.json',
+           contentType: 'application/json;charset=UTF-8',
+           type: 'POST',
+           dataType: 'json',
+           data: angular.toJson($scope.consortium),
+           success: function(data){
+               $scope.$apply(function(){
+                   if(data.errors.length == 0){
+                       $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+                   } else {
+                       $scope.consortium = data;
+                   }
+               });
+               $scope.closeModal();
+           }
+       }).fail(function(error) {
+           // something bad is happening!
+           console.log("Error updating the consortium");
+       });
+   };
+   
+   $scope.closeModal = function() {
+       $.colorbox.close();
+   };
+   
+   // Init
+   $scope.getConsortium();
+   
+}]);
+
+
 orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
     $scope.emails = "";
     $scope.emailIdsMap = {};
@@ -10205,6 +10604,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.registrationForm = {};
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
+    $scope.allowEmailAccess = true;
     $scope.showLongDescription = {};
     $scope.recaptchaWidgetId = null;
     $scope.recatchaResponse = null;
@@ -10236,7 +10636,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
             	angular.forEach(data.scopes, function (scope) {
-            		if(scope.value.endsWith('/create')) {
+            	    if (scope.value == "/email/read-private") {
+            	        $scope.emailRequested = true;
+            	    } else if(scope.value.endsWith('/create')) {
             			$scope.showCreateIcon = true;
             		} else if(scope.value.endsWith('/update')) {
             			$scope.showUpdateIcon = true;
@@ -10310,6 +10712,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
         }        
+        if($scope.allowEmailAccess) {
+            $scope.authorizationForm.emailAccessAllowed = true;
+        }
+        console.log(angular.toJson($scope.authorizationForm));
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -10398,8 +10804,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     };
     
     $scope.register = function() {
-        if($scope.enablePersistentToken)
+        if($scope.enablePersistentToken) {
             $scope.registrationForm.persistentTokenEnabled=true;
+        }
+    
+        if ($scope.allowEmailAccess) {
+            $scope.registrationForm.allowEmailAccess = true;
+        }
+        
         $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
         
@@ -10574,6 +10986,9 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken) {
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
+        }
+        if($scope.allowEmailAccess) {
+            $scope.authorizationForm.emailAccessAllowed = true;
         }
         var is_authorize = $scope.authorizationForm.approved;
         $.ajax({
@@ -11161,29 +11576,39 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
             isPartOf = true;        
-        if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
+        if (workExternalIdentifier == null){
+            return output;
+        } 
+        if (workExternalIdentifier.workExternalIdentifierId == null) {
+            return output;        
+        }
         
         id = workExternalIdentifier.workExternalIdentifierId.value;
         type;
         
-        if (workExternalIdentifier.workExternalIdentifierType != null)
+        if (workExternalIdentifier.workExternalIdentifierType != null) {
             type = workExternalIdentifier.workExternalIdentifierType.value;        
+        }
         if (type != null && typeof type != 'undefined') {
             type.escapeHtml();
-            if(isPartOf)
+            if(isPartOf) {
                 output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-            else 
+            }
+            else {
                 output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+            }
         }
         
-        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '') {
         	link = workExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type);	
-        if (link != null){        	
+        }
+        else {
+            link = workIdLinkJs.getLink(id,type);	
+        }
+        if (link != null) {        	
             link = $filter('urlProtocol')(link);        	
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
-        }else{
+        } else {
             output = output + id.escapeHtml();        
         }
         
@@ -11413,6 +11838,106 @@ orcidNgModule.filter('startsWithLetter', function() {
 /*
  * DIRECTIVES
  */
+
+/*
+ * For modal with email verification validation
+ */
+
+
+
+orcidNgModule.directive(
+    'modalEmailUnVerified', 
+    [
+        '$compile',
+        '$rootScope',
+        '$timeout',
+        function( $compile, $rootScope, $timeout ) {
+
+            var closeModal = function(){
+                $.colorbox.remove();
+                $('modal-email-un-verified').html('<div id="modal-email-unverified-container"></div>');
+            }
+
+            var openModal = function( scope, data ){
+                emailVerifiedObj = data;
+                $.colorbox(
+                    {
+                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><a href="mailto:' + data.emails[0].value + '" target="_blank">' + data.emails[0].value + '</a></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div>'))(scope),
+                        escKey: true,
+                        overlayClose: true,
+                        transition: 'fade',
+                        close: '',
+                        scrolling: false
+                    }
+                );
+                $.colorbox.resize({height:"250px", width:"500px"});
+            }
+
+            var verifyEmail = function( scope ){
+                var colorboxHtml = null;
+                $.ajax({
+                    url: getBaseUri() + '/account/verifyEmail.json',
+                    type: 'get',
+                    data:  { "email": emailVerifiedObj.emails[0].value },
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        //alert( "Verification Email Send To: " + $scope.emailsPojo.emails[idx].value);
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with multi email");
+                });
+                
+                colorboxHtml = $compile($('#verify-email-modal-sent').html())(scope);
+
+                $.colorbox({
+                    html : colorboxHtml,
+                    escKey: true,
+                    overlayClose: true,
+                    transition: 'fade',
+                    close: '',
+                    scrolling: false
+                });
+                $.colorbox.resize({height:"200px", width:"500px"});
+            }
+
+            function link( scope, element, attrs ) {
+
+                scope.verifyEmail = function() {
+                    verifyEmail( scope );
+                };
+
+                scope.closeColorBox = function() {
+                    closeModal();
+                };
+
+                scope.openModal = function( scope, data ){
+                    openModal( scope, data );
+                }
+
+                scope.$on(
+                    'emailVerifiedObj',
+                    function(event, data){
+                        if (data.flag == false ) {
+                            scope.openModal( scope, data ); 
+                        }
+                        else {
+                            scope.closeColorBox(); 
+                        }
+                    }
+
+                );
+            }
+
+            return {
+                link: link,
+                template: '<div id="modal-email-unverified-container"></div>',
+                transclude: true
+            };
+        }
+    ]
+);
 
 /*
  * For forms submitted using the default submit function (Scope: document)

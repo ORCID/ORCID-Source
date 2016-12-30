@@ -18,12 +18,12 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -126,15 +126,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
     private IdentifierTypeManager identifierTypeManager;
     
-    private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+    private long getLastModifiedTime(String orcid) {        
+        return profileEntityManager.getLastModified(orcid);
     }
     
     @RequestMapping(value = { "/workspace/retrieve-work-impor-wizards.json" }, method = RequestMethod.GET)
@@ -265,10 +264,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveIdTypesAsMap() {
         
         Map<String,String> map = new TreeMap<String,String>();
-            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName();
+            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
             for (String type : types.keySet()) {
                 try{
-                    map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString()), type);
+                    map.put(types.get(type).getDescription(), type);
                 }catch (NoSuchMessageException e){
                     //we will skip these from UI for now.
                     //map.put(type, type);                    

@@ -27,7 +27,6 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
@@ -50,13 +49,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "country")
-public class Country implements Serializable, VisibilityType, Comparable<Country> {
+public class Country implements Serializable, Comparable<Country> {
 
     private final static long serialVersionUID = 1L;
     @XmlValue
     protected Iso3166Country value;
-    @XmlAttribute
-    protected Visibility visibility;
 
     public Country() {
         super();
@@ -100,34 +97,11 @@ public class Country implements Serializable, VisibilityType, Comparable<Country
         this.value = Iso3166Country.fromValue(value);
     }
 
-    /**
-     * Gets the value of the visibility property.
-     * 
-     * @return possible object is {@link Visibility }
-     * 
-     */
-    
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    /**
-     * Sets the value of the visibility property.
-     * 
-     * @param value
-     *            allowed object is {@link Visibility }
-     * 
-     */
-    public void setVisibility(Visibility value) {
-        this.visibility = value;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((value == null) ? 0 : value.hashCode());
-        result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
 
@@ -141,8 +115,6 @@ public class Country implements Serializable, VisibilityType, Comparable<Country
             return false;
         Country other = (Country) obj;
         if (value != other.value)
-            return false;
-        if (visibility != other.visibility)
             return false;
         return true;
     }

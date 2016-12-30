@@ -17,6 +17,7 @@
 package org.orcid.core.manager.validator;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -51,7 +52,7 @@ public class ExternalIDValidator {
         
         List<String> errors = Lists.newArrayList();
         
-        if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
+        if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
             errors.add("type");
         }
         
@@ -73,7 +74,7 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();
         for (ExternalID id : ids.getExternalIdentifier()) {
-            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
+            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
             }
             
@@ -95,7 +96,7 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();
         for (ExternalID id : ids.getExternalIdentifier()) {
-            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
+            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
             }
             
@@ -121,7 +122,7 @@ public class ExternalIDValidator {
             if (i.getExternalIdentifier() != null && i.getExternalIdentifier().getType() != null) {
                 ExternalID extId = i.getExternalIdentifier();
                 if (extId.getType() == null
-                        || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(extId.getType())) {
+                        || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(extId.getType())) {
                     errors.add(i.getExternalIdentifier().getType());
                 }
                 

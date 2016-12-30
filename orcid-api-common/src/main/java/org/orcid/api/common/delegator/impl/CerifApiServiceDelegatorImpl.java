@@ -16,7 +16,7 @@
  */
 package org.orcid.api.common.delegator.impl;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,12 +28,13 @@ import org.orcid.api.common.cerif.Cerif16Builder;
 import org.orcid.api.common.cerif.CerifTypeTranslator;
 import org.orcid.api.common.delegator.CerifApiServiceDelgator;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
@@ -58,18 +59,17 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     private PersonalDetailsManager personalDetailsManager;
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
     @Resource
     private WorkManager workManager;
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    @Resource
+    private ActivitiesSummaryManager activitiesSummaryManager;
 
     private CerifTypeTranslator translator = new CerifTypeTranslator();
 
     private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();
+        return profileEntityManager.getLastModified(orcid);
     }
     
     /**
@@ -83,7 +83,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         if (personalDetails == null)
             return Response.status(404).build();
-        personalDetails = visibilityFilter.filter(personalDetails, orcid);
+        orcidSecurityManager.checkAndFilter(orcid, personalDetails, ScopePathType.READ_LIMITED);
 
         Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
@@ -92,14 +92,18 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
-        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifiers();
-        @SuppressWarnings("unchecked")
-        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
+        List<PersonExternalIdentifier> extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifiers();
+        
+        //Lets copy the list so we don't modify the cached collection 
+        List<PersonExternalIdentifier> filteredExtIds = new ArrayList<PersonExternalIdentifier>(extIds); 
+        orcidSecurityManager.checkAndFilter(orcid, filteredExtIds, ScopePathType.READ_LIMITED);
+        
+        ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
+        
+        orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.READ_LIMITED);
 
-        ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
-        visibilityFilter.filter(as, orcid);
-
+        
         return Response.ok(
                 new Cerif16Builder()
                 .addPerson(orcid, given, family, creditname, filteredExtIds)
@@ -111,8 +115,8 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
     public Response getPublication(String orcid, Long id) {
         long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
-        ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws, orcid);
+        orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        ActivityUtils.cleanEmptyFields(ws);        
         if (ws == null || !translator.isPublication(ws.getType()))
             return Response.status(404).build();
 
@@ -121,11 +125,10 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
     @Override
     public Response getProduct(String orcid, Long id) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        long lastModifiedTime = profileEntityManager.getLastModified(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
+        orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws, orcid);
         if (ws == null || !translator.isProduct(ws.getType()))
             return Response.status(404).build();
 

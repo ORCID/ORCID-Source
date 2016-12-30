@@ -160,6 +160,12 @@ public class OauthAuthorizeController extends OauthControllerBase {
             if (form.getPersistentTokenEnabled())
                 requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
 
+        // strip /email/read-private scope if user has not consented
+        if (requestInfoForm.containsEmailReadPrivateScope() && !form.isEmailAccessAllowed()) {
+            requestInfoForm.removeEmailReadPrivateScope();
+            requestParams.put(OrcidOauth2Constants.SCOPE_PARAM, requestInfoForm.getScopesAsString());
+        }
+        
         // Session status
         SimpleSessionStatus status = new SimpleSessionStatus();
 

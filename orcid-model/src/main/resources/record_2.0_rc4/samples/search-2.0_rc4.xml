@@ -23,16 +23,6 @@
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
 			</common:orcid-identifier>
-			<deprecated:deprecated>
-				<deprecated:deprecated-date>2001-12-31T12:00:00</deprecated:deprecated-date>
-				<deprecated:primary-record>
-					<common:orcid-identifier>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-						<common:path>8888-8888-8888-8880</common:path>
-						<common:host>orcid.org</common:host>
-					</common:orcid-identifier>
-				</deprecated:primary-record>
-			</deprecated:deprecated>
 			<preferences:preferences>
 				<preferences:locale>en</preferences:locale>
 			</preferences:preferences>
@@ -294,6 +284,20 @@
 								<common:month>02</common:month>
 								<common:day>02</common:day>
 							</common:end-date>
+							
+							<funding:organization>
+								<common:name>common:name</common:name>
+								<common:address>
+									<common:city>common:city</common:city>
+									<common:region>common:region</common:region>
+									<common:country>AF</common:country>
+								</common:address>
+								<common:disambiguated-organization>
+									<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+									<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+								</common:disambiguated-organization>
+							</funding:organization>
+						
 						</funding:summary>
 					</activities:group>
 				</activities:fundings>
@@ -340,29 +344,6 @@
 					</activities:group>
 				</activities:works>
 			</activities:activities-summary>
-			<internal:internal visibility="private">
-				<internal:security-details>
-					<internal:encrypted-password />
-					<internal:security-question-id>0</internal:security-question-id>
-					<internal:encrypted-security-answer />
-					<internal:encrypted-verification-code />
-				</internal:security-details>
-				<internal:preferences>
-					<internal:send-email-frequency-days>internal:send-email-frequency-days</internal:send-email-frequency-days>
-					<internal:send-change-notifications>true</internal:send-change-notifications>
-					<internal:send-orcid-news>true</internal:send-orcid-news>
-					<internal:send-member-update-requests>true</internal:send-member-update-requests>
-					<internal:activities-visibility-default>private</internal:activities-visibility-default>
-					<internal:developer-tools-enabled>true</internal:developer-tools-enabled>
-				</internal:preferences>
-				<common:group-orcid-identifier>
-					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-					<common:path>8888-8888-8888-8880</common:path>
-					<common:host>orcid.org</common:host>
-				</common:group-orcid-identifier>
-				<internal:referred-by>internal:referred-by</internal:referred-by>
-				<internal:salesforce-id>123456789012345</internal:salesforce-id>
-			</internal:internal>
 		</record:record>
 	</search:result>
 </search:search>

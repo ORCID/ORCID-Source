@@ -92,7 +92,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
     @Resource
     private Jpa2JaxbAdapter adapter;
 
-    @Resource
+    @Resource(name = "workEntityCacheManager")
     private WorkEntityCacheManager realWorkEntityCacheManager;
 
     @Mock

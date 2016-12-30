@@ -23,7 +23,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 
 /**
@@ -241,8 +240,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     boolean isLocked(String orcid);
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
-
-    public void updateNames(String orcid, PersonalDetails personalDetails);
 
     void updateLastModifiedDate(String orcid);
 

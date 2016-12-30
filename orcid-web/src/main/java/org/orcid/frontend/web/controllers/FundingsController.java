@@ -96,7 +96,7 @@ public class FundingsController extends BaseWorkspaceController {
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
     
-    @Resource
+    @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
     
     @Resource
@@ -211,8 +211,7 @@ public class FundingsController extends BaseWorkspaceController {
     private List<String> createFundingIdList(HttpServletRequest request) {
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);        
         String orcid = getEffectiveUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);        
-        List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified.getTime());                
+        List<Funding> fundings = profileFundingManager.getFundingList(orcid, profileEntityManager.getLastModified(orcid));                
         HashMap<String, FundingForm> fundingsMap = new HashMap<String, FundingForm>();
         List<String> fundingIds = new ArrayList<String>();
         if (fundings != null) {

@@ -17,6 +17,8 @@
 
 -->
 <ul ng-hide="!worksSrvc.groups.length" class="workspace-publications bottom-margin-medium" id="body-work-list" ng-cloak>
+    
+
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
         <div class="work-list-container">
             <ul class="sources-edit-list">
@@ -54,14 +56,14 @@
                                                 </div>
                                             </li>
                                             <#if !(isPublicProfile??)>
-	                                            <li>
-	                                                <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
-	                                                    questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-	                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-	                                                    publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-	                                                    limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-	                                                    privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-	                                            </li>
+                                                <li>
+                                                    <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+                                                        questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+                                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+                                                        publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+                                                        limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+                                                        privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+                                                </li>
                                             </#if>
                                         </ul>
                                     </div>
@@ -88,10 +90,10 @@
 
 
                           <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
-                              <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">                              	  
+                              <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">                                 
                                   <#if !(isPublicProfile??)>
                                       <!-- Bulk edit tool -->
-   									   <li ng-if="bulkEditShow" class="bulk-checkbox-item">
+                                       <li ng-if="bulkEditShow" class="bulk-checkbox-item">
                                           <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
                                        </li>
                                   </#if>                                     
@@ -125,15 +127,15 @@
                                
                               <#if !(isPublicProfile??)>
                                   <div ng-if="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
-                                  	<div class="popover-help-container">
-				                    <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
-				                    <div class="popover vis-popover bottom" ng-if="showElement['vis-issue']">
-                                           	<div class="arrow"></div>
+                                    <div class="popover-help-container">
+                                    <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
+                                    <div class="popover vis-popover bottom" ng-if="showElement['vis-issue']">
+                                            <div class="arrow"></div>
                                            <div class="popover-content">
-											<@orcid.msg 'groups.common.data_inconsistency' />                                            
-										</div>
+                                            <@orcid.msg 'groups.common.data_inconsistency' />                                            
+                                        </div>
                                        </div>
-					            </div>                                    
+                                </div>                                    
                                   </div>
                               </#if>
                           </div>
@@ -144,24 +146,24 @@
                          <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">
                                  <li class="url-work">
-                                 	<ul class="id-details">
-                                 		<li ng-repeat='ie in work.workExternalIdentifiers' class="url-popover">
-                                 			<span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
-                                 		</li>
-                                 	</ul>                                 	
+                                    <ul class="id-details">
+                                        <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                                            <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                                        </li>
+                                    </ul>                                   
                                  </li>
                                  <li ng-if="work.url.value" class="url-popover url-work">
-                                 	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
-                                 	<div class="popover-pos">                                 	
-		                                <div class="popover-help-container">
-									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
-												<div class="arrow"></div>
-												<div class="popover-content">
-											    	<a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
-											    </div>                
-										  	</div>    			   				
-									 	</div>
-									 </div>
+                                    <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                    <div class="popover-pos">                                   
+                                        <div class="popover-help-container">
+                                           <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+                                                </div>                
+                                            </div>                              
+                                        </div>
+                                     </div>
                                  </li>
                              </ul>
                          </div>
@@ -376,9 +378,9 @@
 </div>
 <div ng-if="worksSrvc.loading == false && worksSrvc.groups.length == 0" class="" ng-cloak>
     <strong>
-    	<#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
-    		<a ng-if="noLinkFlag" ng-click="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a>
-    		<span ng-hide="noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</span>
-    	</#if>
+        <#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_works_body_list.Nopublicationsaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
+            <a ng-if="noLinkFlag" ng-click="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</a>
+            <span ng-hide="noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addsomenow")}</span>
+        </#if>
     </strong>
 </div>
