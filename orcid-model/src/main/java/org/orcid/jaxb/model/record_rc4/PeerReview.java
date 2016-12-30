@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
@@ -34,7 +35,6 @@ import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Title;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -42,7 +42,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type",  "completionDate",
         "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
-public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder, SourceAware {
+public class PeerReview implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
     private static final long serialVersionUID = -1112309604310926743L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -44,11 +43,12 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class IdentifierTypeManagerTest extends BaseTest{
+public class IdentifierTypeManagerTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";
 
@@ -78,8 +78,8 @@ public class IdentifierTypeManagerTest extends BaseTest{
     
     @Before
     public void before() throws Exception {
-        idTypeMan.setSourceManager(sourceManager);
-        idTypeMan.setSecurityManager(securityManager);
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "sourceManager", sourceManager);
+    	TargetProxyHelper.injectIntoProxy(idTypeMan, "securityManager", securityManager);        
         doNothing().when(securityManager).checkSource(Matchers.any(IdentifierTypeEntity.class));
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
     }

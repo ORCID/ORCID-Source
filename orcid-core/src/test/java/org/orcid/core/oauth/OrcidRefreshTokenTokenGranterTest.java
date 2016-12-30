@@ -239,7 +239,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // disabling parent token, parent should work, refresh should have
         // narrower scopes
         long time = System.currentTimeMillis();
-        String parentScope = "/person/update";
+        String parentScope = "/person/read-limited";
         String refreshScope = "/orcid-bio/read-limited";
         String tokenValue = "parent-token-" + time;
         String refreshTokenValue = "refresh-token-" + time;
@@ -273,7 +273,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
     public void createRefreshTokenWithExpirationOf10Secs() {
         // Create token, dont revoke parent and set expiration to 10 secs
         long time = System.currentTimeMillis();
-        String parentScope = "/person/update";
+        String parentScope = "/person/read-limited";
         String refreshScope = "/orcid-bio/read-limited";
         String tokenValue = "parent-token-" + time;
         String refreshTokenValue = "refresh-token-" + time;

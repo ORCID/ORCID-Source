@@ -43,6 +43,14 @@ public class Educations implements ActivitiesContainer, Serializable {
     @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
     private List<EducationSummary> summaries;
 
+    public Educations() {
+    	
+    }
+    
+    public Educations(List<EducationSummary> summaries) {
+    	this.summaries = summaries;
+    }
+    
     public List<EducationSummary> getSummaries() {
         if (summaries == null)
             summaries = new ArrayList<>();
