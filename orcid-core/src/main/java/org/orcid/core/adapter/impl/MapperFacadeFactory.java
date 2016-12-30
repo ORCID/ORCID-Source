@@ -35,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.PublicationDate;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
@@ -65,6 +66,7 @@ import org.orcid.jaxb.model.record_rc4.WorkContributors;
 import org.orcid.model.notification.institutional_sign_in_rc4.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -592,6 +594,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("type", "groupType");
         classMap.register();
         
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getClientMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
+        clientClassMap.field("name", "clientName");
+        clientClassMap.field("description", "clientDescription");
+        clientClassMap.byDefault();
+        clientClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
 

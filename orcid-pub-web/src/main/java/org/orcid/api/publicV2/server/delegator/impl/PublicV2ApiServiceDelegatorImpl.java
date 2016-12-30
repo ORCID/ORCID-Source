@@ -29,6 +29,7 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
@@ -48,6 +49,7 @@ import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
@@ -163,6 +165,9 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private PublicAPISecurityManagerV2 publicAPISecurityManagerV2;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -545,5 +550,11 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
+    }
+
+    @Override
+    public Response viewClient(String clientId) {
+        Client client = clientDetailsManager.getClient(clientId);
+        return Response.ok(client).build();
     }
 }
