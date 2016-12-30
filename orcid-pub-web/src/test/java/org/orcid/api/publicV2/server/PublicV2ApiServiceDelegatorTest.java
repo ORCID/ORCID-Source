@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc4.Visibility;
@@ -855,6 +857,23 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl(ORCID, 15L);
         fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
     }
     
     private void validatePerson(Person person) {

@@ -16,8 +16,6 @@
  */
 package org.orcid.api.memberV2.server.delegator;
 
-import java.util.Optional;
-
 import javax.ws.rs.core.Response;
 
 /**
@@ -162,6 +160,8 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response deleteAddress(String orcid, Long putCode);
     
     Response viewPerson(String orcid);
+
+    Response viewClient(String clientId);
 
     Response findGroupIdRecordByName(String name);
 }
