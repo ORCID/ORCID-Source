@@ -499,6 +499,7 @@ public class BlackBoxBase {
         waitForElementVisibility(addNew);
         waitForAngular();
         ngAwareClick(findElement(addNew));
+        waitForAngular();
         By emptyInput = By.xpath("(//input[@ng-model='keyword.content'])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
