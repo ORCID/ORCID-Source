@@ -64,13 +64,13 @@ public class OtherNamesTest extends BlackBoxBaseV2Release {
     @Resource(name = "publicV2ApiClient_rc4")
     private PublicV2ApiClientImpl publicV2ApiClient_rc4;
 
-    private static String otherName1 = "other-name-1-" + System.currentTimeMillis();
-    private static String otherName2 = "other-name-2-" + System.currentTimeMillis();
-
     @Resource(name = "memberV2ApiClient")
     private MemberV2ApiClientImpl memberV2ApiClient_release;
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
+    
+    private static String otherName1 = "other-name-1-" + System.currentTimeMillis();
+    private static String otherName2 = "other-name-2-" + System.currentTimeMillis();    
     
     private static org.orcid.jaxb.model.common_v2.Visibility currentDefaultVisibility = null;
     private static org.orcid.jaxb.model.common_v2.Visibility currentOtherNamesVisibility = null;
