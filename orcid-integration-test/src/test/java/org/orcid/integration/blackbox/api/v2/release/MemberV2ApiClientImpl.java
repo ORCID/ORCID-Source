@@ -205,12 +205,16 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
-
     public ClientResponse getGroupIdRecords(int pageSize, int page, String accessToken) {
         URI uri = UriBuilder.fromPath(GROUP_ID_RECORD).queryParam("page-size", pageSize).queryParam("page", page).build();
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
 
+    public ClientResponse getGroupIdByName(String name, String accessToken) {
+        URI uri = UriBuilder.fromPath(GROUP_ID_RECORD).queryParam("name", name).build();
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
+    
     public ClientResponse createGroupIdRecord(GroupIdRecord groupId, String accessToken) {
         URI uri = UriBuilder.fromPath(GROUP_ID_RECORD).build();
         return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, groupId, accessToken);

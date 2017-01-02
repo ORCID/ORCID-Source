@@ -58,6 +58,7 @@ import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -242,12 +243,20 @@ public class BlackBoxBase {
         } 
     }
 
-    public void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
-        BBBUtil.logUserOut(getWebBaseUrl(),webDriver);
-        webDriver.get(getWebBaseUrl() + "/account");
+    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        String baseUri = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
+        String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
+        
+        if(PojoUtil.isEmpty(baseUri)) {
+            baseUri = "https://localhost:8443/orcid-web";
+        }
+        
+        BBBUtil.logUserOut(baseUri, webDriver);
+        webDriver.get(baseUri + "/account");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
-        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+        SigninTest.signIn(webDriver, userOrcid, userPassword);
         BBBUtil.noSpinners(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         
@@ -263,9 +272,7 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
-        // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
-        try {Thread.sleep(500);} catch(Exception e) {};
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);        
     }
     
     public static void changeBiography(String bioValue, Visibility changeTo) throws Exception {

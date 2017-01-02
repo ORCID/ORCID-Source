@@ -241,7 +241,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                     if(jaxbContext_2_0 == null) {
                         jaxbContext_2_0 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_V2.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_V2.size()]));
                     }
-                    return jaxbContext_2_0_rc4;
+                    return jaxbContext_2_0;
                 } else if(apiVersion.equals("2.0_rc4")) {
                     if(jaxbContext_2_0_rc4 == null) {
                         jaxbContext_2_0_rc4 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC4.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC4.size()]));
