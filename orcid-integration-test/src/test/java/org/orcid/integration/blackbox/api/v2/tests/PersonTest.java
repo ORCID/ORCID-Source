@@ -78,6 +78,8 @@ public class PersonTest extends BlackBoxBaseV2Release {
         }
 
         signin();
+        showMyOrcidPage();
+
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
@@ -216,9 +218,9 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc2(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
                 person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc2(limitedEmail, org.orcid.jaxb.model.common_rc2.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -288,7 +290,7 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc2.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc2(getUser1UserName(), org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC,
                 person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -377,9 +379,9 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc3(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
                 person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc3(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -450,7 +452,7 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc3.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc3(getUser1UserName(), org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC,
                 person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -539,9 +541,9 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc4(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
                 person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc4(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -611,7 +613,7 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.rc4.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_rc4(getUser1UserName(), org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC,
                 person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
@@ -700,9 +702,9 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.release.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
                 person.getEmails());
-        org.orcid.integration.blackbox.api.v2.release.EmailTest.assertListContainsEmail(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED, person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
@@ -772,7 +774,7 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        org.orcid.integration.blackbox.api.v2.release.EmailTest.assertListContainsEmail(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
                 person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
