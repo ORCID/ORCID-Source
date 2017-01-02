@@ -29,24 +29,24 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
-import org.orcid.jaxb.model.common_rc4.Day;
-import org.orcid.jaxb.model.common_rc4.FuzzyDate;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Month;
-import org.orcid.jaxb.model.common_rc4.Organization;
-import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.Year;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PeerReviewType;
-import org.orcid.jaxb.model.record_rc4.Relationship;
-import org.orcid.jaxb.model.record_rc4.Role;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Role;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -57,7 +57,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class PublicProfileVisibilityTest extends BlackBoxBaseRC4 {
+public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @BeforeClass
     public static void before() {
         signin();

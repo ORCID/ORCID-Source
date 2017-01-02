@@ -40,7 +40,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Address;
@@ -66,7 +66,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
+public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
 
 	@Resource
     private OauthHelper oauthHelper;

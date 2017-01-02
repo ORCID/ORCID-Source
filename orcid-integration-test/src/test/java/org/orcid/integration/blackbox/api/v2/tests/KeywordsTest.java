@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.Keywords;
@@ -49,7 +49,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class KeywordsTest extends BlackBoxBaseRC4 {
+public class KeywordsTest extends BlackBoxBaseV2Release {
 
     @Resource(name = "memberV2ApiClient_rc2")
     private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
@@ -77,7 +77,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         openEditKeywordsModal();
         createKeyword(keyword1);
         createKeyword(keyword2);
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
     }
 
@@ -86,7 +86,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
         if (allSet) {
             return;
         }
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         allSet = true;
     }
 
@@ -115,7 +115,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testGetKeywordsWihtMembersAPI_rc2() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -148,7 +148,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testCreateGetUpdateAndDeleteKeyword_rc2() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -253,7 +253,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetKeywordWithPublicAPI_rc2() throws InterruptedException, JSONException {
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         ClientResponse response = publicV2ApiClient_rc2.viewKeywordsXML(getUser1OrcidId());
@@ -311,7 +311,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testGetKeywordsWihtMembersAPI_rc3() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -344,7 +344,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testCreateGetUpdateAndDeleteKeyword_rc3() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -449,7 +449,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetKeywordWithPublicAPI_rc3() throws InterruptedException, JSONException {
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         ClientResponse response = publicV2ApiClient_rc3.viewKeywordsXML(getUser1OrcidId());
@@ -506,7 +506,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testGetKeywordsWihtMembersAPI_rc4() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -539,7 +539,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     public void testCreateGetUpdateAndDeleteKeyword_rc4() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         String accessToken = getAccessToken();
@@ -644,7 +644,7 @@ public class KeywordsTest extends BlackBoxBaseRC4 {
     @Test
     public void testGetKeywordWithPublicAPI_rc4() throws InterruptedException, JSONException {
         openEditKeywordsModal();
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         ClientResponse response = publicV2ApiClient_rc4.viewKeywordsXML(getUser1OrcidId());

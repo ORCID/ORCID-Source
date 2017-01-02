@@ -45,7 +45,7 @@ public class MarshallingTest {
     private static final String SAMPLE_PATH_RC2 = "/notification_2.0_rc2/samples/notification-permission-2.0_rc2.xml";
     private static final String SAMPLE_PATH_RC3 = "/notification_2.0_rc3/samples/notification-permission-2.0_rc3.xml";
     private static final String SAMPLE_PATH_RC4 = "/notification_2.0_rc4/samples/notification-permission-2.0_rc4.xml";
-    private static final String SAMPLE_PATH_V2 = "/notification_2.0_rc4/samples/notification-permission-2.0.xml";
+    private static final String SAMPLE_PATH_V2 = "/notification_2.0/samples/notification-permission-2.0.xml";
 
     @Test
     public void testMarshallingV2_0_RC2() throws JAXBException, IOException, SAXException {

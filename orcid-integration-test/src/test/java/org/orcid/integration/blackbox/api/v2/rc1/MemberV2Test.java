@@ -94,7 +94,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);

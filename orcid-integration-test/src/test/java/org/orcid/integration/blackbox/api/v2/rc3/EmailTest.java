@@ -72,12 +72,12 @@ public class EmailTest extends BlackBoxBaseRC3 {
         
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);  
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);  
         removePopOver();
         try {
-            updateEmailVisibility(limitedEmailValue, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+            updateEmailVisibility(limitedEmailValue, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         } catch(Exception e) {
-            addEmail(limitedEmailValue, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+            addEmail(limitedEmailValue, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         }
     }        
     

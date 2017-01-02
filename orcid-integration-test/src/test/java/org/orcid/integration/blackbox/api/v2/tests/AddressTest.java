@@ -34,7 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,7 +48,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class AddressTest extends BlackBoxBaseRC4 {
+public class AddressTest extends BlackBoxBaseV2Release {
 
     @Resource(name = "memberV2ApiClient_rc2")
     private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
@@ -74,7 +74,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();
 
     }
@@ -84,7 +84,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         if (allSet) {
             return;
         }
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         allSet = true;
     }
 
@@ -397,7 +397,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         // SET THEM ALL TO LIMITED
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveEditAddressModal();
 
         // RC2
@@ -433,7 +433,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         saveEditAddressModal();
 
         // RC2
@@ -460,7 +460,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();
     }
 
@@ -521,7 +521,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveEditAddressModal();
 
         // RC2
@@ -549,7 +549,7 @@ public class AddressTest extends BlackBoxBaseRC4 {
         assertTrue(found);
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();
     }
 

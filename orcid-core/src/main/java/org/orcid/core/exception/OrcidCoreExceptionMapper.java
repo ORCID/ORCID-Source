@@ -112,8 +112,8 @@ public class OrcidCoreExceptionMapper {
         return pair != null ? pair : new ImmutablePair<>(Response.Status.INTERNAL_SERVER_ERROR, 9008);
     }
     
-    public org.orcid.jaxb.model.error_rc4.OrcidError getOrcidError(Throwable t) {
-        return (org.orcid.jaxb.model.error_rc4.OrcidError) getOrcidError(t, latest);
+    public org.orcid.jaxb.model.error_v2.OrcidError getOrcidError(Throwable t) {
+        return (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidError(t, latest);
     }
     
     public Object getOrcidError(Throwable t, String version) {

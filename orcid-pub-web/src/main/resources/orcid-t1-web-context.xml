@@ -145,7 +145,7 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc4"/>
     </bean> 
     
-    <bean id="publicV2ApiServiceImplV2_0" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc4">
+    <bean id="publicV2ApiServiceImplV2_0" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2"/>
     </bean>
     

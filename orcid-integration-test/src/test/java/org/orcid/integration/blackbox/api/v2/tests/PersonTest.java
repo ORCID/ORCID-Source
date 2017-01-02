@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,7 +45,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class PersonTest extends BlackBoxBaseRC4 {
+public class PersonTest extends BlackBoxBaseV2Release {
     @Resource(name = "memberV2ApiClient_rc2")
     private org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl memberV2ApiClient_rc2;
     @Resource(name = "publicV2ApiClient_rc2")
@@ -75,21 +75,21 @@ public class PersonTest extends BlackBoxBaseRC4 {
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();
 
         openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName("other-name-1");
         createOtherName("other-name-2");
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveOtherNamesModal();
 
         openEditKeywordsModal();
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         if (hasExternalIdentifiers()) {
@@ -101,12 +101,12 @@ public class PersonTest extends BlackBoxBaseRC4 {
 
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         } else {
-            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+            addEmail(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         }
 
         String accessToken = getAccessToken(getScopes(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE));
@@ -115,15 +115,15 @@ public class PersonTest extends BlackBoxBaseRC4 {
 
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc4.Visibility.LIMITED);
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveExternalIdentifiersModal();
 
         // Set biography to public
-        changeBiography(null, org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
         // Set names to public
-        changeNamesVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
         allSet = true;
     }
