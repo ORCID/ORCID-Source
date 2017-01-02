@@ -559,6 +559,7 @@ public class BlackBoxBase {
         waitForElementVisibility(emptyInput);
         Select input = new Select(findElement(emptyInput));
         input.selectByValue(countryCode);        
+        waitForAngular();
     }
     
     public static void deleteAddresses() {
@@ -609,6 +610,7 @@ public class BlackBoxBase {
         waitForElementVisibility(urlXpath);
         WebElement urlInput = findElement(urlXpath);
         urlInput.sendKeys(url);
+        waitForAngular();
     }  
     
     public static void deleteResearcherUrls() {
@@ -1022,8 +1024,12 @@ public class BlackBoxBase {
     
     public boolean emailExists(String emailValue) {
         String emailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
-        return true;
+        try {
+            BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
     }
     
     public boolean allowedToAddEmails() {
