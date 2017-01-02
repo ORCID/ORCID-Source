@@ -83,7 +83,7 @@ public class MarshallingTest {
     public void testUnMarshallingV2() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom_v2");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc4/samples/notification-custom-2.0.xml");
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0/samples/notification-custom-2.0.xml");
         org.orcid.jaxb.model.notification.custom_v2.NotificationCustom notification = (org.orcid.jaxb.model.notification.custom_v2.NotificationCustom)unmarshaller.unmarshal(inputStream);
         assertNotNull(notification);
         assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM, notification.getNotificationType());
