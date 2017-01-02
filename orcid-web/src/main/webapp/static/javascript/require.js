@@ -1,1 +1,0 @@
-document.write(require("./ng1Orcid/content.js"));

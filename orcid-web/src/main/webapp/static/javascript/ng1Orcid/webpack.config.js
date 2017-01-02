@@ -3,7 +3,8 @@ module.exports = {
     output: {
         path: __dirname,
         filename: "main.js"
-    }
+    },
+    watch: true
     /*,
     module: {
         loaders: [

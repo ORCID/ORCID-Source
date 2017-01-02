@@ -1,0 +1,1 @@
+require.context('./directives/', true, /\.js$/)
