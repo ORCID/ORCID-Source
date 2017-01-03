@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.2</message-version>
+    <orcid-search-results num-found="2">
+        <orcid-search-result>
+            <relevancy-score>0.019084292</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://localhost:8443/orcid-web/0000-0003-2199-2806</uri>
+                    <path>0000-0003-2199-2806</path>
+                    <host>localhost</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Given Names Deactivated</given-names>
+                        <family-name visibility="public">Family Name Deactivated</family-name>
+                    </personal-details>
+                    <biography visibility="public">asdfadfadfsdfsdfsdf hello test</biography>
+                    <contact-details>
+                        <email primary="false" current="true" verified="false" visibility="public" source="0000-0003-2199-2806">another@email.com</email>
+                        <email primary="false" current="true" verified="false" visibility="private" source="0000-0003-2199-2806">strip-this-out@email.com</email>
+                        <address>
+                            <country visibility="public">AL</country>
+                        </address>
+                    </contact-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+        <orcid-search-result>
+            <relevancy-score>0.017082212</relevancy-score>
+            <orcid-profile>
+                <orcid-identifier>
+                    <uri>http://localhost:8443/orcid-web/0000-0003-2199-2888</uri>
+                    <path>0000-0003-2199-2888</path>
+                    <host>localhost</host>
+                </orcid-identifier>
+                <orcid-bio>
+                    <personal-details>
+                        <given-names visibility="public">Given</given-names>
+                        <family-name visibility="public">Family</family-name>
+                    </personal-details>
+                    <biography visibility="public">Biography of test search result</biography>
+                    <contact-details>
+                        <email primary="false" current="true" verified="false" visibility="public" source="0000-0003-2199-2888">something@email.com</email>
+                        <email primary="false" current="true" verified="false" visibility="private" source="0000-0003-2199-2888">strip-this-out@email.com</email>
+                        <address>
+                            <country visibility="public">FR</country>
+                        </address>
+                    </contact-details>
+                </orcid-bio>
+            </orcid-profile>
+        </orcid-search-result>
+    </orcid-search-results>
+</orcid-message>
