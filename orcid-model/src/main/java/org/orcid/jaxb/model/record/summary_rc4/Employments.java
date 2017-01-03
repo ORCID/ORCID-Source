@@ -41,7 +41,7 @@ public class Employments implements ActivitiesContainer, Serializable {
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
 
-    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
+    @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment", required = false)
     private List<EmploymentSummary> summaries;
 
     public Employments() {
