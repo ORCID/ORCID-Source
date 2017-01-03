@@ -34,6 +34,7 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
@@ -43,6 +44,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
@@ -82,6 +84,7 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
@@ -184,10 +187,15 @@ public class MemberV2ApiServiceDelegatorImpl implements
     private SourceUtils sourceUtils;
 
     @Resource
+    private OrcidSearchManager orcidSearchManager;
+
+    @Resource
     private ActivitiesSummaryManager activitiesSummaryManager;
 
     @Resource
     private PersonDetailsManager personDetailsManager;
+
+    public static final int MAX_SEARCH_ROWS = 100;
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
@@ -1003,7 +1011,30 @@ public class MemberV2ApiServiceDelegatorImpl implements
         sourceUtils.setSourceName(person);
         return Response.ok(person).build();
     }
-    
+
+    @Override
+    public Response searchByQuery(Map<String, List<String>> solrParams) {
+        orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
+        validateSearchParams(solrParams);
+        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(orcidIds).build();
+    }
+
+    private void validateSearchParams(Map<String, List<String>> queryMap) {
+        List<String> rowsList = queryMap.get("rows");
+        if (rowsList != null && !rowsList.isEmpty()) {
+            try {
+                String rowsString = rowsList.get(0);
+                int rows = Integer.valueOf(rowsString);
+                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+                }
+            } catch (NumberFormatException e) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+            }
+        }
+    }
+
     @Override
     public Response viewClient(String clientId) {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);

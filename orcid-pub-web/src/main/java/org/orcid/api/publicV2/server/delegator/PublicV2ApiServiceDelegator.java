@@ -16,6 +16,9 @@
  */
 package org.orcid.api.publicV2.server.delegator;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 /**
@@ -96,6 +99,8 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewPerson(String orcid);
     
     Response viewRecord(String orcid);
+
+    Response searchByQuery(Map<String, List<String>> solrParams);
 
     Response viewClient(String clientId);
 }
