@@ -59,6 +59,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -1034,4 +1035,11 @@ public class MemberV2ApiServiceDelegatorImpl implements
         }
     }
 
+    @Override
+    public Response viewClient(String clientId) {
+        orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
+        Client client = clientDetailsManager.getClient(clientId);
+        return Response.ok(client).build();
+    }
+    
 }

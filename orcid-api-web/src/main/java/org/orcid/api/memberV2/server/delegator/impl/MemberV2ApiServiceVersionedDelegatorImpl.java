@@ -515,6 +515,10 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         return memberV2ApiServiceDelegator.searchByQuery(solrParams);
     }
+    
+    public Response viewClient(String clientId) {
+       return memberV2ApiServiceDelegator.viewClient(clientId);
+    }
 
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();

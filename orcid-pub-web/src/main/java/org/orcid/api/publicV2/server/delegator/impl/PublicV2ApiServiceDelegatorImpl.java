@@ -34,6 +34,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RecordManager;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
@@ -53,6 +54,7 @@ import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
@@ -181,6 +183,9 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private LocaleManager localeManager;
 
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -589,4 +594,9 @@ public class PublicV2ApiServiceDelegatorImpl
         }
     }
 
+    @Override
+    public Response viewClient(String clientId) {
+        Client client = clientDetailsManager.getClient(clientId);
+        return Response.ok(client).build();
+    }
 }

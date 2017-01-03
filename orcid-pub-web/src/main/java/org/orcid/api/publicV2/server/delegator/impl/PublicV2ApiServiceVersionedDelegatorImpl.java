@@ -287,4 +287,8 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         this.externalVersion = externalVersion;
     }
 
+    @Override
+    public Response viewClient(String clientId) {
+        return publicV2ApiServiceDelegator.viewClient(clientId);
+    }
 }

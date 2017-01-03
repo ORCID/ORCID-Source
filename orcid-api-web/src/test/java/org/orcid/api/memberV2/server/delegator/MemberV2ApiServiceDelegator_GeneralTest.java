@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.mockito.Matchers;
@@ -49,6 +50,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -741,5 +743,22 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
 
         delegator.searchByQuery(new HashMap<>());
+    }
+
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
     }
 }

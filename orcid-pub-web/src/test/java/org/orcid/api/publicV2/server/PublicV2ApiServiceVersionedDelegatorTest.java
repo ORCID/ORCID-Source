@@ -18,8 +18,8 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -48,9 +48,10 @@ import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedD
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.client_rc4.Client;
+import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.OrcidId;
 import org.orcid.jaxb.model.record_rc4.OrcidIds;
-import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -794,6 +795,23 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
     }
 
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
+    }
+    
     private void updateProfileSubmissionDate(String orcid, int increment) {
         // Update the submission date so it is long enough
         ProfileEntity profileEntity = profileDao.find(orcid);
