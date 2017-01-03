@@ -756,7 +756,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
-        assertNull(personalDetails.getOtherNames().getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());        
 
         // Change all to PUBLIC
         showMyOrcidPage();

@@ -1083,7 +1083,6 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(deleteEmailXpath)), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(confirmDeleteButtonXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(confirmDeleteButtonXpath)), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
         BBBUtil.noCboxOverlay(webDriver);        
     }  
     

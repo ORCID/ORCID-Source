@@ -568,7 +568,8 @@ public class AddressTest extends BlackBoxBaseV2Release {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         addresses_rc4 = response.getEntity(org.orcid.jaxb.model.record_rc4.Addresses.class);
         assertNotNull(addresses_rc4);
-        assertNull(addresses_rc4.getAddress());
+        assertNotNull(addresses_rc4.getAddress());
+        assertTrue(addresses_rc4.getAddress().isEmpty());
 
         // Release
         response = memberV2ApiClient_release.viewAddresses(getUser1OrcidId(), accessToken);
@@ -681,7 +682,8 @@ public class AddressTest extends BlackBoxBaseV2Release {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         addresses_rc4 = response.getEntity(org.orcid.jaxb.model.record_rc4.Addresses.class);
         assertNotNull(addresses_rc4);
-        assertNull(addresses_rc4.getAddress());
+        assertNotNull(addresses_rc4.getAddress());
+        assertTrue(addresses_rc4.getAddress().isEmpty());
 
         // Release
         response = publicV2ApiClient_release.viewAddressesXML(getUser1OrcidId());

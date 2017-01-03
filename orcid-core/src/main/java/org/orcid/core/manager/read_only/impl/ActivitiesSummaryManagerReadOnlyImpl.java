@@ -77,35 +77,32 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
 
         // Set educations
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModifiedTime);
-        if (!educationsList.isEmpty()) {
-            Educations educations = new Educations();
-            for (EducationSummary summary : educationsList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        educations.getSummaries().add(summary);
-                    }
-                } else {
+        Educations educations = new Educations();
+        for (EducationSummary summary : educationsList) {
+            if (justPublic) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                     educations.getSummaries().add(summary);
                 }
-            }            
-            activities.setEducations(educations);
+            } else {
+                educations.getSummaries().add(summary);
+            }
         }
+        activities.setEducations(educations);
 
         // Set employments
         List<EmploymentSummary> employmentList = affiliationsManager.getEmploymentSummaryList(orcid, lastModifiedTime);
-        if (!employmentList.isEmpty()) {
-            Employments employments = new Employments();
-            for (EmploymentSummary summary : employmentList) {
-                if (justPublic) {
-                    if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        employments.getSummaries().add(summary);
-                    }
-                } else {
+
+        Employments employments = new Employments();
+        for (EmploymentSummary summary : employmentList) {
+            if (justPublic) {
+                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                     employments.getSummaries().add(summary);
                 }
-            }            
-            activities.setEmployments(employments);
+            } else {
+                employments.getSummaries().add(summary);
+            }
         }
+        activities.setEmployments(employments);
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
