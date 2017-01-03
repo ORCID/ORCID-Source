@@ -89,7 +89,11 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
                         if (localeResolver == null) {
                                 throw new IllegalStateException("No LocaleResolver found: not in a DispatcherServlet request?");
                         }
-                        localeResolver.setLocale(request, response, StringUtils.parseLocaleString(newLocale));
+                        try {
+                           localeResolver.setLocale(request, response, StringUtils.parseLocaleString(newLocale));
+                        } catch (Exception e) {
+                            // do nothing if a bad locale was set
+                        }
                 }
                 // Proceed in any case.
                 return true;
