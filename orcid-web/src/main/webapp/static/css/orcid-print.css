@@ -218,6 +218,10 @@
         margin-right: 4px;
     }
     
+    .workspace-section .workspace-section-heading li.right span.toggle {
+        display: none;
+    }
+
     .mobile-box {
         padding: 0;
     }
