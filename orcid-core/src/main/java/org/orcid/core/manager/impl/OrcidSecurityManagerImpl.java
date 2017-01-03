@@ -34,12 +34,14 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.common_rc4.VisibilityType;
@@ -56,6 +58,7 @@ import org.orcid.jaxb.model.record_rc4.GroupableActivity;
 import org.orcid.jaxb.model.record_rc4.Person;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
 import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
@@ -84,6 +87,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
@@ -603,8 +609,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (oAuth2Authentication == null) {
             throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
-
+        
         String clientId = sourceManager.retrieveSourceOrcid();
+        
+        ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+            throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
+        }
+        
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
