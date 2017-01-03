@@ -40,9 +40,17 @@ public class Educations implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
+    @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education", required = false)
     private List<EducationSummary> summaries;
 
+    public Educations() {
+    	
+    }
+    
+    public Educations(List<EducationSummary> summaries) {
+    	this.summaries = summaries;
+    }
+    
     public List<EducationSummary> getSummaries() {
         if (summaries == null)
             summaries = new ArrayList<>();

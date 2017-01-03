@@ -28,14 +28,20 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
@@ -52,7 +58,22 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
 
     @Resource
-    private AppIdGenerationManager appIdGenerationManager;        
+    private ClientDetailsDao clientDetailsDao;
+
+    @Resource
+    private ClientSecretDao clientSecretDao;
+
+    @Resource
+    private ClientRedirectDao clientRedirectDao;
+
+    @Resource
+    private EncryptionManager encryptionManager;    
+
+    @Resource
+    private AppIdGenerationManager appIdGenerationManager;
+    
+    @Resource
+    private JpaJaxbClientAdapter jpaJaxbClientAdapter;
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
@@ -266,5 +287,91 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             }
         }
         LOGGER.info("Cron done");
-    }        
+    }
+
+    @Override
+    public boolean exists(String clientId) {
+        return clientDetailsDao.exists(clientId);
+    }
+
+    /**
+     * Verifies if a client belongs to the given group id
+     * 
+     * @param clientId
+     * @param groupId
+     * @return true if clientId belongs to groupId
+     * */
+    @Override
+    public boolean belongsTo(String clientId, String groupId) {
+        return clientDetailsDao.belongsTo(clientId, groupId);
+    }
+
+    /**
+     * Fetch all clients that belongs to a group
+     * 
+     * @param groupId
+     *            Group id
+     * @return A list containing all clients that belongs to the given group
+     * */
+    @Override
+    public List<ClientDetailsEntity> findByGroupId(String groupId) {
+        return clientDetailsDao.findByGroupId(groupId);
+    }
+
+    /**
+     * Get the public profile that belongs to the given orcid ID
+     * 
+     * @param ownerId
+     *            The user or group id
+     * @return the public client that belongs to the given user
+     * */
+    @Override
+    public ClientDetailsEntity getPublicClient(String ownerId) {
+        return clientDetailsDao.getPublicClient(ownerId);
+    }
+    
+    /**
+     * Get member name
+     * 
+     * @param clientId
+     *            The client id
+     * @return the name of the member owner of the given client 
+     * */
+    @Override
+    public String getMemberName(String clientId) {
+        return clientDetailsDao.getMemberName(clientId);
+    }
+    
+    @Override    
+    public Date getLastModified(String clientId) {
+        return clientDetailsDao.getLastModified(clientId);
+    }
+
+    @Override    
+    public Date getLastModifiedByIdp(String idp) {
+        try {
+            return clientDetailsDao.getLastModifiedByIdP(idp);
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
+    }
+    
+    @Override
+    public ClientDetailsEntity findByIdP(String idp) {
+        try {
+            ClientDetailsEntity result = clientDetailsDao.findByIdP(idp);
+            return result;
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
+    }
+
+    @Override
+    public Client getClient(String clientId) {
+        Date lastModified = clientDetailsDao.getLastModified(clientId);
+        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
+        return jpaJaxbClientAdapter.toClient(clientDetailsEntity);
+    }
 }

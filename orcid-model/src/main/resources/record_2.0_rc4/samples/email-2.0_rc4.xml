@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<email:email visibility="public" put-code="1" xmlns:email="http://www.orcid.org/ns/email"
+<email:email primary="true" verified="false" visibility="public" put-code="1" xmlns:email="http://www.orcid.org/ns/email"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/email ../email-2.0_rc4.xsd ">		
 		<common:created-date>2001-12-31T12:00:00</common:created-date>

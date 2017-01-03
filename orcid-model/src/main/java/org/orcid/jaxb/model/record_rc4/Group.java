@@ -32,4 +32,6 @@ public interface Group {
     void setLastModifiedDate(LastModifiedDate lastModifiedDate);
     
     LastModifiedDate getLastModifiedDate();
+    
+    ExternalIDs getIdentifiers();
 }

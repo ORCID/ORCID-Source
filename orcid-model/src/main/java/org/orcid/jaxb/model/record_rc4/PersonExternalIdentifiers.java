@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc4;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,12 +37,15 @@ public class PersonExternalIdentifiers implements Serializable {
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
+    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier", required = false)
     List<PersonExternalIdentifier> externalIdentifiers;
     @XmlAttribute
     protected String path;
 
     public List<PersonExternalIdentifier> getExternalIdentifiers() {
+        if(externalIdentifiers == null) {
+            externalIdentifiers = new ArrayList<>();
+        }
         return externalIdentifiers;
     }
 

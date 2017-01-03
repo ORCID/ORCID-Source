@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc4;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,12 +42,15 @@ public class ResearcherUrls implements Serializable {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
+    @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url", required = false)
     List<ResearcherUrl> researcherUrls;
     @XmlAttribute
     protected String path;
 
     public List<ResearcherUrl> getResearcherUrls() {
+        if(researcherUrls == null) {
+            researcherUrls = new ArrayList<ResearcherUrl>(); 
+        }
         return researcherUrls;
     }
 

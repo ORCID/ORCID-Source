@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
 import org.orcid.jaxb.model.common_rc4.OrganizationHolder;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -56,7 +56,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
-public class Education implements Serializable, VisibilityType, Activity, OrganizationHolder, SourceAware {
+public class Education implements Serializable, Filterable, Activity, OrganizationHolder, SourceAware {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "department-name")
