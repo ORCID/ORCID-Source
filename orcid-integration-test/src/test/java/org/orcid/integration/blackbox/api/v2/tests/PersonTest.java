@@ -65,6 +65,9 @@ public class PersonTest extends BlackBoxBaseRC4 {
 
     private static boolean allSet = false;
 
+    private static String researcherUrl1 = "http://test.orcid.org/1/" + System.currentTimeMillis();
+    private static String researcherUrl2 = "http://test.orcid.org/2/" + System.currentTimeMillis();
+
     @Before
     public void setUpUserInUi() throws Exception {
         if (allSet) {
@@ -91,6 +94,12 @@ public class PersonTest extends BlackBoxBaseRC4 {
         createKeyword("keyword-2");
         changeKeywordsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         saveKeywordsModal();
+
+        openEditResearcherUrlsModal();
+        createResearcherUrl(researcherUrl1);
+        createResearcherUrl(researcherUrl2);
+        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+        saveResearcherUrlsModal();
 
         if (hasExternalIdentifiers()) {
             showMyOrcidPage();
@@ -142,6 +151,10 @@ public class PersonTest extends BlackBoxBaseRC4 {
         openEditKeywordsModal();
         deleteKeywords();
         saveKeywordsModal();
+
+        openEditResearcherUrlsModal();
+        deleteResearcherUrls();
+        saveResearcherUrlsModal();
 
         openEditExternalIdentifiersModal();
         deleteExternalIdentifiers();
@@ -237,6 +250,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
@@ -289,6 +303,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
@@ -386,6 +401,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
@@ -438,6 +454,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
@@ -535,6 +552,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
@@ -587,6 +605,7 @@ public class PersonTest extends BlackBoxBaseRC4 {
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
+        assertTrue("We created researcher urls for this test, so there should be at least some", person.getResearcherUrls().getResearcherUrls().size() >= 2);
         assertNotNull(person.getName());
         assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
