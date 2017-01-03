@@ -25,9 +25,12 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
@@ -35,9 +38,18 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.locale.LocaleManagerImpl;
+import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc4.Visibility;
@@ -60,6 +72,8 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.History;
 import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.OrcidId;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
 import org.orcid.jaxb.model.record_rc4.Person;
@@ -77,6 +91,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
@@ -855,6 +870,55 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl(ORCID, 15L);
         fail();
+    }
+    
+    @Test
+    public void testSearchByQuery() {
+        OrcidIds orcidIds = new OrcidIds();
+        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
+        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>>any())).thenReturn(orcidIds);
+
+        PublicV2ApiServiceDelegatorImpl delegator = new PublicV2ApiServiceDelegatorImpl();
+        ReflectionTestUtils.setField(delegator, "orcidSearchManager", orcidSearchManager);
+        
+        Response response = delegator.searchByQuery(new HashMap<String, List<String>>());
+        
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof OrcidIds);
+        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
+        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+    }
+    
+    @Test(expected = OrcidBadRequestException.class)
+    public void testSearchByQueryTooManyRows() {
+        Map<String, List<String>> params = new HashMap<>();
+        params.put("rows", Arrays.asList(Integer.toString(PublicV2ApiServiceDelegatorImpl.MAX_SEARCH_ROWS + 20)));
+        
+        LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
+        Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");
+
+        PublicV2ApiServiceDelegatorImpl delegator = new PublicV2ApiServiceDelegatorImpl();
+        ReflectionTestUtils.setField(delegator, "localeManager", localeManager);
+        delegator.searchByQuery(params);
+    }
+        
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
     }
     
     private void validatePerson(Person person) {

@@ -218,6 +218,10 @@
         margin-right: 4px;
     }
     
+    .workspace-section .workspace-section-heading li.right span.toggle {
+        display: none;
+    }
+
     .mobile-box {
         padding: 0;
     }
@@ -225,7 +229,7 @@
     .info-detail, 
     .workspace-accordion-content,
     .workspace-accordion-content .workspace-title {
-        font-size: 12px;
+        font-size: 14px;
         line-height: normal;
     }
 

@@ -16,15 +16,21 @@
  */
 package org.orcid.api.memberV2.server.delegator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
@@ -32,10 +38,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
+import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.client_rc4.Client;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -44,6 +55,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.OrcidId;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
@@ -82,7 +95,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void before() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-6666666666666666");
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);
@@ -426,7 +439,6 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    
     /**
      * Locked account throws an exception
      */
@@ -1479,6 +1491,42 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         updateProfileSubmissionDate(unclaimedUserOrcid, 0);
         serviceDelegator.viewPerson(unclaimedUserOrcid);
         fail();
+    }
+
+    @Test
+    public void testSearchByQuery() {
+        OrcidIds orcidIds = new OrcidIds();
+        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        Response searchResponse = Response.ok(orcidIds).build();
+        MemberV2ApiServiceDelegatorImpl delegator = Mockito.mock(MemberV2ApiServiceDelegatorImpl.class);
+        Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>> any())).thenReturn(searchResponse);
+        MemberV2ApiServiceVersionedDelegatorImpl versionedDelegator = new MemberV2ApiServiceVersionedDelegatorImpl();
+        versionedDelegator.setMemberV2ApiServiceDelegator(delegator);
+        Response response = versionedDelegator.searchByQuery(new HashMap<String, List<String>>());
+
+        // just testing MemberV2ApiServiceDelegatorImpl's response is returned
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof OrcidIds);
+        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
+        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+    }
+
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
     }
 
     private void updateProfileSubmissionDate(String orcid, int increment) {

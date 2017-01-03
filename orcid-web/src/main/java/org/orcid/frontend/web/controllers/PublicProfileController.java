@@ -50,7 +50,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -175,9 +174,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource
-    private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private OrcidMessageUtil orcidMessageUtil;

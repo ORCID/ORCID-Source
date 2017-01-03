@@ -39,7 +39,7 @@ public class PeerReviews implements GroupsContainer, Serializable {
     private static final long serialVersionUID = 6779626621503362679L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
     List<PeerReviewGroup> peerReviewGroup;
 
     public List<PeerReviewGroup> getPeerReviewGroup() {

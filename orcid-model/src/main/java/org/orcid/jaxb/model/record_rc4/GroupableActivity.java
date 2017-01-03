@@ -27,5 +27,5 @@ public interface GroupableActivity extends Filterable {
 
     int compareTo(GroupableActivity activity);
 
-    LastModifiedDate getLastModifiedDate();
+    LastModifiedDate getLastModifiedDate();        
 }

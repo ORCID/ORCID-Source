@@ -39,7 +39,7 @@ public class Works implements GroupsContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
     private List<WorkGroup> workGroup;
 
     public List<WorkGroup> getWorkGroup() {

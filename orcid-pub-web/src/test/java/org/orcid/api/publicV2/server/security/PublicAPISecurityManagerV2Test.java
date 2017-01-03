@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc4.Educations;
@@ -96,6 +97,25 @@ public class PublicAPISecurityManagerV2Test {
     }
 
     @Test
+    public void checkIsPublicVisibilityTypeTest() {
+        publicAPISecurityManagerV2.checkIsPublic(getVisibilityTypeElement(Visibility.PUBLIC));
+
+        try {
+            publicAPISecurityManagerV2.checkIsPublic(getVisibilityTypeElement(Visibility.LIMITED));
+            fail();
+        } catch (OrcidNonPublicElementException e) {
+
+        }
+
+        try {
+            publicAPISecurityManagerV2.checkIsPublic(getVisibilityTypeElement(Visibility.PRIVATE));
+            fail();
+        } catch (OrcidNonPublicElementException e) {
+
+        }
+    }
+
+    @Test
     public void checkIsPublicBiographyTest() {
         Biography b = new Biography();
         b.setVisibility(Visibility.PUBLIC);
@@ -138,7 +158,6 @@ public class PublicAPISecurityManagerV2Test {
             publicAPISecurityManagerV2.checkIsPublic(n);
             fail();
         } catch (OrcidNonPublicElementException e) {
-
         }
     }
 
@@ -451,7 +470,8 @@ public class PublicAPISecurityManagerV2Test {
         setVisibility(as.getEducations().getSummaries(), Visibility.LIMITED, Visibility.PRIVATE, Visibility.LIMITED);
         publicAPISecurityManagerV2.filter(as);
 
-        assertNull(as.getEducations());
+        assertNotNull(as.getEducations());
+        assertTrue(as.getEducations().getSummaries().isEmpty());
         assertEquals(3, as.getEmployments().getSummaries().size());
         assertContainerContainsOnlyPublicElements(as.getEmployments());
         assertEquals(3, as.getFundings().getFundingGroup().size());
@@ -468,7 +488,8 @@ public class PublicAPISecurityManagerV2Test {
 
         assertEquals(3, as.getEducations().getSummaries().size());
         assertContainerContainsOnlyPublicElements(as.getEducations());
-        assertNull(as.getEmployments());
+        assertNotNull(as.getEmployments());
+        assertTrue(as.getEmployments().getSummaries().isEmpty());
         assertEquals(3, as.getFundings().getFundingGroup().size());
         assertGroupContainsOnlyPublicElements(as.getFundings());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
@@ -557,8 +578,8 @@ public class PublicAPISecurityManagerV2Test {
         publicAPISecurityManagerV2.filter(p);
         assertNotNull(p.getName());
         assertNotNull(p.getBiography());
-        assertNull(p.getOtherNames());
-
+        assertNotNull(p.getOtherNames());
+        assertTrue(p.getOtherNames().getOtherNames().isEmpty());
     }
 
     @Test
@@ -588,7 +609,8 @@ public class PublicAPISecurityManagerV2Test {
 
         publicAPISecurityManagerV2.filter(p);
         // --- filtered ---
-        assertNull(p.getAddresses());
+        assertNotNull(p.getAddresses());
+        assertTrue(p.getAddresses().getAddress().isEmpty());
         assertEquals(Visibility.PUBLIC, p.getBiography().getVisibility());
         assertEquals(3, p.getEmails().getEmails().size());
         p.getEmails().getEmails().forEach(e -> assertIsPublic(e));
@@ -632,7 +654,8 @@ public class PublicAPISecurityManagerV2Test {
         p.getAddresses().getAddress().forEach(e -> assertIsPublic(e));
         assertEquals(Visibility.PUBLIC, p.getBiography().getVisibility());
         // --- filtered ---
-        assertNull(p.getEmails());
+        assertNotNull(p.getEmails());
+        assertTrue(p.getEmails().getEmails().isEmpty());
         assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
         p.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertIsPublic(e));
         assertEquals(3, p.getKeywords().getKeywords().size());
@@ -654,7 +677,8 @@ public class PublicAPISecurityManagerV2Test {
         assertEquals(3, p.getEmails().getEmails().size());
         p.getEmails().getEmails().forEach(e -> assertIsPublic(e));
         // --- filtered ---
-        assertNull(p.getExternalIdentifiers());
+        assertNotNull(p.getExternalIdentifiers());
+        assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().isEmpty());
         assertEquals(3, p.getKeywords().getKeywords().size());
         p.getKeywords().getKeywords().forEach(e -> assertIsPublic(e));
         assertEquals(Visibility.PUBLIC, p.getName().getVisibility());
@@ -676,7 +700,8 @@ public class PublicAPISecurityManagerV2Test {
         assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
         p.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertIsPublic(e));
         // --- filtered ---
-        assertNull(p.getKeywords());
+        assertNotNull(p.getKeywords());
+        assertTrue(p.getKeywords().getKeywords().isEmpty());
         assertEquals(Visibility.PUBLIC, p.getName().getVisibility());
         assertEquals(3, p.getOtherNames().getOtherNames().size());
         p.getOtherNames().getOtherNames().forEach(e -> assertIsPublic(e));
@@ -720,7 +745,8 @@ public class PublicAPISecurityManagerV2Test {
         p.getKeywords().getKeywords().forEach(e -> assertIsPublic(e));
         assertEquals(Visibility.PUBLIC, p.getName().getVisibility());
         // --- filtered ---
-        assertNull(p.getOtherNames());
+        assertNotNull(p.getOtherNames());
+        assertTrue(p.getOtherNames().getOtherNames().isEmpty());
         assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
         p.getResearcherUrls().getResearcherUrls().forEach(e -> assertIsPublic(e));
 
@@ -742,7 +768,8 @@ public class PublicAPISecurityManagerV2Test {
         assertEquals(3, p.getOtherNames().getOtherNames().size());
         p.getOtherNames().getOtherNames().forEach(e -> assertIsPublic(e));
         // --- filtered ---
-        assertNull(p.getResearcherUrls());
+        assertNotNull(p.getResearcherUrls());
+        assertTrue(p.getResearcherUrls().getResearcherUrls().isEmpty());
     }
 
     @Test
@@ -791,7 +818,8 @@ public class PublicAPISecurityManagerV2Test {
 
         // Verify activities - educations and funding filtered
         as = r.getActivitiesSummary();
-        assertNull(as.getEducations());
+        assertNotNull(as.getEducations());
+        assertTrue(as.getEducations().getSummaries().isEmpty());
         assertEquals(3, as.getEmployments().getSummaries().size());
         assertTrue(as.getFundings().getFundingGroup().isEmpty());
         assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
@@ -828,8 +856,10 @@ public class PublicAPISecurityManagerV2Test {
         // Verify bio sections - emails, external identifiers filtered
         p = r.getPerson();
         assertEquals(3, p.getAddresses().getAddress().size());
-        assertNull(p.getEmails());
-        assertNull(p.getExternalIdentifiers());
+        assertNotNull(p.getEmails());
+        assertTrue(p.getEmails().getEmails().isEmpty());
+        assertNotNull(p.getExternalIdentifiers());
+        assertTrue(p.getExternalIdentifiers().getExternalIdentifiers().isEmpty());
         assertEquals(3, p.getKeywords().getKeywords().size());
         assertEquals(3, p.getOtherNames().getOtherNames().size());
         assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
@@ -856,8 +886,10 @@ public class PublicAPISecurityManagerV2Test {
         assertEquals(3, p.getAddresses().getAddress().size());
         assertEquals(3, p.getEmails().getEmails().size());
         assertEquals(3, p.getExternalIdentifiers().getExternalIdentifiers().size());
-        assertNull(p.getKeywords());
-        assertNull(p.getOtherNames());
+        assertNotNull(p.getKeywords());
+        assertTrue(p.getKeywords().getKeywords().isEmpty());
+        assertNotNull(p.getOtherNames());
+        assertTrue(p.getOtherNames().getOtherNames().isEmpty());
         assertEquals(3, p.getResearcherUrls().getResearcherUrls().size());
         assertNotNull(p.getBiography());
         assertNotNull(p.getName());
@@ -867,6 +899,12 @@ public class PublicAPISecurityManagerV2Test {
      * Utilities
      */
     private Filterable getFilterableElement(Visibility v) {
+        EducationSummary s = new EducationSummary();
+        s.setVisibility(v);
+        return s;
+    }
+
+    private VisibilityType getVisibilityTypeElement(Visibility v) {
         EducationSummary s = new EducationSummary();
         s.setVisibility(v);
         return s;

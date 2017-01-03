@@ -23,6 +23,7 @@ import java.util.List;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_rc4.Filterable;
+import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc4.Activity;
@@ -43,9 +44,10 @@ import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
+    
     @Override
-    public void checkIsPublic(Filterable filterable) {
-        if (filterable != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+    public void checkIsPublic(VisibilityType visibilityType) {
+        if (visibilityType != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
@@ -56,49 +58,27 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
             throw new OrcidNonPublicElementException();
         }
     }
-
-    @Override
-    public void checkIsPublic(Name name) {
-        if (name != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(name.getVisibility())) {
-            throw new OrcidNonPublicElementException();
-        }
-    }
-
+    
     @Override
     public void filter(ActivitiesSummary activitiesSummary) {
         if (activitiesSummary == null) {
             return;
         }
         if (activitiesSummary.getEmployments() != null) {
-            filter(activitiesSummary.getEmployments());
-            if (activitiesSummary.getEmployments().getSummaries().isEmpty()) {
-                activitiesSummary.setEmployments(null);
-            }
+            filter(activitiesSummary.getEmployments());            
         }
         if (activitiesSummary.getEducations() != null) {
-            filter(activitiesSummary.getEducations());
-            if (activitiesSummary.getEducations().getSummaries().isEmpty()) {
-                activitiesSummary.setEducations(null);
-            }
+            filter(activitiesSummary.getEducations());            
         }
 
         if (activitiesSummary.getFundings() != null) {
-            filter(activitiesSummary.getFundings());
-            if (activitiesSummary.getFundings().getFundingGroup().isEmpty()) {
-                activitiesSummary.setFundings(null);
-            }
+            filter(activitiesSummary.getFundings());            
         }
         if (activitiesSummary.getWorks() != null) {
-            filter(activitiesSummary.getWorks());
-            if (activitiesSummary.getWorks().getWorkGroup().isEmpty()) {
-                activitiesSummary.setWorks(null);
-            }
+            filter(activitiesSummary.getWorks());            
         }
         if (activitiesSummary.getPeerReviews() != null) {
-            filter(activitiesSummary.getPeerReviews());
-            if (activitiesSummary.getPeerReviews().getPeerReviewGroup().isEmpty()) {
-                activitiesSummary.setPeerReviews(null);
-            }
+            filter(activitiesSummary.getPeerReviews());            
         }
     }
 
@@ -174,10 +154,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
                 } catch (OrcidNonPublicElementException ex) {   
                     return true;
                 }
-            });
-            if (personalDetails.getOtherNames().getOtherNames().isEmpty()) {
-                personalDetails.setOtherNames(null);
-            }
+            });            
         }
     }
 
@@ -253,44 +230,28 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
 
         if (person.getAddresses() != null) {
             filter(person.getAddresses());
-            if (person.getAddresses().getAddress() == null || person.getAddresses().getAddress().isEmpty()) {
-                person.setAddresses(null);
-            }
         }
 
         if (person.getEmails() != null) {
             filter(person.getEmails());
-            if (person.getEmails().getEmails() == null || person.getEmails().getEmails().isEmpty()) {
-                person.setEmails(null);
-            }
         }
 
         if (person.getExternalIdentifiers() != null) {
             filter(person.getExternalIdentifiers());
-            if (person.getExternalIdentifiers().getExternalIdentifiers() == null || person.getExternalIdentifiers().getExternalIdentifiers().isEmpty()) {
-                person.setExternalIdentifiers(null);
-            }
         }
 
         if (person.getKeywords() != null) {
             filter(person.getKeywords());
-            if (person.getKeywords().getKeywords() == null || person.getKeywords().getKeywords().isEmpty()) {
-                person.setKeywords(null);
-            }
         }
 
         if (person.getOtherNames() != null) {
             filter(person.getOtherNames());
-            if (person.getOtherNames().getOtherNames() == null || person.getOtherNames().getOtherNames().isEmpty()) {
-                person.setOtherNames(null);
-            }
         }
+        
         if (person.getResearcherUrls() != null) {
             filter(person.getResearcherUrls());
-            if (person.getResearcherUrls().getResearcherUrls() == null || person.getResearcherUrls().getResearcherUrls().isEmpty()) {
-                person.setResearcherUrls(null);
-            }
         }
+        
         Name name = person.getName();
         if (name != null) {
             try {

@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc4.CreatedDate;
+import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.FuzzyDate;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc4.Organization;
 import org.orcid.jaxb.model.common_rc4.OrganizationHolder;
 import org.orcid.jaxb.model.common_rc4.Source;
 import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record_rc4.Activity;
 import org.orcid.jaxb.model.record_rc4.ExternalIDs;
 import org.orcid.jaxb.model.record_rc4.FundingTitle;
@@ -43,7 +43,7 @@ import org.orcid.jaxb.model.record_rc4.SourceAware;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate","organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
+public class FundingSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
 
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)
