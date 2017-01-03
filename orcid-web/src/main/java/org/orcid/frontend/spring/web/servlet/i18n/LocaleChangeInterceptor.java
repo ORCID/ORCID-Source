@@ -92,7 +92,10 @@ public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
                         try {
                            localeResolver.setLocale(request, response, StringUtils.parseLocaleString(newLocale));
                         } catch (Exception e) {
-                            // Ignore bad locales as it will cause a 500 error
+                            /* 
+                             * Ignore exceptions from invalid locales as it will cause a 500 error and
+                             * continue with the last valid locale set.
+                             */
                         }
                 }
                 // Proceed in any case.
