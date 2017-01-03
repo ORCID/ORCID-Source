@@ -8010,7 +8010,7 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
 
     $scope.selectedLanguage = function(){
         $.ajax({
-            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value + "&callback=?",
+            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value,
             type: 'GET',
             dataType: 'json',
             success: function(data){
