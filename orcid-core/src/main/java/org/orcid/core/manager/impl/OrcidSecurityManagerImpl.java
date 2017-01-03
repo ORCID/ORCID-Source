@@ -224,6 +224,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkScopes(ScopePathType requiredScope) {
+        //Verify the client is not a public client
+        checkClientType();
+        
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
@@ -610,13 +613,10 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
         
+        //Verify the client is not a public client
+        checkClientType();
+        
         String clientId = sourceManager.retrieveSourceOrcid();
-        
-        ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
-        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
-            throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
-        }
-        
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
@@ -631,6 +631,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
             throw new IllegalStateException("Non client credential scope found in client request");
+        }
+    }
+    
+    private void checkClientType() {
+        String clientId = sourceManager.retrieveSourceOrcid();
+        
+        ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+            throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }
 }
