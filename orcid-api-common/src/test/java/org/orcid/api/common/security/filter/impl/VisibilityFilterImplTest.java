@@ -16,24 +16,24 @@
  */
 package org.orcid.api.common.security.filter.impl;
 
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.junit.Test;
-import org.orcid.core.security.DefaultPermissionChecker;
-import org.orcid.core.security.visibility.filter.impl.VisibilityFilterImpl;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.Visibility;
-import org.springframework.test.util.ReflectionTestUtils;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import java.io.InputStream;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.junit.Test;
+import org.orcid.core.security.visibility.filter.impl.VisibilityFilterImpl;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidSearchResult;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * @author Declan Newman (declan) Date: 16/03/2012
@@ -61,6 +61,22 @@ public class VisibilityFilterImplTest extends XMLTestCase {
         Diff myDiff = new Diff(publicOrcidMessage.toString(), orcidMessage.toString());
         assertEquals(publicOrcidMessage.toString(), orcidMessage.toString());
         assertTrue(myDiff.toString(), myDiff.similar());
+    }
+    
+    @Test
+    public void testOrcidMessageWithNullOrcidProfile() throws JAXBException {
+        OrcidMessage orcidMessage = getOrcidMessage("/orcid-search-result-message.xml");
+        OrcidMessage filteredMessage = visibilityFilter.filter(orcidMessage, Visibility.PUBLIC);
+        assertNotNull(filteredMessage);
+        assertNull(filteredMessage.getOrcidProfile());
+        assertEquals(2, filteredMessage.getOrcidSearchResults().getNumFound());
+        for (int i = 0; i < filteredMessage.getOrcidSearchResults().getNumFound(); i++) {
+            OrcidSearchResult searchResult = filteredMessage.getOrcidSearchResults().getOrcidSearchResult().get(i);
+            OrcidBio orcidBio = searchResult.getOrcidProfile().getOrcidBio();
+            
+            // check private emails stripped out
+            assertEquals(1, orcidBio.getContactDetails().getEmail().size()); 
+        }
     }
 
     private OrcidMessage getOrcidMessage(String s) throws JAXBException {
