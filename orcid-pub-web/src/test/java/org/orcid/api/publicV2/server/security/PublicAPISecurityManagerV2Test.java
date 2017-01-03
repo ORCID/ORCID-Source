@@ -29,7 +29,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.common_rc4.VisibilityType;
@@ -84,14 +84,14 @@ public class PublicAPISecurityManagerV2Test {
         try {
             publicAPISecurityManagerV2.checkIsPublic(getFilterableElement(Visibility.LIMITED));
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
 
         try {
             publicAPISecurityManagerV2.checkIsPublic(getFilterableElement(Visibility.PRIVATE));
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
     }
@@ -103,14 +103,14 @@ public class PublicAPISecurityManagerV2Test {
         try {
             publicAPISecurityManagerV2.checkIsPublic(getVisibilityTypeElement(Visibility.LIMITED));
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
 
         try {
             publicAPISecurityManagerV2.checkIsPublic(getVisibilityTypeElement(Visibility.PRIVATE));
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
     }
@@ -126,7 +126,7 @@ public class PublicAPISecurityManagerV2Test {
             b.setVisibility(Visibility.LIMITED);
             publicAPISecurityManagerV2.checkIsPublic(b);
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
 
@@ -134,7 +134,7 @@ public class PublicAPISecurityManagerV2Test {
             b.setVisibility(Visibility.PRIVATE);
             publicAPISecurityManagerV2.checkIsPublic(b);
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
     }
@@ -149,7 +149,7 @@ public class PublicAPISecurityManagerV2Test {
             n.setVisibility(Visibility.LIMITED);
             publicAPISecurityManagerV2.checkIsPublic(n);
             fail();
-        } catch (OrcidUnauthorizedException e) {
+        } catch (OrcidNonPublicElementException e) {
 
         }
 
@@ -157,8 +157,7 @@ public class PublicAPISecurityManagerV2Test {
             n.setVisibility(Visibility.PRIVATE);
             publicAPISecurityManagerV2.checkIsPublic(n);
             fail();
-        } catch (OrcidUnauthorizedException e) {
-
+        } catch (OrcidNonPublicElementException e) {
         }
     }
 

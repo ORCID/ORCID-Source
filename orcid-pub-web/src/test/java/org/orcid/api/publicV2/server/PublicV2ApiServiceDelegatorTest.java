@@ -43,7 +43,7 @@ import org.mockito.Mockito;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
 import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.locale.LocaleManagerImpl;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -441,14 +441,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(educations.getSummaries().get(0).getLastModifiedDate().getValue());        
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedEducationUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewEducation(ORCID, 21L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateEducationUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewEducation(ORCID, 22L);
@@ -501,14 +501,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(employments.getSummaries().get(0).getLastModifiedDate().getValue());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedEmploymentUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewEmployment(ORCID, 18L);
         fail();
     }        
 
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateEmploymentUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewEmployment(ORCID, 19L);
@@ -569,14 +569,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(fundings.getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate().getValue());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedFundingUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewFunding(ORCID, 11L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateFundingUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewFunding(ORCID, 12L);
@@ -635,14 +635,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(works.getWorkGroup().get(0).getWorkSummary().get(0).getLastModifiedDate().getValue());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedWorkUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewWork(ORCID, 12L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateWorkUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewWork(ORCID, 13L);
@@ -697,14 +697,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(p.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate().getValue());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedPeerReviewUsingToken() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewPeerReview(ORCID, 10L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivatePeerReviewUsingToken() {        
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewPeerReview(ORCID, 11L);
@@ -724,13 +724,13 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, b.getVisibility());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedBiographyUsingToken() {        
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED);
         serviceDelegator.viewBiography("0000-0000-0000-0002");
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateBiographyUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.READ_LIMITED);
         serviceDelegator.viewBiography("0000-0000-0000-0001");
@@ -749,14 +749,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(9), a.getPutCode());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedAddressUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewAddress(ORCID, 10L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateAddressUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewAddress(ORCID, 10L);
@@ -776,14 +776,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(9), k.getPutCode());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedKeywordUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewKeyword(ORCID, 10L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateKeywordUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewKeyword(ORCID, 11L);
@@ -804,14 +804,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedExternalIdentifierUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewExternalIdentifier(ORCID, 14L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateExternalIdentifierUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewExternalIdentifier(ORCID, 15L);
@@ -831,14 +831,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(13), o.getPutCode());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedOtherNameUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewOtherName(ORCID, 14L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateOtherNameUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewOtherName(ORCID, 15L);
@@ -858,14 +858,14 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(13), ru.getPutCode());
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetLimitedResearcherUrlUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl(ORCID, 14L);
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = OrcidNonPublicElementException.class)
     public void testGetPrivateResearcherUrlUsingToken() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
         serviceDelegator.viewResearcherUrl(ORCID, 15L);
