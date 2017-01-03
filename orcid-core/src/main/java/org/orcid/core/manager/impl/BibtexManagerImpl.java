@@ -38,6 +38,8 @@ import org.orcid.jaxb.model.record_rc4.ExternalID;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
@@ -49,6 +51,8 @@ import de.undercouch.citeproc.csl.CSLType;
 
 public class BibtexManagerImpl implements BibtexManager{
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BibtexManagerImpl.class);
+    
     @Resource
     private ActivitiesSummaryManager activitiesManager;
     
@@ -93,9 +97,15 @@ public class BibtexManagerImpl implements BibtexManager{
         if (work.getWorkExternalIdentifiers() != null && work.getWorkExternalIdentifiers().getExternalIdentifier() != null){
             String doi = extractID(work, WorkExternalIdentifierType.DOI);
             if (doi != null){
-                String bibtex = doiManager.fetchDOIBibtex(doi);
-                if (bibtex != null)
-                    return bibtex;
+                try{
+                    String bibtex = doiManager.fetchDOIBibtex(doi);
+                    if (bibtex != null)
+                        return bibtex;                    
+                }catch (Exception e){
+                    //something went wrong at crossref/datacite e.g. 10.1890/1540-9295(2006)004[0244:elsdvs]2.0.co;2
+                    //ignore and use our metadata
+                    LOGGER.warn("cannot resolve DOI to metadata:"+doi);
+                }
             }
         }
         
@@ -153,6 +163,19 @@ public class BibtexManagerImpl implements BibtexManager{
                 builder.URL(url);
             }
         }
+        
+        String pmid = extractID(work, WorkExternalIdentifierType.PMID);
+        if (pmid != null)
+            builder.PMID(pmid);
+        String pmcid = extractID(work, WorkExternalIdentifierType.PMC);
+        if (pmcid != null)
+            builder.PMCID(pmcid);
+        String isbn = extractID(work, WorkExternalIdentifierType.ISBN);
+        if (isbn != null)
+            builder.ISBN(isbn);
+        String issn = extractID(work, WorkExternalIdentifierType.ISSN);        
+        if (issn !=null)
+            builder.ISSN(issn);
 
         if (work.getJournalTitle() != null) {
             builder.containerTitle(StringUtils.stripAccents(work.getJournalTitle().getContent()));
