@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.release;
+package org.orcid.integration.blackbox.api.v2.rc3.tests;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
@@ -31,25 +31,27 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_v2.Title;
-import org.orcid.jaxb.model.common_v2.TranslatedTitle;
-import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
+import org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl;
+import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
+import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_v2.BulkElement;
-import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.record_v2.ExternalID;
-import org.orcid.jaxb.model.record_v2.ExternalIDs;
-import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.jaxb.model.record_v2.WorkTitle;
-import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.record_rc3.BulkElement;
+import org.orcid.jaxb.model.record_rc3.CitationType;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
+import org.orcid.jaxb.model.record_rc3.WorkTitle;
+import org.orcid.jaxb.model.record_rc3.WorkType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -62,16 +64,15 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class WorksTest extends BlackBoxBaseV2Release {
-    @Resource(name = "memberV2ApiClient")
+public class WorksTest extends BlackBoxBaseRC3 {
+    @Resource(name = "memberV2ApiClient_rc3")
     private MemberV2ApiClientImpl memberV2ApiClient;        
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
-        showMyOrcidPage();
-    	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         
@@ -87,7 +88,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc3/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
@@ -132,11 +133,11 @@ public class WorksTest extends BlackBoxBaseV2Release {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Work work1 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         work1.setPutCode(null);
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_v2.WorkTitle title1 = new org.orcid.jaxb.model.record_v2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title1 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title1.setTitle(new Title("Work # 1" + time));
         work1.setWorkTitle(title1);
         ExternalID wExtId1 = new ExternalID();
@@ -147,10 +148,10 @@ public class WorksTest extends BlackBoxBaseV2Release {
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
 
-        Work work2 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         work2.setPutCode(null);
         work2.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_v2.WorkTitle title2 = new org.orcid.jaxb.model.record_v2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title2 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title2.setTitle(new Title("Work # 2" + time));
         work2.setWorkTitle(title2);
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -162,10 +163,10 @@ public class WorksTest extends BlackBoxBaseV2Release {
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         
-        Work work3 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         work3.setPutCode(null);
         work3.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_v2.WorkTitle title3 = new org.orcid.jaxb.model.record_v2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title3 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title3.setTitle(new Title("Work # 3" + time));
         work3.setWorkTitle(title3);        
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -242,7 +243,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -256,7 +257,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc3/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);

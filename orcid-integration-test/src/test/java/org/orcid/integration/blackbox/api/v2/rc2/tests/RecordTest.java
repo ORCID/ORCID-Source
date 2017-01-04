@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.release;
+package org.orcid.integration.blackbox.api.v2.rc2.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,36 +28,38 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
+import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_v2.Educations;
-import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_v2.Employments;
-import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_v2.Fundings;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
-import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -70,10 +72,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class RecordTest extends BlackBoxBaseV2Release {    
-    @Resource(name = "memberV2ApiClient")
+public class RecordTest extends BlackBoxBaseRC2 {    
+    @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-    @Resource(name = "publicV2ApiClient")
+    @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
         
     @Test
@@ -285,7 +287,7 @@ public class RecordTest extends BlackBoxBaseV2Release {
                 }
             }            
         }
-    }    
+    }        
     
     @Test
     public void testViewRecordFromPublicAPI() {
