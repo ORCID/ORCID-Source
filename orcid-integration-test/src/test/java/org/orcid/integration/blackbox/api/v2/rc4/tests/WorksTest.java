@@ -183,14 +183,17 @@ public class WorksTest extends BlackBoxBaseRC4 {
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work1, accessTokenForClient1);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode1 = getPutCodeFromResponse(postResponse);
         
         postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work2, accessTokenForClient1);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode2 = getPutCodeFromResponse(postResponse);
         
         postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), work3, accessTokenForClient2);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        Long putCode3 = getPutCodeFromResponse(postResponse);
         
         ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), accessTokenForClient1);
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
@@ -234,11 +237,26 @@ public class WorksTest extends BlackBoxBaseRC4 {
             }            
         }
         
-        assertTrue(work1found && work2found && work3found);
+        assertTrue(work1found);
+        assertTrue(work2found);
+        assertTrue(work3found);
         //Check that work # 1 and Work # 3 are in the same work
         assertEquals(work1Group, work3Group);
         //Check that work # 2 is not in the same group than group # 1
         assertThat(work2Group, not(work1Group));
+        
+        //Remove all created works
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode1, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode2, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode3, accessTokenForClient2);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test

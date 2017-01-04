@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2.tests;
+package org.orcid.integration.blackbox.api.v2.rc1.tests;
 
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
@@ -31,21 +31,23 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
-import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
-import org.orcid.jaxb.model.common_rc2.Title;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.error_rc2.OrcidError;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
+import org.orcid.integration.blackbox.api.v2.rc1.MemberV2ApiClientImpl;
+import org.orcid.jaxb.model.common_rc1.Title;
+import org.orcid.jaxb.model.common_rc1.Url;
+import org.orcid.jaxb.model.common_rc1.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc1.Identifier;
+import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.CitationType;
+import org.orcid.jaxb.model.record_rc1.Relationship;
+import org.orcid.jaxb.model.record_rc1.Work;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -58,21 +60,21 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class WorksTest extends BlackBoxBaseRC2 {
-    @Resource(name = "memberV2ApiClient_rc2")
+public class WorksTest extends BlackBoxBaseRC1 {
+    @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
     
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
         changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
-        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
+        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();        
         
-        ExternalID wExtId = new ExternalID();
-        wExtId.setValue("Work Id " + time);
-        wExtId.setType("agr");
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         wExtId.setUrl(new Url("http://test.orcid.org/" + time));
         
@@ -82,12 +84,12 @@ public class WorksTest extends BlackBoxBaseRC2 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
         
-        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
         assertEquals("work:citation", gotWork.getWorkCitation().getCitation());
         assertEquals(CitationType.FORMATTED_UNSPECIFIED, gotWork.getWorkCitation().getWorkCitationType());
         
@@ -124,25 +126,28 @@ public class WorksTest extends BlackBoxBaseRC2 {
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        ExternalID wExtId = new ExternalID();
-        wExtId.setValue("Work Id " + time);
-        wExtId.setType(WorkExternalIdentifierType.AGR.value());
+        
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
+        wExtId.setUrl(new Url("http://test.orcid.org/" + time));
+        
         workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + this.getUser1OrcidId() + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
@@ -150,7 +155,7 @@ public class WorksTest extends BlackBoxBaseRC2 {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("common:title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
+        assertEquals("Current treatment of left main coronary artery disease", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -161,48 +166,54 @@ public class WorksTest extends BlackBoxBaseRC2 {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work1.setPutCode(null);
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_rc2.WorkTitle title1 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc1.WorkTitle title1 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
         title1.setTitle(new Title("Work # 1" + time));
         work1.setWorkTitle(title1);
-        ExternalID wExtId1 = new ExternalID();
-        wExtId1.setValue("Work Id " + time);
-        wExtId1.setType(WorkExternalIdentifierType.AGR.value());
-        wExtId1.setRelationship(Relationship.SELF);
+        
+        WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
+        wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId1.setRelationship(Relationship.SELF);        
         wExtId1.setUrl(new Url("http://orcid.org/work#1"));
+        
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
 
-        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work work2 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work2.setPutCode(null);
         work2.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc2.WorkTitle title2 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc1.WorkTitle title2 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
         title2.setTitle(new Title("Work # 2" + time));
         work2.setWorkTitle(title2);
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
-        ExternalID wExtId2 = new ExternalID();
-        wExtId2.setValue("Work Id " + time);
-        wExtId2.setType(WorkExternalIdentifierType.AGR.value());
+        
+        WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
+        wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId2.setRelationship(Relationship.PART_OF);
         wExtId2.setUrl(new Url("http://orcid.org/work#2"));
+        
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         
-        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+        Work work3 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work3.setPutCode(null);
         work3.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc2.WorkTitle title3 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc1.WorkTitle title3 = new org.orcid.jaxb.model.record_rc1.WorkTitle();
         title3.setTitle(new Title("Work # 3" + time));
         work3.setWorkTitle(title3);        
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
-        ExternalID wExtId3 = new ExternalID();
-        wExtId3.setValue("Work Id " + time);
-        wExtId3.setType(WorkExternalIdentifierType.AGR.value());
+        
+        WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
+        wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
+        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId3.setRelationship(Relationship.SELF);
         wExtId3.setUrl(new Url("http://orcid.org/work#3"));
+        
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
         work3.getExternalIdentifiers().getExternalIdentifier().add(wExtId3);
         
@@ -237,7 +248,7 @@ public class WorksTest extends BlackBoxBaseRC2 {
         boolean work3found = false;
                                 
         for(WorkGroup group : activities.getWorks().getWorkGroup()) {
-            if(group.getIdentifiers().getExternalIdentifier() == null || group.getIdentifiers().getExternalIdentifier().isEmpty()) {
+            if(group.getIdentifiers().getIdentifier() == null || group.getIdentifiers().getIdentifier().isEmpty()) {
                 for(WorkSummary summary : group.getWorkSummary()) {
                     String title = summary.getTitle().getTitle().getContent(); 
                     if (("Work # 2" + time).equals(title)) {
@@ -246,9 +257,9 @@ public class WorksTest extends BlackBoxBaseRC2 {
                     }
                 }
             } else {
-                for(ExternalID id : group.getIdentifiers().getExternalIdentifier()) {
+                for(Identifier id : group.getIdentifiers().getIdentifier()) {
                     //If it is the ID is the one we are looking for
-                    if(id.getValue().equals("Work Id " + time)) {                    
+                    if(id.getExternalIdentifierId().equals("Work Id " + time)) {                    
                         for(WorkSummary summary : group.getWorkSummary()) {
                             String title = summary.getTitle().getTitle().getContent(); 
                             if(("Work # 1" + time).equals(title)) {
