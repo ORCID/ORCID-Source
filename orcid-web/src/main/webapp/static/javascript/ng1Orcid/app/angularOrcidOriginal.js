@@ -28,6 +28,8 @@
  *  
  */
 
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+ 
 /*
  * RANDOM FUNCTIONS
  */ 
@@ -498,7 +500,18 @@ ActSortState.prototype.sortBy = function(key) {
 
 
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+//var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+/*
+angular.module(
+  'orcidApp', 
+  [
+    'ngCookies',
+    'ngSanitize',
+    'ui.multiselect',
+    'vcRecaptcha'
+  ]
+);
+*/ 
 
 /*
  * SERVICES
