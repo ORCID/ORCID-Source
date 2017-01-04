@@ -21,8 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
-import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_v2.Filterable;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -45,54 +44,41 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
-    @Override
-    public void checkIsPublic(Filterable filterable) {
-        if(filterable != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
-            throw new OrcidUnauthorizedException("The activity is not public");
-        }
-    }
-
+    
     @Override
     public void checkIsPublic(VisibilityType visibilityType) {
-        if(visibilityType != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
-            throw new OrcidUnauthorizedException("The element is not public");
+        if (visibilityType != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
+            throw new OrcidNonPublicElementException();
         }
     }
 
     @Override
     public void checkIsPublic(Biography biography) {
         if(biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
-            throw new OrcidUnauthorizedException("The biography is not public");
+            throw new OrcidNonPublicElementException();
         }
     }
-
-    @Override
-    public void checkIsPublic(Name name) {
-        if(name != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(name.getVisibility())) {
-            throw new OrcidUnauthorizedException("The name is not public");
-        }
-    }
-
+    
     @Override
     public void filter(ActivitiesSummary activitiesSummary) {
         if (activitiesSummary == null) {
             return;
         }
         if (activitiesSummary.getEmployments() != null) {
-            filter(activitiesSummary.getEmployments());
+            filter(activitiesSummary.getEmployments());            
         }
         if (activitiesSummary.getEducations() != null) {
-            filter(activitiesSummary.getEducations());
+            filter(activitiesSummary.getEducations());            
         }
 
         if (activitiesSummary.getFundings() != null) {
-            filter(activitiesSummary.getFundings());
+            filter(activitiesSummary.getFundings());            
         }
         if (activitiesSummary.getWorks() != null) {
-            filter(activitiesSummary.getWorks());
+            filter(activitiesSummary.getWorks());            
         }
         if (activitiesSummary.getPeerReviews() != null) {
-            filter(activitiesSummary.getPeerReviews());
+            filter(activitiesSummary.getPeerReviews());            
         }
     }
 
@@ -106,7 +92,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
             try {
                 checkIsPublic(e);
                 return false;
-            } catch (OrcidUnauthorizedException ex) {
+            } catch (OrcidNonPublicElementException ex) {
                 return true;
             }
         });
@@ -128,7 +114,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
                     GroupableActivity activity = activityIt.next();
                     try {
                         checkIsPublic(activity);
-                    } catch (OrcidUnauthorizedException e) {
+                    } catch (OrcidNonPublicElementException e) {
                         activityIt.remove();
                     }
                 }
@@ -147,7 +133,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (personalDetails.getName() != null) {
             try {
                 checkIsPublic(personalDetails.getName());
-            } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            } catch (OrcidNonPublicElementException e) {
                 personalDetails.setName(null);
             }
         }
@@ -155,7 +141,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (personalDetails.getBiography() != null) {
             try {
                 checkIsPublic(personalDetails.getBiography());
-            } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
+            } catch (OrcidNonPublicElementException e) {
                 personalDetails.setBiography(null);
             }
         }
@@ -165,10 +151,10 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
                 try {
                     checkIsPublic(e);
                     return false;
-                } catch (OrcidUnauthorizedException ex) {
+                } catch (OrcidNonPublicElementException ex) {   
                     return true;
                 }
-            });
+            });            
         }
     }
 
@@ -230,7 +216,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
             try {
                 checkIsPublic(e);
                 return false;
-            } catch (OrcidUnauthorizedException ex) {
+            } catch (OrcidNonPublicElementException ex) {
                 return true;
             }
         });
@@ -270,7 +256,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (name != null) {
             try {
                 checkIsPublic(name);
-            } catch (OrcidUnauthorizedException ex) {
+            } catch (OrcidNonPublicElementException ex) {
                 person.setName(null);
             }
         }
@@ -279,7 +265,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (bio != null) {
             try {
                 checkIsPublic(bio);
-            } catch (OrcidUnauthorizedException ex) {
+            } catch (OrcidNonPublicElementException ex) {
                 person.setBiography(null);
             }
 

@@ -11972,14 +11972,19 @@ orcidNgModule.directive('fnForm', function($document) {
         scope: {
             updateFn: '&'
         },
-        link: function(scope, elm, attrs) { 
-            $document.bind("keydown", function(event) {
-                if (event.which === 13) {
-                      scope.updateFn();                      
-                      event.stopPropagation();
+        link: function(scope, elm, attrs) {
+
+            $(document).unbind("keydown.keydownUpfateFn");
+
+            $document.bind(
+                "keydown.keydownUpfateFn",
+                function(event) {
+                    if (event.which === 13) {
+                        scope.updateFn();                 
+                        event.stopPropagation();
+                    }
                 }
-            });
-                    
+            );                   
         }
     }
 });

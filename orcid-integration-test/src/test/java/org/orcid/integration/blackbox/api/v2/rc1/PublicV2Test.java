@@ -513,12 +513,12 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
             response = publicV2ApiClient.viewWorkXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -527,12 +527,12 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
             response = publicV2ApiClient.viewWorkSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
     }
 
@@ -565,12 +565,12 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
             response = publicV2ApiClient.viewFundingXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -579,12 +579,12 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
             response = publicV2ApiClient.viewFundingSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
     }
 
@@ -612,20 +612,20 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
 
         ClientResponse response = publicV2ApiClient.viewEmploymentXml(getUser1OrcidId(), putCode);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
         response = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
         
     }
 
@@ -660,11 +660,11 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         } else {
             response = publicV2ApiClient.viewEducationXml(getUser1OrcidId(), putCode);
         }
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -672,11 +672,11 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         } else {
             response = publicV2ApiClient.viewEducationSummaryXml(getUser1OrcidId(), putCode);
         }
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
         
     }
     
@@ -711,11 +711,11 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         } else {
             response = publicV2ApiClient.viewPeerReviewXml(getUser1OrcidId(), putCode);
         }
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -723,11 +723,11 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         } else {
             response = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode);
         }
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
-        assertEquals(new Integer(9017), result.getErrorCode());
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        assertEquals(new Integer(9039), result.getErrorCode());
+        assertEquals("Element is not public", result.getDeveloperMessage());
         
     }
 
@@ -891,7 +891,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     private void checkResponse(ClientResponse response) {
-        if(Response.Status.UNAUTHORIZED.getStatusCode() == response.getStatus()) {
+        if(Response.Status.FORBIDDEN.getStatusCode() == response.getStatus()) {
             fail("Activity is not public, please verify users default visibility is public");
         }
     }
