@@ -89,7 +89,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String locationPath = response.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc4/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v2.0/" + testUser1OrcidId + "/notification-permission/\\d+"));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc4/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v2.0/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
@@ -164,7 +164,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc4/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v2.0/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
@@ -190,7 +190,7 @@ public class NotificationsTest {
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
         assertTrue("Location header path should match pattern, but was " + locationPath,
-                locationPath.matches(".*/v2.0_rc4/" + testUser1OrcidId + "/notification-permission/\\d+"));
+                locationPath.matches(".*/v2.0/" + testUser1OrcidId + "/notification-permission/\\d+"));
         String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
         Long putCode = Long.valueOf(putCodeString);
 
