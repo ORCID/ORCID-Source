@@ -91,11 +91,12 @@ public class BibtexManagerImpl implements BibtexManager{
                 try{
                     String bibtex = doiManager.fetchDOIBibtex(doi);
                     if (bibtex != null)
-                        return bibtex;
-                }catch(Exception e){
-                  //something went wrong at crossref/datacite e.g. 10.1890/1540-9295(2006)004[0244:elsdvs]2.0.co;2
-                  //ignore and use our metadata
-                  LOGGER.warn("cannot resolve DOI to metadata:"+doi);
+                        return bibtex;                    
+                }catch (Exception e){
+                    //something went wrong at crossref/datacite e.g. 10.1890/1540-9295(2006)004[0244:elsdvs]2.0.co;2
+                    //ignore and use our metadata
+                    LOGGER.warn("cannot resolve DOI to metadata:"+doi);
+
                 }
             }
         }
@@ -127,10 +128,10 @@ public class BibtexManagerImpl implements BibtexManager{
         //id
         out.append(escapeStringForBibtex(creditName).replace(' ', '_')+work.getPutCode());   
         //title
-        out.append(",\ntitle = {"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
+        out.append(",\ntitle={"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
         //journal title
         if (work.getJournalTitle() != null) {
-            out.append(",\njournal = {"+escapeStringForBibtex(work.getJournalTitle().getContent())+"}");
+            out.append(",\njournal={"+escapeStringForBibtex(work.getJournalTitle().getContent())+"}");
         }
         //name
         List<String> names = new ArrayList<String>();
@@ -142,29 +143,29 @@ public class BibtexManagerImpl implements BibtexManager{
                 }
             }
         }
-        out.append(",\nauthor = {"+escapeStringForBibtex(Joiner.on(" and ").skipNulls().join(names))+"}");
+        out.append(",\nauthor={"+escapeStringForBibtex(Joiner.on(" and ").skipNulls().join(names))+"}");
         //ids
         String doi = extractID(work, WorkExternalIdentifierType.DOI);
         String url = extractID(work, WorkExternalIdentifierType.URI);
         if (doi != null) {
-            out.append(",\ndoi = {"+escapeStringForBibtex(doi)+"}");
+            out.append(",\ndoi={"+escapeStringForBibtex(doi)+"}");
         }
         if (url != null) {
-            out.append(",\nurl = {"+escapeStringForBibtex(url)+"}");
+            out.append(",\nurl={"+escapeStringForBibtex(url)+"}");
         } else if (doi != null) {
-            out.append(",\nurl = {"+escapeStringForBibtex("http://doi.org/" + doi)+"}");
+            out.append(",\nurl={"+escapeStringForBibtex("http://doi.org/" + doi)+"}");
         } else {
             url = extractID(work, WorkExternalIdentifierType.HANDLE);
             if (url != null) {
-                out.append(",\nurl = {"+escapeStringForBibtex(url)+"}");
+                out.append(",\nurl={"+escapeStringForBibtex(url)+"}");
             }
         }
         String isbn = extractID(work, WorkExternalIdentifierType.ISBN);
         if (isbn != null)
-            out.append(",\nisbn = {"+escapeStringForBibtex(isbn)+"}");
+            out.append(",\nisbn={"+escapeStringForBibtex(isbn)+"}");
         String issn = extractID(work, WorkExternalIdentifierType.ISSN);              
         if (issn !=null)
-            out.append(",\nissn = {"+escapeStringForBibtex(issn)+"}");
+            out.append(",\nissn={"+escapeStringForBibtex(issn)+"}");
         
         //year
         if (work.getPublicationDate() != null) {
@@ -174,7 +175,7 @@ public class BibtexManagerImpl implements BibtexManager{
             } catch (Exception e) {
             }
             if (year > 0) {
-                out.append(",\nyear = {"+year+"}");
+                out.append(",\nyear={"+year+"}");
             }
 
         }
