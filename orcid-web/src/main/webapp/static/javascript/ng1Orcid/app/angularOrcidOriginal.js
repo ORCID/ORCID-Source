@@ -30,7 +30,7 @@
 
 /*
  * RANDOM FUNCTIONS
- */
+ */ 
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {
