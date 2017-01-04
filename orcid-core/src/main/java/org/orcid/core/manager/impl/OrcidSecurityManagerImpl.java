@@ -208,11 +208,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
     }
 
-    @Override
-    public boolean isPasswordConfirmationManualEditRequired() {
-        return false;
-    }
-
     private Authentication getAuthentication() {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
