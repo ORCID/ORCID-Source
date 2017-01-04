@@ -749,8 +749,8 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
-        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is("https://test.orcid.org/test1"), is("https://test.orcid.org/test2")));
-        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is("https://test.orcid.org/test1"), is("https://test.orcid.org/test2")));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
         assertNotNull(person.getName());
@@ -807,8 +807,8 @@ public class PersonTest extends BlackBoxBaseV2Release {
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
         assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
-        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is("https://test.orcid.org/test1"), is("https://test.orcid.org/test2")));
-        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is("https://test.orcid.org/test1"), is("https://test.orcid.org/test2")));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
         assertNotNull(person.getName());

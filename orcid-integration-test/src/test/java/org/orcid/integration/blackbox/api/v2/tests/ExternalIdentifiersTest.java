@@ -88,9 +88,11 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV2Release {
         }
         signin();
         showMyOrcidPage();
-        openEditExternalIdentifiersModal();
-        deleteExternalIdentifiers();
-        saveExternalIdentifiersModal();
+        if(hasExternalIdentifiers()) {
+            openEditExternalIdentifiersModal();
+            deleteExternalIdentifiers();
+            saveExternalIdentifiersModal();            
+        }
         putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         allSet = true;

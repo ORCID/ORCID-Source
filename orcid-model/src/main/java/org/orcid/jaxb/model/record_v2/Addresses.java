@@ -47,9 +47,9 @@ public class Addresses implements Serializable {
     protected String path;
 
     public List<Address> getAddress() {
-        if(address == null) {
+        if (address == null) {
             address = new ArrayList<>();
-         }
+        }
         return address;
     }
 
@@ -95,12 +95,12 @@ public class Addresses implements Serializable {
             return false;
         return true;
     }
-        
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

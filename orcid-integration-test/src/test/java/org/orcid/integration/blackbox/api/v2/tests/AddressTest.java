@@ -600,8 +600,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         for (org.orcid.jaxb.model.record_rc2.Address add : addresses_rc2.getAddress()) {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, add.getVisibility());
             if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common_rc2.Iso3166Country.US)) {
-                found = true;
-                break;
+                found = true;                
             }
         }
 
@@ -618,7 +617,6 @@ public class AddressTest extends BlackBoxBaseV2Release {
             assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC, add.getVisibility());
             if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common_rc3.Iso3166Country.US)) {
                 found = true;
-                break;
             }
         }
 
@@ -635,7 +633,6 @@ public class AddressTest extends BlackBoxBaseV2Release {
             assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, add.getVisibility());
             if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common_rc4.Iso3166Country.US)) {
                 found = true;
-                break;
             }
         }
 
@@ -652,7 +649,6 @@ public class AddressTest extends BlackBoxBaseV2Release {
             assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, add.getVisibility());
             if (add.getCountry().getValue().equals(org.orcid.jaxb.model.common_v2.Iso3166Country.US)) {
                 found = true;
-                break;
             }
         }        
         
