@@ -26,6 +26,7 @@ angular.module('orcidApp').directive(
         '$rootScope',
         '$timeout',
         function( $compile, $rootScope, $timeout ) {
+            console.log("directive loaded");
             $scope.content = {
                 btncancel : om.get("orcid.frontend.freemarker.btncancel"),
                 emailValue : "",

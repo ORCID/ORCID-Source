@@ -19,6 +19,7 @@
 angular.module('orcidApp').directive('compile', function($compile) {
   // directive factory creates a link function
   return function(scope, element, attrs) {
+    console.log("directive loaded");
     scope.$watch(
       function(scope) {
          // watch the 'compile' expression for changes

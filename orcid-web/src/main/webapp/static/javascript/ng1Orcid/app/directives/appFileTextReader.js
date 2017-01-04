@@ -24,6 +24,7 @@ angular.module('orcidApp').directive('appFileTextReader', function($q){
             updateFn: '&'
         },
         link: function(scope, element, attrs, ngModelCtrl){
+            console.log("directive loaded");
             if(!ngModelCtrl) return;
             ngModelCtrl.$render = function(){};
             element.bind('change', function(event){

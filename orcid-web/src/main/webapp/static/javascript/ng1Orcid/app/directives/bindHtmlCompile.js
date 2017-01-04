@@ -20,6 +20,7 @@ angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
+            console.log("directive loaded");
             scope.$watch(function () {
                 return scope.$eval(attrs.bindHtmlCompile);
             }, function (value) {
