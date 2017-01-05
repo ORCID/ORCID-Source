@@ -374,17 +374,17 @@
           <!-- BibTeX Export Layout -->         
           <div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
             <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer">Hide export BibTeX</span>
+              <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                 <p>
-                  Export your works to a BibTeX file. For more information see <a href="">exporting works</a>.
+	                <@orcid.msg 'workspace.bibtexExporter.intro'/>
                 </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
                 <span class="bibtext-options">                                        
-                  <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>             
-                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()">Export</span>                   
+                  <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
+                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
                 </span>                   
                 </div>
               </div>
@@ -393,7 +393,7 @@
 	          <span class="dotted-bar"></span>
               <ul class="inline-list">
                 <li>
-                  Generating BibTeX, please wait...
+	                <@orcid.msg 'workspace.bibtexExporter.generating'/>
                 </li>
                 <li>
                   &nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>    

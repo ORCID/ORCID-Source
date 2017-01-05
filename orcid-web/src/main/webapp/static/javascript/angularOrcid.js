@@ -6790,7 +6790,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data.data];
                     blobObject = new Blob(fileData, {type: 'text/plain'});
-                    window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+                    window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                
                 } else {
                     var anchor = angular.element('<a/>');
                     anchor.css({display: 'none'});
@@ -6798,7 +6798,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
                     anchor.attr({
                       href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
                       target: '_self',
-                      download: 'orcid.bib'
+                      download: 'works.bib'
                     })[0].click();
                     anchor.remove();
                 }
