@@ -1,0 +1,15 @@
+{
+  "name": "ng1-orcid",
+  "version": "1.0.0",
+  "description": "Angular 1.5 Orcid App",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "css-loader": "^0.26.1",
+    "html-loader": "^0.4.4",
+    "sass-loader": "^4.1.1",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.14.0"
+  }
+}
