@@ -16,13 +16,7 @@
  */
 package org.orcid.core.exception;
 
-import java.util.Map;
-
 public class OrcidAccessControlException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
-
-    public OrcidAccessControlException(Map<String, String> params) {
-        super(params);
-    }
 }

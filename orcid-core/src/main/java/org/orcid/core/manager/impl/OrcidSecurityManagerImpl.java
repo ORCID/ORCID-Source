@@ -235,9 +235,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 return;
             }
         }
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("requiredScope", requiredScope.value());
-        throw new OrcidAccessControlException(params);
+        throw new OrcidAccessControlException();
     }
 
     @Override
