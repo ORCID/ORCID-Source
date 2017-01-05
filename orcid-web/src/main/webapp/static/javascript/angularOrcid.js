@@ -509,7 +509,7 @@ var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.mu
 orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
-        modalManualEditVerificationEnabled: false
+        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
     };
 
     var locationObj = $location.search();
