@@ -86,7 +86,7 @@
         <div class="relative">
             <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
-            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 &&  && !showDeactivatedError && !showReactivationSent">
+            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
 				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>
    			</span>
         </div>
