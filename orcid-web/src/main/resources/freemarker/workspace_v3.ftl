@@ -492,13 +492,21 @@
 <script type="text/ng-template" id="verify-email-modal">  
   <div class="lightbox-container"> 
     <div class="row">
-      <div class="col-md-12 col-xs-12 col-sm-12">
+      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="verifiedModalEnabled">
+        <!-- New -->
         <h4><@orcid.msg 'workspace.your_primary_email'/></h4>
         <p><@orcid.msg 'workspace.ensure_future_access'/></p>
-        <p><@orcid.msg 'workspace.ensure_future_access2'/><br /><a href="mailto:{{emailsPojo.emails[0].value}}" target="_blank">{{emailsPojo.emails[0].value}}</a></p>
-        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/><a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
-
+        <p><@orcid.msg 'workspace.ensure_future_access2'/> <a href="mailto:{{emailsPojo.emails[0].value}}" target="_blank">{{emailsPojo.emails[0].value}}</a></p>
+        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
         <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>        
+        <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
+      </div>
+
+      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="!verifiedModalEnabled">
+        <!-- Original -->
+        <h4><@orcid.msg 'workspace.your_primary_email_old'/></h4>
+        <p><@orcid.msg 'workspace.ensure_future_access_old'/></p>
+        <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_old'/></button>        
         <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
       </div>
     </div>

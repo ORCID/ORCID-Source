@@ -4643,7 +4643,7 @@ orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', funct
     $scope.getClaim();
 }]);
 
-orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $compile, emailSrvc, initialConfigService) {
     $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
@@ -4652,9 +4652,12 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
             //data: $scope.emailsPojo,
             dataType: 'json',
             success: function(data) {
+                var configuration = initialConfigService.getInitialConfiguration();
+                var primeVerified = false;
+
+                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
                 $scope.emailsPojo = data;
                 $scope.$apply();
-                var primeVerified = false;
                 for (i in $scope.emailsPojo.emails) {
                     if ($scope.emailsPojo.emails[i].primary) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
@@ -5221,7 +5224,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     $scope.workspaceSrvc = workspaceSrvc;
     
     /////////////////////// Begin of verified email logic for work
-    var configuration = initialConfigService.getInitialConfiguration();
     var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
@@ -6035,7 +6037,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     
 
     /////////////////////// Begin of verified email logic for work
-    var configuration = initialConfigService.getInitialConfiguration();
     var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
