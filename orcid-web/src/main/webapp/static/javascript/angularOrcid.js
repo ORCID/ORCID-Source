@@ -101,15 +101,23 @@
 	/*
 	 * Structure of this file:
 	 * 
+	 *  - 0 - App Init
 	 *  - 1 - Utility functions
 	 *  - 2 - Groupings logic
 	 *  - 3 - Angular Services
-	 *  - Angular Controllers
-	 *  - Angular Filters
-	 *  - Angular Directives
-	 *  - Angular Multiselect Module
+	 *  - 4 - Angular Controllers
+	 *  - 5 - Angular Filters
+	 *  - 6 - Angular Directives
+	 *  - 7 - Angular Multiselect Module
 	 *  
 	 */
+
+
+	/*
+	 * 0 - App Init
+	 */
+	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
 
 	/*
 	 * 1 - Utility functions
@@ -582,14 +590,14 @@
 
 
 
-	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
 
 	/*************************************************
 	 * 3 - Angular Services
 	 *************************************************/
 
 
-	orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
 	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
 	    var configValues = {
 	        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
@@ -615,7 +623,7 @@
 	}]);
 
 
-	orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
 	    var actBulkSrvc = {
 	        initScope: function($scope) {
 	            $scope.bulkEditShow = false;
@@ -630,7 +638,7 @@
 	    return actBulkSrvc;
 	}]);
 
-	orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
 	    var bioBulkSrvc = {
 	        initScope: function($scope) {
 	            $scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
@@ -646,7 +654,7 @@
 	    return bioBulkSrvc;
 	}]);
 
-	orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
+	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
 	    var commonSrvc = {
 	        copyErrorsLeft: function (data1, data2) {
 	            for (var key in data1) {
@@ -704,7 +712,7 @@
 	    return commonSrvc;
 	}]);
 
-	orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
 	        educations: new Array(),
 	        employments: new Array(),
@@ -821,7 +829,7 @@
 	    return serv;
 	}]);
 
-	orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
 	        displayEducation: true,
 	        displayEmployment: true,
@@ -875,7 +883,7 @@
 	/**
 	 * Fundings Service
 	 * */
-	orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($rootScope) {
 	    var fundingSrvc = {
 	        fundings: new Array(),
 	        groups: new Array(),
@@ -1072,7 +1080,7 @@
 	    return fundingSrvc;
 	}]);
 
-	orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
 	    var worksSrvc = {
 	        bibtexJson: {},
 	        blankWork: null,
@@ -1629,7 +1637,7 @@
 	    return worksSrvc;
 	}]);
 
-	orcidNgModule.factory("emailSrvc", function ($rootScope, $location, $timeout) {
+	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
 	    var serv = {
 	        emails: null,            
 	        delEmail: null,
@@ -1763,7 +1771,7 @@
 	    return serv;
 	});
 
-	orcidNgModule.factory("prefsSrvc", function ($rootScope) {
+	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
 	    var serv = {
 	        prefs: null,
 	        saved: false,
@@ -1808,7 +1816,7 @@
 	    return serv; 
 	});
 
-	orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
+	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
 	    var defaultMaxResults = 10;
 	    var serv = {
 	        loading: true,
@@ -2022,7 +2030,7 @@
 	    return serv;
 	}]);
 
-	orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
 	    var widgetSrvc = {
 	        locale: 'en',
 	        setLocale: function (locale) {
@@ -2032,7 +2040,7 @@
 	    return widgetSrvc;
 	}]);
 
-	orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
 	    var serv = {
 	        feed: null,
 	        getDiscoFeed: function() {
@@ -2079,7 +2087,7 @@
 	    return serv; 
 	}]);
 
-	orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
 	        membersList: null,
 	        memberDetails: {},
@@ -2166,7 +2174,7 @@
 	    return serv; 
 	}]);
 
-	orcidNgModule.factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
 	    return {
 	          clearFilters : function ($scope){
 	              $scope.by_country = undefined;
@@ -2176,7 +2184,7 @@
 	     };
 	 }]);
 
-	orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
 	    var peerReviewSrvc = {
 	            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
 	            groups: new Array(),            
@@ -2432,7 +2440,7 @@
 	 * CONTROLLERS
 	 */
 
-	orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
+	angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
 	    // email edit row
 	    $scope.emailUpdateToggleText = function () {
@@ -2567,18 +2575,18 @@
 	    $scope.socialNetworksUpdateToggleText();
 	}]);
 
-	orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc',function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+	angular.module('orcidApp').controller('NotificationPreferencesCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc',function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
 	    $scope.prefsSrvc = prefsSrvc;
 	    $scope.emailSrvc = emailSrvc;
 	}]);
 
-	orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', function ($scope, $compile, emailSrvc, prefsSrvc) {
+	angular.module('orcidApp').controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', function ($scope, $compile, emailSrvc, prefsSrvc) {
 	    $scope.prefsSrvc = prefsSrvc;
 	    $scope.emailSrvc = emailSrvc;
 	    
 	}]);
 
-	orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+	angular.module('orcidApp').controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
 	    $scope.getEmailFrequencies = function() {
 	        $.ajax({
 	            url: window.location.href + '/email-frequencies.json',
@@ -2612,7 +2620,7 @@
 	    $scope.getEmailFrequencies();
 	}]);
 
-	orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', 'commonSrvc', function ($scope, prefsSrvc, commonSrvc) {
+	angular.module('orcidApp').controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', 'commonSrvc', function ($scope, prefsSrvc, commonSrvc) {
 	    $scope.prefsSrvc = prefsSrvc;
 	    $scope.privacyHelp = {};
 	    $scope.showElement = {};
@@ -2637,11 +2645,11 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('EmailPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
+	angular.module('orcidApp').controller('EmailPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
 	    $scope.prefsSrvc = prefsSrvc;
 	}]);
 
-	orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+	angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
 	    $scope.sendDeactivateEmail = function() {
 	        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 	        $.ajax({
@@ -2666,7 +2674,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
+	angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
 	    $scope.errors = null;
 	    $scope.password = null;
 	    $scope.securityQuestions = [];
@@ -2731,7 +2739,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
+	angular.module('orcidApp').controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
 	    $scope.getChangePassword = function() {
 	        $.ajax({
 	            url: getBaseUri() + '/account/change-password.json',
@@ -2772,7 +2780,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
+	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
 	    bioBulkSrvc.initScope($scope);
 	    $scope.emailSrvc = emailSrvc;
 	    $scope.privacyHelp = {};
@@ -2962,7 +2970,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
+	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	    bioBulkSrvc.initScope($scope);
 
 	    $scope.commonSrvc = commonSrvc;
@@ -3237,7 +3245,7 @@
 	    $scope.getWebsitesForm();
 	}]);
 
-	orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
+	angular.module('orcidApp').controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService',  function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	    bioBulkSrvc.initScope($scope);
 	    $scope.commonSrvc = commonSrvc;
 	    $scope.defaultVisibility = null;
@@ -3469,7 +3477,7 @@
 	    $scope.getKeywordsForm();
 	}]);
 
-	orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
+	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
 	    $scope.showEdit = false;
 	    $scope.nameForm = null;
 	    $scope.privacyHelp = false;
@@ -3524,7 +3532,7 @@
 	    $scope.getNameForm();
 	}]);
 
-	orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
+	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
 	    bioBulkSrvc.initScope($scope);  
 	    $scope.showEdit = false;
 	    $scope.otherNamesForm = null;
@@ -3724,7 +3732,7 @@
 	    $scope.getOtherNamesForm();
 	}]);
 
-	orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
+	angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
 	    $scope.biographyForm = null;
 	    $scope.emailSrvc = emailSrvc;
 	    $scope.lengthError = false;
@@ -3837,7 +3845,7 @@
 
 	}]);
 
-	orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
+	angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	    bioBulkSrvc.initScope($scope);
 	    $scope.commonSrvc = commonSrvc;
 	    $scope.countryForm = null;
@@ -4082,7 +4090,7 @@
 	    $scope.getCountryForm();
 	}]);
 
-	orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
+	angular.module('orcidApp').controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
 	    bioBulkSrvc.initScope($scope);
 	    $scope.externalIdentifiersForm = null;
 	    $scope.orcidId = orcidVar.orcidId;
@@ -4257,7 +4265,7 @@
 	   $scope.getExternalIdentifiersForm();  
 	}]);
 
-	orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {
+	angular.module('orcidApp').controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {
 	    $scope.getResetPasswordForm = function(){
 	        $.ajax({
 	            url: getBaseUri() + '/password-reset.json',
@@ -4293,7 +4301,7 @@
 	    $scope.getResetPasswordForm();
 	}]);
 
-	orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
+	angular.module('orcidApp').controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
 	    $scope.privacyHelp = {};
 	    $scope.recaptchaWidgetId = null;
 	    $scope.recatchaResponse = null;
@@ -4551,7 +4559,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
+	angular.module('orcidApp').controller('ReactivationCtrl', ['$scope', '$compile', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, commonSrvc, vcRecaptchaService) {
 	    
 	    $scope.privacyHelp = {};
 
@@ -4643,7 +4651,7 @@
 	}]);
 
 
-	orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
+	angular.module('orcidApp').controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
 	    $scope.postingClaim = false;
 	    $scope.getClaim = function(){
 	        $.ajax({
@@ -4726,7 +4734,7 @@
 	    $scope.getClaim();
 	}]);
 
-	orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+	angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
 	    $scope.loading = true;
 	    $scope.getEmails = function() {
 	        $.ajax({
@@ -4817,7 +4825,7 @@
 	    $scope.getEmails();
 	}]);
 
-	orcidNgModule.controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
+	angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
 	    $scope.showThanks = function () {
 	        var colorboxHtml;
 	            if ($scope.sourceGrantReadWizard.url == null)
@@ -4866,14 +4874,14 @@
 	    $scope.getSourceGrantReadWizard();
 	}]);
 
-	orcidNgModule.controller('PersonalInfoCtrl', ['$scope', '$compile', 'workspaceSrvc',function ($scope, $compile, workspaceSrvc){
+	angular.module('orcidApp').controller('PersonalInfoCtrl', ['$scope', '$compile', 'workspaceSrvc',function ($scope, $compile, workspaceSrvc){
 	    $scope.displayInfo = workspaceSrvc.displayPersonalInfo;
 	    $scope.toggleDisplayInfo = function () {
 	        $scope.displayInfo = !$scope.displayInfo;
 	    };
 	}]);
 
-	orcidNgModule.controller('WorkspaceSummaryCtrl', ['$scope', '$compile', 'affiliationsSrvc', 'fundingSrvc', 'worksSrvc', 'peerReviewSrvc', 'workspaceSrvc',function ($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, peerReviewSrvc, workspaceSrvc){
+	angular.module('orcidApp').controller('WorkspaceSummaryCtrl', ['$scope', '$compile', 'affiliationsSrvc', 'fundingSrvc', 'worksSrvc', 'peerReviewSrvc', 'workspaceSrvc',function ($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, peerReviewSrvc, workspaceSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.worksSrvc = worksSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
@@ -4891,7 +4899,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
 	    $scope.moreInfo = {};
@@ -4925,7 +4933,7 @@
 
 	}]);
 
-	orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
 	    $scope.moreInfo = {};
@@ -4961,7 +4969,7 @@
 	    affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 	}]);
 
-	orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
+	angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
 	    $scope.affiliationsSrvc = affiliationsSrvc;
 	    $scope.editAffiliation;
 	    $scope.emailSrvc = emailSrvc;
@@ -5286,7 +5294,7 @@
 	/**
 	 * Fundings Controller
 	 * */
-	orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
+	angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$filter', 'fundingSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, fundingSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService) {
 	    $scope.addingFunding = false;
 	    $scope.disambiguatedFunding = null;
 	    $scope.displayURLPopOver = {};
@@ -5815,7 +5823,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
+	angular.module('orcidApp').controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
 	    $scope.fundingSrvc = fundingSrvc;
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.moreInfo = {};
@@ -5888,7 +5896,7 @@
 
 	}]);
 
-	orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
+	angular.module('orcidApp').controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
 	     $scope.peerReviewSrvc = peerReviewSrvc;
 	     $scope.workspaceSrvc  = workspaceSrvc;
 	     $scope.showDetails = {};
@@ -5930,7 +5938,7 @@
 	    $scope.peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.ANONYMOUS);       
 	}]);
 
-	orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
+	angular.module('orcidApp').controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'worksSrvc',function ($scope, $compile, $filter, workspaceSrvc, worksSrvc) {
 	    $scope.worksSrvc = worksSrvc;
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.showBibtex = {};
@@ -6071,7 +6079,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
+	angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
 	                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
 	    actBulkSrvc.initScope($scope);
 	   
@@ -6917,7 +6925,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
+	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.peerReviewSrvc = peerReviewSrvc;
 	    $scope.editPeerReview = null;
@@ -7264,7 +7272,7 @@
 	    }
 	}]);
 
-	orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
+	angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
 	    $scope.hasErrors = false;
 	    $scope.results = new Array();
 	    $scope.numFound = 0;
@@ -7369,7 +7377,7 @@
 	}]);
 
 	// Controller for delegate permissions that have been granted BY the current user
-	orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function DelegatesCtrl($scope, $compile){
+	angular.module('orcidApp').controller('DelegatesCtrl',['$scope', '$compile', function DelegatesCtrl($scope, $compile){
 	    $scope.results = new Array();
 	    $scope.numFound = 0;
 	    $scope.input = {};
@@ -7665,7 +7673,7 @@
 	}]);
 
 	// Controller for delegate permissions that have been granted TO the current user
-	orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scope, $compile){
+	angular.module('orcidApp').controller('DelegatorsCtrl',['$scope', '$compile', function ($scope, $compile){
 
 	    $scope.sort = {
 	            column: 'delegateSummary.creditName.content',
@@ -7731,7 +7739,7 @@
 
 	}]);
 
-	orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
+	angular.module('orcidApp').controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
 	    $scope.showLoader = false;
 	    $scope.sort = {
 	        column: 'providerUserId',
@@ -7829,7 +7837,7 @@
 
 
 	// Controller for notifications
-	orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
 	    $scope.displayBody = {};
 	    notificationsSrvc.displayBody = {};    
 	    $scope.notificationsSrvc = notificationsSrvc;
@@ -7861,12 +7869,12 @@
 	}]);
 
 	// Controller to show alert for unread notifications
-	orcidNgModule.controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	angular.module('orcidApp').controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
 	    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
 	    notificationsSrvc.retrieveUnreadCount();
 	}]);
 
-	orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
+	angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
 	    $scope.isDroppedDown = false;
 	    $scope.searchResultsCache = new Object();
 
@@ -7941,7 +7949,7 @@
 	    $scope.getDelegates();
 	}]);
 
-	orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
+	angular.module('orcidApp').controller('statisticCtrl',['$scope', function ($scope){
 	    $scope.liveIds = 0;
 	    $scope.getLiveIds = function(){
 	        $.ajax({
@@ -7962,7 +7970,7 @@
 	    $scope.getLiveIds();
 	}]);
 
-	orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
+	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
 	    var productionLangList =
 	        [
 	            {
@@ -8131,7 +8139,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
+	angular.module('orcidApp').controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
 	    $scope.showSection = false;
 
 	    $scope.toggleSection = function(){
@@ -8158,7 +8166,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$compile', function ($scope,$compile){
+	angular.module('orcidApp').controller('profileDeactivationAndReactivationCtrl',['$scope', '$compile', function ($scope,$compile){
 	    $scope.orcidToDeactivate = null;
 	    $scope.orcidToReactivate = null;
 	    $scope.deactivatedAccount = null;
@@ -8288,7 +8296,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
+	angular.module('orcidApp').controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
 	    $scope.orcidsToDeactivate = "";
 	    $scope.showSection = false;
 
@@ -8317,7 +8325,7 @@
 	    }
 	}]);
 
-	orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
+	angular.module('orcidApp').controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
 	    $scope.deprecated_verified = false;
 	    $scope.primary_verified = false;
 	    $scope.deprecatedAccount = null;
@@ -8509,7 +8517,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
+	angular.module('orcidApp').controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
 	    
 	    $scope.applicationSummary = null;
 	    $scope.applicationSummaryList = null;
@@ -8584,7 +8592,7 @@
 	/**
 	 * Manage members controller
 	 * */
-	orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {    
+	angular.module('orcidApp').controller('manageMembersCtrl',['$scope', '$compile', function manageMembersCtrl($scope, $compile) {    
 	    $scope.showFindModal = false;
 	    $scope.success_message = null;
 	    $scope.client_id = null;
@@ -8904,7 +8912,7 @@
 	/**
 	 * Internal consortium controller
 	 * */
-	orcidNgModule.controller('internalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+	angular.module('orcidApp').controller('internalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
 	    $scope.showFindModal = false;
 	    $scope.consortium = null;
 
@@ -8976,7 +8984,7 @@
 	/**
 	 * External consortium controller
 	 */
-	orcidNgModule.controller('externalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
+	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', function manageConsortiumCtrl($scope, $compile) {    
 	   $scope.consortium = null;
 
 	   $scope.toggleFindConsortiumModal = function() {
@@ -9047,7 +9055,7 @@
 	}]);
 
 
-	orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
+	angular.module('orcidApp').controller('findIdsCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
 	    $scope.emails = "";
 	    $scope.emailIdsMap = {};
 	    $scope.showSection = false;
@@ -9099,7 +9107,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
+	angular.module('orcidApp').controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
 	    $scope.showSection = false;
 	    $scope.params = {orcidOrEmail:'',password:''};
 	    $scope.result = '';
@@ -9172,7 +9180,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('removeSecQuestionCtrl',['$scope','$compile', function ($scope,$compile) {
+	angular.module('orcidApp').controller('removeSecQuestionCtrl',['$scope','$compile', function ($scope,$compile) {
 	    $scope.showSection = false;
 	    $scope.orcidOrEmail = '';
 	    $scope.result= '';
@@ -9224,7 +9232,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
+	angular.module('orcidApp').controller('profileLockingCtrl', ['$scope', '$compile', function($scope, $compile){
 	    $scope.orcidToLock = '';
 	    $scope.orcidToUnlock = '';
 	    $scope.showLockModal = false;
@@ -9281,7 +9289,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
+	angular.module('orcidApp').controller('profileReviewCtrl', ['$scope', '$compile', function($scope, $compile){
 	    $scope.orcidToReview = '';
 	    $scope.orcidToUnreview = '';
 	    $scope.showReviewModal = false;
@@ -9338,7 +9346,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('lookupIdOrEmailCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
+	angular.module('orcidApp').controller('lookupIdOrEmailCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
 	    $scope.idOrEmails = "";
 	    $scope.emailIdsMap = {};
 	    $scope.showSection = false;
@@ -9387,7 +9395,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
+	angular.module('orcidApp').controller('ResendClaimCtrl', ['$scope', function ($scope) {
 	    $scope.emailIds = "";
 	    $scope.showSection = false;
 
@@ -9416,7 +9424,7 @@
 	    }
 	}]);
 
-	orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
+	angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
 	    $scope.noCredentialsYet = true;
 	    $scope.userCredentials = null;
 	    $scope.editing = false;
@@ -9851,7 +9859,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
+	angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', function ($scope, $compile){
 	    $scope.clients = [];
 	    $scope.newClient = null;
 	    $scope.scopeSelectorOpen = false;
@@ -10328,7 +10336,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
+	angular.module('orcidApp').controller('CustomEmailCtrl',['$scope', '$compile',function ($scope, $compile) {
 	    $scope.customEmail = null;
 	    $scope.editedCustomEmail = null;
 	    $scope.customEmailList = [];
@@ -10488,7 +10496,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
+	angular.module('orcidApp').controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
 	    $scope.emails = "";
 	    $scope.orcidOrEmail = "";
 	    $scope.showSection = false;
@@ -10556,7 +10564,7 @@
 
 	}]);
 
-	orcidNgModule.controller('SocialNetworksCtrl',['$scope',function ($scope){
+	angular.module('orcidApp').controller('SocialNetworksCtrl',['$scope',function ($scope){
 	    $scope.twitter=false;
 
 	    $scope.checkTwitterStatus = function(){
@@ -10615,7 +10623,7 @@
 	    $scope.checkTwitterStatus();
 	}]);
 
-	orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
+	angular.module('orcidApp').controller('adminDelegatesCtrl',['$scope',function ($scope){
 	    $scope.showSection = false;
 	    $scope.managed_verified = false;
 	    $scope.trusted_verified = false;
@@ -10679,7 +10687,7 @@
 	    };
 	}]);
 
-	orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
+	angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
 	    $scope.showClientDescription = false;
 	    $scope.showRegisterForm = true;
 	    $scope.isOrcidPresent = false;
@@ -11185,7 +11193,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
+	angular.module('orcidApp').controller('LoginLayoutController',['$scope', function ($scope){
 	    
 	    $scope.personalLogin = true; //Flag to show or not Personal or Institution Account Login
 	    $scope.scriptsInjected = false; //Flag to show or not the spinner
@@ -11246,7 +11254,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
+	angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
 	    
 	    $scope.loadedFeed = false;
 	    
@@ -11269,7 +11277,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
 	    $scope.membersListSrvc = membersListSrvc;
 	    $scope.displayMoreDetails = {};
 	    
@@ -11301,7 +11309,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+	angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
 	    $scope.membersListSrvc = membersListSrvc;
 	    
 	    $scope.renderHtml = function (htmlCode) {
@@ -11310,7 +11318,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
 	    $scope.membersListSrvc = membersListSrvc;
 	    $scope.displayMoreDetails = {};
 	    
@@ -11342,7 +11350,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
+	angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
 	    $scope.emailSrvc = emailSrvc;
 	    $scope.showEdit = false;
 	    $scope.showElement = {};
@@ -11405,7 +11413,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
+	angular.module('orcidApp').controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
 	    
 	    $scope.searchFilterChanged = false;
 	    $scope.filterActive = false;
@@ -11478,7 +11486,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
+	angular.module('orcidApp').controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
 	    $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	    $scope.showCode = false;
 	    $scope.widgetSrvc = widgetSrvc;
@@ -11499,7 +11507,7 @@
 	    
 	}]);
 
-	orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+	angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
 	    $scope.showSources = new Array();
 	    $scope.showPopover = new Array();
 	    $scope.toggleSourcesDisplay = function(section){        
@@ -11519,7 +11527,7 @@
 	 * FILTERS
 	 */
 
-	orcidNgModule.filter('formatBibtexOutput', function () {
+	angular.module('orcidApp').filter('formatBibtexOutput', function () {
 	    return function (text) {
 	        var str = text.replace(/[\-?_?]/, ' ');
 	        return str.toUpperCase();
@@ -11527,7 +11535,7 @@
 	});
 
 
-	orcidNgModule.filter('orderObjectBy', function() {
+	angular.module('orcidApp').filter('orderObjectBy', function() {
 	      return function(items, field, reverse) {
 	        var filtered = [];
 	        angular.forEach(items, function(item) {
@@ -11541,7 +11549,7 @@
 	     };
 	});
 
-	orcidNgModule.filter("filterImportWizards", function(){ 
+	angular.module('orcidApp').filter("filterImportWizards", function(){ 
 	    return function(input, selectedWorkType, selectedGeoArea) {
 	        var output = [];        
 	        if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
@@ -11570,7 +11578,7 @@
 	});
 
 
-	orcidNgModule.filter('urlProtocol', function(){
+	angular.module('orcidApp').filter('urlProtocol', function(){
 	    return function(url){
 	        if (url == null) return url;
 	        if(!url.startsWith('http')) {               
@@ -11584,18 +11592,18 @@
 	    }
 	});
 
-	orcidNgModule.filter('uri', function() {
+	angular.module('orcidApp').filter('uri', function() {
 	    return window.encodeURIComponent;
 	});
 
-	orcidNgModule.filter('latex', function(){
+	angular.module('orcidApp').filter('latex', function(){
 	    return function(input){
 	        if (input == null) return "";
 	        return latexParseJs.decodeLatex(input);
 	    };
 	});
 
-	orcidNgModule.filter('ajaxFormDateToISO8601', function(){
+	angular.module('orcidApp').filter('ajaxFormDateToISO8601', function(){
 	    return function(input){
 	        if (typeof input != 'undefined'){
 	            var str = '';
@@ -11616,7 +11624,7 @@
 	    };
 	});
 
-	orcidNgModule.filter('humanDate', function($filter){
+	angular.module('orcidApp').filter('humanDate', function($filter){
 	    var standardDateFilter = $filter('date');
 	    return function(input){
 	        var inputDate = new Date(input);
@@ -11626,7 +11634,7 @@
 	    };
 	});
 
-	orcidNgModule.filter('contributorFilter', function(){
+	angular.module('orcidApp').filter('contributorFilter', function(){
 	    return function(ctrb){
 	        var out = '';
 	        if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
@@ -11638,7 +11646,7 @@
 	    };
 	});
 
-	orcidNgModule.filter('clean', function($filter){
+	angular.module('orcidApp').filter('clean', function($filter){
 	   return function(x, idx){
 	       console.log(idx);
 	       
@@ -11646,7 +11654,7 @@
 	   }; 
 	});
 
-	orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
+	angular.module('orcidApp').filter('workExternalIdentifierHtml', function($filter){
 	    return function(workExternalIdentifier, first, last, length, moreInfo){
 	        var id = null;
 	        var isPartOf = false;
@@ -11713,7 +11721,7 @@
 	});
 
 	//Currently being used in Fundings only
-	orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
+	angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
 	    return function(externalIdentifier, first, last, length, type, moreInfo){
 	        var isPartOf = false;
 	        var link = null;
@@ -11794,7 +11802,7 @@
 	    };
 	}]);
 
-	orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
+	angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($filter){
 	    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
 	        
 	        var id = null;
@@ -11861,7 +11869,7 @@
 	});
 
 	//used in dropdown filters on /members and /consortia
-	orcidNgModule.filter('unique', function () {
+	angular.module('orcidApp').filter('unique', function () {
 
 	    return function (items, filterOn) {
 
@@ -11901,7 +11909,7 @@
 	  });
 
 	//used in alphabetical filter on /members and /consortia
-	orcidNgModule.filter('startsWithLetter', function() {
+	angular.module('orcidApp').filter('startsWithLetter', function() {
 	    return function(items, letter) {
 
 	        var filtered = [];
@@ -11928,7 +11936,7 @@
 
 
 
-	orcidNgModule.directive(
+	angular.module('orcidApp').directive(
 	    'modalEmailUnVerified', 
 	    [
 	        '$compile',
@@ -12026,7 +12034,7 @@
 	 * For forms submitted using the default submit function (Scope: document)
 	 * Not necessary to be inside an element, for inputs use ngEnter
 	 */
-	orcidNgModule.directive('ngEnterSubmit', function($document) {
+	angular.module('orcidApp').directive('ngEnterSubmit', function($document) {
 	    return {
 	        restrict: 'A',
 	        link: function(scope, element, attr) {
@@ -12049,7 +12057,7 @@
 	 * </fn-form>
 	 * 
 	 */
-	orcidNgModule.directive('fnForm', function($document) {
+	angular.module('orcidApp').directive('fnForm', function($document) {
 	    return {
 	        restrict: 'E',
 	        scope: {
@@ -12075,7 +12083,7 @@
 	/*
 	 * Scope: element
 	 */
-	orcidNgModule.directive('ngEnter', function() {
+	angular.module('orcidApp').directive('ngEnter', function() {
 	    return function(scope, element, attrs) {
 	        element.bind("keydown keypress", function(event) {
 	            if(event.which === 13) {                
@@ -12090,7 +12098,7 @@
 	});
 
 	/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
-	orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+	angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($compile) {
 	    return {
 	        restrict: 'A',
 	        link: function (scope, element, attrs) {
@@ -12104,7 +12112,7 @@
 	    };
 	}]);
 
-	orcidNgModule.directive('focusMe', function($timeout) {
+	angular.module('orcidApp').directive('focusMe', function($timeout) {
 	    return {
 	      scope: { trigger: '=focusMe' },
 	      link: function(scope, element) {
@@ -12121,7 +12129,7 @@
 	    };
 	});
 
-	orcidNgModule.directive('scroll', function () {
+	angular.module('orcidApp').directive('scroll', function () {
 	    return {
 	        restrict: 'A',
 	        link: function ($scope, element, attrs) {
@@ -12135,7 +12143,7 @@
 	    }
 	});
 
-	orcidNgModule.directive('ngModelOnblur', function() {
+	angular.module('orcidApp').directive('ngModelOnblur', function() {
 	    return {
 	        restrict: 'A',
 	        require: 'ngModel',
@@ -12161,7 +12169,7 @@
 	    };
 	});
 
-	orcidNgModule.directive('appFileTextReader', function($q){
+	angular.module('orcidApp').directive('appFileTextReader', function($q){
 	        var slice = Array.prototype.slice;
 	        return {
 	            restrict: 'A',
@@ -12205,7 +12213,7 @@
 	    });//appFilereader
 
 	//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
-	orcidNgModule.directive('compile', function($compile) {
+	angular.module('orcidApp').directive('compile', function($compile) {
 	    // directive factory creates a link function
 	    return function(scope, element, attrs) {
 	      scope.$watch(
@@ -12228,7 +12236,7 @@
 	    };
 	  });
 
-	orcidNgModule.directive('resize', function ($window) {
+	angular.module('orcidApp').directive('resize', function ($window) {
 	    return function ($scope, element) {
 	        var w = angular.element($window);
 	        /* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
