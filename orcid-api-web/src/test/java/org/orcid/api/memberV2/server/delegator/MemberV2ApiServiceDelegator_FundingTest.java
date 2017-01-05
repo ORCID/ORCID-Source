@@ -227,6 +227,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         assertNotNull(r);
         Fundings fundings = (Fundings) r.getEntity();
         assertNotNull(fundings);
+        assertNotNull(fundings.getPath());
         Utils.verifyLastModified(fundings.getLastModifiedDate());
         assertNotNull(fundings.getFundingGroup());
         assertEquals(4, fundings.getFundingGroup().size());
