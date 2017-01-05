@@ -196,6 +196,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        assertNotNull(summary.getPath());
         Utils.verifyLastModified(summary.getLastModifiedDate());
         // Check works
         assertNotNull(summary.getWorks());
@@ -1004,6 +1005,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
         assertNotNull(response);
         Person person = (Person) response.getEntity();
         assertNotNull(person);
+        assertNotNull(person.getPath());
         Utils.verifyLastModified(person.getLastModifiedDate());
         assertNotNull(person.getName());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
@@ -1217,6 +1219,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
         assertEquals("0000-0000-0000-0003", orcid);
 
         assertNotNull(as);
+        assertNotNull(as.getPath());
         Utils.verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
         assertEquals(3, as.getEducations().getSummaries().size());
