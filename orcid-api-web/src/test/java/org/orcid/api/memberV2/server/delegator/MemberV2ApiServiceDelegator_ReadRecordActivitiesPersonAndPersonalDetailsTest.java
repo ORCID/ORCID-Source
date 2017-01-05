@@ -148,21 +148,21 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 
     @Test
     public void testViewRecordReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewRecord(ORCID);
         Record record = (Record) r.getEntity();
         assertNotNull(record);
-        Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "some-client");
-        Utils.assertIsPublicOrSource(record.getPerson(), "some-client");
+        Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555555");
+        Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555555");
     }
 
     @Test
     public void testViewActivitiesReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewActivities(ORCID);
         ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
         assertNotNull(as);
-        Utils.assertIsPublicOrSource(as, "some-client");
+        Utils.assertIsPublicOrSource(as, "APP-5555555555555555");
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
@@ -353,20 +353,20 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 
     @Test
     public void testViewPersonalDetailsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
         PersonalDetails element = (PersonalDetails) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewPersonReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewPerson(ORCID);
         Person element = (Person) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
