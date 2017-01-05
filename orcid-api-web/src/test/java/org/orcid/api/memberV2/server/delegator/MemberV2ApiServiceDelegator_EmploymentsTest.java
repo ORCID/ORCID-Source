@@ -108,29 +108,29 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
 
     @Test
     public void testViewEmploymentsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEmployments(ORCID);
         Employments element = (Employments) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewEmploymentReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEmployment(ORCID, 17L);
         Employment element = (Employment) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewEmploymentSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEmploymentSummary(ORCID, 17L);
         EmploymentSummary element = (EmploymentSummary) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -196,6 +196,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         assertNotNull(r);
         Employments employments = (Employments) r.getEntity();
         assertNotNull(employments);
+        assertNotNull(employments.getPath());
         Utils.verifyLastModified(employments.getLastModifiedDate());
         assertNotNull(employments.getSummaries());
         assertEquals(4, employments.getSummaries().size());

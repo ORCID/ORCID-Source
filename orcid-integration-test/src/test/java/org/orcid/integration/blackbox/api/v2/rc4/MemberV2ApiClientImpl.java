@@ -41,6 +41,7 @@ import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
@@ -310,7 +311,12 @@ public class MemberV2ApiClientImpl {
         URI uri = UriBuilder.fromPath(BIOGRAPHY).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
-    
+
+    public ClientResponse viewBiographyJson(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(BIOGRAPHY).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, MediaType.APPLICATION_JSON, accessToken);
+    }
+
     public ClientResponse createKeyword(String orcid, Keyword keyword, String accessToken) {
         URI uri = UriBuilder.fromPath(KEYWORDS).build(orcid);
         return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, keyword, accessToken);      

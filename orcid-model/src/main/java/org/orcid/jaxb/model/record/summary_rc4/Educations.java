@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -42,7 +43,9 @@ public class Educations implements ActivitiesContainer, Serializable {
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education", required = false)
     private List<EducationSummary> summaries;
-
+    @XmlAttribute
+    protected String path;
+    
     public Educations() {
     	
     }
@@ -98,5 +101,13 @@ public class Educations implements ActivitiesContainer, Serializable {
     @Override
     public Collection<? extends Activity> retrieveActivities() {
         return (Collection<? extends Activity>) summaries;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

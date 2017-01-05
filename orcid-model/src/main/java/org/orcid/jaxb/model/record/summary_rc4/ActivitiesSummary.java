@@ -31,6 +31,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -68,7 +69,9 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     protected PeerReviews peerReviews;
     @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
     protected Works works;
-
+    @XmlAttribute
+    protected String path;
+    
     public Educations getEducations() {
         return educations;
     }
@@ -237,5 +240,13 @@ public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+    
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

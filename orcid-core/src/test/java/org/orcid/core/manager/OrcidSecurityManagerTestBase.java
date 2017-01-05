@@ -35,6 +35,7 @@ import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_rc4.Country;
 import org.orcid.jaxb.model.common_rc4.CreditName;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
@@ -67,6 +68,7 @@ import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.SourceAware;
 import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -89,6 +91,7 @@ public class OrcidSecurityManagerTestBase {
 
     protected final String CLIENT_1 = "APP-0000000000000001";
     protected final String CLIENT_2 = "APP-0000000000000002";
+    protected final String PUBLIC_CLIENT = "APP-0000000000000003";
 
     protected final String EXTID_1 = "extId1";
     protected final String EXTID_2 = "extId2";
@@ -107,10 +110,14 @@ public class OrcidSecurityManagerTestBase {
     @Mock
     protected ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Mock
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         ProfileEntity p1 = new ProfileEntity();
         p1.setClaimed(true);
         p1.setId(ORCID_1);
@@ -120,6 +127,22 @@ public class OrcidSecurityManagerTestBase {
         p2.setId(ORCID_2);
         when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
         when(profileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
+        
+        ClientDetailsEntity client1 = new ClientDetailsEntity();
+        client1.setId(CLIENT_1);
+        client1.setClientType(ClientType.CREATOR);
+        
+        ClientDetailsEntity client2 = new ClientDetailsEntity();
+        client1.setId(CLIENT_2);
+        client1.setClientType(ClientType.UPDATER);
+        
+        ClientDetailsEntity publicClient = new ClientDetailsEntity();
+        publicClient.setId(PUBLIC_CLIENT);
+        publicClient.setClientType(ClientType.PUBLIC_CLIENT);
+        
+        when(clientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
+        when(clientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
+        when(clientDetailsEntityCacheManager.retrieve(PUBLIC_CLIENT)).thenReturn(publicClient);
     }
 
     @After
