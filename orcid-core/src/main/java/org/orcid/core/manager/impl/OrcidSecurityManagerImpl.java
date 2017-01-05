@@ -34,6 +34,7 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
@@ -56,6 +57,8 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
@@ -84,6 +87,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
@@ -218,6 +224,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkScopes(ScopePathType requiredScope) {
+        //Verify the client is not a public client
+        checkClientType();
+        
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(authorizationRequest.getScope());
@@ -226,9 +235,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 return;
             }
         }
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("requiredScope", requiredScope.value());
-        throw new OrcidAccessControlException(params);
+        throw new OrcidAccessControlException();
     }
 
     @Override
@@ -603,7 +610,10 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (oAuth2Authentication == null) {
             throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
-
+        
+        //Verify the client is not a public client
+        checkClientType();
+        
         String clientId = sourceManager.retrieveSourceOrcid();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
@@ -619,6 +629,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
             throw new IllegalStateException("Non client credential scope found in client request");
+        }
+    }
+    
+    private void checkClientType() {
+        String clientId = sourceManager.retrieveSourceOrcid();
+        
+        ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
+        if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
+            throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }
 }
