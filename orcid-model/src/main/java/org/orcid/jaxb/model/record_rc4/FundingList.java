@@ -60,7 +60,7 @@ public class FundingList implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement
+    @XmlElement(required = false)
     protected List<Funding> fundings;
 
     /**

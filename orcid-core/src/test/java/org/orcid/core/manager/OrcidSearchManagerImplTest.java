@@ -21,16 +21,21 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.solr.common.SolrDocument;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -48,6 +53,7 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
+import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherName;
@@ -59,6 +65,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
@@ -92,6 +99,24 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void initMocks() {
         orcidSearchManager.setSolrDao(solrDao);
         orcidSearchManager.setOrcidProfileCacheManager(orcidProfileCacheManager);
+    }
+    
+    @Test
+    public void testFindOrcidIds() {
+        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(multipleResultsForQuery());
+        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(new HashMap<>());
+        assertNotNull(orcidIds);
+        assertEquals(2, orcidIds.getOrcidIds().size());
+        assertEquals("5678", orcidIds.getOrcidIds().get(0).getValue());
+        assertEquals("6789", orcidIds.getOrcidIds().get(1).getValue());
+    }
+    
+    @Test
+    public void testFindOrcidIdsNoResults() {
+        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(new OrcidSolrResults());
+        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(new HashMap<>());
+        assertNotNull(orcidIds);
+        assertEquals(0, orcidIds.getOrcidIds().size());
     }
 
     @Test

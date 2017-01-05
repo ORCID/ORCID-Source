@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc4;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,13 +43,16 @@ public class OtherNames implements Serializable {
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
+    @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name", required =  false)
     List<OtherName> otherNames;
 
     @XmlAttribute
     protected String path;
     
     public List<OtherName> getOtherNames() {
+        if(otherNames == null) {
+            otherNames = new ArrayList<>();
+        }
         return otherNames;
     }
 

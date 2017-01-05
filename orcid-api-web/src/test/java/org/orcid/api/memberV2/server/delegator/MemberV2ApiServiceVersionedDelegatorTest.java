@@ -24,7 +24,9 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -36,6 +38,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
+import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
@@ -49,6 +55,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.record_rc4.OrcidId;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
@@ -1484,7 +1492,26 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.viewPerson(unclaimedUserOrcid);
         fail();
     }
-    
+
+    @Test
+    public void testSearchByQuery() {
+        OrcidIds orcidIds = new OrcidIds();
+        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        Response searchResponse = Response.ok(orcidIds).build();
+        MemberV2ApiServiceDelegatorImpl delegator = Mockito.mock(MemberV2ApiServiceDelegatorImpl.class);
+        Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>> any())).thenReturn(searchResponse);
+        MemberV2ApiServiceVersionedDelegatorImpl versionedDelegator = new MemberV2ApiServiceVersionedDelegatorImpl();
+        versionedDelegator.setMemberV2ApiServiceDelegator(delegator);
+        Response response = versionedDelegator.searchByQuery(new HashMap<String, List<String>>());
+
+        // just testing MemberV2ApiServiceDelegatorImpl's response is returned
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof OrcidIds);
+        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
+        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+    }
+
     @Test(expected = NoResultException.class)
     public void testViewClientNonExistent() {
         serviceDelegator.viewClient("some-client-that-doesn't-exist");

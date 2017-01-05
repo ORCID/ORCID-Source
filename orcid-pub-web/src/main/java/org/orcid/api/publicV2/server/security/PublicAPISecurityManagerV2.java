@@ -16,7 +16,6 @@
  */
 package org.orcid.api.publicV2.server.security;
 
-import org.orcid.jaxb.model.common_rc4.Filterable;
 import org.orcid.jaxb.model.common_rc4.VisibilityType;
 import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
@@ -25,7 +24,6 @@ import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Emails;
 import org.orcid.jaxb.model.record_rc4.GroupsContainer;
 import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.Person;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
@@ -34,14 +32,10 @@ import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 
 public interface PublicAPISecurityManagerV2 {
-    void checkIsPublic(Filterable filterable);
-
     void checkIsPublic(VisibilityType visibilityType);
 
     void checkIsPublic(Biography biography);
-
-    void checkIsPublic(Name name);
-
+    
     void filter(ActivitiesSummary activitiesSummary);
 
     void filter(ActivitiesContainer container);

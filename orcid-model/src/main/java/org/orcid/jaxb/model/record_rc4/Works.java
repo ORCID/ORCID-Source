@@ -56,7 +56,7 @@ public class Works implements Serializable, ActivitiesContainer {
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "work")
+    @XmlElement(name = "work", required = false)
     protected List<Work> works;
 
     /**
@@ -81,7 +81,7 @@ public class Works implements Serializable, ActivitiesContainer {
      * 
      * 
      */
-    public List<Work> getOrcidWork() {
+    public List<Work> getWorks() {
         if (works == null) {
             works = new ArrayList<Work>();
         }
@@ -102,7 +102,7 @@ public class Works implements Serializable, ActivitiesContainer {
 
     @Override
     public List<Work> retrieveActivities() {
-        return getOrcidWork();
+        return getWorks();
     }
 
 

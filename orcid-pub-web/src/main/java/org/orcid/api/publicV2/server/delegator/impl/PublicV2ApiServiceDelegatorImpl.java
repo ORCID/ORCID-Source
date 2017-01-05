@@ -19,6 +19,7 @@ package org.orcid.api.publicV2.server.delegator.impl;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -29,6 +30,10 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -73,6 +78,7 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
@@ -163,13 +169,27 @@ public class PublicV2ApiServiceDelegatorImpl
     private SourceUtils sourceUtilsReadOnly;
 
     @Resource
+    private RecordManager recordManager;
+    
+    @Resource
+    private SourceUtils sourceUtils;
+    
+    @Resource
+    private OrcidSearchManager orcidSearchManager;
+
+    @Resource
     private PublicAPISecurityManagerV2 publicAPISecurityManagerV2;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
+
+    public static final int MAX_SEARCH_ROWS = 100;
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManagerReadOnly.getLastModified(orcid);
@@ -550,6 +570,28 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
+    }
+    
+    @Override
+    public Response searchByQuery(Map<String, List<String>> solrParams) {
+        validateSearchParams(solrParams);
+        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(orcidIds).build();
+    }
+
+    private void validateSearchParams(Map<String, List<String>> queryMap) {
+        List<String> rowsList = queryMap.get("rows");
+        if (rowsList != null && !rowsList.isEmpty()) {
+            try {
+                String rowsString = rowsList.get(0);
+                int rows = Integer.valueOf(rowsString);
+                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+                }
+            } catch (NumberFormatException e) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+            }
+        }
     }
 
     @Override

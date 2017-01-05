@@ -455,7 +455,8 @@ public class AddressTest extends BlackBoxBaseRC4 {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         addresses_rc4 = response.getEntity(org.orcid.jaxb.model.record_rc4.Addresses.class);
         assertNotNull(addresses_rc4);
-        assertNull(addresses_rc4.getAddress());
+        assertNotNull(addresses_rc4.getAddress());
+        assertTrue(addresses_rc4.getAddress().isEmpty());
 
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
@@ -543,7 +544,8 @@ public class AddressTest extends BlackBoxBaseRC4 {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         addresses_rc4 = response.getEntity(org.orcid.jaxb.model.record_rc4.Addresses.class);
         assertNotNull(addresses_rc4);
-        assertNull(addresses_rc4.getAddress());
+        assertNotNull(addresses_rc4.getAddress());
+        assertTrue(addresses_rc4.getAddress().isEmpty());
 
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         assertTrue(found);

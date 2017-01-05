@@ -37,7 +37,7 @@
 		    	<@emailMacros.msg "email.deactivate.once_an_account" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		  		<@emailMacros.msg "email.deactivate.if_you_did" /><a target="_blank" href="mailto:<@emailMacros.msg 'email.deactivate.support_email' />"><@emailMacros.msg "email.deactivate.support_email" />.</a>
+		  		<@emailMacros.msg "email.deactivate.if_you_did" /><a target="_blank" href="mailto:<@emailMacros.msg 'email.deactivate.support_email' />"><@emailMacros.msg "email.deactivate.support_email" /></a>.
 		    </p>	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
