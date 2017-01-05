@@ -168,14 +168,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     public void addressPrivacyTest() throws InterruptedException, JSONException {
         openEditAddressModal();
         deleteAddresses();
-        createAddress(Iso3166Country.AD.name());
-        changeAddressVisibility(Visibility.PRIVATE);  
+        createAddress(Iso3166Country.AD.name());         
         saveEditAddressModal();
       
+        openEditAddressModal();
+        changeAddressVisibility(Visibility.PRIVATE);
+        saveEditAddressModal();
+        
         //Verify it doesn't appears again in the public page
         try {
             showPublicProfilePage(getUser1OrcidId());
-            addressAppearsInPublicPage("Zimbabwe");
+            addressAppearsInPublicPage("Andorra");
             fail();
         } catch(Exception e) {
             
@@ -190,7 +193,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
         //Verify it doesn't appears again in the public page
         try {
             showPublicProfilePage(getUser1OrcidId());
-            addressAppearsInPublicPage("Zimbabwe");
+            addressAppearsInPublicPage("Andorra");
             fail();
         } catch(Exception e) {
             

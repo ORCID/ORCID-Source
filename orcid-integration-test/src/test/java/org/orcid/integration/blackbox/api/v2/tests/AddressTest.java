@@ -78,7 +78,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
         openEditAddressModal();
         deleteAddresses();
-        createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
+        createAddress(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
         changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();        
     }
