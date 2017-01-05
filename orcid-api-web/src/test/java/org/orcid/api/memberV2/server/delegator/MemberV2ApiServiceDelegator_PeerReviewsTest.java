@@ -234,6 +234,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
         assertNotNull(peerReviews);
+        assertNotNull(peerReviews.getPath());
         Utils.verifyLastModified(peerReviews.getLastModifiedDate());
         assertNotNull(peerReviews.getPeerReviewGroup());
         assertEquals(4, peerReviews.getPeerReviewGroup().size());
