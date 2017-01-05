@@ -170,6 +170,7 @@ public class ActivityUtils {
      * */
     public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
         if (activitiesSummary != null) {
+            activitiesSummary.setPath(OrcidApiConstants.ACTIVITIES.replace("{orcid}", orcid));
             ActivityUtils.setPathToEducations(activitiesSummary.getEducations(), orcid);
             ActivityUtils.setPathToEmployments(activitiesSummary.getEmployments(), orcid);
             ActivityUtils.setPathToFundings(activitiesSummary.getFundings(), orcid);
