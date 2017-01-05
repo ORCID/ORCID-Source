@@ -96,6 +96,7 @@
 					</xs:annotation>					
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
