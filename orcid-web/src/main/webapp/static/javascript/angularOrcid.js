@@ -509,7 +509,8 @@ var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.mu
 orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
-        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
+        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+        showModalManualEditVerificationEnabled: true
     };
 
     var locationObj = $location.search();
@@ -521,12 +522,13 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     };
 
     if( locationObj.verifyEdit ){
+        alert(configValues.propertyManualEditVerificationEnabled);
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-            configValues.modalManualEditVerificationEnabled = true;
+            configValues.showModalManualEditVerificationEnabled = true;
         } else {
-            configValues.modalManualEditVerificationEnabled = false;
+            configValues.showModalManualEditVerificationEnabled = false;
         }
-    }
+    } 
 
     return initialConfigService;
 }]);
@@ -3086,8 +3088,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
         
     $scope.openEditModal = function(){
-        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
             $.colorbox({
                 scrolling: true,
@@ -3322,7 +3324,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     };
     
     $scope.openEditModal = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	$scope.modal = true;    	
             $.colorbox({
@@ -3672,7 +3674,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'em
     /////////////////////// End of verified email logic for work
 
     $scope.toggleEdit = function() {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.showEdit = !$scope.showEdit;
         }else{
             showEmailVerificationModal();
@@ -3907,7 +3909,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     
     $scope.openEditModal = function() {
     	
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	
             $.colorbox({
@@ -5058,7 +5060,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.addAffType = type;
             if(affiliation === undefined) {
                 $scope.removeDisambiguatedAffiliation();
@@ -5325,7 +5327,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };
 
     $scope.addFundingModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if(data == undefined) {
                 $scope.removeDisambiguatedFunding();
                 $.ajax({
@@ -6072,7 +6074,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
     $scope.toggleBulkEdit = function() {
 
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (!$scope.bulkEditShow) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;
@@ -6226,7 +6228,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
 
     $scope.openBibTextWizard = function () {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bibtexParsingError = false;
             $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
             $scope.bulkEditShow = false;
@@ -6417,7 +6419,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     }
     
     $scope.addWorkModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (data == undefined) {
                 worksSrvc.getBlankWork(function(data) {
                     $scope.editWork = data;
@@ -6442,7 +6444,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };       
 
     $scope.putWork = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if ($scope.addingWork) {
                 return; // don't process if adding work
             }
