@@ -6775,39 +6775,38 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         $scope.workImportWizard = false;
         $scope.showBibtexExport  = !$scope.showBibtexExport;
         $scope.bibtexExportError = false;
-        $scope.bibtexGenerated = false;
+        $scope.bibtexLoading = false;
     }
-    /*
-    $scope.openBibtexExportDialog = function(){
-        
-        $scope.loadingScripts = true;
-        $scope.bibtexExportError = false; 
-        $scope.scriptsLoaded = false;
-        
-        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
-        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
-        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
-        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
-        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
-        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
-        
-        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
-        
-        getScripts(scripts, function(){
-            $scope.$apply(function() {
-                $scope.loadingScripts = false;
-                $scope.scriptsLoaded = true;
-                orcid.init(function(){
-                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
-                });
-            });            
-        });
-    };*/
     
     $scope.fetchBibtexExport = function(){
-        $scope.bibtexStarted = true;
+        $scope.bibtexLoading = true;
         $scope.bibtexExportError = false; 
-        window.open('works/works.bib');
+        
+        $.ajax({
+            url: getBaseUri() + '/' + 'works/works.bib',
+            type: 'GET',
+            success: function(data) {
+                $scope.bibtexLoading = false;
+                if(window.navigator.msSaveOrOpenBlob) {
+                    var fileData = [data.data];
+                    blobObject = new Blob(fileData, {type: 'text/plain'});
+                    window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+                } else {
+                    var anchor = angular.element('<a/>');
+                    anchor.css({display: 'none'});
+                    angular.element(document.body).append(anchor);
+                    anchor.attr({
+                      href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
+                      target: '_self',
+                      download: 'orcid.bib'
+                    })[0].click();
+                    anchor.remove();
+                }
+            }
+        }).fail(function() {
+            $scope.bibtexExportError = true;
+            console.log("bibtex export error");
+        });        
     };
     
     $scope.downloadBibtexExport = function(citations){

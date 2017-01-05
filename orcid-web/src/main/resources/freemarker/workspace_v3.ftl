@@ -389,8 +389,8 @@
                 </div>
               </div>
             </div>
-            <span class="dotted-bar"></span>
-            <div class="bottomBuffer" ng-if="bibtexStarted && !bibtexGenerated && !bibtexExportError" ng-cloak>
+            <div class="bottomBuffer" ng-if="bibtexLoading && !bibtexExportError" ng-cloak>
+	          <span class="dotted-bar"></span>
               <ul class="inline-list">
                 <li>
                   Generating BibTeX, please wait...
@@ -402,9 +402,6 @@
             </div>
             <div class="alert alert-block" ng-if="bibtexExportError">
               <strong>Something went wrong, please try again...</strong>
-            </div>
-            <div ng-if="bibtexGenerated && !bibtexExportError" class="bottomBuffer">              
-              Your bibtex file has now ftdownloaded.
             </div>
           </div>    
           </#if>
