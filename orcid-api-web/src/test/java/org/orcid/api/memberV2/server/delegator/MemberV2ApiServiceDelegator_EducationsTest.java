@@ -197,6 +197,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(r);
         Educations educations = (Educations) r.getEntity();
         assertNotNull(educations);
+        assertNotNull(educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
         assertNotNull(educations.getSummaries());
         assertEquals(4, educations.getSummaries().size());

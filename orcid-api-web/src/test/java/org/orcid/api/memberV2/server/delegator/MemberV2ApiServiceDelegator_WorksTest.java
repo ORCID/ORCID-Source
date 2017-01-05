@@ -209,6 +209,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertNotNull(works);
         Utils.verifyLastModified(works.getLastModifiedDate());
         assertNotNull(works.getWorkGroup());
+        assertNotNull(works.getPath());
         assertEquals(4, works.getWorkGroup().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
 

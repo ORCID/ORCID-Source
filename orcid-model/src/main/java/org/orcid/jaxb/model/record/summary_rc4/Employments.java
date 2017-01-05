@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -40,18 +41,19 @@ public class Employments implements ActivitiesContainer, Serializable {
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-
     @XmlElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment", required = false)
     private List<EmploymentSummary> summaries;
+    @XmlAttribute
+    protected String path;
 
     public Employments() {
-    	
+
     }
-    
+
     public Employments(List<EmploymentSummary> summaries) {
-    	this.summaries = summaries;    
+        this.summaries = summaries;
     }
-    
+
     public List<EmploymentSummary> getSummaries() {
         if (summaries == null) {
             summaries = new ArrayList<>();
@@ -100,5 +102,13 @@ public class Employments implements ActivitiesContainer, Serializable {
     @Override
     public Collection<? extends Activity> retrieveActivities() {
         return (Collection<? extends Activity>) summaries;
+    }
+    
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
