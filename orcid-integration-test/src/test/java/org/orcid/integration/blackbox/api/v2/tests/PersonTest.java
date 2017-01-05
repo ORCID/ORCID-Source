@@ -470,8 +470,18 @@ public class PersonTest extends BlackBoxBaseRC4 {
      * 
      */
     @Test
-    public void testGetBioFromPublicAPI_rc4() {
+    public void testGetBioXmlFromPublicAPI_rc4() {
         ClientResponse response = publicV2ApiClient_rc4.viewBiographyXML(getUser1OrcidId());
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_rc4.Biography bio = response.getEntity(org.orcid.jaxb.model.record_rc4.Biography.class);
+        assertNotNull(bio);
+        assertEquals(getUser1Bio(), bio.getContent());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, bio.getVisibility());
+    }
+    
+    @Test
+    public void testGetBioJsonFromPublicAPI_rc4() {
+        ClientResponse response = publicV2ApiClient_rc4.viewBiographyJson(getUser1OrcidId());
         assertNotNull(response);
         org.orcid.jaxb.model.record_rc4.Biography bio = response.getEntity(org.orcid.jaxb.model.record_rc4.Biography.class);
         assertNotNull(bio);
@@ -484,6 +494,18 @@ public class PersonTest extends BlackBoxBaseRC4 {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient_rc4.viewBiography(getUser1OrcidId(), accessToken);
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_rc4.Biography bio = response.getEntity(org.orcid.jaxb.model.record_rc4.Biography.class);
+        assertNotNull(bio);
+        assertEquals(getUser1Bio(), bio.getContent());
+        assertEquals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC, bio.getVisibility());
+    }
+    
+    @Test
+    public void testGetBioJsonFromMemberAPI_rc4() throws Exception {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        ClientResponse response = memberV2ApiClient_rc4.viewBiographyJson(getUser1OrcidId(), accessToken);
         assertNotNull(response);
         org.orcid.jaxb.model.record_rc4.Biography bio = response.getEntity(org.orcid.jaxb.model.record_rc4.Biography.class);
         assertNotNull(bio);
