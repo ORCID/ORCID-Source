@@ -6776,10 +6776,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         $scope.showBibtexExport  = !$scope.showBibtexExport;
         $scope.bibtexExportError = false;
         $scope.bibtexGenerated = false;
-        $scope.loadingScripts = false;
-        $scope.scriptsLoaded = false;
     }
-    
+    /*
     $scope.openBibtexExportDialog = function(){
         
         $scope.loadingScripts = true;
@@ -6804,6 +6802,12 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
                 });
             });            
         });
+    };*/
+    
+    $scope.fetchBibtexExport = function(){
+        $scope.bibtexStarted = true;
+        $scope.bibtexExportError = false; 
+        window.open('works/works.bib');
     };
     
     $scope.downloadBibtexExport = function(citations){

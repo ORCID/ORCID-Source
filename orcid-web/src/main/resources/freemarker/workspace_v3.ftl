@@ -384,16 +384,13 @@
                 <div class="col-md-3 col-sm-3 col-xs-4">
                 <span class="bibtext-options">                                        
                   <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>             
-                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openBibtexExportDialog()">Export</span>                   
+                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()">Export</span>                   
                 </span>                   
                 </div>
               </div>
             </div>
-            <div ng-if="loadingScripts" class="text-center ng-hide" ng-cloak>
-              <i id="" class="glyphicon glyphicon-refresh spin x2 green"></i>
-            </div>
-            <span class="dotted-bar" ng-if="scriptsLoaded"></span>
-            <div class="bottomBuffer" ng-if="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
+            <span class="dotted-bar"></span>
+            <div class="bottomBuffer" ng-if="bibtexStarted && !bibtexGenerated && !bibtexExportError" ng-cloak>
               <ul class="inline-list">
                 <li>
                   Generating BibTeX, please wait...
@@ -402,13 +399,12 @@
                   &nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>    
                 </li>
               </ul>
-
             </div>
             <div class="alert alert-block" ng-if="bibtexExportError">
               <strong>Something went wrong, please try again...</strong>
             </div>
             <div ng-if="bibtexGenerated && !bibtexExportError" class="bottomBuffer">              
-              <a download="orcid.bib" href="{{bibtexURL}}" id="downloadlink">Click to Download</a>
+              Your bibtex file has now ftdownloaded.
             </div>
           </div>    
           </#if>
