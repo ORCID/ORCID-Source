@@ -64,6 +64,7 @@
 		"./angularOrcidOriginal.js": 2,
 		"./directives/fnForm.js": 5,
 		"./directives/focusMe.js": 3,
+		"./directives/ngEnter.js": 6,
 		"./directives/ngEnterSubmit.js": 4
 	};
 	function webpackContext(req) {
@@ -11931,7 +11932,7 @@
 
 
 	/*
-	 * 7 - Angular Multiselect Module
+	 * 6 - Angular Directives
 	 */
 
 	/*
@@ -12035,22 +12036,7 @@
 	);
 
 
-	/*
-	 * Scope: element
-	 */
-	angular.module('orcidApp').directive('ngEnter', function() {
-	    return function(scope, element, attrs) {
-	        element.bind("keydown keypress", function(event) {
-	            if(event.which === 13) {                
-	                scope.$apply(function(){
-	                    scope.$eval(attrs.ngEnter, {'event': event});
-	                });
-	                event.preventDefault();
-	                event.stopPropagation();
-	            }
-	        });
-	    };
-	});
+
 
 	/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
 	angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($compile) {
@@ -12565,6 +12551,28 @@
 	            );                   
 	        }
 	    }
+	});
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	/*
+	 * Scope: element
+	 */
+	angular.module('orcidApp').directive('ngEnter', function() {
+	    return function(scope, element, attrs) {
+	        $(document).unbind("keydown.ngEnter keypress.ngEnter");
+	        element.bind("keydown.ngEnter keypress.ngEnter", function(event) {
+	            if(event.which === 13) {                
+	                scope.$apply(function(){
+	                    scope.$eval(attrs.ngEnter, {'event': event});
+	                });
+	                event.preventDefault();
+	                event.stopPropagation();
+	            }
+	        });
+	    };
 	});
 
 /***/ }

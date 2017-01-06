@@ -11845,7 +11845,7 @@ angular.module('orcidApp').filter('startsWithLetter', function() {
 
 
 /*
- * 7 - Angular Multiselect Module
+ * 6 - Angular Directives
  */
 
 /*
@@ -11949,22 +11949,7 @@ angular.module('orcidApp').directive(
 );
 
 
-/*
- * Scope: element
- */
-angular.module('orcidApp').directive('ngEnter', function() {
-    return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
-            if(event.which === 13) {                
-                scope.$apply(function(){
-                    scope.$eval(attrs.ngEnter, {'event': event});
-                });
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        });
-    };
-});
+
 
 /*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
 angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($compile) {
