@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.common_rc4.Title;
 import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record_rc4.WorkTitle;
+import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -41,7 +42,11 @@ public class WorkComparators {
         return -dateString1.compareTo(dateString2);
     };
 
-    private static Comparator<Title> TITLE = Comparator.nullsLast(Comparator.comparing(Title::getContent));
+    private static Comparator<String> TITLE_CONTENT = Comparator.nullsLast(Comparator.<String> naturalOrder());
+
+    private static Comparator<Title> TITLE = Comparator.nullsLast((t1, t2) -> {
+        return TITLE_CONTENT.compare(t1.getContent(), t2.getContent());
+    });
 
     private static Comparator<WorkTitle> WORK_TITLE = Comparator.nullsLast((t1, t2) -> {
         return TITLE.compare(t1.getTitle(), t2.getTitle());
@@ -51,9 +56,13 @@ public class WorkComparators {
         return WORK_TITLE.compare(w1.getTitle(), w2.getTitle());
     });
 
-    private static Comparator<WorkSummary> WORK_TYPE = Comparator.nullsLast(Comparator.comparing(WorkSummary::getType));
+    private static Comparator<WorkType> WORK_TYPE = Comparator.nullsLast(Comparator.<WorkType> naturalOrder());
 
-    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_TYPE);
+    private static Comparator<WorkSummary> WORK_SUMMARY_WORK_TYPE = Comparator.nullsLast((w1, w2) -> {
+        return WORK_TYPE.compare(w1.getType(), w2.getType());
+    });
+
+    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_SUMMARY_WORK_TYPE);
 
     public static Comparator<WorkSummary> ALL = DISPLAY_INDEX.thenComparing(ALL_EXCEPT_DISPLAY_INDEX);
 
