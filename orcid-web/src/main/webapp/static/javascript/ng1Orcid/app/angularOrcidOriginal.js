@@ -7351,7 +7351,7 @@ angular.module('orcidApp').controller('DelegatesCtrl',['$scope', '$compile', fun
         });
 
     };
-
+ 
     $scope.getResults = function(rows){
         $.ajax({
             url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -11844,7 +11844,7 @@ angular.module('orcidApp').filter('startsWithLetter', function() {
 
 
 /*
- * DIRECTIVES
+ * 7 - Angular Multiselect Module
  */
 
 /*
@@ -11947,55 +11947,6 @@ angular.module('orcidApp').directive(
     ]
 );
 
-/*
- * For forms submitted using the default submit function (Scope: document)
- * Not necessary to be inside an element, for inputs use ngEnter
- */
-angular.module('orcidApp').directive('ngEnterSubmit', function($document) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attr) {
-            $document.bind("keydown keypress", function(event) {
-                if (event.which === 13) {
-                   element.submit();
-                }
-            });
-
-        }
-    };
-});
-
-/*
- * For forms submitted using a custom function, Scope: Document
- * 
- * Example:
- * <fn-form update-fn="theCustomFunction()">
- * 
- * </fn-form>
- * 
- */
-angular.module('orcidApp').directive('fnForm', function($document) {
-    return {
-        restrict: 'E',
-        scope: {
-            updateFn: '&'
-        },
-        link: function(scope, elm, attrs) {
-
-            $(document).unbind("keydown.keydownUpfateFn");
-
-            $document.bind(
-                "keydown.keydownUpfateFn",
-                function(event) {
-                    if (event.which === 13) {
-                        scope.updateFn();                 
-                        event.stopPropagation();
-                    }
-                }
-            );                   
-        }
-    }
-});
 
 /*
  * Scope: element
@@ -12028,23 +11979,6 @@ angular.module('orcidApp').directive('bindHtmlCompile', ['$compile', function ($
         }
     };
 }]);
-
-angular.module('orcidApp').directive('focusMe', function($timeout) {
-    return {
-      scope: { trigger: '=focusMe' },
-      link: function(scope, element) {
-        $timeout( //[fn], [delay], [invokeApply], [Pass]
-            function(){
-                if (scope.trigger) {
-                    element[0].focus();
-                    scope.trigger = false;
-                }
-            },
-            1000
-        );
-      }
-    };
-});
 
 angular.module('orcidApp').directive('scroll', function () {
     return {
