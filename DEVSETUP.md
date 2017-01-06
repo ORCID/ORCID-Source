@@ -173,13 +173,13 @@ Do this before the '-vmargs' param
 
 * Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
 
-  * Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
+  * Navigate to ORCID-Source and select eclipse_formatter.xml
 
   * Click "Apply"
 
 * Select Eclipse (or Spring Tool Suit) -> Preferences -> JavaScript -> Code style -> Formatter -> Import
 
-  * Navigate to ~/git/ORCID-Source and select eclipse_javascript_formatter.xml
+  * Navigate to ORCID-Source and select eclipse_javascript_formatter.xml
 
   * Click "Apply"
 
@@ -222,7 +222,7 @@ When this it is done, restart the server.
 * Get latest version
 
 ```
-cd ~/git/ORCID-Source
+cd ORCID-Source
 git checkout master
 git pull
 ```
