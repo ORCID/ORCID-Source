@@ -6,7 +6,8 @@ angular.module('orcidApp').directive('ngEnterSubmit', function($document) {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
-            $document.bind("keydown keypress", function(event) {
+            $(document).unbind("keydown.ngEnterSubmit keypress.ngEnterSubmit");
+            $document.bind("keydown.ngEnterSubmit keypress.ngEnterSubmit", function(event) {
                 if (event.which === 13) {
                    element.submit();
                 }
