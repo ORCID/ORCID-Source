@@ -522,7 +522,9 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     };
 
     if( locationObj.verifyEdit ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
             configValues.showModalManualEditVerificationEnabled = true;
+        }
     } 
 
     return initialConfigService;
