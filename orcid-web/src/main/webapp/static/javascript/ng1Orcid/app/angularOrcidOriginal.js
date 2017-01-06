@@ -9024,7 +9024,7 @@ angular.module('orcidApp').controller('findIdsCtrl',['$scope','$compile', functi
     };
 }]);
 
-angular.module('orcidApp').controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
+angular.module('orcidApp').controller('resetPasswordCtrlModal',['$scope', '$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.params = {orcidOrEmail:'',password:''};
     $scope.result = '';
@@ -10413,7 +10413,7 @@ angular.module('orcidApp').controller('CustomEmailCtrl',['$scope', '$compile',fu
     };
 }]);
 
-angular.module('orcidApp').controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
+angular.module('orcidApp').controller('switchUserModalCtrl',['$scope','$compile',function ($scope,$compile){
     $scope.emails = "";
     $scope.orcidOrEmail = "";
     $scope.showSection = false;

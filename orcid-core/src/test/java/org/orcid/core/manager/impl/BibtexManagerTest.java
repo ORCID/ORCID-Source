@@ -44,7 +44,7 @@ public class BibtexManagerTest extends BaseTest{
 
     private static final String ORCID = "0000-0000-0000-0003";
     
-    private static String bibtex = " @article{Credit_Name15, title={SELF PRIVATE}, url={http://doi.org/5}, DOI={5}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name14, title={SELF LIMITED}, url={http://doi.org/4}, DOI={4}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name13, title={PRIVATE}, url={http://doi.org/3}, DOI={3}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name12, title={LIMITED}, url={http://doi.org/2}, DOI={2}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name11, title={PUBLIC}, url={http://doi.org/1}, DOI={1}, author={Credit Name}, year={2016}, month={Jan}}\n";
+    private static String bibtex =  " @article{Credit_Name12, title={LIMITED}, url={http://doi.org/2}, DOI={2}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name13, title={PRIVATE}, url={http://doi.org/3}, DOI={3}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name11, title={PUBLIC}, url={http://doi.org/1}, DOI={1}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name14, title={SELF LIMITED}, url={http://doi.org/4}, DOI={4}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name15, title={SELF PRIVATE}, url={http://doi.org/5}, DOI={5}, author={Credit Name}, year={2016}, month={Jan}}\n";
     
     @Resource
     private BibtexManager bibtexManager;
