@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -42,6 +44,7 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -59,10 +62,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * 
  */
 public class OrcidClientGroupManagerTest extends BaseTest {
-
-    public static final String CLIENT_GROUP = "/orcid-client-group-request.xml";
-    public static final String PREMIUM_CLIENT_GROUP_NO_CLIENT = "/premium-orcid-client-group-request-no-clients.xml";        
-
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
@@ -78,24 +77,67 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Mock
     private OrcidIndexManager orcidIndexManager;
 
+    private OrcidClientGroup group = null;
+    private final String email = "orcid-admin@elsevier.com"; 
+    
+    {
+        group = new OrcidClientGroup();
+        group.setGroupName("Elsevier");
+        group.setEmail(email);
+        group.setType(MemberType.PREMIUM);
+        
+        OrcidClient client1 = new OrcidClient();
+        client1.setType(ClientType.UPDATER);
+        client1.setDisplayName("Ecological Complexity");
+        client1.setWebsite("http://www.journals.elsevier.com/ecological-complexity");
+        client1.setIdp("IdP-1");
+        client1.setShortDescription("An International Journal on Biocomplexity in the Environment and Theoretical Ecology");
+        RedirectUris rUris = new RedirectUris();
+        RedirectUri r1 = new RedirectUri();
+        r1.setScope(Arrays.asList(ScopePathType.fromValue("/orcid-profile/create"), ScopePathType.fromValue("/orcid-bio/read-limited")));
+        r1.setType(RedirectUriType.GRANT_READ_WIZARD);
+        r1.setValue("http://www.journals.elsevier.com/ecological-complexity/orcid-callback");
+        rUris.getRedirectUri().add(r1);
+        client1.setRedirectUris(rUris);        
+        
+        OrcidClient client2 = new OrcidClient();
+        client2.setType(ClientType.UPDATER);
+        client2.setDisplayName("Ecological Economics");
+        client2.setWebsite("http://www.journals.elsevier.com/ecological-economics");
+        client2.setIdp("IdP-2");
+        client2.setShortDescription("The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)");
+        RedirectUris rUris2 = new RedirectUris();
+        RedirectUri r2 = new RedirectUri();
+        r2.setScope(Arrays.asList(ScopePathType.fromValue("/orcid-bio/read-limited")));
+        r2.setType(RedirectUriType.DEFAULT);
+        r2.setValue("http://www.journals.elsevier.com/ecological-economics/orcid-callback");
+        rUris2.getRedirectUri().add(r2);
+        client2.setRedirectUris(rUris2);
+        
+        group.getOrcidClient().add(client1);
+        group.getOrcidClient().add(client2);
+    }
+    
     @Before
     public void initMocks() throws Exception {
         removeDBUnitData(Collections.<String> emptyList());        
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "orcidIndexManager", orcidIndexManager);         
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
     }
 
+    @After
+    public void after() {
+        group.setEmail(email);
+    }
+    
     @Test    
     public void testCreateOrcidClientGroup() {
-        OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-        String email = group.getEmail() + System.currentTimeMillis();
-        group.setEmail(email);
-
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
-        assertEquals("Elsevier", createdGroup.getGroupName());
-        assertEquals(email, createdGroup.getEmail());
+        assertEquals(group.getGroupName(), createdGroup.getGroupName());
+        assertEquals(group.getEmail(), createdGroup.getEmail());
         assertNotNull(createdGroup.getGroupOrcid());
         List<OrcidClient> createdClients = createdGroup.getOrcidClient();
         assertNotNull(createdClients);
@@ -130,20 +172,16 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         assertTrue(clientScopeTypes.contains("/orcid-bio/read-limited"));
         assertTrue(clientScopeTypes.contains("/orcid-works/read-limited"));
         assertFalse(clientScopeTypes.contains("/orcid-profile/create"));
-        assertTrue(clientScopeTypes.contains("/authenticate"));
+        assertTrue(clientScopeTypes.contains("/authenticate"));        
     }
 
     @Test
     public void testCreateOrcidCreatorClientGroup() {
-        OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-        String email = group.getEmail() + System.currentTimeMillis();
-        group.setEmail(email);
-        
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
-        assertEquals("Elsevier", createdGroup.getGroupName());
-        assertEquals(email, createdGroup.getEmail());
+        assertEquals(group.getGroupName(), createdGroup.getGroupName());
+        assertEquals(group.getEmail(), createdGroup.getEmail());
         assertNotNull(createdGroup.getGroupOrcid());
         List<OrcidClient> createdClients = createdGroup.getOrcidClient();
         assertNotNull(createdClients);
@@ -175,9 +213,6 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testUpdateOrcidClientGroup() {
-        final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-        group.setEmail(group.getEmail() + System.currentTimeMillis());
-        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -226,16 +261,13 @@ public class OrcidClientGroupManagerTest extends BaseTest {
 
     @Test
     public void testGetOrcidClientList() {
-        OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-        group.setEmail(group.getEmail() + System.currentTimeMillis());
-        
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
 
         createdGroup = orcidClientGroupManager.retrieveOrcidClientGroup(createdGroup.getGroupOrcid());
 
         assertNotNull(createdGroup);
         assertNotNull(createdGroup.getOrcidClient());
-        assertEquals(createdGroup.getOrcidClient().size(), 2);
+        assertEquals(2, createdGroup.getOrcidClient().size());
     }
 
     @Test
@@ -244,6 +276,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupName("Elsevier");
         group.setEmail("basic-member@elsevier.com" + System.currentTimeMillis());        
+        group.setType(MemberType.BASIC);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -290,6 +323,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupName("Elsevier");
         group.setEmail("basic-member@elsevier.com" + System.currentTimeMillis());            
+        group.setType(MemberType.PREMIUM);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -323,6 +357,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupName("Elsevier");
         group.setEmail("basic-institution-member@elsevier.com" + System.currentTimeMillis());
+        group.setType(MemberType.BASIC_INSTITUTION);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -369,6 +404,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupName("Elsevier");
         group.setEmail("basic-institution-member@elsevier.com" + System.currentTimeMillis());
+        group.setType(MemberType.BASIC_INSTITUTION);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -399,8 +435,10 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddCreatorToPremiumGroup() {
-        final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_CLIENT_GROUP_NO_CLIENT));
-        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        final OrcidClientGroup group = new OrcidClientGroup();
+        group.setGroupName("Elsevier");
+        group.setEmail("premium-member@elsevier.com" + System.currentTimeMillis());
+        group.setType(MemberType.PREMIUM);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -434,6 +472,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         final OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupName("Elsevier");
         group.setEmail("premium-institution-member@elsevier.com" + System.currentTimeMillis());
+        group.setType(MemberType.PREMIUM_INSTITUTION);
         
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
@@ -463,9 +502,6 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     
     @Test
     public void testUpdateGroup() {
-        final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-        group.setEmail(group.getEmail() + System.currentTimeMillis());
-        
         final OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -479,6 +515,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         
         //Get existing clients
         List<ClientDetailsEntity> clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
+        assertEquals(2, clients.size());
         for(ClientDetailsEntity clientDetails : clients) {
             assertEquals(ClientType.PREMIUM_UPDATER, clientDetails.getClientType());
             assertTrue(clientDetails.isScoped());
@@ -498,6 +535,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         Set<String> premiumInstitutionScopes = orcidClientGroupManager.premiumCreatorScopes();
         
         clients = clientDetailsManager.findByGroupId(createdGroup.getGroupOrcid());
+        assertEquals(2, clients.size());
         for(ClientDetailsEntity clientDetails : clients) {
             assertEquals(ClientType.PREMIUM_CREATOR, clientDetails.getClientType());
             assertTrue(clientDetails.isScoped());
