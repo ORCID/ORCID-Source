@@ -517,7 +517,9 @@ ActSortState.prototype.sortBy = function(key) {
 angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
-        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
+        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+        showModalManualEditVerificationEnabled: true
+
     };
 
     var locationObj = $location.search();
@@ -530,9 +532,9 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
 
     if( locationObj.verifyEdit ){
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-            configValues.modalManualEditVerificationEnabled = true;
+            configValues.showModalManualEditVerificationEnabled = true;
         } else {
-            configValues.modalManualEditVerificationEnabled = false;
+            configValues.showModalManualEditVerificationEnabled = false;
         }
     }
 
@@ -3094,8 +3096,8 @@ angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '
     }
         
     $scope.openEditModal = function(){
-        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bulkEditShow = false;
             $.colorbox({
                 scrolling: true,
@@ -3330,7 +3332,7 @@ angular.module('orcidApp').controller('KeywordsCtrl', ['$scope', '$rootScope', '
     };
     
     $scope.openEditModal = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bulkEditShow = false;
             $scope.modal = true;        
             $.colorbox({
@@ -3680,7 +3682,7 @@ angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$
     /////////////////////// End of verified email logic for work
 
     $scope.toggleEdit = function() {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.showEdit = !$scope.showEdit;
         }else{
             showEmailVerificationModal();
@@ -3914,8 +3916,7 @@ angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$
     };
     
     $scope.openEditModal = function() {
-        
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bulkEditShow = false;
             
             $.colorbox({
@@ -5066,7 +5067,7 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.addAffType = type;
             if(affiliation === undefined) {
                 $scope.removeDisambiguatedAffiliation();
@@ -5333,7 +5334,7 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
 
     $scope.addFundingModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if(data == undefined) {
                 $scope.removeDisambiguatedFunding();
                 $.ajax({
@@ -6080,7 +6081,7 @@ angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$com
 
     $scope.toggleBulkEdit = function() {
 
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (!$scope.bulkEditShow) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;

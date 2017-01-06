@@ -603,7 +603,9 @@
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
 	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
 	    var configValues = {
-	        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
+	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+	        showModalManualEditVerificationEnabled: true
+
 	    };
 
 	    var locationObj = $location.search();
@@ -616,9 +618,9 @@
 
 	    if( locationObj.verifyEdit ){
 	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-	            configValues.modalManualEditVerificationEnabled = true;
+	            configValues.showModalManualEditVerificationEnabled = true;
 	        } else {
-	            configValues.modalManualEditVerificationEnabled = false;
+	            configValues.showModalManualEditVerificationEnabled = false;
 	        }
 	    }
 
@@ -3180,8 +3182,8 @@
 	    }
 	        
 	    $scope.openEditModal = function(){
-	        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            $.colorbox({
 	                scrolling: true,
@@ -3416,7 +3418,7 @@
 	    };
 	    
 	    $scope.openEditModal = function(){
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            $scope.modal = true;        
 	            $.colorbox({
@@ -3766,7 +3768,7 @@
 	    /////////////////////// End of verified email logic for work
 
 	    $scope.toggleEdit = function() {
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.showEdit = !$scope.showEdit;
 	        }else{
 	            showEmailVerificationModal();
@@ -4000,8 +4002,7 @@
 	    };
 	    
 	    $scope.openEditModal = function() {
-	        
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            
 	            $.colorbox({
@@ -5152,7 +5153,7 @@
 	    };
 
 	    $scope.addAffiliationModal = function(type, affiliation){
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.addAffType = type;
 	            if(affiliation === undefined) {
 	                $scope.removeDisambiguatedAffiliation();
@@ -5419,7 +5420,7 @@
 	    };
 
 	    $scope.addFundingModal = function(data){
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            if(data == undefined) {
 	                $scope.removeDisambiguatedFunding();
 	                $.ajax({
@@ -6166,7 +6167,7 @@
 
 	    $scope.toggleBulkEdit = function() {
 
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            if (!$scope.bulkEditShow) {
 	                $scope.bulkEditMap = {};
 	                $scope.bulkChecked = false;
