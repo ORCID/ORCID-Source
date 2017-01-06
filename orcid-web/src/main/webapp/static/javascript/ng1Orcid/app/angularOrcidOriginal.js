@@ -9016,7 +9016,7 @@ orcidNgModule.controller('findIdsCtrl',['$scope','$compile', function findIdsCtr
     };
 }]);
 
-orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($scope,$compile) {
+orcidNgModule.controller('resetPasswordCtrlModal',['$scope', '$compile', function ($scope,$compile) {
     $scope.showSection = false;
     $scope.params = {orcidOrEmail:'',password:''};
     $scope.result = '';
@@ -10405,7 +10405,7 @@ orcidNgModule.controller('CustomEmailCtrl',['$scope', '$compile',function ($scop
     };
 }]);
 
-orcidNgModule.controller('switchUserCtrl',['$scope','$compile',function ($scope,$compile){
+orcidNgModule.controller('switchUserModalCtrl',['$scope','$compile',function ($scope,$compile){
     $scope.emails = "";
     $scope.orcidOrEmail = "";
     $scope.showSection = false;
