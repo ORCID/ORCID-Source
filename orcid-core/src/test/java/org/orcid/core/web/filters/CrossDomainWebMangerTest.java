@@ -43,11 +43,11 @@ public class CrossDomainWebMangerTest {
     String [] allowedDomains = {"https://orcid.org", "http://orcid.org", "http://qa.orcid.org", "https://qa.orcid.org", "https://sandbox.orcid.org", "http://sandbox.orcid.org"};
     String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.ihateorcid.org", "http://qa.ihateorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.ihateorcid.org", "https://qa.ihateorcid.org"};
     
-    String [] allowedPaths = {"/public/other","/public/","/public_widgets/0000-0000-0000-0000/HASH/info.json","/userStatus.json", "/lang.json"};
+    String [] allowedPaths = {"/public/other","/public/","/public_widgets/0000-0000-0000-0000/HASH/info.json","/userStatus.json"};
     String [] forbiddenPaths = {"/public","/whatever/public","/whatever/public/","/whatever/public/other",
             "/public_widgets/","/whatever/public_widgets/","/public_widgets/0000-0000-0000-000/HASH/info.json","/public_widgets/0000-0000-000-0000/HASH/info.json",
             "/whatever/public_widgets/0000-0000-0000-0000/HASH/info.json","/public_widgets/0000-0000-0000-0000/HASH","/public_widgets/0000-0000-0000-0000//info.json",
-            "/public_widgets/invalid_orcid/HASH/info.json","/whatever/userStatus.json","/userstatus.json","/whatever/lang.json","/userStatus.json/","/userStatus.json/whatever",
+            "/public_widgets/invalid_orcid/HASH/info.json","/whatever/userStatus.json","/userstatus.json","/userStatus.json/","/userStatus.json/whatever",
             "/userStatus.jsonwhatever/test","/userStatus.json/whatever","/userStatus.jsonwhatever","/userStatus.jsonwhatever/test"};
     
     @Test
