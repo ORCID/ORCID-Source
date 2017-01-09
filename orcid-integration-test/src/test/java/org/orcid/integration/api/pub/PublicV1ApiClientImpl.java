@@ -24,6 +24,7 @@ import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
@@ -43,12 +44,21 @@ public class PublicV1ApiClientImpl {
     public ClientResponse viewRootProfile(String orcid) {
         return viewRootProfile(orcid, null);
     }
-    
+
+    public ClientResponse viewRootProfileJson(String orcid) {
+        return viewRootProfileJson(orcid, null);
+    }
+
     public ClientResponse viewRootProfile(String orcid, String token) {
         URI rootProfileUri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
         return getClientReponse(rootProfileUri, token);
     }
-    
+
+    public ClientResponse viewRootProfileJson(String orcid, String token) {
+        URI rootProfileUri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
+        return getClientReponse(rootProfileUri, token, MediaType.APPLICATION_JSON);
+    }
+
     public ClientResponse viewPublicProfile(String orcid) {
         return viewPublicProfile(orcid, null);
     }
@@ -67,13 +77,17 @@ public class PublicV1ApiClientImpl {
         URI searchUri = UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery("q=orcid:" + orcid).build();
         return getClientReponse(searchUri, token);
     }
-    
+
     private ClientResponse getClientReponse(URI uri, String token) {
+        return getClientReponse(uri, token, VND_ORCID_XML);
+    }
+
+    private ClientResponse getClientReponse(URI uri, String token, String mediaType) {
         ClientResponse result = null;
-        if(PojoUtil.isEmpty(token)) {
-            result = orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
+        if (PojoUtil.isEmpty(token)) {
+            result = orcidClientHelper.getClientResponse(uri, mediaType);
         } else {
-            result = orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, token);
+            result = orcidClientHelper.getClientResponseWithToken(uri, mediaType, token);
         }
         return result;
     }

@@ -103,20 +103,20 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
 
     @Test
     public void testViewExternalIdentifierReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewExternalIdentifiersReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
         PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test

@@ -139,10 +139,6 @@
             <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common</param-value>
         </init-param>
         <init-param>
-            <param-name>jersey.config.server.provider.classnames</param-name>
-            <param-value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider</param-value>
-        </init-param>
-        <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
             <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter</param-value>
         </init-param>

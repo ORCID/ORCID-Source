@@ -119,20 +119,20 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
 
     @Test
     public void testViewWorkReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewWork(ORCID, 11L);
         Work element = (Work) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewWorkSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewWorkSummary(ORCID, 11L);
         WorkSummary element = (WorkSummary) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -209,6 +209,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertNotNull(works);
         Utils.verifyLastModified(works.getLastModifiedDate());
         assertNotNull(works.getWorkGroup());
+        assertNotNull(works.getPath());
         assertEquals(4, works.getWorkGroup().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
 

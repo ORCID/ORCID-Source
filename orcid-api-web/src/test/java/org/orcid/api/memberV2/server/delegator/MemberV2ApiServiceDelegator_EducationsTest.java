@@ -102,11 +102,11 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
     @Test
     public void testViewEducationReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEducation(ORCID, 20L);
         Education element = (Education) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
@@ -117,20 +117,20 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
 
     @Test
     public void testViewEducationsReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEducations(ORCID);
         Educations element = (Educations) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewEducationSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewEducationSummary(ORCID, 20L);
         EducationSummary element = (EducationSummary) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -197,6 +197,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(r);
         Educations educations = (Educations) r.getEntity();
         assertNotNull(educations);
+        assertNotNull(educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
         assertNotNull(educations.getSummaries());
         assertEquals(4, educations.getSummaries().size());
