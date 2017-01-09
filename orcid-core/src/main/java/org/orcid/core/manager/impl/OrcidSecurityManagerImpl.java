@@ -265,7 +265,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope) {
+    public void checkAndFilter(String orcid, ActivitiesSummary activities) {
         if (activities == null) {
             return;
         }
@@ -275,12 +275,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Educations
         if (activities.getEducations() != null) {
-            checkAndFilter(orcid, activities.getEducations().getSummaries(), requiredScope, true);
+            checkAndFilter(orcid, activities.getEducations().getSummaries(), ScopePathType.AFFILIATIONS_READ_LIMITED, true);
         }
 
         // Employments
         if (activities.getEmployments() != null) {
-            checkAndFilter(orcid, activities.getEmployments().getSummaries(), requiredScope, true);
+            checkAndFilter(orcid, activities.getEmployments().getSummaries(), ScopePathType.AFFILIATIONS_READ_LIMITED, true);
         }
 
         // Funding
@@ -289,7 +289,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 FundingGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getFundingSummary(), requiredScope, true);
+                checkAndFilter(orcid, group.getFundingSummary(), ScopePathType.FUNDING_READ_LIMITED, true);
                 // Clean external identifiers
                 if (group.getFundingSummary().isEmpty()) {
                     groupIt.remove();
@@ -305,7 +305,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 PeerReviewGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getPeerReviewSummary(), requiredScope, true);
+                checkAndFilter(orcid, group.getPeerReviewSummary(), ScopePathType.PEER_REVIEW_READ_LIMITED, true);
                 if (group.getPeerReviewSummary().isEmpty()) {
                     groupIt.remove();
                 }
@@ -318,7 +318,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 WorkGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getWorkSummary(), requiredScope, true);
+                checkAndFilter(orcid, group.getWorkSummary(), ScopePathType.ORCID_WORKS_READ_LIMITED, true);
                 // Clean external identifiers
                 if (group.getWorkSummary().isEmpty()) {
                     groupIt.remove();
@@ -419,7 +419,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         isMyToken(orcid);
 
         if (record.getActivitiesSummary() != null) {
-            checkAndFilter(orcid, record.getActivitiesSummary(), requiredScope);
+            checkAndFilter(orcid, record.getActivitiesSummary());
         }
 
         if (record.getPerson() != null) {

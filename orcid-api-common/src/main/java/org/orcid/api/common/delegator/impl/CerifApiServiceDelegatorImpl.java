@@ -100,7 +100,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
         
-        orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, as);
 
         ActivityUtils.cleanEmptyFields(as);
         

@@ -226,7 +226,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
-        orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);

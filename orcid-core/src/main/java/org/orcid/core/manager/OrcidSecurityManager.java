@@ -59,7 +59,7 @@ public interface OrcidSecurityManager {
 
     void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope);
 
-    void checkAndFilter(String orcid, ActivitiesSummary activities, ScopePathType requiredScope);
+    void checkAndFilter(String orcid, ActivitiesSummary activities);
 
     void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope);
 

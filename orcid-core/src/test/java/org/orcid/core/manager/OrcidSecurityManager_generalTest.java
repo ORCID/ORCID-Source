@@ -57,7 +57,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPublicClient_checkAndFilter_ActivitiesSummary() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
-        orcidSecurityManager.checkAndFilter(ORCID_1, new ActivitiesSummary(), ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new ActivitiesSummary());
     }
     
     @Test(expected = OrcidUnauthorizedException.class)
