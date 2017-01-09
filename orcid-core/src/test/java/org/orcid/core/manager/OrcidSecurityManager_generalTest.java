@@ -34,11 +34,14 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc4.Biography;
 import org.orcid.jaxb.model.record_rc4.Name;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_rc4.Person;
 import org.orcid.jaxb.model.record_rc4.PersonalDetails;
+import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.Work;
 
 /**
@@ -48,6 +51,57 @@ import org.orcid.jaxb.model.record_rc4.Work;
  */
 public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBase {
 
+    /**
+     * =================== public client tests ===================
+     */
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_ActivitiesSummary() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new ActivitiesSummary(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_Collection() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new ArrayList<Work>(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_Person() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new Person(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_PersonalDetails() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new PersonalDetails(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_Record() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new Record(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkAndFilter_VisibilityType() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new Work(), ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkClientAccessAndScopes() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkClientAccessAndScopes(ORCID_1, ScopePathType.READ_LIMITED);
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testPublicClient_checkScopes() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
+    }
+    
     /**
      * =================== checkScopes test's ===================
      */

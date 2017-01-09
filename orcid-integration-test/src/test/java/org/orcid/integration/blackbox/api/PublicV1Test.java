@@ -90,6 +90,28 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
     }
     
     @Test
+    public void testViewPublicProfileJsonAnonymously() throws JSONException, InterruptedException {
+        ClientResponse response = publicV1ApiClient.viewRootProfileJson(getUser1OrcidId());
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+        response = publicV1ApiClient.viewPublicProfile(getUser1OrcidId());
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+    }
+    
+    @Test
     public void testViewPublicProfileUsingToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         ClientResponse response = publicV1ApiClient.viewRootProfile(getUser1OrcidId(), accessToken);
