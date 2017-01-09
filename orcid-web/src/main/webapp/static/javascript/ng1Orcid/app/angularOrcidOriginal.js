@@ -518,7 +518,7 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
         propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
-        showModalManualEditVerificationEnabled: true
+        showModalManualEditVerificationEnabled: false
 
     };
 
@@ -533,8 +533,6 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
     if( locationObj.verifyEdit ){
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
             configValues.showModalManualEditVerificationEnabled = true;
-        } else {
-            configValues.showModalManualEditVerificationEnabled = false;
         }
     }
 
