@@ -39,6 +39,7 @@ node {
             ], 
             wait: true
         ])
+        sh "sleep 120"
     }
     
     stage('Execute Black-Box Tests'){
