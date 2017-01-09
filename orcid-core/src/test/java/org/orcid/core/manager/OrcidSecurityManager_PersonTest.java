@@ -59,7 +59,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
     public void testPerson_When_TokenForOtherUser() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
         Person p = new Person();
-        orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_2, p);
         fail();
     }
 
@@ -115,7 +115,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -203,7 +203,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertEquals(bio, p.getBiography());
@@ -291,7 +291,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertNull(p.getBiography());
@@ -379,7 +379,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -449,7 +449,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -537,7 +537,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -625,7 +625,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -713,7 +713,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertEquals(bio, p.getBiography());
@@ -801,7 +801,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -871,7 +871,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -959,7 +959,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
         p.setOtherNames(otherNames);
         p.setResearcherUrls(researcherUrls);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -999,7 +999,7 @@ public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBas
     public void testPerson_When_ReadLimitedToken_EmptyElement() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);
         Person p = new Person();
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.PERSON_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
     }
 }

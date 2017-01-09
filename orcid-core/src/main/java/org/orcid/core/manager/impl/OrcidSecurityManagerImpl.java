@@ -51,6 +51,7 @@ import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
+import org.orcid.jaxb.model.record_rc4.Email;
 import org.orcid.jaxb.model.record_rc4.ExternalID;
 import org.orcid.jaxb.model.record_rc4.ExternalIDs;
 import org.orcid.jaxb.model.record_rc4.Group;
@@ -79,6 +80,12 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  */
 public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
+    private static final ScopePathType READ_AFFILIATIONS_REQUIRED_SCOPE = ScopePathType.AFFILIATIONS_READ_LIMITED;
+    private static final ScopePathType READ_BIO_REQUIRED_SCOPE = ScopePathType.ORCID_BIO_READ_LIMITED;
+    private static final ScopePathType READ_FUNDING_REQUIRED_SCOPE = ScopePathType.FUNDING_READ_LIMITED;
+    private static final ScopePathType READ_PEER_REVIEWS_REQUIRED_SCOPE = ScopePathType.PEER_REVIEW_READ_LIMITED;
+    private static final ScopePathType READ_WORKS_REQUIRED_SCOPE = ScopePathType.ORCID_WORKS_READ_LIMITED;                
+    
     @Resource
     private SourceManager sourceManager;
 
@@ -236,8 +243,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
         throw new OrcidAccessControlException();
-    }
-
+    }    
+    
     @Override
     public void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope) {
         checkAndFilter(orcid, elements, requiredScope, false);
@@ -275,12 +282,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Educations
         if (activities.getEducations() != null) {
-            checkAndFilter(orcid, activities.getEducations().getSummaries(), ScopePathType.AFFILIATIONS_READ_LIMITED, true);
+            checkAndFilter(orcid, activities.getEducations().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Employments
         if (activities.getEmployments() != null) {
-            checkAndFilter(orcid, activities.getEmployments().getSummaries(), ScopePathType.AFFILIATIONS_READ_LIMITED, true);
+            checkAndFilter(orcid, activities.getEmployments().getSummaries(), READ_AFFILIATIONS_REQUIRED_SCOPE, true);
         }
 
         // Funding
@@ -289,7 +296,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 FundingGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getFundingSummary(), ScopePathType.FUNDING_READ_LIMITED, true);
+                checkAndFilter(orcid, group.getFundingSummary(), READ_FUNDING_REQUIRED_SCOPE, true);
                 // Clean external identifiers
                 if (group.getFundingSummary().isEmpty()) {
                     groupIt.remove();
@@ -305,7 +312,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 PeerReviewGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getPeerReviewSummary(), ScopePathType.PEER_REVIEW_READ_LIMITED, true);
+                checkAndFilter(orcid, group.getPeerReviewSummary(), READ_PEER_REVIEWS_REQUIRED_SCOPE, true);
                 if (group.getPeerReviewSummary().isEmpty()) {
                     groupIt.remove();
                 }
@@ -318,7 +325,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             while (groupIt.hasNext()) {
                 WorkGroup group = groupIt.next();
                 // Filter the list of elements
-                checkAndFilter(orcid, group.getWorkSummary(), ScopePathType.ORCID_WORKS_READ_LIMITED, true);
+                checkAndFilter(orcid, group.getWorkSummary(), READ_WORKS_REQUIRED_SCOPE, true);
                 // Clean external identifiers
                 if (group.getWorkSummary().isEmpty()) {
                     groupIt.remove();
@@ -330,7 +337,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkAndFilter(String orcid, PersonalDetails personalDetails, ScopePathType requiredScope) {
+    public void checkAndFilter(String orcid, PersonalDetails personalDetails) {
         if (personalDetails == null) {
             return;
         }
@@ -339,12 +346,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         isMyToken(orcid);
 
         if (personalDetails.getOtherNames() != null) {
-            checkAndFilter(orcid, personalDetails.getOtherNames().getOtherNames(), requiredScope, true);
+            checkAndFilter(orcid, personalDetails.getOtherNames().getOtherNames(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (personalDetails.getBiography() != null) {
             try {
-                checkAndFilter(orcid, personalDetails.getBiography(), requiredScope, true);
+                checkAndFilter(orcid, personalDetails.getBiography(), READ_BIO_REQUIRED_SCOPE, true);
             } catch (Exception e) {
                 personalDetails.setBiography(null);
             }
@@ -352,7 +359,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         if (personalDetails.getName() != null) {
             try {
-                checkAndFilter(orcid, personalDetails.getName(), requiredScope, true);
+                checkAndFilter(orcid, personalDetails.getName(), READ_BIO_REQUIRED_SCOPE, true);
             } catch (Exception e) {
                 personalDetails.setName(null);
             }
@@ -360,7 +367,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkAndFilter(String orcid, Person person, ScopePathType requiredScope) {
+    public void checkAndFilter(String orcid, Person person) {
         if (person == null) {
             return;
         }
@@ -369,48 +376,49 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         isMyToken(orcid);
 
         if (person.getAddresses() != null) {
-            checkAndFilter(orcid, person.getAddresses().getAddress(), requiredScope, true);
+            checkAndFilter(orcid, person.getAddresses().getAddress(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (person.getBiography() != null) {
             try {
-                checkAndFilter(orcid, person.getBiography(), requiredScope, true);
+                checkAndFilter(orcid, person.getBiography(), READ_BIO_REQUIRED_SCOPE, true);
             } catch (Exception e) {
                 person.setBiography(null);
             }
         }
 
         if (person.getEmails() != null) {
-            checkAndFilter(orcid, person.getEmails().getEmails(), requiredScope, true);
+            //TODO: How to proceed here? we can't overload the filter for collections, so, we can iterate on email's here, or, do it other way
+            checkAndFilter(orcid, person.getEmails().getEmails(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (person.getExternalIdentifiers() != null) {
-            checkAndFilter(orcid, person.getExternalIdentifiers().getExternalIdentifiers(), requiredScope, true);
+            checkAndFilter(orcid, person.getExternalIdentifiers().getExternalIdentifiers(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (person.getKeywords() != null) {
-            checkAndFilter(orcid, person.getKeywords().getKeywords(), requiredScope, true);
+            checkAndFilter(orcid, person.getKeywords().getKeywords(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (person.getName() != null) {
             try {
-                checkAndFilter(orcid, person.getName(), requiredScope, true);
+                checkAndFilter(orcid, person.getName(), READ_BIO_REQUIRED_SCOPE, true);
             } catch (Exception e) {
                 person.setName(null);
             }
         }
 
         if (person.getOtherNames() != null) {
-            checkAndFilter(orcid, person.getOtherNames().getOtherNames(), requiredScope, true);
+            checkAndFilter(orcid, person.getOtherNames().getOtherNames(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
         if (person.getResearcherUrls() != null) {
-            checkAndFilter(orcid, person.getResearcherUrls().getResearcherUrls(), requiredScope, true);
+            checkAndFilter(orcid, person.getResearcherUrls().getResearcherUrls(), READ_BIO_REQUIRED_SCOPE, true);
         }
     }
 
     @Override
-    public void checkAndFilter(String orcid, Record record, ScopePathType requiredScope) {
+    public void checkAndFilter(String orcid, Record record) {
         if (record == null) {
             return;
         }
@@ -423,7 +431,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
 
         if (record.getPerson() != null) {
-            checkAndFilter(orcid, record.getPerson(), requiredScope);
+            checkAndFilter(orcid, record.getPerson());
         }
     }
 
@@ -435,6 +443,68 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         checkScopes(requiredScope);
     }
 
+    /**
+     * Check the permissions of a request over an email.
+     * 
+     * @param orcid
+     *            The user owner of the element
+     * @param email
+     *            The email to check
+     * @param requiredScope
+     *            The required scope to access this element
+     * @throws OrcidUnauthorizedException
+     *             In case the token used was not issued for the owner of the
+     *             element
+     * @throws OrcidAccessControlException
+     *             In case the request doesn't have the required scopes
+     * @throws OrcidVisibilityException
+     *             In case the element is not visible due the visibility
+     */
+    @Override
+    public void checkAndFilter(String orcid, Email email, ScopePathType requiredScope) {        
+        checkAndFilter(orcid, email, requiredScope, false);
+    }
+    
+    /**
+     * Check the permissions of a request over an email. Private
+     * implementation that will also include a parameter that indicates if we
+     * should check the token or, if it was already checked previously
+     * 
+     * @param orcid
+     *            The user owner of the element
+     * @param email
+     *            The email to check
+     * @param requiredScope
+     *            The required scope to access this element
+     * @param tokenAlreadyChecked
+     *            Indicates if the token was already checked previously, so, we
+     *            don't expend time checking it again
+     * @throws OrcidUnauthorizedException
+     *             In case the token used was not issued for the owner of the
+     *             element
+     * @throws OrcidAccessControlException
+     *             In case the request doesn't have the required scopes
+     * @throws OrcidVisibilityException
+     *             In case the element is not visible due the visibility
+     */ 
+    private void checkAndFilter(String orcid, Email email, ScopePathType requiredScope, boolean tokenAlreadyChecked) {        
+        if (email == null) {
+            return;
+        }
+
+        // Check the token was issued for this user
+        if (!tokenAlreadyChecked) {
+            isMyToken(orcid);
+        }
+        
+        try {
+            checkScopes(ScopePathType.EMAIL_READ_PRIVATE);
+            return;
+        } catch(OrcidAccessControlException oace) {
+            checkAndFilter(orcid, email, READ_BIO_REQUIRED_SCOPE, true);
+        }                 
+    }
+    
     /**
      * Check the permissions of a request over an element.
      * 
@@ -455,8 +525,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Override
     public void checkAndFilter(String orcid, VisibilityType element, ScopePathType requiredScope) {
         checkAndFilter(orcid, element, requiredScope, false);
-    }
-
+    }    
+    
     /**
      * Check the permissions of a request over an element. Private
      * implementation that will also include a parameter that indicates if we

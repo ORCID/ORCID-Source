@@ -83,7 +83,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         if (personalDetails == null)
             return Response.status(404).build();
-        orcidSecurityManager.checkAndFilter(orcid, personalDetails, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, personalDetails);
 
         Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
