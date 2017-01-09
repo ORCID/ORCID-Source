@@ -509,7 +509,8 @@ var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.mu
 orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
-        modalManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled
+        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+        showModalManualEditVerificationEnabled: false
     };
 
     var locationObj = $location.search();
@@ -522,11 +523,9 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
 
     if( locationObj.verifyEdit ){
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-            configValues.modalManualEditVerificationEnabled = true;
-        } else {
-            configValues.modalManualEditVerificationEnabled = false;
+            configValues.showModalManualEditVerificationEnabled = true;
         }
-    }
+    } 
 
     return initialConfigService;
 }]);
@@ -3086,8 +3085,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
         
     $scope.openEditModal = function(){
-        console.log( configuration.modalManualEditVerificationEnabled == false, configuration.modalManualEditVerificationEnabled );
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
             $.colorbox({
                 scrolling: true,
@@ -3322,7 +3321,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$rootScope', '$compile', 'b
     };
     
     $scope.openEditModal = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	$scope.modal = true;    	
             $.colorbox({
@@ -3672,7 +3671,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'em
     /////////////////////// End of verified email logic for work
 
     $scope.toggleEdit = function() {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.showEdit = !$scope.showEdit;
         }else{
             showEmailVerificationModal();
@@ -3907,7 +3906,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bi
     
     $scope.openEditModal = function() {
     	
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
         	$scope.bulkEditShow = false;
         	
             $.colorbox({
@@ -4643,7 +4642,7 @@ orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', funct
     $scope.getClaim();
 }]);
 
-orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $compile, emailSrvc, initialConfigService) {
     $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
@@ -4652,9 +4651,12 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
             //data: $scope.emailsPojo,
             dataType: 'json',
             success: function(data) {
+                var configuration = initialConfigService.getInitialConfiguration();
+                var primeVerified = false;
+
+                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
                 $scope.emailsPojo = data;
                 $scope.$apply();
-                var primeVerified = false;
                 for (i in $scope.emailsPojo.emails) {
                     if ($scope.emailsPojo.emails[i].primary) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
@@ -5058,7 +5060,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile',
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.addAffType = type;
             if(affiliation === undefined) {
                 $scope.removeDisambiguatedAffiliation();
@@ -5222,7 +5224,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     
     /////////////////////// Begin of verified email logic for work
     var configuration = initialConfigService.getInitialConfiguration();
-    var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
 
@@ -5325,7 +5326,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$rootScope', '$compile', '$fi
     };
 
     $scope.addFundingModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if(data == undefined) {
                 $scope.removeDisambiguatedFunding();
                 $.ajax({
@@ -6036,7 +6037,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
     /////////////////////// Begin of verified email logic for work
     var configuration = initialConfigService.getInitialConfiguration();
-    var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
 
@@ -6072,7 +6072,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
 
     $scope.toggleBulkEdit = function() {
 
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (!$scope.bulkEditShow) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;
@@ -6226,7 +6226,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };
 
     $scope.openBibTextWizard = function () {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bibtexParsingError = false;
             $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
             $scope.bulkEditShow = false;
@@ -6417,7 +6417,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     }
     
     $scope.addWorkModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (data == undefined) {
                 worksSrvc.getBlankWork(function(data) {
                     $scope.editWork = data;
@@ -6442,7 +6442,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
     };       
 
     $scope.putWork = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if ($scope.addingWork) {
                 return; // don't process if adding work
             }
@@ -6775,35 +6775,38 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         $scope.workImportWizard = false;
         $scope.showBibtexExport  = !$scope.showBibtexExport;
         $scope.bibtexExportError = false;
-        $scope.bibtexGenerated = false;
-        $scope.loadingScripts = false;
-        $scope.scriptsLoaded = false;
+        $scope.bibtexLoading = false;
     }
     
-    $scope.openBibtexExportDialog = function(){
-        
-        $scope.loadingScripts = true;
+    $scope.fetchBibtexExport = function(){
+        $scope.bibtexLoading = true;
         $scope.bibtexExportError = false; 
-        $scope.scriptsLoaded = false;
         
-        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
-        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
-        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
-        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
-        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
-        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
-        
-        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
-        
-        getScripts(scripts, function(){
-            $scope.$apply(function() {
-                $scope.loadingScripts = false;
-                $scope.scriptsLoaded = true;
-                orcid.init(function(){
-                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
-                });
-            });            
-        });
+        $.ajax({
+            url: getBaseUri() + '/' + 'works/works.bib',
+            type: 'GET',
+            success: function(data) {
+                $scope.bibtexLoading = false;
+                if(window.navigator.msSaveOrOpenBlob) {
+                    var fileData = [data.data];
+                    blobObject = new Blob(fileData, {type: 'text/plain'});
+                    window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                
+                } else {
+                    var anchor = angular.element('<a/>');
+                    anchor.css({display: 'none'});
+                    angular.element(document.body).append(anchor);
+                    anchor.attr({
+                      href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
+                      target: '_self',
+                      download: 'works.bib'
+                    })[0].click();
+                    anchor.remove();
+                }
+            }
+        }).fail(function() {
+            $scope.bibtexExportError = true;
+            console.log("bibtex export error");
+        });        
     };
     
     $scope.downloadBibtexExport = function(citations){
@@ -8010,7 +8013,7 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
 
     $scope.selectedLanguage = function(){
         $.ajax({
-            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value + "&callback=?",
+            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value,
             type: 'GET',
             dataType: 'json',
             success: function(data){

@@ -44,7 +44,8 @@ public class BibtexManagerTest extends BaseTest{
 
     private static final String ORCID = "0000-0000-0000-0003";
     
-    private static String bibtex = " @article{Credit_Name15, title={SELF PRIVATE}, url={http://doi.org/5}, DOI={5}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name14, title={SELF LIMITED}, url={http://doi.org/4}, DOI={4}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name13, title={PRIVATE}, url={http://doi.org/3}, DOI={3}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name12, title={LIMITED}, url={http://doi.org/2}, DOI={2}, author={Credit Name}, year={2016}, month={Jan}}\n,\n @article{Credit_Name11, title={PUBLIC}, url={http://doi.org/1}, DOI={1}, author={Credit Name}, year={2016}, month={Jan}}\n";
+    private static String bibtex = "@article{Credit_Name15,\ntitle={SELF PRIVATE},\nauthor={Credit Name},\ndoi={5},\nurl={http://doi.org/5},\nyear={2016}\n},\n@article{Credit_Name14,\ntitle={SELF LIMITED},\nauthor={Credit Name},\ndoi={4},\nurl={http://doi.org/4},\nyear={2016}\n},\n@article{Credit_Name13,\ntitle={PRIVATE},\nauthor={Credit Name},\ndoi={3},\nurl={http://doi.org/3},\nyear={2016}\n},\n@article{Credit_Name12,\ntitle={LIMITED},\nauthor={Credit Name},\ndoi={2},\nurl={http://doi.org/2},\nyear={2016}\n},\n@article{Credit_Name11,\ntitle={PUBLIC},\nauthor={Credit Name},\ndoi={1},\nurl={http://doi.org/1},\nyear={2016}\n}";
+    
     
     @Resource
     private BibtexManager bibtexManager;
@@ -66,7 +67,10 @@ public class BibtexManagerTest extends BaseTest{
     @Test
     public void testGenerateBibtex(){
         String bib = bibtexManager.generateBibtexReferenceList(ORCID);
-        Assert.assertEquals(bibtex,bib);
+        Assert.assertTrue(bib.startsWith("@article{Credit_Name"));
+        Assert.assertTrue(bib.contains(",\ntitle={SELF PRIVATE},\nauthor={Credit Name},\ndoi={5},\nurl={http://doi.org/5},\nyear={2016}\n}"));
+        Assert.assertTrue(bib.contains(",\ntitle={SELF LIMITED},\nauthor={Credit Name},\ndoi={4},\nurl={http://doi.org/4},\nyear={2016}\n}"));
+        Assert.assertTrue(bib.endsWith("year={2016}\n}"));
     }
     
     @Test

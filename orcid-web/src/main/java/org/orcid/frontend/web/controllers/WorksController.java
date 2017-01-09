@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -782,7 +783,7 @@ public class WorksController extends BaseWorkspaceController {
         return types;
     }
     
-    @RequestMapping(value = "/works.bib", method = RequestMethod.GET)
+    @RequestMapping(value = "/works.bib", method = RequestMethod.GET, produces = "application/x-bibtex")
     public @ResponseBody String fetchBibtex(){
         return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());        
     }
