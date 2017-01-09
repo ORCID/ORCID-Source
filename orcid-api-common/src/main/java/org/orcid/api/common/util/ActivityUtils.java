@@ -79,7 +79,8 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToEducations(Educations educations, String orcid) {
-        if(educations != null) {            
+        if(educations != null) { 
+            educations.setPath(OrcidApiConstants.EDUCATIONS.replace("{orcid}", orcid));
             for(EducationSummary summary : educations.getSummaries()) {
                 setPathToActivity(summary, orcid);
             }            
@@ -95,7 +96,8 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToEmployments(Employments employments, String orcid) {
-        if(employments != null) {            
+        if(employments != null) {  
+            employments.setPath(OrcidApiConstants.EMPLOYMENTS.replace("{orcid}", orcid));
             for(EmploymentSummary summary : employments.getSummaries()) {
                 setPathToActivity(summary, orcid);
             }            
@@ -111,7 +113,8 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToWorks(Works works, String orcid) {
-        if(works != null && works.getWorkGroup() != null) {
+        if(works != null) {
+            works.setPath(OrcidApiConstants.WORKS.replace("{orcid}", orcid));
             for(WorkGroup group : works.getWorkGroup()) {
                 for(WorkSummary summary : group.getWorkSummary()) {
                     setPathToActivity(summary, orcid);
@@ -129,7 +132,8 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToFundings(Fundings fundings, String orcid) {
-        if(fundings != null && fundings.getFundingGroup() != null) {
+        if(fundings != null) {
+            fundings.setPath(OrcidApiConstants.FUNDINGS.replace("{orcid}", orcid));
             for(FundingGroup group : fundings.getFundingGroup()) {
                 for(FundingSummary summary : group.getFundingSummary()) {
                     setPathToActivity(summary, orcid);
@@ -147,7 +151,8 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToPeerReviews(PeerReviews peerReviews, String orcid) {
-        if(peerReviews != null && peerReviews.getPeerReviewGroup() != null) {
+        if(peerReviews != null) {
+            peerReviews.setPath(OrcidApiConstants.PEER_REVIEWS.replace("{orcid}", orcid));
             for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
                 for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
                     setPathToActivity(summary, orcid);
@@ -164,52 +169,14 @@ public class ActivityUtils {
      *            The activity owner
      * */
     public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
-        Educations educations = activitiesSummary.getEducations();
-        Employments employments = activitiesSummary.getEmployments();
-        Fundings fundings = activitiesSummary.getFundings();
-        Works works = activitiesSummary.getWorks();
-        PeerReviews peerReviews = activitiesSummary.getPeerReviews();
+        if (activitiesSummary != null) {
+            activitiesSummary.setPath(OrcidApiConstants.ACTIVITIES.replace("{orcid}", orcid));
+            ActivityUtils.setPathToEducations(activitiesSummary.getEducations(), orcid);
+            ActivityUtils.setPathToEmployments(activitiesSummary.getEmployments(), orcid);
+            ActivityUtils.setPathToFundings(activitiesSummary.getFundings(), orcid);
+            ActivityUtils.setPathToWorks(activitiesSummary.getWorks(), orcid);
+            ActivityUtils.setPathToPeerReviews(activitiesSummary.getPeerReviews(), orcid);
 
-        if (educations != null && !educations.getSummaries().isEmpty()) {
-            for (EducationSummary summary : educations.getSummaries()) {
-                ActivityUtils.setPathToActivity(summary, orcid);
-            }
-        }
-
-        if (employments != null && !employments.getSummaries().isEmpty()) {
-            for (EmploymentSummary summary : employments.getSummaries()) {
-                ActivityUtils.setPathToActivity(summary, orcid);
-            }
-        }
-
-        if (!fundings.getFundingGroup().isEmpty()) {
-            for (FundingGroup group : fundings.getFundingGroup()) {
-                if (!group.getFundingSummary().isEmpty()) {
-                    for (FundingSummary summary : group.getFundingSummary()) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                    }
-                }
-            }
-        }
-
-        if (!works.getWorkGroup().isEmpty()) {
-            for (WorkGroup group : works.getWorkGroup()) {
-                if (!group.getWorkSummary().isEmpty()) {
-                    for (WorkSummary summary : group.getWorkSummary()) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                    }
-                }
-            }
-        }
-        
-        if(!peerReviews.getPeerReviewGroup().isEmpty()) {
-            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-                if(!group.getPeerReviewSummary().isEmpty()) {
-                    for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                    }
-                }
-            }
         }
     }
     

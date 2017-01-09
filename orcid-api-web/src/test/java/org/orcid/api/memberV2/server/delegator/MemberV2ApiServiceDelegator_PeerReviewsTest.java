@@ -114,20 +114,20 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
 
     @Test
     public void testViewPeerReviewReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
         PeerReview element = (PeerReview) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewPeerReviewSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -234,6 +234,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
         assertNotNull(peerReviews);
+        assertNotNull(peerReviews.getPath());
         Utils.verifyLastModified(peerReviews.getLastModifiedDate());
         assertNotNull(peerReviews.getPeerReviewGroup());
         assertEquals(4, peerReviews.getPeerReviewGroup().size());

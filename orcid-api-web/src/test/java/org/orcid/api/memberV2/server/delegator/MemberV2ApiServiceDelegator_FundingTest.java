@@ -108,20 +108,20 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
 
     @Test
     public void testViewFundingReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewFunding(ORCID, 10L);
         Funding element = (Funding) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewFundingSummaryReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewFundingSummary(ORCID, 10L);
         FundingSummary element = (FundingSummary) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -227,6 +227,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         assertNotNull(r);
         Fundings fundings = (Fundings) r.getEntity();
         assertNotNull(fundings);
+        assertNotNull(fundings.getPath());
         Utils.verifyLastModified(fundings.getLastModifiedDate());
         assertNotNull(fundings.getFundingGroup());
         assertEquals(4, fundings.getFundingGroup().size());

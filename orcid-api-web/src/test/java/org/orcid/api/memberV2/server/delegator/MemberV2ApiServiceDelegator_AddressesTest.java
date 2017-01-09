@@ -102,20 +102,20 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
 
     @Test
     public void testViewAddressesReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewAddresses(ORCID);
         Addresses element = (Addresses) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
     public void testViewAddressReadPublic() {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("some-client", ScopePathType.READ_PUBLIC);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewAddress(ORCID, 9L);
         Address element = (Address) r.getEntity();
         assertNotNull(element);
-        Utils.assertIsPublicOrSource(element, "some-client");
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
     @Test
@@ -390,7 +390,8 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
         assertEquals(1, addresses.getAddress().size());
-        response = serviceDelegator.deleteAddress("4444-4444-4444-4499", 6L);
+        Long putCode = addresses.getAddress().get(0).getPutCode();
+        response = serviceDelegator.deleteAddress("4444-4444-4444-4499", putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         response = serviceDelegator.viewAddresses("4444-4444-4444-4499");

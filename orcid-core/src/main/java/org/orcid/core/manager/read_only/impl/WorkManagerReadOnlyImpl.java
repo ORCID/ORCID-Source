@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager.read_only.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +26,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
-import org.orcid.core.utils.activities.GroupableActivityComparator;
+import org.orcid.core.utils.activities.WorkComparators;
 import org.orcid.jaxb.model.record.summary_rc4.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc4.Works;
@@ -163,9 +162,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
 
             // Sort the works
-            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
+            workGroup.getWorkSummary().sort(WorkComparators.ALL);
             result.getWorkGroup().add(workGroup);
         }
+        // Sort the groups!
+        result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
     }
+
 }

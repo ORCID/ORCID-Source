@@ -16,11 +16,11 @@
  */
 package org.orcid.api.common.jaxb;
 
-import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -31,8 +31,8 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
  * @author Will Simpson
  */
 @Provider
-@Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
-@Produces({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
 public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
 
     public OrcidJacksonJaxbJsonProvider() {
@@ -52,7 +52,7 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
     
     private void configureAll() {
         configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        configure(SerializationFeature.INDENT_OUTPUT, true);
+        configure(SerializationFeature.INDENT_OUTPUT, false);
     }
 
 }
