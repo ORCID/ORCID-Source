@@ -58,6 +58,8 @@ import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.jaxb.model.common_rc1.Contributor;
+import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
@@ -72,11 +74,14 @@ import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
+import org.orcid.jaxb.model.record_rc1.FundingContributor;
 import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -96,6 +101,9 @@ import io.swagger.annotations.ResponseHeader;
 @Api("Member API v2.0_rc1")
 @Path("/v2.0_rc1")
 public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemberV2ApiServiceImplV2_0_rc1.class);
+
     @Context
     private UriInfo uriInfo;
 
@@ -190,10 +198,11 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create a Work", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Work created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Work created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWork(@PathParam("orcid") String orcid, Work work) {
+        compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.createWork(orcid, work);
     }
 
@@ -205,6 +214,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Work updated") })
     public Response updateWork(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Work work) {
+        compareWorkAndCreditNameVisibility(work);
         return serviceDelegator.updateWork(orcid, getPutCode(putCode), work);
     }
 
@@ -244,10 +254,11 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create a Funding", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Funding created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Funding created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Funding representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Funding representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createFunding(@PathParam("orcid") String orcid, Funding funding) {
+        compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.createFunding(orcid, funding);
     }
 
@@ -259,6 +270,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Funding updated") })
     public Response updateFunding(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Funding funding) {
+        compareFundingAndCreditNameVisibility(funding);
         return serviceDelegator.updateFunding(orcid, getPutCode(putCode), funding);
     }
 
@@ -301,7 +313,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create an Education", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Education created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Education created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Education representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Education representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createEducation(@PathParam("orcid") String orcid, Education education) {
@@ -354,7 +366,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create an Employment", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Employment created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Employment created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Employment representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Employment representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createEmployment(@PathParam("orcid") String orcid, Employment employment) {
@@ -407,7 +419,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create a Peer Review", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Peer Review created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Peer Review created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Education resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Peer Review representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Peer Review representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createPeerReview(@PathParam("orcid") String orcid, PeerReview peerReview) {
@@ -451,7 +463,7 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Create a Group", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class) ),
+            @ApiResponse(code = 201, message = "Group created, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Group resource", response = URI.class)),
             @ApiResponse(code = 400, message = "Invalid Group representation", response = String.class) })
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         return serviceDelegator.createGroupIdRecord(groupIdRecord);
@@ -539,9 +551,29 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     @ApiOperation(value = "Add a notification", response = URI.class, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PREMIUM_NOTIFICATION, description = "you need this") }) })
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class) ) })
+            @ApiResponse(code = 201, message = "Notification added, see HTTP Location header for URI", responseHeaders = @ResponseHeader(name = "Location", description = "The created Notification resource", response = URI.class)) })
     public Response addPermissionNotification(@PathParam("orcid") String orcid, NotificationPermission notification) {
         return notificationsServiceDelegator.addPermissionNotification(uriInfo, orcid, notification);
+    }
+
+    private void compareFundingAndCreditNameVisibility(Funding funding) {
+        Visibility fundingVisibility = funding.getVisibility();
+        for (FundingContributor contributor : funding.getContributors().getContributor()) {
+            if (contributor.getCreditName().getVisibility().isMoreRestrictiveThan(fundingVisibility)) {
+                LOGGER.warn("Client posting funding {} with visibility ({}) less restrictive than its contributor credit name {} ({})", new Object[] { funding.getTitle().getTitle(),
+                        fundingVisibility.toString(), contributor.getCreditName().getContent(), contributor.getCreditName().getVisibility().toString() });
+            }
+        }
+    }
+
+    private void compareWorkAndCreditNameVisibility(Work work) {
+        Visibility workVisibility = work.getVisibility();
+        for (Contributor contributor : work.getWorkContributors().getContributor()) {
+            if (contributor.getCreditName().getVisibility().isMoreRestrictiveThan(workVisibility)) {
+                LOGGER.warn("Client posting work {} with visibility ({}) less restrictive than its contributor credit name {} ({})", new Object[] { work.getWorkTitle().getTitle(),
+                        workVisibility.toString(), contributor.getCreditName().getContent(), contributor.getCreditName().getVisibility().toString() });
+            }
+        }
     }
 
     // END NOTIFICATIONS

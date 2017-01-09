@@ -36,7 +36,7 @@
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
 			</common:contributor-orcid>
-			<work:credit-name visibility="private">work:credit-name</work:credit-name>
+			<work:credit-name>work:credit-name</work:credit-name>
 			<work:contributor-email>work@contributor.email</work:contributor-email>
 			<work:contributor-attributes>
 				<work:contributor-sequence>first</work:contributor-sequence>

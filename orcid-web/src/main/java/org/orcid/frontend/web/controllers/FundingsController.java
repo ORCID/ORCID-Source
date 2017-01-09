@@ -428,21 +428,14 @@ public class FundingsController extends BaseWorkspaceController {
     private void setContributorsCreditName(FundingForm funding) {
         OrcidProfile profile = getEffectiveProfile();
         String creditName = null;
-        Visibility creditNameVisibility = null;
         if (profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null && profile.getOrcidBio().getPersonalDetails().getCreditName() != null) {
             creditName = profile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-            creditNameVisibility = Visibility.valueOf(profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
         }
         if (funding != null && funding.getContributors() != null && !funding.getContributors().isEmpty()) {
             for (Contributor contributor : funding.getContributors()) {
                 if (!PojoUtil.areAllEmtpy(contributor.getContributorRole(), contributor.getContributorSequence())) {
                     if (!PojoUtil.isEmpty(creditName))
                         contributor.setCreditName(Text.valueOf(creditName));
-                    if (creditNameVisibility != null) {
-                        contributor.setCreditNameVisibility(creditNameVisibility);
-                    } else {
-                        contributor.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
-                    }
                 }
             }
         }

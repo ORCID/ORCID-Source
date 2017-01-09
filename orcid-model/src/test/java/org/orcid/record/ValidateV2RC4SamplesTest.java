@@ -202,7 +202,6 @@ public class ValidateV2RC4SamplesTest {
                 "/record_2.0_rc4/personal-details-2.0_rc4.xsd");
         assertNotNull(creditName);
         assertEquals("credit-name", creditName.getContent());
-        assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
     }
 
     @Test

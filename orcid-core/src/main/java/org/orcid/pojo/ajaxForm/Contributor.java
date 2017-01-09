@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc4.ContributorEmail;
 import org.orcid.jaxb.model.common_rc4.ContributorOrcid;
 import org.orcid.jaxb.model.common_rc4.CreditName;
@@ -70,11 +69,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             //Set default values that must be overwritten by the controller
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -96,11 +90,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -123,11 +112,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -162,7 +146,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
-            cn.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
             c.setCreditName(cn);
         }
         return c;
@@ -222,14 +205,6 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     public void setCreditName(Text creditName) {
         this.creditName = creditName;
-    }
-
-    public Visibility getCreditNameVisibility() {
-        return creditNameVisibility;
-    }
-
-    public void setCreditNameVisibility(Visibility contributorRoleVisibility) {
-        this.creditNameVisibility = contributorRoleVisibility;
     }
 
     @Override

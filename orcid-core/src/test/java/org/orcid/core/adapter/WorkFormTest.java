@@ -57,7 +57,6 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
-import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.test.context.ContextConfiguration;
@@ -149,7 +148,6 @@ public class WorkFormTest {
         contributorOrcid.setUri("Contributor uri");
         contributor.setContributorOrcid(contributorOrcid);
         CreditName creditName = new CreditName("Contributor credit name");
-        creditName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
         contributor.setCreditName(creditName);
         contributors.getContributor().add(contributor);
         work.setWorkContributors(contributors);
@@ -171,7 +169,6 @@ public class WorkFormTest {
         contributor.setContributorRole(Text.valueOf("co_inventor"));
         contributor.setContributorSequence(Text.valueOf("first"));
         contributor.setCreditName(Text.valueOf("Contributor credit name"));
-        contributor.setCreditNameVisibility(new Visibility());
         contributor.setEmail(Text.valueOf("Contributor email"));
         contributor.setOrcid(Text.valueOf("Contributor orcid"));
         contributor.setUri(Text.valueOf("Contributor uri"));
