@@ -1,4 +1,4 @@
-angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService) {
+angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
     bioBulkSrvc.initScope($scope);
 
     $scope.commonSrvc = commonSrvc;
@@ -16,6 +16,7 @@ angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '
     var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
+    var utilsService = utilsService;
 
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
@@ -225,7 +226,7 @@ angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '
                         $scope.updateDisplayIndex();
                     }                
                 },
-                width: formColorBoxResize(),
+                width: utilsService.formColorBoxResize(),
                 onComplete: function() {
                         
                 },
