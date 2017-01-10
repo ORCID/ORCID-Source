@@ -348,6 +348,8 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
     
 104. Verify that the returned access token does not include the /email/read-private scope- only /read-limited should be listed as a scope.
 
+105. Visit https://qa.orcid.org/signout
+
 ## Member API 1.2 Creating/Claiming
 
 101. Get a token to create records
