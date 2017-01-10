@@ -12607,15 +12607,15 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 13,
-		"./affiliationsSrvc.js": 16,
-		"./bioBulkSrvc.js": 14,
-		"./commonSrvc.js": 15,
-		"./groupedActivitiesService.js": 18,
-		"./groupedActivitiesUtil.js": 17,
-		"./initialConfigService.js": 11,
-		"./utilsService.js": 10,
-		"./workspaceSrvc.js": 12
+		"./actBulkSrvc.js": 10,
+		"./affiliationsSrvc.js": 11,
+		"./bioBulkSrvc.js": 12,
+		"./commonSrvc.js": 13,
+		"./groupedActivitiesService.js": 14,
+		"./groupedActivitiesUtil.js": 15,
+		"./initialConfigService.js": 16,
+		"./utilsService.js": 17,
+		"./workspaceSrvc.js": 18
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12635,153 +12635,6 @@
 /* 10 */
 /***/ function(module, exports) {
 
-	angular.module('orcidApp').factory(
-	    'utilsService', 
-	    function() {
-	        var utilsService = {
-	            formColorBoxResize: function() {
-	                if (isMobile()) {
-	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	                }
-	                else {
-	                    // IE8 and below doesn't take auto height
-	                    // however the default div height
-	                    // is auto anyway
-	                    $.colorbox.resize({width:'800px'});
-	                    
-	                }
-	            }
-	        };
-	        return utilsService;
-	    }
-	);
-
-
-	var formColorBoxResize = function() {
-	    if (isMobile())
-	        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	    else
-	        // IE8 and below doesn't take auto height
-	        // however the default div height
-	        // is auto anyway
-	        $.colorbox.resize({width:'800px'});
-	}
-
-	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
-	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
-	    var configValues = {
-	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
-	        showModalManualEditVerificationEnabled: true
-
-	    };
-
-	    var locationObj = $location.search();
-
-	    var initialConfigService = {
-	        getInitialConfiguration: function(){
-	            return configValues;
-	        }
-	    };
-
-	    if( locationObj.verifyEdit ){
-	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-	            configValues.showModalManualEditVerificationEnabled = true;
-	        } else {
-	            configValues.showModalManualEditVerificationEnabled = false;
-	        }
-	    }
-
-	    return initialConfigService;
-	}]);
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
-	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
-	    var configValues = {
-	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
-	        showModalManualEditVerificationEnabled: false
-
-	    };
-
-	    var locationObj = $location.search();
-
-	    var initialConfigService = {
-	        getInitialConfiguration: function(){
-	            return configValues;
-	        }
-	    };
-
-	    if( locationObj.verifyEdit ){
-	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
-	            configValues.showModalManualEditVerificationEnabled = true;
-	        }
-	    }
-
-	    return initialConfigService;
-	}]);
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
-	    var serv = {
-	        displayEducation: true,
-	        displayEmployment: true,
-	        displayFunding: true,
-	        displayPersonalInfo: true,
-	        displayWorks: true,
-	        displayPeerReview: true,
-	        toggleEducation: function() {
-	            serv.displayEducation = !serv.displayEducation;
-	        },
-	        toggleEmployment: function() {
-	            serv.displayEmployment = !serv.displayEmployment;
-	        },
-	        toggleFunding: function() {
-	            serv.displayFunding = !serv.displayFunding;
-	        },
-	        togglePersonalInfo: function() {
-	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
-	        },
-	        toggleWorks: function() {
-	            serv.displayWorks = !serv.displayWorks;
-	        },
-	        togglePeerReview: function() {              
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        },
-	        openEducation: function() {
-	            serv.displayEducation = true;
-	        },
-	        openFunding: function() {
-	            serv.displayFunding = true;
-	        },
-	        openEmployment: function() {
-	            serv.displayEmployment = true;
-	        },
-	        openPersonalInfo: function() {
-	            serv.displayPersonalInfo = true;
-	        },
-	        openWorks: function() {
-	            serv.displayWorks = true;
-	        },
-	        openPeerReview: function() {
-	            serv.displayPeerReview = true;
-	        },
-	        togglePeerReviews : function() {
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        }   
-	    };
-	    return serv;
-	}]);
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
 	    var actBulkSrvc = {
 	        initScope: function($scope) {
@@ -12798,92 +12651,10 @@
 	}]);
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports) {
 
-	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
-	    var bioBulkSrvc = {
-	        initScope: function($scope) {
-	            $scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
-	            $scope.bulkEditShow = false;
-	            $scope.bulkEditMap = {};
-	            $scope.bulkChecked = false;
-	            $scope.bulkDisplayToggle = false;
-	            $scope.toggleSelectMenu = function(){               
-	                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
-	            };
-	        }
-	    };
-	    return bioBulkSrvc;
-	}]);
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
-	    var commonSrvc = {
-	        copyErrorsLeft: function (data1, data2) {
-	            for (var key in data1) {
-	                if (key == 'errors') {
-	                    data1.errors = data2.errors;
-	                } else {
-	                    if (data1[key] != null && data1[key].errors !== undefined)
-	                        data1[key].errors = data2[key].errors;
-	                };
-	            };
-	        },
-	        shownElement: [],        
-	        showPrivacyHelp: function(elem, event, offsetArrow){
-	            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-	            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-	            var scrollTop = angular.element('.fixed-area').scrollTop();
-	            
-	            if (elem === '-privacy'){
-	                angular.element('.edit-record .bulk-privacy-bar .popover-help-container').css({
-	                    top: -75,
-	                    left: 512
-	                });
-	            }else{
-	                if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
-	                angular.element('.edit-record .record-settings .popover-help-container').css({
-	                    top: top - scrollTop - 160,
-	                    left: left + 25
-	                });             
-	            }
-	            angular.element('.edit-record .record-settings .popover-help-container .arrow').css({                    
-	                left: offsetArrow
-	            }); 
-	            commonSrvc.shownElement[elem] = true;
-	        },
-	        showTooltip: function(elem, event, topOffset, leftOffset, arrowOffset){
-	            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-	            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');    
-	            var scrollTop = angular.element('.fixed-area').scrollTop();
-	            
-	            angular.element('.edit-record .popover-tooltip').css({
-	                top: top - scrollTop - topOffset,
-	                left: left + leftOffset
-	            });
-	            
-	            angular.element('.edit-record .popover-tooltip .arrow').css({                
-	                left: arrowOffset
-	            });            
-	            
-	            commonSrvc.shownElement[elem] = true;
-	       },
-	       hideTooltip: function(elem){
-	           commonSrvc.shownElement[elem] = false;
-	       }
-	    };
-	    return commonSrvc;
-	}]);
-
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
+	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', 'GroupedActivitiesUtil', 'GroupedActivities', function ($rootScope, GroupedActivitiesUtil, GroupedActivities) {
 	    var serv = {
 	        educations: new Array(),
 	        employments: new Array(),
@@ -12901,10 +12672,10 @@
 	                        for (i in data) {
 	                            if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	                                    && data[i].affiliationType.value == 'education')
-	                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+	                                GroupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
 	                            else if (data[i].affiliationType != null && data[i].affiliationType.value != null
 	                                    && data[i].affiliationType.value == 'employment')
-	                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+	                                GroupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
 	                        };
 	                        if (serv.affiliationsToAddIds.length == 0) {
 	                            serv.loading = false;
@@ -13001,7 +12772,207 @@
 	}]);
 
 /***/ },
-/* 17 */
+/* 12 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
+	    var bioBulkSrvc = {
+	        initScope: function($scope) {
+	            $scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
+	            $scope.bulkEditShow = false;
+	            $scope.bulkEditMap = {};
+	            $scope.bulkChecked = false;
+	            $scope.bulkDisplayToggle = false;
+	            $scope.toggleSelectMenu = function(){               
+	                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
+	            };
+	        }
+	    };
+	    return bioBulkSrvc;
+	}]);
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
+	    var commonSrvc = {
+	        copyErrorsLeft: function (data1, data2) {
+	            for (var key in data1) {
+	                if (key == 'errors') {
+	                    data1.errors = data2.errors;
+	                } else {
+	                    if (data1[key] != null && data1[key].errors !== undefined)
+	                        data1[key].errors = data2[key].errors;
+	                };
+	            };
+	        },
+	        shownElement: [],        
+	        showPrivacyHelp: function(elem, event, offsetArrow){
+	            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+	            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+	            var scrollTop = angular.element('.fixed-area').scrollTop();
+	            
+	            if (elem === '-privacy'){
+	                angular.element('.edit-record .bulk-privacy-bar .popover-help-container').css({
+	                    top: -75,
+	                    left: 512
+	                });
+	            }else{
+	                if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
+	                angular.element('.edit-record .record-settings .popover-help-container').css({
+	                    top: top - scrollTop - 160,
+	                    left: left + 25
+	                });             
+	            }
+	            angular.element('.edit-record .record-settings .popover-help-container .arrow').css({                    
+	                left: offsetArrow
+	            }); 
+	            commonSrvc.shownElement[elem] = true;
+	        },
+	        showTooltip: function(elem, event, topOffset, leftOffset, arrowOffset){
+	            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+	            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');    
+	            var scrollTop = angular.element('.fixed-area').scrollTop();
+	            
+	            angular.element('.edit-record .popover-tooltip').css({
+	                top: top - scrollTop - topOffset,
+	                left: left + leftOffset
+	            });
+	            
+	            angular.element('.edit-record .popover-tooltip .arrow').css({                
+	                left: arrowOffset
+	            });            
+	            
+	            commonSrvc.shownElement[elem] = true;
+	       },
+	       hideTooltip: function(elem){
+	           commonSrvc.shownElement[elem] = false;
+	       }
+	    };
+	    return commonSrvc;
+	}]);
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory(
+	    'GroupedActivities', 
+	    function( type ) {
+	        var GroupedActivities = {
+	            _keySet : {},
+	            ABBR_WORK : 'abbrWork',
+	            activePutCode : null,
+	            activities : {},
+	            activitiesCount : 0,
+	            AFFILIATION : 'affiliation',
+	            count : 0,
+	            dateSortString : null,
+	            defaultPutCode : null,
+	            FUNDING : 'funding',
+	            groupDescription : null,
+	            groupId : this.count,
+	            groupRealId : null,
+	            groupType : null,
+	            PEER_REVIEW : 'peerReview',
+	            title : null,
+	            type : type,
+
+	            add: function( activity ){
+	                // assumes works are added in the order of the display index desc
+	                // subsorted by the created date asc
+	                var identifiersPath = null;
+	                identifiersPath = this.getIdentifiersPath();        
+
+	                if(this.type == GroupedActivities.PEER_REVIEW) {    
+	                    var key = this.key(activity[identifiersPath]);
+	                    this.addKey(key);
+	                } else {
+	                    for (var idx in activity[identifiersPath]) {
+	                        this.addKey(this.key(activity[identifiersPath][idx]));
+	                    }
+	                }    
+
+	                this.activities[activity.putCode.value] = activity;
+	                if (this.defaultPutCode == null) {
+	                    this.activePutCode = activity.putCode.value;
+	                    this.makeDefault(activity.putCode.value);
+	                }
+	                this.activitiesCount++;
+	            },
+
+	            addKey : function(key) {
+	                if (this.hasKey(key)){
+	                    return;
+	                } 
+	                this._keySet[key] = true;
+	                if (this.type == GroupedActivities.PEER_REVIEW) {
+	                    this.groupRealId = key;
+	                }
+	                return;
+	            },
+
+	            consistentVis : function() {
+	                var vis = null;
+	                if (this.type == GroupedActivities.FUNDING)
+	                    vis = this.getDefault().visibility.visibility;
+	                else
+	                    vis = this.getDefault().visibility;
+
+	                for (var idx in this.activities) {
+	                    if (this.type == GroupedActivities.FUNDING) {
+	                        if (this.activities[idx].visibility.visibility != vis){
+	                            return false;
+	                        }
+	                    } else {
+	                        if (this.activities[idx].visibility != vis) {
+	                            return false;
+	                        }
+	                    }
+	                }
+	                return true;
+	            },
+
+	            getActive : function() {
+	                return this.activities[this.activePutCode];
+	            },
+
+	            getByPut : function(putCode) {
+	                return this.activities[putCode];
+	            },
+
+	            getDefault : function() {
+	                return this.activities[this.defaultPutCode];
+	            },
+
+	            getIdentifiersPath : function() {
+	                if (this.type == GroupedActivities.ABBR_WORK) {
+	                    return 'workExternalIdentifiers';
+	                }
+	                if (this.type == GroupedActivities.PEER_REVIEW) {
+	                    return 'groupId';
+	                } 
+	                return 'externalIdentifiers';
+	            },
+
+	            getInstantiateCount: function() {
+	                var id = 0; // This is the private persistent value
+	                // The outer function returns a nested function that has access
+	                // to the persistent value.  It is this nested function we're storing
+	                // in the variable uniqueID above.
+	                return function() { 
+	                    return id++; 
+	                };  // Return and increment
+	            }
+	        };
+	        return GroupedActivities;
+	    }
+	);
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13055,120 +13026,151 @@
 
 
 /***/ },
-/* 18 */
+/* 16 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
+	    var configValues = {
+	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+	        showModalManualEditVerificationEnabled: false
+
+	    };
+
+	    var locationObj = $location.search();
+
+	    var initialConfigService = {
+	        getInitialConfiguration: function(){
+	            return configValues;
+	        }
+	    };
+
+	    if( locationObj.verifyEdit ){
+	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+	            configValues.showModalManualEditVerificationEnabled = true;
+	        }
+	    }
+
+	    return initialConfigService;
+	}]);
+
+/***/ },
+/* 17 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
-	  'GroupedActivities', 
-	  function( type ) {
-	    var GroupedActivities = {
-	      _keySet : {},
-	      ABBR_WORK : 'abbrWork',
-	      activePutCode : null,
-	      activities : {},
-	      activitiesCount : 0,
-	      AFFILIATION : 'affiliation',
-	      count : 0,
-	      dateSortString : null,
-	      defaultPutCode : null,
-	      FUNDING : 'funding',
-	      groupDescription : null,
-	      groupId : this.count,
-	      groupRealId : null,
-	      groupType : null,
-	      PEER_REVIEW : 'peerReview',
-	      title : null,
-	      type : type,
-
-	      add: function( activity ){
-	         // assumes works are added in the order of the display index desc
-	        // subsorted by the created date asc
-	        var identifiersPath = null;
-	        identifiersPath = this.getIdentifiersPath();        
-	        
-	        if(this.type == GroupedActivities.PEER_REVIEW) {    
-	            var key = this.key(activity[identifiersPath]);
-	            this.addKey(key);
-	        } else {
-	            for (var idx in activity[identifiersPath]) {
-	                this.addKey(this.key(activity[identifiersPath][idx]));
+	    'utilsService', 
+	    function() {
+	        var utilsService = {
+	            formColorBoxResize: function() {
+	                if (isMobile()) {
+	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+	                }
+	                else {
+	                    // IE8 and below doesn't take auto height
+	                    // however the default div height
+	                    // is auto anyway
+	                    $.colorbox.resize({width:'800px'});
+	                    
+	                }
 	            }
-	        }    
-	        
-	        this.activities[activity.putCode.value] = activity;
-	        if (this.defaultPutCode == null) {
-	            this.activePutCode = activity.putCode.value;
-	            this.makeDefault(activity.putCode.value);
-	        }
-	        this.activitiesCount++;
-	      },
-
-	      addKey : function(key) {
-	        if (this.hasKey(key)){
-	          return;
-	        } 
-	        this._keySet[key] = true;
-	        if (this.type == GroupedActivities.PEER_REVIEW) {
-	          this.groupRealId = key;
-	        }
-	        return;
-	      },
-
-	      consistentVis : function() {
-	        var vis = null;
-	        if (this.type == GroupedActivities.FUNDING)
-	          vis = this.getDefault().visibility.visibility;
-	        else
-	          vis = this.getDefault().visibility;
-
-	        for (var idx in this.activities) {
-	          if (this.type == GroupedActivities.FUNDING) {
-	            if (this.activities[idx].visibility.visibility != vis){
-	              return false;
-	            }
-	          } else {
-	            if (this.activities[idx].visibility != vis) {
-	              return false;
-	            }
-	          }
-	        }
-	        return true;
-	      },
-
-	      getActive : function() {
-	        return this.activities[this.activePutCode];
-	      },
-
-	      getByPut : function(putCode) {
-	        return this.activities[putCode];
-	      },
-
-	      getDefault : function() {
-	        return this.activities[this.defaultPutCode];
-	      },
-
-	      getIdentifiersPath : function() {
-	        if (this.type == GroupedActivities.ABBR_WORK) {
-	          return 'workExternalIdentifiers';
-	        }
-	        if (this.type == GroupedActivities.PEER_REVIEW) {
-	          return 'groupId';
-	        } 
-	        return 'externalIdentifiers';
-	      },
-
-	      getInstantiateCount: function() {
-	        var id = 0; // This is the private persistent value
-	        // The outer function returns a nested function that has access
-	        // to the persistent value.  It is this nested function we're storing
-	        // in the variable uniqueID above.
-	        return function() { return id++; };  // Return and increment
-	      }
-	    };
-	    return GroupedActivities;
-	  }
+	        };
+	        return utilsService;
+	    }
 	);
 
+
+	var formColorBoxResize = function() {
+	    if (isMobile())
+	        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+	    else
+	        // IE8 and below doesn't take auto height
+	        // however the default div height
+	        // is auto anyway
+	        $.colorbox.resize({width:'800px'});
+	}
+
+	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
+	    var configValues = {
+	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
+	        showModalManualEditVerificationEnabled: true
+
+	    };
+
+	    var locationObj = $location.search();
+
+	    var initialConfigService = {
+	        getInitialConfiguration: function(){
+	            return configValues;
+	        }
+	    };
+
+	    if( locationObj.verifyEdit ){
+	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+	            configValues.showModalManualEditVerificationEnabled = true;
+	        } else {
+	            configValues.showModalManualEditVerificationEnabled = false;
+	        }
+	    }
+
+	    return initialConfigService;
+	}]);
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	    var serv = {
+	        displayEducation: true,
+	        displayEmployment: true,
+	        displayFunding: true,
+	        displayPersonalInfo: true,
+	        displayWorks: true,
+	        displayPeerReview: true,
+	        toggleEducation: function() {
+	            serv.displayEducation = !serv.displayEducation;
+	        },
+	        toggleEmployment: function() {
+	            serv.displayEmployment = !serv.displayEmployment;
+	        },
+	        toggleFunding: function() {
+	            serv.displayFunding = !serv.displayFunding;
+	        },
+	        togglePersonalInfo: function() {
+	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
+	        },
+	        toggleWorks: function() {
+	            serv.displayWorks = !serv.displayWorks;
+	        },
+	        togglePeerReview: function() {              
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        },
+	        openEducation: function() {
+	            serv.displayEducation = true;
+	        },
+	        openFunding: function() {
+	            serv.displayFunding = true;
+	        },
+	        openEmployment: function() {
+	            serv.displayEmployment = true;
+	        },
+	        openPersonalInfo: function() {
+	            serv.displayPersonalInfo = true;
+	        },
+	        openWorks: function() {
+	            serv.displayWorks = true;
+	        },
+	        openPeerReview: function() {
+	            serv.displayPeerReview = true;
+	        },
+	        togglePeerReviews : function() {
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        }   
+	    };
+	    return serv;
+	}]);
 
 /***/ }
 /******/ ]);
