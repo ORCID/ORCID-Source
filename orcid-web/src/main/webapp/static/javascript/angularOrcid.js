@@ -6788,7 +6788,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
             success: function(data) {
                 $scope.bibtexLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
-                    var fileData = [data.data];
+                    var fileData = [data];
                     blobObject = new Blob(fileData, {type: 'text/plain'});
                     window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                
                 } else {
