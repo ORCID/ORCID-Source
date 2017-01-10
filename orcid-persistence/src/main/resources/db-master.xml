@@ -220,4 +220,5 @@
     <include file="/db/updates/institutional_sign_in_heuristics.xml" />
 	<include file="/db/updates/add_auto_deprecate_to_client_details.xml" />
 	<include file="/db/updates/identifier-types/add-primary-use-and-urls.xml" />
+	<include file="/db/updates/identifier-types/update-kuid-url.xml" />
 </databaseChangeLog>

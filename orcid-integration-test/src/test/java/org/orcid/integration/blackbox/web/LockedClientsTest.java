@@ -30,8 +30,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
 import org.orcid.integration.blackbox.api.v2.rc4.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc4.Emails;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,8 +46,8 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class LockedClientsTest extends BlackBoxBaseRC4 {    
-    @Resource(name = "memberV2ApiClient_rc4")
+public class LockedClientsTest extends BlackBoxBaseV2Release {    
+    @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;    
     
     @Test

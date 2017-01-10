@@ -14,7 +14,7 @@ node {
     
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
-    def modules_to_build = ['orcid-web'] //,'orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web'
+    def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
     
     def firefox_home = '/usr/bin/firefox'
     
@@ -60,18 +60,25 @@ node {
         }
     }
     
-    stage('Execute Black-Box Tests'){
+    stage('Execute Black-Box Test'){
         try {
             do_maven("test -f orcid-integration-test/pom.xml -Dtest=${bb_test_name} -Dorg.orcid.config.file='classpath:test-client.properties,classpath:test-web.properties' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home")
+            orcid_notify("BlackBoxTest ${branch_to_build}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
         } catch(Exception err) {
             def err_msg = err.getMessage()
             echo "Tests problem: $err_msg"
+            orcid_notify("BlackBoxTest ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         } finally {
-            echo "Stoping tomcat and xvfb..."
-            //sh "sh $tomcat_home/bin/shutdown.sh"
-            //sh "XVFB_PID=\$(cat /tmp/xvfb_jenkins.pid) ; kill \$XVFB_PID"
+            echo "Saving tests results"
             junit '**/target/surefire-reports/*.xml'
+            build([
+                job: 'ORCID-tomcat', 
+                parameters: [
+                    string(name: 'tomcat_task', value: 'shutdown')
+                ], 
+                wait: true
+            ])            
         }
     }
 }
@@ -81,6 +88,17 @@ def do_maven(mvn_task){
         sh "export MAVEN_OPTS=' -Xms32m -Xmx2048m' ; export DISPLAY=:1.0 ; $MAVEN/bin/mvn $mvn_task"
     } catch(Exception err) {
         throw err
+    }
+}
+def orcid_notify(message, level){
+    def color = "#d00000"
+    if(level == 'SUCCESS'){
+        color = "#36a64f"
+    }
+    try{
+        slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid', channel: '#tech-ci-blackbox'
+    } catch(Exception err) {
+        echo err.toString()
     }
 }
 // https://github.com/ORCID/ORCID-Source.git

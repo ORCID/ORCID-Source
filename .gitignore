@@ -18,3 +18,6 @@ orcid-solr-web/src/main/webapp/solr/org/data/
 orcid-solr-web/src/main/webapp/solr/profile/data/
 orcid-solr-web/src/main/webapp/solr/fundingSubType/data
 orcid-solr-web/**/_rest_managed.json
+Servers/Pivotal tc Server Developer Edition v3.1-config/
+.metadata/
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/
