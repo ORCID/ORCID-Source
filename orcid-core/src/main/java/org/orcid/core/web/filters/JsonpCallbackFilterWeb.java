@@ -78,7 +78,7 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
 
                 filterChain.doFilter(requestWrapper, responseWrapper);
                 
-                out.write(new String(callbackParam + "(").getBytes());
+                out.write(new String("/* jsonp callback */ \n" + callbackParam + "(").getBytes());
                 out.write(responseWrapper.getData());
                 out.write(new String(");").getBytes());
 
