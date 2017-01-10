@@ -262,9 +262,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         Iterator<? extends VisibilityType> it = elements.iterator();
         while (it.hasNext()) {
-            VisibilityType element = it.next();
+            VisibilityType element = it.next();            
             try {
-                checkAndFilter(orcid, element, requiredScope, true);
+                if(element instanceof Email) {
+                    Email email = (Email) element;
+                    checkAndFilter(orcid, email, requiredScope, true);
+                } else {
+                    checkAndFilter(orcid, element, requiredScope, true);
+                }                
             } catch (Exception e) {
                 it.remove();
             }
@@ -388,7 +393,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
 
         if (person.getEmails() != null) {
-            //TODO: How to proceed here? we can't overload the filter for collections, so, we can iterate on email's here, or, do it other way
             checkAndFilter(orcid, person.getEmails().getEmails(), READ_BIO_REQUIRED_SCOPE, true);
         }
 
@@ -501,7 +505,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             checkScopes(ScopePathType.EMAIL_READ_PRIVATE);
             return;
         } catch(OrcidAccessControlException oace) {
-            checkAndFilter(orcid, email, READ_BIO_REQUIRED_SCOPE, true);
+            checkAndFilter(orcid, (VisibilityType) email, READ_BIO_REQUIRED_SCOPE, true);
         }                 
     }
     

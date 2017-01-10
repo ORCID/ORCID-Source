@@ -16,12 +16,9 @@
  */
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -116,138 +113,140 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
     @Test
     public void testReadPublicScope_Activities() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-
-        // Check that lists returns only PUBLIC elements
-        /**
-         * ACTIVITIES
-         */
-        try {
-            // Check you get only public activities
-            Response r = serviceDelegator.viewActivities(ORCID);
-            ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
-            testActivities(as, ORCID);
-        } catch (Exception e) {
-            fail();
-        }
+        // Check you get only public activities
+        Response r = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+        testActivities(as, ORCID);
     }
 
     @Test
     public void testViewActitivies() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
-        assertNotNull(response);
-        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
-        assertNotNull(summary);
-        assertNotNull(summary.getPath());
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        // Check works
-        assertNotNull(summary.getWorks());
-        Utils.verifyLastModified(summary.getWorks().getLastModifiedDate());
-        assertEquals(3, summary.getWorks().getWorkGroup().size());
-        boolean foundPrivateWork = false;
-        for (WorkGroup group : summary.getWorks().getWorkGroup()) {
-            Utils.verifyLastModified(group.getLastModifiedDate());
-            assertNotNull(group.getWorkSummary());
-            assertEquals(1, group.getWorkSummary().size());
-            WorkSummary work = group.getWorkSummary().get(0);
-            Utils.verifyLastModified(work.getLastModifiedDate());
-            assertThat(work.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-            assertThat(work.getPath(), anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-            assertThat(work.getTitle().getTitle().getContent(), anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-            if (work.getPutCode().equals(Long.valueOf(7))) {
-                assertEquals(Visibility.PRIVATE, work.getVisibility());
-                foundPrivateWork = true;
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        assertNotNull(as.getEducations());
+        assertEquals(4, as.getEducations().getSummaries().size());
+
+        for (EducationSummary element : as.getEducations().getSummaries()) {
+            if (element.getPutCode().equals(Long.valueOf(20))) {
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(21))) {
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(22))) {
+                found3 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(25))) {
+                found4 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
             }
         }
-        assertTrue(foundPrivateWork);
 
-        // Check fundings
-        assertNotNull(summary.getFundings());
-        Utils.verifyLastModified(summary.getFundings().getLastModifiedDate());
-        assertEquals(3, summary.getFundings().getFundingGroup().size());
-        boolean foundPrivateFunding = false;
-        for (FundingGroup group : summary.getFundings().getFundingGroup()) {
-            assertNotNull(group.getFundingSummary());
-            Utils.verifyLastModified(group.getLastModifiedDate());
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        found1 = found2 = found3 = found4 = false;
+
+        assertNotNull(as.getEmployments());
+        assertEquals(4, as.getEmployments().getSummaries().size());
+
+        for (EmploymentSummary element : as.getEmployments().getSummaries()) {
+            if (element.getPutCode().equals(Long.valueOf(17))) {
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(18))) {
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(19))) {
+                found3 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(23))) {
+                found4 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        found1 = found2 = found3 = found4 = false;
+
+        assertNotNull(as.getFundings());
+        assertEquals(4, as.getFundings().getFundingGroup().size());
+
+        for (FundingGroup group : as.getFundings().getFundingGroup()) {
             assertEquals(1, group.getFundingSummary().size());
-            FundingSummary funding = group.getFundingSummary().get(0);
-            Utils.verifyLastModified(funding.getLastModifiedDate());
-            assertThat(funding.getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5)), is(Long.valueOf(8))));
-            assertThat(funding.getPath(), anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5"), is("/4444-4444-4444-4446/funding/8")));
-            assertThat(funding.getTitle().getTitle().getContent(), anyOf(is("Private Funding"), is("Public Funding"), is("Limited Funding")));
-            if (funding.getPutCode().equals(4L)) {
-                assertEquals(Visibility.PRIVATE, funding.getVisibility());
-                foundPrivateFunding = true;
+            FundingSummary element = group.getFundingSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(10))) {
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(11))) {
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(12))) {
+                found3 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(13))) {
+                found4 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
             }
         }
 
-        assertTrue(foundPrivateFunding);
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        found1 = found2 = found3 = found4 = false;
 
-        // Check Educations
-        assertNotNull(summary.getEducations());
-        Utils.verifyLastModified(summary.getLastModifiedDate());
-        assertNotNull(summary.getEducations().getSummaries());
-        assertEquals(3, summary.getEducations().getSummaries().size());
+        assertNotNull(as.getPeerReviews());
+        assertEquals(4, as.getPeerReviews().getPeerReviewGroup().size());
 
-        boolean foundPrivateEducation = false;
-        for (EducationSummary education : summary.getEducations().getSummaries()) {
-            Utils.verifyLastModified(education.getLastModifiedDate());
-            assertThat(education.getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7)), is(Long.valueOf(9))));
-            assertThat(education.getPath(),
-                    anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
-            assertThat(education.getDepartmentName(), anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
-
-            if (education.getPutCode().equals(6L)) {
-                assertEquals(Visibility.PRIVATE, education.getVisibility());
-                foundPrivateEducation = true;
-            }
-        }
-
-        assertTrue(foundPrivateEducation);
-
-        // Check Employments
-        assertNotNull(summary.getEmployments());
-        Utils.verifyLastModified(summary.getEmployments().getLastModifiedDate());
-        assertNotNull(summary.getEmployments().getSummaries());
-        assertEquals(3, summary.getEmployments().getSummaries().size());
-
-        boolean foundPrivateEmployment = false;
-
-        for (EmploymentSummary employment : summary.getEmployments().getSummaries()) {
-            Utils.verifyLastModified(employment.getLastModifiedDate());
-            assertThat(employment.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8)), is(Long.valueOf(11))));
-            assertThat(employment.getPath(),
-                    anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
-            assertThat(employment.getDepartmentName(), anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
-            if (employment.getPutCode().equals(5L)) {
-                assertEquals(Visibility.PRIVATE, employment.getVisibility());
-                foundPrivateEmployment = true;
-            }
-        }
-
-        assertTrue(foundPrivateEmployment);
-
-        // Check Peer reviews
-        assertNotNull(summary.getPeerReviews());
-        Utils.verifyLastModified(summary.getPeerReviews().getLastModifiedDate());
-        assertEquals(3, summary.getPeerReviews().getPeerReviewGroup().size());
-
-        boolean foundPrivatePeerReview = false;
-        for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
-            assertNotNull(group.getPeerReviewSummary());
-            Utils.verifyLastModified(group.getLastModifiedDate());
+        for (PeerReviewGroup group : as.getPeerReviews().getPeerReviewGroup()) {
             assertEquals(1, group.getPeerReviewSummary().size());
-            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
-            Utils.verifyLastModified(peerReview.getLastModifiedDate());
-            assertThat(peerReview.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(4))));
-            assertThat(peerReview.getGroupId(), anyOf(is("issn:0000001"), is("issn:0000002"), is("issn:0000003")));
-            if (peerReview.getPutCode().equals(4L)) {
-                assertEquals(Visibility.PRIVATE, peerReview.getVisibility());
-                foundPrivatePeerReview = true;
+            PeerReviewSummary element = group.getPeerReviewSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(9))) {
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(10))) {
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(11))) {
+                found3 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(12))) {
+                found4 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
             }
         }
 
-        assertTrue(foundPrivatePeerReview);
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        found1 = found2 = found3 = found4 = false;
+
+        assertNotNull(as.getWorks());
+        assertEquals(4, as.getWorks().getWorkGroup().size());
+
+        for (WorkGroup group : as.getWorks().getWorkGroup()) {
+            assertEquals(1, group.getWorkSummary().size());
+            WorkSummary element = group.getWorkSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(11))) {
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(12))) {
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(13))) {
+                found3 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(14))) {
+                found4 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
     }
 
     @Test
@@ -402,5 +401,310 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
         assertTrue(found2);
         assertTrue(found3);
         found1 = found2 = found3 = false;
+    }
+
+    @Test
+    public void testViewActitivies_AffiliationsReadLimited_NoSource() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.AFFILIATIONS_READ_LIMITED);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        // Limited educations
+        boolean found1 = false, found2 = false, found3 = false;
+        assertNotNull(as.getEducations());
+        assertEquals(3, as.getEducations().getSummaries().size());
+        for (EducationSummary education : as.getEducations().getSummaries()) {
+            Long putCode = education.getPutCode();
+            if (putCode == 20L) {
+                assertEquals(Visibility.PUBLIC, education.getVisibility());
+                found1 = true;
+            } else if (putCode == 21L) {
+                assertEquals(Visibility.LIMITED, education.getVisibility());
+                found2 = true;
+            } else if (putCode == 25L) {
+                assertEquals(Visibility.LIMITED, education.getVisibility());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + putCode);
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+
+        // Limited employments
+        found1 = found2 = found3 = false;
+        assertNotNull(as.getEmployments());
+        assertEquals(3, as.getEmployments().getSummaries().size());
+
+        for (EmploymentSummary employment : as.getEmployments().getSummaries()) {
+            Long putCode = employment.getPutCode();
+            if (putCode == 17L) {
+                assertEquals(Visibility.PUBLIC, employment.getVisibility());
+                found1 = true;
+            } else if (putCode == 18L) {
+                assertEquals(Visibility.LIMITED, employment.getVisibility());
+                found2 = true;
+            } else if (putCode == 23L) {
+                assertEquals(Visibility.LIMITED, employment.getVisibility());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + putCode);
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+
+        // Only public funding
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
+        // Only public peer reviews
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
+        // Only public works
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
+    }
+
+    @Test
+    public void testViewActitivies_FundingReadLimited_NoSource() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.FUNDING_READ_LIMITED);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        // Only public educations
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEducations().getSummaries().get(0).getVisibility());
+
+        // Only public employments
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEmployments().getSummaries().get(0).getVisibility());
+
+        // Limited funding
+        boolean found1 = false, found2 = false, found3 = false;
+        assertNotNull(as.getFundings());
+        assertEquals(3, as.getFundings().getFundingGroup().size());
+
+        for (FundingGroup group : as.getFundings().getFundingGroup()) {
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary element = group.getFundingSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals(Visibility.PUBLIC, element.getVisibility());
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+
+        // Only public peer reviews
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
+        // Only public works
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
+    }
+
+    @Test
+    public void testViewActitivies_PeerReviewReadLimited_NoSource() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.PEER_REVIEW_READ_LIMITED);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        // Only public educations
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEducations().getSummaries().get(0).getVisibility());
+
+        // Only public employments
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEmployments().getSummaries().get(0).getVisibility());
+
+        // Only public funding
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
+        // Limited peer reviews
+        boolean found1 = false, found2 = false, found3 = false;
+        assertNotNull(as.getPeerReviews());
+        assertEquals(3, as.getPeerReviews().getPeerReviewGroup().size());
+
+        for (PeerReviewGroup group : as.getPeerReviews().getPeerReviewGroup()) {
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary element = group.getPeerReviewSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(9))) {
+                assertEquals(Visibility.PUBLIC, element.getVisibility());
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+
+        // Only public works
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
+    }
+
+    @Test
+    public void testViewActitivies_WorksReadLimited_NoSource() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.ORCID_WORKS_READ_LIMITED);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        // Only public educations
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEducations().getSummaries().get(0).getVisibility());
+
+        // Only public employments
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEmployments().getSummaries().get(0).getVisibility());
+
+        // Only public funding
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
+        // Only public peer reviews
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
+        // Limited works
+        assertNotNull(as.getWorks());
+        assertEquals(3, as.getWorks().getWorkGroup().size());
+
+        boolean found1 = false, found2 = false, found3 = false;
+
+        for (WorkGroup group : as.getWorks().getWorkGroup()) {
+            assertEquals(1, group.getWorkSummary().size());
+            WorkSummary element = group.getWorkSummary().get(0);
+            if (element.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals(Visibility.PUBLIC, element.getVisibility());
+                found1 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found2 = true;
+            } else if (element.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals(Visibility.LIMITED, element.getVisibility());
+                found3 = true;
+            } else {
+                fail("Invalid put code " + element.getPutCode());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+    }
+
+    @Test
+    public void testViewActitivies_NoReadLimited_NoSource() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
+        assertNotNull(as);
+        assertNotNull(as.getPath());
+        Utils.verifyLastModified(as.getLastModifiedDate());
+        // Only public educations
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEducations().getSummaries().get(0).getVisibility());
+
+        // Only public employments
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getEmployments().getSummaries().get(0).getVisibility());
+
+        // Only public funding
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
+        // Only public peer reviews
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
+        // Only public works
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
     }
 }

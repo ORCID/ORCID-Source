@@ -54,7 +54,6 @@ import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
  */
 public class OrcidSecurityManager_PersonTest extends OrcidSecurityManagerTestBase {
 
-    // ---- PERSON ----
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPerson_When_TokenForOtherUser() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.PERSON_READ_LIMITED);

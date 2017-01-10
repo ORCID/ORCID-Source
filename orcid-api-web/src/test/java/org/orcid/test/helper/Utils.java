@@ -71,122 +71,122 @@ import org.orcid.jaxb.model.record_rc4.WorkTitle;
 import org.orcid.jaxb.model.record_rc4.WorkType;
 
 public class Utils {
-	public static void assertIsPublicOrSource(VisibilityType v, String sourceId) {
-		if(v instanceof Filterable) {
-			Filterable f = (Filterable) v;
-			if(f.retrieveSourcePath().equals(sourceId)) {
-				return;
-			}
-		}
-		
-		if(!Visibility.PUBLIC.equals(v.getVisibility())) {
-			fail("Not public nor source");			
-		}    	
+    public static void assertIsPublicOrSource(VisibilityType v, String sourceId) {
+        if (v instanceof Filterable) {
+            Filterable f = (Filterable) v;
+            if (f.retrieveSourcePath().equals(sourceId)) {
+                return;
+            }
+        }
+
+        if (!Visibility.PUBLIC.equals(v.getVisibility())) {
+            fail("Not public nor source");
+        }
     }
-    
+
     public static void assertIsPublicOrSource(ActivitiesContainer c, String sourceId) {
-    	Collection<? extends Activity> activities = c.retrieveActivities();
-    	for(Activity a : activities) {
-    		assertIsPublicOrSource(a, sourceId);
-    	}
+        Collection<? extends Activity> activities = c.retrieveActivities();
+        for (Activity a : activities) {
+            assertIsPublicOrSource(a, sourceId);
+        }
     }
-    
+
     public static void assertIsPublicOrSource(Addresses elements, String sourceId) {
-    	if(elements == null || elements.getAddress() == null) {
-    		return;    		
-    	}
-    	
-    	for(Address e : elements.getAddress()) {
-    		assertIsPublicOrSource(e, sourceId);
-    	}
+        if (elements == null || elements.getAddress() == null) {
+            return;
+        }
+
+        for (Address e : elements.getAddress()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
     }
-    
-	public static void assertIsPublicOrSource(Keywords elements, String sourceId) {
-		if(elements == null || elements.getKeywords() == null) {
-    		return;    		
-    	}
-    	
-    	for(Keyword e : elements.getKeywords()) {
-    		assertIsPublicOrSource(e, sourceId);
-    	}
-	}
-	
-	public static void assertIsPublicOrSource(ResearcherUrls elements, String sourceId) {
-		if(elements == null || elements.getResearcherUrls() == null) {
-    		return;    		
-    	}
-    	
-    	for(ResearcherUrl e : elements.getResearcherUrls()) {
-    		assertIsPublicOrSource(e, sourceId);
-    	}
-	}
-	
-	public static void assertIsPublicOrSource(PersonExternalIdentifiers elements, String sourceId) {
-		if(elements == null || elements.getExternalIdentifiers() == null) {
-    		return;    		
-    	}
-    	
-    	for(PersonExternalIdentifier e : elements.getExternalIdentifiers()) {
-    		assertIsPublicOrSource(e, sourceId);
-    	}
-	}
-	
-	public static void assertIsPublicOrSource(Emails elements, String sourceId) {
-		if (elements == null || elements.getEmails() == null) {
-			return;
-		}
 
-		for (Email e : elements.getEmails()) {
-			assertIsPublicOrSource(e, sourceId);
-		}
-	}
+    public static void assertIsPublicOrSource(Keywords elements, String sourceId) {
+        if (elements == null || elements.getKeywords() == null) {
+            return;
+        }
 
-	public static void assertIsPublicOrSource(OtherNames elements, String sourceId) {
-		if (elements == null || elements.getOtherNames() == null) {
-			return;
-		}
+        for (Keyword e : elements.getKeywords()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
+    }
 
-		for (OtherName e : elements.getOtherNames()) {
-			assertIsPublicOrSource(e, sourceId);
-		}
-	}
+    public static void assertIsPublicOrSource(ResearcherUrls elements, String sourceId) {
+        if (elements == null || elements.getResearcherUrls() == null) {
+            return;
+        }
 
-	public static void assertIsPublicOrSource(PersonalDetails p, String sourceId) {
-		if (p == null) {
-			return;
-		}
+        for (ResearcherUrl e : elements.getResearcherUrls()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
+    }
 
-		assertIsPublicOrSource(p.getBiography(), sourceId);
-		assertIsPublicOrSource(p.getOtherNames(), sourceId);
-		assertIsPublicOrSource(p.getName(), sourceId);
-	}
+    public static void assertIsPublicOrSource(PersonExternalIdentifiers elements, String sourceId) {
+        if (elements == null || elements.getExternalIdentifiers() == null) {
+            return;
+        }
 
-	public static void assertIsPublicOrSource(Person p, String sourceId) {
-		if (p == null) {
-			return;
-		}
-		assertIsPublicOrSource(p.getAddresses(), sourceId);
-		assertIsPublicOrSource(p.getBiography(), sourceId);
-		assertIsPublicOrSource(p.getEmails(), sourceId);
-		assertIsPublicOrSource(p.getExternalIdentifiers(), sourceId);
-		assertIsPublicOrSource(p.getKeywords(), sourceId);
-		assertIsPublicOrSource(p.getName(), sourceId);
-		assertIsPublicOrSource(p.getOtherNames(), sourceId);
-		assertIsPublicOrSource(p.getResearcherUrls(), sourceId);
-	}
-    
+        for (PersonExternalIdentifier e : elements.getExternalIdentifiers()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
+    }
+
+    public static void assertIsPublicOrSource(Emails elements, String sourceId) {
+        if (elements == null || elements.getEmails() == null) {
+            return;
+        }
+
+        for (Email e : elements.getEmails()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
+    }
+
+    public static void assertIsPublicOrSource(OtherNames elements, String sourceId) {
+        if (elements == null || elements.getOtherNames() == null) {
+            return;
+        }
+
+        for (OtherName e : elements.getOtherNames()) {
+            assertIsPublicOrSource(e, sourceId);
+        }
+    }
+
+    public static void assertIsPublicOrSource(PersonalDetails p, String sourceId) {
+        if (p == null) {
+            return;
+        }
+
+        assertIsPublicOrSource(p.getBiography(), sourceId);
+        assertIsPublicOrSource(p.getOtherNames(), sourceId);
+        assertIsPublicOrSource(p.getName(), sourceId);
+    }
+
+    public static void assertIsPublicOrSource(Person p, String sourceId) {
+        if (p == null) {
+            return;
+        }
+        assertIsPublicOrSource(p.getAddresses(), sourceId);
+        assertIsPublicOrSource(p.getBiography(), sourceId);
+        assertIsPublicOrSource(p.getEmails(), sourceId);
+        assertIsPublicOrSource(p.getExternalIdentifiers(), sourceId);
+        assertIsPublicOrSource(p.getKeywords(), sourceId);
+        assertIsPublicOrSource(p.getName(), sourceId);
+        assertIsPublicOrSource(p.getOtherNames(), sourceId);
+        assertIsPublicOrSource(p.getResearcherUrls(), sourceId);
+    }
+
     public static void verifyLastModified(LastModifiedDate l) {
-    	assertNotNull(l);
-    	assertNotNull(l.getValue());
+        assertNotNull(l);
+        assertNotNull(l.getValue());
     }
-    
+
     public static Address getAddress() {
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);
         address.setCountry(new Country(Iso3166Country.ES));
         return address;
-    }    
-    
+    }
+
     public static Education getEducation() {
         Education education = new Education();
         education.setDepartmentName("My department name");
@@ -194,7 +194,7 @@ public class Utils {
         education.setOrganization(getOrganization());
         return education;
     }
-    
+
     public static Employment getEmployment() {
         Employment employment = new Employment();
         employment.setDepartmentName("My department name");
@@ -202,7 +202,7 @@ public class Utils {
         employment.setOrganization(getOrganization());
         return employment;
     }
-    
+
     public static Work getWork(String title) {
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
@@ -219,8 +219,8 @@ public class Utils {
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         return work;
-    }            
-    
+    }
+
     public static PeerReview getPeerReview() {
         PeerReview peerReview = new PeerReview();
         ExternalIDs weis = new ExternalIDs();
@@ -243,8 +243,8 @@ public class Utils {
         peerReview.setType(PeerReviewType.EVALUATION);
         return peerReview;
     }
-    
-    public static Funding getFunding(){
+
+    public static Funding getFunding() {
         Funding newFunding = new Funding();
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Public Funding # 2"));
@@ -261,7 +261,7 @@ public class Utils {
         newFunding.setOrganization(getOrganization());
         return newFunding;
     }
-    
+
     public static Organization getOrganization() {
         Organization org = new Organization();
         org.setName("Org Name");
@@ -271,7 +271,7 @@ public class Utils {
         org.setAddress(add);
         return org;
     }
-    
+
     public static PersonExternalIdentifier getPersonExternalIdentifier() {
         PersonExternalIdentifier newExtId = new PersonExternalIdentifier();
         newExtId.setType("new-common-name");
@@ -280,21 +280,21 @@ public class Utils {
         newExtId.setVisibility(Visibility.LIMITED);
         return newExtId;
     }
-    
+
     public static Keyword getKeyword() {
         Keyword keyword = new Keyword();
         keyword.setContent("New keyword");
         keyword.setVisibility(Visibility.LIMITED);
         return keyword;
     }
-    
+
     public static OtherName getOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("New Other Name");
         otherName.setVisibility(Visibility.LIMITED);
         return otherName;
     }
-    
+
     public static ResearcherUrl getResearcherUrl() {
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://www.myRUrl.com"));
@@ -302,7 +302,7 @@ public class Utils {
         rUrl.setVisibility(Visibility.LIMITED);
         return rUrl;
     }
-    
+
     public static GroupIdRecord getGroupIdRecord() {
         GroupIdRecord newRecord = new GroupIdRecord();
         newRecord.setGroupId("issn:0000005");
@@ -310,8 +310,8 @@ public class Utils {
         newRecord.setDescription("TestDescription5");
         newRecord.setType("publisher");
         return newRecord;
-    }    
-    
+    }
+
     public static Long getPutCode(Response response) {
         Map<?, ?> map = response.getMetadata();
         assertNotNull(map);

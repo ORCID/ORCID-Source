@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common_rc4.Visibility;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc4.Address;
@@ -315,7 +316,6 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found4);
 
         assertNotNull(p.getPath());
-
     }
 
     private void testPerson(Person p, String orcid) {
@@ -495,5 +495,113 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found3);
 
         assertNotNull(p.getPath());
+    }
+
+    @Test
+    public void testReadPrivateEmails_OtherThingsJustPublic_Person() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, "APP-5555555555555556", ScopePathType.EMAIL_READ_PRIVATE);
+        Response response = serviceDelegator.viewPerson(ORCID);
+        assertNotNull(response);
+        assertEquals(Person.class.getName(), response.getEntity().getClass().getName());
+        Person p = (Person) response.getEntity();
+
+        // Check email
+        // Email
+        assertNotNull(p.getEmails());
+        Emails email = p.getEmails();
+        assertNotNull(email);
+        Utils.verifyLastModified(email.getLastModifiedDate());
+        assertEquals(5, email.getEmails().size());
+
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+
+        for (Email element : email.getEmails()) {
+            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
+                found1 = true;
+            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+                found2 = true;
+            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+                found3 = true;
+            } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
+                found4 = true;
+            } else if (element.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
+                found5 = true;
+            } else {
+                fail("Invalid email " + element.getEmail());
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+
+        this.assertAllPublicButEmails(p);
+
+    }    
+    
+    private void assertAllPublicButEmails(Person p) {
+        assertNotNull(p);
+        Utils.verifyLastModified(p.getLastModifiedDate());
+
+        // Address
+        assertNotNull(p.getAddresses());
+        Addresses a = p.getAddresses();
+        assertNotNull(a);
+        Utils.verifyLastModified(a.getLastModifiedDate());
+        assertEquals(1, a.getAddress().size());
+        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, a.getAddress().get(0).getVisibility());
+
+        // Biography
+        assertNotNull(p.getBiography());
+        Biography b = p.getBiography();
+        assertNotNull(b);
+        Utils.verifyLastModified(b.getLastModifiedDate());
+
+        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
+
+        // External identifiers
+        assertNotNull(p.getExternalIdentifiers());
+        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
+        assertNotNull(extIds);
+        Utils.verifyLastModified(extIds.getLastModifiedDate());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
+
+        // Keywords
+        assertNotNull(p.getKeywords());
+        Keywords k = p.getKeywords();
+        assertNotNull(k);
+        Utils.verifyLastModified(k.getLastModifiedDate());
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, k.getKeywords().get(0).getVisibility());
+
+        // Name
+        assertNotNull(p.getName());
+        assertEquals("Credit Name", p.getName().getCreditName().getContent());
+        assertEquals("Given Names", p.getName().getGivenNames().getContent());
+        assertEquals("Family Name", p.getName().getFamilyName().getContent());
+
+        // Other names
+        assertNotNull(p.getOtherNames());
+        OtherNames o = p.getOtherNames();
+        assertNotNull(o);
+        Utils.verifyLastModified(o.getLastModifiedDate());
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, o.getOtherNames().get(0).getVisibility());
+
+        // Researcher urls
+        assertNotNull(p.getResearcherUrls());
+        ResearcherUrls ru = p.getResearcherUrls();
+        assertNotNull(ru);
+        Utils.verifyLastModified(ru.getLastModifiedDate());
+        assertEquals(1, ru.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, ru.getResearcherUrls().get(0).getVisibility());
     }
 }
