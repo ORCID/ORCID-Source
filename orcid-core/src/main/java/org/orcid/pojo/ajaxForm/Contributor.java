@@ -48,8 +48,6 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Text contributorRole;
 
-    private Visibility creditNameVisibility;    
-    
     public static Contributor valueOf(org.orcid.jaxb.model.common_rc4.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
@@ -60,8 +58,6 @@ public class Contributor implements ErrorsInterface, Serializable {
                 if (contributor.getContributorAttributes().getContributorSequence() != null)
                     c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
             }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
@@ -82,8 +78,6 @@ public class Contributor implements ErrorsInterface, Serializable {
                 if (contributor.getContributorAttributes().getContributorRole() != null)
                     c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
             }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
@@ -214,7 +208,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         result = prime * result + ((contributorRole == null) ? 0 : contributorRole.hashCode());
         result = prime * result + ((contributorSequence == null) ? 0 : contributorSequence.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
-        result = prime * result + ((creditNameVisibility == null) ? 0 : creditNameVisibility.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((errors == null) ? 0 : errors.hashCode());
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
@@ -245,11 +238,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             if (other.creditName != null)
                 return false;
         } else if (!creditName.equals(other.creditName))
-            return false;
-        if (creditNameVisibility == null) {
-            if (other.creditNameVisibility != null)
-                return false;
-        } else if (!creditNameVisibility.equals(other.creditNameVisibility))
             return false;
         if (email == null) {
             if (other.email != null)

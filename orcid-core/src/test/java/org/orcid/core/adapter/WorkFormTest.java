@@ -143,7 +143,7 @@ public class WorkFormTest {
         attributes.setContributorRole(org.orcid.jaxb.model.common_rc4.ContributorRole.CO_INVENTOR);
         attributes.setContributorSequence(org.orcid.jaxb.model.record_rc4.SequenceType.FIRST);
         contributor.setContributorAttributes(attributes);
-        contributor.setContributorEmail(new ContributorEmail("Contributor email"));      
+        contributor.setContributorEmail(null);      
         ContributorOrcid contributorOrcid = new ContributorOrcid("Contributor orcid");
         contributorOrcid.setUri("Contributor uri");
         contributor.setContributorOrcid(contributorOrcid);
@@ -169,7 +169,7 @@ public class WorkFormTest {
         contributor.setContributorRole(Text.valueOf("co_inventor"));
         contributor.setContributorSequence(Text.valueOf("first"));
         contributor.setCreditName(Text.valueOf("Contributor credit name"));
-        contributor.setEmail(Text.valueOf("Contributor email"));
+        contributor.setEmail(null);
         contributor.setOrcid(Text.valueOf("Contributor orcid"));
         contributor.setUri(Text.valueOf("Contributor uri"));
         çontributors.add(contributor);
