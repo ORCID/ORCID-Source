@@ -559,9 +559,11 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     private void compareFundingAndCreditNameVisibility(Funding funding) {
         Visibility fundingVisibility = funding.getVisibility();
         for (FundingContributor contributor : funding.getContributors().getContributor()) {
-            if (contributor.getCreditName().getVisibility().isMoreRestrictiveThan(fundingVisibility)) {
-                LOGGER.warn("Client posting funding {} with visibility ({}) less restrictive than its contributor credit name {} ({})", new Object[] { funding.getTitle().getTitle(),
-                        fundingVisibility.toString(), contributor.getCreditName().getContent(), contributor.getCreditName().getVisibility().toString() });
+            if (contributor.getCreditName() != null && contributor.getCreditName().getVisibility() != null
+                    && contributor.getCreditName().getVisibility().isMoreRestrictiveThan(fundingVisibility)) {
+                LOGGER.warn("Client posting funding {} with visibility ({}) less restrictive than its contributor credit name {} ({})",
+                        new Object[] { funding.getTitle().getTitle(), fundingVisibility.toString(), contributor.getCreditName().getContent(),
+                                contributor.getCreditName().getVisibility().toString() });
             }
         }
     }
@@ -569,9 +571,11 @@ public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper
     private void compareWorkAndCreditNameVisibility(Work work) {
         Visibility workVisibility = work.getVisibility();
         for (Contributor contributor : work.getWorkContributors().getContributor()) {
-            if (contributor.getCreditName().getVisibility().isMoreRestrictiveThan(workVisibility)) {
-                LOGGER.warn("Client posting work {} with visibility ({}) less restrictive than its contributor credit name {} ({})", new Object[] { work.getWorkTitle().getTitle(),
-                        workVisibility.toString(), contributor.getCreditName().getContent(), contributor.getCreditName().getVisibility().toString() });
+            if (contributor.getCreditName() != null && contributor.getCreditName().getVisibility() != null
+                    && contributor.getCreditName().getVisibility().isMoreRestrictiveThan(workVisibility)) {
+                LOGGER.warn("Client posting work {} with visibility ({}) less restrictive than its contributor credit name {} ({})",
+                        new Object[] { work.getWorkTitle().getTitle(), workVisibility.toString(), contributor.getCreditName().getContent(),
+                                contributor.getCreditName().getVisibility().toString() });
             }
         }
     }
