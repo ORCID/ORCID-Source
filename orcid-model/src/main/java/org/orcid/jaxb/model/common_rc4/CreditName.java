@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -53,6 +55,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "credit-name")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreditName implements Serializable {
 
     private static final long serialVersionUID = 1L;
