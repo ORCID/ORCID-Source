@@ -84,7 +84,7 @@ public class JpaJaxbFundingAdapterTest {
 
         // Contributors
         assertEquals(
-                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\",\"visibility\":\"PRIVATE\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
+                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
                 pfe.getContributorsJson());
 
         // External identifiers
