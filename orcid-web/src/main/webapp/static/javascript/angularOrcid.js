@@ -61,6 +61,30 @@
 
 /***/ },
 /* 1 */
+<<<<<<< HEAD
+=======
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./angularOrcidOriginal.js": 2
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 1;
+
+
+/***/ },
+/* 2 */
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 /***/ function(module, exports) {
 
 	/*
@@ -584,7 +608,10 @@
 	    var configValues = {
 	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
 	        showModalManualEditVerificationEnabled: false
+<<<<<<< HEAD
 
+=======
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 	    };
 
 	    var locationObj = $location.search();
@@ -599,7 +626,7 @@
 	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
 	            configValues.showModalManualEditVerificationEnabled = true;
 	        }
-	    }
+	    } 
 
 	    return initialConfigService;
 	}]);
@@ -3121,6 +3148,10 @@
 	    };
 	    
 	    $scope.openEditModal = function(){
+<<<<<<< HEAD
+=======
+	        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            $scope.modal = true;        
@@ -3194,6 +3225,230 @@
 	        $scope.showEdit = !$scope.showEdit;
 	    };
 
+<<<<<<< HEAD
+=======
+	    var showEmailVerificationModal = function(){
+	        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+	    };
+	    
+	    $scope.emailSrvc.getEmails(
+	        function(data) {
+	            emails = data.emails;
+	            data.emails.forEach(
+	                function(element){
+	                    if(element.verified == true) {
+	                        emailVerified = true;
+	                    }
+	                }
+	            );
+	        }
+	    );
+	    /////////////////////// End of verified email logic for work
+
+	    $scope.openEdit = function() {
+	        $scope.addNew();
+	        $scope.showEdit = true;
+	    };
+
+	    $scope.close = function() {
+	        $scope.getKeywordsForm();
+	        $scope.showEdit = false;
+	    };
+
+	    $scope.updateDisplayIndex = function(){
+	        for (var idx in $scope.keywordsForm.keywords)
+	            $scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
+	    };
+	    
+	    $scope.addNew = function() {
+	        $scope.keywordsForm.keywords.push({content: "", displayIndex: "1"});        
+	        $scope.updateDisplayIndex();
+	    };
+	    
+	    $scope.addNewModal = function() {                
+	        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":$scope.orcidId,"sourceName":""};
+	        $scope.keywordsForm.keywords.push(tmpObj);
+	        $scope.updateDisplayIndex();
+	        $scope.newInput = true;
+	    };
+
+	    $scope.getKeywordsForm = function(){
+	        $.ajax({
+	            url: getBaseUri() + '/my-orcid/keywordsForms.json',
+	            dataType: 'json',
+	            success: function(data) {
+	                $scope.keywordsForm = data;
+	                $scope.newElementDefaultVisibility = $scope.keywordsForm.visibility.visibility;
+	                //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element                
+	                if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null && $scope.keywordsForm.keywords.length > 0) {
+	                    for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
+	                        var itemVisibility = null;
+	                        if($scope.keywordsForm.keywords[i].visibility != null && $scope.keywordsForm.keywords[i].visibility.visibility) {
+	                            itemVisibility = $scope.keywordsForm.keywords[i].visibility.visibility;
+	                        }
+	                        /**
+	                         * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+	                         * 
+	                         * Rules: 
+	                         * - If the default visibility is null:
+	                         *  - If the item visibility is not null, set the default visibility to the item visibility
+	                         * - If the default visibility is not null:
+	                         *  - If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+	                         * */
+	                        if($scope.defaultVisibility == null) {
+	                            if(itemVisibility != null) {
+	                                $scope.defaultVisibility = itemVisibility;
+	                            }                           
+	                        } else {
+	                            if(itemVisibility != null) {
+	                                if($scope.defaultVisibility != itemVisibility) {
+	                                    $scope.defaultVisibility = null;
+	                                    break;
+	                                }
+	                            } else {
+	                                $scope.defaultVisibility = null;
+	                                break;
+	                            }
+	                        }                       
+	                    }
+	                } else {
+	                    $scope.defaultVisibility = $scope.keywordsForm.visibility.visibility;
+	                }
+	                                                                
+	                $scope.$apply();
+	            }
+	        }).fail(function(){
+	            // something bad is happening!
+	            console.log("error fetching keywords");
+	        });
+	    };
+
+	    $scope.deleteKeyword = function(keyword){
+	        var keywords = $scope.keywordsForm.keywords;
+	        var len = keywords.length;
+	        while (len--) {
+	            if (keywords[len] == keyword)
+	                keywords.splice(len,1);
+	        }
+	    };
+
+	    $scope.setKeywordsForm = function(){        
+	        $scope.keywordsForm.visibility = null;        
+	        $.ajax({
+	            url: getBaseUri() + '/my-orcid/keywordsForms.json',
+	            type: 'POST',
+	            data:  angular.toJson($scope.keywordsForm),
+	            contentType: 'application/json;charset=UTF-8',
+	            dataType: 'json',
+	            success: function(data) {
+	                $scope.keywordsForm = data;
+	                
+	                if(data.errors.length == 0){
+	                    $scope.close();
+	                    $.colorbox.close();
+	                }                   
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            // something bad is happening!
+	            console.log("KeywordsCtrl.serverValidate() error");
+	        });
+	    };
+
+	    $scope.setPrivacy = function(priv, $event) {
+	        $event.preventDefault();
+	        $scope.defaultVisibility = priv;
+	    };
+	    
+	    $scope.setPrivacyModal = function(priv, $event, keyword) {        
+	        $event.preventDefault();
+	        
+	        var keywords = $scope.keywordsForm.keywords;        
+	        var len = keywords.length;
+	        
+	        while (len--) {
+	            if (keywords[len] == keyword){
+	                keywords[len].visibility.visibility = priv;
+	                $scope.keywordsForm.keywords = keywords;
+	            }
+	        }
+	    };
+	    
+	    $scope.openEditModal = function(){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	            $scope.bulkEditShow = false;
+	            $scope.modal = true;        
+	            $.colorbox({
+	                scrolling: true,
+	                html: $compile($('#edit-keyword').html())($scope),
+	                onLoad: function() {
+	                    $('#cboxClose').remove();
+	                    if ($scope.keywordsForm.keywords.length == 0){
+	                        $scope.addNewModal();
+	                        $scope.newInput = true;
+	                        
+	                    } else{
+	                        $scope.updateDisplayIndex();
+	                    }
+	                },
+	                width: formColorBoxResize(),
+	                onComplete: function() {
+	                        
+	                },
+	                onClosed: function() {
+	                    $scope.getKeywordsForm();
+	                }            
+	            });
+	            $.colorbox.resize();
+	        }else{
+	            showEmailVerificationModal();
+	        }
+	    }
+	    
+	    $scope.closeEditModal = function(){        
+	        $.colorbox.close();
+	    }
+	    
+	    $scope.swapUp = function(index){
+	        if (index > 0) {
+	            var temp = $scope.keywordsForm.keywords[index];
+	            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+	            temp['displayIndex'] = $scope.keywordsForm.keywords[index - 1]['displayIndex']
+	            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index - 1];
+	            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+	            $scope.keywordsForm.keywords[index - 1] = temp;
+	        }
+	    };
+
+	    $scope.swapDown = function(index){
+	        if (index < $scope.keywordsForm.keywords.length - 1) {
+	            var temp = $scope.keywordsForm.keywords[index];
+	            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+	            temp['displayIndex'] = $scope.keywordsForm.keywords[index + 1]['displayIndex']
+	            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index + 1];
+	            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+	            $scope.keywordsForm.keywords[index + 1] = temp;
+	        }
+	    };
+	    
+	    $scope.setBulkGroupPrivacy = function(priv) {
+	        for (var idx in $scope.keywordsForm.keywords)      
+	            $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+	    };
+	    
+	    $scope.getKeywordsForm();
+	}]);
+
+	orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
+	    $scope.showEdit = false;
+	    $scope.nameForm = null;
+	    $scope.privacyHelp = false;
+
+	    $scope.toggleEdit = function() {
+	        $scope.showEdit = !$scope.showEdit;
+	    };
+
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 	    $scope.close = function() {
 	        $scope.getNameForm();
 	        $scope.showEdit = false;
@@ -3705,6 +3960,10 @@
 	    };
 	    
 	    $scope.openEditModal = function() {
+<<<<<<< HEAD
+=======
+	        
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            
@@ -4441,7 +4700,11 @@
 	    $scope.getClaim();
 	}]);
 
+<<<<<<< HEAD
 	angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+=======
+	orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $compile, emailSrvc, initialConfigService) {
+>>>>>>> 23221193b7bcbcc9236ec95c23a14bf6e383e138
 	    $scope.loading = true;
 	    $scope.getEmails = function() {
 	        $.ajax({
@@ -4450,9 +4713,12 @@
 	            //data: $scope.emailsPojo,
 	            dataType: 'json',
 	            success: function(data) {
+	                var configuration = initialConfigService.getInitialConfiguration();
+	                var primeVerified = false;
+
+	                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
 	                $scope.emailsPojo = data;
 	                $scope.$apply();
-	                var primeVerified = false;
 	                for (i in $scope.emailsPojo.emails) {
 	                    if ($scope.emailsPojo.emails[i].primary) {
 	                        $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
@@ -5019,7 +5285,6 @@
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    
 	    /////////////////////// Begin of verified email logic for work
-	    var configuration = initialConfigService.getInitialConfiguration();
 	    var configuration = initialConfigService.getInitialConfiguration();
 	    var emailVerified = false;
 	    var emails = {};
@@ -5834,7 +6099,6 @@
 
 	    /////////////////////// Begin of verified email logic for work
 	    var configuration = initialConfigService.getInitialConfiguration();
-	    var configuration = initialConfigService.getInitialConfiguration();
 	    var emailVerified = false;
 	    var emails = {};
 
@@ -6024,7 +6288,7 @@
 	    };
 
 	    $scope.openBibTextWizard = function () {
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bibtexParsingError = false;
 	            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
 	            $scope.bulkEditShow = false;
@@ -6215,7 +6479,7 @@
 	    }
 	    
 	    $scope.addWorkModal = function(data){
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            if (data == undefined) {
 	                worksSrvc.getBlankWork(function(data) {
 	                    $scope.editWork = data;
@@ -6240,7 +6504,7 @@
 	    };       
 
 	    $scope.putWork = function(){
-	        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            if ($scope.addingWork) {
 	                return; // don't process if adding work
 	            }
@@ -7808,7 +8072,7 @@
 
 	    $scope.selectedLanguage = function(){
 	        $.ajax({
-	            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value + "&callback=?",
+	            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value,
 	            type: 'GET',
 	            dataType: 'json',
 	            success: function(data){

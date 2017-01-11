@@ -60,6 +60,16 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
                 if (log.isDebugEnabled())
                     log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
 
+                String callbackParam = parms.get("callback")[0];
+                // make sure callback is valid
+                if (!callbackParam.equals(callbackParam.replaceAll("[^0-9a-zA-Z_$]", ""))) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
+                    response.getWriter().println("<body>400 Bad Request: Callback url param is not valid</body>");
+                    response.getWriter().println("</html>");
+                   return;
+                }
+
                 HttpServletRequestWrapper requestWrapper = new AcceptHeaderRequestWrapper(httpRequest, "application/json");
 
                 OutputStream out = httpResponse.getOutputStream();
@@ -67,11 +77,8 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
                 GenericResponseWrapper responseWrapper = new GenericResponseWrapper(httpResponse);
 
                 filterChain.doFilter(requestWrapper, responseWrapper);
-
-                String callbackParam = (parms.get("callback")[0]).replaceAll("[^0-9a-zA-Z_$]", "");
                 
-                
-                out.write(new String(callbackParam + "(").getBytes());
+                out.write(new String("/* jsonp callback */ \n" + callbackParam + "(").getBytes());
                 out.write(responseWrapper.getData());
                 out.write(new String(");").getBytes());
 

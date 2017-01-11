@@ -14,43 +14,53 @@ node {
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
     def tomcat_home = '/opt/tomcat/apache-tomcat-8.0.21'
+    
     def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
+   
     def firefox_home = '/usr/bin/firefox'
     
     stage('Build and Pack'){
         echo "Packaging..."
         do_maven("clean install -Dmaven.test.skip=true")
     }
-    stage('Copy Apps'){
+    
+    stage('Copy Apps and Start Tomcat') {
         echo "Installing new *.war files..."
         sh "rm -rf $tomcat_home/webapps/*.war"
-        sh "rm -rf $tomcat_home/webapps/orcid-api-web $tomcat_home/webapps/orcid-internal-api $tomcat_home/webapps/orcid-pub-web $tomcat_home/webapps/orcid-scheduler-web $tomcat_home/webapps/orcid-solr-web $tomcat_home/webapps/orcid-web"        
-        for (int i = 0; i < modules_to_build.size(); i++) {    
+        for (int i = 0; i < modules_to_build.size(); i++) {
             def module_name = modules_to_build.get(i)
+            sh "rm -rf $tomcat_home/webapps/${module_name}"
             sh "cp ${module_name}/target/${module_name}.war ${tomcat_home}/webapps/"
         }
+        build([
+            job: 'ORCID-tomcat', 
+            parameters: [
+                string(name: 'tomcat_task', value: 'startup')
+            ], 
+            wait: true
+        ])
+        sh "sleep 120"
     }
-    stage('Start Tomcat') {
-        echo "Starting Tomcat 8..."
-        sh "sh $tomcat_home/bin/startup.sh"
-        sh "sleep 80"
-    }
-    stage('Start XVirtual Frame Buffers'){
-        sh "Xvfb :1 -screen 0 1024x758x16 -fbdir /tmp/xvfb_jenkins & > /dev/null 2>&1 && echo \$! > /tmp/xvfb_jenkins.pid"
-        sh "cat /tmp/xvfb_jenkins.pid"
-    }
+    
     stage('Execute Black-Box Tests'){
         try {
             do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.config.file='classpath:test-client.properties,classpath:test-web.properties' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home")
+            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
         } catch(Exception err) {
             def err_msg = err.getMessage()
             echo "Tests problem: $err_msg"
+            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         } finally {
-            echo "Stoping tomcat and xvfb..."
-            sh "sh $tomcat_home/bin/shutdown.sh"
-            sh "XVFB_PID=\$(cat /tmp/xvfb_jenkins.pid) ; kill \$XVFB_PID"
+            echo "Saving tests results"
             junit '**/target/surefire-reports/*.xml'
+            build([
+                job: 'ORCID-tomcat', 
+                parameters: [
+                    string(name: 'tomcat_task', value: 'shutdown')
+                ], 
+                wait: true
+            ])            
         }
     }
 }
@@ -62,3 +72,14 @@ def do_maven(mvn_task){
         throw err
     }
 } 
+def orcid_notify(message, level){
+    def color = "#d00000"
+    if(level == 'SUCCESS'){
+        color = "#36a64f"
+    }
+    try{
+        slackSend color: "$color", failOnError: true, message: "$message", teamDomain: 'orcid', channel: '#tech-ci-blackbox'
+    } catch(Exception err) {
+        echo err.toString()
+    }
+}

@@ -32,9 +32,13 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -56,10 +60,7 @@ import com.sun.jersey.api.client.ClientResponse;
 public class OrcidClientDataHelper implements InitializingBean {
 
     public static final String ORCID_INTERNAL_NO_SPONSOR_XML = "/orcid-client/orcid-internal-no-sponsor-client.xml";
-    public static final String ORCID_INTERNAL_SPONSOR_XML = "/orcid-client/orcid-internal-sponsor-message-client.xml";
-    public static final String CLIENT_GROUP_SINGLE_FOR_OAUTH = "/orcid-client/orcid-client-group-single.xml";
-    public static final String GROUP_WITH_MULTIPLE_CLIENTS_FOR_OAUTH = "/orcid-client/orcid-group-with-multiple-clients.xml";
-    public static final String USER_TO_TEST_PRIVATE_DATA_VISIBILITY = "/orcid-client/orcid-user-to-test-private-data-visibility.xml";
+    public static final String ORCID_INTERNAL_SPONSOR_XML = "/orcid-client/orcid-internal-sponsor-message-client.xml";    
 
     @Resource
     private OrcidClientGroupManager orcidClientGroupManager;
@@ -120,7 +121,22 @@ public class OrcidClientDataHelper implements InitializingBean {
     }
 
     public OrcidClientGroup getOrcidClientGroup() {
-        OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP_SINGLE_FOR_OAUTH));
+        OrcidClientGroup group = new OrcidClientGroup();
+        group.setGroupName("Elsevier");
+        group.setEmail("orcid-admin@elsevier.com");
+        group.setType(MemberType.PREMIUM_INSTITUTION);
+        OrcidClient client = new OrcidClient();
+        client.setType(ClientType.PREMIUM_CREATOR);
+        client.setDisplayName("Ecological Complexity");
+        client.setShortDescription("An International Journal on Biocomplexity in the Environment and Theoretical Ecology");   
+        client.setWebsite("http://www.journals.elsevier.com/ecological-complexity");
+        RedirectUris rUris = new RedirectUris();
+        RedirectUri rUri = new RedirectUri();
+        rUri.setValue("http://www.journals.elsevier.com/ecological-complexity/orcid-callback");
+        rUri.setType(RedirectUriType.DEFAULT);
+        rUris.getRedirectUri().add(rUri);
+        client.setRedirectUris(rUris);        
+        group.getOrcidClient().add(client);        
         return group;
     }
 

@@ -519,7 +519,6 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
     var configValues = {
         propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
         showModalManualEditVerificationEnabled: false
-
     };
 
     var locationObj = $location.search();
@@ -534,7 +533,7 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
         if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
-    }
+    } 
 
     return initialConfigService;
 }]);
@@ -4376,7 +4375,7 @@ angular.module('orcidApp').controller('ClaimCtrl', ['$scope', '$compile', 'commo
     $scope.getClaim();
 }]);
 
-angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
+angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $compile, emailSrvc, initialConfigService) {
     $scope.loading = true;
     $scope.getEmails = function() {
         $.ajax({
@@ -4385,9 +4384,12 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
             //data: $scope.emailsPojo,
             dataType: 'json',
             success: function(data) {
+                var configuration = initialConfigService.getInitialConfiguration();
+                var primeVerified = false;
+
+                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
                 $scope.emailsPojo = data;
                 $scope.$apply();
-                var primeVerified = false;
                 for (i in $scope.emailsPojo.emails) {
                     if ($scope.emailsPojo.emails[i].primary) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
@@ -4954,7 +4956,6 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     $scope.workspaceSrvc = workspaceSrvc;
     
     /////////////////////// Begin of verified email logic for work
-    var configuration = initialConfigService.getInitialConfiguration();
     var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
@@ -5769,7 +5770,6 @@ angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$com
 
     /////////////////////// Begin of verified email logic for work
     var configuration = initialConfigService.getInitialConfiguration();
-    var configuration = initialConfigService.getInitialConfiguration();
     var emailVerified = false;
     var emails = {};
 
@@ -5959,7 +5959,7 @@ angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$com
     };
 
     $scope.openBibTextWizard = function () {
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bibtexParsingError = false;
             $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
             $scope.bulkEditShow = false;
@@ -6150,7 +6150,7 @@ angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$com
     }
     
     $scope.addWorkModal = function(data){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (data == undefined) {
                 worksSrvc.getBlankWork(function(data) {
                     $scope.editWork = data;
@@ -6175,7 +6175,7 @@ angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$com
     };       
 
     $scope.putWork = function(){
-        if(emailVerified === true || configuration.modalManualEditVerificationEnabled == false){
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if ($scope.addingWork) {
                 return; // don't process if adding work
             }
@@ -7743,7 +7743,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
 
     $scope.selectedLanguage = function(){
         $.ajax({
-            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value + "&callback=?",
+            url: getBaseUri()+'/lang.json?lang=' + $scope.language.value,
             type: 'GET',
             dataType: 'json',
             success: function(data){
