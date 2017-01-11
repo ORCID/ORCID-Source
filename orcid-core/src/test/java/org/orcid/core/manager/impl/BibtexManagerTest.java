@@ -31,11 +31,14 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.DOIManager;
+import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.test.TargetProxyHelper;
 
 public class BibtexManagerTest extends BaseTest{
@@ -43,9 +46,6 @@ public class BibtexManagerTest extends BaseTest{
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String ORCID = "0000-0000-0000-0003";
-    
-    private static String bibtex = "@article{Credit_Name15,\ntitle={SELF PRIVATE},\nauthor={Credit Name},\ndoi={5},\nurl={http://doi.org/5},\nyear={2016}\n},\n@article{Credit_Name14,\ntitle={SELF LIMITED},\nauthor={Credit Name},\ndoi={4},\nurl={http://doi.org/4},\nyear={2016}\n},\n@article{Credit_Name13,\ntitle={PRIVATE},\nauthor={Credit Name},\ndoi={3},\nurl={http://doi.org/3},\nyear={2016}\n},\n@article{Credit_Name12,\ntitle={LIMITED},\nauthor={Credit Name},\ndoi={2},\nurl={http://doi.org/2},\nyear={2016}\n},\n@article{Credit_Name11,\ntitle={PUBLIC},\nauthor={Credit Name},\ndoi={1},\nurl={http://doi.org/1},\nyear={2016}\n}";
-    
     
     @Resource
     private BibtexManager bibtexManager;
@@ -82,6 +82,18 @@ public class BibtexManagerTest extends BaseTest{
         w.setWorkCitation(c);
         String bib = bibtexManager.generateBibtex(ORCID, w);
         Assert.assertEquals("HELLO",bib);
+    }
+    
+    @Test
+    public void testGenerateBibtexForSingleWorkEsaped(){
+        Work w = new Work();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Escapes θ à À È © ë Ö ì"));
+        w.setWorkTitle(title);
+        w.setWorkType(WorkType.JOURNAL_ARTICLE);
+        w.setPutCode(100l);
+        String bib = bibtexManager.generateBibtex(ORCID, w);
+        Assert.assertEquals("@article{Credit_Name100,\ntitle={Escapes \\texttheta {\\`a} \\`{A} \\`{E} \\textcopyright {\\\"e} {\\\"O} {\\`i}},\nauthor={Credit Name}\n}",bib);
     }
     
     @Test

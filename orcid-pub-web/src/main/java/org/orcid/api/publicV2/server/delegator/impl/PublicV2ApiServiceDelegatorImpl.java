@@ -52,6 +52,7 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.Client;
@@ -167,6 +168,9 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private SourceUtils sourceUtilsReadOnly;
+    
+    @Resource
+    private ContributorUtils contributorUtilsReadOnly;
 
     @Resource
     private RecordManager recordManager;
@@ -229,6 +233,7 @@ public class PublicV2ApiServiceDelegatorImpl
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtilsReadOnly.setSourceName(w);
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         return Response.ok(w).build();
     }
 
@@ -286,6 +291,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtilsReadOnly.setSourceName(f);
+        contributorUtilsReadOnly.filterContributorPrivateData(f);
         return Response.ok(f).build();
     }
 

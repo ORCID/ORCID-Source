@@ -354,6 +354,18 @@
 	
 	
 	<!-- Utilities -->
+	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+	
+	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+	
 	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils">
 		<property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
 	</bean>

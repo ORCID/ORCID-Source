@@ -60,7 +60,6 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -693,15 +692,6 @@ public class PublicProfileController extends BaseWorkspaceController {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));                            
-                            if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() != null) {                                
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getRecordNameEntity().getVisibility()));
-                            } else {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
-                            }
-                        } else {
-                            if (contributor.getCreditNameVisibility() == null) {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
-                            }
                         }
                     }
                 }

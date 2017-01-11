@@ -342,7 +342,7 @@ public class ActivityValidatorTest {
         Contributor contributor = new Contributor();
         contributor.setContributorAttributes(attributes);
         contributor.setContributorOrcid(contributorOrcid);
-        contributor.setCreditName(new CreditName("credit name", Visibility.PUBLIC));
+        contributor.setCreditName(new CreditName("credit name"));
         contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
         
         WorkContributors contributors = new WorkContributors(Stream.of(contributor).collect(Collectors.toList()));        
