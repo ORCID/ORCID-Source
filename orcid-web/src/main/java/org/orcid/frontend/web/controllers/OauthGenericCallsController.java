@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
-import org.orcid.frontend.web.controllers.oauth.error.OAuthError;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.web.controllers.oauth.error;
+package org.orcid.core.oauth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
