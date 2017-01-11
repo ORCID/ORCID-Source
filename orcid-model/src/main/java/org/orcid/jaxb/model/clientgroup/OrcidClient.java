@@ -25,75 +25,22 @@ package org.orcid.jaxb.model.clientgroup;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidType;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}display-name"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}website"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}short-description"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}redirect-uris"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-id" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}client-secret" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}error-desc"/>
- *       &lt;/sequence>
- *       &lt;attribute name="type" type="{http://www.orcid.org/ns/orcid}client-type" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "displayName", "website", "shortDescription", "idp", "redirectUris", "clientId", "clientSecret", "errors" })
-@XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlElement(name = "display-name", required = true)
     protected String displayName;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "anyURI")
     protected String website;
-    @XmlElement(name = "short-description", required = true)
     protected String shortDescription;
-    @XmlElement(name = "idp", required = true)
     protected String idp;
-    @XmlElement(name = "redirect-uris", required = true)
     protected RedirectUris redirectUris;
-    @XmlElement(name = "client-id")
     protected String clientId;
-    @XmlElement(name = "client-secret")
     protected String clientSecret;
-    @XmlElement(name = "error-desc", required = false)
     protected ErrorDesc errors;
-    @XmlAttribute
     protected ClientType type;
-    @XmlTransient
     protected boolean persistentTokenEnabled;    
-    @XmlTransient
     protected Boolean allowAutoDeprecate;
 
     /**

@@ -178,9 +178,7 @@
 
 	<xs:complexType name="credit-name">
 		<xs:simpleContent>
-			<xs:extension base="common:non-empty-string">
-				<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
-			</xs:extension>
+			<xs:extension base="common:non-empty-string" />
 		</xs:simpleContent>
 	</xs:complexType>
 </xs:schema>

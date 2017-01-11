@@ -60,12 +60,6 @@ public class OrcidApiConstants {
     public static final String IDENTIFIER_PATH = "/identifiers";
     public static final String STATS = "/{type}";
     public static final String STATS_ALL = "/all";
-    public static final String CERIF_PATH = "/cerif/1_0";
-    public static final String CERIF_PERSONS_PATH = "/persons/{id}";
-    public static final String CERIF_PUBLICATIONS_PATH = "/publications/{id}";
-    public static final String CERIF_PRODUCTS_PATH = "/products/{id}";
-    public static final String CERIF_ENTITIES_PATH = "/entities";
-    public static final String CERIF_SEMANTICS_PATH = "/semantics";
     public static final String ERROR = "/error";
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";

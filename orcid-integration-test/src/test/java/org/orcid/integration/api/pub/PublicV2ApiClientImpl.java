@@ -43,6 +43,7 @@ import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
@@ -202,7 +203,12 @@ public class PublicV2ApiClientImpl {
         URI uri = UriBuilder.fromPath(BIOGRAPHY).build(orcid);
         return getClientReponse(uri, null);
     }
-                
+
+    public ClientResponse viewBiographyJson(String orcid) {
+        URI uri = UriBuilder.fromPath(BIOGRAPHY).build(orcid);
+        return getClientReponse(uri, null, MediaType.APPLICATION_JSON);
+    }
+        
     public ClientResponse viewKeywordsXML(String orcid) {
         URI uri = UriBuilder.fromPath(KEYWORDS).build(orcid);
         return getClientReponse(uri, null);
@@ -227,18 +233,27 @@ public class PublicV2ApiClientImpl {
         URI uri = UriBuilder.fromPath(PERSON).build(orcid);
         return getClientReponse(uri, null);
     }
-    
+
+    public ClientResponse viewPersonJson(String orcid) {
+        URI uri = UriBuilder.fromPath(PERSON).build(orcid);
+        return getClientReponse(uri, null, MediaType.APPLICATION_JSON);
+    }
+
     public ClientResponse viewRecordXML(String orcid) {
         URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
         return getClientReponse(uri, null);
     }
     
     private ClientResponse getClientReponse(URI uri, String token) {
+        return getClientReponse(uri, token, VND_ORCID_XML);
+    }
+
+    private ClientResponse getClientReponse(URI uri, String token, String mediaType) {
         ClientResponse result = null;
-        if(PojoUtil.isEmpty(token)) {
-            result = orcidClientHelper.getClientResponse(uri, VND_ORCID_XML);
+        if (PojoUtil.isEmpty(token)) {
+            result = orcidClientHelper.getClientResponse(uri, mediaType);
         } else {
-            result = orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, token);
+            result = orcidClientHelper.getClientResponseWithToken(uri, mediaType, token);
         }
         return result;
     }
