@@ -267,7 +267,7 @@ the software.
                             <exclude>**.xjb</exclude>
                             <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
-                            <exclude>**/src/main/resources/**/*escape_bibtex.csv</exclude>
+                            <exclude>**/src/main/resources/**/*escape_bibtex.txt</exclude>
                         </excludes>
                     </configuration>
                     <executions>
