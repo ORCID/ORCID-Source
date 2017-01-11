@@ -1,4 +1,4 @@
-angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', 'GroupedActivitiesUtil', 'GroupedActivities', function ($rootScope, GroupedActivitiesUtil, GroupedActivities) {
+angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         educations: new Array(),
         employments: new Array(),
@@ -16,10 +16,10 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', 'GroupedAc
                         for (i in data) {
                             if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                     && data[i].affiliationType.value == 'education')
-                                GroupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
                             else if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                     && data[i].affiliationType.value == 'employment')
-                                GroupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
                         };
                         if (serv.affiliationsToAddIds.length == 0) {
                             serv.loading = false;
