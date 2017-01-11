@@ -63,10 +63,11 @@ public class BibtexManagerImpl implements BibtexManager{
     private DOIManager doiManager;
     
     private static volatile ImmutableMap<Character,String> escapeW3C = null;
+    private static Object initLock = new Object();
     
     public BibtexManagerImpl(){
         if (escapeW3C == null){
-            synchronized(this){
+            synchronized(initLock){
                 if (escapeW3C == null){
                     CsvMapper mapper = new CsvMapper();
                     mapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
