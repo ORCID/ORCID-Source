@@ -55,7 +55,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "credit-name")
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties({"visibility"})
 public class CreditName implements Serializable {
 
     private static final long serialVersionUID = 1L;
