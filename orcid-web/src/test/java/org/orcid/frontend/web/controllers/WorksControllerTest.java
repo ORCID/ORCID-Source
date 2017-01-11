@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -42,6 +43,7 @@ import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
@@ -60,15 +62,15 @@ import orcid.pojo.ajaxForm.WorkFormTest;
 public class WorksControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml", "/data/RecordNameEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml", "/data/RecordNameEntityData.xml");
 
     @Resource
     WorksController worksController;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
-    
+
     private String _5000chars = null;
 
     @Before
@@ -98,7 +100,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         assertNotNull(work_ids);
         assertEquals(5, work_ids.size());
-        work_ids.containsAll(Arrays.asList("11","12","13","14","15"));        
+        work_ids.containsAll(Arrays.asList("11", "12", "13", "14", "15"));
     }
 
     @Test
@@ -118,7 +120,32 @@ public class WorksControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testFieldValidators() throws Exception {        
+    public void testGetWorkInfoWithContributors() throws Exception {
+        WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
+        assertNotNull(work);
+        assertNotNull(work.getContributors());
+        assertEquals(4, work.getContributors().size());
+
+        Contributor contributor = work.getContributors().get(0);
+        assertNull(contributor.getEmail());
+        assertEquals("Jaylen Kessler", contributor.getCreditName().getValue());
+
+        contributor = work.getContributors().get(1);
+        assertNull(contributor.getEmail());
+        assertEquals("John Smith", contributor.getCreditName().getValue());
+
+        contributor = work.getContributors().get(2);
+        assertNull(contributor.getEmail());
+        assertEquals("Credit Name", contributor.getCreditName().getValue());
+        
+        // contributor is an ORCID user with private name
+        contributor = work.getContributors().get(3);
+        assertNull(contributor.getEmail());
+        assertNull(contributor.getCreditName().getValue());
+    }
+
+    @Test
+    public void testFieldValidators() throws Exception {
         Work work = WorkFormTest.getWork();
         WorkForm workForm = WorkForm.valueOf(work);
 
@@ -219,14 +246,14 @@ public class WorksControllerTest extends BaseControllerTest {
         WorkExternalIdentifier wei = work.getWorkExternalIdentifiers().get(0);
         wei.setWorkExternalIdentifierId(Text.valueOf("1"));
         wei.setWorkExternalIdentifierType(Text.valueOf("doi"));
-        if(!PojoUtil.isEmpty(work.getPutCode())) {
+        if (!PojoUtil.isEmpty(work.getPutCode())) {
             work.setPutCode(Text.valueOf(""));
         }
-        
-        if(work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
-        	work.getCitation().getCitation().setValue("test");
+
+        if (work.getCitation() != null && work.getCitation().getCitation() != null && PojoUtil.isEmpty(work.getCitation().getCitation())) {
+            work.getCitation().getCitation().setValue("test");
         }
-        
+
         work = worksController.postWork(null, work);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
@@ -247,7 +274,7 @@ public class WorksControllerTest extends BaseControllerTest {
         try {
             worksController.postWork(null, work);
         } catch (Exception e) {
-            throwsError  = true;
+            throwsError = true;
         }
         assertTrue(throwsError);
     }
@@ -288,7 +315,7 @@ public class WorksControllerTest extends BaseControllerTest {
         work.getPublicationDate().setYear("2014");
 
         worksController.validateWork(work);
-        if (!work.getErrors().isEmpty()){
+        if (!work.getErrors().isEmpty()) {
             work.getErrors().forEach(n -> System.out.println(n));
             fail("invalid work update");
         }

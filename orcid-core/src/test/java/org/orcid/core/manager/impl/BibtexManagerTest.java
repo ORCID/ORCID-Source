@@ -31,11 +31,14 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.DOIManager;
+import org.orcid.jaxb.model.common_rc4.Title;
 import org.orcid.jaxb.model.record_rc4.Citation;
 import org.orcid.jaxb.model.record_rc4.CitationType;
 import org.orcid.jaxb.model.record_rc4.ExternalID;
 import org.orcid.jaxb.model.record_rc4.ExternalIDs;
 import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_rc4.WorkTitle;
+import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.test.TargetProxyHelper;
 
 public class BibtexManagerTest extends BaseTest{
@@ -82,6 +85,18 @@ public class BibtexManagerTest extends BaseTest{
         w.setWorkCitation(c);
         String bib = bibtexManager.generateBibtex(ORCID, w);
         Assert.assertEquals("HELLO",bib);
+    }
+    
+    @Test
+    public void testGenerateBibtexForSingleWorkEsaped(){
+        Work w = new Work();
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("Escapes θ à À È © ë Ö ì"));
+        w.setWorkTitle(title);
+        w.setWorkType(WorkType.JOURNAL_ARTICLE);
+        w.setPutCode(100l);
+        String bib = bibtexManager.generateBibtex(ORCID, w);
+        Assert.assertEquals("@article{Credit_Name100,\ntitle={Escapes \\texttheta {\\`a} \\`{A} \\`{E} \\textcopyright {\\\"e} {\\\"O} {\\`i}},\nauthor={Credit Name}\n}",bib);
     }
     
     @Test

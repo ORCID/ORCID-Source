@@ -34,13 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -48,7 +48,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
@@ -59,6 +58,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -101,6 +101,9 @@ public class FundingsController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ActivityCacheManager cacheManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -232,6 +235,20 @@ public class FundingsController extends BaseWorkspaceController {
                         BigDecimal bigDecimal = new BigDecimal(funding.getAmount().getContent());
                         String formattedAmount = formatAmountString(bigDecimal);
                         form.setAmount(Text.valueOf(formattedAmount));
+                    }
+                    
+                    if (form.getContributors() != null) {
+                        for (Contributor contributor : form.getContributors()) {
+                            if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                                String contributorOrcid = contributor.getOrcid().getValue();
+                                if (profileEntityManager.orcidExists(contributorOrcid)) {
+                                    // contributor is an ORCID user - visibility of user's name in record must be taken into account 
+                                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
+                                    String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                                }
+                            }
+                        }
                     }
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
                     String putCode = String.valueOf(funding.getPutCode());
@@ -378,8 +395,6 @@ public class FundingsController extends BaseWorkspaceController {
     private void addFunding(FundingForm fundingForm) throws Exception {
         // Set the right value for the amount
         setAmountWithTheCorrectFormat(fundingForm);
-        // Set the credit name
-        setContributorsCreditName(fundingForm);
         // Set default type for external identifiers
         setTypeToExternalIdentifiers(fundingForm);
         // Add to database
@@ -396,8 +411,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Set the right value for the amount
         setAmountWithTheCorrectFormat(fundingForm);
         // Set the credit name
-        setContributorsCreditName(fundingForm);
-        // Set default type for external identifiers
         setTypeToExternalIdentifiers(fundingForm);
         
         // Add to database
@@ -423,29 +436,6 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         funding.setExternalIdentifiers(updatedExtIds);
-    }
-
-    private void setContributorsCreditName(FundingForm funding) {
-        OrcidProfile profile = getEffectiveProfile();
-        String creditName = null;
-        Visibility creditNameVisibility = null;
-        if (profile.getOrcidBio() != null && profile.getOrcidBio().getPersonalDetails() != null && profile.getOrcidBio().getPersonalDetails().getCreditName() != null) {
-            creditName = profile.getOrcidBio().getPersonalDetails().getCreditName().getContent();
-            creditNameVisibility = Visibility.valueOf(profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
-        }
-        if (funding != null && funding.getContributors() != null && !funding.getContributors().isEmpty()) {
-            for (Contributor contributor : funding.getContributors()) {
-                if (!PojoUtil.areAllEmtpy(contributor.getContributorRole(), contributor.getContributorSequence())) {
-                    if (!PojoUtil.isEmpty(creditName))
-                        contributor.setCreditName(Text.valueOf(creditName));
-                    if (creditNameVisibility != null) {
-                        contributor.setCreditNameVisibility(creditNameVisibility);
-                    } else {
-                        contributor.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
-                    }
-                }
-            }
-        }
     }
 
     private void setTypeToExternalIdentifiers(FundingForm funding) {
