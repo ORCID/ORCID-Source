@@ -201,8 +201,7 @@ public class ValidateV2SamplesTest {
         CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0/samples/credit-name-2.0.xml", CreditName.class,
                 "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(creditName);
-        assertEquals("credit-name", creditName.getContent());
-        assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
+        assertEquals("credit-name", creditName.getContent());        
     }
 
     @Test

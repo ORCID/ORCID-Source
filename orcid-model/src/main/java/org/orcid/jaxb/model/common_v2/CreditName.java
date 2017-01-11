@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
 /**
@@ -53,7 +56,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "credit-name")
-public class CreditName implements Serializable, VisibilityType {
+@JsonIgnoreProperties({"visibility"})
+public class CreditName implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -114,17 +118,5 @@ public class CreditName implements Serializable, VisibilityType {
     @Override
     public int hashCode() {
         return content != null ? content.hashCode() : 0;
-    }
-
-    @Override
-    public Visibility getVisibility() {
-        return visibility;
-    }
-
-    @Override
-    public void setVisibility(Visibility visibility) {
-        this.visibility = visibility;
-
-    }
-
+    }    
 }
