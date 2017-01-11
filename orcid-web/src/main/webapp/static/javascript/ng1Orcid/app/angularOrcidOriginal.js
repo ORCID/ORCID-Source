@@ -4654,7 +4654,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                 var configuration = initialConfigService.getInitialConfiguration();
                 var primeVerified = false;
 
-                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
+                $scope.verifiedModalEnabled = configuration.showModalManualEditVerificationEnabled;
                 $scope.emailsPojo = data;
                 $scope.$apply();
                 for (i in $scope.emailsPojo.emails) {
