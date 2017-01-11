@@ -33,59 +33,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
-/**
- * <p>
- * Java class for anonymous complex type.
- * 
- * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
- * 
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}type"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}group-orcid" minOccurs="0"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}group-name"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}email"/>
- *         &lt;element ref="{http://www.orcid.org/ns/orcid}orcid-client" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "groupOrcid", "type", "groupName", "email", "orcidClient", "salesforceId" })
-@XmlRootElement(name = "orcid-client-group")
 public class OrcidClientGroup implements Serializable {
 
     private final static long serialVersionUID = 1L;
-    @XmlAttribute(name = "type")
-    MemberType type;
-    @XmlElement(name = "group-orcid")
+    protected MemberType type;
     protected String groupOrcid;
-    @XmlElement(name = "group-name", required = true)
     protected String groupName;
-    @XmlElement(required = true)
     protected String email;
-    @XmlElement(name = "orcid-client", required = true)
     protected List<OrcidClient> orcidClient;
-    @XmlElement(name = "salesforce-id")
-    protected String salesforceId;    
-    
+    protected String salesforceId;
+
     /**
      * Gets the value of the type property.
      * 
@@ -106,7 +64,7 @@ public class OrcidClientGroup implements Serializable {
     public void setType(MemberType type) {
         this.type = type;
     }
-           
+
     /**
      * Gets the value of the groupOrcid property.
      * 
@@ -189,7 +147,7 @@ public class OrcidClientGroup implements Serializable {
      */
     public void setSalesforceId(String salesforceId) {
         this.salesforceId = salesforceId;
-    }        
+    }
 
     /**
      * Gets the value of the orcidClient property.
