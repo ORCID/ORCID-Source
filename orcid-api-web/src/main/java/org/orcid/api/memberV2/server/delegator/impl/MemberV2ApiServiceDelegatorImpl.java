@@ -57,6 +57,7 @@ import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_rc4.Client;
@@ -185,6 +186,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private SourceUtils sourceUtils;
+    
+    @Resource
+    private ContributorUtils contributorUtils;
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
@@ -194,7 +198,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private PersonDetailsManager personDetailsManager;
-
+    
     public static final int MAX_SEARCH_ROWS = 100;
 
     private long getLastModifiedTime(String orcid) {
@@ -241,6 +245,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
+        contributorUtils.filterContributorPrivateData(w);
         return Response.ok(w).build();
     }
 
@@ -321,9 +326,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtils.setSourceName(f);
+        contributorUtils.filterContributorPrivateData(f);
         return Response.ok(f).build();
     }
-
+    
     @Override
     public Response viewFundings(String orcid) {
         List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));

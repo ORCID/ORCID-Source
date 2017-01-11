@@ -317,9 +317,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 if(!PojoUtil.isEmpty(wfContributor.getCreditName())) {
                     org.orcid.jaxb.model.common_rc4.CreditName creditName = new org.orcid.jaxb.model.common_rc4.CreditName(); 
                     creditName.setContent(wfContributor.getCreditName().getValue());
-                    if(wfContributor.getCreditNameVisibility() != null && wfContributor.getCreditNameVisibility().getVisibility() != null) {
-                        creditName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(wfContributor.getCreditNameVisibility().getVisibility().value()));
-                    }
                     workContributor.setCreditName(creditName);
                 }                                
                 
