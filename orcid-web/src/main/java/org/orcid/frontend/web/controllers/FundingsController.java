@@ -395,8 +395,6 @@ public class FundingsController extends BaseWorkspaceController {
     private void addFunding(FundingForm fundingForm) throws Exception {
         // Set the right value for the amount
         setAmountWithTheCorrectFormat(fundingForm);
-        // Set the credit name
-        setContributorsCreditName(fundingForm);
         // Set default type for external identifiers
         setTypeToExternalIdentifiers(fundingForm);
         // Add to database
@@ -413,8 +411,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Set the right value for the amount
         setAmountWithTheCorrectFormat(fundingForm);
         // Set the credit name
-        setContributorsCreditName(fundingForm);
-        // Set default type for external identifiers
         setTypeToExternalIdentifiers(fundingForm);
         
         // Add to database
@@ -440,23 +436,6 @@ public class FundingsController extends BaseWorkspaceController {
             }
         }
         funding.setExternalIdentifiers(updatedExtIds);
-    }
-
-    private void setContributorsCreditName(FundingForm funding) {
-        if (funding != null && funding.getContributors() != null && !funding.getContributors().isEmpty()) {
-            for (Contributor contributor : funding.getContributors()) {
-                contributor.setEmail(null);
-                if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                    String contributorOrcid = contributor.getOrcid().getValue();
-                    if (profileEntityManager.orcidExists(contributorOrcid)) {
-                        // contributor is an ORCID user - visibility of user's name in record must be taken into account 
-                        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                        String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                        contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                    }
-                }
-            }
-        }
     }
 
     private void setTypeToExternalIdentifiers(FundingForm funding) {
