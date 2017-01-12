@@ -49,7 +49,7 @@
 		        <@emailMacros.msg "email.api_record_creation.launched.1" /><a href="${baseUri}/home?lang=${locale}">${baseUri}</a><@emailMacros.msg "email.api_record_creation.launched.2" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		        <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><@emailMacros.space /><a href="${baseUri}/privacy-policy/?lang=${locale}">${baseUri}/privacy-policy/</a><@emailMacros.msg "email.api_record_creation.read_privacy.2" /><@emailMacros.msg "email.common.if_you_have_any1" /><a href="https://support.orcid.org">https://support.orcid.org</a><@emailMacros.msg "email.common.if_you_have_any2" />
+		        <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><@emailMacros.space /><a href="${baseUri}/privacy-policy/?lang=${locale}">${baseUri}/privacy-policy/</a><@emailMacros.msg "email.api_record_creation.read_privacy.2" /><@emailMacros.msg "email.common.if_you_have_any1" /><a href="<@emailMacros.knowledgeBaseUri />"><@emailMacros.knowledgeBaseUri /></a><@emailMacros.msg "email.common.if_you_have_any2" />
 		    </p>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />

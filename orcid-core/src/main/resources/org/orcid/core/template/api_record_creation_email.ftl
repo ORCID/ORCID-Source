@@ -36,7 +36,7 @@ ${verificationUrl}?lang=${locale}
 <@emailMacros.msg "email.api_record_creation.launched.1" />${baseUri}/home?lang=${locale}<@emailMacros.msg "email.api_record_creation.launched.2" />
 
 <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><@emailMacros.space />${baseUri}/privacy-policy/?lang=${locale}<@emailMacros.msg "email.api_record_creation.read_privacy.2" />
-<@emailMacros.msg "email.common.if_you_have_any1" />https://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
+<@emailMacros.msg "email.common.if_you_have_any1" /><@emailMacros.knowledgeBaseUri /><@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}

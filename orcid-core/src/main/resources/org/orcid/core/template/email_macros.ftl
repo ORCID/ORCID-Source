@@ -21,4 +21,5 @@
 -->
 <#macro msg key, htmlEscape=false>${messages.getMessage(key ,messageArgs, locale)}</#macro>
 <#macro space>${messages.getMessage("unicode.escape.space" ,messageArgs, locale)}</#macro>
+<#macro knowledgeBaseUri>${messages.getMessage("orcid.knowledgebse.uri" ,messageArgs, locale)}</#macro>
 
