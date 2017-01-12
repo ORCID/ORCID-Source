@@ -56,12 +56,6 @@ psql -U statistics -d statistics -c "\list" -h localhost
 git clone https://github.com/ORCID/ORCID-Source.git
 ```
 
-* Clone the git ORCID-Fonts-Dot-Com repository (due to licensing issues this is only available to ORCID.org employees) into the static fonts directory
-
-```
-git clone https://github.com/ORCID/ORCID-Fonts-Dot-Com.git ORCID-Source/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
-```
-
 ## Run Maven build
 
 * Skip test the first time you run this
