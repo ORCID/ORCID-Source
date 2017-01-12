@@ -257,7 +257,7 @@
         </div>
     </#if>
     <div class="margin-top">
-    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="http://support.orcid.org/knowledgebase/articles/665437" target="_blank"><@orcid.msg 'notifications.learn_more'/></a></small>
+    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="${knowledgeBaseUri}/articles/665437" target="_blank"><@orcid.msg 'notifications.learn_more'/></a></small>
     </div>
 </body>
 </html>

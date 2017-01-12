@@ -38,7 +38,7 @@
                                     <p><@orcid.msg ''/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-                                    <a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
                                 </div>
                             </div>
                         </div>
