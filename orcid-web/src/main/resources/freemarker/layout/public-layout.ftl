@@ -105,7 +105,7 @@
 		</div>
 		<!-- .row -->
 		<div class="row">			
-			<#if (isPublicProfile)?? && isPublicProfile == true && RequestParameters['publicRecordMenu']??>	
+			<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated) && RequestParameters['publicRecordMenu']??>	
 				<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">
 					
 					<!-- Mobile View -->
