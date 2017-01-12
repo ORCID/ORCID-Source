@@ -27,7 +27,7 @@
 
 <@emailMacros.msg "email.common.did_you_know" /><@emailMacros.space />${baseUri}/about/news
 
-<@emailMacros.msg "email.common.if_you_have_any1" />http://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
+<@emailMacros.msg "email.common.if_you_have_any1" />https://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}
