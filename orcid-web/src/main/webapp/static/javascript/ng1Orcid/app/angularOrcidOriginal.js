@@ -514,6 +514,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     };
 
     var locationObj = $location.search();
+    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
     var initialConfigService = {
         getInitialConfiguration: function(){
@@ -521,8 +523,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
         }
     };
 
-    if( locationObj.verifyEdit ){
-        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+    if( locationObj.verifyEdit || paramVerifyEdit == true ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
     } 
@@ -2319,26 +2321,31 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-                if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
-                    peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
-                    var group = peerReviewSrvc.getGroup(putCode);
-                    $.ajax({
-                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
-                        dataType: 'json',
-                        contentType: 'application/json;charset=UTF-8',
-                        type: 'GET',
-                        success: function(data) {
-                            $rootScope.$apply(function(){
-                                group.groupName = data.name;
-                                group.groupDescription = data.description;
-                                group.groupType = data.type;
-                            });
-                        }
-                    }).fail(function(xhr, status, error){
-                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                    });
-                    
-                }
+            	if(groupIDPutCode != undefined) {
+            		if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
+                        peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
+                        var group = peerReviewSrvc.getGroup(putCode);
+                        $.ajax({
+                            url: getBaseUri() + '/public/group/' + groupIDPutCode,
+                            dataType: 'json',
+                            contentType: 'application/json;charset=UTF-8',
+                            type: 'GET',
+                            success: function(data) {
+                                $rootScope.$apply(function(){
+                                	console.log(angular.toJson(data));
+                                    group.groupName = data.name;
+                                    group.groupDescription = data.description;
+                                    group.groupType = data.type;
+                                });
+                            }
+                        }).fail(function(xhr, status, error){
+                            console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+                        });
+                        
+                    }
+            	} else {
+            		console.log("Error: undefined group id for peer review with put code: " + putCode);	 
+            	}     	
             }
     };
     return peerReviewSrvc;
@@ -4654,7 +4661,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
                 var configuration = initialConfigService.getInitialConfiguration();
                 var primeVerified = false;
 
-                $scope.verifiedModalEnabled = configuration.modalManualEditVerificationEnabled;
+                $scope.verifiedModalEnabled = configuration.showModalManualEditVerificationEnabled;
                 $scope.emailsPojo = data;
                 $scope.$apply();
                 for (i in $scope.emailsPojo.emails) {
