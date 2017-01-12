@@ -2425,8 +2425,8 @@
 	                        
 	                    }
 	            	} else {
-	            		console.log("Error: undefined group id for peer review with put code: " + putCode);	            		
-	            	}       
+	            		console.log("Error: undefined group id for peer review with put code: " + putCode);	 
+	            	}     	
 	            }
 	    };
 	    return peerReviewSrvc;
