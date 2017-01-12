@@ -499,7 +499,7 @@ ActSortState.prototype.sortBy = function(key) {
 
 
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ngRoute', 'ui.multiselect', 'vcRecaptcha']);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 /*************************************************
  * 3 - Angular Services
@@ -514,8 +514,6 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     };
 
     var locationObj = $location.search();
-    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
-    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
     var initialConfigService = {
         getInitialConfiguration: function(){
@@ -523,8 +521,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
         }
     };
 
-    if( locationObj.verifyEdit || paramVerifyEdit == true ){
-        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
+    if( locationObj.verifyEdit ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
     } 
