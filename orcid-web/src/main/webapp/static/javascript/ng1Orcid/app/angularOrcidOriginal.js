@@ -514,8 +514,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', '$rout
     };
 
     var locationObj = $location.search();
-
-    console.log("$routeParams", $routeParams);
+    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
     var initialConfigService = {
         getInitialConfiguration: function(){
@@ -523,8 +523,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', '$rout
         }
     };
 
-    if( locationObj.verifyEdit ){
-        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+    if( locationObj.verifyEdit || paramVerifyEdit == true ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
     } 

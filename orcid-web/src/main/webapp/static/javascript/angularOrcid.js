@@ -597,8 +597,8 @@
 	    };
 
 	    var locationObj = $location.search();
-
-	    console.log("$routeParams", $routeParams);
+	    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+	    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
 	    var initialConfigService = {
 	        getInitialConfiguration: function(){
@@ -606,8 +606,8 @@
 	        }
 	    };
 
-	    if( locationObj.verifyEdit ){
-	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+	    if( locationObj.verifyEdit || paramVerifyEdit == true ){
+	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
 	            configValues.showModalManualEditVerificationEnabled = true;
 	        }
 	    } 
