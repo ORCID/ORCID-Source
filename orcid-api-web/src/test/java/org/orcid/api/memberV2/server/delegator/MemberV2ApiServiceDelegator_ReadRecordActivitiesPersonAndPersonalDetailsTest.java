@@ -33,15 +33,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.manager.AddressManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc4.Iso3166Country;
 import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
@@ -93,7 +90,6 @@ import org.orcid.jaxb.model.record_rc4.WorkType;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.Utils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -115,19 +111,10 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
-    @Resource
-    private AddressManager addressManager;
-
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
-    }
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(addressManager, "profileLastModifiedAspect", profileLastModifiedAspect);
-    }
+    }    
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
