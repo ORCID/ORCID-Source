@@ -582,14 +582,14 @@
 
 
 
-	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ngRoute', 'ui.multiselect', 'vcRecaptcha']);
 
 	/*************************************************
 	 * 3 - Angular Services
 	 *************************************************/
 
 
-	orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
+	orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', '$routeParams', function ($rootScope, $location, $routeParams) {
 	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
 	    var configValues = {
 	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
@@ -597,6 +597,8 @@
 	    };
 
 	    var locationObj = $location.search();
+
+	    console.log("$routeParams", $routeParams);
 
 	    var initialConfigService = {
 	        getInitialConfiguration: function(){
