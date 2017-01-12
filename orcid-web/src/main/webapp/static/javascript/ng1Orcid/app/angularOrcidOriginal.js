@@ -499,7 +499,7 @@ ActSortState.prototype.sortBy = function(key) {
 
 
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ngRoute', 'ui.multiselect', 'vcRecaptcha']);
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 /*************************************************
  * 3 - Angular Services
