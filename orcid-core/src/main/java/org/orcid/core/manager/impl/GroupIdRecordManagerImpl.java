@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.exception.OrcidElementCantBeDeletedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -100,6 +101,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     public void deleteGroupIdRecord(Long putCode) {
         GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);
         if (existingEntity != null) {
+            if(groupIdRecordDao.haveAnyPeerReview(existingEntity.getGroupId())) {
+                throw new OrcidElementCantBeDeletedException("Unable to delete group id because there are peer reviews associated to it");
+            }
             orcidSecurityManager.checkSource(existingEntity);
             groupIdRecordDao.remove(Long.valueOf(putCode));
         } else {
@@ -107,6 +111,8 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         }
     }    
 
+    
+    
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
         List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();
         if (existingGroupIdRecords != null && !existingGroupIdRecords.isEmpty()) {
