@@ -506,7 +506,7 @@ var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ngRou
  *************************************************/
 
 
-orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', '$routeParams', function ($rootScope, $location, $routeParams) {
+orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
     //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
     var configValues = {
         propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
