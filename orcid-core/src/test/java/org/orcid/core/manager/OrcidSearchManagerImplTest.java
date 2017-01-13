@@ -104,6 +104,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(2, search.getResults().size());
+        assertEquals(Long.valueOf(2), search.getNumFound());
         assertEquals("5678", search.getResults().get(0).getOrcidIdentifier().getPath());
         assertEquals("6789", search.getResults().get(1).getOrcidIdentifier().getPath());
     }
@@ -113,6 +114,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
+        assertEquals(Long.valueOf(0), search.getNumFound());
         assertEquals(0, search.getResults().size());
     }
 
