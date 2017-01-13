@@ -10,7 +10,6 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
 
     var initialConfigService = {
         getInitialConfiguration: function(){
-            console.log("configValues", configValues);
             return configValues;
         }
     };
