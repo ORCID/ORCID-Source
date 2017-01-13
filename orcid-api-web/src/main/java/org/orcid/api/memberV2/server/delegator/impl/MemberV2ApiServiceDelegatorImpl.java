@@ -199,8 +199,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Resource
     private PersonDetailsManager personDetailsManager;
     
-    public static final int MAX_SEARCH_ROWS = 200;
-
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
     }
@@ -1032,8 +1030,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             try {
                 String rowsString = rowsList.get(0);
                 int rows = Integer.valueOf(rowsString);
-                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
-                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", MAX_SEARCH_ROWS));
+                if (rows < 0 || rows > OrcidSearchManager.MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
                 }
             } catch (NumberFormatException e) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));

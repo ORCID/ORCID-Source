@@ -191,9 +191,7 @@ public class PublicV2ApiServiceDelegatorImpl
     private ClientDetailsManager clientDetailsManager;
     
     @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
-    public static final int MAX_SEARCH_ROWS = 100;
+    private String baseUrl;    
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManagerReadOnly.getLastModified(orcid);
@@ -591,8 +589,8 @@ public class PublicV2ApiServiceDelegatorImpl
             try {
                 String rowsString = rowsList.get(0);
                 int rows = Integer.valueOf(rowsString);
-                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
-                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", MAX_SEARCH_ROWS));
+                if (rows < 0 || rows > OrcidSearchManager.MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
                 }
             } catch (NumberFormatException e) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
