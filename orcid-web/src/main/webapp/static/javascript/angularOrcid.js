@@ -597,38 +597,6 @@
 	    return initialConfigService;
 	}]);
 
-
-	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
-	    var actBulkSrvc = {
-	        initScope: function($scope) {
-	            $scope.bulkEditShow = false;
-	            $scope.bulkEditMap = {};
-	            $scope.bulkChecked = false;
-	            $scope.bulkDisplayToggle = false;
-	            $scope.toggleSelectMenu = function(){                   
-	                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
-	            };
-	        }
-	    };
-	    return actBulkSrvc;
-	}]);
-
-	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
-	    var bioBulkSrvc = {
-	        initScope: function($scope) {
-	            $scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
-	            $scope.bulkEditShow = false;
-	            $scope.bulkEditMap = {};
-	            $scope.bulkChecked = false;
-	            $scope.bulkDisplayToggle = false;
-	            $scope.toggleSelectMenu = function(){               
-	                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
-	            };
-	        }
-	    };
-	    return bioBulkSrvc;
-	}]);
-
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
 	    var commonSrvc = {
 	        copyErrorsLeft: function (data1, data2) {
@@ -12604,12 +12572,12 @@
 	    return {
 	        restrict: 'A',
 	        link: function(scope, element, attr) {
-	            $document.bind("keydown keypress", function(event) {
+	            $(document).unbind("keydown.ngEnterSubmit keypress.ngEnterSubmit");
+	            $document.bind("keydown.ngEnterSubmit keypress.ngEnterSubmit", function(event) {
 	                if (event.which === 13) {
 	                   element.submit();
 	                }
 	            });
-
 	        }
 	    };
 	});
