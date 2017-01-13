@@ -2321,8 +2321,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-            	if(groupIDPutCode != undefined) {
-            		if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
+                if(groupIDPutCode != undefined) {
+                    if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
                         peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
                         var group = peerReviewSrvc.getGroup(putCode);
                         $.ajax({
@@ -2332,7 +2332,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                             type: 'GET',
                             success: function(data) {
                                 $rootScope.$apply(function(){
-                                	console.log(angular.toJson(data));
+                                    console.log(angular.toJson(data));
                                     group.groupName = data.name;
                                     group.groupDescription = data.description;
                                     group.groupType = data.type;
@@ -2343,9 +2343,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         });
                         
                     }
-            	} else {
-            		console.log("Error: undefined group id for peer review with put code: " + putCode);	 
-            	}     	
+                } else {
+                    console.log("Error: undefined group id for peer review with put code: " + putCode);  
+                }       
             }
     };
     return peerReviewSrvc;
