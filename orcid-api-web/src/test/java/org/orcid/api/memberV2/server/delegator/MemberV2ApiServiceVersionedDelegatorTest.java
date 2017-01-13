@@ -47,6 +47,7 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.client_rc4.Client;
+import org.orcid.jaxb.model.common_rc4.OrcidIdentifier;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -55,12 +56,12 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc4.Address;
 import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OrcidId;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.search_rc4.Result;
+import org.orcid.jaxb.model.search_rc4.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -1495,9 +1496,11 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
 
     @Test
     public void testSearchByQuery() {
-        OrcidIds orcidIds = new OrcidIds();
-        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
-        Response searchResponse = Response.ok(orcidIds).build();
+        Search search = new Search();
+        Result result = new Result();
+        result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
+        search.getResults().add(result);
+        Response searchResponse = Response.ok(search).build();
         MemberV2ApiServiceDelegatorImpl delegator = Mockito.mock(MemberV2ApiServiceDelegatorImpl.class);
         Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>> any())).thenReturn(searchResponse);
         MemberV2ApiServiceVersionedDelegatorImpl versionedDelegator = new MemberV2ApiServiceVersionedDelegatorImpl();
@@ -1507,9 +1510,9 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         // just testing MemberV2ApiServiceDelegatorImpl's response is returned
         assertNotNull(response);
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof OrcidIds);
-        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
-        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+        assertTrue(response.getEntity() instanceof Search);
+        assertEquals(1, ((Search) response.getEntity()).getResults().size());
+        assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
     }
 
     @Test(expected = NoResultException.class)
