@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -34,6 +35,8 @@ public class Search implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "result", namespace = "http://www.orcid.org/ns/search")
     protected List<Result> results;
+    @XmlAttribute(name = "num-found")
+    protected Long numFound;
 
     public List<Result> getResults() {
         if (results == null) {
@@ -67,4 +70,11 @@ public class Search implements Serializable {
         return true;
     }
 
+    public Long getNumFound() {
+        return numFound;
+    }
+
+    public void setNumFound(Long numFound) {
+        this.numFound = numFound;
+    }
 }
