@@ -5,8 +5,9 @@ angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', funct
                 if (key == 'errors') {
                     data1.errors = data2.errors;
                 } else {
-                    if (data1[key] != null && data1[key].errors !== undefined)
+                    if (data1[key] != null && data1[key].errors !== undefined) {
                         data1[key].errors = data2[key].errors;
+                    }
                 };
             };
         },
@@ -22,7 +23,9 @@ angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', funct
                     left: 512
                 });
             }else{
-                if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
+                if (elem.indexOf('@') > -1) {
+                    left = 530; //Emails modal fix
+                }
                 angular.element('.edit-record .record-settings .popover-help-container').css({
                     top: top - scrollTop - 160,
                     left: left + 25
