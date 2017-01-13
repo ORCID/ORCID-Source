@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/search" xmlns:search="http://www.orcid.org/ns/search"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:record="http://www.orcid.org/ns/record">
+    elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/search"
+	xmlns:search="http://www.orcid.org/ns/search"
+	xmlns:common="http://www.orcid.org/ns/common">
 	<xs:annotation>
 		<xs:documentation> 
 			=============================================================================
@@ -27,16 +28,9 @@
 			and responses.
 			The top level element is orcid-message.
 		</xs:documentation>
-		<xs:appinfo>
-			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
-		</xs:appinfo>
 	</xs:annotation>
     <xs:import namespace="http://www.orcid.org/ns/common"
         schemaLocation="../common_2.0/common-2.0.xsd" />
-	<xs:import namespace="http://www.orcid.org/ns/record"
-		schemaLocation="record-2.0.xsd" />
-
 
 	<xs:element name="search">
 		<xs:complexType>
@@ -54,7 +48,6 @@
 		</xs:complexType>
 	</xs:element>
 
-
 	<xs:complexType name="result">
 		<xs:annotation>
 			<xs:documentation>A single result when performing a search on the
@@ -62,21 +55,8 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="relevancy-score" type="search:relevancy-score"
-				maxOccurs="1" />
-			<xs:element ref="record:record" maxOccurs="1" />
+			<xs:element ref="common:orcid-identifier" maxOccurs="1" />
 		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType mixed="true" name="relevancy-score">
-		<xs:annotation>
-			<xs:documentation>Search relevancy score based on ORCID's search
-				scoring model.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:float" />
-		</xs:simpleContent>
 	</xs:complexType>
 
 </xs:schema>

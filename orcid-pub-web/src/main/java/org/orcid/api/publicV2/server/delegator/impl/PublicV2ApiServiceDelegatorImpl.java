@@ -32,9 +32,9 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RecordManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
@@ -70,7 +70,6 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.OrcidIds;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -91,6 +90,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -581,8 +581,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
-        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(solrParams);
-        return Response.ok(orcidIds).build();
+        Search search = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(search).build();
     }
 
     private void validateSearchParams(Map<String, List<String>> queryMap) {

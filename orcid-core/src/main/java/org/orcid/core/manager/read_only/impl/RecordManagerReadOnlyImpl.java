@@ -99,7 +99,8 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         return record;
     }
     
-    private OrcidIdentifier getOrcidIdentifier(String orcid) {
+    @Override
+    public OrcidIdentifier getOrcidIdentifier(String orcid) {
         OrcidIdentifier orcidIdentifier = new OrcidIdentifier();
         orcidIdentifier.setPath(orcid);
         orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
