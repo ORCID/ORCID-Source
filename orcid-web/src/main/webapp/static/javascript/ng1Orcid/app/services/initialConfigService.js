@@ -3,10 +3,11 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
     var configValues = {
         propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
         showModalManualEditVerificationEnabled: false
-
     };
 
     var locationObj = $location.search();
+    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
     var initialConfigService = {
         getInitialConfiguration: function(){
@@ -14,11 +15,11 @@ angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$loca
         }
     };
 
-    if( locationObj.verifyEdit ){
-        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+    if( locationObj.verifyEdit || paramVerifyEdit == true ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
-    }
+    } 
 
     return initialConfigService;
 }]);

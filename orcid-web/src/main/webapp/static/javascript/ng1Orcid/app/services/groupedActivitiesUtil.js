@@ -1,3 +1,4 @@
+/*
 angular.module('orcidApp').factory(
     'GroupedActivitiesUtil', 
     function() {
@@ -46,3 +47,4 @@ angular.module('orcidApp').factory(
         return GroupedActivitiesUtil;
     }
 );
+*/
