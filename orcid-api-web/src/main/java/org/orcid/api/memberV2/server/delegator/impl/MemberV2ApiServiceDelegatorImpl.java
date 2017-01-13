@@ -85,7 +85,6 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
@@ -98,6 +97,7 @@ import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.search_rc4.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.springframework.beans.factory.annotation.Value;
@@ -1022,8 +1022,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
-        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(solrParams);
-        return Response.ok(orcidIds).build();
+        Search search = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(search).build();
     }
 
     private void validateSearchParams(Map<String, List<String>> queryMap) {

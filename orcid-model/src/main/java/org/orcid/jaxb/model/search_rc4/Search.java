@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.jaxb.model.record_rc4;
+package org.orcid.jaxb.model.search_rc4;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,57 +27,43 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidIds" })
-@XmlRootElement(name = "orcid-ids", namespace = "http://www.orcid.org/ns/orcid-id")
-public class OrcidIds implements Serializable {
-    private static final long serialVersionUID = 6312730308815255894L;
+@XmlType(propOrder = { "results" })
+@XmlRootElement(name = "search", namespace = "http://www.orcid.org/ns/search")
 
-    @XmlElement(name = "orcid-id", namespace = "http://www.orcid.org/ns/orcid-id")
-    List<OrcidId> orcidIds;
+public class Search implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @XmlElement(name = "result", namespace = "http://www.orcid.org/ns/search")
+    protected List<Result> results;
 
-    public List<OrcidId> getOrcidIds() {
-        if (orcidIds == null) {
-            orcidIds = new ArrayList<>();
+    public List<Result> getResults() {
+        if (results == null) {
+            results = new ArrayList<Result>();
         }
-        return orcidIds;
+        return this.results;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((orcidIds == null) ? 0 : orcidIds.hashCode());
+        result = prime * result + ((results == null) ? 0 : results.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-
-        OrcidIds other = (OrcidIds) obj;
-        if (orcidIds == null && other.orcidIds != null) {
-            return false;
-        }
-
-        if (orcidIds.size() != other.orcidIds.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < orcidIds.size(); i++) {
-            if (!orcidIds.get(i).equals(other.orcidIds.get(i))) {
+        Search other = (Search) obj;
+        if (results == null) {
+            if (other.results != null)
                 return false;
-            }
-        }
+        } else if (!results.equals(other.results))
+            return false;
         return true;
     }
 
