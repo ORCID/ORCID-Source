@@ -213,7 +213,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewRecord(String orcid) {
         Record record = recordManager.getRecord(orcid);
-        orcidSecurityManager.checkAndFilter(orcid, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtils.setSourceName(record.getPerson());
@@ -230,7 +230,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewActivities(String orcid) {
         ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
-        orcidSecurityManager.checkAndFilter(orcid, as, ScopePathType.ACTIVITIES_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
@@ -1001,7 +1001,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewPersonalDetails(String orcid) {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
-        orcidSecurityManager.checkAndFilter(orcid, personalDetails, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtils.setSourceName(personalDetails);
@@ -1011,7 +1011,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewPerson(String orcid) {
         Person person = personDetailsManager.getPersonDetails(orcid);
-        orcidSecurityManager.checkAndFilter(orcid, person, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(orcid, person);
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);

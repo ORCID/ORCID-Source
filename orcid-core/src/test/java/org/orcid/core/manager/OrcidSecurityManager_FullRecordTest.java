@@ -66,7 +66,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
     public void testRecord_When_TokenForOtherUser() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_LIMITED);
         Record record = new Record();
-        orcidSecurityManager.checkAndFilter(ORCID_2, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_2, record);
         fail();
     }
 
@@ -153,7 +153,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertEquals(name, p.getName());
@@ -315,7 +315,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertEquals(name, p.getName());
@@ -477,7 +477,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -639,7 +639,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -753,7 +753,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -915,7 +915,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertEquals(name, p.getName());
@@ -1077,7 +1077,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertEquals(name, p.getName());
@@ -1239,7 +1239,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -1401,7 +1401,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -1515,7 +1515,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertNull(p.getName());
@@ -1677,7 +1677,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
         record.setActivitiesSummary(as);
         record.setPerson(p);
 
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
         // Check person
         assertEquals(name, p.getName());
@@ -1760,7 +1760,7 @@ public class OrcidSecurityManager_FullRecordTest extends OrcidSecurityManagerTes
     public void testRecord_When_ReadLimitedToken_EmptyElement() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_LIMITED);
         Record record = new Record();
-        orcidSecurityManager.checkAndFilter(ORCID_1, record, ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, record);
         assertNotNull(record);
     }
 }

@@ -57,7 +57,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPublicClient_checkAndFilter_ActivitiesSummary() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
-        orcidSecurityManager.checkAndFilter(ORCID_1, new ActivitiesSummary(), ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new ActivitiesSummary());
     }
     
     @Test(expected = OrcidUnauthorizedException.class)
@@ -69,19 +69,19 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPublicClient_checkAndFilter_Person() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
-        orcidSecurityManager.checkAndFilter(ORCID_1, new Person(), ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new Person());
     }
     
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPublicClient_checkAndFilter_PersonalDetails() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
-        orcidSecurityManager.checkAndFilter(ORCID_1, new PersonalDetails(), ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new PersonalDetails());
     }
     
     @Test(expected = OrcidUnauthorizedException.class)
     public void testPublicClient_checkAndFilter_Record() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, PUBLIC_CLIENT, ScopePathType.READ_PUBLIC);
-        orcidSecurityManager.checkAndFilter(ORCID_1, new Record(), ScopePathType.READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, new Record());
     }
     
     @Test(expected = OrcidUnauthorizedException.class)
@@ -914,7 +914,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
     public void testPersonalDetails_When_TokenForOtherUser() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
         PersonalDetails p = new PersonalDetails();
-        orcidSecurityManager.checkAndFilter(ORCID_2, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_2, p);
         fail();
     }
 
@@ -932,7 +932,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -958,7 +958,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertEquals(bio, p.getBiography());
@@ -984,7 +984,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertNull(p.getBiography());
@@ -1010,7 +1010,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -1033,7 +1033,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -1059,7 +1059,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -1085,7 +1085,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
         assertEquals(bio, p.getBiography());
@@ -1111,7 +1111,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertEquals(bio, p.getBiography());
@@ -1137,7 +1137,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -1160,7 +1160,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         p.setBiography(bio);
         p.setName(name);
         p.setOtherNames(otherNames);
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
         assertNull(p.getBiography());
@@ -1176,7 +1176,7 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
     public void testPersonalDetails_When_ReadLimitedToken_EmptyElement() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.ORCID_BIO_READ_LIMITED);
         PersonalDetails p = new PersonalDetails();
-        orcidSecurityManager.checkAndFilter(ORCID_1, p, ScopePathType.ORCID_BIO_READ_LIMITED);
+        orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
     }
 }
