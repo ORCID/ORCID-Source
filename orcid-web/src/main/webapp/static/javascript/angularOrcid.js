@@ -12966,20 +12966,18 @@
 	        showModalManualEditVerificationEnabled: false
 	    };
 
-	    var locationObj = $location.search();
-	    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+	    var paramVerifyEditRegex = /.*\?(.*\&)*(verifyEdit){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
 	    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
 	    var initialConfigService = {
 	        getInitialConfiguration: function(){
+	            console.log("configValues", configValues);
 	            return configValues;
 	        }
 	    };
 
-	    if( locationObj.verifyEdit || paramVerifyEdit == true ){
-	        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
-	            configValues.showModalManualEditVerificationEnabled = true;
-	        }
+	    if( paramVerifyEdit == true ){
+	        configValues.showModalManualEditVerificationEnabled = true;
 	    } 
 
 	    return initialConfigService;
