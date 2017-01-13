@@ -318,6 +318,50 @@ GroupedActivities.prototype.unionCheck = function() {
     return rmActs;
 };
 
+var ActSortState = function(groupType) {
+    var _self = this;
+    _self.type = groupType;    
+    _self.predicateKey = 'date';
+    if (_self.type == 'peerReview') {
+        _self.predicateKey = 'groupName';
+    }
+    _self.reverseKey = {};
+    _self.reverseKey['date']  = false;
+    _self.reverseKey['title'] = false;
+    _self.reverseKey['type']  = false;
+    _self.reverseKey['groupName']  = false;
+    _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
+};
+
+var sortPredicateMap = {};
+sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
+sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getDefault().workType.value'];
+sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getDefault().workType.value'];
+sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.FUNDING] = {};
+sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
+sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
+sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.AFFILIATION] = {};
+sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
+sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
+
+sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
+sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
+
+ActSortState.prototype.predicateMap = sortPredicateMap;
+
+ActSortState.prototype.sortBy = function(key) { 
+    if (this.predicateKey == key){
+       this.reverse = !this.reverse;
+       this.reverseKey[key] = !this.reverseKey[key];           
+    }
+    this.predicateKey = key;
+    this.predicate = this.predicateMap[this.type][key];
+};
+
 (function($) {
  
 

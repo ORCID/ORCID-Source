@@ -215,354 +215,6 @@
 	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
-	/*
-	 * GROUPINGS LOGIC
-	 */
-	var PRIVACY = {};
-	PRIVACY.PUBLIC = 'PUBLIC';
-	PRIVACY.LIMITED = 'LIMITED';
-	PRIVACY.PRIVATE = 'PRIVATE';
-
-	var GroupedActivitiesUtil = function() {};
-
-	GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
-	    var matches = new Array();
-	    // there are no possible keys for affiliations    
-	    if (type != GroupedActivities.AFFILIATION);
-	       for (var idx in groupsArray) {          
-	           if (groupsArray[idx].keyMatch(activity))
-	               matches.push(groupsArray[idx]);
-	       }           
-	    if (matches.length == 0) {
-	        var newGroup = new GroupedActivities(type);
-	        newGroup.add(activity);
-	        groupsArray.push(newGroup);
-	    }  else {
-	        var firstMatch = matches.shift();
-	        firstMatch.add(activity);
-	        // combine any remaining groups into the first group we found.
-	        for (var idx in matches) {
-	            var matchIndex = groupsArray.indexOf(matches[idx]);
-	            var curMatch = groupsArray[matchIndex];
-	            for (var idj in curMatch.activities)
-	                firstMatch.add(curMatch.activities[idj]);
-	            groupsArray.splice(matchIndex, 1);
-	        }
-	    }
-	};
-
-	GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
-	    for (var idx in groupsArray) {
-	        if (groupsArray[idx].hasPut(putCode)) {
-	           groupsArray[idx].rmByPut(putCode);
-	           if (groupsArray[idx].activitiesCount == 0)
-	               groupsArray.splice(idx,1);
-	           else {
-	               var orphans = groupsArray[idx].unionCheck();
-	               for (var idj in orphans)
-	                   groupedActivitiesUtil.group(orphans[idj], type, groupsArray);
-	           }
-	        }
-	    }
-	};
-
-	var groupedActivitiesUtil = new GroupedActivitiesUtil();
-
-	var GroupedActivities = function(type) {
-	    if (GroupedActivities.count == undefined)
-	        GroupedActivities.count = 1;
-	    else
-	        GroupedActivities.count ++;
-
-	    function getInstantiateCount() {
-	           var id = 0; // This is the private persistent value
-	           // The outer function returns a nested function that has access
-	           // to the persistent value.  It is this nested function we're storing
-	           // in the variable uniqueID above.
-	           return function() { return id++; };  // Return and increment
-	    }
-
-	    this.type = type;
-	    this._keySet = {};
-	    this.activities = {};
-	    this.activitiesCount = 0;
-	    this.activePutCode = null;
-	    this.defaultPutCode = null;
-	    this.dateSortString = null;
-	    this.groupId = GroupedActivities.count;
-	    this.groupDescription = null;
-	    this.groupType = null;
-	    this.groupRealId = null;
-	    this.title = null;
-	};
-
-	GroupedActivities.count = 0;
-	GroupedActivities.prototype.FUNDING = 'funding';
-	GroupedActivities.ABBR_WORK = 'abbrWork';
-	GroupedActivities.PEER_REVIEW = 'peerReview';
-	GroupedActivities.AFFILIATION = 'affiliation';
-
-	GroupedActivities.prototype.add = function(activity) {      
-	    // assumes works are added in the order of the display index desc
-	    // subsorted by the created date asc
-	    var identifiersPath = null;
-	    identifiersPath = this.getIdentifiersPath();        
-	    
-	    if(this.type == GroupedActivities.PEER_REVIEW) {    
-	        var key = this.key(activity[identifiersPath]);
-	        this.addKey(key);
-	    } else {
-	        for (var idx in activity[identifiersPath]) {
-	            this.addKey(this.key(activity[identifiersPath][idx]));
-	        }
-	    }    
-	    
-	    this.activities[activity.putCode.value] = activity;
-	    if (this.defaultPutCode == null) {
-	        this.activePutCode = activity.putCode.value;
-	        this.makeDefault(activity.putCode.value);
-	    }
-	    this.activitiesCount++;
-	};
-
-	GroupedActivities.prototype.addKey = function(key) {
-	    if (this.hasKey(key)) return;
-	    this._keySet[key] = true;
-	    if (this.type == GroupedActivities.PEER_REVIEW)
-	        this.groupRealId = key;
-	    return;
-	};
-
-	GroupedActivities.prototype.getActive = function() {
-	    return this.activities[this.activePutCode];
-	};
-
-	GroupedActivities.prototype.getDefault = function() {
-	    return this.activities[this.defaultPutCode];
-	};
-
-	GroupedActivities.prototype.getByPut = function(putCode) {
-	    return this.activities[putCode];
-	};
-
-	GroupedActivities.prototype.consistentVis = function() {
-	    var vis = null;
-	    if (this.type == GroupedActivities.FUNDING)
-	        vis = this.getDefault().visibility.visibility;
-	    else
-	        vis = this.getDefault().visibility;
-
-	    for (var idx in this.activities)
-	        
-	        if (this.type == GroupedActivities.FUNDING) {
-	            if (this.activities[idx].visibility.visibility != vis)
-	                return false;
-	        } else {
-	            if (this.activities[idx].visibility != vis)
-	                return false;
-	        }
-	    return true;
-	};
-
-	GroupedActivities.prototype.getIdentifiersPath = function() {
-	    if (this.type == GroupedActivities.ABBR_WORK) return 'workExternalIdentifiers';
-	    if (this.type == GroupedActivities.PEER_REVIEW) return 'groupId';
-	    return 'externalIdentifiers';
-	};
-
-	/*
-	* takes a activity and adds it to an existing group or creates a new group
-	*/
-
-	GroupedActivities.prototype.hasKey = function(key) {
-	    if (key in this._keySet)
-	        return true;
-	    return false;
-	};
-
-	GroupedActivities.prototype.hasKeys = function(key) {
-	    if (Object.keys(this._keySet).length > 0)
-	        return true;
-	    return false;
-	};
-
-	GroupedActivities.prototype.hasUserVersion = function() {
-	    for (var idx in this.activities)
-	        if (this.activities[idx].source == orcidVar.orcidId)
-	            return true;
-	    return false;
-	};
-
-	GroupedActivities.prototype.hasPut = function(putCode) {
-	    if (this.activities[putCode] !== undefined)
-	                return true;
-	        return false;
-	};
-
-	GroupedActivities.prototype.key = function(activityIdentifiers) {
-	    var idPath;
-	    var idTypePath;
-	    var relationship = 'relationship';
-	    if (this.type == GroupedActivities.ABBR_WORK) {
-	        idPath = 'workExternalIdentifierId';
-	        idTypePath = 'workExternalIdentifierType';
-	    } else if (this.type == GroupedActivities.FUNDING) {
-	        idPath = 'value';
-	        idTypePath = 'type';
-	    } else if (this.type == GroupedActivities.AFFILIATION) {
-	        // we don't have external identifiers for affiliations yet
-	        idPath = null;
-	        idTypePath = null;
-	    } else if (this.type == GroupedActivities.PEER_REVIEW) {
-	        idPath = 'value';
-	        idTypePath = 'value';
-	    }
-	    
-	    var key = '';
-	    
-	    if (this.type ==  GroupedActivities.PEER_REVIEW) {
-	        if(activityIdentifiers != null && activityIdentifiers[idPath] != null)
-	            key += activityIdentifiers[idPath];
-	    } else if (activityIdentifiers[idTypePath]) {    
-	        // ISSN is misused too often to identify a work
-	        if (activityIdentifiers[idTypePath].value != 'issn'
-	                && (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
-	                && activityIdentifiers[idPath] != null
-	                && activityIdentifiers[idPath].value != null
-	                && activityIdentifiers[idPath].value != '') {           
-	            key = activityIdentifiers[idTypePath].value;
-	            // Removed conversion to lower case as per card: https://trello.com/c/b7jLWgNq/3070-api-groups-are-case-sensitive-ui-groups-are-not
-	            key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : '';
-	            
-	            
-	        }
-	    }
-	    return key;
-	};
-
-	GroupedActivities.prototype.keyMatch = function(activity) {
-	    var identifiersPath = null;
-	    identifiersPath = this.getIdentifiersPath();
-	    if(this.type == GroupedActivities.PEER_REVIEW) {        
-	        if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
-	        if(this.key(activity[identifiersPath]) in this._keySet)
-	            return true;
-	    } else {
-	        for (var idx in activity[identifiersPath]) {                        
-	            if (this.key(activity[identifiersPath][idx]) == '') continue;
-	            if (this.key(activity[identifiersPath][idx]) in this._keySet)
-	                return true;        
-	        }
-	    }   
-	    return false;
-	};
-
-	GroupedActivities.prototype.highestVis = function() {
-	    var vis = this.getDefault().visibility;
-	    for (var idx in this.activities)
-	        if (vis == PRIVACY.PUBLIC)
-	            return vis;
-	        else if (this.activities[putCode].visibility == PRIVACY.PUBLIC)
-	            return PRIVACY.PUBLIC;
-	        else if (this.activities[putCode].visibility == PRIVACY.LIMITED)
-	            vis = PRIVACY.LIMITED;
-	    return vis;
-	};
-
-	GroupedActivities.prototype.makeDefault = function(putCode) {
-	    this.defaultPutCode = putCode;
-	    this.dateSortString = this.activities[putCode].dateSortString;
-	    var act = this.activities[putCode];
-	    var title = null;
-	    // at some point we should make this easier by making all paths match
-	    if (this.type == GroupedActivities.ABBR_WORK) title = act.title;
-	    else if (this.type == GroupedActivities.FUNDING) title = act.fundingTitle.title;
-	    else if (this.type == GroupedActivities.AFFILIATION) title = act.affiliationName;
-	    else if (this.type == GroupedActivities.PEER_REVIEW) title = act.subjectName;
-	    this.title =  title != null ? title.value : null;
-	};
-
-	GroupedActivities.prototype.rmByPut = function(putCode) {
-	    var activity =  this.activities[putCode];
-	    delete this.activities[putCode];
-	    this.activitiesCount--;
-	    if (putCode == this.defaultPutCode) {
-	        // make the first one default
-	        for (var idx in this.activities) {
-	            this.defaultPutCode = idx;
-	            break;
-	        }
-	    }
-	    if (putCode == this.activePutCode)
-	        this.activePutCode = this.defaultPutCode;
-	    return activity;
-	};
-
-	// makes sure the current set if a valid union of activities
-	// and returns any activity removed from the group
-	GroupedActivities.prototype.unionCheck = function() {
-	    //alert('here unionCheck');
-	    var rmActs = new Array();
-	    var tempGroups = new Array();
-	    for (var idx in this.activities)
-	        groupedActivitiesUtil.group(this.activities[idx],this.type, tempGroups);
-	    for (var idx in tempGroups)
-	        if (idx == 0) {
-	           this._keySet = tempGroups[idx]._keySet; 
-	        } else { 
-	           for (var jdx in tempGroups[idx].activities) {
-	              rmActs.push(tempGroups[idx].activities[jdx]);
-	              this.rmByPut(tempGroups[idx].activities[jdx].putCode.value);
-	           }
-	        }
-	    return rmActs;
-	};
-
-	var ActSortState = function(groupType) {
-	    var _self = this;
-	    _self.type = groupType;    
-	    _self.predicateKey = 'date';
-	    if (_self.type == 'peerReview') {
-	        _self.predicateKey = 'groupName';
-	    }
-	    _self.reverseKey = {};
-	    _self.reverseKey['date']  = false;
-	    _self.reverseKey['title'] = false;
-	    _self.reverseKey['type']  = false;
-	    _self.reverseKey['groupName']  = false;
-	    _self.predicate = this.predicateMap[_self.type][_self.predicateKey];
-	};
-
-	var sortPredicateMap = {};
-	sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
-	sortPredicateMap[GroupedActivities.ABBR_WORK]['date'] = ['-dateSortString', 'title','getDefault().workType.value'];
-	sortPredicateMap[GroupedActivities.ABBR_WORK]['title'] = ['title', '-dateSortString','getDefault().workType.value'];
-	sortPredicateMap[GroupedActivities.ABBR_WORK]['type'] = ['getDefault().workType.value','title', '-dateSortString'];
-
-	sortPredicateMap[GroupedActivities.FUNDING] = {};
-	sortPredicateMap[GroupedActivities.FUNDING]['date'] = ['-dateSortString', 'title','getDefault().fundingTypeForDisplay'];
-	sortPredicateMap[GroupedActivities.FUNDING]['title'] = ['title', '-dateSortString','getDefault().fundingTypeForDisplay'];
-	sortPredicateMap[GroupedActivities.FUNDING]['type'] = ['getDefault().fundingTypeForDisplay','title', '-dateSortString'];
-
-	sortPredicateMap[GroupedActivities.AFFILIATION] = {};
-	sortPredicateMap[GroupedActivities.AFFILIATION]['date'] = ['-dateSortString', 'title'];
-	sortPredicateMap[GroupedActivities.AFFILIATION]['title'] = ['title', '-dateSortString'];
-
-	sortPredicateMap[GroupedActivities.PEER_REVIEW] = {};
-	sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
-
-	ActSortState.prototype.predicateMap = sortPredicateMap;
-
-	ActSortState.prototype.sortBy = function(key) { 
-	    if (this.predicateKey == key){
-	       this.reverse = !this.reverse;
-	       this.reverseKey[key] = !this.reverseKey[key];           
-	    }
-	    this.predicateKey = key;
-	    this.predicate = this.predicateMap[this.type][key];
-	};
-
-
 
 	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
@@ -5651,858 +5303,7 @@
 	    
 	}]);
 
-	angular.module('orcidApp').controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filter','emailSrvc', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', 'initialConfigService', '$timeout', '$q', 
-	                                      function ($scope, $rootScope, $compile, $filter,emailSrvc, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, initialConfigService, $timeout, $q) {
-	    actBulkSrvc.initScope($scope);
-	   
-	    $scope.badgesRequested = {};
-	    $scope.bibtexGenerated = false;
-	    $scope.bibtexExportError = false;
-	    $scope.bibtexParsingError = false;
-	    $scope.bibtexURL = "";
-	    $scope.bibtextWork = false;
-	    $scope.bibtextWorkIndex = null;
-	    $scope.bulkDeleteCount = 0;
-	    $scope.bulkDeleteSubmit = false;
-	    $scope.canReadFiles = false;
-	    $scope.contentCopy = {
-	        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-	        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-	    };
-	    $scope.delCountVerify = 0;
-	    $scope.displayURLPopOver = {};
-	    $scope.editSources = {};
-	    $scope.editTranslatedTitle = false;
-	    $scope.emailSrvc = emailSrvc;
-	    $scope.generatingBibtex = false;
-	    $scope.geoArea = ['All'];
-	    $scope.moreInfo = {};
-	    $scope.moreInfoOpen = false;
-	    $scope.noLinkFlag = true;
-	    $scope.privacyHelp = {};
-	    $scope.scriptsLoaded = false;
-	    $scope.showBibtex = {};
-	    $scope.showBibtexExport = false;
-	    $scope.showBibtexImportWizard = false;
-	    $scope.showElement = {};
-	    $scope.textFiles = [];
-	    $scope.types = null;
-	    $scope.wizardDescExpanded = {};
-	    $scope.workImportWizard = false;
-	    $scope.worksFromBibtex = null;
-	    $scope.workspaceSrvc = workspaceSrvc;
-	    $scope.worksSrvc = worksSrvc;
-	    $scope.workType = ['All'];
 
-	    $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
-	    
-
-	    /////////////////////// Begin of verified email logic for work
-	    var configuration = initialConfigService.getInitialConfiguration();
-	    var emailVerified = false;
-	    var emails = {};
-
-	    var showEmailVerificationModal = function(){
-	        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
-	    };
-	    
-	    $scope.emailSrvc.getEmails(
-	        function(data) {
-	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
-	        }
-	    );
-	    /////////////////////// End of verified email logic for work
-
-	    $scope.applyLabelWorkType = function() {
-	        var obj = null;
-	        $timeout(function() {
-	            obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
-	            $scope.contentCopy = obj;
-	        }, 100);
-	    };
-
-	    $scope.sort = function(key) {
-	        $scope.sortState.sortBy(key);
-	    };
-
-	    $scope.toggleBulkEdit = function() {
-
-	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-	            if (!$scope.bulkEditShow) {
-	                $scope.bulkEditMap = {};
-	                $scope.bulkChecked = false;
-	                for (var idx in worksSrvc.groups)
-	                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
-	            };
-	            $scope.bulkEditShow = !$scope.bulkEditShow;
-	            $scope.showBibtexImportWizard = false;
-	            $scope.workImportWizard = false;
-	            $scope.showBibtexExport = false;
-	        }else{
-	            showEmailVerificationModal();
-	        }
-	    };
-
-
-	    $scope.bulkApply = function(func) {
-	        for (var idx in worksSrvc.groups)
-	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-	                func(worksSrvc.groups[idx].getActive().putCode.value);
-	    };
-
-	    $scope.swapbulkChangeAll = function() {
-	        $scope.bulkChecked = !$scope.bulkChecked;
-	        for (var idx in worksSrvc.groups)
-	            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = $scope.bulkChecked;
-	        $scope.bulkDisplayToggle = false;
-	    };
-
-	    $scope.bulkChangeAll = function(bool) {
-	        $scope.bulkChecked = bool;
-	        $scope.bulkDisplayToggle = false;
-	        for (var idx in worksSrvc.groups)
-	            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
-	    };
-
-	    $scope.setBulkGroupPrivacy = function(priv) {
-	        var putCodes = new Array();
-	        for (var idx in worksSrvc.groups)
-	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-	                for (var idj in worksSrvc.groups[idx].activities) {
-	                    putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
-	                    worksSrvc.groups[idx].activities[idj].visibility = priv;
-	                }
-	        worksSrvc.updateVisibility(putCodes, priv);
-	    };
-
-	    $scope.deleteBulk = function () {
-	        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
-	            $scope.bulkDeleteSubmit = true;
-	            return;
-	        }
-	        var delPuts = new Array();
-	        for (var idx in worksSrvc.groups)
-	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-	                delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
-	        worksSrvc.deleteGroupWorks(delPuts);
-	        $.colorbox.close();
-	        $scope.bulkEditShow = false;
-	    };
-
-
-	    $scope.deleteBulkConfirm = function(idx) {
-	        $scope.delCountVerify = 0;
-	        $scope.bulkDeleteCount = 0;
-	        $scope.bulkDeleteSubmit = false;        
-	        for (var idx in worksSrvc.groups)
-	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
-	                $scope.bulkDeleteCount++;
-
-	        $scope.bulkDeleteFunction = $scope.deleteBulk;
-
-	        $.colorbox({
-	            html: $compile($('#bulk-delete-modal').html())($scope)
-
-	        });
-	        $.colorbox.resize();
-	    };
-
-	    $scope.sortOtherLast = function(type) {
-	        if (type.key == 'other') return 'ZZZZZ';
-	        return type.value;
-	    };
-
-	    $scope.loadBibtexJs = function() {
-	        try {
-	            $scope.worksFromBibtex = new Array();
-	            $.each($scope.textFiles, function (index, bibtex) {
-	                var parsed = bibtexParse.toJSON(bibtex);
-	                if (parsed.length == 0) 
-	                    throw "bibtex parse return nothing";
-	                worksSrvc.getBlankWork(function(blankWork) {
-	                    var newWorks = new Array();
-	                    while (parsed.length > 0) {
-	                        var cur = parsed.shift();
-	                        var bibtexEntry = cur.entryType.toLowerCase();
-	                        if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') //Filtering @PREAMBLE and @COMMENT
-	                            newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
-	                    };
-	                    worksSrvc.worksValidate(newWorks, function(data) {
-	                        for (i in data) {                           
-	                            $scope.worksFromBibtex.push(data[i]);
-	                        }
-	                        $scope.$apply();
-	                    });
-	                });
-	            });
-	            $scope.textFiles.length = 0;
-	            $scope.bibtexParsingError = false;
-	               
-	        } catch (err) {
-	            $scope.bibtexParsingError = true;
-	        };
-	    };
-
-	    $scope.rmWorkFromBibtex = function(work) {
-	        var index = $scope.worksFromBibtex.indexOf(work);
-	        $scope.worksFromBibtex.splice(index, 1);
-	    };
-
-	    $scope.editWorkFromBibtex = function(work) {
-	        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
-	        $scope.bibtextWork = true;
-	        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);        
-	        
-	    };
-	    
-	    $scope.addWorkFromBibtex = function(work) {
-	        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);     
-	        $scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
-	        $scope.bibtextWork = true;              
-	        $scope.putWork();        
-	    };
-	    
-	    $scope.saveAllFromBibtex = function(){
-	        var warksToSave =  new Array();
-	        angular.forEach($scope.worksFromBibtex, function( work, key ) {
-	            if (work.errors.length == 0) warksToSave.push(work);
-	        });
-	        var numToSave = warksToSave.length;
-	        angular.forEach( warksToSave, function( work, key ) {
-	            worksSrvc.putWork(work,function(data) {
-	                    index = $scope.worksFromBibtex.indexOf(work);
-	                    $scope.worksFromBibtex.splice(index, 1);
-	                    $scope.$apply();
-	                    numToSave--;
-	                    if (numToSave == 0)
-	                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-	            });
-	        });
-	    };
-
-	    $scope.openBibTextWizard = function () {
-	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-	            $scope.bibtexParsingError = false;
-	            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
-	            $scope.bulkEditShow = false;
-	            $scope.worksFromBibtex = null;
-	            $scope.workImportWizard = false;
-	            $scope.showBibtexExport = false;
-	        }else{
-	            showEmailVerificationModal();
-	        }
-	    };
-
-	    $scope.bibtextCancel = function(){
-	        $scope.worksFromBibtex = null;
-	    };    
-
-	    // Check for the various File API support.
-	    if (window.File && window.FileReader && window.FileList && window.Blob) {
-	        $scope.canReadFiles = true;
-	    };
-
-	    $scope.toggleClickPrivacyHelp = function(key) {
-	        if (!document.documentElement.className.contains('no-touch'))
-	            $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-	    };
-
-	    $scope.addExternalIdentifier = function () {
-	        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
-	    };
-
-	    $scope.deleteExternalIdentifier = function(obj) {
-	        var index = $scope.editWork.workExternalIdentifiers.indexOf(obj);
-	        $scope.editWork.workExternalIdentifiers.splice(index,1);
-	    };
-
-	    $scope.deleteContributor = function(obj) {
-	        var index = $scope.editWork.contributors.indexOf(obj);
-	        $scope.editWork.contributors.splice(index,1);
-	    };
-
-	    $scope.userIsSource = function(work) {
-	        if (work.source == orcidVar.orcidId)
-	            return true;
-	        return false;
-	    };
-
-	    $scope.hasCombineableEIs = function(work) {
-	        if (work.workExternalIdentifiers != null)
-	            for (var idx in work.workExternalIdentifiers)
-	                if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn')
-	                    return true;
-	        return false;
-	    };
-
-	    $scope.canBeCombined = function(work) {
-	        if ($scope.userIsSource(work))
-	            return true;
-	        return $scope.hasCombineableEIs(work);
-	    };
-
-	    $scope.validCombineSel = function(selectedWork,work) {
-	        if ($scope.hasCombineableEIs(selectedWork))
-	            return $scope.userIsSource(work) || $scope.hasCombineableEIs(work);
-	        else
-	            return $scope.hasCombineableEIs(work);
-	    };
-
-	    $scope.combiningWorks = false;
-	    $scope.combined = function(work1, work2) {
-	        // no duplicate request;
-	        if ($scope.combiningWorks)
-	            return;
-	        $scope.combiningWorks = true;
-	        var putWork;
-	        if ($scope.userIsSource(work1)) {
-	            putWork = worksSrvc.copyEIs(work2, work1);
-	        } else if ($scope.userIsSource(work2)) {
-	            putWork = worksSrvc.copyEIs(work1, work2);
-	        } else {
-	            putWork = worksSrvc.createNew(work1);
-	            putWork = worksSrvc.copyEIs(work1, work2);
-	        }
-	        worksSrvc.putWork(
-	                putWork,
-	                function(data){
-	                    $scope.combiningWorks = false;
-	                    $scope.closeModal();
-	                },
-	                function() {
-	                    $scope.combiningWorks = false;
-	                }
-	            );
-	    };
-
-	    $scope.showCombineMatches = function(work1) {
-	        $scope.combineWork = work1;
-	        $.colorbox({
-	            scrolling: true,
-	            html: $compile($('#combine-work-template').html())($scope),
-	            onLoad: function() {$('#cboxClose').remove();},
-	            // start the colorbox off with the correct width
-	            width: formColorBoxResize(),
-	            onComplete: function() {$.colorbox.resize();},
-	            onClosed: function() {
-	                $scope.closeAllMoreInfo();
-	                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-	            }
-	        });
-	        return false;
-	    };
-
-	    $scope.showAddWorkModal = function(){
-	        $scope.editTranslatedTitle = false;
-	        $.colorbox({
-	            scrolling: true,
-	            html: $compile($('#add-work-modal').html())($scope),
-	            onLoad: function() {$('#cboxClose').remove();},
-	            // start the colorbox off with the correct width
-	            width: formColorBoxResize(),
-	            onComplete: function() {
-	                //resize to insure content fits
-	            },
-	            onClosed: function() {
-	                $scope.closeAllMoreInfo();
-	                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-	            }
-	        });
-	    };
-
-	    $scope.toggleTranslatedTitleModal = function(){
-	        $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
-	        $('#translatedTitle').toggle();
-	        $.colorbox.resize();
-	    };
-
-	    $scope.bibtexShowToggle = function (putCode) {
-	        $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);
-	    };
-
-	    $scope.showWorkImportWizard =  function() {
-	        if(!$scope.workImportWizard) {
-	            loadWorkImportWizardList();
-	        }
-	        $scope.workImportWizard = !$scope.workImportWizard;
-	    };   
-
-	    function loadWorkImportWizardList() {
-	        $.ajax({
-	            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
-	            type: 'GET',
-	            contentType: 'application/json;charset=UTF-8',
-	            dataType: 'json',
-	            success: function(data) {
-	                if(data == null || data.length == 0) {
-	                    $scope.noLinkFlag = false;
-	                }
-	                
-	                $scope.selectedWorkType = 'Articles';
-	                $scope.selectedGeoArea = 'Global';
-	                $scope.workImportWizardsOriginal = data;
-	                $scope.bulkEditShow = false;
-	                $scope.showBibtexImportWizard = false;
-	                for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-	                    for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-	                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
-	                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
-	                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-	                            if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
-	                                $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
-	                        }
-	                        
-	                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-	                            if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
-	                                $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
-	                        }
-	                    }
-	                }               
-	                if(getParameterByName('import_works_wizard') != 'true') {
-	                    $scope.selectedWorkType = 'All';
-	                    $scope.selectedGeoArea = 'All';
-	                }
-	                $scope.$apply();
-	            }
-	        }).fail(function(e) {
-	            // something bad is happening!
-	            console.log("WorkImportWizardError");
-	            logAjaxError(e);
-	        });
-	    }
-	    
-	    $scope.addWorkModal = function(data){
-	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-	            if (data == undefined) {
-	                worksSrvc.getBlankWork(function(data) {
-	                    $scope.editWork = data;
-	                    $scope.$apply(function() {
-	                        $scope.loadWorkTypes();
-	                        $scope.showAddWorkModal();
-	                    });
-	                });
-	            } else {
-	                $scope.editWork = data;            
-	                $scope.loadWorkTypes();
-	                $scope.showAddWorkModal();
-	            }
-	        } else {
-	            showEmailVerificationModal();
-	        }
-
-	    };
-
-	    $scope.openEditWork = function(putCode){
-	        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
-	    };       
-
-	    $scope.putWork = function(){
-	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-	            if ($scope.addingWork) {
-	                return; // don't process if adding work
-	            }
-	            $scope.addingWork = true;
-	            $scope.editWork.errors.length = 0;
-	            worksSrvc.putWork($scope.editWork,
-	                function(data){
-	                    if (data.errors.length == 0) {
-	                        if ($scope.bibtextWork == false){
-	                            $.colorbox.close();
-	                            $scope.addingWork = false;
-	                        } else {
-	                            $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
-	                            $scope.bibtextWork = false;
-	                            $scope.addingWork = false;
-	                            $scope.$apply();
-	                            $.colorbox.close();
-	                            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-	                        }
-	                    } else {
-	                        $scope.editWork = data;                    
-	                        commonSrvc.copyErrorsLeft($scope.editWork, data);
-	                        
-	                        $scope.addingWork = false;
-	                        $scope.$apply();
-	                        // make sure colorbox is shown if there are errors
-	                        if (!($("#colorbox").css("display")=="block")) {
-	                            $scope.addWorkModal(data);
-	                        }
-	                    }
-	                },
-	                function() {
-	                    // something bad is happening!
-	                    $scope.addingWork = false;
-	                }
-	            );
-	        } else {
-	            showEmailVerificationModal();
-	        }
-	    };
-
-	    $scope.closeAllMoreInfo = function() {
-	        for (var idx in $scope.moreInfo)
-	            $scope.moreInfo[idx]=false;
-	    };
-
-	    $scope.validateCitation = function() {
-	        if ($scope.editWork.citation
-	                && $scope.editWork.citation.citation.value
-	                && $scope.editWork.citation.citation.value.length > 0
-	                && $scope.editWork.citation.citationType.value == 'bibtex') {
-	            try {
-	                var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
-	                if (parsed.length == 0) throw "bibtex parse return nothing";
-	                var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
-	                if (index > -1) {
-	                    $scope.editWork.citation.citation.errors.splice(index, 1);
-	                }
-	            } catch (err) {
-	                $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
-	            };
-	        };
-	    };
-
-	    $scope.renderTranslatedTitleInfo = function(putCode) {
-	        var info = null;
-
-	        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
-	            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
-	        }
-
-	        return info;
-	    };
-
-	    $scope.loadWorkTypes = function(){
-	        var workCategory = "";
-	        if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
-	            workCategory = $scope.editWork.workCategory.value;
-	        else
-	            return; //do nothing if we have not types
-	        $.ajax({
-	            url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
-	            contentType: 'application/json;charset=UTF-8',
-	            dataType: 'json',
-	            success: function(data) {
-	                $scope.$apply(function() {
-	                    $scope.types = data;
-	                    if($scope.editWork != null && $scope.editWork.workCategory != null) {
-	                        // if the edit works doesn't have a value that matches types
-	                        var hasType = false;
-	                        for (var idx in $scope.types)
-	                            if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
-	                        if(!hasType) {
-	                            switch ($scope.editWork.workCategory.value){
-	                            case "conference":
-	                                $scope.editWork.workType.value="conference-paper";
-	                                break;
-	                            case "intellectual_property":
-	                                $scope.editWork.workType.value="patent";
-	                                break;
-	                            case "other_output":
-	                                $scope.editWork.workType.value="data-set";
-	                                break;
-	                            case "publication":
-	                                $scope.editWork.workType.value="journal-article";
-	                                break;
-	                            }
-	                        }
-	                    }
-	                });
-
-	            }
-	        }).fail(function() {
-	            console.log("Error loading work types.");
-	        });
-
-	    };
-
-	    $scope.fillUrl = function(extId) {
-	        if(extId != null) {
-	            var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-	            if(extId.url == null) {
-	                extId.url = {value:""};
-	            }
-	            extId.url.value=url;
-	        }
-	    };
-	    
-	    //init
-	    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
-	    loadWorkImportWizardList();
-
-	    // remove once grouping is live
-	    $scope.moreInfoClick = function(work, $event) {
-	        if (!document.documentElement.className.contains('no-touch'))
-	            $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-	    };
-
-	    // remove once grouping is live
-	    $scope.moreInfoMouseEnter = function(work, $event) {
-	        $event.stopPropagation();
-	        if (document.documentElement.className.contains('no-touch'))
-	            $scope.loadWorkInfo(work.putCode.value, $event);
-	        else
-	            $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-	    };
-
-	    $scope.showDetailsMouseClick = function(group, $event) {
-	        $event.stopPropagation();
-	        $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
-	        for (var idx in group.activities)
-	            $scope.loadDetails(group.activities[idx].putCode.value, $event);
-	    };
-
-	    $scope.hideSources = function(group) {
-	        $scope.editSources[group.groupId] = false;
-	        group.activePutCode = group.defaultPutCode;
-	    };
-
-	    $scope.showSources = function(group) {
-	        $scope.editSources[group.groupId] = true;
-	    };
-
-	    $scope.loadDetails = function(putCode, event) {
-	        //Close any open popover
-	        $scope.closePopover(event);
-	        $scope.moreInfoOpen = true;
-	        //Display the popover
-	        $(event.target).next().css('display','inline');
-	        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
-	    };
-
-
-	    $scope.loadWorkInfo = function(putCode, event) {
-	        //Close any open popover
-	        $scope.closePopover(event);
-	        $scope.moreInfoOpen = true;
-	        //Display the popover
-	        $(event.target).next().css('display','inline');
-	        if($scope.worksSrvc.details[putCode] == null) {
-	            $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
-	        } else {
-	            $(event.target).next().css('display','inline');
-	        }
-	    };
-
-	    $scope.closePopover = function(event) {
-	        $scope.moreInfoOpen = false;
-	        $('.work-more-info-container').css('display', 'none');
-	    };
-
-	    $scope.deleteWorkConfirm = function(putCode, deleteGroup) {
-	        $scope.deletePutCode = putCode;
-	        $scope.deleteGroup = deleteGroup;
-	        var work = worksSrvc.getWork(putCode);
-	        if (work.title)
-	            $scope.fixedTitle = work.title.value;
-	        else $scope.fixedTitle = '';
-	        var maxSize = 100;
-	        if($scope.fixedTitle.length > maxSize)
-	            $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
-	        $.colorbox({
-	            html : $compile($('#delete-work-modal').html())($scope),
-	            onComplete: function() {$.colorbox.resize();}
-	        });
-	    };
-
-	    $scope.deleteByPutCode = function(putCode, deleteGroup) {
-	        if (deleteGroup)
-	           worksSrvc.deleteGroupWorks(putCode);
-	        else
-	           worksSrvc.deleteWork(putCode);
-	        $.colorbox.close();
-	    };
-
-	    $scope.closeModal = function() {
-	        $.colorbox.close();
-	    };
-
-	    $scope.openImportWizardUrl = function(url) {
-	        openImportWizardUrl(url);
-	    };
-	    
-	    $scope.openImportWizardUrlFilter = function(url, param) {
-	        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-	        openImportWizardUrl(url);
-	    };
-
-	    $scope.setAddWorkPrivacy = function(priv, $event) {
-	        $event.preventDefault();
-	        $scope.editWork.visibility = priv;
-	    };
-
-	    $scope.serverValidate = function (relativePath) {
-	        $.ajax({
-	            url: getBaseUri() + '/' + relativePath,
-	            type: 'POST',
-	            data:  angular.toJson($scope.editWork),
-	            contentType: 'application/json;charset=UTF-8',
-	            dataType: 'json',
-	            success: function(data) {
-	                commonSrvc.copyErrorsLeft($scope.editWork, data);
-	                if ( relativePath == 'works/work/citationValidate.json') {
-	                    $scope.validateCitation();
-	                }
-	                $scope.$apply();
-	            }
-	        }).fail(function() {
-	            // something bad is happening!
-	            console.log("WorkCtrl.serverValidate() error");
-	        });
-	    };
-
-	    $scope.isValidClass = function (cur) {
-	        var valid = true;
-	        if (cur === undefined || cur == null) {
-	            return '';
-	        }
-	        if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
-	        if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
-	        return valid ? '' : 'text-error';
-	    };
-
-	    $scope.clearErrors = function() {
-	        $scope.editWork.workCategory.errors = [];
-	        $scope.editWork.workType.errors = [];
-	    };
-	    
-	    $scope.showTooltip = function (key){        
-	        $scope.showElement[key] = true;     
-	    };
-	    
-	    $scope.hideTooltip = function (key){        
-	        $scope.showElement[key] = false;
-	    };
-	    
-	    $scope.openFileDialog = function(){
-	        $scope.textFiles = [];
-	        $scope.bibtexParsingError = false;
-	        $timeout(function() { //To avoid '$apply already in progress' error
-	            angular.element('#inputBibtex').trigger('click');
-	        }, 0);
-	    };
-	    
-	    $scope.toggleWizardDesc = function(id){
-	        $scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
-	    };
-	    
-	    $scope.showURLPopOver = function(id){       
-	        $scope.displayURLPopOver[id] = true;
-	    }
-	    
-	    $scope.hideURLPopOver = function(id){       
-	        $scope.displayURLPopOver[id] = false;
-	    }
-	    
-	    $scope.showMozillaBadges = function(putCode){
-	        $scope.$watch(
-	            function () { 
-	                return document.getElementsByClassName('badge-container-' + putCode).length; 
-	            },
-	            function (newValue, oldValue) {
-	                  if (newValue !== oldValue) {
-	                      if ($scope.badgesRequested[putCode] == null){
-	                        var dois = worksSrvc.getUniqueDois(putCode);
-	                        var c = document.getElementsByClassName('badge-container-' + putCode);
-	                        for (i = 0; i <= dois.length - 1; i++){
-	                            var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-	                            var s = document.createElement('script');
-	                            s.type = 'text/javascript';
-	                            try {
-	                              s.appendChild(document.createTextNode(code));
-	                              c[0].appendChild(s);
-	                            } catch (e) {
-	                              s.text = code;
-	                              c[0].appendChild(s);
-	                            }
-	                        }
-	                        $scope.badgesRequested[putCode] = true;
-	                    }
-	                }
-	            }
-	        );
-	    };
-	    
-	    $scope.toggleBibtexExport = function(){
-	        $scope.bibtexParsingError = false;
-	        $scope.showBibtexImportWizard = false;
-	        $scope.bulkEditShow = false;        
-	        $scope.workImportWizard = false;
-	        $scope.showBibtexExport  = !$scope.showBibtexExport;
-	        $scope.bibtexExportError = false;
-	        $scope.loadingScripts = false;
-	        $scope.scriptsLoaded = false;
-	        $scope.bibtexLoading = false;
-
-	    }
-
-
-	    $scope.fetchBibtexExport = function(){
-	        $scope.bibtexLoading = true;
-	        $scope.bibtexExportError = false; 
-	        
-	        $.ajax({
-	            url: getBaseUri() + '/' + 'works/works.bib',
-	            type: 'GET',
-	            success: function(data) {
-	                $scope.bibtexLoading = false;
-	                if(window.navigator.msSaveOrOpenBlob) {
-	                    var fileData = [data];
-	                    blobObject = new Blob(fileData, {type: 'text/plain'});
-	                    window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
-	                } else {
-	                    var anchor = angular.element('<a/>');
-	                    anchor.css({display: 'none'});
-	                    angular.element(document.body).append(anchor);
-	                    anchor.attr({
-	                      href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
-	                      target: '_self',
-	                      download: 'works.bib'
-	                    })[0].click();
-	                    anchor.remove();
-	                }
-	            }
-	        }).fail(function() {
-	            $scope.bibtexExportError = true;
-	            console.log("bibtex export error");
-	        });        
-	    };
-
-
-	    $scope.downloadBibtexExport = function(citations){
-	        $scope.bibtexGenerated = false;
-	        if (citations.length > 0){
-	            var text = "";
-	            for (c in citations){
-	                text += citations[c] +"\n"; 
-	            }
-	            text = text.replace(/<div class="csl-entry">/g, '');
-	            text = text.replace(/<\/div>/g, '');
-	            
-	            if(window.navigator.msSaveOrOpenBlob) {
-	                var fileData = [text];
-	                blobObject = new Blob(fileData, {type: 'text/plain'});
-	                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
-	            } else {
-	                $scope.bibtexGenerated = true;
-	                $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
-	            }
-	        }else{
-	            $scope.$apply(function() {
-	                $scope.bibtexExportError = true;
-	            });   
-	        }
-	    };
-	    
-	    
-	}]);
 
 	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
@@ -12053,7 +10854,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./websitesCtrl.js": 3
+		"./websitesCtrl.js": 3,
+		"./workCtrl.js": 19
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12952,6 +11754,17 @@
 	                    $.colorbox.resize({width:'800px'});
 	                    
 	                }
+	            },
+
+	            getParameterByName: function( name ) {
+	                var _name = name,
+	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
+	                    results = regex.exec(location.search)
+	                ;
+	                
+	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	                
+	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	            }
 	        };
 	        return utilsService;
@@ -13011,6 +11824,869 @@
 	        }   
 	    };
 	    return serv;
+	}]);
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller(
+	    'WorkCtrl', 
+	    [
+	        '$scope', '$rootScope', '$compile', '$filter', '$timeout', '$q', 'actBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', 'worksSrvc', 'workspaceSrvc',     
+	        function ($scope, $rootScope, $compile, $filter, $timeout, $q, actBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService, worksSrvc, workspaceSrvc    ) {
+
+	            var utilsService = utilsService;
+
+	    actBulkSrvc.initScope($scope);
+	   
+	    $scope.badgesRequested = {};
+	    $scope.bibtexGenerated = false;
+	    $scope.bibtexExportError = false;
+	    $scope.bibtexParsingError = false;
+	    $scope.bibtexURL = "";
+	    $scope.bibtextWork = false;
+	    $scope.bibtextWorkIndex = null;
+	    $scope.bulkDeleteCount = 0;
+	    $scope.bulkDeleteSubmit = false;
+	    $scope.canReadFiles = false;
+	    $scope.contentCopy = {
+	        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+	        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+	    };
+	    $scope.delCountVerify = 0;
+	    $scope.displayURLPopOver = {};
+	    $scope.editSources = {};
+	    $scope.editTranslatedTitle = false;
+	    $scope.emailSrvc = emailSrvc;
+	    $scope.generatingBibtex = false;
+	    $scope.geoArea = ['All'];
+	    $scope.moreInfo = {};
+	    $scope.moreInfoOpen = false;
+	    $scope.noLinkFlag = true;
+	    $scope.privacyHelp = {};
+	    $scope.scriptsLoaded = false;
+	    $scope.showBibtex = {};
+	    $scope.showBibtexExport = false;
+	    $scope.showBibtexImportWizard = false;
+	    $scope.showElement = {};
+	    $scope.textFiles = [];
+	    $scope.types = null;
+	    $scope.wizardDescExpanded = {};
+	    $scope.workImportWizard = false;
+	    $scope.worksFromBibtex = null;
+	    $scope.workspaceSrvc = workspaceSrvc;
+	    $scope.worksSrvc = worksSrvc;
+	    $scope.workType = ['All'];
+
+	    $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+	    
+
+	    /////////////////////// Begin of verified email logic for work
+	    var configuration = initialConfigService.getInitialConfiguration();
+	    var emailVerified = false;
+	    var emails = {};
+
+	    var showEmailVerificationModal = function(){
+	        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
+	    };
+	    
+	    $scope.emailSrvc.getEmails(
+	        function(data) {
+	            emails = data.emails;
+	            data.emails.forEach(
+	                function(element){
+	                    if(element.verified == true) {
+	                        emailVerified = true;
+	                    }
+	                }
+	            );
+	        }
+	    );
+	    /////////////////////// End of verified email logic for work
+
+	    $scope.applyLabelWorkType = function() {
+	        var obj = null;
+	        $timeout(function() {
+	            obj = $scope.worksSrvc.getLabelMapping($scope.editWork.workCategory.value, $scope.editWork.workType.value)
+	            $scope.contentCopy = obj;
+	        }, 100);
+	    };
+
+	    $scope.sort = function(key) {
+	        $scope.sortState.sortBy(key);
+	    };
+
+	    $scope.toggleBulkEdit = function() {
+
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	            if (!$scope.bulkEditShow) {
+	                $scope.bulkEditMap = {};
+	                $scope.bulkChecked = false;
+	                for (var idx in worksSrvc.groups)
+	                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+	            };
+	            $scope.bulkEditShow = !$scope.bulkEditShow;
+	            $scope.showBibtexImportWizard = false;
+	            $scope.workImportWizard = false;
+	            $scope.showBibtexExport = false;
+	        }else{
+	            showEmailVerificationModal();
+	        }
+	    };
+
+
+	    $scope.bulkApply = function(func) {
+	        for (var idx in worksSrvc.groups)
+	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+	                func(worksSrvc.groups[idx].getActive().putCode.value);
+	    };
+
+	    $scope.swapbulkChangeAll = function() {
+	        $scope.bulkChecked = !$scope.bulkChecked;
+	        for (var idx in worksSrvc.groups)
+	            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = $scope.bulkChecked;
+	        $scope.bulkDisplayToggle = false;
+	    };
+
+	    $scope.bulkChangeAll = function(bool) {
+	        $scope.bulkChecked = bool;
+	        $scope.bulkDisplayToggle = false;
+	        for (var idx in worksSrvc.groups)
+	            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+	    };
+
+	    $scope.setBulkGroupPrivacy = function(priv) {
+	        var putCodes = new Array();
+	        for (var idx in worksSrvc.groups)
+	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+	                for (var idj in worksSrvc.groups[idx].activities) {
+	                    putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+	                    worksSrvc.groups[idx].activities[idj].visibility = priv;
+	                }
+	        worksSrvc.updateVisibility(putCodes, priv);
+	    };
+
+	    $scope.deleteBulk = function () {
+	        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+	            $scope.bulkDeleteSubmit = true;
+	            return;
+	        }
+	        var delPuts = new Array();
+	        for (var idx in worksSrvc.groups)
+	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+	                delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
+	        worksSrvc.deleteGroupWorks(delPuts);
+	        $.colorbox.close();
+	        $scope.bulkEditShow = false;
+	    };
+
+
+	    $scope.deleteBulkConfirm = function(idx) {
+	        $scope.delCountVerify = 0;
+	        $scope.bulkDeleteCount = 0;
+	        $scope.bulkDeleteSubmit = false;        
+	        for (var idx in worksSrvc.groups)
+	            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
+	                $scope.bulkDeleteCount++;
+
+	        $scope.bulkDeleteFunction = $scope.deleteBulk;
+
+	        $.colorbox({
+	            html: $compile($('#bulk-delete-modal').html())($scope)
+
+	        });
+	        $.colorbox.resize();
+	    };
+
+	    $scope.sortOtherLast = function(type) {
+	        if (type.key == 'other') return 'ZZZZZ';
+	        return type.value;
+	    };
+
+	    $scope.loadBibtexJs = function() {
+	        try {
+	            $scope.worksFromBibtex = new Array();
+	            $.each($scope.textFiles, function (index, bibtex) {
+	                var parsed = bibtexParse.toJSON(bibtex);
+	                if (parsed.length == 0) 
+	                    throw "bibtex parse return nothing";
+	                worksSrvc.getBlankWork(function(blankWork) {
+	                    var newWorks = new Array();
+	                    while (parsed.length > 0) {
+	                        var cur = parsed.shift();
+	                        var bibtexEntry = cur.entryType.toLowerCase();
+	                        if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') //Filtering @PREAMBLE and @COMMENT
+	                            newWorks.push(populateWorkAjaxForm(cur,JSON.parse(JSON.stringify(blankWork))));
+	                    };
+	                    worksSrvc.worksValidate(newWorks, function(data) {
+	                        for (i in data) {                           
+	                            $scope.worksFromBibtex.push(data[i]);
+	                        }
+	                        $scope.$apply();
+	                    });
+	                });
+	            });
+	            $scope.textFiles.length = 0;
+	            $scope.bibtexParsingError = false;
+	               
+	        } catch (err) {
+	            $scope.bibtexParsingError = true;
+	        };
+	    };
+
+	    $scope.rmWorkFromBibtex = function(work) {
+	        var index = $scope.worksFromBibtex.indexOf(work);
+	        $scope.worksFromBibtex.splice(index, 1);
+	    };
+
+	    $scope.editWorkFromBibtex = function(work) {
+	        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);
+	        $scope.bibtextWork = true;
+	        $scope.addWorkModal($scope.worksFromBibtex[$scope.bibtextWorkIndex]);        
+	        
+	    };
+	    
+	    $scope.addWorkFromBibtex = function(work) {
+	        $scope.bibtextWorkIndex = $scope.worksFromBibtex.indexOf(work);     
+	        $scope.editWork = $scope.worksFromBibtex[$scope.bibtextWorkIndex];
+	        $scope.bibtextWork = true;              
+	        $scope.putWork();        
+	    };
+	    
+	    $scope.saveAllFromBibtex = function(){
+	        var warksToSave =  new Array();
+	        angular.forEach($scope.worksFromBibtex, function( work, key ) {
+	            if (work.errors.length == 0) warksToSave.push(work);
+	        });
+	        var numToSave = warksToSave.length;
+	        angular.forEach( warksToSave, function( work, key ) {
+	            worksSrvc.putWork(work,function(data) {
+	                    index = $scope.worksFromBibtex.indexOf(work);
+	                    $scope.worksFromBibtex.splice(index, 1);
+	                    $scope.$apply();
+	                    numToSave--;
+	                    if (numToSave == 0)
+	                        $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	            });
+	        });
+	    };
+
+	    $scope.openBibTextWizard = function () {
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	            $scope.bibtexParsingError = false;
+	            $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
+	            $scope.bulkEditShow = false;
+	            $scope.worksFromBibtex = null;
+	            $scope.workImportWizard = false;
+	            $scope.showBibtexExport = false;
+	        }else{
+	            showEmailVerificationModal();
+	        }
+	    };
+
+	    $scope.bibtextCancel = function(){
+	        $scope.worksFromBibtex = null;
+	    };    
+
+	    // Check for the various File API support.
+	    if (window.File && window.FileReader && window.FileList && window.Blob) {
+	        $scope.canReadFiles = true;
+	    };
+
+	    $scope.toggleClickPrivacyHelp = function(key) {
+	        if (!document.documentElement.className.contains('no-touch'))
+	            $scope.privacyHelp[key]=!$scope.privacyHelp[key];
+	    };
+
+	    $scope.addExternalIdentifier = function () {
+	        $scope.editWork.workExternalIdentifiers.push({workExternalIdentifierId: {value: ""}, workExternalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+	    };
+
+	    $scope.deleteExternalIdentifier = function(obj) {
+	        var index = $scope.editWork.workExternalIdentifiers.indexOf(obj);
+	        $scope.editWork.workExternalIdentifiers.splice(index,1);
+	    };
+
+	    $scope.deleteContributor = function(obj) {
+	        var index = $scope.editWork.contributors.indexOf(obj);
+	        $scope.editWork.contributors.splice(index,1);
+	    };
+
+	    $scope.userIsSource = function(work) {
+	        if (work.source == orcidVar.orcidId)
+	            return true;
+	        return false;
+	    };
+
+	    $scope.hasCombineableEIs = function(work) {
+	        if (work.workExternalIdentifiers != null)
+	            for (var idx in work.workExternalIdentifiers)
+	                if (work.workExternalIdentifiers[idx].workExternalIdentifierType.value != 'issn')
+	                    return true;
+	        return false;
+	    };
+
+	    $scope.canBeCombined = function(work) {
+	        if ($scope.userIsSource(work))
+	            return true;
+	        return $scope.hasCombineableEIs(work);
+	    };
+
+	    $scope.validCombineSel = function(selectedWork,work) {
+	        if ($scope.hasCombineableEIs(selectedWork))
+	            return $scope.userIsSource(work) || $scope.hasCombineableEIs(work);
+	        else
+	            return $scope.hasCombineableEIs(work);
+	    };
+
+	    $scope.combiningWorks = false;
+	    $scope.combined = function(work1, work2) {
+	        // no duplicate request;
+	        if ($scope.combiningWorks)
+	            return;
+	        $scope.combiningWorks = true;
+	        var putWork;
+	        if ($scope.userIsSource(work1)) {
+	            putWork = worksSrvc.copyEIs(work2, work1);
+	        } else if ($scope.userIsSource(work2)) {
+	            putWork = worksSrvc.copyEIs(work1, work2);
+	        } else {
+	            putWork = worksSrvc.createNew(work1);
+	            putWork = worksSrvc.copyEIs(work1, work2);
+	        }
+	        worksSrvc.putWork(
+	                putWork,
+	                function(data){
+	                    $scope.combiningWorks = false;
+	                    $scope.closeModal();
+	                },
+	                function() {
+	                    $scope.combiningWorks = false;
+	                }
+	            );
+	    };
+
+	    $scope.showCombineMatches = function(work1) {
+	        $scope.combineWork = work1;
+	        $.colorbox({
+	            scrolling: true,
+	            html: $compile($('#combine-work-template').html())($scope),
+	            onLoad: function() {$('#cboxClose').remove();},
+	            // start the colorbox off with the correct width
+	            width: utilsService.formColorBoxResize(),
+	            onComplete: function() {$.colorbox.resize();},
+	            onClosed: function() {
+	                $scope.closeAllMoreInfo();
+	                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	            }
+	        });
+	        return false;
+	    };
+
+	    $scope.showAddWorkModal = function(){
+	        $scope.editTranslatedTitle = false;
+	        $.colorbox({
+	            scrolling: true,
+	            html: $compile($('#add-work-modal').html())($scope),
+	            onLoad: function() {$('#cboxClose').remove();},
+	            // start the colorbox off with the correct width
+	            width: utilsService.formColorBoxResize(),
+	            onComplete: function() {
+	                //resize to insure content fits
+	            },
+	            onClosed: function() {
+	                $scope.closeAllMoreInfo();
+	                $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	            }
+	        });
+	    };
+
+	    $scope.toggleTranslatedTitleModal = function(){
+	        $scope.editTranslatedTitle = !$scope.editTranslatedTitle;
+	        $('#translatedTitle').toggle();
+	        $.colorbox.resize();
+	    };
+
+	    $scope.bibtexShowToggle = function (putCode) {
+	        $scope.showBibtex[putCode] = !($scope.showBibtex[putCode]);
+	    };
+
+	    $scope.showWorkImportWizard =  function() {
+	        if(!$scope.workImportWizard) {
+	            loadWorkImportWizardList();
+	        }
+	        $scope.workImportWizard = !$scope.workImportWizard;
+	    };   
+
+	    function loadWorkImportWizardList() {
+	        $.ajax({
+	            url: getBaseUri() + '/workspace/retrieve-work-impor-wizards.json',
+	            type: 'GET',
+	            contentType: 'application/json;charset=UTF-8',
+	            dataType: 'json',
+	            success: function(data) {
+	                if(data == null || data.length == 0) {
+	                    $scope.noLinkFlag = false;
+	                }
+	                
+	                $scope.selectedWorkType = 'Articles';
+	                $scope.selectedGeoArea = 'Global';
+	                $scope.workImportWizardsOriginal = data;
+	                $scope.bulkEditShow = false;
+	                $scope.showBibtexImportWizard = false;
+	                for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
+	                    for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
+	                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
+	                        $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
+	                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
+	                            if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]))
+	                                $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
+	                        }
+	                        
+	                        for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
+	                            if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]))
+	                                $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
+	                        }
+	                    }
+	                }               
+	                if( utilsService.getParameterByName('import_works_wizard') != 'true' ) {
+	                    $scope.selectedWorkType = 'All';
+	                    $scope.selectedGeoArea = 'All';
+	                }
+	                $scope.$apply();
+	            }
+	        }).fail(function(e) {
+	            // something bad is happening!
+	            console.log("WorkImportWizardError");
+	            logAjaxError(e);
+	        });
+	    }
+	    
+	    $scope.addWorkModal = function(data){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	            if (data == undefined) {
+	                worksSrvc.getBlankWork(function(data) {
+	                    $scope.editWork = data;
+	                    $scope.$apply(function() {
+	                        $scope.loadWorkTypes();
+	                        $scope.showAddWorkModal();
+	                    });
+	                });
+	            } else {
+	                $scope.editWork = data;            
+	                $scope.loadWorkTypes();
+	                $scope.showAddWorkModal();
+	            }
+	        } else {
+	            showEmailVerificationModal();
+	        }
+
+	    };
+
+	    $scope.openEditWork = function(putCode){
+	        worksSrvc.getEditable(putCode, function(data) {$scope.addWorkModal(data);});
+	    };       
+
+	    $scope.putWork = function(){
+	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	            if ($scope.addingWork) {
+	                return; // don't process if adding work
+	            }
+	            $scope.addingWork = true;
+	            $scope.editWork.errors.length = 0;
+	            worksSrvc.putWork($scope.editWork,
+	                function(data){
+	                    if (data.errors.length == 0) {
+	                        if ($scope.bibtextWork == false){
+	                            $.colorbox.close();
+	                            $scope.addingWork = false;
+	                        } else {
+	                            $scope.worksFromBibtex.splice($scope.bibtextWorkIndex, 1);
+	                            $scope.bibtextWork = false;
+	                            $scope.addingWork = false;
+	                            $scope.$apply();
+	                            $.colorbox.close();
+	                            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	                        }
+	                    } else {
+	                        $scope.editWork = data;                    
+	                        commonSrvc.copyErrorsLeft($scope.editWork, data);
+	                        
+	                        $scope.addingWork = false;
+	                        $scope.$apply();
+	                        // make sure colorbox is shown if there are errors
+	                        if (!($("#colorbox").css("display")=="block")) {
+	                            $scope.addWorkModal(data);
+	                        }
+	                    }
+	                },
+	                function() {
+	                    // something bad is happening!
+	                    $scope.addingWork = false;
+	                }
+	            );
+	        } else {
+	            showEmailVerificationModal();
+	        }
+	    };
+
+	    $scope.closeAllMoreInfo = function() {
+	        for (var idx in $scope.moreInfo)
+	            $scope.moreInfo[idx]=false;
+	    };
+
+	    $scope.validateCitation = function() {
+	        if ($scope.editWork.citation
+	                && $scope.editWork.citation.citation.value
+	                && $scope.editWork.citation.citation.value.length > 0
+	                && $scope.editWork.citation.citationType.value == 'bibtex') {
+	            try {
+	                var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
+	                if (parsed.length == 0) throw "bibtex parse return nothing";
+	                var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
+	                if (index > -1) {
+	                    $scope.editWork.citation.citation.errors.splice(index, 1);
+	                }
+	            } catch (err) {
+	                $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
+	            };
+	        };
+	    };
+
+	    $scope.renderTranslatedTitleInfo = function(putCode) {
+	        var info = null;
+
+	        if(putCode != null && $scope.worksSrvc.details[putCode] != null && $scope.worksSrvc.details[putCode].translatedTitle != null) {
+	            info = $scope.worksSrvc.details[putCode].translatedTitle.content + ' - ' + $scope.worksSrvc.details[putCode].translatedTitle.languageName;
+	        }
+
+	        return info;
+	    };
+
+	    $scope.loadWorkTypes = function(){
+	        var workCategory = "";
+	        if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
+	            workCategory = $scope.editWork.workCategory.value;
+	        else
+	            return; //do nothing if we have not types
+	        $.ajax({
+	            url: getBaseUri() + '/works/loadWorkTypes.json?workCategory=' + workCategory,
+	            contentType: 'application/json;charset=UTF-8',
+	            dataType: 'json',
+	            success: function(data) {
+	                $scope.$apply(function() {
+	                    $scope.types = data;
+	                    if($scope.editWork != null && $scope.editWork.workCategory != null) {
+	                        // if the edit works doesn't have a value that matches types
+	                        var hasType = false;
+	                        for (var idx in $scope.types)
+	                            if ($scope.types[idx].key == $scope.editWork.workType.value) hasType = true;
+	                        if(!hasType) {
+	                            switch ($scope.editWork.workCategory.value){
+	                            case "conference":
+	                                $scope.editWork.workType.value="conference-paper";
+	                                break;
+	                            case "intellectual_property":
+	                                $scope.editWork.workType.value="patent";
+	                                break;
+	                            case "other_output":
+	                                $scope.editWork.workType.value="data-set";
+	                                break;
+	                            case "publication":
+	                                $scope.editWork.workType.value="journal-article";
+	                                break;
+	                            }
+	                        }
+	                    }
+	                });
+
+	            }
+	        }).fail(function() {
+	            console.log("Error loading work types.");
+	        });
+
+	    };
+
+	    $scope.fillUrl = function(extId) {
+	        if(extId != null) {
+	            var url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+	            if(extId.url == null) {
+	                extId.url = {value:""};
+	            }
+	            extId.url.value=url;
+	        }
+	    };
+	    
+	    //init
+	    $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
+	    loadWorkImportWizardList();
+
+	    // remove once grouping is live
+	    $scope.moreInfoClick = function(work, $event) {
+	        if (!document.documentElement.className.contains('no-touch'))
+	            $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	    };
+
+	    // remove once grouping is live
+	    $scope.moreInfoMouseEnter = function(work, $event) {
+	        $event.stopPropagation();
+	        if (document.documentElement.className.contains('no-touch'))
+	            $scope.loadWorkInfo(work.putCode.value, $event);
+	        else
+	            $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
+	    };
+
+	    $scope.showDetailsMouseClick = function(group, $event) {
+	        $event.stopPropagation();
+	        $scope.moreInfo[group.groupId] = !$scope.moreInfo[group.groupId];
+	        for (var idx in group.activities)
+	            $scope.loadDetails(group.activities[idx].putCode.value, $event);
+	    };
+
+	    $scope.hideSources = function(group) {
+	        $scope.editSources[group.groupId] = false;
+	        group.activePutCode = group.defaultPutCode;
+	    };
+
+	    $scope.showSources = function(group) {
+	        $scope.editSources[group.groupId] = true;
+	    };
+
+	    $scope.loadDetails = function(putCode, event) {
+	        //Close any open popover
+	        $scope.closePopover(event);
+	        $scope.moreInfoOpen = true;
+	        //Display the popover
+	        $(event.target).next().css('display','inline');
+	        $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+	    };
+
+
+	    $scope.loadWorkInfo = function(putCode, event) {
+	        //Close any open popover
+	        $scope.closePopover(event);
+	        $scope.moreInfoOpen = true;
+	        //Display the popover
+	        $(event.target).next().css('display','inline');
+	        if($scope.worksSrvc.details[putCode] == null) {
+	            $scope.worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER);
+	        } else {
+	            $(event.target).next().css('display','inline');
+	        }
+	    };
+
+	    $scope.closePopover = function(event) {
+	        $scope.moreInfoOpen = false;
+	        $('.work-more-info-container').css('display', 'none');
+	    };
+
+	    $scope.deleteWorkConfirm = function(putCode, deleteGroup) {
+	        $scope.deletePutCode = putCode;
+	        $scope.deleteGroup = deleteGroup;
+	        var work = worksSrvc.getWork(putCode);
+	        if (work.title)
+	            $scope.fixedTitle = work.title.value;
+	        else $scope.fixedTitle = '';
+	        var maxSize = 100;
+	        if($scope.fixedTitle.length > maxSize)
+	            $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+	        $.colorbox({
+	            html : $compile($('#delete-work-modal').html())($scope),
+	            onComplete: function() {$.colorbox.resize();}
+	        });
+	    };
+
+	    $scope.deleteByPutCode = function(putCode, deleteGroup) {
+	        if (deleteGroup)
+	           worksSrvc.deleteGroupWorks(putCode);
+	        else
+	           worksSrvc.deleteWork(putCode);
+	        $.colorbox.close();
+	    };
+
+	    $scope.closeModal = function() {
+	        $.colorbox.close();
+	    };
+
+	    $scope.openImportWizardUrl = function(url) {
+	        openImportWizardUrl(url);
+	    };
+	    
+	    $scope.openImportWizardUrlFilter = function(url, param) {
+	        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
+	        openImportWizardUrl(url);
+	    };
+
+	    $scope.setAddWorkPrivacy = function(priv, $event) {
+	        $event.preventDefault();
+	        $scope.editWork.visibility = priv;
+	    };
+
+	    $scope.serverValidate = function (relativePath) {
+	        $.ajax({
+	            url: getBaseUri() + '/' + relativePath,
+	            type: 'POST',
+	            data:  angular.toJson($scope.editWork),
+	            contentType: 'application/json;charset=UTF-8',
+	            dataType: 'json',
+	            success: function(data) {
+	                commonSrvc.copyErrorsLeft($scope.editWork, data);
+	                if ( relativePath == 'works/work/citationValidate.json') {
+	                    $scope.validateCitation();
+	                }
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            // something bad is happening!
+	            console.log("WorkCtrl.serverValidate() error");
+	        });
+	    };
+
+	    $scope.isValidClass = function (cur) {
+	        var valid = true;
+	        if (cur === undefined || cur == null) {
+	            return '';
+	        }
+	        if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
+	        if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+	        return valid ? '' : 'text-error';
+	    };
+
+	    $scope.clearErrors = function() {
+	        $scope.editWork.workCategory.errors = [];
+	        $scope.editWork.workType.errors = [];
+	    };
+	    
+	    $scope.showTooltip = function (key){        
+	        $scope.showElement[key] = true;     
+	    };
+	    
+	    $scope.hideTooltip = function (key){        
+	        $scope.showElement[key] = false;
+	    };
+	    
+	    $scope.openFileDialog = function(){
+	        $scope.textFiles = [];
+	        $scope.bibtexParsingError = false;
+	        $timeout(function() { //To avoid '$apply already in progress' error
+	            angular.element('#inputBibtex').trigger('click');
+	        }, 0);
+	    };
+	    
+	    $scope.toggleWizardDesc = function(id){
+	        $scope.wizardDescExpanded[id] = !$scope.wizardDescExpanded[id];
+	    };
+	    
+	    $scope.showURLPopOver = function(id){       
+	        $scope.displayURLPopOver[id] = true;
+	    }
+	    
+	    $scope.hideURLPopOver = function(id){       
+	        $scope.displayURLPopOver[id] = false;
+	    }
+	    
+	    $scope.showMozillaBadges = function(putCode){
+	        $scope.$watch(
+	            function () { 
+	                return document.getElementsByClassName('badge-container-' + putCode).length; 
+	            },
+	            function (newValue, oldValue) {
+	                  if (newValue !== oldValue) {
+	                      if ($scope.badgesRequested[putCode] == null){
+	                        var dois = worksSrvc.getUniqueDois(putCode);
+	                        var c = document.getElementsByClassName('badge-container-' + putCode);
+	                        for (i = 0; i <= dois.length - 1; i++){
+	                            var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+	                            var s = document.createElement('script');
+	                            s.type = 'text/javascript';
+	                            try {
+	                              s.appendChild(document.createTextNode(code));
+	                              c[0].appendChild(s);
+	                            } catch (e) {
+	                              s.text = code;
+	                              c[0].appendChild(s);
+	                            }
+	                        }
+	                        $scope.badgesRequested[putCode] = true;
+	                    }
+	                }
+	            }
+	        );
+	    };
+	    
+	    $scope.toggleBibtexExport = function(){
+	        $scope.bibtexParsingError = false;
+	        $scope.showBibtexImportWizard = false;
+	        $scope.bulkEditShow = false;        
+	        $scope.workImportWizard = false;
+	        $scope.showBibtexExport  = !$scope.showBibtexExport;
+	        $scope.bibtexExportError = false;
+	        $scope.loadingScripts = false;
+	        $scope.scriptsLoaded = false;
+	        $scope.bibtexLoading = false;
+
+	    }
+
+
+	    $scope.fetchBibtexExport = function(){
+	        $scope.bibtexLoading = true;
+	        $scope.bibtexExportError = false; 
+	        
+	        $.ajax({
+	            url: getBaseUri() + '/' + 'works/works.bib',
+	            type: 'GET',
+	            success: function(data) {
+	                $scope.bibtexLoading = false;
+	                if(window.navigator.msSaveOrOpenBlob) {
+	                    var fileData = [data];
+	                    blobObject = new Blob(fileData, {type: 'text/plain'});
+	                    window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
+	                } else {
+	                    var anchor = angular.element('<a/>');
+	                    anchor.css({display: 'none'});
+	                    angular.element(document.body).append(anchor);
+	                    anchor.attr({
+	                      href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
+	                      target: '_self',
+	                      download: 'works.bib'
+	                    })[0].click();
+	                    anchor.remove();
+	                }
+	            }
+	        }).fail(function() {
+	            $scope.bibtexExportError = true;
+	            console.log("bibtex export error");
+	        });        
+	    };
+
+
+	    $scope.downloadBibtexExport = function(citations){
+	        $scope.bibtexGenerated = false;
+	        if (citations.length > 0){
+	            var text = "";
+	            for (c in citations){
+	                text += citations[c] +"\n"; 
+	            }
+	            text = text.replace(/<div class="csl-entry">/g, '');
+	            text = text.replace(/<\/div>/g, '');
+	            
+	            if(window.navigator.msSaveOrOpenBlob) {
+	                var fileData = [text];
+	                blobObject = new Blob(fileData, {type: 'text/plain'});
+	                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+	            } else {
+	                $scope.bibtexGenerated = true;
+	                $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+	            }
+	        }else{
+	            $scope.$apply(function() {
+	                $scope.bibtexExportError = true;
+	            });   
+	        }
+	    };
+	    
+	    
 	}]);
 
 /***/ }

@@ -13,6 +13,17 @@ angular.module('orcidApp').factory(
                     $.colorbox.resize({width:'800px'});
                     
                 }
+            },
+
+            getParameterByName: function( name ) {
+                var _name = name,
+                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
+                    results = regex.exec(location.search)
+                ;
+                
+                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
             }
         };
         return utilsService;
