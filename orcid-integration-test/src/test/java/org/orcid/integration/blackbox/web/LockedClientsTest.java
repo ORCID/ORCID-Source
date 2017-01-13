@@ -73,8 +73,7 @@ public class LockedClientsTest extends BlackBoxBaseV2Release {
         String error = getAllResponse.getEntity(String.class);
         assertNotNull(error);
         assertTrue(error.contains("invalid_token"));
-        assertTrue(error.contains("The given client " + this.getClient1ClientId() + " is locked because his member " + this.getMember1Orcid() + " is also locked"));
-
+        assertTrue("Incorrect error message: " + error, error.contains("The client is locked"));
         // unlock to finish
         adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getMember1Orcid());
     }
