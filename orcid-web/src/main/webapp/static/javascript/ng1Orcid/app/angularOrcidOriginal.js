@@ -29,7 +29,7 @@
  */
 
 /*
- * 1 - Utility functions
+ * 1 - Utility functions 
  */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
