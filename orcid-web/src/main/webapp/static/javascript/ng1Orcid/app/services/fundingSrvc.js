@@ -3,12 +3,13 @@
  * */
 angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($rootScope) {
     var fundingSrvc = {
+        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
         fundings: new Array(),
+        fundingToAddIds: null,
         groups: new Array(),
         loading: false,
-        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-        fundingToAddIds: null,
         moreDetailsActive: false,
+        
         addFundingToScope: function(path) {
             if( fundingSrvc.fundingToAddIds.length != 0 ) {
                 var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
@@ -16,7 +17,7 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                     url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
                     dataType: 'json',
                     success: function(data) {
-                        for (i in data) {
+                        for (var i in data) {
                             var funding = data[i];
                             groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
                         };
@@ -42,15 +43,17 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
             var cloneF = JSON.parse(JSON.stringify(work));
             cloneF.source = null;
             cloneF.putCode = null;
-            for (var idx in cloneF.externalIdentifiers)
+            for (var idx in cloneF.externalIdentifiers){
                 cloneF.externalIdentifiers[idx].putCode = null;
+            }
             return cloneF;
         },
         getEditable: function(putCode, callback) {
             // first check if they are the current source
             var funding = fundingSrvc.getFunding(putCode);
-            if (funding.source == orcidVar.orcidId)
+            if (funding.source == orcidVar.orcidId){
                 callback(funding);
+            }
             else {
                 var bestMatch = null;
                 var group = fundingSrvc.getGroup(putCode);
@@ -60,8 +63,9 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                         break;
                     }
                 }
-                if (bestMatch == null) 
+                if (bestMatch == null) {
                     bestMatch = fundingSrvc.createNew(funding);
+                }
                 callback(bestMatch);
             };
         },
@@ -98,8 +102,9 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
         },
         getFunding: function(putCode) {
             for (var idx in fundingSrvc.groups) {
-                    if (fundingSrvc.groups[idx].hasPut(putCode))
-                        return fundingSrvc.groups[idx].getByPut(putCode);
+                if (fundingSrvc.groups[idx].hasPut(putCode)){
+                    return fundingSrvc.groups[idx].getByPut(putCode);
+                }
             }
             return null;
         },
@@ -126,8 +131,9 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
         },
         getGroup: function(putCode) {
             for (var idx in fundingSrvc.groups) {
-                    if (fundingSrvc.groups[idx].hasPut(putCode))
-                        return fundingSrvc.groups[idx];
+                if (fundingSrvc.groups[idx].hasPut(putCode)){
+                    return fundingSrvc.groups[idx];
+                }
             }
             return null;
         },
@@ -151,10 +157,12 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (data.errors.length != 0)
+                    if (data.errors.length != 0){
                        console.log("Unable to delete funding.");
-                    else
+                    }
+                    else{
                        groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
+                    }
                     $rootScope.$apply();
                 }
             }).fail(function() {
@@ -172,7 +180,6 @@ angular.module('orcidApp').factory("fundingSrvc", ['$rootScope', function ($root
             }
         },
         setPrivacy: function(putCode, priv) {
-            var idx;
             var funding = fundingSrvc.getFunding(putCode);
             funding.visibility.visibility = priv;
             fundingSrvc.updateProfileFunding(funding);
