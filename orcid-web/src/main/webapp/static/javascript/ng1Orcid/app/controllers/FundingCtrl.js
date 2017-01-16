@@ -169,12 +169,15 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
 
     $scope.closeAllMoreInfo = function() {
-        for (var idx in $scope.moreInfo)
+        for (var idx in $scope.moreInfo){
             $scope.moreInfo[idx]=false;
+        }
     };
 
     $scope.putFunding = function(){
-        if ($scope.addingFunding) return; // don't process if adding funding
+        if ($scope.addingFunding){    
+            return; // don't process if adding funding
+        } 
         $scope.addingFunding = true;
         $scope.editFunding.errors.length = 0;
         $.ajax({
@@ -205,9 +208,12 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
 
     //Resizing window after error message is shown
     $scope.$watch('addingFunding', function() {
-         setTimeout(function(){
-             $.colorbox.resize();;
-         }, 50);
+        setTimeout(
+            function(){
+                $.colorbox.resize();;
+            }, 
+            50
+        );
      });
 
     $scope.showTemplateInModal = function(templateId) {
@@ -237,18 +243,19 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
                 }
             },
             template: function (datum) {
-                   var forDisplay =
-                       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
-                      +'<span style=\'font-size: 80%;\'>'
-                      + ' <br />' + datum.city;
-                   if(datum.region){
-                       forDisplay += ", " + datum.region;
-                   }
-                   if (datum.orgType != null && datum.orgType.trim() != '')
-                      forDisplay += ", " + datum.orgType;
-                   forDisplay += '</span><hr />';
+                var forDisplay =
+                    '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
+                    +'<span style=\'font-size: 80%;\'>'
+                    + ' <br />' + datum.city;
+                if(datum.region){
+                    forDisplay += ", " + datum.region;
+                }
+                if (datum.orgType != null && datum.orgType.trim() != ''){
+                    forDisplay += ", " + datum.orgType;
+                }
+                forDisplay += '</span><hr />';
 
-                   return forDisplay;
+                return forDisplay;
             }
         });
         $("#fundingName").bind("typeahead:selected", function(obj, datum) {
@@ -273,9 +280,9 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
                 }
             },
             template: function (datum) {
-                   var forDisplay =
-                       '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
-                   return forDisplay;
+                var forDisplay =
+                    '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value + '</span><hr />';
+                return forDisplay;
             }
         });
         $("#organizationDefinedType").bind("typeahead:selected", function(obj, datum){
@@ -303,11 +310,13 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     $scope.selectFunding = function(datum) {
         if (datum != undefined && datum != null) {
             $scope.editFunding.fundingName.value = datum.value;
-            if(datum.value)
+            if(datum.value){
                 $scope.editFunding.fundingName.errors = [];
+            }
             $scope.editFunding.city.value = datum.city;
-            if(datum.city)
+            if(datum.city){
                 $scope.editFunding.city.errors = [];
+            }
             $scope.editFunding.region.value = datum.region;
 
             if(datum.country != undefined && datum.country != null) {
@@ -341,27 +350,36 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
 
     $scope.deleteFundingConfirm = function(putCode, deleteGroup) {
+        var funding = fundingSrvc.getFunding(putCode);
+        var maxSize = 100;
+        
         $scope.deletePutCode = putCode;
         $scope.deleteGroup = deleteGroup;
-        var funding = fundingSrvc.getFunding(putCode);
-        if (funding.fundingTitle && funding.fundingTitle.title)
+        
+        if (funding.fundingTitle && funding.fundingTitle.title){
             $scope.fixedTitle = funding.fundingTitle.title.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
-        if($scope.fixedTitle.length > maxSize)
+        }
+        else{
+            $scope.fixedTitle = '';
+        } 
+
+        if($scope.fixedTitle.length > maxSize){
             $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
+        }
+
         $.colorbox({
             html : $compile($('#delete-funding-modal').html())($scope),
             onComplete: function() {$.colorbox.resize();}
         });
     };
 
-
     $scope.deleteFundingByPut = function(putCode, deleteGroup) {
-        if (deleteGroup)
+        if (deleteGroup){
             fundingSrvc.deleteGroupFunding(putCode);
-        else
+        }
+        else {
             fundingSrvc.deleteFunding(putCode);
+        }
         $.colorbox.close();
     };
 
@@ -387,15 +405,27 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
 
     $scope.removeDisambiguatedFunding = function() {
         $scope.bindTypeaheadForOrgs();
-        if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
-        if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
+        if ($scope.disambiguatedFunding != undefined) {
+            delete $scope.disambiguatedFunding;
+        }
+        if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) {
+            delete $scope.editFunding.disambiguatedFundingSourceId;
+        }
     };
 
     $scope.isValidClass = function (cur) {
-        if (cur === undefined) return '';
         var valid = true;
-        if (cur.required && (cur.value == null || cur.value.trim() == '')) valid = false;
-        if (cur.errors !== undefined && cur.errors.length > 0) valid = false;
+
+        if (cur === undefined){
+            return '';
+        } 
+        if (cur.required && (cur.value == null || cur.value.trim() == '')) {
+            valid = false;
+        }
+        if (cur.errors !== undefined && cur.errors.length > 0) {
+            valid = false;
+        }
+
         return valid ? '' : 'text-error';
     };
 
@@ -511,8 +541,9 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
     
     $scope.userIsSource = function(funding) {
-        if (funding.source == orcidVar.orcidId)
+        if (funding.source == orcidVar.orcidId){
             return true;
+        }
         return false;
     };
     
@@ -525,7 +556,9 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
     
     $scope.moreInfoActive = function(groupID){
-        if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) return 'truncate-anchor';
+        if ($scope.moreInfo[groupID] == true || $scope.moreInfo[groupID] != null) {
+            return 'truncate-anchor';
+        }
     }
     
 }]);
