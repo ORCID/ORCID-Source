@@ -12516,8 +12516,10 @@
 	                $scope.newElementDefaultVisibility = $scope.countryForm.visibility.visibility;
 	                //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
 	                if($scope.countryForm != null && $scope.countryForm.addresses != null && $scope.countryForm.addresses.length > 0) {
+	                    var highestDisplayIndex = null;
+	                    var itemVisibility = null;
+	                    
 	                    for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
-	                        var itemVisibility = null;
 	                        if($scope.countryForm.addresses[i].visibility != null && $scope.countryForm.addresses[i].visibility.visibility) {
 	                            itemVisibility = $scope.countryForm.addresses[i].visibility.visibility;
 	                        }
@@ -12546,7 +12548,6 @@
 	                            }
 	                        }                                                                   
 	                    }
-	                    var highestDisplayIndex = null;
 	                    //We have to iterate on them again to select the primary address
 	                    for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
 	                        //Set the primary element based on the display index
@@ -12568,8 +12569,9 @@
 	    };
 
 	    $scope.toggleClickPrivacyHelp = function() {
-	        if (!document.documentElement.className.contains('no-touch'))
+	        if (!document.documentElement.className.contains('no-touch')){
 	            $scope.privacyHelp=!$scope.privacyHelp;
+	        }
 	    };
 
 	    $scope.setCountryForm = function(){
@@ -12671,12 +12673,27 @@
 	    };
 	    
 	    $scope.updateDisplayIndex = function(){
-	        for (var idx in $scope.countryForm.addresses)
+	        for (var idx in $scope.countryForm.addresses){
 	            $scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;                       
+	        }
 	    };
 	    
 	    $scope.addNewModal = function() {       
-	        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":$scope.orcidId,"sourceName":""};
+	        var tmpObj = {
+	            "errors":[],
+	            "iso2Country": null,
+	            "countryName":null,
+	            "putCode":null,
+	            "visibility":{
+	                "errors":[],
+	                "required":true,
+	                "getRequiredMessage":null,
+	                "visibility":$scope.newElementDefaultVisibility
+	            },
+	            "displayIndex":1,
+	            "source":$scope.orcidId,
+	            "sourceName":""
+	        };
 	        $scope.countryForm.addresses.push(tmpObj);
 	        $scope.updateDisplayIndex();
 	        $scope.newInput = true; 
@@ -12705,8 +12722,9 @@
 	    };
 	    
 	    $scope.setBulkGroupPrivacy = function(priv) {
-	        for (var idx in $scope.countryForm.addresses)      
+	        for (var idx in $scope.countryForm.addresses){
 	            $scope.countryForm.addresses[idx].visibility.visibility = priv;        
+	        }
 	    };
 	     
 	    $scope.getCountryForm();
