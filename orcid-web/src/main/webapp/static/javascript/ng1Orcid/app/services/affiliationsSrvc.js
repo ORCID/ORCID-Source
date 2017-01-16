@@ -4,6 +4,7 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
         employments: new Array(),
         loading: false,
         affiliationsToAddIds: null,
+        
         addAffiliationToScope: function(path) {
             if( serv.affiliationsToAddIds.length != 0 ) {
                 var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
@@ -15,20 +16,25 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                     success: function(data) {
                         for (i in data) {
                             if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                    && data[i].affiliationType.value == 'education')
+                                    && data[i].affiliationType.value == 'education'){
                                 groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                            }
                             else if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                    && data[i].affiliationType.value == 'employment')
+                                    && data[i].affiliationType.value == 'employment'){
                                 groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                            }
                         };
                         if (serv.affiliationsToAddIds.length == 0) {
                             serv.loading = false;
                             $rootScope.$apply();
                         } else {
                             $rootScope.$apply();
-                            setTimeout(function () {
-                                serv.addAffiliationToScope(path);
-                            },50);
+                            setTimeout(
+                                function () {
+                                    serv.addAffiliationToScope(path);
+                                },
+                                50
+                            );
                         }
                     }
                 }).fail(function(e) {
@@ -82,14 +88,16 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
         },
         deleteAffiliation: function(affiliation) {
             var arr = null;
-            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
-                    && affiliation.affiliationType.value == 'education')
-                arr = serv.educations;
-            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
-                    && affiliation.affiliationType.value == 'employment')
-                arr = serv.employments;
             var idx;
-            for (var idx in arr) {
+            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+                    && affiliation.affiliationType.value == 'education'){
+                arr = serv.educations;
+            }
+            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+                    && affiliation.affiliationType.value == 'employment'){
+                arr = serv.employments;
+            }
+            for (idx in arr) {
                 if (arr[idx].activePutCode == affiliation.putCode.value) {
                     break;
                 }
