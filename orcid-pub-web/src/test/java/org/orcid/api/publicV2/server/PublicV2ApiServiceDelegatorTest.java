@@ -896,7 +896,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = OrcidBadRequestException.class)
     public void testSearchByQueryTooManyRows() {
         Map<String, List<String>> params = new HashMap<>();
-        params.put("rows", Arrays.asList(Integer.toString(PublicV2ApiServiceDelegatorImpl.MAX_SEARCH_ROWS + 20)));
+        params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
         
         LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
         Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");
