@@ -1,4 +1,3 @@
-/*
 angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         educations: new Array(),
@@ -115,4 +114,3 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
     };
     return serv;
 }]);
-*/
