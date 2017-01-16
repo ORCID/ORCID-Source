@@ -1,14 +1,16 @@
 angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
+ 
     bioBulkSrvc.initScope($scope);  
-    $scope.showEdit = false;
-    $scope.otherNamesForm = null;
-    $scope.privacyHelp = false;
-    $scope.showElement = {};
-    $scope.orcidId = orcidVar.orcidId; 
+ 
+    $scope.commonSrvc = commonSrvc;
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
+    $scope.orcidId = orcidVar.orcidId; 
+    $scope.otherNamesForm = null;
+    $scope.privacyHelp = false;
     $scope.scrollTop = 0;
-    $scope.commonSrvc = commonSrvc;
+    $scope.showEdit = false;
+    $scope.showElement = {};
 
     var utilsService = utilsService;
         
@@ -34,7 +36,21 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
     };
     
     $scope.addNewModal = function() {               
-        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 1};        
+        var tmpObj = {
+            "errors":[],
+            "url":null,
+            "urlName":null,
+            "putCode":null,
+            "visibility":{
+                "errors":[],
+                "required":true,
+                "getRequiredMessage":null,
+                "visibility":$scope.newElementDefaultVisibility
+            },
+            "source":$scope.orcidId,
+            "sourceName":"", 
+            "displayIndex": 1
+        };        
         $scope.otherNamesForm.otherNames.push(tmpObj);        
         $scope.updateDisplayIndex();          
         $scope.newInput = true;
@@ -44,13 +60,15 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
-            success: function(data) {                
+            success: function(data) {
+                var itemVisibility;          
                 $scope.otherNamesForm = data;   
                 $scope.newElementDefaultVisibility = $scope.otherNamesForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null && $scope.otherNamesForm.otherNames.length > 0) {
                     for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
-                        var itemVisibility = null;
+                        itemVisibility = null;
+                        
                         if($scope.otherNamesForm.otherNames[i].visibility != null && $scope.otherNamesForm.otherNames[i].visibility.visibility) {
                             itemVisibility = $scope.otherNamesForm.otherNames[i].visibility.visibility;
                         }
@@ -112,9 +130,10 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
             dataType: 'json',
             success: function(data) {                
                 $scope.otherNamesForm = data;
-                if(data.errors.length == 0)
+                if(data.errors.length == 0){
                     $scope.close();                 
-                    $.colorbox.close(); 
+                }
+                $.colorbox.close(); 
                 $scope.$apply();                
             }
         }).fail(function() {
@@ -171,9 +190,11 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
     }
     
     $scope.swapUp = function(index){
+        var temp;
+        var tempDisplayIndex;
         if (index > 0) {
-            var temp = $scope.otherNamesForm.otherNames[index];
-            var tempDisplayIndex =$scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp = $scope.otherNamesForm.otherNames[index];
+            tempDisplayIndex =$scope.otherNamesForm.otherNames[index]['displayIndex'];
             temp['displayIndex'] = $scope.otherNamesForm.otherNames[index - 1]['displayIndex']
             $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index - 1];
             $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
@@ -182,9 +203,11 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
     };
 
     $scope.swapDown = function(index){
+        var temp;
+        var tempDisplayIndex;
         if (index < $scope.otherNamesForm.otherNames.length - 1) {
-            var temp = $scope.otherNamesForm.otherNames[index];
-            var tempDisplayIndex = $scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp = $scope.otherNamesForm.otherNames[index];
+            tempDisplayIndex = $scope.otherNamesForm.otherNames[index]['displayIndex'];
             temp['displayIndex'] = $scope.otherNamesForm.otherNames[index + 1]['displayIndex']
             $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index + 1];
             $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
@@ -193,8 +216,9 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-        for (var idx in $scope.otherNamesForm.otherNames)            
-            $scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
+        for (var idx in $scope.otherNamesForm.otherNames){
+            $scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;    
+        }         
     };
            
     $scope.getOtherNamesForm();
