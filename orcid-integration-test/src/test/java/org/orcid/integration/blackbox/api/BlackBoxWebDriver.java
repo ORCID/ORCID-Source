@@ -18,6 +18,9 @@ package org.orcid.integration.blackbox.api;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class BlackBoxWebDriver {
    
@@ -34,7 +37,16 @@ public class BlackBoxWebDriver {
         Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
     
-    private static WebDriver webDriver = new FirefoxDriver();
+    private static WebDriver webDriver;
+    static {
+        FirefoxProfile fireFoxProfile = new FirefoxProfile();
+        fireFoxProfile.setAcceptUntrustedCertificates(true);
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
+        // Marionette does not allow untrusted certs yet
+        capabilities.setCapability(FirefoxDriver.MARIONETTE, false);
+        webDriver = new FirefoxDriver(capabilities);
+    }
 
     public static WebDriver getWebDriver() {
         return webDriver;

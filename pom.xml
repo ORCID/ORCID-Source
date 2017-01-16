@@ -1026,7 +1026,7 @@ the software.
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>2.53.0</version>
+                <version>3.0.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
