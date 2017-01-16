@@ -816,7 +816,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="APP-[\da-zA-Z]{16}" />
+			<xs:pattern value="(APP-[\da-zA-Z]{16}|(\d{4}-){3,}\d{3}[\dX])" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -827,7 +827,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/((\d{4}-){3,}\d{3}[\dX]|APP-[\da-zA-Z]{16})" />
 		</xs:restriction>
 	</xs:simpleType>
 
