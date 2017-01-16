@@ -514,6 +514,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
     };
 
     var locationObj = $location.search();
+    var paramVerifyEditRegex = /.*\?(.*\&)*verifyEdit(\&.*)*/g;
+    var paramVerifyEdit = paramVerifyEditRegex.test( $location.absUrl() ); 
 
     var initialConfigService = {
         getInitialConfiguration: function(){
@@ -521,8 +523,8 @@ orcidNgModule.factory("initialConfigService", ['$rootScope', '$location', functi
         }
     };
 
-    if( locationObj.verifyEdit ){
-        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" ){
+    if( locationObj.verifyEdit || paramVerifyEdit == true ){
+        if( locationObj.verifyEdit == true || locationObj.verifyEdit == "true" || paramVerifyEdit == true ){
             configValues.showModalManualEditVerificationEnabled = true;
         }
     } 
@@ -2319,26 +2321,31 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-                if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
-                    peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
-                    var group = peerReviewSrvc.getGroup(putCode);
-                    $.ajax({
-                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
-                        dataType: 'json',
-                        contentType: 'application/json;charset=UTF-8',
-                        type: 'GET',
-                        success: function(data) {
-                            $rootScope.$apply(function(){
-                                group.groupName = data.name;
-                                group.groupDescription = data.description;
-                                group.groupType = data.type;
-                            });
-                        }
-                    }).fail(function(xhr, status, error){
-                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                    });
-                    
-                }
+            	if(groupIDPutCode != undefined) {
+            		if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
+                        peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
+                        var group = peerReviewSrvc.getGroup(putCode);
+                        $.ajax({
+                            url: getBaseUri() + '/public/group/' + groupIDPutCode,
+                            dataType: 'json',
+                            contentType: 'application/json;charset=UTF-8',
+                            type: 'GET',
+                            success: function(data) {
+                                $rootScope.$apply(function(){
+                                	console.log(angular.toJson(data));
+                                    group.groupName = data.name;
+                                    group.groupDescription = data.description;
+                                    group.groupType = data.type;
+                                });
+                            }
+                        }).fail(function(xhr, status, error){
+                            console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+                        });
+                        
+                    }
+            	} else {
+            		console.log("Error: undefined group id for peer review with put code: " + putCode);	 
+            	}     	
             }
     };
     return peerReviewSrvc;
@@ -3085,7 +3092,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bi
     }
         
     $scope.openEditModal = function(){
-        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
+        //console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
         if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bulkEditShow = false;
             $.colorbox({
@@ -6775,37 +6782,45 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$rootScope', '$compile', '$filt
         $scope.workImportWizard = false;
         $scope.showBibtexExport  = !$scope.showBibtexExport;
         $scope.bibtexExportError = false;
-        $scope.bibtexGenerated = false;
         $scope.loadingScripts = false;
         $scope.scriptsLoaded = false;
+        $scope.bibtexLoading = false;
+
     }
-    
-    $scope.openBibtexExportDialog = function(){
-        
-        $scope.loadingScripts = true;
+
+
+    $scope.fetchBibtexExport = function(){
+        $scope.bibtexLoading = true;
         $scope.bibtexExportError = false; 
-        $scope.scriptsLoaded = false;
         
-        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
-        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
-        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
-        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
-        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
-        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
-        
-        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
-        
-        getScripts(scripts, function(){
-            $scope.$apply(function() {
-                $scope.loadingScripts = false;
-                $scope.scriptsLoaded = true;
-                orcid.init(function(){
-                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
-                });
-            });            
-        });
+        $.ajax({
+            url: getBaseUri() + '/' + 'works/works.bib',
+            type: 'GET',
+            success: function(data) {
+                $scope.bibtexLoading = false;
+                if(window.navigator.msSaveOrOpenBlob) {
+                    var fileData = [data];
+                    blobObject = new Blob(fileData, {type: 'text/plain'});
+                    window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
+                } else {
+                    var anchor = angular.element('<a/>');
+                    anchor.css({display: 'none'});
+                    angular.element(document.body).append(anchor);
+                    anchor.attr({
+                      href: 'data:text/x-bibtex;charset=utf-8,' + encodeURIComponent(data),
+                      target: '_self',
+                      download: 'works.bib'
+                    })[0].click();
+                    anchor.remove();
+                }
+            }
+        }).fail(function() {
+            $scope.bibtexExportError = true;
+            console.log("bibtex export error");
+        });        
     };
-    
+
+
     $scope.downloadBibtexExport = function(citations){
         $scope.bibtexGenerated = false;
         if (citations.length > 0){

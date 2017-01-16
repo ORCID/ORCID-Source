@@ -72,8 +72,6 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.History;
 import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OrcidId;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
 import org.orcid.jaxb.model.record_rc4.Person;
@@ -83,6 +81,8 @@ import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.Work;
 import org.orcid.jaxb.model.record_rc4.WorkType;
+import org.orcid.jaxb.model.search_rc4.Result;
+import org.orcid.jaxb.model.search_rc4.Search;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -874,10 +874,12 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testSearchByQuery() {
-        OrcidIds orcidIds = new OrcidIds();
-        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        Search search = new Search();
+        Result result = new Result();
+        result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
+        search.getResults().add(result);
         OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
-        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>>any())).thenReturn(orcidIds);
+        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>>any())).thenReturn(search);
 
         PublicV2ApiServiceDelegatorImpl delegator = new PublicV2ApiServiceDelegatorImpl();
         ReflectionTestUtils.setField(delegator, "orcidSearchManager", orcidSearchManager);
@@ -886,9 +888,9 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         
         assertNotNull(response);
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof OrcidIds);
-        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
-        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+        assertTrue(response.getEntity() instanceof Search);
+        assertEquals(1, ((Search) response.getEntity()).getResults().size());
+        assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
     }
     
     @Test(expected = OrcidBadRequestException.class)

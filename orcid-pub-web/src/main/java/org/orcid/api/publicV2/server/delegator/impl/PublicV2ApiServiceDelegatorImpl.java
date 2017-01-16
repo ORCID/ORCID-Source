@@ -32,9 +32,9 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RecordManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
@@ -79,7 +79,6 @@ import org.orcid.jaxb.model.record_rc4.Employment;
 import org.orcid.jaxb.model.record_rc4.Funding;
 import org.orcid.jaxb.model.record_rc4.Keyword;
 import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
 import org.orcid.jaxb.model.record_rc4.OtherName;
 import org.orcid.jaxb.model.record_rc4.OtherNames;
 import org.orcid.jaxb.model.record_rc4.PeerReview;
@@ -91,6 +90,7 @@ import org.orcid.jaxb.model.record_rc4.Record;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.search_rc4.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -581,8 +581,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
-        OrcidIds orcidIds = orcidSearchManager.findOrcidIds(solrParams);
-        return Response.ok(orcidIds).build();
+        Search search = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(search).build();
     }
 
     private void validateSearchParams(Map<String, List<String>> queryMap) {
