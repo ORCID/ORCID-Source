@@ -12628,14 +12628,17 @@
 	    };
 
 	    $scope.checkLength = function () {
-	        if ($scope.biographyForm != null)
-	            if ($scope.biographyForm.biography != null)
-	                if ($scope.biographyForm.biography.value != null)
+	        if ($scope.biographyForm != null){
+	            if ($scope.biographyForm.biography != null){
+	                if ($scope.biographyForm.biography.value != null){    
 	                    if ($scope.biographyForm.biography.value.length > 5000) {
 	                        $scope.lengthError = true;
 	                    } else {
 	                        $scope.lengthError = false;
 	                    }
+	                }
+	            }
+	        }
 	        return $scope.lengthError;
 	    };
 
@@ -12656,7 +12659,9 @@
 	    };
 
 	    $scope.setBiographyForm = function(){
-	        if ($scope.checkLength()) return; // do nothing if there is a length error
+	        if( $scope.checkLength() ){    
+	            return; // do nothing if there is a length error
+	        } 
 	        $.ajax({
 	            url: getBaseUri() + '/account/biographyForm.json',
 	            type: 'POST',
@@ -12665,8 +12670,9 @@
 	            dataType: 'json',
 	            success: function(data) {
 	                $scope.biographyForm = data;
-	                if(data.errors.length == 0)
+	                if(data.errors.length == 0){
 	                    $scope.close();
+	                }
 	                $scope.$apply();
 	            }
 	        }).fail(function() {
