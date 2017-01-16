@@ -11,4 +11,5 @@ function requireAll(requireContext) {
 require('./app/angularOrcidOriginal.js');
 requireAll(require.context("./app/controllers", true, /^\.\/.*\.js$/));
 requireAll(require.context("./app/directives", true, /^\.\/.*\.js$/));
+requireAll(require.context("./app/modules", true, /^\.\/.*\.js$/));
 requireAll(require.context("./app/services", true, /^\.\/.*\.js$/));
