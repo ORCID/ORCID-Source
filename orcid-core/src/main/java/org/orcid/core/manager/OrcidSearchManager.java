@@ -35,6 +35,8 @@ import org.orcid.jaxb.model.search_v2.Search;
  */
 public interface OrcidSearchManager {
 
+    static final int MAX_SEARCH_ROWS = 200; 
+    
     OrcidMessage findOrcidSearchResultsById(String orcid);
 
     /**
