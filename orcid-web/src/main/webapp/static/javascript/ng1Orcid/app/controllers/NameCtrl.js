@@ -1,7 +1,7 @@
 angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
-    $scope.showEdit = false;
     $scope.nameForm = null;
     $scope.privacyHelp = false;
+    $scope.showEdit = false;
 
     $scope.toggleEdit = function() {
         $scope.showEdit = !$scope.showEdit;
