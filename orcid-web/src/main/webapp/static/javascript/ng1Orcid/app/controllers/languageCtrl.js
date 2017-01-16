@@ -108,10 +108,12 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
     
     $scope.widgetSrvc = widgetSrvc;
 
-    if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org")
+    if (location == parent.location && window.location.hostname.toLowerCase() != "orcid.org"){
         $scope.languages = testingLangList;
-    else
+    }
+    else{
         $scope.languages = productionLangList;
+    }
 
     //Load Language that is set in the cookie or set default language to english
     $scope.getCurrentLanguage = function(){
@@ -134,17 +136,20 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
             dataType: 'json',
             success: function(data){
                 angular.forEach($scope.languages, function(value, key){
+                    var params;
                     if(value.value == data.locale){
                         $scope.language = $scope.languages[key];                        
                         $scope.widgetSrvc.setLocale($scope.language.value);
                         //In case some parameters were sent via URL
-                        var params = window.location.href.split("?")[1];
+                        params = window.location.href.split("?")[1];
                         if (typeof params != 'undefined'){
                             params = params.split("&");
                             //Removing language parameter (lang=[code]) if it exists
-                            for ( var i = 0; i < params.length; i++ )
-                                if(params[i].indexOf("lang=") > -1)
+                            for ( var i = 0; i < params.length; i++ ){
+                                if(params[i].indexOf("lang=") > -1){
                                     params.splice(i, 1);    
+                                }
+                            }
                             
                             if ( params.length > 0 ) {                                
                                 window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
