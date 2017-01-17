@@ -21,6 +21,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1036,6 +1037,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
             } catch (NumberFormatException e) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
             }
+        } else {
+            //Set the default number of results 
+            queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
         }
     }
 
