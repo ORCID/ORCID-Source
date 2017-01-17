@@ -19,7 +19,6 @@ package org.orcid.api.publicV2.server;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
-import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
@@ -44,6 +43,7 @@ import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -390,7 +390,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     
     @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(BIO_SEARCH_PATH)
+    @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/orcid-id-2.0_rc4.xsd")
     public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
@@ -401,7 +401,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
 
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(BIO_SEARCH_PATH)
+    @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records")
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/orcid-id-2.0_rc4.xsd")
     public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
