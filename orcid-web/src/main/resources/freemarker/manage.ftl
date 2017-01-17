@@ -255,7 +255,7 @@
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.whatHappens")}</h4>
                             <p>
                                 ${springMacroRequestContext.getMessage("deactivate_orcid.once")} <a
-                                    href="http://support.orcid.org/knowledgebase/articles/148970-closing-an-orcid-account"
+                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
                                     target="_blank">${springMacroRequestContext.getMessage("deactivate_orcid.close_an")}</a>
                             </p>
                             
@@ -461,7 +461,7 @@
             <p>
             	<@orcid.msg 'manage_signin_subtitle' />
             	<br>
-            	<a href="http://support.orcid.org/knowledgebase/articles/892920"
+            	<a href="${knowledgeBaseUri}/articles/892920"
             target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
             </p>
             <div>

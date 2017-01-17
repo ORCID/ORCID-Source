@@ -18,6 +18,7 @@ package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -590,11 +591,15 @@ public class PublicV2ApiServiceDelegatorImpl
                 String rowsString = rowsList.get(0);
                 int rows = Integer.valueOf(rowsString);
                 if (rows < 0 || rows > OrcidSearchManager.MAX_SEARCH_ROWS) {
-                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
+                    throw new OrcidBadRequestException(
+                            localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
                 }
             } catch (NumberFormatException e) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
             }
+        } else {
+            // Set the default number of results
+            queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
         }
     }
 

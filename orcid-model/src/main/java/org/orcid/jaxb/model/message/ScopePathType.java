@@ -238,7 +238,7 @@ public enum ScopePathType implements Serializable {
     }
 
     /*
-     * http://support.orcid.org/knowledgebase/articles/119656 These types are
+     * https://support.orcid.org/knowledgebase/articles/119656 These types are
      * issues by ORCID and don't expire for at long time.
      */
     public boolean isClientCreditalScope() {

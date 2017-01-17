@@ -99,7 +99,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);

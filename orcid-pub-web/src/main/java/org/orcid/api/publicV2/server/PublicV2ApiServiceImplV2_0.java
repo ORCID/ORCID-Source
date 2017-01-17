@@ -19,6 +19,7 @@ package org.orcid.api.publicV2.server;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION_SUMMARY;
@@ -42,6 +43,7 @@ import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
 import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
@@ -49,14 +51,20 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
@@ -378,5 +386,36 @@ public class PublicV2ApiServiceImplV2_0 {
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(SEARCH_PATH)
+    @ApiOperation(value = "Search records")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/orcid-id-2.0.xsd")
+    public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+        Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
+        return jsonQueryResults;
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(SEARCH_PATH)
+    @ApiOperation(value = "Search records")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/orcid-id-2.0.xsd")
+    public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+        Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
+        return xmlQueryResults;
+    }
+
+    @GET
+    @Path(CLIENT_PATH)
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @ApiOperation(value = "Fetch client details")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/client-2.0.xsd")
+    public Response viewClient(@PathParam("client_id") String clientId) {
+        return serviceDelegator.viewClient(clientId);
     }
 }

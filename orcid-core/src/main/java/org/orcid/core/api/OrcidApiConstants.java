@@ -30,6 +30,7 @@ public class OrcidApiConstants {
     public static final String EXTERNAL_IDENTIFIER_PATH = "/{orcid}/orcid-bio/external-identifiers";
     public static final String STATUS_PATH = "/status";
     public static final String BIO_SEARCH_PATH = "/search/orcid-bio";
+    public static final String SEARCH_PATH = "/search";
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";
     public static final String AUTHENTICATE_PATH = "/{orcid}/authenticate";
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";

@@ -266,7 +266,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
         assertEquals(
-                "OAuth2 problem : One of the provided scopes is not allowed. Please refer to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.",
+                "OAuth2 problem : One of the provided scopes is not allowed. Please refer to the list of allowed scopes at: https://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.",
                 errorMessage.getErrorDesc().getContent());
     }
 

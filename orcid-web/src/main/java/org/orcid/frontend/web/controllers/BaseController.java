@@ -222,7 +222,7 @@ public class BaseController {
         return knowledgeBaseUri;
     }
 
-    @Value("${org.orcid.core.knowledgeBaseUri:http://support.orcid.org/knowledgebase}")
+    @Value("${org.orcid.core.knowledgeBaseUri:https://support.orcid.org/knowledgebase}")
     public void setKnowledgeBaseUri(String knowledgeBaseUri) {
         this.knowledgeBaseUri = knowledgeBaseUri;
     }
