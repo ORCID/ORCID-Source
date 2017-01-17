@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc4.ContributorEmail;
 import org.orcid.jaxb.model.common_rc4.ContributorOrcid;
 import org.orcid.jaxb.model.common_rc4.CreditName;
@@ -49,8 +48,6 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Text contributorRole;
 
-    private Visibility creditNameVisibility;    
-    
     public static Contributor valueOf(org.orcid.jaxb.model.common_rc4.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
@@ -61,8 +58,6 @@ public class Contributor implements ErrorsInterface, Serializable {
                 if (contributor.getContributorAttributes().getContributorSequence() != null)
                     c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
             }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
@@ -70,11 +65,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             //Set default values that must be overwritten by the controller
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -88,19 +78,12 @@ public class Contributor implements ErrorsInterface, Serializable {
                 if (contributor.getContributorAttributes().getContributorRole() != null)
                     c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
             }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
                 c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -123,11 +106,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
             if (contributor.getCreditName() != null) {
                 c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-                if(contributor.getCreditName().getVisibility() != null) {
-                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
-                } else {
-                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
-                }
             }
         }
         return c;
@@ -162,7 +140,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
-            cn.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
             c.setCreditName(cn);
         }
         return c;
@@ -224,14 +201,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         this.creditName = creditName;
     }
 
-    public Visibility getCreditNameVisibility() {
-        return creditNameVisibility;
-    }
-
-    public void setCreditNameVisibility(Visibility contributorRoleVisibility) {
-        this.creditNameVisibility = contributorRoleVisibility;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -239,7 +208,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         result = prime * result + ((contributorRole == null) ? 0 : contributorRole.hashCode());
         result = prime * result + ((contributorSequence == null) ? 0 : contributorSequence.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
-        result = prime * result + ((creditNameVisibility == null) ? 0 : creditNameVisibility.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((errors == null) ? 0 : errors.hashCode());
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
@@ -270,11 +238,6 @@ public class Contributor implements ErrorsInterface, Serializable {
             if (other.creditName != null)
                 return false;
         } else if (!creditName.equals(other.creditName))
-            return false;
-        if (creditNameVisibility == null) {
-            if (other.creditNameVisibility != null)
-                return false;
-        } else if (!creditNameVisibility.equals(other.creditNameVisibility))
             return false;
         if (email == null) {
             if (other.email != null)

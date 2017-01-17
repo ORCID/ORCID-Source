@@ -33,8 +33,9 @@ import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+
+import com.fasterxml.jackson.core.JsonParseException;
 
 public class OrcidCoreExceptionMapper {
     
@@ -57,6 +58,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
 
         // 400
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(JsonParseException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9001));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalArgumentException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9006));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidBadRequestException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9012));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MismatchedPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9019));
@@ -73,8 +75,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidUnauthorizedException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9017));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidTokenException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9038));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));        
         
         // 403
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(SecurityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9004));
@@ -84,7 +85,9 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidForbiddenException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9014));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidVisibilityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9013));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(VisibilityMismatchException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9035));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidAccessControlException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9038));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNonPublicElementException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9039));
+        
         // 404
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9016));

@@ -21,12 +21,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
@@ -86,6 +90,28 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
     }
     
     @Test
+    public void testViewPublicProfileJsonAnonymously() throws JSONException, InterruptedException {
+        ClientResponse response = publicV1ApiClient.viewRootProfileJson(getUser1OrcidId());
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        OrcidMessage message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+        response = publicV1ApiClient.viewPublicProfile(getUser1OrcidId());
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());    
+        message = response.getEntity(OrcidMessage.class);
+        assertNotNull(message);
+        assertNotNull(message.getOrcidProfile());
+        assertNotNull(message.getOrcidProfile().getOrcidIdentifier());
+        assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
+        
+    }
+    
+    @Test
     public void testViewPublicProfileUsingToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         ClientResponse response = publicV1ApiClient.viewRootProfile(getUser1OrcidId(), accessToken);
@@ -107,7 +133,8 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
         assertEquals(getUser1OrcidId(), message.getOrcidProfile().getOrcidIdentifier().getPath());
     }
 
-    @Test
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
     public void testViewPublicProfileUsingInvalidToken() throws JSONException, InterruptedException {
         String accessToken = getAccessToken();
         accessToken += "X";
@@ -116,7 +143,9 @@ public class PublicV1Test extends BlackBoxBaseRC2 {
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());    
         String errorMessage = response.getEntity(String.class);
         assertFalse(PojoUtil.isEmpty(errorMessage));
-        assertTrue(errorMessage.contains("invalid_token"));
+        Map<String, Object> error = JsonUtils.<HashMap> readObjectFromJsonString(errorMessage, HashMap.class);
+        assertEquals("invalid_token", error.get("error"));
+        assertEquals("Invalid access token: " + accessToken, error.get("error_description"));
     }
     
     

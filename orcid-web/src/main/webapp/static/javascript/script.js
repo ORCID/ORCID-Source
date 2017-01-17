@@ -799,7 +799,7 @@ $(function() {
  * "citationType":{"errors":[],"value":"formatted-unspecified","required":true,"getRequiredMessage":null},"required":true,"getRequiredMessage":null},
  * "countryCode":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "countryName":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
- * "contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"creditNameVisibility":null}],
+ * "contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null}}],
  * "workExternalIdentifiers":[ { "errors":[],
  * "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
@@ -3996,7 +3996,7 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['kuid'] = function (id) {
-       return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
+       return 'https://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
    };
    
    typeMap['lensid'] = function (id) {

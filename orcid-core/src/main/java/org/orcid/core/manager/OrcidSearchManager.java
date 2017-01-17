@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.search_rc4.Search;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating
@@ -34,6 +35,10 @@ import org.orcid.jaxb.model.message.OrcidMessage;
  */
 public interface OrcidSearchManager {
 
+    static final int DEFAULT_SEARCH_ROWS = 100;
+    
+    static final int MAX_SEARCH_ROWS = 200; 
+    
     OrcidMessage findOrcidSearchResultsById(String orcid);
 
     /**
@@ -48,5 +53,7 @@ public interface OrcidSearchManager {
     OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows);
 
     OrcidMessage findOrcidsByQuery(Map<String, List<String>> query);
+    
+    Search findOrcidIds(Map<String, List<String>> queryParameters);
 
 }

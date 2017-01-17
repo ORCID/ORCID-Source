@@ -354,6 +354,18 @@
 	
 	
 	<!-- Utilities -->
+	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+	
+	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
+		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
+		<property name="cacheManager" ref="ActivityCacheManager" />
+		<property name="profileEntityManager" ref="profileEntityManager" />
+	</bean>
+	
 	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils">
 		<property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
 	</bean>
@@ -1073,6 +1085,11 @@
         <property name="mapperFacade" ref="addressMapperFacade" />
     </bean>
     
+    <bean id="clientMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getClientMapperFacade"/>
+	<bean id="jpaJaxbClientAdapter" class="org.orcid.core.adapter.impl.JpaJaxbClientAdapterImpl">
+        <property name="mapperFacade" ref="clientMapperFacade" />
+    </bean>
+
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
              

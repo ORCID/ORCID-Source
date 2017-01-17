@@ -62,7 +62,7 @@
 						<xs:documentation>Container for the list of educations associated
 							with the researcher or contributor
 						</xs:documentation>
-					</xs:annotation>					
+					</xs:annotation>										
 				</xs:element>
 												
 				<xs:element name="employments" type="activities:employments" minOccurs="0" maxOccurs="1">
@@ -73,50 +73,30 @@
 					</xs:annotation>					
 				</xs:element>
 																				
-				<xs:element name="fundings" minOccurs="0" maxOccurs="1">
+				<xs:element name="fundings" type="activities:fundings" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the funding received by the
 							researcher or contributor
 						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
-								type="activities:funding-group" />
-						</xs:sequence>
-					</xs:complexType>
+					</xs:annotation>					
 				</xs:element>
-				<xs:element name="peer-reviews" minOccurs="0" maxOccurs="1">
+				<xs:element name="peer-reviews" type="activities:peer-reviews" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the funding received by the
 							researcher or contributor
 						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
-								type="activities:peer-review-group" />
-						</xs:sequence>
-					</xs:complexType>
+					</xs:annotation>					
 				</xs:element>
-				<xs:element name="works" minOccurs="0" maxOccurs="1">
+				<xs:element name="works" type="activities:works" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Container for the Works published by the
 							researcher
 							or contributor.
 						</xs:documentation>
-					</xs:annotation>
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-							<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
-								type="activities:work-group" />
-						</xs:sequence>
-					</xs:complexType>
+					</xs:annotation>					
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
@@ -126,6 +106,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0"
 				ref="education:education-summary" />
 		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 
 	<xs:element name="educations">
@@ -142,6 +123,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0"
 				ref="employment:employment-summary" />
 		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 
 	<xs:element name="employments">
@@ -150,18 +132,7 @@
 				<xs:restriction base="activities:employments" />
 			</xs:complexContent>
 		</xs:complexType>
-	</xs:element>
-
-	<xs:complexType name="work-group">
-		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element ref="common:external-ids"></xs:element>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0"
-					ref="work:work-summary" />
-			</xs:sequence>
-		</xs:sequence>
-	</xs:complexType>
+	</xs:element>	
 
 	<xs:complexType name="funding-group">
 		<xs:sequence>
@@ -173,6 +144,23 @@
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
+	
+	<xs:complexType name="fundings">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+				type="activities:funding-group" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+
+	<xs:element name="fundings">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="activities:fundings" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
@@ -184,4 +172,49 @@
 			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
+	
+	<xs:complexType name="peer-reviews">		
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+				type="activities:peer-review-group" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+
+	<xs:element name="peer-reviews">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="activities:peer-reviews" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:complexType name="work-group">
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:external-ids"></xs:element>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0"
+					ref="work:work-summary" />
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="works">		
+		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="group"
+				type="activities:work-group" />
+		</xs:sequence>
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+	
+	<xs:element name="works">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="activities:works" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>

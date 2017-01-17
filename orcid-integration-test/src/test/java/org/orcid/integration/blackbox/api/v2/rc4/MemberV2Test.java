@@ -20,9 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.orcid.integration.blackbox.api.BBBUtil.noSpinners;
-import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -33,6 +30,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
@@ -79,17 +77,22 @@ import com.sun.jersey.api.client.ClientResponse;
 public class MemberV2Test extends BlackBoxBaseRC4 {    
     static List<GroupIdRecord> groupRecords = null;           
     
+    private static boolean allSet = false;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        signin();
+    }
+    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();  
+        if(allSet) {
+            return;
+        }
+        showMyOrcidPage();
+        cleanActivities();          
         groupRecords = createGroupIds();
-        
-        // Remove remaining works using UI, because clients aren't allowed to
-        // delete works that they are not the source of.
-        signin();
-        noSpinners();
-        waitForAngular();
-        removeAllWorks();
+        allSet = true;
     }
 
     @After
@@ -691,9 +694,7 @@ public class MemberV2Test extends BlackBoxBaseRC4 {
                     found2 = true;
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
                     found3 = true;
-                } else {
-                    fail("Couldnt find work with title: " + summary.getTitle().getTitle().getContent());
-                }
+                } 
             }
         }
         

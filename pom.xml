@@ -217,6 +217,8 @@ the software.
                         	<exclude>**/src/main/resources/orcid-client-group-for-db-unit-data.xml</exclude>
                         	<exclude>**/src/main/webapp/static/ORCID-Fonts-Dot-Com/**</exclude>
                         	<exclude>**/src/main/webapp/static/font-awesome/**</exclude>
+                            <exclude>**/src/main/webapp/static/javascript/ng1Orcid/**</exclude>
+                            <exclude>**/src/main/webapp/static/javascript/angularOrcid.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
@@ -265,6 +267,7 @@ the software.
                             <exclude>**.xjb</exclude>
                             <exclude>**.lock</exclude>
                             <exclude>atlassian-ide-plugin.xml</exclude>
+                            <exclude>**/src/main/resources/**/*escape_bibtex.txt</exclude>
                         </excludes>
                     </configuration>
                     <executions>

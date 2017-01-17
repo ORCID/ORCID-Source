@@ -26,31 +26,31 @@ import org.orcid.utils.DateUtils;
 
 public class LastModifiedDateTest {
 
-	@Test
-	public void testWithLongs() {
-		LastModifiedDate empty = new LastModifiedDate();
-		LastModifiedDate _1000 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1000));
-		LastModifiedDate _1001 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1001));
-		assertTrue(_1000.after(null));
-		assertTrue(_1000.after(empty));
-		assertFalse(empty.after(_1000));
-		assertFalse(empty.after(empty));
-		assertFalse(_1000.after(_1000));
-		assertTrue(_1001.after(_1000));
-		assertFalse(_1000.after(_1001));		
-	}
-	
-	@Test
-	public void testWithDates() {
-		LastModifiedDate empty = new LastModifiedDate();
-		LastModifiedDate _1000 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(new Date(1000)));
-		LastModifiedDate _1001 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(new Date(1001)));
-		assertTrue(_1000.after(null));
-		assertTrue(_1000.after(empty));
-		assertFalse(empty.after(_1000));
-		assertFalse(empty.after(empty));
-		assertFalse(_1000.after(_1000));
-		assertTrue(_1001.after(_1000));
-		assertFalse(_1000.after(_1001));		
-	}
+    @Test
+    public void testWithLongs() {
+        LastModifiedDate empty = new LastModifiedDate();
+        LastModifiedDate _1000 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1000));
+        LastModifiedDate _1001 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(1001));
+        assertTrue(_1000.after(null));
+        assertTrue(_1000.after(empty));
+        assertFalse(empty.after(_1000));
+        assertFalse(empty.after(empty));
+        assertFalse(_1000.after(_1000));
+        assertTrue(_1001.after(_1000));
+        assertFalse(_1000.after(_1001));
+    }
+
+    @Test
+    public void testWithDates() {
+        LastModifiedDate empty = new LastModifiedDate();
+        LastModifiedDate _1000 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(new Date(1000)));
+        LastModifiedDate _1001 = new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(new Date(1001)));
+        assertTrue(_1000.after(null));
+        assertTrue(_1000.after(empty));
+        assertFalse(empty.after(_1000));
+        assertFalse(empty.after(empty));
+        assertFalse(_1000.after(_1000));
+        assertTrue(_1001.after(_1000));
+        assertFalse(_1000.after(_1001));
+    }
 }

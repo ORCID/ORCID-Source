@@ -124,6 +124,11 @@
            <artifactId>jackson-jaxrs-json-provider</artifactId>
         </dependency>
         <dependency>
+		   <groupId>com.fasterxml.jackson.dataformat</groupId>
+		   <artifactId>jackson-dataformat-csv</artifactId>
+		   <version>2.5.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
         </dependency>

@@ -58,6 +58,7 @@ public class Educations implements Serializable, ActivitiesContainer {
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
+    @XmlElement(required = false)
     protected List<Education> education;
 
     /**
@@ -133,6 +134,6 @@ public class Educations implements Serializable, ActivitiesContainer {
 
     @Override
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        // TODO Auto-generated method stub
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

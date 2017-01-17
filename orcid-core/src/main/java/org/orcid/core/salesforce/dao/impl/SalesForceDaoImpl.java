@@ -222,7 +222,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createMemberListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
         return resource;
     }
 
@@ -252,7 +252,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createConsortiaListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
+                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         return resource;
     }
 
@@ -278,7 +278,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createConsortiumResource(String consortiumId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
+                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
                         + validateSalesForceId(consortiumId) + "'");
         return resource;
     }

@@ -23,13 +23,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.solr.common.SolrDocument;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
@@ -39,12 +42,12 @@ import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.FundingTitle;
-import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
@@ -59,6 +62,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.search_rc4.Search;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
@@ -92,6 +96,26 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void initMocks() {
         orcidSearchManager.setSolrDao(solrDao);
         orcidSearchManager.setOrcidProfileCacheManager(orcidProfileCacheManager);
+    }
+    
+    @Test
+    public void testFindOrcidIds() {
+        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(multipleResultsForQuery());
+        Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
+        assertNotNull(search);
+        assertEquals(2, search.getResults().size());
+        assertEquals(Long.valueOf(2), search.getNumFound());
+        assertEquals("5678", search.getResults().get(0).getOrcidIdentifier().getPath());
+        assertEquals("6789", search.getResults().get(1).getOrcidIdentifier().getPath());
+    }
+    
+    @Test
+    public void testFindOrcidIdsNoResults() {
+        when(solrDao.findByDocumentCriteria(Matchers.<Map<String, List<String>>>any())).thenReturn(new OrcidSolrResults());
+        Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
+        assertNotNull(search);
+        assertEquals(Long.valueOf(0), search.getNumFound());
+        assertEquals(0, search.getResults().size());
     }
 
     @Test

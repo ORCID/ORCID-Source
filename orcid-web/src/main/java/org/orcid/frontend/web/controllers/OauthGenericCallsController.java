@@ -29,21 +29,21 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
-import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")
@@ -58,7 +58,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
     private UriInfo uriInfo;
     
     @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
-    public @ResponseBody Object obtainOauth2TokenPost(HttpServletRequest request) {
+    public ResponseEntity<?> obtainOauth2TokenPost(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         Enumeration<String> paramNames = request.getParameterNames();
         MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
@@ -69,12 +69,12 @@ public class OauthGenericCallsController extends OauthControllerBase {
                         
         try {
             Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
-            return JsonUtils.convertToJsonString(response.getEntity());
+            return ResponseEntity.ok(response.getEntity());
         } catch(Exception e) {
-            OrcidMessage errorMessage = new OrcidMessage();
-            errorMessage.setMessageVersion("1.2");
-            errorMessage.setErrorDesc(new ErrorDesc(e.getMessage()));
-            return JsonUtils.convertToJsonString(errorMessage);
+            OAuthError errorMessage = new OAuthError();
+            errorMessage.setError(OAuthError.UNAUTHORIZED_CLIENT);
+            errorMessage.setErrorDescription(e.getMessage());
+            return ResponseEntity.badRequest().body(errorMessage);
         }
     }
     

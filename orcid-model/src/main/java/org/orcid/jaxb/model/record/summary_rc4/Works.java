@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -35,13 +36,15 @@ import org.orcid.jaxb.model.record_rc4.GroupsContainer;
 @XmlType(propOrder = { "lastModifiedDate", "workGroup" })
 @XmlRootElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
 public class Works implements GroupsContainer, Serializable {
-
+    
     private static final long serialVersionUID = 3293976926416154039L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities", required = false)
     private List<WorkGroup> workGroup;
-
+    @XmlAttribute
+    protected String path;
+    
     public List<WorkGroup> getWorkGroup() {
         if (workGroup == null) {
             workGroup = new ArrayList<WorkGroup>();
@@ -85,5 +88,13 @@ public class Works implements GroupsContainer, Serializable {
 
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

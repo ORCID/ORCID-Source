@@ -20,14 +20,14 @@
     *,
     *:before,
     *:after,
-    p:first-letter,
-    div:first-letter,
     blockquote:first-letter,
-    li:first-letter,
-    p:first-line,
-    div:first-line,
     blockquote:first-line,
-    li:first-line {
+    div:first-letter,
+    div:first-line,
+    li:first-line,
+    li:first-letter,
+    p:first-letter,
+    p:first-line {
         background: transparent !important;
         box-shadow: none !important;
         color: #000 !important; /* Black prints faster:                           http://www.sanbeiji.com/archives/953 */
@@ -116,8 +116,8 @@
 
     ul.sources-edit-list > li,
     .id-banner .oid,
-    .workspace-body-list > li,
     .workspace-accordion-content > li,
+    .workspace-body-list > li,
     .workspace-border-box {
         border: 0;
     }
@@ -209,6 +209,7 @@
         display: block;
         float: left;
         margin: 4px;
+        margin-left: 0;
         padding: 0;
     }
     
@@ -218,6 +219,10 @@
         margin-right: 4px;
     }
     
+    .workspace-section .workspace-section-heading li.right span.toggle {
+        display: none;
+    }
+
     .mobile-box {
         padding: 0;
     }
@@ -225,7 +230,7 @@
     .info-detail, 
     .workspace-accordion-content,
     .workspace-accordion-content .workspace-title {
-        font-size: 12px;
+        font-size: 14px;
         line-height: normal;
     }
 
@@ -243,6 +248,13 @@
         font-weight: normal;
     }
     
+    .workspace-accordion,
+    .workspace-accordion-content .col-md-12, 
+    .workspace-accordion-content .col-sm-12,
+    .workspace-accordion-content .col-xs-12 {
+        padding-left: 0;
+    }
+
     .affiliation-date::after {
         content: " | ";
     }

@@ -62,7 +62,7 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
         //If it is locked
         if(!memberEntity.isAccountNonLocked()) {
-            throw new LockedException("The given client " + clientDetails.getClientId() + " is locked because his member " + clientDetails.getGroupProfileId() + " is also locked", clientDetails.getGroupProfileId());
+            throw new LockedException("The client is locked");
         }
     }
 

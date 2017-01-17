@@ -241,7 +241,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 
 79. Log into the account created for testing today if you are not already
 
-80. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
+80. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /person/update&redirect_uri=https://developers.google.com/oauthplayground
 
 81. Grant long lived authorization
 
@@ -332,7 +332,23 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 * Check that notification to add a work has posted
 * Check that notifications from the previous updates have posted
 
-100. Visit https://qa.orcid.org/signout	
+## Email Read Private
+
+100. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /email/read-private&redirect_uri=https://developers.google.com/oauthplayground
+
+101. Check that the email check box appears with the why text
+
+102. Uncheck the email check box and grant access
+
+103. Exchange the authorization code: 
+
+    ```
+    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
+    ```
+    
+104. Verify that the returned access token does not include the /email/read-private scope- only /read-limited should be listed as a scope.
+
+105. Visit https://qa.orcid.org/signout
 
 ## Member API 1.2 Creating/Claiming
 
@@ -346,7 +362,7 @@ Short story: copy your folder with the tests inside your vagrant folder. I.e: C:
 103. Post a new record with the 1.2 API
 
     ```
-    curl -H 'Accept: application/xml' -H 'Content-Type: application/vdn.orcid+json' -H 'Authorization: Bearer [create token]'  'http://api.qa.orcid.org/v1.2/orcid-profile' -X POST -d '{
+    curl -H 'Accept: application/xml' -H 'Content-Type: application/vnd.orcid+json' -H 'Authorization: Bearer [create token]'  'http://api.qa.orcid.org/v1.2/orcid-profile' -X POST -d '{
 "message-version" : "1.2",
   "orcid-profile" : 
 {"orcid-bio" : 
@@ -463,6 +479,7 @@ In this section all calls are expected to fail.
 117. Check the deny access process, by going to the following URL and clicking Deny.
 https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
 Check that you are sent to https://developers.google.com/oauthplayground with the error 'access_denied'
+
 
 ## Refresh tokens
 
@@ -601,38 +618,38 @@ This record has ever field set to limited, check that nothing is visible in the 
     ```
 
 
-140. Read a single work with Public API 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+140. Read a single work with Public API 2.0_rc3. Check that you get a 403 Forbidden error with error code 9039
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
     
-141. Read email with Public API 2.0_rc3. Check that no content is retruned
+141. Read email with Public API 2.0_rc3. Check that an empty field is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
     ```
 
 
-142. Read the record with /read-public token API 1.2. Check that the bio and activities sections are not returned
+142. Read the record with /read-public token API 1.2. Check that an empty record is returned
 
     ```
     curl -H 'Accept: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'http://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-143. Read record with /read-public token API 2.0_rc3. Check that the bio and activities sections are not returned
+143. Read record with /read-public token API 2.0_rc3. Check that an empty record is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-144. Read a single work with /read-public token 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+144. Read a single work with /read-public token 2.0_rc3. Check that you get a 403 Forbidden error with error code 9038
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
 
-145. Read email with /read-public token API 2.0_rc3. Check that an empty record is returned
+145. Read email with /read-public token API 2.0_rc3. Check that an empty field is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
@@ -656,19 +673,19 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-149. Read record with access token for another record 2.0_rc3. Check that a 401 Unauthorized error is returned with the message "Access token is for a different record"
+149. Read record with access token for another record 2.0_rc3. Check that a 401 Unauthorized error is returned with error code 1917
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-150. Read a single work with an access token for another record 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public"
+150. Read a single work with an access token for another record 2.0_rc3. Check that you get a 401 Unauthorized error with error code 1917
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
 
-151. Read email with access token for another record 2.0_rc3. Check that nothing is returned.
+151. Read email with access token for another record 2.0_rc3. Check that you get a 401 Unauthorized error with error code 1917
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
@@ -680,16 +697,16 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-153. Read record with access token with activities/update scope 2.0_rc3. Check that an empty record is returned.
+153. Read record with access token with activities/update scope 2.0_rc3. Check that an empty record is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-154. Read a single work with activities/update 2.0_rc3. Check that you get a 401 Unauthorized error with the message "The activity is not public" (Currently broken - information is returned)
+154. Read a single work with activities/update 2.0_rc3. Check that you get a 403 Forbidden error with error code 9038
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 064e64ef-6c49-4634-b09b-a38d8d75c774' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
 
 155. Read with access token with orcid-profile/create scope 1.2. Check that an empty record is returned
@@ -698,19 +715,19 @@ This record has ever field set to limited, check that nothing is visible in the 
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-156. Read record with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
+156. Read record with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with error code 9005
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/record' -L -i -k
     ```
 
-157. Read a single work with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
+157. Read a single work with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with error code 9005
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/142043' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
 
-158. Read email section with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with the message "The client application is forbidden to perform the action."
+158. Read email section with access token with orcid-profile/create scope 2.0_rc3. Check that you get a 403 Forbidden error with error code 9005
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ddc95880-fbfb-4fbf-931e-a18e15cf0a1c' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/email' -L -i -k
@@ -731,7 +748,7 @@ This record has ever field set to limited, check that nothing is visible in the 
 161. Read a single work with a working token 2.0_rc3. Check that the work is returned
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/person' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 1fcda8a0-1af3-4b35-8825-e4c53dae8953' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0001-7325-5491/work/141942' -L -i -k
     ```
 
 162. Read email with a working token 2.0_rc3. Check that the email address is returned
@@ -772,16 +789,10 @@ This record has every fields set to private. Check that no information is displa
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/record' -L -i -k
     ```
 
-169. Read person with /read-limited token API 2.0_rc3. Check that an empty record is returned
+169. Read a single work with /read-limited token API 2.0_rc3. Check that you get a 403 Forbidden error with error code 9013
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/person' -L -i -k
-    ```
-
-170. Read activities with /read-limited token API 2.0_rc3. Check that an empty record is returned 
-
-    ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/activities' -L -i -k
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc3/0000-0003-2366-2712/work/141943' -L -i -k
     ```
 
 171. Read email with /read-limited token API 2.0_rc3. Check that an empty record is returned
