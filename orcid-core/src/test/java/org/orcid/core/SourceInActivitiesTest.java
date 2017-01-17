@@ -41,10 +41,10 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.jaxb.model.common_rc4.Organization;
-import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc4.Title;
-import org.orcid.jaxb.model.common_rc4.Url;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.Title;
+import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -63,18 +63,18 @@ import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.FundingTitle;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PeerReviewType;
-import org.orcid.jaxb.model.record_rc4.Relationship;
-import org.orcid.jaxb.model.record_rc4.Role;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkTitle;
-import org.orcid.jaxb.model.record_rc4.WorkType;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingTitle;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Role;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -281,7 +281,7 @@ public class SourceInActivitiesTest extends BaseTest {
     private ProfileFundingEntity getFundingWithoutTitle(String userOrcid) {
         Funding funding = new Funding();        
         funding.setOrganization(getOrganization());
-        funding.setType(org.orcid.jaxb.model.record_rc4.FundingType.AWARD);
+        funding.setType(org.orcid.jaxb.model.record_v2.FundingType.AWARD);
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
@@ -299,7 +299,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
-        funding.setType(org.orcid.jaxb.model.record_rc4.FundingType.AWARD);
+        funding.setType(org.orcid.jaxb.model.record_v2.FundingType.AWARD);
         funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
@@ -310,7 +310,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
-        funding.setType(org.orcid.jaxb.model.record_rc4.FundingType.AWARD);
+        funding.setType(org.orcid.jaxb.model.record_v2.FundingType.AWARD);
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
@@ -460,7 +460,7 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
-        work.setWorkType(org.orcid.jaxb.model.record_rc4.WorkType.BOOK);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(WorkExternalIdentifierType.DOI.value());
@@ -473,7 +473,7 @@ public class SourceInActivitiesTest extends BaseTest {
     
     private Work getWorkWithoutTitle(String userOrcid2, boolean validate) {
     	Work work = new Work();
-        work.setWorkType(org.orcid.jaxb.model.record_rc4.WorkType.BOOK);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(WorkExternalIdentifierType.DOI.value());
@@ -489,7 +489,7 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work " + System.currentTimeMillis()));
         work.setWorkTitle(title);
-        work.setWorkType(org.orcid.jaxb.model.record_rc4.WorkType.BOOK);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode(), 0L);
     }
@@ -504,7 +504,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
-        work.setWorkType(org.orcid.jaxb.model.record_rc4.WorkType.BOOK);
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.BOOK);
         work.setPutCode(Long.valueOf(111));
         work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode(), 0L);
@@ -516,7 +516,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingTitle title = new FundingTitle();
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
-        funding.setType(org.orcid.jaxb.model.record_rc4.FundingType.AWARD);
+        funding.setType(org.orcid.jaxb.model.record_v2.FundingType.AWARD);
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
@@ -561,7 +561,7 @@ public class SourceInActivitiesTest extends BaseTest {
             OrganizationAddress address = new OrganizationAddress();
             address.setCity("City");
             address.setRegion("Region");
-            address.setCountry(org.orcid.jaxb.model.common_rc4.Iso3166Country.US);                        
+            address.setCountry(org.orcid.jaxb.model.common_v2.Iso3166Country.US);                        
             organization = new Organization();                                    
             organization.setName("Org name");
             organization.setAddress(address);

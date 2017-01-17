@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
-import org.orcid.jaxb.model.notification_rc4.NotificationType;
+import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;

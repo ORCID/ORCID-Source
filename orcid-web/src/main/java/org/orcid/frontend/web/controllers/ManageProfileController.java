@@ -45,7 +45,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -59,9 +59,9 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -892,7 +892,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if(bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.common_rc4.Visibility v = org.orcid.jaxb.model.common_rc4.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+                org.orcid.jaxb.model.common_v2.Visibility v = org.orcid.jaxb.model.common_v2.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
                 bio.setVisibility(v);
             }
             

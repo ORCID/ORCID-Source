@@ -52,7 +52,7 @@ public class V2VersionObjectFactoryImpl implements V2VersionObjectFactory {
     }
 
     private String calculateClassFullName(Class<?> originalClass, String requiredVersion) {
-        String requiredMinorVersion = requiredVersion.substring(requiredVersion.lastIndexOf('_') + 1);
+        String requiredMinorVersion = requiredVersion.equals("2.0") ? "v2" : requiredVersion.substring(requiredVersion.lastIndexOf('_') + 1);
         String originalPackageName = originalClass.getPackage().getName();
         String packageNameBase = originalPackageName.substring(0, originalPackageName.lastIndexOf('_') + 1);
         String originalClassName = originalClass.getSimpleName();

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReview;
 
 public interface PeerReviewManager extends PeerReviewManagerReadOnly {
     

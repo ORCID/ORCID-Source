@@ -22,7 +22,7 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
 public class JpaJaxbGroupIdRecordAdapterImpl implements JpaJaxbGroupIdRecordAdapter {

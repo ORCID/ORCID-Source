@@ -55,43 +55,43 @@ import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
-import org.orcid.core.version.impl.Api2_0_rc4_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.client_rc4.Client;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Educations;
-import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Employments;
-import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Fundings;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Works;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.Person;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
-import org.orcid.jaxb.model.record_rc4.Record;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.search_rc4.Search;
+import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_v2.Educations;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_v2.Employments;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.Fundings;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -219,7 +219,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(as);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(as);
         sourceUtilsReadOnly.setSourceName(as);
         return Response.ok(as).build();
     }
@@ -244,7 +244,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicWorks);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
         sourceUtilsReadOnly.setSourceName(publicWorks);
         return Response.ok(publicWorks).build();
     }
@@ -300,7 +300,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV2.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicFundings);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
     }
@@ -334,7 +334,7 @@ public class PublicV2ApiServiceDelegatorImpl
                 publicEducations.getSummaries().add(summary);
             }
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEducations);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEducations);
         return Response.ok(publicEducations).build();
     }
 
@@ -367,7 +367,7 @@ public class PublicV2ApiServiceDelegatorImpl
                 publicEmployments.getSummaries().add(summary);
             }
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
         return Response.ok(publicEmployments).build();
     }
 
@@ -395,7 +395,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
     }
@@ -418,7 +418,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         GroupIdRecords records = groupIdRecordManagerReadOnly.getGroupIdRecords(pageSize, pageNum);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(records);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(records);
         return Response.ok(records).build();
     }
 
@@ -427,7 +427,7 @@ public class PublicV2ApiServiceDelegatorImpl
         long lastModifiedTime = getLastModifiedTime(orcid);
         ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
         sourceUtilsReadOnly.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
@@ -447,7 +447,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(emails);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
         return Response.ok(emails).build();
     }
@@ -457,7 +457,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
         publicAPISecurityManagerV2.filter(personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(personalDetails);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(personalDetails);
         sourceUtilsReadOnly.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
     }
@@ -468,7 +468,7 @@ public class PublicV2ApiServiceDelegatorImpl
         OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(otherNames);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(otherNames);
         sourceUtilsReadOnly.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
@@ -488,7 +488,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(extIds);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(extIds);
         sourceUtilsReadOnly.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
@@ -516,7 +516,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
         publicAPISecurityManagerV2.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(keywords);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(keywords);
         sourceUtilsReadOnly.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
@@ -535,8 +535,8 @@ public class PublicV2ApiServiceDelegatorImpl
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         publicAPISecurityManagerV2.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
-        // Set the latest last modified
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(addresses);
+        //Set the latest last modified
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(addresses);
         sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
@@ -555,7 +555,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
         ElementUtils.setPathToPerson(person, orcid);
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(person);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
         return Response.ok(person).build();
     }
@@ -573,7 +573,7 @@ public class PublicV2ApiServiceDelegatorImpl
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
         }
-        Api2_0_rc4_LastModifiedDatesHelper.calculateLastModified(record);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
     

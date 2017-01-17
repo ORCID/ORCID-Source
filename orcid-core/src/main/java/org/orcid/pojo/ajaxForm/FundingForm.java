@@ -21,21 +21,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_rc4.Amount;
-import org.orcid.jaxb.model.common_rc4.DisambiguatedOrganization;
-import org.orcid.jaxb.model.common_rc4.FuzzyDate;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Organization;
-import org.orcid.jaxb.model.common_rc4.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc4.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.common_rc4.Source;
-import org.orcid.jaxb.model.common_rc4.Url;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.FundingContributor;
-import org.orcid.jaxb.model.record_rc4.FundingContributors;
-import org.orcid.jaxb.model.record_rc4.FundingType;
+import org.orcid.jaxb.model.common_v2.Amount;
+import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.FundingContributors;
+import org.orcid.jaxb.model.record_v2.FundingType;
 
 public class FundingForm implements ErrorsInterface, Serializable {
 
@@ -310,7 +310,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
         else
             result.setUrl(new Url());
         if (visibility != null)
-            result.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(visibility.getVisibility().value()));
+            result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.getVisibility().value()));
 
         // Set Organization
         Organization organization = new Organization();

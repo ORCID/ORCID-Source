@@ -27,11 +27,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
-import org.orcid.jaxb.model.common_rc4.Contributor;
+import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.CitationType;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;

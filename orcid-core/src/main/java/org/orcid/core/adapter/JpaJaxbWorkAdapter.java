@@ -19,8 +19,8 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.summary_rc4.WorkSummary;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 

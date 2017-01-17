@@ -30,13 +30,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PeerReviewType;
-import org.orcid.jaxb.model.record_rc4.Role;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -165,9 +165,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/peer-review-2.0_rc4.xml";
+        String name = "/record_2.0/samples/peer-review-2.0.xml";
         if(full) {
-            name = "/record_2.0_rc4/samples/peer-review-full-2.0_rc4.xml";
+            name = "/record_2.0/samples/peer-review-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);

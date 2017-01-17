@@ -27,8 +27,8 @@ import java.io.Serializable;
 
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.Relationship;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,7 +59,7 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
         }
     }
 
-    public FundingExternalIdentifier(org.orcid.jaxb.model.record_rc4.ExternalID recordPojo) {
+    public FundingExternalIdentifier(org.orcid.jaxb.model.record_v2.ExternalID recordPojo) {
         if (recordPojo.getType() != null) {
             this.setType(recordPojo.getType());
         }
@@ -200,7 +200,7 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
             recordPojo.setType(this.getType().toLowerCase());
 
         if (this.getUrl() != null && !PojoUtil.isEmpty(this.getUrl().value)) {
-            org.orcid.jaxb.model.common_rc4.Url url = new org.orcid.jaxb.model.common_rc4.Url(this.getUrl().value);
+            org.orcid.jaxb.model.common_v2.Url url = new org.orcid.jaxb.model.common_v2.Url(this.getUrl().value);
             recordPojo.setUrl(url);
         }
 

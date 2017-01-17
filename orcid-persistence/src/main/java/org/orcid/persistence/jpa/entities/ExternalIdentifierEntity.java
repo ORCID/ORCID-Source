@@ -31,7 +31,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * orcid-entities - Dec 6, 2011 - ExternalIdentifierEntity

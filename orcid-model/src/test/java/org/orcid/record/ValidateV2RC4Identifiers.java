@@ -289,6 +289,7 @@ public class ValidateV2RC4Identifiers {
         return validator;
     }
     
+    @SuppressWarnings("unchecked")
     private <T> T unmarshallFromPath(String path, Class<T> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);

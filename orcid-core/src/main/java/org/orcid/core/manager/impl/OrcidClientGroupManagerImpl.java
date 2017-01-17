@@ -238,7 +238,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             }
             //Set the record name entity table
             groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());
-            groupProfileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);
+            groupProfileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
             
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed

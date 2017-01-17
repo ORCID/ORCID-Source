@@ -30,8 +30,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.orcid.jaxb.model.record_rc4.Record;
-import org.orcid.listener.converters.OrcidProfileToSolrDocument;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.converters.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.slf4j.Logger;
@@ -52,8 +51,7 @@ public class SolrIndexUpdater {
         
     @Resource(name = "solrServer")
     private SolrServer solrServer;
-
-    private OrcidProfileToSolrDocument conv = new OrcidProfileToSolrDocument();
+    
     private OrcidRecordToSolrDocument recordConv;
     
     public SolrIndexUpdater(){

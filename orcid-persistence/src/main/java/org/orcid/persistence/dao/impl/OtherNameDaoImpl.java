@@ -49,7 +49,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common_rc4.Visibility visibility) {
+    public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility) {
         Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);

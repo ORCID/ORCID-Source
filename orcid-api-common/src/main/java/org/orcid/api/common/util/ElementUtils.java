@@ -26,20 +26,20 @@ import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
-import org.orcid.jaxb.model.record_rc4.Person;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
 public class ElementUtils {
 

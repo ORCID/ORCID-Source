@@ -40,19 +40,19 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc4.BlackBoxBaseRC4;
-import org.orcid.jaxb.model.error_rc4.OrcidError;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -66,7 +66,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
+public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
 
 	@Resource
     private OauthHelper oauthHelper;
@@ -125,39 +125,39 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC4 {
         String orcid = getUser1OrcidId();
         Long putCode = 1L;
 
-        Address address = (Address) unmarshallFromPath("/record_2.0_rc4/samples/address-2.0_rc4.xml", Address.class);
+        Address address = (Address) unmarshallFromPath("/record_2.0/samples/address-2.0.xml", Address.class);
         evaluateResponse(memberV2ApiClient.createAddress(orcid, address, accessToken));
 
-        Education education = (Education) unmarshallFromPath("/record_2.0_rc4/samples/education-2.0_rc4.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0/samples/education-2.0.xml", Education.class);
         evaluateResponse(memberV2ApiClient.createEducationJson(orcid, education, accessToken));
         evaluateResponse(memberV2ApiClient.createEducationXml(orcid, education, accessToken));
 
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc4/samples/employment-2.0_rc4.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/employment-2.0.xml", Employment.class);
         evaluateResponse(memberV2ApiClient.createEmploymentJson(orcid, employment, accessToken));
         evaluateResponse(memberV2ApiClient.createEmploymentXml(orcid, employment, accessToken));
 
-        PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0_rc4/samples/external-identifier-2.0_rc4.xml",
+        PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0/samples/external-identifier-2.0.xml",
                 PersonExternalIdentifier.class);
         evaluateResponse(memberV2ApiClient.createExternalIdentifier(orcid, externalIdentifier, accessToken));
 
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0_rc4/samples/funding-2.0_rc4.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/funding-2.0.xml", Funding.class);
         evaluateResponse(memberV2ApiClient.createFundingJson(orcid, funding, accessToken));
         evaluateResponse(memberV2ApiClient.createFundingXml(orcid, funding, accessToken));
 
-        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0_rc4/samples/keyword-2.0_rc4.xml", Keyword.class);
+        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0/samples/keyword-2.0.xml", Keyword.class);
         evaluateResponse(memberV2ApiClient.createKeyword(orcid, keyword, accessToken));
 
-        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0_rc4/samples/other-name-2.0_rc4.xml", OtherName.class);
+        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0/samples/other-name-2.0.xml", OtherName.class);
         evaluateResponse(memberV2ApiClient.createOtherName(orcid, otherName, accessToken));
 
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc4/samples/peer-review-2.0_rc4.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
         evaluateResponse(memberV2ApiClient.createPeerReviewJson(orcid, peerReview, accessToken));
         evaluateResponse(memberV2ApiClient.createPeerReviewXml(orcid, peerReview, accessToken));
 
-        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc4/samples/researcher-url-2.0_rc4.xml", ResearcherUrl.class);
+        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0/samples/researcher-url-2.0.xml", ResearcherUrl.class);
         evaluateResponse(memberV2ApiClient.createResearcherUrls(orcid, rUrl, accessToken));
 
-        Work work = (Work) unmarshallFromPath("/record_2.0_rc4/samples/work-2.0_rc4.xml", Work.class);
+        Work work = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
         evaluateResponse(memberV2ApiClient.createWorkJson(orcid, work, accessToken));
         evaluateResponse(memberV2ApiClient.createWorkXml(orcid, work, accessToken));
         evaluateResponse(memberV2ApiClient.deleteAddress(orcid, putCode, accessToken));

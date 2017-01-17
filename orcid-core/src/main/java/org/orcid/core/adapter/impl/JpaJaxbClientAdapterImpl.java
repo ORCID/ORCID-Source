@@ -19,7 +19,7 @@ package org.orcid.core.adapter.impl;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
-import org.orcid.jaxb.model.client_rc4.Client;
+import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 public class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {

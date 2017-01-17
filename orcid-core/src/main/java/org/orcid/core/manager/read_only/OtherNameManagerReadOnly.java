@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager.read_only;
 
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 
 public interface OtherNameManagerReadOnly {
     OtherNames getOtherNames(String orcid, long lastModified);

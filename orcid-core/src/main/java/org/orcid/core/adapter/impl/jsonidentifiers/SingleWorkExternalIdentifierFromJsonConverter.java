@@ -16,8 +16,8 @@
  */
 package org.orcid.core.adapter.impl.jsonidentifiers;
 
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;

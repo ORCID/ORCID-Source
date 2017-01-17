@@ -362,7 +362,50 @@ public class ApiVersionCheckFilterTest {
             fail();
         }
     }
-            
+        
+    @Test
+    public void api2_0VersionTest() {
+        MockHttpServletRequest mockReq = new MockHttpServletRequest();
+        mockReq.setAttribute("X-Forwarded-Proto", "https");
+        OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
+        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
+        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
+        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v2.0/0000-0001-7510-9252/activities");
+        InBoundHeaders headers = new InBoundHeaders();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
+            filter.filter(containerRequest);
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
+            filter.filter(containerRequest);            
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
+            filter.filter(containerRequest);            
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
+            filter.filter(containerRequest);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
     @Test
     public void apiOauthTokenTest() {
         MockHttpServletRequest mockReq = new MockHttpServletRequest();

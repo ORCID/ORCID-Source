@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.search_rc4.Search;
+import org.orcid.jaxb.model.search_v2.Search;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating

@@ -16,7 +16,7 @@
  */
 package org.orcid.core.adapter;
 
-import org.orcid.jaxb.model.client_rc4.Client;
+import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 public interface JpaJaxbClientAdapter {

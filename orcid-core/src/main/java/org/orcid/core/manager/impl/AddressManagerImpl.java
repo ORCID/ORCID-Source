@@ -33,9 +33,9 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -158,12 +158,12 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }    
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc4.Visibility incomingCountryVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc4.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc4.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
+        org.orcid.jaxb.model.common_v2.Visibility incomingCountryVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_v2.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultCountryVisibility);            
         } else if (incomingCountryVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }    
     

@@ -26,8 +26,8 @@ import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 

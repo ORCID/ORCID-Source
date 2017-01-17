@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Keyword;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -81,7 +81,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     private Keyword getKeyword() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Keyword.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/keyword-2.0_rc4.xml";
+        String name = "/record_2.0/samples/keyword-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Keyword) unmarshaller.unmarshal(inputStream); 
     }

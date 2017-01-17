@@ -662,12 +662,14 @@
 	            <ref bean="versionConverterV2_0_rc1ToV2_0_rc2" />
 	            <ref bean="versionConverterV2_0_rc2ToV2_0_rc3" />
 	            <ref bean="versionConverterV2_0_rc3ToV2_0_rc4" />
+	            <ref bean="versionConverterV2_0_rc4ToV2_0" />
 	        </list>
 	    </property>
 	</bean>
     <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
 	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
 	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
+	<bean id="versionConverterV2_0_rc4ToV2_0" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc4ToV2_0"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	

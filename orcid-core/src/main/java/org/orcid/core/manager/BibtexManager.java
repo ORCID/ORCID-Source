@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.record_v2.Work;
 
 public interface BibtexManager {
 
