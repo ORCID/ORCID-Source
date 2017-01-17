@@ -137,4 +137,4 @@ Release candidate versions of the XSD contain elements and data structures for f
 
 # Getting help
 
-Your best first resource for getting help is our [ORCID Support Site](http://support.orcid.org), where you may access our complete documentation, tutorials and guides, as well as contact our support team. We also invite you to submit questions to the [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.
+Your best first resource for getting help is our [ORCID Support Site](https://support.orcid.org), where you may access our complete documentation, tutorials and guides, as well as contact our support team. We also invite you to submit questions to the [API Users Group](https://groups.google.com/forum/?fromgroups#!forum/orcid-api-users) mailing list and forum.

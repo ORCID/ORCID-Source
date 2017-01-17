@@ -9,7 +9,7 @@ The ORCID Team is always **EXCITED** to get contributions. Checkout our pointers
 * **Feature requests should be made in the Ideas forum**
 
     Don't create issues for feature requests in the GitHub issue tracker. Instead,
-    search [the Ideas Forum](http://support.orcid.org/forums/175591-orcid-ideas-forum)
+    search [the Ideas Forum](https://support.orcid.org/forums/175591-orcid-ideas-forum)
     to see if your idea has already been suggested. If it has, you can vote and comment
     to show your support. If not, you can add a new idea.
 

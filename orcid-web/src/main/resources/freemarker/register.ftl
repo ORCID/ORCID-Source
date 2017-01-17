@@ -35,7 +35,7 @@
                             ${springMacroRequestContext.getMessage("social.link.to_finish.register.1")}<span ng-bind="idpName"></span>${springMacroRequestContext.getMessage("social.link.to_finish.register.2")}
                         </p>
                         <p>
-                            <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+                            <i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="_blank" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
                         </p>
                     </div>
                     <div>                                                   

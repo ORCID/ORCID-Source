@@ -67,7 +67,7 @@
 						<xs:documentation>
 							The ORCID error code that defines the specific type of error. A full
 							list of codes can be found at
-							http://support.orcid.org/knowledgebase/articles/....
+							https://support.orcid.org/knowledgebase/articles/....
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>

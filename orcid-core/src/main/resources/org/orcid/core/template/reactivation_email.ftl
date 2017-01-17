@@ -26,7 +26,7 @@ ${reactivationUrl}
 
 <@emailMacros.msg "email.reactivation.after" />
 
-<@emailMacros.msg "email.common.if_you_have_any1" />http://support.orcid.org<@emailMacros.msg "email.common.if_you_have_any2" />
+<@emailMacros.msg "email.common.if_you_have_any1" /><@emailMacros.knowledgeBaseUri /><@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}
