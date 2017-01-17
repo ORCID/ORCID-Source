@@ -42,6 +42,7 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.locale.LocaleManager;
@@ -58,12 +59,19 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_v2.Employments;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_v2.Fundings;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -72,13 +80,16 @@ import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.History;
 import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.jaxb.model.search_v2.Result;
@@ -143,6 +154,26 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void testViewWorks() {
+        Response response = serviceDelegator.viewWorks(ORCID);
+        assertNotNull(response);
+        Works works = (Works) response.getEntity();
+        assertNotNull(works);
+        assertEquals("/0000-0000-0000-0003/works", works.getPath());
+        assertNotNull(works.getLastModifiedDate());
+        assertNotNull(works.getLastModifiedDate().getValue());
+        assertEquals(1, works.getWorkGroup().size());
+        assertEquals(1, works.getWorkGroup().get(0).getWorkSummary().size());
+        WorkSummary work = works.getWorkGroup().get(0).getWorkSummary().get(0);
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertNotNull(work.getLastModifiedDate());
+        assertNotNull(work.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getType());
+        assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+    }
+    
+    @Test
     public void testViewFunding() {
         Response response = serviceDelegator.viewFunding(ORCID, 10L);
         assertNotNull(response);
@@ -157,6 +188,29 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
         assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewFundings() {
+        Response response = serviceDelegator.viewFundings(ORCID);
+        assertNotNull(response);
+        Fundings fundings = (Fundings) response.getEntity();
+        assertNotNull(fundings);
+        assertEquals("/0000-0000-0000-0003/fundings", fundings.getPath());
+        assertNotNull(fundings.getLastModifiedDate());
+        assertNotNull(fundings.getLastModifiedDate().getValue());        
+        assertEquals(1, fundings.getFundingGroup().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        FundingSummary funding = fundings.getFundingGroup().get(0).getFundingSummary().get(0);
+        assertNotNull(funding.getTitle());
+        assertNotNull(funding.getTitle().getTitle());
+        assertEquals(Long.valueOf(10), funding.getPutCode());
+        assertNotNull(funding.getLastModifiedDate());
+        assertNotNull(funding.getLastModifiedDate().getValue());                
+        assertEquals("/0000-0000-0000-0003/funding/10", funding.getPath());
+        assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
+        assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
+        assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());        
     }
 
     @Test
@@ -175,11 +229,32 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testViewEducations() {
+        Response response = serviceDelegator.viewEducations(ORCID);
+        assertNotNull(response);
+        Educations educations = (Educations) response.getEntity();
+        assertNotNull(educations);
+        assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
+        assertNotNull(educations.getLastModifiedDate());
+        assertNotNull(educations.getLastModifiedDate().getValue());
+        assertEquals(1, educations.getSummaries().size());
+        EducationSummary education = educations.getSummaries().get(0);
+        assertEquals(Long.valueOf(20), education.getPutCode());
+        assertNotNull(education.getLastModifiedDate());
+        assertNotNull(education.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+        assertEquals("PUBLIC Department", education.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+        assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
+    }
+    
+    @Test
     public void testViewPeerReview() {
         Response response = serviceDelegator.viewPeerReview(ORCID, 9L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/0000-0000-0000-0003/peer-review/9", peerReview.getPath());        
         assertNotNull(peerReview.getLastModifiedDate());
         assertNotNull(peerReview.getLastModifiedDate().getValue());
         assertEquals(Long.valueOf(9), peerReview.getPutCode());
@@ -195,6 +270,33 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
+    public void testViewPeerReviews() {
+        Response response = serviceDelegator.viewPeerReviews(ORCID);
+        assertNotNull(response);
+        PeerReviews peerReviews = (PeerReviews) response.getEntity();
+        assertNotNull(peerReviews);
+        assertEquals("/0000-0000-0000-0003/peer-reviews", peerReviews.getPath());
+        assertNotNull(peerReviews.getLastModifiedDate());
+        assertNotNull(peerReviews.getLastModifiedDate().getValue());
+        assertEquals(1, peerReviews.getPeerReviewGroup().size());
+        assertEquals(1, peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        PeerReviewSummary peerReview = peerReviews.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
+        assertEquals(Long.valueOf(9), peerReview.getPutCode());
+        assertNotNull(peerReview.getLastModifiedDate());
+        assertNotNull(peerReview.getLastModifiedDate().getValue());        
+        assertEquals("02", peerReview.getCompletionDate().getDay().getValue());
+        assertEquals("02", peerReview.getCompletionDate().getMonth().getValue());
+        assertEquals("2016", peerReview.getCompletionDate().getYear().getValue());
+        assertNotNull(peerReview.getExternalIdentifiers());
+        assertNotNull(peerReview.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("/0000-0000-0000-0003/peer-review/9", peerReview.getPath());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(Visibility.PUBLIC.value(), peerReview.getVisibility().value());
+        assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+    }
+    
+    @Test
     public void testViewEmployment() {
         Response response = serviceDelegator.viewEmployment(ORCID, 17L);
         assertNotNull(response);
@@ -203,6 +305,26 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(employment.getLastModifiedDate());
         assertNotNull(employment.getLastModifiedDate().getValue());
         assertEquals(Long.valueOf(17), employment.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
+        assertEquals("PUBLIC Department", employment.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());  
+        assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewEmployments() {
+        Response response = serviceDelegator.viewEmployments(ORCID);
+        assertNotNull(response);
+        Employments employments = (Employments) response.getEntity();
+        assertNotNull(employments);
+        assertEquals("/0000-0000-0000-0003/employments", employments.getPath());
+        assertNotNull(employments.getLastModifiedDate());
+        assertNotNull(employments.getLastModifiedDate().getValue());
+        assertEquals(1, employments.getSummaries().size());
+        EmploymentSummary employment = employments.getSummaries().get(0);
+        assertEquals(Long.valueOf(17), employment.getPutCode());
+        assertNotNull(employment.getLastModifiedDate());
+        assertNotNull(employment.getLastModifiedDate().getValue());        
         assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
         assertEquals("PUBLIC Department", employment.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());  
@@ -225,10 +347,52 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testViewOtherNames() {
+        Response response = serviceDelegator.viewOtherNames(ORCID);
+        assertNotNull(response);
+        OtherNames otherNames = (OtherNames) response.getEntity();
+        assertNotNull(otherNames);
+        assertNotNull(otherNames.getLastModifiedDate());
+        assertNotNull(otherNames.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/other-names", otherNames.getPath());
+        assertEquals(1, otherNames.getOtherNames().size());
+        OtherName otherName = otherNames.getOtherNames().get(0);
+        assertNotNull(otherName);
+        assertNotNull(otherName.getLastModifiedDate());
+        assertNotNull(otherName.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(13), otherName.getPutCode());
+        assertEquals("Other Name PUBLIC", otherName.getContent());
+        assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+        assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+    }
+    
+    @Test
     public void testViewKeyword() {
         Response response = serviceDelegator.viewKeyword(ORCID, 9L);
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertNotNull(keyword.getLastModifiedDate());
+        assertNotNull(keyword.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(9), keyword.getPutCode());
+        assertEquals("PUBLIC", keyword.getContent());
+        assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewKeywords() {
+        Response response = serviceDelegator.viewKeywords(ORCID);
+        assertNotNull(response);
+        Keywords keywords = (Keywords) response.getEntity();
+        assertNotNull(keywords);
+        assertNotNull(keywords.getLastModifiedDate());
+        assertNotNull(keywords.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/keywords", keywords.getPath());
+        assertEquals(1, keywords.getKeywords().size());
+        Keyword keyword = keywords.getKeywords().get(0);
         assertNotNull(keyword);
         assertNotNull(keyword.getLastModifiedDate());
         assertNotNull(keyword.getLastModifiedDate().getValue());
@@ -257,10 +421,55 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testViewExternalIdentifiers() {
+        Response response = serviceDelegator.viewExternalIdentifiers(ORCID);
+        assertNotNull(response);
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getLastModifiedDate());
+        assertNotNull(extIds.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        PersonExternalIdentifier extId = extIds.getExternalIdentifiers().get(0);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(13), extId.getPutCode());
+        assertEquals("public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+    }
+    
+    @Test
     public void testViewResearcherUrl() {
         Response response = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         assertNotNull(response);
         ResearcherUrl rUrl = (ResearcherUrl) response.getEntity();
+        assertNotNull(rUrl);
+        assertNotNull(rUrl.getLastModifiedDate());
+        assertNotNull(rUrl.getLastModifiedDate().getValue());
+        assertNotNull(rUrl.getUrl());
+        assertEquals("http://www.researcherurl.com?id=13", rUrl.getUrl().getValue());
+        assertEquals("public_rurl", rUrl.getUrlName());        
+        assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+        assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewResearcherUrls() {
+        Response response = serviceDelegator.viewResearcherUrls(ORCID);
+        assertNotNull(response);
+        ResearcherUrls rUrls = (ResearcherUrls) response.getEntity();
+        assertNotNull(rUrls);
+        assertNotNull(rUrls.getLastModifiedDate());
+        assertNotNull(rUrls.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/researcher-urls", rUrls.getPath());
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        ResearcherUrl rUrl = rUrls.getResearcherUrls().get(0);
         assertNotNull(rUrl);
         assertNotNull(rUrl.getLastModifiedDate());
         assertNotNull(rUrl.getLastModifiedDate().getValue());
@@ -299,6 +508,28 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewAddress(ORCID, 9L);
         assertNotNull(response);
         Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertNotNull(address.getLastModifiedDate());
+        assertNotNull(address.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(9), address.getPutCode());
+        assertNotNull(address.getCountry());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewAddresses() {
+        Response response = serviceDelegator.viewAddresses(ORCID);
+        assertNotNull(response);
+        Addresses addresses = (Addresses) response.getEntity();
+        assertNotNull(addresses);
+        assertNotNull(addresses.getLastModifiedDate());
+        assertNotNull(addresses.getLastModifiedDate().getValue());
+        assertEquals("/0000-0000-0000-0003/address", addresses.getPath());
+        assertEquals(1, addresses.getAddress().size());
+        Address address = addresses.getAddress().get(0);
         assertNotNull(address);
         assertNotNull(address.getLastModifiedDate());
         assertNotNull(address.getLastModifiedDate().getValue());
@@ -1025,6 +1256,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     
     private void validateActivities(ActivitiesSummary summary) {
         assertNotNull(summary);
+        assertEquals(OrcidApiConstants.ACTIVITIES.replace("{orcid}", ORCID), summary.getPath());
         assertNotNull(summary.getLastModifiedDate());
         assertNotNull(summary.getLastModifiedDate().getValue());
         // Check works

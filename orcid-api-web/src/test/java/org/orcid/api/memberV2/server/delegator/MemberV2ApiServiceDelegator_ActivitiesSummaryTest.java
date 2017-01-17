@@ -101,6 +101,7 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
         Response r = serviceDelegator.viewActivities(ORCID);
         ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
         assertNotNull(as);
+        assertEquals("/0000-0000-0000-0003/activities", as.getPath());
         Utils.assertIsPublicOrSource(as, "APP-5555555555555555");
     }
 
@@ -126,7 +127,7 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
         ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
         assertNotNull(as);
-        assertNotNull(as.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", as.getPath());
         Utils.verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
         assertEquals(4, as.getEducations().getSummaries().size());
@@ -295,6 +296,7 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
 
         assertNotNull(as);
         assertNotNull(as.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", as.getPath());      
         Utils.verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
         assertEquals(3, as.getEducations().getSummaries().size());
@@ -672,22 +674,25 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
         Response response = serviceDelegator.viewActivities(ORCID);
         ActivitiesSummary as = (ActivitiesSummary) response.getEntity();
         assertNotNull(as);
-        assertNotNull(as.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", as.getPath());        
         Utils.verifyLastModified(as.getLastModifiedDate());
         // Only public educations
         assertNotNull(as.getEducations());
+        assertEquals("/0000-0000-0000-0003/educations", as.getEducations().getPath());       
         assertEquals(1, as.getEducations().getSummaries().size());
         assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, as.getEducations().getSummaries().get(0).getVisibility());
 
         // Only public employments
         assertNotNull(as.getEmployments());
+        assertEquals("/0000-0000-0000-0003/employments", as.getEmployments().getPath());
         assertEquals(1, as.getEmployments().getSummaries().size());
         assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, as.getEmployments().getSummaries().get(0).getVisibility());
 
         // Only public funding
         assertNotNull(as.getFundings());
+        assertEquals("/0000-0000-0000-0003/fundings", as.getFundings().getPath());
         assertEquals(1, as.getFundings().getFundingGroup().size());
         assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
         assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
@@ -695,6 +700,7 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
 
         // Only public peer reviews
         assertNotNull(as.getPeerReviews());
+        assertEquals("/0000-0000-0000-0003/peer-reviews", as.getPeerReviews().getPath());
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
         assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
         assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
@@ -702,6 +708,7 @@ public class MemberV2ApiServiceDelegator_ActivitiesSummaryTest extends DBUnitTes
 
         // Only public works
         assertNotNull(as.getWorks());
+        assertEquals("/0000-0000-0000-0003/works", as.getWorks().getPath());
         assertEquals(1, as.getWorks().getWorkGroup().size());
         assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
         assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());

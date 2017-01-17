@@ -107,6 +107,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -116,6 +117,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
         PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -126,6 +128,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
         Utils.verifyLastModified(extIds.getLastModifiedDate());
         List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
@@ -160,6 +163,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/0000-0000-0000-0003/external-identifier/2", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(2), extId.getPutCode());
@@ -180,6 +184,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/0000-0000-0000-0003/external-identifier/3", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(3), extId.getPutCode());
@@ -200,6 +205,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/0000-0000-0000-0003/external-identifier/5", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(5), extId.getPutCode());
@@ -415,6 +421,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
         assertEquals(3, p.getExternalIdentifiers().size());
         boolean found13 = false, found14 = false, found15 = false;

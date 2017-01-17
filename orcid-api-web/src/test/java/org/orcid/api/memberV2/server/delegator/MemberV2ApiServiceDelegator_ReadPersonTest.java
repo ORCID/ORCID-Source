@@ -98,6 +98,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Response r = serviceDelegator.viewPerson(ORCID);
         Person element = (Person) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/person", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -119,6 +120,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertEquals(Person.class.getName(), response.getEntity().getClass().getName());
         Person p = (Person) response.getEntity();
         assertNotNull(p);
+        assertEquals("/0000-0000-0000-0003/person", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
 
         // Address
@@ -322,6 +324,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         // This is more an utility that will work only for 0000-0000-0000-0003
         assertEquals("0000-0000-0000-0003", orcid);
         assertNotNull(p);
+        assertEquals("/0000-0000-0000-0003/person", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
         // Address
         assertNotNull(p.getAddresses());
@@ -504,7 +507,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Person.class.getName(), response.getEntity().getClass().getName());
         Person p = (Person) response.getEntity();
-
+        assertEquals("/0000-0000-0000-0003/person", p.getPath());
         // Check email
         // Email
         assertNotNull(p.getEmails());
@@ -538,7 +541,6 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found5);
 
         this.assertAllPublicButEmails(p);
-
     }    
     
     private void assertAllPublicButEmails(Person p) {
