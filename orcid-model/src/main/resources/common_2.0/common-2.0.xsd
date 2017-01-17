@@ -1435,9 +1435,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="common:non-empty-string">
-				<xs:attribute name="visibility" type="common:visibility" />
-			</xs:extension>
+			<xs:extension base="common:non-empty-string" />
 		</xs:simpleContent>
 	</xs:complexType>
 
