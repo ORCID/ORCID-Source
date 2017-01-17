@@ -117,18 +117,18 @@ public class MemberV2ApiServiceDelegator_ReadRecordActivitiesPersonAndPersonalDe
 
     @Resource
     private AddressManager addressManager;
-
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
-    }
+    }    
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(addressManager, "profileLastModifiedAspect", profileLastModifiedAspect);
     }
-
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);

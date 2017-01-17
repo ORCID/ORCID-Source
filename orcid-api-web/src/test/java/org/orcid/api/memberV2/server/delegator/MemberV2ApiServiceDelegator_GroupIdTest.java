@@ -98,7 +98,7 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
         Response response = serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
         // Response created with location as the group-id
         assertNotNull(response.getMetadata().get("Location").get(0));
-        assertEquals(response.getMetadata().get("Location").get(0).toString(), "5");
+        assertEquals(response.getMetadata().get("Location").get(0).toString(), "6");
     }
 
     @Test
@@ -131,14 +131,14 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     public void testDeleteGroupIdRecord() {
         SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         // Verify if the record exists
-        Response response = serviceDelegator.viewGroupIdRecord(4L);
+        Response response = serviceDelegator.viewGroupIdRecord(5L);
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
         // Delete the record
-        serviceDelegator.deleteGroupIdRecord(Long.valueOf("4"));
+        serviceDelegator.deleteGroupIdRecord(5L);
         // Throws a record not found exception
-        serviceDelegator.viewGroupIdRecord(Long.valueOf("4"));
+        serviceDelegator.viewGroupIdRecord(5L);
     }
 
     @Test

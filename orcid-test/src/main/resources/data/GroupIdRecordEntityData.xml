@@ -22,4 +22,5 @@
     <group_id_record id="2" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000002" group_name="TestGroup2" group_description="TestDescription2" group_type="publisher" client_source_id="APP-5555555555555555"/>
     <group_id_record id="3" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000003" group_name="TestGroup3" group_description="TestDescription3" group_type="publisher" client_source_id="APP-5555555555555555"/>  
     <group_id_record id="4" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000004" group_name="TestGroup4" group_description="TestDescription4" group_type="publisher" client_source_id="APP-5555555555555555"/>
+    <group_id_record id="5" date_created="2013-10-22 11:09:28.636" last_modified="2013-10-22 11:09:28.636" group_id="issn:0000005" group_name="TestGroup5" group_description="TestDescription5" group_type="publisher" client_source_id="APP-5555555555555555"/>
 </dataset>

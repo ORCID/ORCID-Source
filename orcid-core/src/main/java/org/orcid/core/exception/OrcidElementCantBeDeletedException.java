@@ -14,19 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.exception;
 
-import java.util.List;
+public class OrcidElementCantBeDeletedException extends ApplicationException {
 
-import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
+    private static final long serialVersionUID = 5048947096027869417L;
 
-public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> {
-    List<GroupIdRecordEntity> getGroupIdRecords(int pageSize, int page);
-
-    boolean exists(String groupId);
-    GroupIdRecordEntity findByGroupId(String groupId);
-
-    GroupIdRecordEntity findByName(String name);
-    
-    boolean haveAnyPeerReview(String groupId);
+    public OrcidElementCantBeDeletedException(String message) {
+        super(message);
+    }
 }
