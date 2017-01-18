@@ -8,7 +8,9 @@ node {
         parameters([
             string(defaultValue: 'master', description: '', name: 'branch_to_build')
         ]), 
-        pipelineTriggers([])
+        pipelineTriggers([
+            cron('* */4 * * *')
+        ])
     ])
     
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
@@ -55,12 +57,12 @@ node {
             echo "Saving tests results"
             junit '**/target/surefire-reports/*.xml'
             build([
-                job: 'ORCID-tomcat', 
+                job: 'ORCID-tomcat',
                 parameters: [
                     string(name: 'tomcat_task', value: 'shutdown')
-                ], 
+                ],
                 wait: true
-            ])            
+            ])
         }
     }
 }

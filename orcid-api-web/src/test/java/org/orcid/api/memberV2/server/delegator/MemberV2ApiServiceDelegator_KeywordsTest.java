@@ -43,22 +43,22 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
@@ -106,6 +106,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         Response r = serviceDelegator.viewKeyword(ORCID, 9L);
         Keyword element = (Keyword) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/keywords/9", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -115,6 +116,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         Response r = serviceDelegator.viewKeywords(ORCID);
         Keywords element = (Keywords) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/keywords", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -125,6 +127,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         assertNotNull(response);
         Keywords keywords = (Keywords) response.getEntity();
         assertNotNull(keywords);
+        assertEquals("/4444-4444-4444-4443/keywords", keywords.getPath());
         Utils.verifyLastModified(keywords.getLastModifiedDate());
         assertNotNull(keywords.getKeywords());
         assertEquals(3, keywords.getKeywords().size());
@@ -153,6 +156,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        assertEquals("/4444-4444-4444-4443/keywords/1", keyword.getPath());
         Utils.verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("tea making", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
@@ -166,6 +170,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        assertEquals("/4444-4444-4444-4443/keywords/2", keyword.getPath());
         Utils.verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("coffee making", keyword.getContent());
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
@@ -179,6 +184,7 @@ public class MemberV2ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
+        assertEquals("/4444-4444-4444-4443/keywords/4", keyword.getPath());
         Utils.verifyLastModified(keyword.getLastModifiedDate());
         assertEquals("what else can we make?", keyword.getContent());
         assertEquals(Visibility.PRIVATE, keyword.getVisibility());

@@ -55,17 +55,17 @@ import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.amended_rc4.AmendedSection;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.CreditName;
-import org.orcid.jaxb.model.record_rc4.FamilyName;
-import org.orcid.jaxb.model.record_rc4.GivenNames;
-import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.CreditName;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -275,7 +275,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 name.setCreditName(new CreditName());
                 name.setGivenNames(new GivenNames("Given Names Deactivated"));
                 name.setFamilyName(new FamilyName("Family Name Deactivated"));
-                name.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PRIVATE);
+                name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
                 name.setPath(deprecatedOrcid);
                 recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
@@ -523,7 +523,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 
         //Update the visibility for every bio element to the visibility selected by the user
         //Update the bio
-        org.orcid.jaxb.model.common_rc4.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc4.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if(profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
@@ -626,7 +626,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);                                      
         }
         
         Set<EmailEntity> emails = toClear.getEmails();

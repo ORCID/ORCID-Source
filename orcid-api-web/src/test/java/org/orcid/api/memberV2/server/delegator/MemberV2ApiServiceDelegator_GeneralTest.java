@@ -32,14 +32,12 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.helper.Utils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -50,24 +48,27 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.manager.impl.OrcidSecurityManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.client_rc4.Client;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OrcidId;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.search_v2.Result;
+import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -696,10 +697,12 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @Test
     public void testSearchByQuery() {
-        OrcidIds orcidIds = new OrcidIds();
-        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
+        Search search = new Search();
+        Result result = new Result();
+        result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
+        search.getResults().add(result);
         OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
-        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>> any())).thenReturn(orcidIds);
+        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>> any())).thenReturn(search);
 
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
         Mockito.doNothing().when(orcidSecurityManager).checkScopes(Mockito.any(ScopePathType.class));
@@ -712,15 +715,15 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
 
         assertNotNull(response);
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof OrcidIds);
-        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
-        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+        assertTrue(response.getEntity() instanceof Search);
+        assertEquals(1, ((Search) response.getEntity()).getResults().size());
+        assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
     }
 
     @Test(expected = OrcidBadRequestException.class)
     public void testSearchByQueryTooManyRows() {
         Map<String, List<String>> params = new HashMap<>();
-        params.put("rows", Arrays.asList(Integer.toString(MemberV2ApiServiceDelegatorImpl.MAX_SEARCH_ROWS + 20)));
+        params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
 
         LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
         Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");

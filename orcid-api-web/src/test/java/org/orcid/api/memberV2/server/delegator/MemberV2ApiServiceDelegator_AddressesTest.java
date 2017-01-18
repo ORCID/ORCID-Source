@@ -43,23 +43,23 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
@@ -106,6 +106,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         Response r = serviceDelegator.viewAddresses(ORCID);
         Addresses element = (Addresses) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/address", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -115,6 +116,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         Response r = serviceDelegator.viewAddress(ORCID, 9L);
         Address element = (Address) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/address/9", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -127,6 +129,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
         Addresses a = (Addresses) r.getEntity();
         assertNotNull(a);
+        assertEquals("/0000-0000-0000-0003/address", a.getPath());
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(3, a.getAddress().size());
         boolean found9 = false, found10 = false, found11 = false;
@@ -183,6 +186,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
+        assertEquals("/4444-4444-4444-4447/address", addresses.getPath());
         Utils.verifyLastModified(addresses.getLastModifiedDate());
         assertNotNull(addresses.getAddress());
         assertEquals(3, addresses.getAddress().size());
@@ -211,6 +215,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/2", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
         assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
@@ -224,6 +229,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/3", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.LIMITED, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
@@ -237,6 +243,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/4", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PRIVATE, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());

@@ -106,7 +106,7 @@
                                     <div id="social-login-help" class="popover bottom">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+                                            <p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="${knowledgeBaseUri}/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
                                         </div>
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@
                                             <div id="institution-login-help" class="popover bottom">
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
-                                                    <p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
+                                                    <p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="${knowledgeBaseUri}/articles/892920" target="_blank"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
                                                 </div>
                                             </div>
                                         </div>

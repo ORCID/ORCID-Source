@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.record_rc4.CitationType;
+import org.orcid.jaxb.model.record_v2.CitationType;
 
 import com.fasterxml.jackson.databind.JavaType;
 
@@ -70,13 +70,15 @@ public class SwaggerModelConverter implements ModelConverter {
             if (    org.orcid.jaxb.model.common_rc1.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc2.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.common_rc3.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls) || 
+                    org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
             }
             if (    org.orcid.jaxb.model.record_rc1.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc2.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.record_rc3.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls)) {
+                    org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls) || 
+                    org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }
         }

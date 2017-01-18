@@ -22,8 +22,8 @@ import java.net.URISyntaxException;
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
-import org.orcid.jaxb.model.error_rc4.OrcidError;
-import org.orcid.jaxb.model.record_rc4.Record;
+import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;

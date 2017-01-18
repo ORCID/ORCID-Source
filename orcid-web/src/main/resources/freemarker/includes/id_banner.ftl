@@ -76,7 +76,7 @@
 				 arrowStyle="left: 48px;"	                 	     
 			/>
 			<div style="float: left">
-				<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+				<a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
 			</div>
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">

@@ -30,10 +30,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record.summary_rc4.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc4.Employment;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -110,7 +110,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employment.getOrganization().getAddress());
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.common_rc4.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());
@@ -141,9 +141,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/employment-2.0_rc4.xml";
+        String name = "/record_2.0/samples/employment-2.0.xml";
         if(full) {
-            name = "/record_2.0_rc4/samples/employment-full-2.0_rc4.xml";
+            name = "/record_2.0/samples/employment-full-2.0.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Employment) unmarshaller.unmarshal(inputStream);

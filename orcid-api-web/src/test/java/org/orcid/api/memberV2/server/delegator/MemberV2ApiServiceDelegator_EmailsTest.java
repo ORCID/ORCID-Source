@@ -38,22 +38,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Email;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -93,6 +93,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEmails(ORCID);
         Emails element = (Emails) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/email", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -104,6 +105,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
         assertNotNull(email);
+        assertEquals("/0000-0000-0000-0003/email", email.getPath());
         Utils.verifyLastModified(email.getLastModifiedDate());
         assertEquals(3, email.getEmails().size());
         boolean found1 = false;
@@ -135,6 +137,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
         assertNotNull(email);
+        assertEquals("/4444-4444-4444-4497/email", email.getPath());
         assertNotNull(email.getLastModifiedDate());
         assertEquals(3, email.getEmails().size());
         assertEquals("public_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(0).getEmail());
@@ -152,6 +155,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertNotNull(response);
         Emails emails = (Emails) response.getEntity();
         assertNotNull(emails);
+        assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
         assertEquals(3, emails.getEmails().size());

@@ -23,7 +23,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.RecordNameDao;

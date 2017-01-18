@@ -40,24 +40,24 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Educations;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_v2.Educations;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
@@ -106,6 +106,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducation(ORCID, 20L);
         Education element = (Education) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/education/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -121,6 +122,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducations(ORCID);
         Educations element = (Educations) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/educations", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -130,6 +132,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducationSummary(ORCID, 20L);
         EducationSummary element = (EducationSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/education/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -197,7 +200,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(r);
         Educations educations = (Educations) r.getEntity();
         assertNotNull(educations);
-        assertNotNull(educations.getPath());
+        assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
         assertNotNull(educations.getSummaries());
         assertEquals(4, educations.getSummaries().size());

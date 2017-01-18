@@ -17,7 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
-import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_v2.Biography;
 
 /**
  * 

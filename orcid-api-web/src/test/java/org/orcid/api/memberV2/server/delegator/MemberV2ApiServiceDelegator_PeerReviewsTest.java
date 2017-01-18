@@ -42,34 +42,34 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Title;
-import org.orcid.jaxb.model.common_rc4.Url;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Title;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc4.PeerReviews;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.ExternalIDs;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PeerReviewType;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Role;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
-import org.orcid.jaxb.model.record_rc4.WorkTitle;
-import org.orcid.jaxb.model.record_rc4.WorkType;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Role;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
@@ -118,6 +118,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
         PeerReview element = (PeerReview) r.getEntity();
         assertNotNull(element);
+        assertEquals("/4444-4444-4444-4447/peer-review/2", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -127,6 +128,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -137,6 +139,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(1L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -166,6 +169,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/3", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(3L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -184,6 +188,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/4", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(4L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -216,6 +221,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReviewSummary peerReview = (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf("1"), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -234,7 +240,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
         assertNotNull(peerReviews);
-        assertNotNull(peerReviews.getPath());
+        assertEquals("/0000-0000-0000-0003/peer-reviews", peerReviews.getPath());
         Utils.verifyLastModified(peerReviews.getLastModifiedDate());
         assertNotNull(peerReviews.getPeerReviewGroup());
         assertEquals(4, peerReviews.getPeerReviewGroup().size());

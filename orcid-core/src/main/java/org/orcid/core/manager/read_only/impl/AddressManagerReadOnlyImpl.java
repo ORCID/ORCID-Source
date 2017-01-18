@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;

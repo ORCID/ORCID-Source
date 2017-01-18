@@ -58,6 +58,11 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="memberV2ApiClient" class="org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="publicV1ApiClient" class="org.orcid.integration.api.pub.PublicV1ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
         <constructor-arg ref="jerseyClient"/>
@@ -80,6 +85,11 @@
     
     <bean id="publicV2ApiClient_rc4" class="org.orcid.integration.api.pub.PublicV2ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v2.0_rc4"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <bean id="publicV2ApiClient" class="org.orcid.integration.api.pub.PublicV2ApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v2.0"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     

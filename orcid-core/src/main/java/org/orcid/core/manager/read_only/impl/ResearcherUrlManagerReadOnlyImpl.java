@@ -22,9 +22,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.cache.annotation.Cacheable;

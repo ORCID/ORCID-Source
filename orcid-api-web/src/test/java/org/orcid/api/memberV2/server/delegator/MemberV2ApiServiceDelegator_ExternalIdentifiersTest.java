@@ -44,23 +44,23 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Url;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -107,6 +107,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         Response r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         PersonExternalIdentifier element = (PersonExternalIdentifier) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -116,6 +117,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         Response r = serviceDelegator.viewExternalIdentifiers(ORCID);
         PersonExternalIdentifiers element = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -126,6 +128,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
+        assertEquals("/4444-4444-4444-4442/external-identifiers", extIds.getPath());
         Utils.verifyLastModified(extIds.getLastModifiedDate());
         List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
@@ -160,6 +163,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/4444-4444-4444-4442/external-identifiers/2", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(2), extId.getPutCode());
@@ -180,6 +184,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/4444-4444-4444-4442/external-identifiers/3", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(3), extId.getPutCode());
@@ -200,6 +205,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
+        assertEquals("/4444-4444-4444-4442/external-identifiers/5", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(5), extId.getPutCode());
@@ -415,6 +421,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
+        assertEquals("/0000-0000-0000-0003/external-identifiers", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
         assertEquals(3, p.getExternalIdentifiers().size());
         boolean found13 = false, found14 = false, found15 = false;

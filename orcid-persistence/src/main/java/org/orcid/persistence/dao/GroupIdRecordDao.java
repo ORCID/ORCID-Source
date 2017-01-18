@@ -27,4 +27,6 @@ public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> 
     GroupIdRecordEntity findByGroupId(String groupId);
 
     GroupIdRecordEntity findByName(String name);
+    
+    boolean haveAnyPeerReview(String groupId);
 }

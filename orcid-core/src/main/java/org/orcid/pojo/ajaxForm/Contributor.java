@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_rc4.ContributorEmail;
-import org.orcid.jaxb.model.common_rc4.ContributorOrcid;
-import org.orcid.jaxb.model.common_rc4.CreditName;
-import org.orcid.jaxb.model.record_rc4.FundingContributor;
-import org.orcid.jaxb.model.record_rc4.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_rc4.FundingContributorRole;
+import org.orcid.jaxb.model.common_v2.ContributorEmail;
+import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.FundingContributorAttributes;
+import org.orcid.jaxb.model.record_v2.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -48,7 +48,7 @@ public class Contributor implements ErrorsInterface, Serializable {
 
     private Text contributorRole;
 
-    public static Contributor valueOf(org.orcid.jaxb.model.common_rc4.Contributor contributor) {
+    public static Contributor valueOf(org.orcid.jaxb.model.common_v2.Contributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {

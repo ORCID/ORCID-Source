@@ -44,22 +44,22 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -105,6 +105,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         Response r = serviceDelegator.viewOtherName(ORCID, 13L);
         OtherName element = (OtherName) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names/13", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -114,6 +115,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         Response r = serviceDelegator.viewOtherNames(ORCID);
         OtherNames element = (OtherNames) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -124,6 +126,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
+        assertEquals("/4444-4444-4444-4446/other-names", otherNames.getPath());
         Utils.verifyLastModified(otherNames.getLastModifiedDate());
         assertNotNull(otherNames.getOtherNames());
         assertEquals(3, otherNames.getOtherNames().size());
@@ -151,6 +154,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/5", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 1", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
@@ -164,6 +168,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/6", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 2", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
@@ -177,6 +182,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/8", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 4", otherName.getContent());
         assertEquals(Visibility.PRIVATE, otherName.getVisibility());

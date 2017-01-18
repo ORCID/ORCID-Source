@@ -17,7 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 
 public interface GroupIdRecordManager extends GroupIdRecordManagerReadOnly {
 

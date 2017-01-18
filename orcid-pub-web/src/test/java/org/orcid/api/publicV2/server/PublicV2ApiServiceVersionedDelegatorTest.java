@@ -48,10 +48,11 @@ import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedD
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.client_rc4.Client;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.OrcidId;
-import org.orcid.jaxb.model.record_rc4.OrcidIds;
+import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.search_v2.Result;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -71,7 +72,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
     
-	@Resource(name = "publicV2ApiServiceDelegatorRc4")
+	@Resource(name = "publicV2ApiServiceDelegatorV2")
 	PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
     @Resource
@@ -778,9 +779,11 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     @Test
     public void testSearchByQuery() {
-        OrcidIds orcidIds = new OrcidIds();
-        orcidIds.getOrcidIds().add(new OrcidId("some-orcid-id"));
-        Response searchResponse = Response.ok(orcidIds).build();
+        Search search = new Search();
+        Result result = new Result();
+        result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
+        search.getResults().add(result);
+        Response searchResponse = Response.ok(search).build();
         PublicV2ApiServiceDelegatorImpl delegator = Mockito.mock(PublicV2ApiServiceDelegatorImpl.class);
         Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>>any())).thenReturn(searchResponse);
         PublicV2ApiServiceVersionedDelegatorImpl versionedDelegator = new PublicV2ApiServiceVersionedDelegatorImpl();
@@ -790,9 +793,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         // just testing MemberV2ApiServiceDelegatorImpl's response is returned 
         assertNotNull(response);
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof OrcidIds);
-        assertEquals(1, ((OrcidIds) response.getEntity()).getOrcidIds().size());
-        assertEquals("some-orcid-id", ((OrcidIds) response.getEntity()).getOrcidIds().get(0).getValue());
+        assertTrue(response.getEntity() instanceof Search);
+        assertEquals(1, ((Search) response.getEntity()).getResults().size());
+        assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
     }
 
     @Test(expected = NoResultException.class)
