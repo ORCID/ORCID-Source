@@ -904,8 +904,8 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/orcid-id-2.0.xsd")
-    public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
+    public Response searchByQueryJSON(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
         return jsonQueryResults;
@@ -916,8 +916,8 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/orcid-id-2.0.xsd")
-    public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
+    public Response searchByQueryXML(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
         return xmlQueryResults;
