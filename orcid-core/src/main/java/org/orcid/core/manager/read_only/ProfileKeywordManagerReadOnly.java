@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager.read_only;
 
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.Keywords;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 
 public interface ProfileKeywordManagerReadOnly { 
     /**

@@ -18,8 +18,8 @@ package org.orcid.core.adapter;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface JpaJaxbOtherNameAdapter {

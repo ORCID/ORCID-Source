@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,7 +85,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     private PersonExternalIdentifier getExternalIdentifier() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PersonExternalIdentifier.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/external-identifier-2.0_rc4.xml";             
+        String name = "/record_2.0/samples/external-identifier-2.0.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }

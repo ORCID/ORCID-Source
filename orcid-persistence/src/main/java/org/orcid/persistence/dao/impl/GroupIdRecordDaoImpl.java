@@ -60,4 +60,12 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         GroupIdRecordEntity result = query.getSingleResult();
         return result;
     }
+
+    @Override
+    public boolean haveAnyPeerReview(String groupId) {
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from PeerReviewEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
+        query.setParameter("groupId", groupId);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
 }

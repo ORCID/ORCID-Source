@@ -18,8 +18,8 @@ package org.orcid.core.adapter;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Addresses;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
 public interface JpaJaxbAddressAdapter {

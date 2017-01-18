@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Email;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -77,7 +77,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     private Email getEmail() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Email.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/email-2.0_rc4.xml";
+        String name = "/record_2.0/samples/email-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Email) unmarshaller.unmarshal(inputStream);
     }

@@ -17,8 +17,8 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 
 public interface ExternalIdentifierManager extends ExternalIdentifierManagerReadOnly {
     /**

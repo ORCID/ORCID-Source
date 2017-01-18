@@ -28,13 +28,13 @@ import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.record.summary_rc4.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc4.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc4.Fundings;
-import org.orcid.jaxb.model.record_rc4.ExternalID;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.GroupAble;
-import org.orcid.jaxb.model.record_rc4.GroupableActivity;
+import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.Fundings;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.GroupAble;
+import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
@@ -155,7 +155,7 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Fundings result = new Fundings();
         for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC)) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {

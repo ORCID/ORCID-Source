@@ -35,20 +35,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc4.LastModifiedDate;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc4.GroupIdRecords;
-import org.orcid.jaxb.model.record_rc4.Address;
-import org.orcid.jaxb.model.record_rc4.Education;
-import org.orcid.jaxb.model.record_rc4.Employment;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.Keyword;
-import org.orcid.jaxb.model.record_rc4.OtherName;
-import org.orcid.jaxb.model.record_rc4.PeerReview;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc4.Work;
-import org.orcid.jaxb.model.record_rc4.WorkBulk;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -98,7 +98,7 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
         Response response = serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
         // Response created with location as the group-id
         assertNotNull(response.getMetadata().get("Location").get(0));
-        assertEquals(response.getMetadata().get("Location").get(0).toString(), "5");
+        assertEquals(response.getMetadata().get("Location").get(0).toString(), "6");
     }
 
     @Test
@@ -131,14 +131,14 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     public void testDeleteGroupIdRecord() {
         SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         // Verify if the record exists
-        Response response = serviceDelegator.viewGroupIdRecord(4L);
+        Response response = serviceDelegator.viewGroupIdRecord(5L);
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
         // Delete the record
-        serviceDelegator.deleteGroupIdRecord(Long.valueOf("4"));
+        serviceDelegator.deleteGroupIdRecord(5L);
         // Throws a record not found exception
-        serviceDelegator.viewGroupIdRecord(Long.valueOf("4"));
+        serviceDelegator.viewGroupIdRecord(5L);
     }
 
     @Test

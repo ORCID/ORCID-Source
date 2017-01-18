@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.read_only.impl.BiographyManagerReadOnlyImpl;
-import org.orcid.jaxb.model.record_rc4.Biography;
+import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**

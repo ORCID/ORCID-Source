@@ -19,11 +19,11 @@ package org.orcid.core.utils;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.common_rc4.Contributor;
-import org.orcid.jaxb.model.common_rc4.CreditName;
-import org.orcid.jaxb.model.record_rc4.Funding;
-import org.orcid.jaxb.model.record_rc4.FundingContributor;
-import org.orcid.jaxb.model.record_rc4.Work;
+import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 

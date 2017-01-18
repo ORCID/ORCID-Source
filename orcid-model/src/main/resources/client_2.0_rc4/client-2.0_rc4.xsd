@@ -38,10 +38,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="name" minOccurs="1"
-					maxOccurs="1" />
-				<xs:element ref="description" minOccurs="1"
-					maxOccurs="1" />
+				<xs:element name="name" type="client:name" minOccurs="1" maxOccurs="1" />
+				<xs:element name="description" type="client:description" minOccurs="1" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

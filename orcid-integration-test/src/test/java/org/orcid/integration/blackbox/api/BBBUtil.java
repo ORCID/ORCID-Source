@@ -125,37 +125,18 @@ public class BBBUtil {
         } finally {
             logUserOut(baseUrl, webDriver);
         }
-    }
-
+    }    
+    
     public static void ngAwareClick(WebElement webElement){
         ngAwareClick(webElement, getWebDriver());
     }
     
-    public static void ngAwareClick(WebElement webElement, boolean hidePopOvers){
-        ngAwareClick(webElement, getWebDriver(), hidePopOvers);
-    }
-    
-    public static void ngAwareClick(WebElement webElement, WebDriver webDriver, boolean hidePopOvers) {
+    public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).perform();
-        
-        if(hidePopOvers) {
-        	//Hide all popover tooltip 
-	        List<WebElement> visibilityElements = webDriver.findElements(By.className("popover"));
-	        for (WebElement popOver : visibilityElements) {	        	
-	        	if(popOver.isDisplayed()) {
-	        		executeJavaScript("arguments[0].setAttribute('class','hide')", popOver, webDriver);
-	        	}
-	        } 
-        }
-        
+        actions.moveToElement(webElement).perform();        
         actions.click(webElement).perform();
         waitForAngular(webDriver);
-    }
-
-    public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-    	ngAwareClick(webElement, webDriver, false);
     }
     
     public static void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {

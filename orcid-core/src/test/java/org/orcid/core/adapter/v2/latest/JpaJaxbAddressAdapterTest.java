@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_rc4.Iso3166Country;
-import org.orcid.jaxb.model.common_rc4.Visibility;
-import org.orcid.jaxb.model.record_rc4.Address;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -78,7 +78,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     private Address getAddress() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Address.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc4/samples/address-2.0_rc4.xml";
+        String name = "/record_2.0/samples/address-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Address) unmarshaller.unmarshal(inputStream);
     }

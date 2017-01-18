@@ -22,39 +22,39 @@ import java.util.List;
 
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidNonPublicElementException;
-import org.orcid.jaxb.model.common_rc4.Filterable;
-import org.orcid.jaxb.model.common_rc4.VisibilityType;
-import org.orcid.jaxb.model.record.summary_rc4.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc4.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc4.Activity;
-import org.orcid.jaxb.model.record_rc4.Addresses;
-import org.orcid.jaxb.model.record_rc4.Biography;
-import org.orcid.jaxb.model.record_rc4.Emails;
-import org.orcid.jaxb.model.record_rc4.Group;
-import org.orcid.jaxb.model.record_rc4.GroupableActivity;
-import org.orcid.jaxb.model.record_rc4.GroupsContainer;
-import org.orcid.jaxb.model.record_rc4.Keywords;
-import org.orcid.jaxb.model.record_rc4.Name;
-import org.orcid.jaxb.model.record_rc4.OtherNames;
-import org.orcid.jaxb.model.record_rc4.Person;
-import org.orcid.jaxb.model.record_rc4.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc4.PersonalDetails;
-import org.orcid.jaxb.model.record_rc4.Record;
-import org.orcid.jaxb.model.record_rc4.ResearcherUrls;
+import org.orcid.jaxb.model.common_v2.Filterable;
+import org.orcid.jaxb.model.common_v2.VisibilityType;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record_v2.ActivitiesContainer;
+import org.orcid.jaxb.model.record_v2.Activity;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Group;
+import org.orcid.jaxb.model.record_v2.GroupableActivity;
+import org.orcid.jaxb.model.record_v2.GroupsContainer;
+import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
     
     @Override
     public void checkIsPublic(VisibilityType visibilityType) {
-        if (visibilityType != null && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
+        if (visibilityType != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
 
     @Override
     public void checkIsPublic(Biography biography) {
-        if (biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_rc4.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }

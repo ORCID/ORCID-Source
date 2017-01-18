@@ -18,7 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc4.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 
 public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> {

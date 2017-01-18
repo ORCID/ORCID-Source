@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbNameAdapter;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
-import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

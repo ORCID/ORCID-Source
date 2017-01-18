@@ -54,7 +54,7 @@
 			<h1 id="manage-permissions">${springMacroRequestContext.getMessage("manage.managepermission")}</h1>
 			<h4>${springMacroRequestContext.getMessage("manage.trusted_organisations")}</h4>
 			<p>${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br /> 
-			<a href="http://support.orcid.org/knowledgebase/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
+			<a href="${knowledgeBaseUri}/articles/131598">${springMacroRequestContext.getMessage("manage.findoutmore")}</a></p>
 			<table class="table table-bordered table-settings">
 				<thead>
 					<tr>

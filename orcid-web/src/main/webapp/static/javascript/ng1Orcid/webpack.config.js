@@ -16,5 +16,16 @@ module.exports = {
         path: __dirname,
         filename: "../angularOrcid.js"
     },
+    //Uglify won't work with the way things are declared at this moment
+    /*plugins: [
+        new webpack.optimize.UglifyJsPlugin(
+            {
+                compress: { 
+                    warnings: false 
+                },
+                minimize: true
+            }
+        )
+    ],*/
     watch: true
 };

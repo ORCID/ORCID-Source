@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.common_rc4.CreditName;
+import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -63,9 +63,9 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc4.FamilyName;
-import org.orcid.jaxb.model.record_rc4.GivenNames;
-import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
@@ -498,7 +498,7 @@ public class SetUpClientsAndUsers {
             name.setCreditName(new CreditName(params.get(CREDIT_NAME)));
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
-            name.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));                       
+            name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));                       
             if(recordNameManager.exists(orcid)) {
                 recordNameManager.updateRecordName(orcid, name);
             } else {
@@ -508,14 +508,14 @@ public class SetUpClientsAndUsers {
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            org.orcid.jaxb.model.record_rc4.Biography bio = biographyManager.getBiography(orcid, 0L);
+            org.orcid.jaxb.model.record_v2.Biography bio = biographyManager.getBiography(orcid, 0L);
             if (bio == null || bio.getContent() == null) {
-                bio = new org.orcid.jaxb.model.record_rc4.Biography(params.get(BIO)); 
-                bio.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                bio = new org.orcid.jaxb.model.record_v2.Biography(params.get(BIO)); 
+                bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.createBiography(orcid, bio);
             } else {
                 bio.setContent(params.get(BIO));
-                bio.setVisibility(org.orcid.jaxb.model.common_rc4.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.updateBiography(orcid, bio);
             }
             

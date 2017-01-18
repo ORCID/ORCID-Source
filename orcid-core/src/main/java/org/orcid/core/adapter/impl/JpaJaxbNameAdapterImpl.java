@@ -17,7 +17,7 @@
 package org.orcid.core.adapter.impl;
 
 import org.orcid.core.adapter.JpaJaxbNameAdapter;
-import org.orcid.jaxb.model.record_rc4.Name;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 import ma.glasnost.orika.MapperFacade;

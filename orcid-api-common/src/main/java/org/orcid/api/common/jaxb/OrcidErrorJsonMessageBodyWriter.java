@@ -32,7 +32,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.jaxb.model.error_rc4.OrcidError;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 
 /**
  * 

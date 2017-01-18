@@ -42,7 +42,7 @@
 			        	<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
 			        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
 			        </ul>
-			        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+			        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
 		        </div>                
 		    </div>
     	</div>				   					
@@ -68,7 +68,7 @@
 				        	<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
 				        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
 				        </ul>
-				        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+				        <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
 			        </div>
 			    </div>
 	    	</div>
@@ -129,7 +129,7 @@ kind of variable. This temp value is only used in this macro lib -->
 	</#if>      
 </#macro>
 
-<#macro privacy thing selected="protected" btnContainerClass="btn-group privacy-group abs-left-top" helpLink="http://support.orcid.org/knowledgebase/articles/124518 ">
+<#macro privacy thing selected="protected" btnContainerClass="btn-group privacy-group abs-left-top" helpLink="${knowledgeBaseUri}/articles/124518 ">
     <div class="privacy-tool">
         
         <div class="${btnContainerClass}">
@@ -300,7 +300,7 @@ kind of variable. This temp value is only used in this macro lib -->
 				    <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
 				    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
 			    </ul>
-		       <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		       <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
 		    </div>                
 	  	</div>    			   				
  	</div>
@@ -324,7 +324,7 @@ kind of variable. This temp value is only used in this macro lib -->
 				    <li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
 				    <li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
 			    </ul>
-		       <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+		       <a href="${knowledgeBaseUri}/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
 		    </div>                
 	  	</div>    			   				
  	</div>

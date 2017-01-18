@@ -124,7 +124,7 @@ public enum ScopePathType implements Serializable {
     @XmlEnumValue(ScopeConstants.ORCID_PROFILE_READ_LIMITED) ORCID_PROFILE_READ_LIMITED(ScopeConstants.ORCID_PROFILE_READ_LIMITED, READ_LIMITED),
     
     // Emails
-    @XmlEnumValue(ScopeConstants.EMAIL_READ_PRIVATE) EMAIL_READ_PRIVATE(ScopeConstants.EMAIL_READ_PRIVATE),
+    @XmlEnumValue(ScopeConstants.EMAIL_READ_PRIVATE) EMAIL_READ_PRIVATE(ScopeConstants.EMAIL_READ_PRIVATE, READ_PUBLIC),
     
     // ORCID PROFILE CREATE    
     @XmlEnumValue(ScopeConstants.ORCID_PROFILE_CREATE) ORCID_PROFILE_CREATE(ScopeConstants.ORCID_PROFILE_CREATE, AUTHENTICATE, ACTIVITIES_UPDATE, PERSON_UPDATE, ORCID_PROFILE_READ_LIMITED),
@@ -238,7 +238,7 @@ public enum ScopePathType implements Serializable {
     }
 
     /*
-     * http://support.orcid.org/knowledgebase/articles/119656 These types are
+     * https://support.orcid.org/knowledgebase/articles/119656 These types are
      * issues by ORCID and don't expire for at long time.
      */
     public boolean isClientCreditalScope() {
