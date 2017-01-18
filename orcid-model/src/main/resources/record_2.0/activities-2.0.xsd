@@ -112,7 +112,7 @@
 	<xs:element name="educations">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:restriction base="activities:educations" />
+				<xs:extension base="activities:educations" />
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
@@ -126,10 +126,10 @@
 		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 
-	<xs:element name="employments">
+	<xs:element name="employments"> 
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:restriction base="activities:employments" />
+				<xs:extension base="activities:employments" />
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>	
@@ -157,7 +157,7 @@
 	<xs:element name="fundings">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:restriction base="activities:fundings" />
+				<xs:extension base="activities:fundings" />
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
@@ -185,7 +185,7 @@
 	<xs:element name="peer-reviews">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:restriction base="activities:peer-reviews" />
+				<xs:extension base="activities:peer-reviews" />
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
@@ -213,7 +213,7 @@
 	<xs:element name="works">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:restriction base="activities:works" />
+				<xs:extension base="activities:works" />
 			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
