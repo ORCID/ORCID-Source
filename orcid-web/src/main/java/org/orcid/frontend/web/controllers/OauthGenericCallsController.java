@@ -30,12 +30,14 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Controller;
@@ -71,10 +73,9 @@ public class OauthGenericCallsController extends OauthControllerBase {
             Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
             return ResponseEntity.ok(response.getEntity());
         } catch(Exception e) {
-            OAuthError errorMessage = new OAuthError();
-            errorMessage.setError(OAuthError.UNAUTHORIZED_CLIENT);
-            errorMessage.setErrorDescription(e.getMessage());
-            return ResponseEntity.badRequest().body(errorMessage);
+            OAuthError error = OAuthErrorUtils.getOAuthError(e);
+            HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
+            return ResponseEntity.status(status).body(error);
         }
     }
     
