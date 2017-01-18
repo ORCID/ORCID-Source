@@ -1329,6 +1329,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     
     private void validateRecord(Record record) {
         assertNotNull(record);
+        assertEquals("/" + ORCID, record.getPath());
         validatePerson(record.getPerson());
         validateActivities(record.getActivitiesSummary());
         assertNotNull(record.getHistory());

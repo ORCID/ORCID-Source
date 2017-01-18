@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -56,6 +57,8 @@ public class Record implements Serializable {
     protected ActivitiesSummary activitiesSummary;
     @XmlTransient
     protected OrcidType orcidType;
+    @XmlAttribute
+    protected String path;
 
     public OrcidIdentifier getOrcidIdentifier() {
         return orcidIdentifier;
@@ -112,6 +115,14 @@ public class Record implements Serializable {
     public void setOrcidType(OrcidType orcidType) {
         this.orcidType = orcidType;
     }
+    
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     @Override
     public int hashCode() {
@@ -122,6 +133,7 @@ public class Record implements Serializable {
         result = prime * result + ((history == null) ? 0 : history.hashCode());
         result = prime * result + ((orcidIdentifier == null) ? 0 : orcidIdentifier.hashCode());
         result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
+        result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((person == null) ? 0 : person.hashCode());
         result = prime * result + ((preferences == null) ? 0 : preferences.hashCode());
         return result;
@@ -158,6 +170,11 @@ public class Record implements Serializable {
             return false;
         if (orcidType != other.orcidType)
             return false;
+        if (path == null) {
+            if (other.path != null)
+                return false;
+        } else if (!path.equals(other.path))
+            return false;
         if (person == null) {
             if (other.person != null)
                 return false;
@@ -169,5 +186,5 @@ public class Record implements Serializable {
         } else if (!preferences.equals(other.preferences))
             return false;
         return true;
-    }
+    }    
 }
