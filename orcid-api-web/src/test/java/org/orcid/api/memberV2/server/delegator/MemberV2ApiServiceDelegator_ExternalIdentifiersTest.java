@@ -128,7 +128,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
+        assertEquals("/4444-4444-4444-4442/external-identifiers", extIds.getPath());
         Utils.verifyLastModified(extIds.getLastModifiedDate());
         List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
@@ -163,7 +163,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("/0000-0000-0000-0003/external-identifier/2", extId.getPath());
+        assertEquals("/4444-4444-4444-4442/external-identifiers/2", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(2), extId.getPutCode());
@@ -184,7 +184,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("/0000-0000-0000-0003/external-identifier/3", extId.getPath());
+        assertEquals("/4444-4444-4444-4442/external-identifiers/3", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(3), extId.getPutCode());
@@ -205,7 +205,7 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(response);
         PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("/0000-0000-0000-0003/external-identifier/5", extId.getPath());
+        assertEquals("/4444-4444-4444-4442/external-identifiers/5", extId.getPath());
         Utils.verifyLastModified(extId.getLastModifiedDate());
         assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(5), extId.getPutCode());

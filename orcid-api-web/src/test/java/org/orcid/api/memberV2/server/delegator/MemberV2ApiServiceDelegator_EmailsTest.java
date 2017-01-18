@@ -137,7 +137,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
         Emails email = (Emails) r.getEntity();
         assertNotNull(email);
-        assertEquals("/0000-0000-0000-0003/email", email.getPath());
+        assertEquals("/4444-4444-4444-4497/email", email.getPath());
         assertNotNull(email.getLastModifiedDate());
         assertEquals(3, email.getEmails().size());
         assertEquals("public_4444-4444-4444-4497@test.orcid.org", email.getEmails().get(0).getEmail());
@@ -155,7 +155,7 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertNotNull(response);
         Emails emails = (Emails) response.getEntity();
         assertNotNull(emails);
-        assertEquals("/0000-0000-0000-0003/email", emails.getPath());
+        assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
         assertEquals(3, emails.getEmails().size());
