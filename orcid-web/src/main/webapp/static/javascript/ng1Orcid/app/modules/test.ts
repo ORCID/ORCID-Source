@@ -1,6 +1,6 @@
 import {NgModule, Component} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeModule} from '@angular/upgrade/static';
+//import {UpgradeModule} from '@angular/upgrade/static';
 
 @Component({
   selector: 'root-cmp',
@@ -13,11 +13,11 @@ export class RootCmp {}
 @NgModule({
   imports: [
     BrowserModule,
-    UpgradeModule,
+    //UpgradeModule,
   ],
   bootstrap: [RootCmp],
   declarations: [RootCmp]
 })
 export class Ng2AppModule {
-  constructor(public upgrade: UpgradeModule){}
+  constructor(){}
 }

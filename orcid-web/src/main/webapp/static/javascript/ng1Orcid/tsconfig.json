@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "noEmit": true,
+    //"noEmit": true,
     "noEmitHelpers": true,
     "strictNullChecks": false,
     "lib": [
@@ -18,12 +18,12 @@
       "node_modules/@types"
     ],
     "types": [
-      "hammerjs",
+      //"hammerjs",
       "jasmine",
-      "node",
-      "source-map",
-      "uglify-js",
-      "webpack"
+      "node"
+      //"source-map",
+      //"uglify-js",
+      //"webpack"
     ]
   },
   "exclude": [
