@@ -310,6 +310,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidSolrResults.setResults(resultsList);
         resultsList.add(getSolrRes5678());
         resultsList.add(getSolrRes6789());
+        orcidSolrResults.setNumFound(2);
         return orcidSolrResults;
     }
 

@@ -23,16 +23,15 @@
 
 package org.orcid.jaxb.model.common_v2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.io.Serializable;
 
 /**
  * <p>
@@ -64,9 +63,6 @@ public class CreditName implements Serializable {
     @XmlValue
     protected String content;
 
-    @XmlAttribute
-    protected Visibility visibility;
-
     public CreditName() {
     }
 
@@ -74,11 +70,6 @@ public class CreditName implements Serializable {
         this.content = content;
     }
     
-    public CreditName(String content, Visibility visibility) {
-        this.content = content;
-        this.visibility = visibility;
-    }
-
     /**
      * Gets the value of the content property.
      * 

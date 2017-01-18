@@ -91,6 +91,7 @@
 				<xs:element ref="activities:activities-summary"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 

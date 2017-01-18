@@ -105,6 +105,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         Response r = serviceDelegator.viewOtherName(ORCID, 13L);
         OtherName element = (OtherName) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names/13", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -114,6 +115,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         Response r = serviceDelegator.viewOtherNames(ORCID);
         OtherNames element = (OtherNames) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/other-names", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -124,6 +126,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherNames otherNames = (OtherNames) response.getEntity();
         assertNotNull(otherNames);
+        assertEquals("/4444-4444-4444-4446/other-names", otherNames.getPath());
         Utils.verifyLastModified(otherNames.getLastModifiedDate());
         assertNotNull(otherNames.getOtherNames());
         assertEquals(3, otherNames.getOtherNames().size());
@@ -151,6 +154,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/5", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 1", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
@@ -164,6 +168,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/6", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 2", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
@@ -177,6 +182,7 @@ public class MemberV2ApiServiceDelegator_OtherNamesTest extends DBUnitTest {
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
+        assertEquals("/4444-4444-4444-4446/other-names/8", otherName.getPath());
         Utils.verifyLastModified(otherName.getLastModifiedDate());
         assertEquals("Other Name # 4", otherName.getContent());
         assertEquals(Visibility.PRIVATE, otherName.getVisibility());

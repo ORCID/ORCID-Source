@@ -118,6 +118,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response r = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
         PeerReview element = (PeerReview) r.getEntity();
         assertNotNull(element);
+        assertEquals("/4444-4444-4444-4447/peer-review/2", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -127,6 +128,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response r = serviceDelegator.viewPeerReviewSummary("4444-4444-4444-4446", Long.valueOf(1));
         PeerReviewSummary element = (PeerReviewSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -137,6 +139,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(1L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -166,6 +169,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/3", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(3L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -184,6 +188,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/4", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf(4L), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -216,6 +221,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(response);
         PeerReviewSummary peerReview = (PeerReviewSummary) response.getEntity();
         assertNotNull(peerReview);
+        assertEquals("/4444-4444-4444-4446/peer-review/1", peerReview.getPath());
         Utils.verifyLastModified(peerReview.getLastModifiedDate());
         assertEquals(Long.valueOf("1"), peerReview.getPutCode());
         assertNotNull(peerReview.getCompletionDate());
@@ -234,7 +240,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(r);
         PeerReviews peerReviews = (PeerReviews) r.getEntity();
         assertNotNull(peerReviews);
-        assertNotNull(peerReviews.getPath());
+        assertEquals("/0000-0000-0000-0003/peer-reviews", peerReviews.getPath());
         Utils.verifyLastModified(peerReviews.getLastModifiedDate());
         assertNotNull(peerReviews.getPeerReviewGroup());
         assertEquals(4, peerReviews.getPeerReviewGroup().size());

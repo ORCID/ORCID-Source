@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<record:record xmlns:activities="http://www.orcid.org/ns/activities"
+<record:record path="/8888-8888-8888-8880" xmlns:activities="http://www.orcid.org/ns/activities"
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"
 	xmlns:other-name="http://www.orcid.org/ns/other-name"
 	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
@@ -323,11 +323,11 @@
 					<common:created-date>2001-12-31T12:00:00</common:created-date>
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
-						<common:source-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-							<common:path>8888-8888-8888-8880</common:path>
+						<common:source-client-id>
+							<common:uri>http://orcid.org/client/APP-9999999999999901</common:uri>
+							<common:path>APP-9999999999999901</common:path>
 							<common:host>orcid.org</common:host>
-						</common:source-orcid>
+						</common:source-client-id>
 						<common:source-name />
 					</common:source>
 					<common:external-ids>
@@ -375,11 +375,11 @@
 					<common:created-date>2001-12-31T12:00:00</common:created-date>
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
-						<common:source-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-							<common:path>8888-8888-8888-8880</common:path>
+						<common:source-client-id>
+							<common:uri>http://orcid.org/client/8888-8888-8888-8880</common:uri>
+							<common:path>8888-8888-8888-8880</common:path> 
 							<common:host>orcid.org</common:host>
-						</common:source-orcid>
+						</common:source-client-id>
 						<common:source-name />
 					</common:source>
 					<work:title>

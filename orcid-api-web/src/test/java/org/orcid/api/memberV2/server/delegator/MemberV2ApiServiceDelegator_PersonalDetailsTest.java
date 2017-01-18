@@ -85,6 +85,7 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         Response r = serviceDelegator.viewPersonalDetails(ORCID);
         PersonalDetails element = (PersonalDetails) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/personal-details", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -101,6 +102,7 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         PersonalDetails p = (PersonalDetails) r.getEntity();
+        assertEquals("/0000-0000-0000-0003/personal-details", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
         Utils.verifyLastModified(p.getBiography().getLastModifiedDate());
         Utils.verifyLastModified(p.getName().getLastModifiedDate());
@@ -146,6 +148,7 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertNotNull(response);
         PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
         assertNotNull(personalDetails);
+        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());
         Utils.verifyLastModified(personalDetails.getLastModifiedDate());
         assertNotNull(personalDetails.getBiography());
         Utils.verifyLastModified(personalDetails.getBiography().getLastModifiedDate());

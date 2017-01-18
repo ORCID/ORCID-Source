@@ -113,7 +113,10 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         // Verify everything inside is public
         Record record = (Record) response.getEntity();
         assertNotNull(record);
+        assertEquals("/0000-0000-0000-0003", record.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", record.getActivitiesSummary().getPath());
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
+        assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
     }
 
@@ -123,7 +126,10 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Response r = serviceDelegator.viewRecord(ORCID);
         Record record = (Record) r.getEntity();
         assertNotNull(record);
+        assertEquals("/0000-0000-0000-0003", record.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", record.getActivitiesSummary().getPath());
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555555");
+        assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555555");
     }
 
@@ -139,6 +145,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Response response = serviceDelegator.viewRecord(ORCID);
         assertNotNull(response);
         Record record = (Record) response.getEntity();
+        assertEquals("/0000-0000-0000-0003", record.getPath());
         testPerson(record.getPerson(), ORCID);
         testActivities(record.getActivitiesSummary(), ORCID);
         assertNotNull(record.getHistory());
@@ -166,6 +173,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(response);
         Record record = (Record) response.getEntity();
         assertNotNull(record);
+        assertEquals("/0000-0000-0000-0003", record.getPath());
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());
         assertNotNull(record.getPreferences());
@@ -185,6 +193,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         // Validate person
         Person person = record.getPerson();
         assertNotNull(person);
+        assertEquals("/0000-0000-0000-0003/person", person.getPath());
         Utils.verifyLastModified(person.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/person", person.getPath());
         assertNotNull(person.getAddresses());
@@ -412,6 +421,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         // Validate activities
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities);
+        assertEquals("/0000-0000-0000-0003/activities", activities.getPath());
         Utils.verifyLastModified(activities.getLastModifiedDate());
 
         assertNotNull(activities.getEducations());
@@ -679,7 +689,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals("0000-0000-0000-0003", orcid);
 
         assertNotNull(as);
-        assertNotNull(as.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", as.getPath());
         Utils.verifyLastModified(as.getLastModifiedDate());
         assertNotNull(as.getEducations());
         assertEquals(3, as.getEducations().getSummaries().size());
@@ -792,6 +802,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         // This is more an utility that will work only for 0000-0000-0000-0003
         assertEquals("0000-0000-0000-0003", orcid);
         assertNotNull(p);
+        assertEquals("/0000-0000-0000-0003/person", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
         // Address
         assertNotNull(p.getAddresses());
@@ -975,6 +986,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals(Record.class.getName(), response.getEntity().getClass().getName());
         Record r = (Record) response.getEntity();
         assertNotNull(r);
+        assertEquals("/0000-0000-0000-0003", r.getPath());
         Utils.assertIsPublicOrSource(r.getActivitiesSummary(), "APP-5555555555555556");
         Person p = r.getPerson();
 

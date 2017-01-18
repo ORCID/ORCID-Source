@@ -17,7 +17,9 @@
     =============================================================================
 
 -->
-<personal-details:credit-name
-	xmlns:personal-details="http://www.orcid.org/ns/personal-details"	
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.0.xsd">credit-name</personal-details:credit-name>
+<client:client xmlns:client="http://www.orcid.org/ns/client"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/client ../client-2.0.xsd ">    
+    <client:name>Name</client:name>
+    <client:description>Description</client:description>
+</client:client>
