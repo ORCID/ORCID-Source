@@ -1,43 +1,45 @@
 # ORCID API v2.0 Guide
 
 ## Current State (Release Candidate Stable)
-v2.0_r3 is in current development and should be avoided.
+v2.0 is in current development and should be avoided.
 
 ## XSDs and current state (all stable)
 - [activities-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/activities-2.0.xsd) 
-**stable**, developement ongoing
+**stable**, development ongoing
 - [address-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/address-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [bulk-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/bulk-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [common-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0/common-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [education-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/education-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [email-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/email-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [employment-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/employment-2.0.xsd)
-**not stable**, developement ongoing
+**not stable**, development ongoing
 - [error-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/error-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [external-identifier-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/external-identifier-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [funding-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/funding-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [keyword-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/keyword-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [other-names-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/other-name-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [peer-review-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/peer-review-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [person-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/person-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [personal-details-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/personal-details-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 - [researcher-url-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/researcher-url-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
+- [search-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd)
+**stable**, development ongoing
 - [work-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd)
-**stable**, developement ongoing
+**stable**, development ongoing
 
 ##Changes:
 ### Search
@@ -80,6 +82,7 @@ v2.0_r3 is in current development and should be avoided.
 - [personal-details-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/personal-details-2.0.xml)
 - [researcher-url-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/researcher-url-2.0.xml)
 - [researcher-urls-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/researcher-urls-2.0.xml)
+- [search-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/search-2.0.xml)
 - [work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/work-2.0.xml)
 
 **Note:** These files contain system-generated elements/attributes that are returned when reading items from ORCID, but should not be included when posting items to ORCID
@@ -145,6 +148,14 @@ The swagger interfaces to the API available at:
 
 **Note:** email, person and personal-details sections are only for reading purposes
 
+## Search
+
+| Action             | HTTP method | Scope                    | URL                                                                      |
+|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
+| Search records     | GET         | /read-only      	      | https://api.sandbox.orcid.org/v2.0/search?q=[SOLR-QUERY]          	 |
+
+By default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets.
+
 ## Examples
 ### Read Record Items
 | Item               | v2.0 Scope               | v1.2 Scope (deprecated)                               | Example cURL Statement                                         |
@@ -209,4 +220,7 @@ When updating a record item, include the put code as an attribute in the root el
 | Researcher URL  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
 | Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.0/0000-0002-1306-4180/work/[PUT-CODE]'```|
 
-
+### Search
+| Item               | v2.0 Scope               | v1.2 Scope                            | Example cURL Statement                                         |
+|--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
+| Search records     | /read-public             |  /read-public                         | ```curl -i -H "Accept: application/orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/search?q=Simpson'```|
