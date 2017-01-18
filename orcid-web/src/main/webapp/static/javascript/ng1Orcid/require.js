@@ -1,8 +1,4 @@
-//require('./app/angularOrcidOriginal.js');
-//require('./app/directives/focusMe.js');
-//require(/Test$/);
-//require('./app/', true, /\.js$/);
-//require.context('./app/directives', true, /\.js$/);
+//npm install -g typescript
 
 function requireAll(requireContext) {
   return requireContext.keys().map(requireContext);
@@ -10,6 +6,10 @@ function requireAll(requireContext) {
 
 require('./app/angularOrcidOriginal.js');
 requireAll(require.context("./app/controllers", true, /^\.\/.*\.js$/));
+requireAll(require.context("./app/controllers", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/directives", true, /^\.\/.*\.js$/));
+requireAll(require.context("./app/directives", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/modules", true, /^\.\/.*\.js$/));
+requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/services", true, /^\.\/.*\.js$/));
+requireAll(require.context("./app/services", true, /^\.\/.*\.ts$/));
