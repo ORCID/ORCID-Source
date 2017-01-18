@@ -567,14 +567,13 @@ public class PublicV2ApiServiceDelegatorImpl
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         publicAPISecurityManagerV2.filter(record);
         if (record.getPerson() != null) {
-            ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
-            ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
         }
+        ElementUtils.setPathToRecord(record, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }

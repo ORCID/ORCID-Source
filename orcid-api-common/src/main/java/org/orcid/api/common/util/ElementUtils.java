@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
@@ -154,33 +155,48 @@ public class ElementUtils {
     }
     
     public static void setPathToPerson(Person person, String orcid) {
-        person.setPath(PERSON.replace("{orcid}", orcid) );
-        if(person.getAddresses() != null) {
-            setPathToAddresses(person.getAddresses(), orcid);
+        if (person != null) {
+            person.setPath(PERSON.replace("{orcid}", orcid));
+            if (person.getAddresses() != null) {
+                setPathToAddresses(person.getAddresses(), orcid);
+            }
+
+            if (person.getBiography() != null) {
+                setPathToBiography(person.getBiography(), orcid);
+            }
+
+            if (person.getEmails() != null) {
+                setPathToEmail(person.getEmails(), orcid);
+            }
+
+            if (person.getExternalIdentifiers() != null) {
+                setPathToExternalIdentifiers(person.getExternalIdentifiers(), orcid);
+            }
+
+            if (person.getKeywords() != null) {
+                setPathToKeywords(person.getKeywords(), orcid);
+            }
+
+            if (person.getOtherNames() != null) {
+                setPathToOtherNames(person.getOtherNames(), orcid);
+            }
+
+            if (person.getResearcherUrls() != null) {
+                setPathToResearcherUrls(person.getResearcherUrls(), orcid);
+            }
         }
-        
-        if(person.getBiography() != null) {
-            setPathToBiography(person.getBiography(), orcid);
-        }
-        
-        if(person.getEmails() != null) {
-            setPathToEmail(person.getEmails(), orcid);
-        }
-        
-        if(person.getExternalIdentifiers() != null) {
-            setPathToExternalIdentifiers(person.getExternalIdentifiers(), orcid);
-        }
-        
-        if(person.getKeywords() != null) {
-            setPathToKeywords(person.getKeywords(), orcid);
-        }
-        
-        if(person.getOtherNames() != null) {
-            setPathToOtherNames(person.getOtherNames(), orcid);
-        }
-        
-        if(person.getResearcherUrls() != null) {
-            setPathToResearcherUrls(person.getResearcherUrls(), orcid);
+    }
+
+    public static void setPathToRecord(Record record, String orcid) {
+        if (record != null) {
+            record.setPath("/" + orcid);
+            if (record.getPerson() != null) {
+                setPathToPerson(record.getPerson(), orcid);
+            }
+
+            if (record.getActivitiesSummary() != null) {
+                ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
+            }
         }
     }
 }

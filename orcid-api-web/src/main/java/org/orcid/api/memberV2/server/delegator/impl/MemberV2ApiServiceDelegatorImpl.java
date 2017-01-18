@@ -214,14 +214,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Record record = recordManager.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
-            ElementUtils.setPathToPerson(record.getPerson(), orcid);
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
-            ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
             sourceUtils.setSourceName(record.getActivitiesSummary());
         }
+        ElementUtils.setPathToRecord(record, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
