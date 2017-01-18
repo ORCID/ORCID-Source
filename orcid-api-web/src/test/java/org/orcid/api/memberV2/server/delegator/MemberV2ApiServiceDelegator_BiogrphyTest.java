@@ -89,6 +89,7 @@ public class MemberV2ApiServiceDelegator_BiogrphyTest extends DBUnitTest {
         Response r = serviceDelegator.viewBiography(ORCID);
         Biography element = (Biography) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/biography", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 

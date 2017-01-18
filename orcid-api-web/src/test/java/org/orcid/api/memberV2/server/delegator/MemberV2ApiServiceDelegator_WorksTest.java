@@ -123,6 +123,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         Response r = serviceDelegator.viewWork(ORCID, 11L);
         Work element = (Work) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/work/11", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -132,6 +133,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         Response r = serviceDelegator.viewWorkSummary(ORCID, 11L);
         WorkSummary element = (WorkSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/work/11", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -142,6 +144,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertNotNull(response);
         Work work = (Work) response.getEntity();
         assertNotNull(work);
+        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
         Utils.verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
@@ -158,6 +161,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         Response response = serviceDelegator.viewWork("4444-4444-4444-4446", 6L);
         assertNotNull(response);
         Work work = (Work) response.getEntity();
+        assertEquals("/4444-4444-4444-4446/work/6", work.getPath());
         Utils.verifyLastModified(work.getLastModifiedDate());
         assertNotNull(work.getWorkTitle());
         assertNotNull(work.getWorkTitle().getTitle());
@@ -207,6 +211,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertNotNull(r);
         Works works = (Works) r.getEntity();
         assertNotNull(works);
+        assertEquals("/0000-0000-0000-0003/works", works.getPath());
         Utils.verifyLastModified(works.getLastModifiedDate());
         assertNotNull(works.getWorkGroup());
         assertNotNull(works.getPath());

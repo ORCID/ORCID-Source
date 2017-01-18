@@ -335,6 +335,7 @@ public class PublicV2ApiServiceDelegatorImpl
             }
         }
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEducations);
+        ActivityUtils.setPathToEducations(publicEducations, orcid);
         return Response.ok(publicEducations).build();
     }
 
@@ -368,6 +369,7 @@ public class PublicV2ApiServiceDelegatorImpl
             }
         }
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
+        ActivityUtils.setPathToEmployments(publicEmployments, orcid);
         return Response.ok(publicEmployments).build();
     }
 
