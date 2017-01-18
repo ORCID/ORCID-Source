@@ -113,7 +113,8 @@ public class PersonalDetailsManagerTest extends BaseTest {
     public void getPersonalDetailsTest2() {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(ORCID2);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getOtherNames());        
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
         assertNotNull(personalDetails.getBiography());
         assertEquals(Visibility.LIMITED, personalDetails.getBiography().getVisibility());
         assertEquals("Biography for 0000-0000-0000-0002", personalDetails.getBiography().getContent());
@@ -128,7 +129,8 @@ public class PersonalDetailsManagerTest extends BaseTest {
     public void getPublicPersonalDetailsTest2() {
         PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(ORCID2);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getOtherNames());        
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
     } 

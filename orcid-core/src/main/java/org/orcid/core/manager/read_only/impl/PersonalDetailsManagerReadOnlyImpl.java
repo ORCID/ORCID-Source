@@ -74,10 +74,11 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         }
 
         OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
+        OtherNames filteredOtherNames = new OtherNames();
+        personalDetails.setOtherNames(filteredOtherNames);
         if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
             // Lets copy the list so we don't modify the cached collection
             List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
-            OtherNames filteredOtherNames = new OtherNames();
             filteredOtherNames.setOtherNames(filteredList);
             personalDetails.setOtherNames(filteredOtherNames);
         }
@@ -108,12 +109,12 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         }
 
         OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        OtherNames filteredOtherNames = new OtherNames();
+        personalDetails.setOtherNames(filteredOtherNames);
         if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
             // Lets copy the list so we don't modify the cached collection
             List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
-            OtherNames filteredOtherNames = new OtherNames();
             filteredOtherNames.setOtherNames(filteredList);
-            personalDetails.setOtherNames(filteredOtherNames);
         }
 
         if (personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {

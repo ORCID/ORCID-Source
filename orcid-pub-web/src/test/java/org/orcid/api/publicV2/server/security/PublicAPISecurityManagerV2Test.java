@@ -580,6 +580,13 @@ public class PublicAPISecurityManagerV2Test {
         assertNotNull(p.getBiography());
         assertNotNull(p.getOtherNames());
         assertTrue(p.getOtherNames().getOtherNames().isEmpty());
+        
+        p = getPersonalDetailsElement(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PRIVATE);
+        publicAPISecurityManagerV2.filter(p);
+        assertNotNull(p.getName());
+        assertNotNull(p.getBiography());
+        assertNotNull(p.getOtherNames());
+        assertTrue(p.getOtherNames().getOtherNames().isEmpty());
     }
 
     @Test
