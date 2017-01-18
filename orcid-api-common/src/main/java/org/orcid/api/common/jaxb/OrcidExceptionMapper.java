@@ -42,6 +42,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -115,8 +116,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             }
         }
 
-        if (isOAuthTokenRequest() && LockedException.class.isAssignableFrom(t.getClass())) {
-            return lockedAccountOAuthErrorResponse(t);
+        if (isOAuthTokenRequest()) {
+            return oAuthErrorResponse(t);
         }
 
         String apiVersion = getApiVersion();
@@ -144,11 +145,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         }
     }
 
-    private Response lockedAccountOAuthErrorResponse(Throwable t) {
-        OAuthError error = new OAuthError();
-        error.setError(OAuthError.UNAUTHORIZED_CLIENT);
-        error.setErrorDescription(t.getMessage());
-        return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+    private Response oAuthErrorResponse(Throwable t) {
+        OAuthError error = OAuthErrorUtils.getOAuthError(t);
+        return Response.status(error.getResponseStatus()).entity(error).build();
     }
 
     private Response legacyErrorResponse(Throwable t) {
