@@ -40,11 +40,19 @@ v2.0_r3 is in current development and should be avoided.
 **stable**, developement ongoing
 
 ##Changes:
-###Post bulk works
+### Search
+- Addition of search endpoints
 
-- Addition of endpoint /works for bulk posting works
-- Update to schema of bulk element in works
-- Update to schema of error section for returning errors with bulk added works
+### Peer-review
+- Change external-id-type PEER-REVIEW to peer-review
+- Addition of "peer-review service" as a group type for peer-reviews
+- Peer-review groups look-up by name option
+
+### Notifications
+- Endpoint to read all notifications you have posted to a record
+
+### Email addresses
+- Include primary and verified status when reading an email address
 
 ## Sample files:
 
