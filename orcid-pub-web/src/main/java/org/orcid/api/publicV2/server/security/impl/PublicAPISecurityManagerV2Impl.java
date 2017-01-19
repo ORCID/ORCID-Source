@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_v2.Filterable;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
@@ -54,11 +55,15 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
 
     @Override
     public void checkIsPublic(Biography biography) {
-        if(biography == null || (PojoUtil.isEmpty(biography.getContent()) && biography.getVisibility() == null)) {
-            return;
+        if (biography == null) {
+            throw new OrcidNoBioException();
         }
         
-        if(!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if (PojoUtil.isEmpty(biography.getContent()) && biography.getVisibility() == null) {
+            return;
+        }
+
+        if (!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
