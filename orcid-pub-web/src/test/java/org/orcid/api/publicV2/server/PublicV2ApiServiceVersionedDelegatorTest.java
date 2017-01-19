@@ -18,7 +18,6 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -46,11 +45,11 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
-import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.ProfileDao;
@@ -734,12 +733,10 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @Test
+    @Test(expected = OrcidNoBioException.class)
     public void testViewBiographyWhereBiographyIsNull() {
-        Response response = serviceDelegator.viewBiography(userWithNoBio);
-        assertNotNull(response.getEntity());
-        Biography biography = (Biography) response.getEntity();
-        assertNull(biography.getContent());
+        serviceDelegator.viewBiography(userWithNoBio);
+        fail();
     }
 
     @Test(expected = OrcidNotClaimedException.class)

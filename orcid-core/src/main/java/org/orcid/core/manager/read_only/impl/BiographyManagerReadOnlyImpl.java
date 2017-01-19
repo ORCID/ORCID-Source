@@ -45,7 +45,6 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
     @Override
     @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
     public Biography getBiography(String orcid, long lastModified) {
-        Biography bio = new Biography();
         BiographyEntity biographyEntity = null;
         try {
             biographyEntity = biographyDao.getBiography(orcid);
@@ -53,12 +52,14 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
             LOGGER.warn("Couldn't find biography for " + orcid); 
         }
         if(biographyEntity != null) {
+            Biography bio = new Biography();
             bio.setContent(biographyEntity.getBiography());
             bio.setVisibility(biographyEntity.getVisibility());
             bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getLastModified())));
-            bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getDateCreated())));            
+            bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getDateCreated())));
+            return bio;
         }         
-        return bio;
+        return null;
     }
     
     @Override
@@ -68,7 +69,7 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
         if(bio != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }
-        return new Biography();
+        return null;
     }
 
     @Override

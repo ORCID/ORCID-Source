@@ -36,6 +36,7 @@ import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
@@ -991,6 +992,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewBiography(String orcid) {
         Biography bio = biographyManager.getBiography(orcid, getLastModifiedTime(orcid));
+        if(bio == null) {
+            throw new OrcidNoBioException();
+        }
         orcidSecurityManager.checkAndFilter(orcid, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();

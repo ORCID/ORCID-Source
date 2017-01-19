@@ -136,9 +136,7 @@ public class MemberV2ApiServiceDelegator_PersonalDetailsTest extends DBUnitTest 
         assertNotNull(r);
         assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
         p = (PersonalDetails) r.getEntity();
-        assertNotNull(p.getBiography());
-        assertNull(p.getBiography().getContent());
-        assertNull(p.getBiography().getVisibility());
+        assertNull(p.getBiography());
         assertNull(p.getName());
         assertNotNull(p.getOtherNames());
         assertTrue(p.getOtherNames().getOtherNames().isEmpty());
