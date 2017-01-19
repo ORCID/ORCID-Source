@@ -93,6 +93,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomMapper;
@@ -252,7 +253,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public void registerSourceConverters(MapperFactory mapperFactory, ClassMapBuilder<? extends SourceAware, ? extends SourceAwareEntity<?>> classMapBuilder) {
         @SuppressWarnings("rawtypes")
         SourceMapper sourceMapper = new SourceMapper();
-        classMapBuilder.customize(sourceMapper);
+        mapperFactory.classMap(SourceAware.class, SourceAwareEntity.class).customize(sourceMapper).register();
     }
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
@@ -267,7 +268,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             if (StringUtils.isEmpty(sourceId)) {
                 return;
             }
-            if (clientDetailsManagerReadOnly.exists(sourceId)) {
+            if (isClient(sourceId)) {
                 b.setClientSourceId(sourceId);
             } else {
                 b.setSourceId(sourceId);
@@ -281,13 +282,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 return;
             }
             Source source = null;
-            if (clientDetailsManagerReadOnly.exists(sourceId)) {
+            if (isClient(sourceId)) {
                 source = createClientSource(sourceId);
             } else {
                 source = createOrcidSource(sourceId);
             }
             a.setSource(source);
             source.setSourceName(new SourceName(sourceNameCacheManager.retrieve(sourceId)));
+        }
+
+        private boolean isClient(String sourceId) {
+            return OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.exists(sourceId);
         }
 
         private Source createClientSource(String sourceId) {
