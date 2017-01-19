@@ -816,7 +816,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="APP-[\da-zA-Z]{16}" />
+			<xs:pattern value="(APP-[\da-zA-Z]{16}|(\d{4}-){3,}\d{3}[\dX])" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -827,7 +827,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/APP-[\da-zA-Z]{16}" />
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/(APP-[\da-zA-Z]{16}|(\d{4}-){3,}\d{3}[\dX])" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -1048,7 +1048,7 @@
 		<xs:annotation>
 			<xs:documentation>See the ORCID Knowledgebase for a complete
 				description of ORCID Scopes and related documentation:
-				http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.
+				https://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.				
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">

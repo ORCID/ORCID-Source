@@ -106,6 +106,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         Response r = serviceDelegator.viewAddresses(ORCID);
         Addresses element = (Addresses) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/address", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -115,6 +116,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         Response r = serviceDelegator.viewAddress(ORCID, 9L);
         Address element = (Address) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/address/9", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -127,6 +129,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
         Addresses a = (Addresses) r.getEntity();
         assertNotNull(a);
+        assertEquals("/0000-0000-0000-0003/address", a.getPath());
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(3, a.getAddress().size());
         boolean found9 = false, found10 = false, found11 = false;
@@ -183,6 +186,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Addresses addresses = (Addresses) response.getEntity();
         assertNotNull(addresses);
+        assertEquals("/4444-4444-4444-4447/address", addresses.getPath());
         Utils.verifyLastModified(addresses.getLastModifiedDate());
         assertNotNull(addresses.getAddress());
         assertEquals(3, addresses.getAddress().size());
@@ -211,6 +215,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/2", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
         assertEquals("4444-4444-4444-4447", address.getSource().retrieveSourcePath());
@@ -224,6 +229,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/3", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.LIMITED, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
@@ -237,6 +243,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         assertNotNull(response);
         Address address = (Address) response.getEntity();
         assertNotNull(address);
+        assertEquals("/4444-4444-4444-4447/address/4", address.getPath());
         Utils.verifyLastModified(address.getLastModifiedDate());
         assertEquals(Visibility.PRIVATE, address.getVisibility());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());

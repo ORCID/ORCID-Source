@@ -237,8 +237,10 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                 return result;
             }).collect(Collectors.toList());
             search.getResults().addAll(orcidIdList);
-        }
-        search.setNumFound((search.getResults() == null) ? 0L : Long.valueOf(search.getResults().size()));
+            search.setNumFound(orcidSolrResults.getNumFound());
+        } else {
+            search.setNumFound(0L);
+        }                                
         return search;
     }
 

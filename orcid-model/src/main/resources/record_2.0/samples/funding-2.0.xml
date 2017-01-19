@@ -43,7 +43,7 @@
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
 			</common:contributor-orcid>
-			<funding:credit-name visibility="private">funding:credit-name</funding:credit-name>
+			<funding:credit-name>funding:credit-name</funding:credit-name>
 			<funding:contributor-email>funding@contributor.email</funding:contributor-email>
 			<funding:contributor-attributes>
 				<funding:contributor-role>lead</funding:contributor-role>

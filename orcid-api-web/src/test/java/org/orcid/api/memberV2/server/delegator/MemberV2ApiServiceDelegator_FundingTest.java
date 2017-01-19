@@ -112,6 +112,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         Response r = serviceDelegator.viewFunding(ORCID, 10L);
         Funding element = (Funding) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/funding/10", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -121,6 +122,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         Response r = serviceDelegator.viewFundingSummary(ORCID, 10L);
         FundingSummary element = (FundingSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/funding/10", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -227,6 +229,7 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         assertNotNull(r);
         Fundings fundings = (Fundings) r.getEntity();
         assertNotNull(fundings);
+        assertEquals("/0000-0000-0000-0003/fundings", fundings.getPath());
         assertNotNull(fundings.getPath());
         Utils.verifyLastModified(fundings.getLastModifiedDate());
         assertNotNull(fundings.getFundingGroup());

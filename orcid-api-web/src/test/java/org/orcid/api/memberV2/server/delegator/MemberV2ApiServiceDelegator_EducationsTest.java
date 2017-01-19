@@ -106,6 +106,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducation(ORCID, 20L);
         Education element = (Education) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/education/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -121,6 +122,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducations(ORCID);
         Educations element = (Educations) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/educations", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -130,6 +132,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         Response r = serviceDelegator.viewEducationSummary(ORCID, 20L);
         EducationSummary element = (EducationSummary) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/education/20", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
@@ -197,7 +200,7 @@ public class MemberV2ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(r);
         Educations educations = (Educations) r.getEntity();
         assertNotNull(educations);
-        assertNotNull(educations.getPath());
+        assertEquals("/0000-0000-0000-0003/educations", educations.getPath());
         Utils.verifyLastModified(educations.getLastModifiedDate());
         assertNotNull(educations.getSummaries());
         assertEquals(4, educations.getSummaries().size());

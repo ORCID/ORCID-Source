@@ -109,6 +109,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         Response r = serviceDelegator.viewResearcherUrl(ORCID, 13L);
         ResearcherUrl element = (ResearcherUrl) r.getEntity();
         assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", element.getPath());
         Utils.assertIsPublicOrSource(element, SecurityContextTestUtils.DEFAULT_CLIENT_ID);
     }
 
@@ -118,6 +119,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         Response r = serviceDelegator.viewResearcherUrls(ORCID);
         ResearcherUrls elements = (ResearcherUrls) r.getEntity();
         assertNotNull(elements);
+        assertEquals("/0000-0000-0000-0003/researcher-urls", elements.getPath());
         for (ResearcherUrl element : elements.getResearcherUrls()) {
             if (!element.retrieveSourcePath().equals("APP-5555555555555555") && !Visibility.PUBLIC.equals(element.getVisibility())) {
                 fail("Element " + element.getPutCode() + " is not source of APP-5555555555555555 and is not public");
@@ -131,7 +133,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         Response response = serviceDelegator.viewResearcherUrls("4444-4444-4444-4443");
         assertNotNull(response);
         ResearcherUrls researcherUrls = (ResearcherUrls) response.getEntity();
-        assertNotNull(researcherUrls);
+        assertNotNull(researcherUrls);        
         Utils.verifyLastModified(researcherUrls.getLastModifiedDate());
         assertEquals("/4444-4444-4444-4443/researcher-urls", researcherUrls.getPath());
         assertNotNull(researcherUrls.getResearcherUrls());
@@ -158,6 +160,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        assertEquals("/4444-4444-4444-4443/researcher-urls/2", researcherUrl.getPath());
         Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=1", researcherUrl.getUrl().getValue());
@@ -172,6 +175,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        assertEquals("/4444-4444-4444-4443/researcher-urls/8", researcherUrl.getPath());
         Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
         assertEquals("4444-4444-4444-4443", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=8", researcherUrl.getUrl().getValue());
@@ -186,6 +190,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         assertNotNull(response);
         ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();
         assertNotNull(researcherUrl);
+        assertEquals("/4444-4444-4444-4443/researcher-urls/7", researcherUrl.getPath());
         Utils.verifyLastModified(researcherUrl.getLastModifiedDate());
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.researcherurl2.com?id=7", researcherUrl.getUrl().getValue());
@@ -346,6 +351,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         assertNotNull(r);
         ResearcherUrls ru = (ResearcherUrls) r.getEntity();
         assertNotNull(ru);
+        assertEquals("/0000-0000-0000-0003/researcher-urls", ru.getPath());
         Utils.verifyLastModified(ru.getLastModifiedDate());
         assertEquals(3, ru.getResearcherUrls().size());
         boolean found13 = false, found14 = false, found15 = false;

@@ -22,10 +22,12 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/activities", xmlns = {
-        @javax.xml.bind.annotation.XmlNs(prefix = "employments", namespaceURI = "http://www.orcid.org/ns/activities"), 
-        @javax.xml.bind.annotation.XmlNs(prefix = "employment", namespaceURI = "http://www.orcid.org/ns/employment"), 
-        @javax.xml.bind.annotation.XmlNs(prefix = "educations", namespaceURI = "http://www.orcid.org/ns/activities"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "employment", namespaceURI = "http://www.orcid.org/ns/employment"),         
         @javax.xml.bind.annotation.XmlNs(prefix = "education", namespaceURI = "http://www.orcid.org/ns/education"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "funding", namespaceURI = "http://www.orcid.org/ns/funding"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "peer-review", namespaceURI = "http://www.orcid.org/ns/peer-review"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "work", namespaceURI = "http://www.orcid.org/ns/work"),
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common")}, 
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.record.summary_v2;
