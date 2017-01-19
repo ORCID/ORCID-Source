@@ -20,12 +20,11 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +126,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
         if(result == null) {
             try {
                 RecordNameEntity recordName = recordNameDao.getRecordName(clientId);
-                result = getPublicNameFromRecordName(recordName);
+                result = RecordNameUtils.getPublicName(recordName);
             } catch(Exception e2) {
                 //If it fails to find the name in the record_name table, then it might be an error
                 throw new IllegalArgumentException("Unable to find source name for: " + clientId);
@@ -136,17 +135,4 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
         return result;
     }
     
-    private String getPublicNameFromRecordName(RecordNameEntity recordName) {
-        if (Visibility.PUBLIC.equals(recordName.getVisibility())) {
-            if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            } else {
-                // If credit name is empty
-                return recordName.getGivenNames() + (StringUtils.isEmpty(recordName.getFamilyName()) ? ""
-                        : " " + recordName.getFamilyName());
-            }
-        } else {
-            return null;
-        }
-    }
 }
