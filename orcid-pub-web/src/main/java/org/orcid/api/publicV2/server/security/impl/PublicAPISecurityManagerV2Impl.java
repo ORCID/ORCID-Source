@@ -54,7 +54,11 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
 
     @Override
     public void checkIsPublic(Biography biography) {
-        if(biography != null && !PojoUtil.isEmpty(biography.getContent()) && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography == null || (PojoUtil.isEmpty(biography.getContent()) && biography.getVisibility() == null)) {
+            return;
+        }
+        
+        if(!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidNonPublicElementException();
         }
     }
