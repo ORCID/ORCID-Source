@@ -188,7 +188,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -197,9 +198,12 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         ////////////////////////////
         // Rollback to public again//
@@ -313,7 +317,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -408,7 +414,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -417,9 +424,12 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         ////////////////////////////
         // Rollback to public again//
@@ -533,7 +543,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -628,7 +640,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -637,9 +650,12 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         ////////////////////////////
         // Rollback to public again//
@@ -753,7 +769,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());        
@@ -848,7 +866,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -857,9 +876,12 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_v2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         ////////////////////////////
         // Rollback to public again//
@@ -973,7 +995,9 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_v2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNull(personalDetails.getBiography());
+        assertNotNull(personalDetails.getBiography());
+        assertNull(personalDetails.getBiography().getContent());
+        assertNull(personalDetails.getBiography().getVisibility());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());

@@ -987,7 +987,9 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertEquals(name, p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames());
         assertNotNull(p.getOtherNames().getOtherNames());
         assertEquals(1, p.getOtherNames().getOtherNames().size());
@@ -1013,7 +1015,9 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames());
         assertNotNull(p.getOtherNames().getOtherNames());
         assertTrue(p.getOtherNames().getOtherNames().isEmpty());
@@ -1036,7 +1040,9 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames());
         assertNotNull(p.getOtherNames().getOtherNames());
         assertEquals(3, p.getOtherNames().getOtherNames().size());
@@ -1140,7 +1146,9 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames());
         assertNotNull(p.getOtherNames().getOtherNames());
         assertTrue(p.getOtherNames().getOtherNames().isEmpty());
@@ -1163,7 +1171,9 @@ public class OrcidSecurityManager_generalTest extends OrcidSecurityManagerTestBa
         orcidSecurityManager.checkAndFilter(ORCID_1, p);
         assertNotNull(p);
         assertNull(p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames());
         assertNotNull(p.getOtherNames().getOtherNames());
         assertEquals(3, p.getOtherNames().getOtherNames().size());

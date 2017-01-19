@@ -568,13 +568,22 @@ public class PublicAPISecurityManagerV2Test {
         p = getPersonalDetailsElement(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PUBLIC);
         publicAPISecurityManagerV2.filter(p);
         assertNotNull(p.getName());
-        assertNull(p.getBiography());
+        assertNotNull(p.getBiography());
+        assertNull(p.getBiography().getContent());
+        assertNull(p.getBiography().getVisibility());
         assertNotNull(p.getOtherNames().getOtherNames());
         p.getOtherNames().getOtherNames().forEach(e -> {
             assertIsPublic(e);
         });
 
         p = getPersonalDetailsElement(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.LIMITED);
+        publicAPISecurityManagerV2.filter(p);
+        assertNotNull(p.getName());
+        assertNotNull(p.getBiography());
+        assertNotNull(p.getOtherNames());
+        assertTrue(p.getOtherNames().getOtherNames().isEmpty());
+        
+        p = getPersonalDetailsElement(Visibility.PUBLIC, Visibility.PUBLIC, Visibility.PRIVATE);
         publicAPISecurityManagerV2.filter(p);
         assertNotNull(p.getName());
         assertNotNull(p.getBiography());
