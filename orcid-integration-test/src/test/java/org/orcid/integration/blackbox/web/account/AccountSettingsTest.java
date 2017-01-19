@@ -67,13 +67,8 @@ public class AccountSettingsTest extends BlackBoxBase {
         removeEmail(emailValue);
         //Reload the account settings to confirm it was actually removed
         showAccountSettingsPage();
-        try {
-            //Look if it is still present
-            emailExists(emailValue);
-            fail("Email " + emailValue + " should not be there");
-        } catch (Exception e) {
-
-        }
+        // Look if it is still present
+        assertFalse("Email " + emailValue + " should not be there", emailExists(emailValue));
     }
 
     @Test
