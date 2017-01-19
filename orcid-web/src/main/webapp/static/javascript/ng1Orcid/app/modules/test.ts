@@ -2,7 +2,7 @@ import 'zone.js';
 import 'reflect-metadata';
 import {NgModule, Component} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-//import {UpgradeModule} from '@angular/upgrade/static';
+import {UpgradeModule} from '@angular/upgrade/static';
 
 @Component({
   selector: 'root-cmp',
@@ -14,8 +14,8 @@ export class RootCmp {}
 
 @NgModule({
   imports: [
-    BrowserModule
-    //UpgradeModule,
+    BrowserModule,
+    UpgradeModule
   ],
   bootstrap: [RootCmp],
   declarations: [RootCmp]
