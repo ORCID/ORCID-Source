@@ -82,7 +82,6 @@ public class ShibbolethTest {
         capabilities.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
         // Marionette does not allow untrusted certs yet
         capabilities.setCapability(FirefoxDriver.MARIONETTE, false);
-        capabilities.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
         webDriver = new FirefoxDriver(capabilities);
     }
 
