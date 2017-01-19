@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    //"noEmit": true,
-    //"noEmitHelpers": true,
-    "strictNullChecks": false,
     "lib": [
       "dom",
       "es6"
     ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    //"noEmit": true,
+    //"noEmitHelpers": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "target": "es5",
     "typeRoots": [
       "node_modules/@types"
     ],
