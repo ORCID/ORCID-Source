@@ -297,7 +297,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             // Get biography
             if (publicPersonalDetails.getBiography() != null) {
                 Biography bio = publicPersonalDetails.getBiography();
-                if(bio.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC) && !PojoUtil.isEmpty(bio.getContent())) {
+                if((bio.getVisibility() == null || bio.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) && !PojoUtil.isEmpty(bio.getContent())) {
                     isProfileEmtpy = false;
                     mav.addObject("biography", bio);
                 }            
