@@ -15,7 +15,7 @@ The new style tests are different from the old style integration tests because t
 
         find / -name firefox 2>/dev/null
     
-4. Install the latest [geckodriver](https://github.com/mozilla/geckodriver/releases).
+4. Install the latest [geckodriver](https://github.com/mozilla/geckodriver/releases). We suggest putting this into your `~/bin`.
 
 ###Set up the test data
 
@@ -85,13 +85,14 @@ This should setup the test data and then run a test that verifies the data persi
     * Test class: ```org.orcid.integration.blackbox.BlackBoxTestSuite```
     * Test runner: ```JUnit 4```
 
-6. In the Arguments tab, set the following VM arguments (note that you need to insert your `webdriver.gecko.driver` path)
+6. In the Arguments tab, set the following VM arguments (note that you need to insert your `webdriver.firefox.bin` and `webdriver.gecko.driver` paths)
 
         -Xmx2g
         -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid
         -Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties
         -Dorg.orcid.persistence.db.dataSource=simpleDataSource
         -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource
+        -Dwebdriver.firefox.bin=[path to firefox executable]
         -Dwebdriver.gecko.driver=[path to geckodriver executable]
 
 7. Click Apply, then click Run
@@ -102,7 +103,7 @@ This should setup the test data and then run a test that verifies the data persi
 
         cd ~/git/ORCID-Source
 
-2. Run the test with the following arguments (note that you need to insert your `webdriver.gecko.driver` path)
+2. Run the test with the following arguments (note that you need to insert your `webdriver.firefox.bin` and `webdriver.gecko.driver` paths)
 
         export MAVEN_OPTS="-Xmx2g";
         mvn test -DfailIfNoTests=false \
@@ -111,6 +112,7 @@ This should setup the test data and then run a test that verifies the data persi
         -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid \
         -Dorg.orcid.persistence.db.dataSource=simpleDataSource \
         -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource \
+        -Dwebdriver.firefox.bin=[path to firefox executable] \
         -Dwebdriver.gecko.driver=[path to geckodriver executable]
 
 VM Argument notes:
