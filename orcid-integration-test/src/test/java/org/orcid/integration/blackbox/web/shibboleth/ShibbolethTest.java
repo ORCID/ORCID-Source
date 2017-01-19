@@ -80,6 +80,8 @@ public class ShibbolethTest {
         capabilities.setBrowserName("firefox");
         capabilities.setPlatform(org.openqa.selenium.Platform.ANY);
         capabilities.setCapability(FirefoxDriver.PROFILE, fireFoxProfile);
+        // Marionette does not allow untrusted certs yet
+        capabilities.setCapability(FirefoxDriver.MARIONETTE, false);
         webDriver = new FirefoxDriver(capabilities);
     }
 

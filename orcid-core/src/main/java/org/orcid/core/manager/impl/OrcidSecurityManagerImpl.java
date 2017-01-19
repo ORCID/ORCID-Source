@@ -358,8 +358,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             try {
                 checkAndFilter(orcid, personalDetails.getBiography(), READ_BIO_REQUIRED_SCOPE, true);
             } catch (Exception e) {
-                personalDetails.setBiography(null);
-            }
+                personalDetails.setBiography(null);                
+            }            
         }
 
         if (personalDetails.getName() != null) {

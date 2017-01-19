@@ -188,7 +188,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -199,7 +200,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         ////////////////////////////
         // Rollback to public again//
@@ -408,7 +410,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -419,7 +422,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNull(personalDetails.getOtherNames().getOtherNames());
 
         ////////////////////////////
         // Rollback to public again//
@@ -628,7 +632,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -639,7 +644,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         ////////////////////////////
         // Rollback to public again//
@@ -848,7 +854,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
         assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         // Change bio to limited
         changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
@@ -859,7 +866,8 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
-        assertNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames());
+        assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
 
         ////////////////////////////
         // Rollback to public again//

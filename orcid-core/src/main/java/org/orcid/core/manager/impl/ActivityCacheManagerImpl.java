@@ -26,6 +26,7 @@ import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
@@ -122,16 +123,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
     public String getPublicCreditName(ProfileEntity profile) {
         String publicCreditName = null;
-        if(profile != null) {
-            if(profile.getRecordNameEntity() != null && Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
-                if(!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
-                    publicCreditName = profile.getRecordNameEntity().getCreditName();
-                } else {
-                    String givenName = profile.getRecordNameEntity().getGivenNames();
-                    String familyName = profile.getRecordNameEntity().getFamilyName();
-                    publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                }
-            }            
+        if(profile != null && profile.getRecordNameEntity() != null) {
+            publicCreditName = RecordNameUtils.getPublicName(profile.getRecordNameEntity());        
         }
         
         return publicCreditName;

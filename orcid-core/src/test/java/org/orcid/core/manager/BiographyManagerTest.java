@@ -101,7 +101,7 @@ public class BiographyManagerTest extends BaseTest {
     public void testGetPublicBiography() {
         String orcid = "0000-0000-0000-0002";
         Biography bio = biographyManager.getPublicBiography(orcid, 0);
-        assertNull(bio);   
+        assertNull(bio);
         
         orcid = "0000-0000-0000-0003";
         bio = biographyManager.getPublicBiography(orcid, 0);

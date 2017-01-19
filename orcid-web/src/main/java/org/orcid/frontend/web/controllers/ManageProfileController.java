@@ -32,7 +32,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
@@ -42,6 +41,7 @@ import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
@@ -1039,7 +1039,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @SuppressWarnings("unchecked")
     private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException {
         String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));
-        Map<String, String> params = (HashMap<String, String>) JSON.parse(jsonString);
+        Map<String, String> params = (Map<String, String>) JsonUtils.readObjectFromJsonString(jsonString, Map.class);
         return params;
     }
 
