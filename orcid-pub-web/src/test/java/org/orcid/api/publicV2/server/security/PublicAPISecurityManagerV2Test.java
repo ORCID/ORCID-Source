@@ -564,13 +564,11 @@ public class PublicAPISecurityManagerV2Test {
             assertIsPublic(e);
         });
 
-        // Should not fail, but bio should be empty
+        // Should not fail, but bio should be null
         p = getPersonalDetailsElement(Visibility.PUBLIC, Visibility.LIMITED, Visibility.PUBLIC);
         publicAPISecurityManagerV2.filter(p);
         assertNotNull(p.getName());
-        assertNotNull(p.getBiography());
-        assertNull(p.getBiography().getContent());
-        assertNull(p.getBiography().getVisibility());
+        assertNull(p.getBiography());
         assertNotNull(p.getOtherNames().getOtherNames());
         p.getOtherNames().getOtherNames().forEach(e -> {
             assertIsPublic(e);

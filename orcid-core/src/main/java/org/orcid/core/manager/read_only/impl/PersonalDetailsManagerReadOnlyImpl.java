@@ -79,8 +79,7 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
         if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
             // Lets copy the list so we don't modify the cached collection
             List<OtherName> filteredList = new ArrayList<OtherName>(otherNames.getOtherNames());
-            filteredOtherNames.setOtherNames(filteredList);
-            personalDetails.setOtherNames(filteredOtherNames);
+            filteredOtherNames.setOtherNames(filteredList);            
         }
 
         if (personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {

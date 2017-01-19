@@ -198,9 +198,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -317,9 +315,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -424,9 +420,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -543,9 +537,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc3.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNull(personalDetails.getOtherNames().getOtherNames());
@@ -650,9 +642,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
@@ -769,9 +759,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_rc4.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());        
@@ -876,9 +864,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_v2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertTrue(personalDetails.getOtherNames().getOtherNames().isEmpty());
@@ -995,9 +981,7 @@ public class PersonalDetailsTest extends BlackBoxBaseV2Release {
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(org.orcid.jaxb.model.record_v2.PersonalDetails.class);
         assertNotNull(personalDetails);
-        assertNotNull(personalDetails.getBiography());
-        assertNull(personalDetails.getBiography().getContent());
-        assertNull(personalDetails.getBiography().getVisibility());
+        assertNull(personalDetails.getBiography());
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());

@@ -68,7 +68,7 @@ public class BiographyManagerReadOnlyImpl implements BiographyManagerReadOnly {
         if(bio != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }
-        return new Biography();
+        return null;
     }
 
     @Override

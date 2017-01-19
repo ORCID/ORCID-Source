@@ -142,8 +142,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
             try {
                 checkIsPublic(personalDetails.getBiography());
             } catch (OrcidNonPublicElementException e) {
-                personalDetails.getBiography().setContent(null);
-                personalDetails.getBiography().setVisibility(null);
+                personalDetails.setBiography(null);
             }
         }
 
