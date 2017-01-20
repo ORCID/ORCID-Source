@@ -28,6 +28,16 @@
  *  
  */
 
+angular.element(function() {
+angular.bootstrap(
+    document, 
+    ['orcidApp']
+);
+});
+//angular.bootstrap(document.body, ['orcidApp'], {});
+
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
 /*
  * 1 - Utility functions 
  */
@@ -150,8 +160,6 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 /*************************************************
  * 3 - Angular Services

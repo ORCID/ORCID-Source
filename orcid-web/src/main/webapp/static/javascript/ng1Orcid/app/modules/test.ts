@@ -1,3 +1,5 @@
+
+/*
 import 'zone.js';
 import 'reflect-metadata';
 import {NgModule, Component} from '@angular/core';
@@ -23,3 +25,4 @@ export class RootCmp {}
 export class Ng2AppModule {
   constructor(){}
 }
+*/
