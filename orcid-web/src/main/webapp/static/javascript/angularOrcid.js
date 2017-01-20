@@ -57,8 +57,8 @@
 	requireAll(__webpack_require__(20));
 	requireAll(__webpack_require__(21));
 	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(49));
-	requireAll(__webpack_require__(60));
+	requireAll(__webpack_require__(52));
+	requireAll(__webpack_require__(63));
 
 /***/ },
 /* 1 */
@@ -12078,7 +12078,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./test.ts": 24
+		"./ng1_app.ts": 24,
+		"./test.ts": 27
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12096,6 +12097,18 @@
 
 /***/ },
 /* 24 */
+/***/ function(module, exports) {
+
+	//import * as angular from 'angular'
+	//export const orcidApp = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+	//var orcidApp = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+	//var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']); 
+
+
+/***/ },
+/* 25 */,
+/* 26 */,
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -12108,11 +12121,11 @@
 	var __metadata = (this && this.__metadata) || function (k, v) {
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
-	__webpack_require__(25);
-	__webpack_require__(27);
-	var core_1 = __webpack_require__(28);
-	var platform_browser_1 = __webpack_require__(46);
-	var static_1 = __webpack_require__(48);
+	__webpack_require__(28);
+	__webpack_require__(30);
+	var core_1 = __webpack_require__(31);
+	var platform_browser_1 = __webpack_require__(49);
+	var static_1 = __webpack_require__(51);
 	var RootCmp = (function () {
 	    function RootCmp() {
 	    }
@@ -12145,7 +12158,7 @@
 
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {/**
@@ -14010,10 +14023,10 @@
 
 	})));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(26)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(29)))
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -14199,7 +14212,7 @@
 
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*! *****************************************************************************
@@ -15331,7 +15344,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -15340,7 +15353,7 @@
 	 * License: MIT
 	 */
 	(function (global, factory) {
-	     true ? factory(exports, __webpack_require__(29), __webpack_require__(30)) :
+	     true ? factory(exports, __webpack_require__(32), __webpack_require__(33)) :
 	    typeof define === 'function' && define.amd ? define(['exports', 'rxjs/Subject', 'rxjs/Observable'], factory) :
 	    (factory((global.ng = global.ng || {}, global.ng.core = global.ng.core || {}),global.Rx,global.Rx));
 	}(this, function (exports,rxjs_Subject,rxjs_Observable) { 'use strict';
@@ -28625,7 +28638,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -28634,12 +28647,12 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var Observable_1 = __webpack_require__(30);
-	var Subscriber_1 = __webpack_require__(33);
-	var Subscription_1 = __webpack_require__(35);
-	var ObjectUnsubscribedError_1 = __webpack_require__(44);
-	var SubjectSubscription_1 = __webpack_require__(45);
-	var rxSubscriber_1 = __webpack_require__(42);
+	var Observable_1 = __webpack_require__(33);
+	var Subscriber_1 = __webpack_require__(36);
+	var Subscription_1 = __webpack_require__(38);
+	var ObjectUnsubscribedError_1 = __webpack_require__(47);
+	var SubjectSubscription_1 = __webpack_require__(48);
+	var rxSubscriber_1 = __webpack_require__(45);
 	/**
 	 * @class SubjectSubscriber<T>
 	 */
@@ -28790,13 +28803,13 @@
 	//# sourceMappingURL=Subject.js.map
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var root_1 = __webpack_require__(31);
-	var toSubscriber_1 = __webpack_require__(32);
-	var observable_1 = __webpack_require__(43);
+	var root_1 = __webpack_require__(34);
+	var toSubscriber_1 = __webpack_require__(35);
+	var observable_1 = __webpack_require__(46);
 	/**
 	 * A representation of any set of values over any amount of time. This the most basic building block
 	 * of RxJS.
@@ -28924,7 +28937,7 @@
 	//# sourceMappingURL=Observable.js.map
 
 /***/ },
-/* 31 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
@@ -28943,13 +28956,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Subscriber_1 = __webpack_require__(33);
-	var rxSubscriber_1 = __webpack_require__(42);
-	var Observer_1 = __webpack_require__(41);
+	var Subscriber_1 = __webpack_require__(36);
+	var rxSubscriber_1 = __webpack_require__(45);
+	var Observer_1 = __webpack_require__(44);
 	function toSubscriber(nextOrObserver, error, complete) {
 	    if (nextOrObserver) {
 	        if (nextOrObserver instanceof Subscriber_1.Subscriber) {
@@ -28968,7 +28981,7 @@
 	//# sourceMappingURL=toSubscriber.js.map
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -28977,10 +28990,10 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var isFunction_1 = __webpack_require__(34);
-	var Subscription_1 = __webpack_require__(35);
-	var Observer_1 = __webpack_require__(41);
-	var rxSubscriber_1 = __webpack_require__(42);
+	var isFunction_1 = __webpack_require__(37);
+	var Subscription_1 = __webpack_require__(38);
+	var Observer_1 = __webpack_require__(44);
+	var rxSubscriber_1 = __webpack_require__(45);
 	/**
 	 * Implements the {@link Observer} interface and extends the
 	 * {@link Subscription} class. While the {@link Observer} is the public API for
@@ -29222,7 +29235,7 @@
 	//# sourceMappingURL=Subscriber.js.map
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29233,16 +29246,16 @@
 	//# sourceMappingURL=isFunction.js.map
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var isArray_1 = __webpack_require__(36);
-	var isObject_1 = __webpack_require__(37);
-	var isFunction_1 = __webpack_require__(34);
-	var tryCatch_1 = __webpack_require__(38);
-	var errorObject_1 = __webpack_require__(39);
-	var UnsubscriptionError_1 = __webpack_require__(40);
+	var isArray_1 = __webpack_require__(39);
+	var isObject_1 = __webpack_require__(40);
+	var isFunction_1 = __webpack_require__(37);
+	var tryCatch_1 = __webpack_require__(41);
+	var errorObject_1 = __webpack_require__(42);
+	var UnsubscriptionError_1 = __webpack_require__(43);
 	/**
 	 * Represents a disposable resource, such as the execution of an Observable. A
 	 * Subscription has one important method, `unsubscribe`, that takes no argument
@@ -29391,7 +29404,7 @@
 	//# sourceMappingURL=Subscription.js.map
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29399,7 +29412,7 @@
 	//# sourceMappingURL=isArray.js.map
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29410,11 +29423,11 @@
 	//# sourceMappingURL=isObject.js.map
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var errorObject_1 = __webpack_require__(39);
+	var errorObject_1 = __webpack_require__(42);
 	var tryCatchTarget;
 	function tryCatcher() {
 	    try {
@@ -29434,7 +29447,7 @@
 	//# sourceMappingURL=tryCatch.js.map
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29443,7 +29456,7 @@
 	//# sourceMappingURL=errorObject.js.map
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29473,7 +29486,7 @@
 	//# sourceMappingURL=UnsubscriptionError.js.map
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29486,22 +29499,22 @@
 	//# sourceMappingURL=Observer.js.map
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var root_1 = __webpack_require__(31);
+	var root_1 = __webpack_require__(34);
 	var Symbol = root_1.root.Symbol;
 	exports.$$rxSubscriber = (typeof Symbol === 'function' && typeof Symbol.for === 'function') ?
 	    Symbol.for('rxSubscriber') : '@@rxSubscriber';
 	//# sourceMappingURL=rxSubscriber.js.map
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var root_1 = __webpack_require__(31);
+	var root_1 = __webpack_require__(34);
 	function getSymbolObservable(context) {
 	    var $$observable;
 	    var Symbol = context.Symbol;
@@ -29524,7 +29537,7 @@
 	//# sourceMappingURL=observable.js.map
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -29556,7 +29569,7 @@
 	//# sourceMappingURL=ObjectUnsubscribedError.js.map
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29565,7 +29578,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var Subscription_1 = __webpack_require__(35);
+	var Subscription_1 = __webpack_require__(38);
 	/**
 	 * We need this JSDoc comment for affecting ESDoc.
 	 * @ignore
@@ -29601,7 +29614,7 @@
 	//# sourceMappingURL=SubjectSubscription.js.map
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -29610,7 +29623,7 @@
 	 * License: MIT
 	 */
 	(function (global, factory) {
-	     true ? factory(exports, __webpack_require__(47), __webpack_require__(28)) :
+	     true ? factory(exports, __webpack_require__(50), __webpack_require__(31)) :
 	    typeof define === 'function' && define.amd ? define(['exports', '@angular/common', '@angular/core'], factory) :
 	    (factory((global.ng = global.ng || {}, global.ng.platformBrowser = global.ng.platformBrowser || {}),global.ng.common,global.ng.core));
 	}(this, function (exports,_angular_common,core) { 'use strict';
@@ -34299,7 +34312,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -34308,7 +34321,7 @@
 	 * License: MIT
 	 */
 	(function (global, factory) {
-	     true ? factory(exports, __webpack_require__(28)) :
+	     true ? factory(exports, __webpack_require__(31)) :
 	    typeof define === 'function' && define.amd ? define(['exports', '@angular/core'], factory) :
 	    (factory((global.ng = global.ng || {}, global.ng.common = global.ng.common || {}),global.ng.core));
 	}(this, function (exports,_angular_core) { 'use strict';
@@ -37939,7 +37952,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37948,7 +37961,7 @@
 	 * License: MIT
 	 */
 	(function (global, factory) {
-	     true ? factory(exports, __webpack_require__(28)) :
+	     true ? factory(exports, __webpack_require__(31)) :
 	    typeof define === 'function' && define.amd ? define(['exports', '@angular/core'], factory) :
 	    (factory((global.ng = global.ng || {}, global.ng.upgrade = global.ng.upgrade || {}, global.ng.upgrade.static = global.ng.upgrade.static || {}),global.ng.core));
 	}(this, function (exports,_angular_core) { 'use strict';
@@ -39057,20 +39070,20 @@
 	}));
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 50,
-		"./affiliationsSrvc.js": 51,
-		"./bioBulkSrvc.js": 52,
-		"./commonSrvc.js": 53,
-		"./fundingSrvc.js": 54,
-		"./groupedActivitiesService.js": 55,
-		"./groupedActivitiesUtil.js": 56,
-		"./initialConfigService.js": 57,
-		"./utilsService.js": 58,
-		"./workspaceSrvc.js": 59
+		"./actBulkSrvc.js": 53,
+		"./affiliationsSrvc.js": 54,
+		"./bioBulkSrvc.js": 55,
+		"./commonSrvc.js": 56,
+		"./fundingSrvc.js": 57,
+		"./groupedActivitiesService.js": 58,
+		"./groupedActivitiesUtil.js": 59,
+		"./initialConfigService.js": 60,
+		"./utilsService.js": 61,
+		"./workspaceSrvc.js": 62
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -39083,11 +39096,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 49;
+	webpackContext.id = 52;
 
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -39106,7 +39119,7 @@
 	}]);
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -39235,7 +39248,7 @@
 	}]);
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -39255,7 +39268,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -39320,7 +39333,7 @@
 	}]);
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports) {
 
 	/**
@@ -39531,7 +39544,7 @@
 	}]);
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -39649,7 +39662,7 @@
 
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports) {
 
 	/*
@@ -39704,7 +39717,7 @@
 	*/
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -39731,7 +39744,7 @@
 	}]);
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -39767,7 +39780,7 @@
 	);
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -39822,7 +39835,7 @@
 	}]);
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -39831,7 +39844,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 60;
+	webpackContext.id = 63;
 
 
 /***/ }
