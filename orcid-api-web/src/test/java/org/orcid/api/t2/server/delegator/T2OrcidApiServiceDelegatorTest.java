@@ -873,6 +873,62 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testAddDuplicatedExtIdsDontModifyProfile() {
         String userOrcid = "0000-0000-0000-0005";
+
+        OrcidMessage message = new OrcidMessage();
+        message.setMessageVersion("1.2_rc6");
+        message.setOrcidProfile(new OrcidProfile());
+        message.getOrcidProfile().setOrcidBio(new OrcidBio());
+        ExternalIdentifiers extIds = new ExternalIdentifiers();
+        ExternalIdentifier extId1 = new ExternalIdentifier();
+        String commonName = "common-name-1-" + System.currentTimeMillis();
+        extId1.setExternalIdCommonName(new ExternalIdCommonName(commonName));
+        extId1.setExternalIdReference(new ExternalIdReference("ext-id-reference-1"));
+        extId1.setExternalIdUrl(new ExternalIdUrl("http://test.orcid.org/" + System.currentTimeMillis()));
+        extIds.getExternalIdentifier().add(extId1);
+        message.getOrcidProfile().getOrcidBio().setExternalIdentifiers(extIds);
+
+        // Add for client 1
+        SecurityContextTestUtils.setUpSecurityContext(userOrcid, "APP-5555555555555555", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
+        Response r = t2OrcidApiServiceDelegator.addExternalIdentifiers(null, userOrcid, message);
+        assertNotNull(r);
+        OrcidMessage newMessage1 = (OrcidMessage) r.getEntity();
+        assertNotNull(newMessage1);
+        assertNotNull(newMessage1.getOrcidProfile());
+        assertNotNull(newMessage1.getOrcidProfile().getOrcidBio());
+        assertNotNull(newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
+        assertNotNull(newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(commonName,
+                newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("APP-5555555555555555",
+                newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource().retrieveSourcePath());
+
+        // Reset message to add it again
+        message = new OrcidMessage();
+        message.setMessageVersion("1.2_rc6");
+        message.setOrcidProfile(new OrcidProfile());
+        message.getOrcidProfile().setOrcidBio(new OrcidBio());
+        extId1.setSource(null);
+        message.getOrcidProfile().getOrcidBio().setExternalIdentifiers(extIds);
+        r = t2OrcidApiServiceDelegator.addExternalIdentifiers(null, userOrcid, message);
+        // If we add it again, no error, but it is not duplicated
+        assertNotNull(r);
+        OrcidMessage newMessage2 = (OrcidMessage) r.getEntity();
+        assertNotNull(newMessage2);
+        assertNotNull(newMessage2.getOrcidProfile());
+        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio());
+        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
+        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(commonName,
+                newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("APP-5555555555555555",
+                newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testAddDuplicatedExtIdsWhenThereIsNonPublicCountry() {
+        String userOrcid = "0000-0000-0000-0003";
         
         OrcidMessage message = new OrcidMessage();
         message.setMessageVersion("1.2_rc6");
@@ -897,31 +953,11 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(newMessage1.getOrcidProfile().getOrcidBio());
         assertNotNull(newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
         assertNotNull(newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(commonName, newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
-        assertEquals("APP-5555555555555555", newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource().retrieveSourcePath());
-        
-        //Reset message to add it again
-        message = new OrcidMessage();
-        message.setMessageVersion("1.2_rc6");
-        message.setOrcidProfile(new OrcidProfile());
-        message.getOrcidProfile().setOrcidBio(new OrcidBio());
-        extId1.setSource(null);
-        message.getOrcidProfile().getOrcidBio().setExternalIdentifiers(extIds);
-        r = t2OrcidApiServiceDelegator.addExternalIdentifiers(null, userOrcid, message);
-        //If we add it again, no error, but it is not duplicated
-        assertNotNull(r);
-        OrcidMessage newMessage2 = (OrcidMessage)r.getEntity();
-        assertNotNull(newMessage2);
-        assertNotNull(newMessage2.getOrcidProfile());
-        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio());
-        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
-        assertNotNull(newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals(commonName, newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
-        assertEquals("APP-5555555555555555", newMessage2.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource().retrieveSourcePath());
+        assertEquals(4, newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(commonName, newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(3).getExternalIdCommonName().getContent());
+        assertEquals("APP-5555555555555555", newMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(3).getSource().retrieveSourcePath());
     }
-    
+
     @Test(expected = OrcidDeprecatedException.class)
     public void testAddWorkToDeprecatedAccount() {
     	SecurityContextTestUtils.setUpSecurityContext();

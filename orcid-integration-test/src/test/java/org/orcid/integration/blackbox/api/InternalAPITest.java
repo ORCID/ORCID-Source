@@ -93,7 +93,7 @@ public class InternalAPITest {
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
         assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), clientResponse.getStatus());
     }
     
     @Test
@@ -105,7 +105,7 @@ public class InternalAPITest {
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.MEMBER);
         assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), clientResponse.getStatus());
     }
     
     @Test
