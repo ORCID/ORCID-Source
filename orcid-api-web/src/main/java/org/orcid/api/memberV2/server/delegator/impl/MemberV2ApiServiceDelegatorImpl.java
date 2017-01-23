@@ -55,10 +55,10 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -184,7 +184,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     private BiographyManager biographyManager;
 
     @Resource
-    private RecordManager recordManager;
+    private RecordManagerReadOnly recordManagerReadOnly;
 
     @Resource
     private SourceUtils sourceUtils;
@@ -212,7 +212,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
-        Record record = recordManager.getRecord(orcid);
+        Record record = recordManagerReadOnly.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
             sourceUtils.setSourceName(record.getPerson());
