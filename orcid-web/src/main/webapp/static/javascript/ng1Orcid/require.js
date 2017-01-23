@@ -5,6 +5,7 @@ function requireAll(requireContext) {
 }
 
 require('./app/angularOrcidOriginal.js');
+require('./app/main.ts');
 requireAll(require.context("./app/controllers", true, /^\.\/.*\.js$/));
 requireAll(require.context("./app/controllers", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/directives", true, /^\.\/.*\.js$/));

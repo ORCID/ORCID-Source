@@ -28,15 +28,16 @@
  *  
  */
 
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
 angular.element(function() {
-angular.bootstrap(
-    document, 
-    ['orcidApp']
-);
+    angular.bootstrap(
+        document, 
+        ['orcidApp']
+    );
 });
 //angular.bootstrap(document.body, ['orcidApp'], {});
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 /*
  * 1 - Utility functions 
