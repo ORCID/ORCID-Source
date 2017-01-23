@@ -194,7 +194,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                     } else {
                                         // As last resource, check the source
                                         Source source = country.getSource();
-                                        if (source != null && sourceId.equals(source.retrieveSourcePath())) {
+                                        if (source != null && sourceId != null && sourceId.equals(source.retrieveSourcePath())) {
                                             decision = TreeCleaningDecision.IGNORE;
                                         } else {
                                             decision = TreeCleaningDecision.CLEANING_REQUIRED;
