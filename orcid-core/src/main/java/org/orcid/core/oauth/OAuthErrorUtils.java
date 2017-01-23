@@ -21,10 +21,11 @@ import javax.ws.rs.core.Response.Status;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.security.aop.LockedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 
 public class OAuthErrorUtils {
-    
+
     public static OAuthError getOAuthError(Throwable t) {
         OAuthError error = new OAuthError();
         error.setErrorDescription(t.getMessage());
@@ -35,6 +36,9 @@ public class OAuthErrorUtils {
             error.setError(OAuthError.UNSUPPORTED_GRANT_TYPE);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if (OrcidInvalidScopeException.class.isAssignableFrom(t.getClass())) {
+            error.setError(OAuthError.INVALID_SCOPE);
+            error.setResponseStatus(Status.BAD_REQUEST);
+        } else if (InvalidScopeException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.INVALID_SCOPE);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if (InsufficientAuthenticationException.class.isAssignableFrom(t.getClass())) {

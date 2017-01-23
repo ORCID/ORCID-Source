@@ -43,7 +43,6 @@ import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
@@ -145,11 +144,12 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC2 {
         ClientResponse tokenResponse = getClientResponse(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.ORCID_WORKS_UPDATE.getContent(), this.getClient1RedirectUri(),
                 authorizationCode);
 
-        assertEquals(401, tokenResponse.getStatus());
-        OrcidMessage result = tokenResponse.getEntity(OrcidMessage.class);
+        assertEquals(400, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject result = new JSONObject(body);
         assertNotNull(result);
-        assertNotNull(result.getErrorDesc());
-        assertEquals("OAuth2 problem : Invalid scopes: /orcid-works/update available scopes for this code are: [/orcid-works/create]", result.getErrorDesc().getContent());
+        assertEquals("invalid_scope", result.get("error"));
+        assertEquals("Invalid scopes: /orcid-works/update available scopes for this code are: [/orcid-works/create]", result.get("error_description"));
     }
 
     @Test
