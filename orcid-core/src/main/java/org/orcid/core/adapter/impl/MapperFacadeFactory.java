@@ -292,7 +292,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         }
 
         private boolean isClient(String sourceId) {
-            return OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.exists(sourceId);
+            return OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.isLegacyClientId(sourceId);
         }
 
         private Source createClientSource(String sourceId) {

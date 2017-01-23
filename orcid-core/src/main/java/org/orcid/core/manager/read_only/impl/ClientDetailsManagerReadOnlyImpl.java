@@ -17,7 +17,9 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -45,6 +47,8 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
     protected ClientSecretDao clientSecretDao;
     
     protected ClientRedirectDao clientRedirectDao;
+    
+    private Set<String> legacyClientIds;
     
     public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
 		this.clientDetailsDao = clientDetailsDao;
@@ -183,5 +187,21 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
             LOGGER.warn("There is no client with the IdP: " + idp);
         }
         return null;
+    }
+    
+    @Override
+    public boolean isLegacyClientId(String clientId) {
+        initLegacyClientIds();
+        return legacyClientIds.contains(clientId);
+    }
+
+    private void initLegacyClientIds() {
+        if (legacyClientIds == null) {
+            synchronized (this) {
+                if (legacyClientIds == null) {
+                    legacyClientIds = new HashSet<>(clientDetailsDao.findLegacyClientIds());
+                }
+            }
+        }
     }
 }
