@@ -210,4 +210,10 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         query.setParameter("idp", idp);        
         return query.getSingleResult();        
     }
+    
+    @Override
+    public List<String> findLegacyClientIds(){
+        TypedQuery<String> query = entityManager.createQuery("select id from ClientDetailsEntity where id not like 'APP-%'", String.class);
+        return query.getResultList();
+    }
 }

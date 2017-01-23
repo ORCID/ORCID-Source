@@ -63,4 +63,6 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     Date getLastModifiedIfNotPublicClient(String clientId);
     
     ClientDetailsEntity findByIdP(String idp);
+
+    List<String> findLegacyClientIds();
 }
