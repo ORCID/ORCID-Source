@@ -530,9 +530,9 @@ public class BlackBoxBase {
     }
 
     public static void saveEditAddressModal() {
-        ngAwareClick(findElementByXpath("//div[@id='colorbox']//button[contains('Save changes',text())]"));        
-        waitForElementVisibility(By.id("country-open-edit-modal"));
+        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
         waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("country-open-edit-modal"));        
     }    
 
     public static void changeAddressVisibility(Visibility visibility) {
@@ -553,18 +553,10 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By countryList = By.xpath("(//select[@ng-model='country.iso2Country.value'])");
-        waitForElementVisibility(countryList);
-        waitForAngular();
-        ngAwareClick(findElement(countryList));
-        waitForAngular();
         By emptyInput = By.xpath("(//select[@ng-model='country.iso2Country.value'])[last()]//option[@value = " + Quotes.escape(countryCode) + "]");
         waitForElementVisibility(emptyInput);
         WebElement countryElement = findElement(emptyInput);
-        countryElement.click();
-        waitForAngular();
-        ngAwareClick(findElement(countryList));
-        waitForAngular();
+        BBBUtil.ngAwareClick(countryElement, webDriver);        
     }
     
     public static void deleteAddresses() {
