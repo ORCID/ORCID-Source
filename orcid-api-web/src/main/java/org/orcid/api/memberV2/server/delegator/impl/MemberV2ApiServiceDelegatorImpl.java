@@ -40,7 +40,6 @@ import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -56,6 +55,7 @@ import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
@@ -229,7 +229,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
     
     @Resource
-    private ClientDetailsManager clientDetailsManagerReadOnly;
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
     
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
