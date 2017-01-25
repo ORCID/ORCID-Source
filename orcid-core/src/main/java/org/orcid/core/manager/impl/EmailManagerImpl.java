@@ -18,9 +18,13 @@ package org.orcid.core.manager.impl;
 
 import java.util.Collection;
 
+import javax.annotation.Resource;
+
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailManager {
 
+    @Resource
+    private SourceManager sourceManager;
+    
     @Override
     @Transactional
     public void removeEmail(String orcid, String email) {
@@ -112,6 +119,16 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void addEmail(String orcid, Email email) {
-        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), email.getSource(), email.getSourceClientId());
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        String sourceId = null;
+        String clientSourceId = null;
+        if(sourceEntity.getSourceProfile() != null) {
+            sourceId = sourceEntity.getSourceProfile().getId();
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            clientSourceId = sourceEntity.getSourceClient().getId();
+        } 
+        emailDao.addEmail(orcid, email.getValue(), email.getVisibility(), sourceId, clientSourceId);
     }	
 }

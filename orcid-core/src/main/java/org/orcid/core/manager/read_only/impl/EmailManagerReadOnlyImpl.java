@@ -134,29 +134,5 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             }
         }
         return false;
-    }
-    
-    @Deprecated
-    @Override    
-    public org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
-        org.orcid.pojo.ajaxForm.Emails form = new org.orcid.pojo.ajaxForm.Emails();
-        
-        if(entities != null) {
-            form.setEmails(new ArrayList<org.orcid.pojo.Email>());
-            for(EmailEntity entity : entities) {
-                org.orcid.pojo.Email email = new org.orcid.pojo.Email();
-                email.setCurrent(entity.getCurrent());
-                email.setPrimary(entity.getPrimary());
-                email.setSource(entity.getSourceId());
-                email.setSourceClientId(entity.getClientSourceId());
-                email.setValue(entity.getId());
-                email.setVerified(entity.getVerified());
-                email.setVisibility(entity.getVisibility());     
-                form.getEmails().add(email);
-            }
-        }
-                
-        return form;
-    }      
+    }        
 }
