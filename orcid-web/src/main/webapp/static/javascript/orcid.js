@@ -484,7 +484,6 @@ Print public record
 ============================================================*/
 
 var printFunc = function() {
-    console.log('starting print');
     window.frames['printRecordFrame'].focus();
     window.frames['printRecordFrame'].print();
     setTimeout(
