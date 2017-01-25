@@ -518,11 +518,8 @@ function printPublicRecord(url){
             }
             $('#printRecordFrame').bind(
                 'load', // jquery thinks it's ready
-                function () {
-                    printFrameReadyToPrint(printFunc);
-                }
+                function () { printFrameReadyToPrint(printFunc); }
             );
-
         }
     ); 
 }
