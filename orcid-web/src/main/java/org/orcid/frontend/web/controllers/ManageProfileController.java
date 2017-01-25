@@ -873,9 +873,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody BiographyForm getBiographyForm() {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        BiographyForm bf = BiographyForm.valueOf(profileEntity);
-        return bf;
+        Biography bio = biographyManager.getBiography(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));
+        return BiographyForm.valueOf(bio);
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)

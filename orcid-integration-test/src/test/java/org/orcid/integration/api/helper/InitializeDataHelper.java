@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.message.ReferredBy;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDao;
@@ -260,7 +260,7 @@ public class InitializeDataHelper {
         preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
         preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
         preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
 
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));

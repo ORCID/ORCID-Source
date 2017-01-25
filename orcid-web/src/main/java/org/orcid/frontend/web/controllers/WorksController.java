@@ -172,7 +172,7 @@ public class WorksController extends BaseWorkspaceController {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
             Visibility v = profile.getActivitiesVisibilityDefault() == null
                     ? Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault();
-            w.setVisibility(v);
+            w.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(v));
         }
 
         if (w.getTitle() == null) {

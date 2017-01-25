@@ -25,7 +25,6 @@ import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -149,7 +148,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set visibility
         if (work.getVisibility() != null) {
-            w.setVisibility(work.getVisibility());
+            w.setVisibility(Visibility.valueOf(work.getVisibility()));
         }
 
         // Set country
@@ -384,7 +383,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set visibility
         if (this.getVisibility() != null) {
-            work.setVisibility(this.getVisibility());
+            work.setVisibility(this.getVisibility().getVisibility());
         }
         
         // Set country
