@@ -38,27 +38,36 @@ import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.PersonDetailsManager;
-import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
+import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -100,9 +109,6 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.WebhookDao;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.NotFoundException;
@@ -120,14 +126,12 @@ import com.sun.jersey.api.NotFoundException;
 public class MemberV2ApiServiceDelegatorImpl implements
         MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
 
+    //Managers that goes to the primary database
     @Resource
     private WorkManager workManager;
 
     @Resource
     private ProfileFundingManager profileFundingManager;
-
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -137,15 +141,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private PeerReviewManager peerReviewManager;
-
-    @Resource
-    private WebhookDao webhookDao;
-
-    @Resource
-    private ProfileDao profileDao;
-
-    @Resource
-    private SourceManager sourceManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -163,28 +158,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
     private OtherNameManager otherNameManager;
 
     @Resource
-    private EmailManager emailManager;
-
-    @Resource
     private ExternalIdentifierManager externalIdentifierManager;
 
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
     @Resource
-    private PersonalDetailsManager personalDetailsManager;
-
-    @Resource
-    private ProfileKeywordManager keywordsManager;
+    private ProfileKeywordManager profileKeywordManager;
 
     @Resource
     private AddressManager addressManager;
-
-    @Resource
-    private BiographyManager biographyManager;
-
-    @Resource
-    private RecordManager recordManager;
 
     @Resource
     private SourceUtils sourceUtils;
@@ -195,11 +175,61 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Resource
     private OrcidSearchManager orcidSearchManager;
 
+    //Managers that goes to the replication database
+    // Activities managers
     @Resource
-    private ActivitiesSummaryManager activitiesSummaryManager;
+    private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
-    private PersonDetailsManager personDetailsManager;
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+
+    @Resource
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
+
+    @Resource
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+
+    @Resource
+    private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
+
+    // Person managers
+    @Resource
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
+
+    @Resource
+    private OtherNameManagerReadOnly otherNameManagerReadOnly;
+
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
+
+    @Resource
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
+
+    @Resource
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
+
+    @Resource
+    private ProfileKeywordManagerReadOnly profileKeywordManagerReadOnly;
+
+    @Resource
+    private AddressManagerReadOnly addressManagerReadOnly;
+
+    @Resource
+    private BiographyManagerReadOnly biographyManagerReadOnly;
+
+    @Resource
+    private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
+
+    // Record manager
+    @Resource
+    private RecordManagerReadOnly recordManagerReadOnly;
+
+    // Other managers
+    @Resource
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
+    
+    @Resource
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
     
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
@@ -212,7 +242,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
-        Record record = recordManager.getRecord(orcid);
+        Record record = recordManagerReadOnly.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
             sourceUtils.setSourceName(record.getPerson());
@@ -228,7 +258,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = activitiesSummaryManager.getActivitiesSummary(orcid);
+        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getActivitiesSummary(orcid);
         orcidSecurityManager.checkAndFilter(orcid, as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
@@ -239,7 +269,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        Work w = workManager.getWork(orcid, putCode, getLastModifiedTime(orcid));
+        Work w = workManagerReadOnly.getWork(orcid, putCode, getLastModifiedTime(orcid));
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -250,7 +280,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
+        List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
@@ -270,7 +300,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, getLastModifiedTime(orcid));
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, getLastModifiedTime(orcid));
         orcidSecurityManager.checkAndFilter(orcid, ws, ScopePathType.ORCID_WORKS_READ_LIMITED);
         ActivityUtils.cleanEmptyFields(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -321,7 +351,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        Funding f = profileFundingManager.getFunding(orcid, putCode);
+        Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
         sourceUtils.setSourceName(f);
@@ -331,7 +361,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     
     @Override
     public Response viewFundings(String orcid) {
-        List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        List<FundingSummary> fundingSummaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         List<FundingSummary> filteredList = null;
@@ -350,7 +380,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
-        FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
+        FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
         sourceUtils.setSourceName(fs);
@@ -392,7 +422,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
+        Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
@@ -401,7 +431,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducations(String orcid) {
-        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EducationSummary> educationsList = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         List<EducationSummary> filteredList = null;
@@ -420,7 +450,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
+        EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);
@@ -455,7 +485,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
+        Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtils.setSourceName(e);
@@ -464,7 +494,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmployments(String orcid) {
-        List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+        List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         List<EmploymentSummary> filteredList = null;
@@ -483,7 +513,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
+        EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
         sourceUtils.setSourceName(es);
@@ -525,7 +555,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        PeerReview p = peerReviewManager.getPeerReview(orcid, putCode);
+        PeerReview p = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, p, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(p, orcid);
         sourceUtils.setSourceName(p);
@@ -534,7 +564,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        List<PeerReviewSummary> peerReviewList = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         List<PeerReviewSummary> filteredList = null;
@@ -553,7 +583,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        PeerReviewSummary ps = peerReviewManager.getPeerReviewSummary(orcid, putCode);
+        PeerReviewSummary ps = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
         sourceUtils.setSourceName(ps);
@@ -596,7 +626,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewGroupIdRecord(Long putCode) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
-        GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
+        GroupIdRecord record = groupIdRecordManagerReadOnly.getGroupIdRecord(putCode);
         return Response.ok(record).build();
     }
 
@@ -634,7 +664,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
-        GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+        GroupIdRecords records = groupIdRecordManagerReadOnly.getGroupIdRecords(pageSize, pageNum);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(records);
         return Response.ok(records).build();
     }
@@ -653,7 +683,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
      */
     @Override
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, getLastModifiedTime(orcid));
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getResearcherUrls(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         if (researcherUrls.getResearcherUrls() != null) {
@@ -670,7 +700,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
+        ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, researcherUrl, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         sourceUtils.setSourceName(researcherUrl);
@@ -719,13 +749,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            emails = emailManager.getEmails(orcid, lastModified);
+            emails = emailManagerReadOnly.getEmails(orcid, lastModified);
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            emails = emailManager.getEmails(orcid, lastModified);
+            emails = emailManagerReadOnly.getEmails(orcid, lastModified);
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
@@ -744,7 +774,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid, getLastModifiedTime(orcid));
+        OtherNames otherNames = otherNameManagerReadOnly.getOtherNames(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         if (otherNames.getOtherNames() != null) {
@@ -762,7 +792,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
+        OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, otherName, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToOtherName(otherName, orcid);
         sourceUtils.setSourceName(otherName);
@@ -806,7 +836,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getExternalIdentifiers(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         if (extIds.getExternalIdentifiers() != null) {
@@ -824,7 +854,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
+        PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, extId, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtils.setSourceName(extId);
@@ -866,7 +896,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getKeywords(orcid, getLastModifiedTime(orcid));
+        Keywords keywords = profileKeywordManagerReadOnly.getKeywords(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         if (keywords.getKeywords() != null) {
@@ -884,7 +914,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
+        Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, keyword, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);
@@ -894,7 +924,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createKeyword(String orcid, Keyword keyword) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
-        keyword = keywordsManager.createKeyword(orcid, keyword, true);
+        keyword = profileKeywordManager.createKeyword(orcid, keyword, true);
         sourceUtils.setSourceName(keyword);
         try {
             return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
@@ -913,7 +943,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
 
-        keyword = keywordsManager.updateKeyword(orcid, putCode, keyword, true);
+        keyword = profileKeywordManager.updateKeyword(orcid, putCode, keyword, true);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);
         return Response.ok(keyword).build();
@@ -922,13 +952,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response deleteKeyword(String orcid, Long putCode) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
-        keywordsManager.deleteKeyword(orcid, putCode, true);
+        profileKeywordManager.deleteKeyword(orcid, putCode, true);
         return Response.noContent().build();
     }
 
     @Override
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));
+        Addresses addresses = addressManagerReadOnly.getAddresses(orcid, getLastModifiedTime(orcid));
 
         // Lets copy the list so we don't modify the cached collection
         if (addresses.getAddress() != null) {
@@ -947,7 +977,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        Address address = addressManager.getAddress(orcid, putCode);
+        Address address = addressManagerReadOnly.getAddress(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, address, ScopePathType.ORCID_BIO_READ_LIMITED);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtils.setSourceName(address);
@@ -991,7 +1021,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManager.getBiography(orcid, getLastModifiedTime(orcid));
+        Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
         if(bio == null) {
             throw new OrcidNoBioException();
         }
@@ -1002,7 +1032,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
+        PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPersonalDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, personalDetails);
         ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(personalDetails);
@@ -1012,7 +1042,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewPerson(String orcid) {
-        Person person = personDetailsManager.getPersonDetails(orcid);
+        Person person = personDetailsManagerReadOnly.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person);
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
@@ -1049,8 +1079,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewClient(String clientId) {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
-        Client client = clientDetailsManager.getClient(clientId);
+        Client client = clientDetailsManagerReadOnly.getClient(clientId);
         return Response.ok(client).build();
-    }
-    
+    }    
 }

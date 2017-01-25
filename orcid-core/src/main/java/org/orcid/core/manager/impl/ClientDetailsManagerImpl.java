@@ -28,14 +28,12 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.impl.ClientDetailsManagerReadOnlyImpl;
-import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -72,9 +70,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
     
-    @Resource
-    private JpaJaxbClientAdapter jpaJaxbClientAdapter;
-
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
@@ -366,12 +361,5 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             LOGGER.warn("There is no client with the IdP: " + idp);
         }
         return null;
-    }
-
-    @Override
-    public Client getClient(String clientId) {
-        Date lastModified = clientDetailsDao.getLastModified(clientId);
-        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
-        return jpaJaxbClientAdapter.toClient(clientDetailsEntity);
     }
 }
