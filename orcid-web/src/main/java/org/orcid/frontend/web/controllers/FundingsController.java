@@ -139,7 +139,7 @@ public class FundingsController extends BaseWorkspaceController {
         result.setUrl(new Text());
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility() : profile.getActivitiesVisibilityDefault());
+        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault());
         
         result.setVisibility(v);
         Date startDate = new Date();

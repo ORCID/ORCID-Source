@@ -1103,7 +1103,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         preferences.setNotificationsEnabled(profileEntity.getEnableNotifications() == null ? DefaultPreferences.NOTIFICATIONS_ENABLED : profileEntity.getEnableNotifications());
         // This column is constrained as not null in the DB so don't have to
         // worry about null!
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(profileEntity.getActivitiesVisibilityDefault()));
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault().value())));
 
         // Set developer tools preference
         preferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(profileEntity.getEnableDeveloperTools()));

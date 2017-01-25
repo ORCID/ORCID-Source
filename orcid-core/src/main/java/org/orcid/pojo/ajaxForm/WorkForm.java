@@ -18,25 +18,22 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import org.orcid.jaxb.model.common_v2.CreatedDate;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkCategory;
+import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
 public class WorkForm implements ErrorsInterface, Serializable {
@@ -93,17 +90,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
     private Date lastModified;
 
-    private transient DatatypeFactory datatypeFactory = null;
-    
-    public WorkForm() {
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            // We're in serious trouble and can't carry on
-            throw new IllegalStateException("Cannot create new DatatypeFactory");
-        }  
-    }
-    
     public static WorkForm valueOf(Work work) {
         if (work == null)
             return null;
@@ -124,7 +110,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         if (work.getWorkType() != null) {
             w.setWorkType(Text.valueOf(work.getWorkType().value()));
             // Set category
-            WorkCategory category = WorkCategory.fromWorkType(WorkType.fromValue(work.getWorkType().value()));
+            WorkCategory category = WorkCategory.fromWorkType(work.getWorkType());
             w.setWorkCategory(Text.valueOf(category.value()));
         }
 
@@ -163,7 +149,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set visibility
         if (work.getVisibility() != null) {
-            w.setVisibility(Visibility.fromValue(work.getVisibility().value()));
+            w.setVisibility(work.getVisibility());
         }
 
         // Set country
@@ -187,7 +173,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
             if (day != null && day == 0) {
                 day = null;
             }
-            fuzzyPublicationDate = new FuzzyDate(year, month, day);
+            fuzzyPublicationDate = FuzzyDate.valueOf(year, month, day);
             w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
         }
         w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
@@ -236,13 +222,13 @@ public class WorkForm implements ErrorsInterface, Serializable {
                     
                     if(extId.getRelationship() == null) {
                         if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
-                            if(org.orcid.jaxb.model.record_v2.WorkType.BOOK.equals(work.getWorkType())) {
+                            if(WorkType.BOOK.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
                             }
                         } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
-                            if(org.orcid.jaxb.model.record_v2.WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || org.orcid.jaxb.model.record_v2.WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
+                            if(WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
@@ -258,8 +244,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         }
         workForm.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
-    
-    
+        
     private static void populateExternalIdentifiers(WorkForm workForm, Work work) {
         ExternalIDs workExternalIds = new ExternalIDs();
         if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
@@ -354,7 +339,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set type
         if (!PojoUtil.isEmpty(this.getWorkType())) {
-            work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.fromValue(this.getWorkType().getValue()));
+            work.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }        
         
         org.orcid.jaxb.model.record_v2.WorkTitle workTitle = new org.orcid.jaxb.model.record_v2.WorkTitle();
@@ -399,7 +384,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set visibility
         if (this.getVisibility() != null) {
-            work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(this.getVisibility().value()));
+            work.setVisibility(this.getVisibility());
         }
         
         // Set country
@@ -449,16 +434,14 @@ public class WorkForm implements ErrorsInterface, Serializable {
         // Set created date
         if(!PojoUtil.isEmpty(this.getCreatedDate())) {
             CreatedDate createdDate = new CreatedDate();
-            GregorianCalendar calendar = this.getCreatedDate().toCalendar();
-            createdDate.setValue(datatypeFactory.newXMLGregorianCalendar(calendar));            
+            createdDate.setValue(DateUtils.convertToXMLGregorianCalendar(this.getCreatedDate().toJavaDate()));            
             work.setCreatedDate(createdDate);
         }
         
         // Set last modified
         if(!PojoUtil.isEmpty(this.getLastModified())) {
             org.orcid.jaxb.model.common_v2.LastModifiedDate lastModified = new org.orcid.jaxb.model.common_v2.LastModifiedDate();
-            GregorianCalendar calendar = this.getLastModified().toCalendar();
-            lastModified.setValue(datatypeFactory.newXMLGregorianCalendar(calendar));
+            lastModified.setValue(DateUtils.convertToXMLGregorianCalendar(this.getLastModified().toJavaDate()));
             work.setLastModifiedDate(lastModified);
         }
 

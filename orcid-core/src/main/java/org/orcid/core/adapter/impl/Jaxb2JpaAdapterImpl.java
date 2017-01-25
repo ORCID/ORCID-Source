@@ -940,7 +940,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
-            Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault();
+            Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             if(profileEntity.getBiographyEntity() == null) {
                 profileEntity.setBiographyEntity(new BiographyEntity());
                 profileEntity.getBiographyEntity().setProfile(profileEntity);                
@@ -1053,8 +1053,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.setSendMemberUpdateRequests(preferences.getSendMemberUpdateRequests() == null ? null : preferences
                         .getSendMemberUpdateRequests());
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
-                if (preferences.getActivitiesVisibilityDefault() != null) {
-                    profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue());
+                if (preferences.getActivitiesVisibilityDefault() != null && preferences.getActivitiesVisibilityDefault().getValue() != null) {
+                    profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value()));
                 }
 
                 if (preferences.getDeveloperToolsEnabled() != null) {
@@ -1372,10 +1372,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 defaultVisibility = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();
             }
         } else {
-            //If it is claimed, set the default profile visibility 
-            if(profile.getActivitiesVisibilityDefault() != null) {
-                defaultVisibility = profile.getActivitiesVisibilityDefault(); 
-            }
+            //If it is claimed, set the default profile visibility             
+            return profile.getActivitiesVisibilityDefault();             
         }
         
         return org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value());

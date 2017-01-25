@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.utils.DateUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 

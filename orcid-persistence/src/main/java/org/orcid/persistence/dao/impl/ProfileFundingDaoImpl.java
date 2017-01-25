@@ -23,7 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +90,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingId", profileFundingId);
-        query.setParameter("visibility", visibility);
+        query.setParameter("visibility", visibility.name());
         return query.executeUpdate() > 0 ? true : false;
     }
 

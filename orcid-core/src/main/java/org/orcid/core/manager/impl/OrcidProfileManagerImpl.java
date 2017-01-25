@@ -382,12 +382,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
+        Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
+        
         if (existingProfileEntity != null) {
             //Dont delete the existing elements anymore
             //profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
-            setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
-            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
-            setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setWorkPrivacy(orcidProfile, defaultVisibility);
+            setAffiliationPrivacy(orcidProfile, defaultVisibility);
+            setFundingPrivacy(orcidProfile, defaultVisibility);
         }
         dedupeWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
@@ -395,8 +397,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         
         Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
-        
-        Visibility defaultVisibility = existingProfileEntity.getActivitiesVisibilityDefault();
+                
         if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
             defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
@@ -2168,9 +2169,13 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 if(useMemberDefaults) {
-                    profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
+                    profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value()));
                 } else {
-                    profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
+                    if(defaultVisibility != null) {
+                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                    } else {
+                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().value()));
+                    }
                 }                
             }
             

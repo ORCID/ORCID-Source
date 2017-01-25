@@ -33,7 +33,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
@@ -206,12 +206,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     }
 
     private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
+        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = org.orcid.jaxb.model.message.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed()) {            
             profileFundingEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(Visibility.PRIVATE);
+            profileFundingEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
         }
     }
     
@@ -228,7 +228,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
-        Visibility originalVisibility = pfe.getVisibility();
+    	org.orcid.jaxb.model.message.Visibility originalVisibility = pfe.getVisibility();
         
         //Save the original source
         String existingSourceId = pfe.getSourceId();
