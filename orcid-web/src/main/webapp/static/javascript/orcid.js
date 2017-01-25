@@ -495,13 +495,13 @@ var printFunc = function() {
     );
 };
 
-var printFrameReadToPrint = function (func) {
+var printFrameReadyToPrint = function (func) {
     var frame = window.frames['printRecordFrame'];
     // Step 1: make sure angular 1 is ready by putting a function on the angular apply queue
     frame.angular.element(frame.document.documentElement).scope().$root.$apply(
             function() {
                 // Step 2: if JQuery has any outstanding request repeat other call otherwise print
-                frame.$.active>0?setTimeout(printFrameReadToPrint):printFunc();
+                frame.$.active>0?setTimeout(printFrameReadyToPrint):printFunc();
             }
     );
 }
@@ -519,7 +519,7 @@ function printPublicRecord(url){
             $('#printRecordFrame').bind(
                 'load', // jquery thinks it's ready
                 function () {
-                    printFrameReadToPrint(printFunc);
+                    printFrameReadyToPrint(printFunc);
                 }
             );
 
