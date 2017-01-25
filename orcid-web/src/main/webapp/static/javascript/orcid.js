@@ -500,7 +500,7 @@ var printFrameReadyToPrint = function (func) {
     // Step 1: make sure angular 1 is ready by putting a function on the angular apply queue
     frame.angular.element(frame.document.documentElement).scope().$root.$apply(
             function() {
-                // Step 2: if JQuery has any outstanding request repeat other call otherwise print
+                // Step 2: if JQuery has any outstanding request repeat otherwise call otherwise print
                 frame.$.active>0?setTimeout(printFrameReadyToPrint):printFunc();
             }
     );
