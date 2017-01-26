@@ -215,6 +215,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     private void saveOrUpdateIdentityProviderInTransaction(IdentityProviderEntity incoming) {
         IdentityProviderEntity existing = identityProviderDao.findByProviderid(incoming.getProviderid());
         if (existing == null) {
+            incoming.getNames().stream().forEach(i -> i.setIdentityProvider(incoming));
             identityProviderDao.persist(incoming);
         } else {
             existing.setProviderid(incoming.getProviderid());
