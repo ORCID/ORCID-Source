@@ -21,7 +21,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -240,6 +240,20 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
             return result == null ? false : result;
         } catch(Exception e) {
             //TODO log exception
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean isPrimaryEmail(String orcid, String email) {
+        Query query = entityManager.createNativeQuery("select is_primary from email where orcid=:orcid and email=:email");
+        query.setParameter("orcid", orcid);
+        query.setParameter("email", email);
+        try {
+            Boolean result = (Boolean)query.getSingleResult();
+            return result == null ? false : result;
+        } catch(Exception e) {
+            
         }
         return false;
     }

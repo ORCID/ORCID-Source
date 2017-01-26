@@ -837,7 +837,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setPrimary(emailEntity.getPrimary());
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
-                email.setVisibility(emailEntity.getVisibility());
+                email.setVisibility(emailEntity.getVisibility() == null ? OrcidVisibilityDefaults.PRIMARY_EMAIL_DEFAULT.getVisibility() : org.orcid.jaxb.model.message.Visibility.fromValue(emailEntity.getVisibility().value()));
                 email.setSource(emailEntity.getSourceId());
                 email.setSourceClientId(emailEntity.getClientSourceId());
                 emailList.add(email);

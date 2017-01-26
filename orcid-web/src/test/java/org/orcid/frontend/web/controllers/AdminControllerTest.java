@@ -50,9 +50,9 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -291,7 +291,8 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     public void verifyEmailTest() {
         //Add not verified email
-        Email email = new Email("not-verified@email.com");
+        Email email = new Email();
+        email.setEmail("not-verified@email.com");
         email.setCurrent(false);
         email.setPrimary(false);
         email.setVerified(false);

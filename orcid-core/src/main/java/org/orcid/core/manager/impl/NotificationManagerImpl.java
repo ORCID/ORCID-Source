@@ -656,18 +656,17 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail) {
+    public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail) {
 
         // build up old template
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.email_removed", updatedProfile);
-        String email = oldEmail.getValue();
         String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("oldEmail", oldEmail.getValue());
+        templateParams.put("oldEmail", oldEmail);
         templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -681,7 +680,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
 
-        mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, email, subject, body, html);
+        mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
     }
 
     @Override

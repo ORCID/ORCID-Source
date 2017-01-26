@@ -51,6 +51,17 @@ public class Email implements ErrorsInterface {
         }
         return email;
     }
+    
+    public org.orcid.jaxb.model.record_v2.Email toV2Email() {
+        org.orcid.jaxb.model.record_v2.Email email = new org.orcid.jaxb.model.record_v2.Email();
+        email.setCurrent(current);
+        email.setEmail(value);
+        email.setLastModifiedDate(null);
+        email.setPrimary(primary);
+        email.setVerified(verified);
+        email.setVisibility(visibility);        
+        return email;
+    }
 
     public String getValue() {
         return value;

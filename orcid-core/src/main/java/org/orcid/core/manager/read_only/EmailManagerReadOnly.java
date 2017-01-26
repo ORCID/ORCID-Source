@@ -43,4 +43,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     Emails getEmails(String orcid, long lastModified);
     
     Emails getPublicEmails(String orcid, long lastModified);
+    
+    boolean isPrimaryEmail(String orcid, String email);
 }

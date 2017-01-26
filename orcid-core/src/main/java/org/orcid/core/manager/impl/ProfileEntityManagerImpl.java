@@ -633,7 +633,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (emails != null) {
             // For each email in the deprecated profile                            
             for (EmailEntity email : emails) {
-                email.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }        
         }
         

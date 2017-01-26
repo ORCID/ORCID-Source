@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -642,7 +641,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             email.setErrors(new ArrayList<String>());
 
             // if blank
-            if (email.getValue() == null || email.getValue().trim().equals("")) {
+            if (PojoUtil.isEmpty(email.getValue())) {
                 emailErrors.add(getMessage("Email.personalInfoForm.email"));
             }            
             
@@ -660,7 +659,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     newPrime = email.getValue();
                 }
                 
-                emailManager.addEmail(currentProfile.getOrcidIdentifier().getPath(), email);
+                emailManager.addEmail(getCurrentUserOrcid(), email.toV2Email());
 
                 // send verifcation email for new address
                 notificationManager.sendVerificationEmail(currentProfile, email.getValue());
@@ -668,7 +667,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 // if primary also send change notification.
                 if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime.getValue())) {
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-                    notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime);
+                    notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 }
 
             }
@@ -682,46 +681,33 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody org.orcid.pojo.ajaxForm.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         List<String> emailErrors = new ArrayList<String>();
-
-        // clear errros
+        String currentUserOrcid = getCurrentUserOrcid();
+        // clear erros
         email.setErrors(new ArrayList<String>());
 
         // if blank
         if (email.getValue() == null || email.getValue().trim().equals("")) {
             emailErrors.add(getMessage("Email.personalInfoForm.email"));
         }
-        OrcidProfile currentProfile = getEffectiveProfile();
-        List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
-
-        if (email.isPrimary()) {
+        
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email.getValue())) {
             emailErrors.add(getMessage("manage.email.primaryEmailDeletion"));
         }
 
         email.setErrors(emailErrors);
 
-        if (emailErrors.size() == 0) {
-            Iterator<Email> emailIterator = emails.iterator();
-            while (emailIterator.hasNext()) {
-                Email nextEmail = emailIterator.next();
-                if (nextEmail.getValue().equals(email.getValue())) {
-                    emailIterator.remove();
-                }
-            }
-            currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-            emailManager.removeEmail(currentProfile.getOrcidIdentifier().getPath(), email.getValue());
+        if (emailErrors.size() == 0) {            
+            emailManager.removeEmail(currentUserOrcid, email.getValue());
         }
         return email;
     }
-
-    @SuppressWarnings("unchecked")
+    
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
         org.orcid.pojo.ajaxForm.Email newPrime = null;
-        org.orcid.pojo.ajaxForm.Email oldPrime = null;
         List<String> allErrors = new ArrayList<String>();
 
         for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
-
             MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
             validateEmailAddress(email.getValue(), request, mbr);
             List<String> emailErrors = new ArrayList<String>();
@@ -739,16 +725,13 @@ public class ManageProfileController extends BaseWorkspaceController {
             allErrors.add("A Primary Email Must be selected");
         }
 
-        OrcidProfile currentProfile = getEffectiveProfile();
-        if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
-            oldPrime = new org.orcid.pojo.ajaxForm.Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-
         emails.setErrors(allErrors);
         if (allErrors.size() == 0) {
-            currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
-            emailManager.updateEmails(currentProfile.getOrcidIdentifier().getPath(), currentProfile.getOrcidBio().getContactDetails().getEmail());
-            if (newPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()));
+            OrcidProfile currentProfile = getEffectiveProfile();
+            org.orcid.jaxb.model.message.Email oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+            emailManager.updateEmails(getCurrentUserOrcid(), emails.toV2Emails());
+            if (oldPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 if (!newPrime.isVerified()) {
                     notificationManager.sendVerificationEmail(currentProfile, newPrime.getValue());
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);

@@ -900,9 +900,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             emailEntity.setCurrent(email.isCurrent());
             emailEntity.setVerified(email.isVerified());
             if (email.getVisibility() == null) {
-                emailEntity.setVisibility(Visibility.PRIVATE);
+                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             } else {
-                emailEntity.setVisibility(email.getVisibility());
+                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(email.getVisibility().value()));
             }
             emailEntities.add(emailEntity);
         }

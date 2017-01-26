@@ -18,7 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 /**
@@ -77,4 +77,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
      *         client source of the record allows auto deprecating records
      */
     boolean isAutoDeprecateEnableForEmail(String email);
+    
+    boolean isPrimaryEmail(String orcid, String email);
 }

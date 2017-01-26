@@ -36,6 +36,16 @@ public class Emails implements ErrorsInterface {
         }
         return emails;
     }
+    
+    public org.orcid.jaxb.model.record_v2.Emails toV2Emails() {
+        org.orcid.jaxb.model.record_v2.Emails v2Emails = new org.orcid.jaxb.model.record_v2.Emails();
+        if(emails != null && !emails.isEmpty()) {
+            for(Email email : emails) {
+                v2Emails.getEmails().add(email.toV2Email());
+            }
+        }
+        return v2Emails;
+    }
 
     public List<String> getErrors() {
         return errors;

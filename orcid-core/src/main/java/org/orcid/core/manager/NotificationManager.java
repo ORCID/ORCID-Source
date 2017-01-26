@@ -18,18 +18,16 @@ package org.orcid.core.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
-import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
+import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -67,7 +65,7 @@ public interface NotificationManager {
 
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
-    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail);
+    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 
