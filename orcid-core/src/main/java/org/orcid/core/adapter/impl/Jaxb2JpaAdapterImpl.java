@@ -96,6 +96,7 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -1153,9 +1154,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             FuzzyDate startDate = affiliation.getStartDate();
             FuzzyDate endDate = affiliation.getEndDate();
-            orgRelationEntity.setAffiliationType(affiliation.getType());
-            orgRelationEntity.setVisibility(affiliation.getVisibility() == null ? Visibility.PRIVATE : affiliation.getVisibility());
+            if(affiliation.getType() != null) {
+                orgRelationEntity.setAffiliationType(AffiliationType.fromValue(affiliation.getType().value()));    
+            }
             
+            if(affiliation.getVisibility() != null) {
+                orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(affiliation.getVisibility().value()));
+            } else {
+                orgRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            }
+                        
             //Set source
             setSource(affiliation.getSource(), orgRelationEntity);
             

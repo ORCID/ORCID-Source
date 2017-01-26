@@ -43,7 +43,6 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -214,7 +213,7 @@ public class SendBadOrgsEmail {
             LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
                     new Object[] { profile.getId(), a.getId(), a.getVisibility(), orgDescription });
             if (!dryRun) {
-                affiliationsManager.updateVisibility(profile.getId(), a.getId(), Visibility.PRIVATE);
+                affiliationsManager.updateVisibility(profile.getId(), a.getId(), org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }
         });
         return badAffs;

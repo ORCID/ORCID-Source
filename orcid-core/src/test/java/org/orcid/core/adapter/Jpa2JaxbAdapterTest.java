@@ -42,6 +42,7 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -55,7 +56,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -344,7 +344,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set affiliations
         TreeSet<OrgAffiliationRelationEntity> affiliations = new TreeSet<OrgAffiliationRelationEntity>();
         OrgAffiliationRelationEntity affiliation = new OrgAffiliationRelationEntity();
-        affiliation.setAffiliationType(AffiliationType.EDUCATION);
+        affiliation.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
         affiliation.setOrg(newOrg);
         affiliation.setVisibility(Visibility.PUBLIC);
         affiliation.setClientSourceId(clientId);
@@ -385,6 +385,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidActivities().getAffiliations());
         assertNotNull(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
         assertEquals(1, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().size());
+        assertEquals(AffiliationType.EDUCATION, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getType());
         assertEquals("My org name", orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getName());
         assertEquals("San Jose", orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getAddress().getCity());
         assertEquals(org.orcid.jaxb.model.message.Iso3166Country.CR,

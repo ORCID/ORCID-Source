@@ -409,14 +409,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private Affiliation getAffiliation(OrgAffiliationRelationEntity orgAffiliationRelationEntity) {
         Affiliation affiliation = new Affiliation();
         affiliation.setPutCode(Long.toString(orgAffiliationRelationEntity.getId()));
-        affiliation.setType(orgAffiliationRelationEntity.getAffiliationType());
+        affiliation.setType(AffiliationType.fromValue(orgAffiliationRelationEntity.getAffiliationType().value()));
         affiliation.setRoleTitle(orgAffiliationRelationEntity.getTitle());
 
         FuzzyDateEntity startDate = orgAffiliationRelationEntity.getStartDate();
         FuzzyDateEntity endDate = orgAffiliationRelationEntity.getEndDate();
         affiliation.setStartDate(startDate != null ? new FuzzyDate(startDate.getYear(), startDate.getMonth(), startDate.getDay()) : null);
         affiliation.setEndDate(endDate != null ? new FuzzyDate(endDate.getYear(), endDate.getMonth(), endDate.getDay()) : null);
-        affiliation.setVisibility(orgAffiliationRelationEntity.getVisibility());
+        affiliation.setVisibility(Visibility.fromValue(orgAffiliationRelationEntity.getVisibility().value()));
         affiliation.setDepartmentName(orgAffiliationRelationEntity.getDepartment());
         affiliation.setSource(getSource(orgAffiliationRelationEntity));
 
