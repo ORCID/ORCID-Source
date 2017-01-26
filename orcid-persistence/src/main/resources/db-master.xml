@@ -221,4 +221,5 @@
 	<include file="/db/updates/add_auto_deprecate_to_client_details.xml" />
 	<include file="/db/updates/identifier-types/add-primary-use-and-urls.xml" />
 	<include file="/db/updates/identifier-types/update-kuid-url.xml" />
+	<include file="/db/updates/identifier-types/identifier-type-37-38.xml" />
 </databaseChangeLog>
