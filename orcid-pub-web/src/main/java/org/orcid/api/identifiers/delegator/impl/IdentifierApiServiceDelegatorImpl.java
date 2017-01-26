@@ -16,13 +16,11 @@
  */
 package org.orcid.api.identifiers.delegator.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.LocaleUtils;
@@ -32,6 +30,8 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.IdentifierType;
+
+import com.google.common.collect.Lists;
 
 public class IdentifierApiServiceDelegatorImpl implements IdentifierApiServiceDelegator {
     
@@ -45,7 +45,8 @@ public class IdentifierApiServiceDelegatorImpl implements IdentifierApiServiceDe
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getIdentifierTypes(String locale) {
         Collection<IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(LocaleUtils.toLocale(locale)).values();
-        return Response.ok(types).build();
+        GenericEntity<List<IdentifierType>> entity = new GenericEntity<List<IdentifierType>>(Lists.newArrayList(types)) {};        
+        return Response.ok(entity).build();
     }
 
 }
