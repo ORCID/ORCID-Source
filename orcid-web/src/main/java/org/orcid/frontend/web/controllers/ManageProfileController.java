@@ -182,7 +182,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public Map<String, String> retrieveExternalIdentifierRefData() {
         Map<String, String> types = new HashMap<String, String>();
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            types.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
+            types.put(type.value(), buildInternationalizationKey(org.orcid.jaxb.model.message.WorkExternalIdentifierType.class, type.value()));
         }
         return types;
     }

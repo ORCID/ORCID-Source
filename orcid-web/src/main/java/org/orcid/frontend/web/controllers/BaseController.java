@@ -682,7 +682,7 @@ public class BaseController {
      * @return a String of the form full.class.name.with.package.key
      */
     @SuppressWarnings("rawtypes")
-    protected String buildInternationalizationKey_updated(Class theClass, String key) {
+    protected String buildInternationalizationKey(Class theClass, String key) {
         return theClass.getName() + '.' + key;
     }
 

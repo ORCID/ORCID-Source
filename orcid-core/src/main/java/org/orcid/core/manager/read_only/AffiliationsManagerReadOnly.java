@@ -18,7 +18,7 @@ package org.orcid.core.manager.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.Education;

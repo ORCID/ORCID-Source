@@ -28,8 +28,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
@@ -140,7 +140,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
+        educationEntity.setAffiliationType(AffiliationType.EDUCATION);
         orgAffiliationRelationDao.persist(educationEntity);
         orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
@@ -181,7 +181,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
 
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
+        educationEntity.setAffiliationType(AffiliationType.EDUCATION);
         educationEntity = orgAffiliationRelationDao.merge(educationEntity);
         orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
@@ -250,7 +250,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
+        employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT);
         orgAffiliationRelationDao.persist(employmentEntity);
         orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
@@ -292,7 +292,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
 
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
+        employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT);
         employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
         orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));

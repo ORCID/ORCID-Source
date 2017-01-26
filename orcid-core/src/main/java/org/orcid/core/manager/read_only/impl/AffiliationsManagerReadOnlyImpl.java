@@ -25,7 +25,7 @@ import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.Education;

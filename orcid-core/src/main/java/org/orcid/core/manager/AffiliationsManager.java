@@ -17,7 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 
