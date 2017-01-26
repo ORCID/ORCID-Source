@@ -298,7 +298,7 @@ public class SetUpClientsAndUsers {
         if (user1Profile == null) {
             createUser(user1Params);
         } else {
-            clearRegistry(user1Profile, user1Params);            
+            clearRegistry(user1Profile, user1Params);
         }        
         
         // Create user 2
