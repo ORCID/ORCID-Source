@@ -298,7 +298,7 @@ public class SetUpClientsAndUsers {
         if (user1Profile == null) {
             createUser(user1Params);
         } else {
-            clearRegistry(user1Profile, user1Params);
+            clearRegistry(user1Profile, user1Params);            
         }        
         
         // Create user 2
@@ -619,6 +619,9 @@ public class SetUpClientsAndUsers {
                 }
             }
 
+            //Unlock just in case it is locked
+            profileDao.unlockProfile(orcid);
+            
             return true;
         }
         return false;
