@@ -35,8 +35,8 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 
-@Api("Identifier API")
-@Path("/v2.0_rc2" + OrcidApiConstants.IDENTIFIER_PATH)
+@Api("Identifier API v2.0")
+@Path("/v2.0" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImplV2_0 {
 
     private IdentifierApiServiceDelegator serviceDelegator;
