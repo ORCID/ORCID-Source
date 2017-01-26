@@ -311,7 +311,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-        org.orcid.jaxb.model.message.Visibility originalVisibility = workEntity.getVisibility();
+        Visibility originalVisibility = workEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
@@ -366,12 +366,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = workEntity.getVisibility();
-        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = org.orcid.jaxb.model.message.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        Visibility incomingWorkVisibility = workEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             workEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }
 

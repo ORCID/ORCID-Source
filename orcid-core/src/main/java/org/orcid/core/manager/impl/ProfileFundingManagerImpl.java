@@ -206,12 +206,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     }
 
     private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
-        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = org.orcid.jaxb.model.message.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {            
             profileFundingEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            profileFundingEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+            profileFundingEntity.setVisibility(Visibility.PRIVATE);
         }
     }
     
@@ -228,7 +228,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
-    	org.orcid.jaxb.model.message.Visibility originalVisibility = pfe.getVisibility();
+    	Visibility originalVisibility = pfe.getVisibility();
         
         //Save the original source
         String existingSourceId = pfe.getSourceId();

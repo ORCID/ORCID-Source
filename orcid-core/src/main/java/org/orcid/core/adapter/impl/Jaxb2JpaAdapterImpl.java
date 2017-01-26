@@ -96,6 +96,7 @@ import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -258,7 +259,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Citation workCitation = orcidWork.getWorkCitation();
             if (workCitation != null && StringUtils.isNotBlank(workCitation.getCitation()) && workCitation.getWorkCitationType() != null) {
                 workEntity.setCitation(workCitation.getCitation());
-                workEntity.setCitationType(workCitation.getWorkCitationType());
+                workEntity.setCitationType(CitationType.fromValue(workCitation.getWorkCitationType().value()));
             }
             // New way of doing work contributors
             workEntity.setContributorsJson(getWorkContributorsJson(orcidWork.getWorkContributors()));
@@ -278,13 +279,23 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             workEntity.setJournalTitle(orcidWork.getJournalTitle() != null ? orcidWork.getJournalTitle().getContent() : null);
             workEntity.setLanguageCode(orcidWork.getLanguageCode() != null ? orcidWork.getLanguageCode() : null);
-            workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
-            workEntity.setWorkType(orcidWork.getWorkType());
+            if(orcidWork.getCountry() != null && orcidWork.getCountry().getValue() != null) {
+                workEntity.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.fromValue(orcidWork.getCountry().getValue().value()));
+            }            
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
-            //Set source
-            setSource(orcidWork.getSource(), workEntity);            
-            workEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
+            if(orcidWork.getWorkType() != null) {
+                workEntity.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.fromValue(orcidWork.getWorkType().value()));   
+            }                        
+            
+            if(orcidWork.getVisibility() != null) {
+                workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(orcidWork.getVisibility().value()));
+            } else {
+                workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+            }
+            
             workEntity.setAddedToProfileDate(new Date());
+            //Set source
+            setSource(orcidWork.getSource(), workEntity);
             if(workEntity.getDisplayIndex() == null) {
                 workEntity.setDisplayIndex(0L);
             }
@@ -1230,12 +1241,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileFundingEntity.setTranslatedTitleLanguageCode(StringUtils.isNotBlank(languageCode) ? languageCode : null);
             }
 
-            profileFundingEntity.setType(funding.getType() != null ? funding.getType() : null);
+            if(funding.getType() != null) {
+                profileFundingEntity.setType(org.orcid.jaxb.model.record_v2.FundingType.fromValue(funding.getType().value()));
+            }            
             profileFundingEntity.setOrganizationDefinedType(funding.getOrganizationDefinedFundingType() != null ? funding.getOrganizationDefinedFundingType()
                     .getContent() : null);
             if (funding.getUrl() != null)
                 profileFundingEntity.setUrl(StringUtils.isNotBlank(funding.getUrl().getValue()) ? funding.getUrl().getValue() : null);
-            profileFundingEntity.setVisibility(funding.getVisibility() != null ? funding.getVisibility() : OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility());
+            
+            if(funding.getVisibility() != null) {
+                profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(funding.getVisibility().value()));
+            } else {
+                profileFundingEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()));
+            }
+            
 
             if (funding.getCreatedDate() != null && funding.getCreatedDate().getValue() != null)
                 profileFundingEntity.setDateCreated(funding.getCreatedDate().getValue().toGregorianCalendar().getTime());

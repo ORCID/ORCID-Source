@@ -335,7 +335,7 @@ public class AffiliationsController extends BaseWorkspaceController {
             for (AffiliationForm form : affiliationsList) {
                 try {
                     if (form.getAffiliationType() != null) {
-                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, form.getAffiliationType().getValue())));
+                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.AffiliationType.class, form.getAffiliationType().getValue())));
                     }
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
                     affiliationsMap.put(form.getPutCode().getValue(), form);

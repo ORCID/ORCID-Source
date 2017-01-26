@@ -30,8 +30,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.message.CitationType;
-import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
 
 /**
  * orcid-entities - Dec 6, 2011 - WorkEntity

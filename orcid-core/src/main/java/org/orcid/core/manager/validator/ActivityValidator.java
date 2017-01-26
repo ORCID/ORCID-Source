@@ -68,7 +68,7 @@ public class ActivityValidator {
     @Resource
     private ExternalIDValidator externalIDValidator;
 
-    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -259,7 +259,7 @@ public class ActivityValidator {
     }
 
     public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -312,7 +312,7 @@ public class ActivityValidator {
     }
 
     public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -329,7 +329,7 @@ public class ActivityValidator {
     }
 
     public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -346,7 +346,7 @@ public class ActivityValidator {
     }
 
     public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
@@ -442,7 +442,7 @@ public class ActivityValidator {
         return null;
     }
 
-    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {
                 throw new VisibilityMismatchException();

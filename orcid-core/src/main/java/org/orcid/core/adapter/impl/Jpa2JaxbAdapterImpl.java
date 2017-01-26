@@ -47,104 +47,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Affiliations;
-import org.orcid.jaxb.model.message.Amount;
-import org.orcid.jaxb.model.message.ApprovalDate;
-import org.orcid.jaxb.model.message.Biography;
-import org.orcid.jaxb.model.message.Citation;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.CompletionDate;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Contributor;
-import org.orcid.jaxb.model.message.ContributorOrcid;
-import org.orcid.jaxb.model.message.Country;
-import org.orcid.jaxb.model.message.CreatedDate;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.Day;
-import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.DeprecatedDate;
-import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
-import org.orcid.jaxb.model.message.DisambiguatedOrganization;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.EncryptedPassword;
-import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.EncryptedVerificationCode;
-import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdReference;
-import org.orcid.jaxb.model.message.ExternalIdUrl;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingContributor;
-import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingList;
-import org.orcid.jaxb.model.message.FundingTitle;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
-import org.orcid.jaxb.model.message.GivenPermissionTo;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.Month;
-import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidIdBase;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.message.OrganizationAddress;
-import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.PrimaryRecord;
-import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.ReferredBy;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.SalesforceId;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.SendOrcidNews;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceClientId;
-import org.orcid.jaxb.model.message.SourceDate;
-import org.orcid.jaxb.model.message.SourceName;
-import org.orcid.jaxb.model.message.SourceOrcid;
-import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Subtitle;
-import org.orcid.jaxb.model.message.Title;
-import org.orcid.jaxb.model.message.TranslatedTitle;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
-import org.orcid.jaxb.model.message.VerifiedEmail;
-import org.orcid.jaxb.model.message.VerifiedPrimaryEmail;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.Year;
+import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -427,7 +330,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             List<OrcidWork> unsorted = new ArrayList<>();
             for (WorkEntity workEntity : works) {
                 OrcidWork orcidWork = getOrcidWork(workEntity);
-                orcidWork.setVisibility(workEntity.getVisibility());
+                orcidWork.setVisibility(Visibility.fromValue(workEntity.getVisibility().value()));
                 unsorted.add(orcidWork);
             }
             OrcidWorks orcidWorks = new OrcidWorks();
@@ -559,11 +462,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             title.setTranslatedTitle(translatedTitle);
         }
         funding.setTitle(title);
-        funding.setType(profileFundingEntity.getType() != null ? profileFundingEntity.getType() : null);
+        if(profileFundingEntity.getType() != null) {
+            funding.setType(FundingType.fromValue(profileFundingEntity.getType().value()));    
+        }
+        
         funding.setOrganizationDefinedFundingType(profileFundingEntity.getOrganizationDefinedType() != null ? new OrganizationDefinedFundingSubType(profileFundingEntity
                 .getOrganizationDefinedType()) : null);
         funding.setUrl(StringUtils.isNotEmpty(profileFundingEntity.getUrl()) ? new Url(profileFundingEntity.getUrl()) : new Url(new String()));
-        funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
+        
+        if(profileFundingEntity.getVisibility() != null) {
+            funding.setVisibility(Visibility.fromValue(profileFundingEntity.getVisibility().value()));
+        } else {
+            funding.setVisibility(Visibility.PRIVATE);
+        }
+        
         funding.setPutCode(Long.toString(profileFundingEntity.getId()));
         funding.setFundingContributors(getFundingContributors(profileFundingEntity));
         
@@ -614,9 +526,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // Make sure contributor credit name has the same visibility as
                 // the funding relation
                 CreditName creditName = contributor.getCreditName();
-                if (creditName != null) {
-                    creditName.setVisibility(profileFundingEntity.getVisibility());
-                }
+                if (creditName != null) {                    
+                    creditName.setVisibility(Visibility.valueOf(profileFundingEntity.getVisibility().value()));                                       
+                } 
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);
                 // Make sure orcid-id in new format
@@ -902,12 +814,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setLanguageCode(normalizeLanguageCode(work.getLanguageCode()));
 
         if (work.getIso2Country() != null) {
-            Country country = new Country(work.getIso2Country());
+            Country country = new Country(Iso3166Country.fromValue(work.getIso2Country().value()));
             country.setVisibility(OrcidVisibilityDefaults.WORKS_COUNTRY_DEFAULT.getVisibility());
             orcidWork.setCountry(country);
         }
-        orcidWork.setWorkType(work.getWorkType());
-        orcidWork.setVisibility(work.getVisibility());
+        if(work.getWorkType() != null) {
+            orcidWork.setWorkType(WorkType.fromValue(work.getWorkType().value()));
+        }
+        orcidWork.setVisibility(Visibility.fromValue(work.getVisibility().value()));
 
         orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(work.getDateCreated())));
         orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(work.getLastModified())));
@@ -941,7 +855,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private Citation getWorkCitation(WorkEntity work) {
         if (StringUtils.isNotBlank(work.getCitation()) && work.getCitationType() != null) {
-            return new Citation(work.getCitation(), work.getCitationType());
+            return new Citation(work.getCitation(), CitationType.fromValue(work.getCitationType().value()));
         }
         return null;
     }
@@ -972,7 +886,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // the work
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {
-                    creditName.setVisibility(work.getVisibility());
+                    creditName.setVisibility(Visibility.fromValue(work.getVisibility().value()));
                 }
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);

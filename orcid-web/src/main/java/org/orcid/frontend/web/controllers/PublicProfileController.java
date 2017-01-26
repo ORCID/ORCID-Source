@@ -593,7 +593,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
-                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
             }
             // Set translated title language name
             if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {

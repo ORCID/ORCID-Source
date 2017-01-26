@@ -32,7 +32,7 @@ import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
@@ -197,7 +197,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setSubjectTranslatedNameLanguageCode("en");
         result.setSubjectUrl("peer-review:subject-url");                
         result.setSubjectType(WorkType.BOOK_REVIEW);        
-        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
+        result.setVisibility(Visibility.PRIVATE);   
         result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);

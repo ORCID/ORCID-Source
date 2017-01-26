@@ -228,7 +228,7 @@ public class SendBadOrgsEmail {
             LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}, orgDescription={}",
                     new Object[] { profile.getId(), a.getId(), a.getVisibility(), orgDescription });
             if (!dryRun) {
-                profileFundingManager.updateProfileFundingVisibility(profile.getId(), a.getId(), Visibility.PRIVATE);
+                profileFundingManager.updateProfileFundingVisibility(profile.getId(), a.getId(), org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }
         });
         return badFundings;
