@@ -12667,6 +12667,29 @@
 	                console.log("error flagging notification as archived");
 	            });
 	        },
+	        suppressAlert: function(notificationId) {         
+	            $.ajax({
+	                url: getBaseUri() + '/inbox/' + notificationId + '/suppressAlert.json',
+	                type: 'POST',
+	                dataType: 'json',
+	                success: function(data) {
+	                    for(var i = 0;  i < serv.notifications.length; i++){
+	                        var existing = serv.notifications[i];
+	                        if(existing.putCode === notificationId){
+	                            serv.notifications.splice(i, 1);
+	                            if(serv.firstResult > 0){
+	                                serv.firstResult--;
+	                            }
+	                            break;
+	                        }
+	                    }
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error flagging notification alert as suppressed");
+	            });
+	        },
 	        toggleArchived: function(){
 	            serv.showArchived = !serv.showArchived;
 	            serv.reloadNotifications();
