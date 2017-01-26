@@ -24,3 +24,4 @@ export class Ng2AppModule {
   //constructor(){}
   ngDoBootstrap() {}
 }
+

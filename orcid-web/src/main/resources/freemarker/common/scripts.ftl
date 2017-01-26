@@ -54,6 +54,7 @@ if (typeof jQuery == 'undefined') {
     }
 </script>
 
+
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
@@ -74,14 +75,12 @@ if (typeof angular == 'undefined') {
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
 <script type="text/javascript">
-	var lang = OrcidCookie.getCookie('locale_v3');
-	var script = document.createElement("script");
-	script.type = "text/javascript";
+    var lang = OrcidCookie.getCookie('locale_v3');
+    var script = document.createElement("script");
+    script.type = "text/javascript";
     script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
     document.body.appendChild(script);
 </script>
-
-
 
 <script src="${staticCdn}/javascript/angularjs/1.5.0/angular-recaptcha.min.js"></script>
 
