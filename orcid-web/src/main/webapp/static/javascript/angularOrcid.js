@@ -97,27 +97,6 @@
 	/*
 	 * 1 - Utility functions 
 	 */
-	function openImportWizardUrl(url) {
-	    var win = window.open(url, "_target");
-	    setTimeout( function() {
-	        if(!win || win.outerHeight === 0) {
-	            //First Checking Condition Works For IE & Firefox
-	            //Second Checking Condition Works For Chrome
-	            window.location.href = url;
-	        }
-	    }, 250);
-	    $.colorbox.close();
-	}
-
-	function contains(arr, obj) {
-	    var index = arr.length;
-	    while (index--) {
-	       if (arr[index] === obj) {
-	           return true;
-	       }
-	    }
-	    return false;
-	}
 
 	function formatDate(oldDate) {
 	    var date = new Date(oldDate);
@@ -3184,7 +3163,7 @@
 
 
 
-	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
+	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', 'utilsService', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc, utilsService){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.peerReviewSrvc = peerReviewSrvc;
 	    $scope.editPeerReview = null;
@@ -3494,7 +3473,7 @@
 	    
 	    $scope.openImportWizardUrlFilter = function(url, param) {
 	        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-	        openImportWizardUrl(url);
+	        utilsService.openImportWizardUrl(url);
 	    };
 	        
 	    //Init
@@ -8997,7 +8976,7 @@
 	    };
 
 	    $scope.openImportWizardUrl = function(url) {
-	        openImportWizardUrl(url);
+	        utilsService.openImportWizardUrl(url);
 	    };
 
 	    $scope.bindTypeaheadForOrgs = function () {
@@ -10835,13 +10814,13 @@
 	                                $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
 	                                $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
 	                                for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-	                                    if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
+	                                    if(!utilsService.contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
 	                                        $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
 	                                    }
 	                                }
 	                                
 	                                for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-	                                    if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
+	                                    if(!utilsService.contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
 	                                        $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
 	                                    }
 	                                }
@@ -11121,12 +11100,12 @@
 	            };
 
 	            $scope.openImportWizardUrl = function(url) {
-	                openImportWizardUrl(url);
+	                utilsService.openImportWizardUrl(url);
 	            };
 	    
 	            $scope.openImportWizardUrlFilter = function(url, param) {
 	                url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-	                openImportWizardUrl(url);
+	                utilsService.openImportWizardUrl(url);
 	            };
 
 	            $scope.setAddWorkPrivacy = function(priv, $event) {
@@ -12764,6 +12743,26 @@
 	    'utilsService', 
 	    function() {
 	        var utilsService = {
+	            contains: function(arr, obj) {
+	                var index = arr.length;
+	                while (index--) {
+	                    if (arr[index] === obj) {
+	                       return true;
+	                    }
+	                }
+	                return false;
+	            },
+	            openImportWizardUrl: function(url) {
+	                var win = window.open(url, "_target");
+	                setTimeout( function() {
+	                    if(!win || win.outerHeight === 0) {
+	                        //First Checking Condition Works For IE & Firefox
+	                        //Second Checking Condition Works For Chrome
+	                        window.location.href = url;
+	                    }
+	                }, 250);
+	                $.colorbox.close();
+	            },
 	            formColorBoxResize: function() {
 	                if (isMobile()) {
 	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
