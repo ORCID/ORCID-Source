@@ -127,6 +127,7 @@ function addComma(str) {
     return str;
 }
 
+//Needs refactor for dw object
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
         if (dw.contributors[idx].contributorSequence == null
@@ -140,6 +141,7 @@ function removeBadContributors(dw) {
     }
 }
 
+//Needs refactor for dw object
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
         if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
