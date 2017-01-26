@@ -36,6 +36,7 @@ public class NotificationInstitutionalConnection extends Notification {
     protected XMLGregorianCalendar actionedDate;
     protected String subject;
     protected String idpName;
+    protected String authenticationProviderId;
 
     {
         notificationType = NotificationType.INSTITUTIONAL_CONNECTION;
@@ -84,6 +85,14 @@ public class NotificationInstitutionalConnection extends Notification {
 
     public void setIdpName(String idpName) {
         this.idpName = idpName;
+    }
+
+    public String getAuthenticationProviderId() {
+        return authenticationProviderId;
+    }
+
+    public void setAuthenticationProviderId(String authenticationProviderId) {
+        this.authenticationProviderId = authenticationProviderId;
     }
 
 }
