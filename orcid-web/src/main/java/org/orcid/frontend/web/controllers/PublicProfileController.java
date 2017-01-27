@@ -94,7 +94,6 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.orcid.utils.ReleaseNameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -872,11 +871,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
-    }       
-    
-    private String generateCacheKey(String orcid, Long lastModified) {
-        return StringUtils.join(new String[] {orcid, String.valueOf(lastModified), ReleaseNameUtils.getReleaseName() }, "_");
-    }
+    }          
 }
 
 class OrcidInfo {
