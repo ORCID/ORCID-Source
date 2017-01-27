@@ -18,37 +18,30 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.Affiliations;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,21 +55,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller("affiliationsController")
 @RequestMapping(value = { "/affiliations" })
-public class AffiliationsController extends BaseWorkspaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AffiliationsController.class);
+public class AffiliationsController extends BaseWorkspaceController {    
 
     private static final String AFFILIATIONS_MAP = "AFFILIATIONS_MAP";
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-
-    //TODO: Stop using the DAO, use the 'affiliationsManager' instead
-    @Resource
-    private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
     @Resource
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
@@ -96,24 +77,8 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.DELETE)
     public @ResponseBody
     AffiliationForm removeAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-
-        // Get cached profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Affiliations affiliations = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getAffiliations();
-        if (affiliations != null) {
-            List<Affiliation> affiliationList = affiliations.getAffiliation();
-            Iterator<Affiliation> affiliationIterator = affiliationList.iterator();
-            while (affiliationIterator.hasNext()) {
-                Affiliation orcidAffiliation = affiliationIterator.next();
-                if (affiliation.getPutCode().getValue().equals(orcidAffiliation.getPutCode())) {
-                    affiliationIterator.remove();
-                }
-            }
-            currentProfile.getOrcidActivities().setAffiliations(affiliations);
-            orgAffiliationRelationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()));
-        }
-
-        return affiliation;
+        affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()));
+        return affiliation;        
     }
 
     /**
@@ -283,12 +248,13 @@ public class AffiliationsController extends BaseWorkspaceController {
      * @param affiliationForm
      * */
     private void addAffiliation(AffiliationForm affiliationForm) {
-        // Persist to DB
-        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
-        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
-        orgAffiliationRelationEntity.setSourceId(getEffectiveUserOrcid());
-        orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
-        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));
+        Affiliation affiliation = affiliationForm.toAffiliation();
+        if(AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+            affiliation = affiliationsManager.createEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
+        } else {
+            affiliation = affiliationsManager.createEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
+        }
+        affiliationForm.setPutCode(Text.valueOf(affiliation.getPutCode()));
     }
     
     /**
@@ -296,19 +262,16 @@ public class AffiliationsController extends BaseWorkspaceController {
      * @param affiliationForm
      * @throws Exception 
      * */
-    private void editAffiliation(AffiliationForm affiliationForm) throws Exception {
-    	Object params[] = {};
-        if(PojoUtil.isEmpty(affiliationForm.getPutCode())) {
-            throw new IllegalArgumentException(getMessage("web.orcid.affiliation_noputcode.exception", params));
-        }
-        OrcidProfile currentProfile = getEffectiveProfile();
-        if (!currentProfile.getOrcidIdentifier().getPath().equals(affiliationForm.getSource()))
+    private void editAffiliation(AffiliationForm affiliationForm) throws Exception {    	
+        if (!getCurrentUserOrcid().equals(affiliationForm.getSource()))
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
-
-        OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
-        orgAffiliationRelationEntity.setSourceId(getEffectiveUserOrcid());
-        orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
-        affiliationForm.setPutCode(Text.valueOf(orgAffiliationRelationEntity.getId().toString()));                
+        
+        Affiliation affiliation = affiliationForm.toAffiliation();
+        if(AffiliationType.EDUCATION.value().equals(affiliationForm.getAffiliationType().getValue())) {
+            affiliation = affiliationsManager.updateEducationAffiliation(getCurrentUserOrcid(), (Education) affiliation, false);
+        } else {
+            affiliation = affiliationsManager.updateEmploymentAffiliation(getCurrentUserOrcid(), (Employment) affiliation, false);
+        }                                
     }            
 
     /**
@@ -328,21 +291,15 @@ public class AffiliationsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createAffiliationsIdList(HttpServletRequest request) {
-        List<AffiliationForm> affiliationsList = affiliationsManager.getAffiliations(getCurrentUserOrcid());
+        List<Affiliation> affiliationsList = affiliationsManager.getAffiliations(getCurrentUserOrcid());
         HashMap<String, AffiliationForm> affiliationsMap = new HashMap<>();
         List<String> affiliationIds = new ArrayList<String>();
         if (affiliationsList != null) {
-            for (AffiliationForm form : affiliationsList) {
-                try {
-                    if (form.getAffiliationType() != null) {
-                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, form.getAffiliationType().getValue())));
-                    }
-                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
-                    affiliationsMap.put(form.getPutCode().getValue(), form);
-                    affiliationIds.add(form.getPutCode().getValue());
-                } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Affiliation. Put code" + form.getPutCode().getValue(), e);
-                }
+            for (Affiliation affiliation : affiliationsList) {
+                AffiliationForm form = AffiliationForm.valueOf(affiliation);
+                form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
+                affiliationsMap.put(form.getPutCode().getValue(), form);
+                affiliationIds.add(form.getPutCode().getValue());
             }
             request.getSession().setAttribute(AFFILIATIONS_MAP, affiliationsMap);
         }
@@ -355,10 +312,8 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
     AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-        // Get cached profile
-        String userOrcid = getEffectiveUserOrcid();
-        affiliationsManager.updateVisibility(userOrcid, Long.valueOf(affiliation.getPutCode().getValue()), affiliation
-                                .getVisibility().getVisibility());
+        org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(affiliation.getVisibility().getVisibility().value());
+        affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
     }
 
