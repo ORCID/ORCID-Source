@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -759,7 +760,11 @@ public class WorksController extends BaseWorkspaceController {
         return types;
     }
 
-    @RequestMapping(value = "/works.bib", method = RequestMethod.GET)
+    /** Returns the works in bibtex format.  
+     * This format encodes everything it can using latex encoding and leaves the rest as UTF-8
+     * Note, you must specifically set the encoding to UTF-8 in the produces argument to enforce the encoding over the wire.
+     */
+    @RequestMapping(value = "/works.bib", method = RequestMethod.GET, produces = "text/plain; charset=utf-8")
     public @ResponseBody String fetchBibtex() {
         return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());
     }
