@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.AffiliationsManager;
@@ -28,20 +26,17 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
-import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
     @Resource
@@ -60,53 +55,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     private NotificationManager notificationManager;
     
     @Resource 
-    private ActivityValidator activityValidator;        
-    
-    @Override
-    public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
-        if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
-            return null;
-        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
-        return affiliation;
-    }    
-
-    @Override
-    public List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type) {
-        if (PojoUtil.isEmpty(userOrcid) || type == null)
-            return null;
-        return orgAffiliationRelationDao.getByUserAndType(userOrcid, type);
-    }
-
-    /**
-     * Get an education based on the orcid and education id
-     * 
-     * @param orcid
-     *            The education owner
-     * @param affiliationId
-     *            The affiliation id
-     * @return the education
-     * */
-    @Override
-    public Education getEducationAffiliation(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
-        return jpaJaxbEducationAdapter.toEducation(entity);
-    }
-
-    /**
-     * Get a summary of an education affiliation based on the orcid and
-     * education id
-     * 
-     * @param orcid
-     *            The education owner
-     * @param affiliationId
-     *            The affiliation id
-     * @return the education summary
-     * */
-    @Override
-    public EducationSummary getEducationSummary(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
-        return jpaJaxbEducationAdapter.toEducationSummary(entity);
-    }
+    private ActivityValidator activityValidator;
 
     /**
      * Add a new education to the given user
@@ -186,36 +135,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
-    }
-
-    /**
-     * Get an employment based on the orcid and education id
-     * 
-     * @param orcid
-     *            The employment owner
-     * @param employmentId
-     *            The employment id
-     * @return the employment
-     * */
-    @Override
-    public Employment getEmploymentAffiliation(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
-        return jpaJaxbEmploymentAdapter.toEmployment(entity);
-    }
-
-    /**
-     * Get a summary of an employment affiliation based on the orcid and
-     * education id
-     * 
-     * @param orcid
-     *            The employment owner
-     * @param employmentId
-     *            The employment id
-     * @return the employment summary
-     * */
-    public EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
     }
 
     /**
@@ -340,5 +259,23 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
+    }
+
+    /**
+     * Deletes an affiliation.
+     * 
+     * It doesn't check the source of the element before delete it, so, it is
+     * intended to be used only by the user from the UI
+     * 
+     * @param userOrcid
+     *            The client orcid
+     *
+     * @param affiliationId
+     *            The affiliation id in the DB
+     * @return true if the relationship was deleted
+     */
+    @Override
+    public boolean removeAffiliation(String userOrcid, Long affiliationId) {
+        return orgAffiliationRelationDao.removeOrgAffiliationRelation(userOrcid, affiliationId);
     }        
 }

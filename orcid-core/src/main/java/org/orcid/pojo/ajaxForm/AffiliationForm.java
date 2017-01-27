@@ -20,7 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.DisambiguatedOrganization;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -28,10 +29,6 @@ import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.persistence.jpa.entities.EndDateEntity;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.StartDateEntity;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -62,7 +59,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Text disambiguatedAffiliationSourceId;
 
     private Text disambiguationSource;
-    
+
     private Text orgDisambiguatedId;
 
     private String affiliationTypeForDisplay;
@@ -72,30 +69,29 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     private Date endDate;
 
     private String sourceName;
-    
+
     private String source;
-    
+
     private String dateSortString;
-    
+
     private Date createdDate;
 
     private Date lastModified;
 
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
-        
+
         if (affiliation instanceof Education) {
             form.setAffiliationType(Text.valueOf(AffiliationType.EDUCATION.value()));
         } else {
             form.setAffiliationType(Text.valueOf(AffiliationType.EMPLOYMENT.value()));
         }
-        
-        
+
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
-        
-        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));        
+
+        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));
         form.setAffiliationName(Text.valueOf(organization.getName()));
         OrganizationAddress address = organization.getAddress();
         form.setCity(Text.valueOf(address.getCity()));
@@ -111,25 +107,25 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         } else {
             form.setRegion(new Text());
         }
-        
-        if(address.getCountry() != null) {
+
+        if (address.getCountry() != null) {
             form.setCountry(Text.valueOf(address.getCountry().value()));
         } else {
             form.setCountry(new Text());
-        }        
-        
+        }
+
         if (affiliation.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(affiliation.getDepartmentName()));
         } else {
             form.setDepartmentName(new Text());
         }
-                
+
         if (affiliation.getRoleTitle() != null) {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
         } else {
             form.setRoleTitle(new Text());
-        }               
-        
+        }
+
         if (affiliation.getStartDate() != null) {
             form.setStartDate(Date.valueOf(affiliation.getStartDate()));
         }
@@ -139,25 +135,25 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         Source source = affiliation.getSource();
         if (source != null) {
             form.setSource(source.retrieveSourcePath());
-            if(source.getSourceName() != null) {
+            if (source.getSourceName() != null) {
                 form.setSourceName(source.getSourceName().getContent());
-            }                        
+            }
         }
-        
+
         form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
-        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));                
+        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
         return form;
     }
 
     public Affiliation toAffiliation() {
         Affiliation affiliation = null;
-        
-        if(AffiliationType.EDUCATION.value().equals(affiliationType.getValue())) {
+
+        if (AffiliationType.EDUCATION.value().equals(affiliationType.getValue())) {
             affiliation = new Education();
         } else {
             affiliation = new Employment();
         }
-        
+
         if (!PojoUtil.isEmpty(putCode)) {
             affiliation.setPutCode(Long.valueOf(putCode.getValue()));
         }
@@ -177,9 +173,6 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
         organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
-        if (!PojoUtil.isEmpty(affiliationType)) {
-            affiliation.setType(AffiliationType.fromValue(affiliationType.getValue()));
-        }
         if (!PojoUtil.isEmpty(roleTitle)) {
             affiliation.setRoleTitle(roleTitle.getValue());
         }
@@ -306,7 +299,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
-    
+
     public Text getRoleTitle() {
         return roleTitle;
     }
@@ -369,5 +362,5 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
-    }        
+    }
 }

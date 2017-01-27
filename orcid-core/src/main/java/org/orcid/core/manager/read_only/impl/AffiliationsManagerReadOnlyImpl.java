@@ -25,15 +25,14 @@ import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
 public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadOnly {
@@ -52,22 +51,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
     }
 
     public void setSourceNameCacheManager(SourceNameCacheManager sourceNameCacheManager) {
-		this.sourceNameCacheManager = sourceNameCacheManager;
-	}
-
-	@Override
-    public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
-        if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
-            return null;
-        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
-        return affiliation;
-    }    
-
-    @Override
-    public List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type) {
-        if (PojoUtil.isEmpty(userOrcid) || type == null)
-            return null;
-        return orgAffiliationRelationDao.getByUserAndType(userOrcid, type);
+        this.sourceNameCacheManager = sourceNameCacheManager;
     }
 
     /**
@@ -81,7 +65,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * */
     @Override
     public Education getEducationAffiliation(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
         return jpaJaxbEducationAdapter.toEducation(entity);
     }
 
@@ -97,7 +81,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * */
     @Override
     public EducationSummary getEducationSummary(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, affiliationId);
         return jpaJaxbEducationAdapter.toEducationSummary(entity);
     }
 
@@ -112,7 +96,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * */
     @Override
     public Employment getEmploymentAffiliation(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmployment(entity);
     }
 
@@ -127,7 +111,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
      * @return the employment summary
      * */
     public EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(userOrcid, employmentId);
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
     }
 
@@ -142,7 +126,7 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
     @Override
     @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> employmentEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
+        List<OrgAffiliationRelationEntity> employmentEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
         return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
     }
 
@@ -157,25 +141,22 @@ public class AffiliationsManagerReadOnlyImpl implements AffiliationsManagerReadO
     @Override
     @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
+        List<OrgAffiliationRelationEntity> educationEntities = orgAffiliationRelationDao.getByUserAndType(userOrcid, AffiliationType.EDUCATION);
         return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
     }    
     
-    @Deprecated
     @Override
-    public List<AffiliationForm> getAffiliations(String orcid) {
+    public List<Affiliation> getAffiliations(String orcid) {
         List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);        
-        List<AffiliationForm> result = new ArrayList<AffiliationForm>();
+        List<Affiliation> result = new ArrayList<Affiliation>();
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                AffiliationForm affiliationForm = AffiliationForm.valueOf(affiliation);
-                //Get the name from the name cache
-                if(!PojoUtil.isEmpty(affiliationForm.getSource())) {
-                    String sourceName = sourceNameCacheManager.retrieve(affiliationForm.getSource());
-                    affiliationForm.setSourceName(sourceName);
+                if(AffiliationType.EDUCATION.equals(affiliation.getAffiliationType())) {
+                    result.add(jpaJaxbEducationAdapter.toEducation(affiliation));
+                } else {
+                    result.add(jpaJaxbEmploymentAdapter.toEmployment(affiliation));
                 }
-                result.add(affiliationForm);
             }
         }
         

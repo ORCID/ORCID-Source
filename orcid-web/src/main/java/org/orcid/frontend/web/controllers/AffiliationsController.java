@@ -30,9 +30,6 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -96,23 +93,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/affiliations.json", method = RequestMethod.DELETE)
     public @ResponseBody
     AffiliationForm removeAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-
-        // Get cached profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Affiliations affiliations = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getAffiliations();
-        if (affiliations != null) {
-            List<Affiliation> affiliationList = affiliations.getAffiliation();
-            Iterator<Affiliation> affiliationIterator = affiliationList.iterator();
-            while (affiliationIterator.hasNext()) {
-                Affiliation orcidAffiliation = affiliationIterator.next();
-                if (affiliation.getPutCode().getValue().equals(orcidAffiliation.getPutCode())) {
-                    affiliationIterator.remove();
-                }
-            }
-            currentProfile.getOrcidActivities().setAffiliations(affiliations);
-            orgAffiliationRelationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()));
-        }
-
+        affiliationsManager.removeAffiliation(getCurrentUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()));
         return affiliation;
     }
 
@@ -328,12 +309,13 @@ public class AffiliationsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createAffiliationsIdList(HttpServletRequest request) {
-        List<AffiliationForm> affiliationsList = affiliationsManager.getAffiliations(getCurrentUserOrcid());
+        List<Affiliation> affiliationsList = affiliationsManager.getAffiliations(getCurrentUserOrcid());
         HashMap<String, AffiliationForm> affiliationsMap = new HashMap<>();
         List<String> affiliationIds = new ArrayList<String>();
         if (affiliationsList != null) {
             for (AffiliationForm form : affiliationsList) {
                 try {
+                    //TODO: PUT THE SOURCE NAME ON THE FORM ELEMENT
                     if (form.getAffiliationType() != null) {
                         form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.AffiliationType.class, form.getAffiliationType().getValue())));
                     }
