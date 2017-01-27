@@ -55,7 +55,7 @@ node {
             timeout(time:30,unit:'SECONDS'){
                 setup_users = input message: 'Would you like to STOP setup clients and users ?', 
                                          ok: 'Skip',
-                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'install')]
+                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'skip')]
             }
         } catch(err){
             echo err.toString()
