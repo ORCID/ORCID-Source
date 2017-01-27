@@ -6,10 +6,12 @@ node {
         ),
         [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
         parameters([
-            string(defaultValue: 'master', description: '', name: 'branch_to_build')
+            string(defaultValue: 'master', description: 'Branch to checkout and build', name: 'branch_to_build'),
+            string(defaultValue: 'file:///opt/tomcat/orcid-ci2.properties', description: 'Persistence properties file for Settting up clients and users', name: 'setup_properties_file'),
+            string(defaultValue: 'classpath:test-client.properties,classpath:test-web.properties', description: 'Persistence properties file', name: 'test_properties_file')
         ]), 
         pipelineTriggers([
-            cron('* */4 * * *')
+            cron('0 H/4 * * *')
         ])
     ])
     
@@ -20,6 +22,8 @@ node {
     def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
    
     def firefox_home = '/usr/bin/firefox'
+    
+    def gecko_home = '/usr/local/bin/geckodriver'
     
     stage('Build and Pack'){
         echo "Packaging..."
@@ -44,9 +48,29 @@ node {
         sh "sleep 120"
     }
     
+    stage('Setup Clients and Users'){
+        // or try postgres@ci-3:~$ psql -f ~/orcid.setup.db
+        def setup_users = false
+        try {
+            timeout(time:30,unit:'SECONDS'){
+                setup_users = input message: 'Would you like to STOP setup clients and users ?', 
+                                         ok: 'Skip',
+                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'install')]
+            }
+        } catch(err){
+            echo err.toString()
+        }
+        if (setup_users) {
+            echo "Skiping users setup."
+        } else {
+            echo "Installing required users for blackbox tests"
+            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -DfailIfNoTests=false -Dorg.orcid.config.file='$setup_properties_file'")
+        }
+    }
+    
     stage('Execute Black-Box Tests'){
         try {
-            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.config.file='classpath:test-client.properties,classpath:test-web.properties' -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home")
+            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.config.file=$test_properties_file -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home -Dwebdriver.gecko.driver=$gecko_home")
             orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
         } catch(Exception err) {
             def err_msg = err.getMessage()
