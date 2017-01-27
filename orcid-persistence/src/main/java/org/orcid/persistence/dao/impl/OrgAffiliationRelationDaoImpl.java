@@ -22,8 +22,8 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -176,20 +176,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("affiliationType", type);
         return query.getResultList();
-    }
-    
-    /**
-     * Get all affiliations that matches the given type
-     * @param type
-     *          The affiliation type
-     * @return a list of all affiliations that matches the given type                 
-     * */
-    @Override
-    public List<OrgAffiliationRelationEntity> getByType(AffiliationType type){
-        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where affiliationType.value=:affiliationType", OrgAffiliationRelationEntity.class);
-        query.setParameter("affiliationType", type.value());
-        return query.getResultList();
-    } 
+    }    
     
     /**
      * Get all affiliations that belongs to the given user

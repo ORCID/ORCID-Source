@@ -214,7 +214,7 @@ public class SendBadOrgsEmail {
             LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
                     new Object[] { profile.getId(), a.getId(), a.getVisibility(), orgDescription });
             if (!dryRun) {
-                affiliationsManager.updateVisibility(profile.getId(), a.getId(), Visibility.PRIVATE);
+                affiliationsManager.updateVisibility(profile.getId(), a.getId(), org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }
         });
         return badAffs;

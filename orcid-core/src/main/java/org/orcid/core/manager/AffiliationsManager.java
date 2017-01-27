@@ -17,7 +17,7 @@
 package org.orcid.core.manager;
 
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 
@@ -72,5 +72,20 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * */
     boolean checkSourceAndDelete(String orcid, Long affiliationId);        
     
-    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);        
+    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
+    
+    /**
+     * Deletes an affiliation.
+     * 
+     * It doesn't check the source of the element before delete it, so, it is
+     * intended to be used only by the user from the UI
+     * 
+     * @param userOrcid
+     *            The client orcid
+     *
+     * @param affiliationId
+     *            The affiliation id in the DB
+     * @return true if the relationship was deleted
+     */
+    boolean removeAffiliation(String userOrcid, Long affiliationId);
 }

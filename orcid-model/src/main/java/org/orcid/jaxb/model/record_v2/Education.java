@@ -56,7 +56,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
 @XmlRootElement(name = "education", namespace = "http://www.orcid.org/ns/education")
-public class Education implements Serializable, Filterable, Activity, OrganizationHolder, SourceAware {
+public class Education implements Serializable, Affiliation, Filterable, Activity, OrganizationHolder, SourceAware {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/education", name = "department-name")

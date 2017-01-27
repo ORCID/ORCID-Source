@@ -33,6 +33,7 @@ import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -159,7 +160,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setSource(new SourceEntity("APP-000000001"));
         
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
-        result.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.EMPLOYMENT);
+        result.setAffiliationType(AffiliationType.EMPLOYMENT);
         result.setDepartment("employment:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
@@ -167,7 +168,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
-        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
+        result.setVisibility(Visibility.PRIVATE);   
         result.setClientSourceId("APP-000000001");
         
         return result;
