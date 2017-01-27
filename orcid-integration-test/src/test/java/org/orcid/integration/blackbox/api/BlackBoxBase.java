@@ -841,6 +841,7 @@ public class BlackBoxBase {
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
