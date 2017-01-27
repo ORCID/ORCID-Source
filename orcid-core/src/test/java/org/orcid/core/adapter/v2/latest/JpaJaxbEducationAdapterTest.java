@@ -77,15 +77,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
         //Source
-        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());
-        
-        //Check org values
-        assertEquals("common:name", oar.getOrg().getName());
-        assertEquals("common:city", oar.getOrg().getCity());
-        assertEquals("common:region", oar.getOrg().getRegion());        
-        assertEquals(Iso3166Country.AF.value(), oar.getOrg().getCountry().value());
-        assertEquals("common:disambiguated-organization-identifier", oar.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguation-source", oar.getOrg().getOrgDisambiguated().getSourceType());        
+        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());       
     }
     
     @Test
