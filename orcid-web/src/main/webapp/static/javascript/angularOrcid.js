@@ -97,6 +97,27 @@
 	/*
 	 * 1 - Utility functions 
 	 */
+	function openImportWizardUrl(url) {
+	    var win = window.open(url, "_target");
+	    setTimeout( function() {
+	        if(!win || win.outerHeight === 0) {
+	            //First Checking Condition Works For IE & Firefox
+	            //Second Checking Condition Works For Chrome
+	            window.location.href = url;
+	        }
+	    }, 250);
+	    $.colorbox.close();
+	}
+
+	function contains(arr, obj) {
+	    var index = arr.length;
+	    while (index--) {
+	       if (arr[index] === obj) {
+	           return true;
+	       }
+	    }
+	    return false;
+	}
 
 	function formatDate(oldDate) {
 	    var date = new Date(oldDate);
@@ -3163,7 +3184,7 @@
 
 
 
-	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', 'utilsService', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc, utilsService){
+	angular.module('orcidApp').controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.peerReviewSrvc = peerReviewSrvc;
 	    $scope.editPeerReview = null;
@@ -3473,7 +3494,7 @@
 	    
 	    $scope.openImportWizardUrlFilter = function(url, param) {
 	        url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-	        utilsService.openImportWizardUrl(url);
+	        openImportWizardUrl(url);
 	    };
 	        
 	    //Init
@@ -8976,7 +8997,7 @@
 	    };
 
 	    $scope.openImportWizardUrl = function(url) {
-	        utilsService.openImportWizardUrl(url);
+	        openImportWizardUrl(url);
 	    };
 
 	    $scope.bindTypeaheadForOrgs = function () {
@@ -11100,12 +11121,12 @@
 	            };
 
 	            $scope.openImportWizardUrl = function(url) {
-	                utilsService.openImportWizardUrl(url);
+	                openImportWizardUrl(url);
 	            };
 	    
 	            $scope.openImportWizardUrlFilter = function(url, param) {
 	                url = url + '?client_id='+param.clientId+'&response_type=code&scope='+param.redirectUris.redirectUri[0].scopeAsSingleString+'&redirect_uri='+param.redirectUris.redirectUri[0].value;
-	                utilsService.openImportWizardUrl(url);
+	                openImportWizardUrl(url);
 	            };
 
 	            $scope.setAddWorkPrivacy = function(priv, $event) {
@@ -11251,34 +11272,6 @@
 	                    $scope.bibtexExportError = true;
 	                    console.log("bibtex export error");
 	                });        
-	            };
-
-
-	            $scope.downloadBibtexExport = function(citations){
-	                $scope.bibtexGenerated = false;
-	                if (citations.length > 0){
-	                    var text = "";
-	                    for (var c in citations){
-	                        text += citations[c] +"\n"; 
-	                    }
-	                    text = text.replace(/<div class="csl-entry">/g, '');
-	                    text = text.replace(/<\/div>/g, '');
-	                    
-	                    if(window.navigator.msSaveOrOpenBlob) {
-	                        var fileData = [text];
-	                        blobObject = new Blob(fileData, {type: 'text/plain'});
-	                        window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
-	                    } else {
-	                        $scope.bibtexGenerated = true;
-	                        $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
-	                    }
-	                }else{
-	                    $scope.$apply(
-	                        function() {
-	                            $scope.bibtexExportError = true;
-	                        }
-	                    );   
-	                }
 	            };
 	        }
 	    ]
@@ -12752,17 +12745,7 @@
 	                }
 	                return false;
 	            },
-	            openImportWizardUrl: function(url) {
-	                var win = window.open(url, "_target");
-	                setTimeout( function() {
-	                    if(!win || win.outerHeight === 0) {
-	                        //First Checking Condition Works For IE & Firefox
-	                        //Second Checking Condition Works For Chrome
-	                        window.location.href = url;
-	                    }
-	                }, 250);
-	                $.colorbox.close();
-	            },
+
 	            formColorBoxResize: function() {
 	                if (isMobile()) {
 	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});

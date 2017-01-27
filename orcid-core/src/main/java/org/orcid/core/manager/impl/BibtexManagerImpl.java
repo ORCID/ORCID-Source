@@ -263,6 +263,8 @@ public class BibtexManagerImpl implements BibtexManager{
         boolean nl=false;
         for (int codepoint : text.codePoints().toArray()){
             char ch=(char)codepoint;//text.charAt(i);
+       //for (int i=0 ; i < text.length();i++){
+           //char ch = text.charAt(i);
             if (ch!=13 && ch!=10 && nl) {
                 sb.append("\\\\\n");
                 nl=false;
@@ -348,7 +350,7 @@ public class BibtexManagerImpl implements BibtexManager{
                         if (rep != null)
                             sb.append(rep);
                         else
-                            sb.append("?");
+                            sb.append(ch); //here we just spit out the utf-8.  This is what GS does...
                     }
             }
         }
