@@ -60,7 +60,8 @@ if (typeof jQuery == 'undefined') {
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
-
+<!--
+-->
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-cookies.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-sanitize.min.js"></script>

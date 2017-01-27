@@ -12,12 +12,11 @@
  */
 //import 'reflect-metadata';
 
+import * as angular from 'angular'
+import 'angular-route'
 
 // import app modules
 //import {MessagesModule} from './messages';
 //import {MenuModule} from './menu';
 
-
-//import * as angular from 'angular'
-//import 'angular-route'
-//export const Ng1AppModule = angular.module('Ng1AppModule', ['ngRoute']);
+export const Ng1AppModule = angular.module('Ng1AppModule', ['ngRoute']);
