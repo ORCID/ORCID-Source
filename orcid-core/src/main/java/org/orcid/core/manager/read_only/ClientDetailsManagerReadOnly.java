@@ -54,4 +54,6 @@ public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
     String getMemberName(String clientId);    
     
     ClientDetailsEntity findByIdP(String idp);
+
+    boolean isLegacyClientId(String clientId);
 }

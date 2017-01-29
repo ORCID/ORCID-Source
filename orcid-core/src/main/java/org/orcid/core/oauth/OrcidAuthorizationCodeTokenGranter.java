@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -113,7 +114,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             
             for(String requestScope : requestScopes) {
                 if(!grantedScopes.contains(requestScope)) {
-                    throw new InvalidGrantException("Invalid scopes: " + requestScope + " available scopes for this code are: " + grantedScopes);
+                    throw new InvalidScopeException("Invalid scopes: " + requestScope + " available scopes for this code are: " + grantedScopes);
                 }
             }                        
             
