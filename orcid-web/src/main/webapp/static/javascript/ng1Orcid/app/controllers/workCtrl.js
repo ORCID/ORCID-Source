@@ -462,13 +462,13 @@ angular.module('orcidApp').controller(
                                 $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType);
                                 $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea =  JSON.parse($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea);
                                 for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'].length; k ++) {
-                                    if(!contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
+                                    if(!utilsService.contains($scope.workType, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k])){
                                         $scope.workType.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'][k]);
                                     }
                                 }
                                 
                                 for(var k = 0; k < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'].length; k ++) {
-                                    if(!contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
+                                    if(!utilsService.contains($scope.geoArea, $scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k])){
                                         $scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
                                     }
                                 }
@@ -899,34 +899,6 @@ angular.module('orcidApp').controller(
                     $scope.bibtexExportError = true;
                     console.log("bibtex export error");
                 });        
-            };
-
-
-            $scope.downloadBibtexExport = function(citations){
-                $scope.bibtexGenerated = false;
-                if (citations.length > 0){
-                    var text = "";
-                    for (var c in citations){
-                        text += citations[c] +"\n"; 
-                    }
-                    text = text.replace(/<div class="csl-entry">/g, '');
-                    text = text.replace(/<\/div>/g, '');
-                    
-                    if(window.navigator.msSaveOrOpenBlob) {
-                        var fileData = [text];
-                        blobObject = new Blob(fileData, {type: 'text/plain'});
-                        window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
-                    } else {
-                        $scope.bibtexGenerated = true;
-                        $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
-                    }
-                }else{
-                    $scope.$apply(
-                        function() {
-                            $scope.bibtexExportError = true;
-                        }
-                    );   
-                }
             };
         }
     ]

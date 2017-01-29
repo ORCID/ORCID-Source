@@ -19,17 +19,23 @@ package org.orcid.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
+@XmlRootElement
 public class IdentifierType implements Serializable{
 
     private static final long serialVersionUID = 1L;
+    
     private String name;
     private Long id;
     private String validationRegex;
     private String resolutionPrefix;
     private String description;
-    
     private Date dateCreated;
     private Date lastModified;
     
@@ -55,6 +61,7 @@ public class IdentifierType implements Serializable{
     public String getValidationRegex() {
         return validationRegex;
     }
+    @XmlTransient
     public void setValidationRegex(String validationRegex) {
         this.validationRegex = validationRegex;
     }
@@ -82,6 +89,7 @@ public class IdentifierType implements Serializable{
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+    @XmlTransient
     public ClientDetailsEntity getSourceClient() {
         return sourceClient;
     }

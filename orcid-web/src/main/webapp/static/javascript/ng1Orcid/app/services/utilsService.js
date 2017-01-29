@@ -2,6 +2,16 @@ angular.module('orcidApp').factory(
     'utilsService', 
     function() {
         var utilsService = {
+            contains: function(arr, obj) {
+                var index = arr.length;
+                while (index--) {
+                    if (arr[index] === obj) {
+                       return true;
+                    }
+                }
+                return false;
+            },
+
             formColorBoxResize: function() {
                 if (isMobile()) {
                     $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});

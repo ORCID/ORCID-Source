@@ -44,6 +44,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
@@ -69,7 +70,6 @@ import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -138,7 +138,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     private EmailDao emailDao;
 
     @Resource
-    private UserConnectionDao userConnectionDao;
+    private UserConnectionManager userConnectionManager;
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
@@ -309,7 +309,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
+        List<UserconnectionEntity> userConnectionEntities = userConnectionManager.findByOrcid(orcid);
         return userConnectionEntities;
     }
 
@@ -322,7 +322,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
-        userConnectionDao.remove(manageSocialAccount.getIdToManage());
+        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
         return manageSocialAccount;
     }
 

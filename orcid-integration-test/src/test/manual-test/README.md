@@ -818,20 +818,20 @@ This section checks that clients can only get access based on the allowed scopes
 174. Attempt to get an /activities/update token via 2 step. Check a 401 Unauthorized error is returned
 
     ```
-    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 
     ```
 
 175. Attempt to get a /webhooks token with a basic client. Check a 401 Unauthorized error is returned
 
     ```
-    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
     ```
 
 176. Attempt to get a /orcid-profile/create token with a non-institution client. Check a 401 Unauthorized error is returned
 
     ```
-    curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
     ```
 
 

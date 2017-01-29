@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
@@ -59,9 +60,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes(null).getStatus(), 200);
         Response r = service.viewIdentifierTypes(null);
         @SuppressWarnings("unchecked")
-        Collection<IdentifierType> types = (Collection<IdentifierType>) r.getEntity();
+        GenericEntity<List<IdentifierType>> types = (GenericEntity<List<IdentifierType>>) r.getEntity();
         Boolean found = false;
-        for (IdentifierType t : types){
+        for (IdentifierType t : types.getEntity()){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Digital object identifier",t.getDescription());
                 found = true;
@@ -75,9 +76,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes("es").getStatus(), 200);
         Response r = service.viewIdentifierTypes("es");
         @SuppressWarnings("unchecked")
-        Collection<IdentifierType> types = (Collection<IdentifierType>) r.getEntity();
+        GenericEntity<List<IdentifierType>> types = (GenericEntity<List<IdentifierType>>) r.getEntity();
         Boolean found = false;
-        for (IdentifierType t : types){
+        for (IdentifierType t : types.getEntity()){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Identificador de objeto digital",t.getDescription());
                 found = true;

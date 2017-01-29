@@ -619,6 +619,9 @@ public class SetUpClientsAndUsers {
                 }
             }
 
+            //Unlock just in case it is locked
+            profileDao.unlockProfile(orcid);
+            
             return true;
         }
         return false;

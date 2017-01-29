@@ -29,6 +29,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.interactions.Actions;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
@@ -165,17 +166,24 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     }    
         
     @Test
-    public void addressPrivacyTest() throws InterruptedException, JSONException {
+    public void addressPrivacyTest() throws InterruptedException, JSONException {        
         openEditAddressModal();
         deleteAddresses();
-        createAddress(Iso3166Country.AD.name());         
+        createAddress(Iso3166Country.AD.name());
+        changeAddressVisibility(Visibility.PUBLIC);
         saveEditAddressModal();
-      
+        
+        //Verify it appears again in the public page
+        showPublicProfilePage(getUser1OrcidId());
+        addressAppearsInPublicPage("Andorra");
+        
+        //Change visibility to private
+        showMyOrcidPage();
         openEditAddressModal();
         changeAddressVisibility(Visibility.PRIVATE);
         saveEditAddressModal();
         
-        //Verify it doesn't appears again in the public page
+        //Verify it doesn't appears in the public page
         try {
             showPublicProfilePage(getUser1OrcidId());
             addressAppearsInPublicPage("Andorra");
@@ -197,15 +205,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
             fail();
         } catch(Exception e) {
             
-        }
-                
-        //Change visibility to public again
+        }                               
+        
+        //Change it to public again and verify it appears in the public paget
         showMyOrcidPage();
         openEditAddressModal();
         changeAddressVisibility(Visibility.PUBLIC);
         saveEditAddressModal();
-        
-        //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         addressAppearsInPublicPage("Andorra");
         

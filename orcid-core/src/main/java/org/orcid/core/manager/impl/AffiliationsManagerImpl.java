@@ -42,7 +42,6 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
     @Resource
@@ -328,37 +327,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         } else if (incomingWorkVisibility == null) {
             orgAffiliationRelationEntity.setVisibility(Visibility.PRIVATE);
         }
-    }
-
-    /**
-     * Get the list of employments that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of employments that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> employmentEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
-    }
-
-    /**
-     * Get the list of educations that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of educations that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
-        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
-    }
+    }    
 
     private Item createItem(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();

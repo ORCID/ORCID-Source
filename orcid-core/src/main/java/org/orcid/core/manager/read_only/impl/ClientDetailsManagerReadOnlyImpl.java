@@ -24,8 +24,10 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
@@ -38,7 +40,10 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);    
-
+    
+    @Resource
+    protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
+    
     @Resource
     protected EncryptionManager encryptionManager;    
     
@@ -203,5 +208,12 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
                 }
             }
         }
+    }
+    
+    @Override
+    public Client getClient(String clientId) {
+        Date lastModified = clientDetailsDao.getLastModified(clientId);
+        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
+        return jpaJaxbClientAdapter.toClient(clientDetailsEntity);
     }
 }

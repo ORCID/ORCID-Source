@@ -2,7 +2,14 @@ node {
 
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${env.BRANCH_NAME}"
     
-    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '3']]])
+    properties([
+        buildDiscarder(
+            logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '3')
+        ), 
+        disableConcurrentBuilds(), 
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+        pipelineTriggers([])
+    ])
     
     stage('Fetch Code and Build') {
         echo "triggered by modification on ${env.BRANCH_NAME} ---------------------------------------------------------------------------"

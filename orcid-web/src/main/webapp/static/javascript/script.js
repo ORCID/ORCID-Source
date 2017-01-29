@@ -3907,8 +3907,8 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['doi'] = function (id) {
-      if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'http://' + id;
-      return 'http://dx.doi.org/' + id;
+      if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'https://' + id;
+      return 'https://dx.doi.org/' + id;
    };
 
    typeMap['ethos'] = function (id) {
@@ -4002,6 +4002,10 @@ this.w3cLatexCharMap = {
    typeMap['lensid'] = function (id) {
        if (id.toLowerCase().startsWith('www.lens.org')) return 'https://' + id;
        return 'https://www.lens.org/' + encodeURIComponent(id);
+   };
+   
+   typeMap['cienciaiul'] = function (id) {
+       return 'https://ciencia.iscte-iul.pt/id/' + encodeURIComponent(id);
    };
 
    exports.getLink = function(id, type) {

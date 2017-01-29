@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -89,7 +88,5 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);
     
-    ClientDetailsEntity findByIdP(String idp);
-
-    Client getClient(String clientId);
+    ClientDetailsEntity findByIdP(String idp);    
 }
