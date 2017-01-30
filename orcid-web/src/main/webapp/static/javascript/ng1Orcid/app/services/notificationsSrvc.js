@@ -36,6 +36,7 @@ angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', fun
                     serv.loadingMore = false;
                     $rootScope.$apply();
                     serv.resizeIframes();
+                    serv.retrieveUnreadCount();
                 }
             }).fail(function(e) {
                 serv.loading = false;
@@ -52,6 +53,7 @@ angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', fun
                 dataType: 'json',
                 success: function(data) {
                     serv.notificationAlerts = data;
+                    serv.retrieveUnreadCount();
                 }
             }).fail(function(e) {
                 // something bad is happening!

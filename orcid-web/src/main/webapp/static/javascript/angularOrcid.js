@@ -4095,12 +4095,6 @@
 	}]);
 
 
-	// Controller to show alert for unread notifications
-	angular.module('orcidApp').controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-	    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
-	    notificationsSrvc.retrieveUnreadCount();
-	}]);
-
 	angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
 	    $scope.isDroppedDown = false;
 	    $scope.searchResultsCache = new Object();
@@ -8162,6 +8156,8 @@
 		"./FundingCtrl.js": 6,
 		"./KeywordsCtrl.js": 7,
 		"./NameCtrl.js": 8,
+		"./NotificationAlertsCtrl.js": 36,
+		"./NotificationsCountCtrl.js": 35,
 		"./NotificationsCtrl.js": 9,
 		"./OtherNamesCtrl.js": 10,
 		"./languageCtrl.js": 11,
@@ -9658,7 +9654,6 @@
 	    $scope.archive = notificationsSrvc.archive;
 	    $scope.getNotifications = notificationsSrvc.getNotifications;
 	    $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-	    $scope.notificationsSrvc = notificationsSrvc;
 	    $scope.bulkChecked = notificationsSrvc.bulkChecked;
 	    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
 	    $scope.toggleDisplayBody = function (notificationId) {
@@ -9674,8 +9669,7 @@
 	        }
 	    });
 
-	    notificationsSrvc.getNotifications();    
-	    notificationsSrvc.getNotificationAlerts();
+	    notificationsSrvc.getNotifications();
 	        
 	}]);
 
@@ -12529,6 +12523,7 @@
 	                    serv.loadingMore = false;
 	                    $rootScope.$apply();
 	                    serv.resizeIframes();
+	                    serv.retrieveUnreadCount();
 	                }
 	            }).fail(function(e) {
 	                serv.loading = false;
@@ -12545,6 +12540,7 @@
 	                dataType: 'json',
 	                success: function(data) {
 	                    serv.notificationAlerts = data;
+	                    serv.retrieveUnreadCount();
 	                }
 	            }).fail(function(e) {
 	                // something bad is happening!
@@ -12827,6 +12823,36 @@
 	        }   
 	    };
 	    return serv;
+	}]);
+
+/***/ },
+/* 34 */,
+/* 35 */
+/***/ function(module, exports) {
+
+	// Controller to show alert for unread notifications
+	angular.module('orcidApp').controller('NotificationsCountCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	    
+	    $scope.isCurrentPage = function(path){
+	        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+	    }
+	    
+	    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
+	    // Pages that load notifications will get the unread count themselves
+	    if(!($scope.isCurrentPage('my-orcid') || $scope.isCurrentPage('inbox'))){
+	        notificationsSrvc.retrieveUnreadCount();
+	    }
+	    
+	}]);
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	// Controller for notifications
+	angular.module('orcidApp').controller('NotificationAlertsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	    $scope.notificationsSrvc = notificationsSrvc;
+	    notificationsSrvc.getNotificationAlerts();
 	}]);
 
 /***/ }

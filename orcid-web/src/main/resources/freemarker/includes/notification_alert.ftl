@@ -16,7 +16,7 @@
     =============================================================================
 
 -->
-<div ng-controller="NotificationsCtrl">
+<div ng-controller="NotificationAlertsCtrl">
 	<div class="notification-alert" ng-repeat="notification in notificationsSrvc.notificationAlerts" ng-show="alert['$index'] == null" ng-cloak>		
 		<h3 class="notification-alert-title" ng-cloak>		
 			<@orcid.msg 'notifications.alert_title_1'/>
