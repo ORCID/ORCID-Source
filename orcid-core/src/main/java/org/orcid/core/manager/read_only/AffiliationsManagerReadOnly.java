@@ -18,26 +18,14 @@ package org.orcid.core.manager.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
 
 public interface AffiliationsManagerReadOnly {
 
-    /**
-     * 
-     * */
-    OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId);
-        
-    /**
-     * 
-     * */
-    List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type);
-    
     /**
      * Get an education based on the orcid and education id
      * @param orcid
@@ -98,6 +86,5 @@ public interface AffiliationsManagerReadOnly {
      * */
     List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);  
     
-    @Deprecated
-    List<AffiliationForm> getAffiliations(String orcid);
+    List<Affiliation> getAffiliations(String orcid);
 }

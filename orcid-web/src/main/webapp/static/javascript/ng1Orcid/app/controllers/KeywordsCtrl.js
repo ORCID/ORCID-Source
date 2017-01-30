@@ -130,8 +130,9 @@ angular.module('orcidApp').controller(
         var keywords = $scope.keywordsForm.keywords;
         var len = keywords.length;
         while (len--) {
-            if (keywords[len] == keyword)
+            if (keywords[len] == keyword){
                 keywords.splice(len,1);
+            }
         }
     };
 
@@ -235,8 +236,9 @@ angular.module('orcidApp').controller(
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-        for (var idx in $scope.keywordsForm.keywords)      
+        for (var idx in $scope.keywordsForm.keywords){
             $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+        }
     };
     
     $scope.getKeywordsForm();

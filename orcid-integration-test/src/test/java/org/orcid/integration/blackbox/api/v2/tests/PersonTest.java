@@ -81,33 +81,33 @@ public class PersonTest extends BlackBoxBaseV2Release {
         }
 
         signin();
+        
+        //Set the default visibility to public, so, all elements created are public by default
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        
         showMyOrcidPage();
 
         openEditAddressModal();
         deleteAddresses();
         createAddress(org.orcid.jaxb.model.common_rc4.Iso3166Country.US.name());
-        changeAddressVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveEditAddressModal();
 
         openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName("other-name-1");
         createOtherName("other-name-2");
-        changeOtherNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveOtherNamesModal();
 
         openEditKeywordsModal();
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
-        changeKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveKeywordsModal();
 
         openEditResearcherUrlsModal();
         deleteResearcherUrls();
         createResearcherUrl(researcherUrl1);
         createResearcherUrl(researcherUrl2);
-        changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveResearcherUrlsModal();
 
         if (hasExternalIdentifiers()) {

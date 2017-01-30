@@ -19,7 +19,7 @@
 <#assign verDateTime = startupDate?datetime>
 <#macro base ver="${verDateTime?iso_utc}">
 <!DOCTYPE html>
-<html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
+<html class="no-js oldie" lang="en">
 <#include "/common/html-head.ftl" />
 <body data-baseurl="<@orcid.rootPath '/'/>">
 <#nested />

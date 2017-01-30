@@ -193,7 +193,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals("[11]", model.get("workIdsJson"));
         
         assertTrue(model.containsKey("affiliationIdsJson"));
-        assertEquals("[20,17]", model.get("affiliationIdsJson"));
+        assertEquals("[17,20]", model.get("affiliationIdsJson"));
         
         assertTrue(model.containsKey("fundingIdsJson"));
         assertEquals("[10]", model.get("fundingIdsJson"));
