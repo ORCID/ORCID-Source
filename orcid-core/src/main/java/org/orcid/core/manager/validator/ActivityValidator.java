@@ -441,13 +441,13 @@ public class ActivityValidator {
         }
         return null;
     }
-
+    
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {
                 throw new VisibilityMismatchException();
             }
-            if (!updatedVisibility.value().equals(originalVisibility.value())) {
+            if (!updatedVisibility.equals(originalVisibility)) {
                 throw new VisibilityMismatchException();
             }
         }

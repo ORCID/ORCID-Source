@@ -72,6 +72,7 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * */
     boolean checkSourceAndDelete(String orcid, Long affiliationId);        
     
+
     boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);  
     
     /**

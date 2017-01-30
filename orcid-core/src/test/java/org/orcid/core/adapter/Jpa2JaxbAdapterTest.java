@@ -346,7 +346,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         OrgAffiliationRelationEntity affiliation = new OrgAffiliationRelationEntity();
         affiliation.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
         affiliation.setOrg(newOrg);
-        affiliation.setVisibility(Visibility.PUBLIC);
+        affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         affiliation.setClientSourceId(clientId);
         affiliation.setId(24816L);
         affiliations.add(affiliation);

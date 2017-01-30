@@ -4003,6 +4003,10 @@ this.w3cLatexCharMap = {
        if (id.toLowerCase().startsWith('www.lens.org')) return 'https://' + id;
        return 'https://www.lens.org/' + encodeURIComponent(id);
    };
+   
+   typeMap['cienciaiul'] = function (id) {
+       return 'https://ciencia.iscte-iul.pt/id/' + encodeURIComponent(id);
+   };
 
    exports.getLink = function(id, type) {
       if (id == null) return null;

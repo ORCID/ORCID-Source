@@ -92,5 +92,5 @@ public interface AffiliationsManagerReadOnly {
      * 
      * @return the list of all affiliations that belongs to this user
      * */
-    List<Affiliation> getAffiliations(String userOrcid);
+    List<Affiliation> getAffiliations(String orcid);
 }

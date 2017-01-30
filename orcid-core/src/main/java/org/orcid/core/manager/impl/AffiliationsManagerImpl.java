@@ -239,11 +239,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
 
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = orgAffiliationRelationEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            orgAffiliationRelationEntity.setVisibility(defaultWorkVisibility);            
-        } else if (incomingWorkVisibility == null) {
+        Visibility incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
+        Visibility defaultElementVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) { 
+            orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);            
+        } else if (incomingElementVisibility == null) {
             orgAffiliationRelationEntity.setVisibility(Visibility.PRIVATE);
         }
     }    

@@ -185,7 +185,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     public List<OrgAffiliationRelationEntity> getByUser(String orcid) {
-        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:orcid", OrgAffiliationRelationEntity.class);
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:orcid order by dateCreated asc", OrgAffiliationRelationEntity.class);
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }

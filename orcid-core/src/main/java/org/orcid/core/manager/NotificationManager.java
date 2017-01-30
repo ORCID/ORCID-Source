@@ -87,6 +87,8 @@ public interface NotificationManager {
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
+    Notification flagAsArchived(String orcid, Long id, boolean checkSource) throws OrcidNotificationAlreadyReadException;
+
     public Notification setActionedAndReadDate(String orcid, Long id);
 
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);

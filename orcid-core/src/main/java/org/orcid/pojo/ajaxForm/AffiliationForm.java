@@ -157,7 +157,9 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(putCode)) {
             affiliation.setPutCode(Long.valueOf(putCode.getValue()));
         }
-        affiliation.setVisibility(visibility.getVisibility());
+        if(visibility != null && visibility.getVisibility() != null) {
+            affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(visibility.getVisibility().value()));
+        }
         Organization organization = new Organization();
         affiliation.setOrganization(organization);
         organization.setName(affiliationName.getValue());

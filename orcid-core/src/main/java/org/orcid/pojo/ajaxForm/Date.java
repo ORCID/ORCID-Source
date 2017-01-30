@@ -62,7 +62,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (!PojoUtil.isEmpty(this.getYear()))
             pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
-    }
+    }        
     
     public static Date valueOf(java.util.Date date) {
         Date newDate = new Date();
