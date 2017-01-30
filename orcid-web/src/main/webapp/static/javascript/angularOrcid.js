@@ -44,21 +44,22 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	//require('./app/angularOrcidOriginal.js');
-	//require('./app/directives/focusMe.js');
-	//require(/Test$/);
-	//require('./app/', true, /\.js$/);
-	//require.context('./app/directives', true, /\.js$/);
+	//npm install -g typescript
 
 	function requireAll(requireContext) {
 	  return requireContext.keys().map(requireContext);
 	}
 
 	__webpack_require__(1);
-	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(14));
-	requireAll(__webpack_require__(20));
-	requireAll(__webpack_require__(22));
+	//require('./app/main.ts');
+	requireAll(__webpack_require__(67));
+	requireAll(__webpack_require__(79));
+	requireAll(__webpack_require__(80));
+	requireAll(__webpack_require__(86));
+	requireAll(__webpack_require__(87));
+	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
+	requireAll(__webpack_require__(90));
+	requireAll(__webpack_require__(102));
 
 /***/ },
 /* 1 */
@@ -93,6 +94,17 @@
 	 *  - 7 - Angular Multiselect Module
 	 *  
 	 */
+
+	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
+	angular.element(function() {
+	    angular.bootstrap(
+	        document, 
+	        ['orcidApp']
+	    );
+	});
+	//angular.bootstrap(document.body, ['orcidApp'], {});
+
 
 	/*
 	 * 1 - Utility functions 
@@ -182,6 +194,7 @@
 	    return str;
 	}
 
+	//Needs refactor for dw object
 	function removeBadContributors(dw) {
 	    for (var idx in dw.contributors) {
 	        if (dw.contributors[idx].contributorSequence == null
@@ -195,6 +208,7 @@
 	    }
 	}
 
+	//Needs refactor for dw object
 	function removeBadExternalIdentifiers(dw) {
 	    for(var idx in dw.workExternalIdentifiers) {
 	        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
@@ -216,8 +230,6 @@
 	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
-
-	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 	/*************************************************
 	 * 3 - Angular Services
@@ -8152,21 +8164,86 @@
 	/* Do not add anything below, see file structure at the top of this file */
 
 /***/ },
-/* 2 */
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */,
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */,
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./BiographyCtrl.js": 3,
-		"./CountryCtrl.js": 4,
-		"./EmailEditCtrl.js": 5,
-		"./FundingCtrl.js": 6,
-		"./KeywordsCtrl.js": 7,
-		"./NameCtrl.js": 8,
-		"./NotificationsCtrl.js": 9,
-		"./OtherNamesCtrl.js": 10,
-		"./languageCtrl.js": 11,
-		"./websitesCtrl.js": 12,
-		"./workCtrl.js": 13
+		"./BiographyCtrl.js": 68,
+		"./CountryCtrl.js": 69,
+		"./EmailEditCtrl.js": 70,
+		"./FundingCtrl.js": 71,
+		"./KeywordsCtrl.js": 72,
+		"./NameCtrl.js": 73,
+		"./NotificationsCtrl.js": 74,
+		"./OtherNamesCtrl.js": 75,
+		"./languageCtrl.js": 76,
+		"./websitesCtrl.js": 77,
+		"./workCtrl.js": 78
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8179,11 +8256,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 2;
+	webpackContext.id = 67;
 
 
 /***/ },
-/* 3 */
+/* 68 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
@@ -8306,7 +8383,7 @@
 	}]);
 
 /***/ },
-/* 4 */
+/* 69 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -8574,7 +8651,7 @@
 	}]);
 
 /***/ },
-/* 5 */
+/* 70 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
@@ -8768,7 +8845,7 @@
 	}]);
 
 /***/ },
-/* 6 */
+/* 71 */
 /***/ function(module, exports) {
 
 	/**
@@ -9337,7 +9414,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 72 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -9472,8 +9549,9 @@
 	        var keywords = $scope.keywordsForm.keywords;
 	        var len = keywords.length;
 	        while (len--) {
-	            if (keywords[len] == keyword)
+	            if (keywords[len] == keyword){
 	                keywords.splice(len,1);
+	            }
 	        }
 	    };
 
@@ -9577,15 +9655,16 @@
 	    };
 	    
 	    $scope.setBulkGroupPrivacy = function(priv) {
-	        for (var idx in $scope.keywordsForm.keywords)      
+	        for (var idx in $scope.keywordsForm.keywords){
 	            $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+	        }
 	    };
 	    
 	    $scope.getKeywordsForm();
 	}]);
 
 /***/ },
-/* 8 */
+/* 73 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
@@ -9644,7 +9723,7 @@
 	}]);
 
 /***/ },
-/* 9 */
+/* 74 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9680,7 +9759,7 @@
 	}]);
 
 /***/ },
-/* 10 */
+/* 75 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
@@ -9910,7 +9989,7 @@
 	}]);
 
 /***/ },
-/* 11 */
+/* 76 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -10088,7 +10167,7 @@
 	}]);
 
 /***/ },
-/* 12 */
+/* 77 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10368,7 +10447,7 @@
 	}]);
 
 /***/ },
-/* 13 */
+/* 78 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11273,20 +11352,61 @@
 	                    console.log("bibtex export error");
 	                });        
 	            };
+
+
+	            $scope.downloadBibtexExport = function(citations){
+	                $scope.bibtexGenerated = false;
+	                if (citations.length > 0){
+	                    var text = "";
+	                    for (var c in citations){
+	                        text += citations[c] +"\n"; 
+	                    }
+	                    text = text.replace(/<div class="csl-entry">/g, '');
+	                    text = text.replace(/<\/div>/g, '');
+	                    
+	                    if(window.navigator.msSaveOrOpenBlob) {
+	                        var fileData = [text];
+	                        blobObject = new Blob(fileData, {type: 'text/plain'});
+	                        window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+	                    } else {
+	                        $scope.bibtexGenerated = true;
+	                        $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+	                    }
+	                }else{
+	                    $scope.$apply(
+	                        function() {
+	                            $scope.bibtexExportError = true;
+	                        }
+	                    );   
+	                }
+	            };
 	        }
 	    ]
 	);
 
 /***/ },
-/* 14 */
+/* 79 */
+/***/ function(module, exports) {
+
+	function webpackContext(req) {
+		throw new Error("Cannot find module '" + req + "'.");
+	}
+	webpackContext.keys = function() { return []; };
+	webpackContext.resolve = webpackContext;
+	module.exports = webpackContext;
+	webpackContext.id = 79;
+
+
+/***/ },
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 15,
-		"./focusMe.js": 16,
-		"./modalEmailUnVerified.js": 17,
-		"./ngEnter.js": 18,
-		"./ngEnterSubmit.js": 19
+		"./fnForm.js": 81,
+		"./focusMe.js": 82,
+		"./modalEmailUnVerified.js": 83,
+		"./ngEnter.js": 84,
+		"./ngEnterSubmit.js": 85
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11299,11 +11419,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 14;
+	webpackContext.id = 80;
 
 
 /***/ },
-/* 15 */
+/* 81 */
 /***/ function(module, exports) {
 
 	/*
@@ -11339,7 +11459,7 @@
 	});
 
 /***/ },
-/* 16 */
+/* 82 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11363,7 +11483,7 @@
 	);
 
 /***/ },
-/* 17 */
+/* 83 */
 /***/ function(module, exports) {
 
 	/*
@@ -11467,7 +11587,7 @@
 	);
 
 /***/ },
-/* 18 */
+/* 84 */
 /***/ function(module, exports) {
 
 	/*
@@ -11489,7 +11609,7 @@
 	});
 
 /***/ },
-/* 19 */
+/* 85 */
 /***/ function(module, exports) {
 
 	/*
@@ -11511,11 +11631,24 @@
 	});
 
 /***/ },
-/* 20 */
+/* 86 */
+/***/ function(module, exports) {
+
+	function webpackContext(req) {
+		throw new Error("Cannot find module '" + req + "'.");
+	}
+	webpackContext.keys = function() { return []; };
+	webpackContext.resolve = webpackContext;
+	module.exports = webpackContext;
+	webpackContext.id = 86;
+
+
+/***/ },
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 21
+		"./ui.multiselect.js": 88
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11528,11 +11661,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 20;
+	webpackContext.id = 87;
 
 
 /***/ },
-/* 21 */
+/* 88 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11813,21 +11946,22 @@
 	}]);
 
 /***/ },
-/* 22 */
+/* 89 */,
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 23,
-		"./affiliationsSrvc.js": 24,
-		"./bioBulkSrvc.js": 25,
-		"./commonSrvc.js": 26,
-		"./fundingSrvc.js": 27,
-		"./groupedActivitiesService.js": 28,
-		"./groupedActivitiesUtil.js": 29,
-		"./initialConfigService.js": 30,
-		"./notificationsSrvc.js": 31,
-		"./utilsService.js": 32,
-		"./workspaceSrvc.js": 33
+		"./actBulkSrvc.js": 91,
+		"./affiliationsSrvc.js": 92,
+		"./bioBulkSrvc.js": 93,
+		"./commonSrvc.js": 94,
+		"./fundingSrvc.js": 95,
+		"./groupedActivitiesService.js": 96,
+		"./groupedActivitiesUtil.js": 97,
+		"./initialConfigService.js": 98,
+		"./notificationsSrvc.js": 99,
+		"./utilsService.js": 100,
+		"./workspaceSrvc.js": 101
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11840,11 +11974,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 22;
+	webpackContext.id = 90;
 
 
 /***/ },
-/* 23 */
+/* 91 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11863,7 +11997,7 @@
 	}]);
 
 /***/ },
-/* 24 */
+/* 92 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -11992,7 +12126,7 @@
 	}]);
 
 /***/ },
-/* 25 */
+/* 93 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12012,7 +12146,7 @@
 	}]);
 
 /***/ },
-/* 26 */
+/* 94 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12077,7 +12211,7 @@
 	}]);
 
 /***/ },
-/* 27 */
+/* 95 */
 /***/ function(module, exports) {
 
 	/**
@@ -12288,7 +12422,7 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 96 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12406,7 +12540,7 @@
 
 
 /***/ },
-/* 29 */
+/* 97 */
 /***/ function(module, exports) {
 
 	/*
@@ -12461,7 +12595,7 @@
 	*/
 
 /***/ },
-/* 30 */
+/* 98 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12488,7 +12622,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 99 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12729,13 +12863,20 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 100 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
 	    'utilsService', 
 	    function() {
 	        var utilsService = {
+	            addComma: function(str) {
+	                if (str.length > 0){
+	                    return str + ', ';
+	                } 
+	                return str;
+	            },
+
 	            contains: function(arr, obj) {
 	                var index = arr.length;
 	                while (index--) {
@@ -12744,6 +12885,40 @@
 	                    }
 	                }
 	                return false;
+	            },
+
+	            emptyTextField: function(field) {
+	                if (field != null
+	                    && field.value != null
+	                    && field.value.trim() != '') {
+	                    return false;
+	                }
+	                return true;
+	            },
+
+	            fixZindexIE7: function(target, zindex){
+	                if(isIE() == 7){
+	                    $(target).each(
+	                        function(){
+	                            $(this).css('z-index', zindex);
+	                            --zindex;
+	                        }
+	                    );
+	                }
+	            },
+
+	            formatDate: function(oldDate) {
+	                var date = new Date(oldDate);
+	                var day = date.getDate();
+	                var month = date.getMonth() + 1;
+	                var year = date.getFullYear();
+	                if(month < 10) {
+	                    month = '0' + month;
+	                }
+	                if(day < 10) {
+	                    day = '0' + day;
+	                }
+	                return (year + '-' + month + '-' + day);
 	            },
 
 	            formColorBoxResize: function() {
@@ -12759,6 +12934,10 @@
 	                }
 	            },
 
+	            formColorBoxWidth: function() {
+	                return isMobile()? '100%': '800px';
+	            },
+
 	            getParameterByName: function( name ) {
 	                var _name = name,
 	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
@@ -12768,6 +12947,37 @@
 	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
 	                
 	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	            },
+
+	            getScripts: function(scripts, callback) {
+	                var progress = 0;
+	                var internalCallback = function () {        
+	                    if (++progress == scripts.length - 1) {
+	                        callback();
+	                    }
+	                };    
+	                scripts.forEach(
+	                    function(script) {        
+	                        $.getScript(script, internalCallback);        
+	                    }
+	                );
+	            },
+
+	            isEmail: function(email) {
+	                var re = /\S+@\S+\.\S+/;
+	                return re.test(email);
+	            },
+
+	            openImportWizardUrl: function(url) {
+	                var win = window.open(url, "_target");
+	                setTimeout( function() {
+	                    if(!win || win.outerHeight === 0) {
+	                        //First Checking Condition Works For IE & Firefox
+	                        //Second Checking Condition Works For Chrome
+	                        window.location.href = url;
+	                    }
+	                }, 250);
+	                $.colorbox.close();
 	            }
 	        };
 	        return utilsService;
@@ -12775,7 +12985,7 @@
 	);
 
 /***/ },
-/* 33 */
+/* 101 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -12828,6 +13038,19 @@
 	    };
 	    return serv;
 	}]);
+
+/***/ },
+/* 102 */
+/***/ function(module, exports) {
+
+	function webpackContext(req) {
+		throw new Error("Cannot find module '" + req + "'.");
+	}
+	webpackContext.keys = function() { return []; };
+	webpackContext.resolve = webpackContext;
+	module.exports = webpackContext;
+	webpackContext.id = 102;
+
 
 /***/ }
 /******/ ]);
