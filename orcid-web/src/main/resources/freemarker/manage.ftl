@@ -287,21 +287,15 @@
 	                    ng-show="showEditDeprecate" ng-cloak>
 	                    <td colspan="2">
 	                        <div class="editTablePadCell35 close-account-container">
-								<span class="orcid-error"
-	                                ng-show="deprecateProfilePojo.errors.length > 0">
-	                                <div ng-repeat='error in deprecateProfilePojo.errors'
-	                                    ng-bind-html="error"></div>
-	                            </span>                        
+								                      
 	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
 	                            
-	                            <h4>${springMacroRequestContext.getMessage("deprecate_orcid.what_happens")}</h4>
-	                            <p>
-	                                ${springMacroRequestContext.getMessage("deprecate_orcid.when_records_are")} <a
-	                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
-	                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.more_information_link")}</a>
+	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}
+								<a
+	                                href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
+	                                target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more")}</a>
 	                            </p>
 	                            
-	                            <h4>${springMacroRequestContext.getMessage("deprecate_orcid.deprecate_record")}</h4>
 	                            <div>
 	                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
 	                                <div class="relative">
@@ -319,8 +313,13 @@
 	                                        class="input-xlarge" /> <span class="required">*</span>
 	                                </div>
 	                            </div>
+	                            <span class="orcid-error"
+	                                ng-show="deprecateProfilePojo.errors.length > 0">
+	                                <div ng-repeat='error in deprecateProfilePojo.errors'
+	                                    ng-bind-html="error"></div>
+	                            </span>  
 	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.deprecate_record")}</button>
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.warning")}</p>
+	                            
 	                        </div>
 	                    </td>
 	                </tr>

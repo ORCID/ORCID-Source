@@ -1385,7 +1385,7 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
     
     $scope.deprecateUpdateToggleText = function () {
         if ($scope.showEditDeprecate) $scope.deprecateToggleText = om.get("manage.editTable.hide");
-        else $scope.deprecateToggleText = om.get("manage.editTable.deprecateRecord");
+        else $scope.deprecateToggleText = om.get("manage.editTable.removeDuplicate");
     };
 
     $scope.toggleDeprecateEdit = function() {
