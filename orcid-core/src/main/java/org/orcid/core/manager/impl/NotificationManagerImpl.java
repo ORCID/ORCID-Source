@@ -1014,16 +1014,22 @@ public class NotificationManagerImpl implements NotificationManager {
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
-
+    
     @Override
     @Transactional
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
+        return flagAsArchived(orcid, id, true);
+    }
+
+    @Override
+    @Transactional
+    public Notification flagAsArchived(String orcid, Long id, boolean checkSource) throws OrcidNotificationAlreadyReadException {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
             return null;
         }
         String sourceId = sourceManager.retrieveSourceOrcid();
-        if (sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
+        if (checkSource && sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "notification");
             throw new WrongSourceException(params);

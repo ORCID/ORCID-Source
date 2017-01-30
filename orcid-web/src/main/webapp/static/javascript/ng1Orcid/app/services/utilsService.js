@@ -8,7 +8,6 @@ angular.module('orcidApp').factory(
                 } 
                 return str;
             },
-
             contains: function(arr, obj) {
                 var index = arr.length;
                 while (index--) {
@@ -18,7 +17,6 @@ angular.module('orcidApp').factory(
                 }
                 return false;
             },
-
             emptyTextField: function(field) {
                 if (field != null
                     && field.value != null
@@ -52,7 +50,6 @@ angular.module('orcidApp').factory(
                 }
                 return (year + '-' + month + '-' + day);
             },
-
             formColorBoxResize: function() {
                 if (isMobile()) {
                     $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
