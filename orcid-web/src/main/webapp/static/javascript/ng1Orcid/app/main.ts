@@ -35,7 +35,7 @@ platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(ref => {
 
   // setTimeout is necessary because upgrade.bootstrap is async.
   // This should be fixed.
-  setTimeout(() => {
-    ref.injector.get(Router).initialNavigation();
-  }, 0);
+  //setTimeout(() => {
+  //  ref.injector.get(Router).initialNavigation();
+  //}, 0);
 });
