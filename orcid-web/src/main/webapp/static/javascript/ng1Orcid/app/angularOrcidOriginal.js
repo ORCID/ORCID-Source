@@ -4040,12 +4040,6 @@ angular.module('orcidApp').controller('SocialCtrl',['$scope', '$compile', 'disco
 }]);
 
 
-// Controller to show alert for unread notifications
-angular.module('orcidApp').controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
-    notificationsSrvc.retrieveUnreadCount();
-}]);
-
 angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
     $scope.isDroppedDown = false;
     $scope.searchResultsCache = new Object();

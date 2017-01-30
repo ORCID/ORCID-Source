@@ -79,6 +79,18 @@ public interface NotificationManager {
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
     public List<Notification> findNotificationAlertsByOrcid(String orcid);
+    
+    /**
+     * Filters the list of notification alerts by archiving any that have
+     * already been actioned
+     * 
+     * @param notifications
+     *            The list of notification alerts, as returned by
+     *            {@link #findNotificationAlertsByOrcid(String)}
+     * @return The list of notification alerts, minus any that have already been
+     *         actioned
+     */
+    public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid);
 
     public Notification findById(Long id);
 

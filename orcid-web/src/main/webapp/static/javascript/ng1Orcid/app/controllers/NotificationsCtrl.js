@@ -9,7 +9,6 @@ angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile',
     $scope.archive = notificationsSrvc.archive;
     $scope.getNotifications = notificationsSrvc.getNotifications;
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-    $scope.notificationsSrvc = notificationsSrvc;
     $scope.bulkChecked = notificationsSrvc.bulkChecked;
     $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
     $scope.toggleDisplayBody = function (notificationId) {
@@ -25,7 +24,6 @@ angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile',
         }
     });
 
-    notificationsSrvc.getNotifications();    
-    notificationsSrvc.getNotificationAlerts();
+    notificationsSrvc.getNotifications();
         
 }]);
