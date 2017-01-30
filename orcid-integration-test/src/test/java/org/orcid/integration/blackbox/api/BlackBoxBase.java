@@ -981,8 +981,6 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")));
         
-        By ajaxLoader = By.xpath("//div[@id='DelegatesCtrl']//span[@id='ajax-loader']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.visibilityOfElementLocated(ajaxLoader)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.noSpinners();
         
