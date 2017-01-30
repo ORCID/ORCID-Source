@@ -900,34 +900,6 @@ angular.module('orcidApp').controller(
                     console.log("bibtex export error");
                 });        
             };
-
-
-            $scope.downloadBibtexExport = function(citations){
-                $scope.bibtexGenerated = false;
-                if (citations.length > 0){
-                    var text = "";
-                    for (var c in citations){
-                        text += citations[c] +"\n"; 
-                    }
-                    text = text.replace(/<div class="csl-entry">/g, '');
-                    text = text.replace(/<\/div>/g, '');
-                    
-                    if(window.navigator.msSaveOrOpenBlob) {
-                        var fileData = [text];
-                        blobObject = new Blob(fileData, {type: 'text/plain'});
-                        window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
-                    } else {
-                        $scope.bibtexGenerated = true;
-                        $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
-                    }
-                }else{
-                    $scope.$apply(
-                        function() {
-                            $scope.bibtexExportError = true;
-                        }
-                    );   
-                }
-            };
         }
     ]
 );
