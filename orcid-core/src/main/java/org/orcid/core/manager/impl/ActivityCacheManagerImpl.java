@@ -23,14 +23,14 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -48,6 +48,9 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     
     @Resource
     private WorkManager workManager;
+    
+    @Resource
+    private AffiliationsManager affiliationsManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid, long lastModified) {
@@ -88,14 +91,13 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return fundingMap;
     }
 
-    @Cacheable(value = "pub-affiliation-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, Affiliation> affiliationMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-affiliation-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, long lastModified) {
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getAffiliations() != null) {
-                for (Affiliation aff:profile.getOrcidActivities().getAffiliations().getAffiliation())
-                    if (org.orcid.jaxb.model.message.Visibility.PUBLIC.equals(aff.getVisibility()))
-                        affiliationMap.put(Long.valueOf(aff.getPutCode()), aff);
+        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);        
+        for(Affiliation affiliation : affiliations) {
+            if(Visibility.PUBLIC.equals(affiliation.getVisibility())) {
+                affiliationMap.put(affiliation.getPutCode(), affiliation);
             }
         }
         return affiliationMap;
