@@ -219,6 +219,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/font-awesome/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/ng1Orcid/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/angularOrcid.js</exclude>
+                            <exclude>**/src/main/webapp/static/javascript/angular-recaptcha.min.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/plugins.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/modernizr.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/jquery/**</exclude>
