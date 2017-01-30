@@ -83,7 +83,7 @@ if (typeof angular == 'undefined') {
     document.body.appendChild(script);
 </script>
 
-<script src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
+<script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
 <script type="text/javascript">
     var MTIProjectId='078e0d2f-8275-4c25-8aa9-5d902d8e4491';
