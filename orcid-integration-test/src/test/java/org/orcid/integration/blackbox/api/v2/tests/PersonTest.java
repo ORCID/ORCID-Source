@@ -82,7 +82,7 @@ public class PersonTest extends BlackBoxBaseV2Release {
 
         signin();
         
-        //Set the default address visibility to public, so, all elements created are public by defaul
+        //Set the default visibility to public, so, all elements created are public by default
         changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         
         showMyOrcidPage();
