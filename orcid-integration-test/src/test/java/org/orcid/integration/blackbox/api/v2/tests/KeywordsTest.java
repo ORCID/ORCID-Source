@@ -89,16 +89,6 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
         currentKeywordsVisibility = org.orcid.jaxb.model.common_v2.Visibility.PUBLIC;
     }
 
-    @AfterClass
-    public static void after() {
-        showMyOrcidPage();
-        openEditKeywordsModal();
-        deleteKeywords();
-        saveKeywordsModal();
-        signout();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-    }
-
     private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
         if (!v.equals(currentDefaultVisibility)) {
             changeDefaultUserVisibility(webDriver, v);
