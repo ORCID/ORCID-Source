@@ -1385,7 +1385,7 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
     
     $scope.deprecateUpdateToggleText = function () {
         if ($scope.showEditDeprecate) $scope.deprecateToggleText = om.get("manage.editTable.hide");
-        else $scope.deprecateToggleText = om.get("manage.editTable.deprecateRecord");
+        else $scope.deprecateToggleText = om.get("manage.editTable.removeDuplicate");
     };
 
     $scope.toggleDeprecateEdit = function() {
@@ -1616,7 +1616,6 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                     overlayClose:true,
                     close: '',
                     });
-                $.colorbox.resize({width:"780px" , height:"200px"});
                 $scope.$apply();
             }
         }).fail(function() {

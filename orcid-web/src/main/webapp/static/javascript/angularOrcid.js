@@ -1451,7 +1451,7 @@
 	    
 	    $scope.deprecateUpdateToggleText = function () {
 	        if ($scope.showEditDeprecate) $scope.deprecateToggleText = om.get("manage.editTable.hide");
-	        else $scope.deprecateToggleText = om.get("manage.editTable.deprecateRecord");
+	        else $scope.deprecateToggleText = om.get("manage.editTable.removeDuplicate");
 	    };
 
 	    $scope.toggleDeprecateEdit = function() {
@@ -1682,7 +1682,6 @@
 	                    overlayClose:true,
 	                    close: '',
 	                    });
-	                $.colorbox.resize({width:"780px" , height:"200px"});
 	                $scope.$apply();
 	            }
 	        }).fail(function() {
@@ -8245,11 +8244,11 @@
 	var map = {
 		"./BiographyCtrl.js": 3,
 		"./CountryCtrl.js": 4,
-		"./EmailEditCtrl.js": 6,
-		"./FundingCtrl.js": 7,
-		"./KeywordsCtrl.js": 8,
-		"./NameCtrl.js": 9,
-		"./NotificationsCtrl.js": 33,
+		"./EmailEditCtrl.js": 5,
+		"./FundingCtrl.js": 6,
+		"./KeywordsCtrl.js": 7,
+		"./NameCtrl.js": 8,
+		"./NotificationsCtrl.js": 9,
 		"./OtherNamesCtrl.js": 10,
 		"./languageCtrl.js": 11,
 		"./websitesCtrl.js": 12,
@@ -8661,8 +8660,7 @@
 	}]);
 
 /***/ },
-/* 5 */,
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
@@ -8856,7 +8854,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/**
@@ -9425,7 +9423,7 @@
 	}]);
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -9673,7 +9671,7 @@
 	}]);
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
@@ -9729,6 +9727,42 @@
 	    };
 
 	    $scope.getNameForm();
+	}]);
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	// Controller for notifications
+	angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	    $scope.displayBody = {};
+	    notificationsSrvc.displayBody = {};    
+	    $scope.notificationsSrvc = notificationsSrvc;
+	    $scope.notifications = notificationsSrvc.notifications;
+	    $scope.showMore = notificationsSrvc.showMore;
+	    $scope.areMore = notificationsSrvc.areMore;
+	    $scope.archive = notificationsSrvc.archive;
+	    $scope.getNotifications = notificationsSrvc.getNotifications;
+	    $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
+	    $scope.notificationsSrvc = notificationsSrvc;
+	    $scope.bulkChecked = notificationsSrvc.bulkChecked;
+	    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
+	    $scope.toggleDisplayBody = function (notificationId) {
+	        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
+	        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
+	        notificationsSrvc.flagAsRead(notificationId);
+	        iframeResize(notificationId);
+	    };    
+	    
+	    $scope.$watch(function () { return notificationsSrvc.bulkChecked }, function (newVal, oldVal) {
+	        if (typeof newVal !== 'undefined') {
+	            $scope.bulkChecked = notificationsSrvc.bulkChecked;
+	        }
+	    });
+
+	    notificationsSrvc.getNotifications();    
+	    notificationsSrvc.getNotificationAlerts();
+	        
 	}]);
 
 /***/ },
@@ -11877,9 +11911,9 @@
 		"./groupedActivitiesService.js": 28,
 		"./groupedActivitiesUtil.js": 29,
 		"./initialConfigService.js": 30,
-		"./notificationsSrvc.js": 34,
-		"./utilsService.js": 31,
-		"./workspaceSrvc.js": 32
+		"./notificationsSrvc.js": 31,
+		"./utilsService.js": 32,
+		"./workspaceSrvc.js": 33
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12543,143 +12577,6 @@
 /* 31 */
 /***/ function(module, exports) {
 
-	angular.module('orcidApp').factory(
-	    'utilsService', 
-	    function() {
-	        var utilsService = {
-	            contains: function(arr, obj) {
-	                var index = arr.length;
-	                while (index--) {
-	                    if (arr[index] === obj) {
-	                       return true;
-	                    }
-	                }
-	                return false;
-	            },
-
-	            formColorBoxResize: function() {
-	                if (isMobile()) {
-	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	                }
-	                else {
-	                    // IE8 and below doesn't take auto height
-	                    // however the default div height
-	                    // is auto anyway
-	                    $.colorbox.resize({width:'800px'});
-	                    
-	                }
-	            },
-
-	            getParameterByName: function( name ) {
-	                var _name = name,
-	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
-	                    results = regex.exec(location.search)
-	                ;
-	                
-	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	                
-	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	            }
-	        };
-	        return utilsService;
-	    }
-	);
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
-	    var serv = {
-	        displayEducation: true,
-	        displayEmployment: true,
-	        displayFunding: true,
-	        displayPersonalInfo: true,
-	        displayWorks: true,
-	        displayPeerReview: true,
-	        toggleEducation: function() {
-	            serv.displayEducation = !serv.displayEducation;
-	        },
-	        toggleEmployment: function() {
-	            serv.displayEmployment = !serv.displayEmployment;
-	        },
-	        toggleFunding: function() {
-	            serv.displayFunding = !serv.displayFunding;
-	        },
-	        togglePersonalInfo: function() {
-	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
-	        },
-	        toggleWorks: function() {
-	            serv.displayWorks = !serv.displayWorks;
-	        },
-	        togglePeerReview: function() {              
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        },
-	        openEducation: function() {
-	            serv.displayEducation = true;
-	        },
-	        openFunding: function() {
-	            serv.displayFunding = true;
-	        },
-	        openEmployment: function() {
-	            serv.displayEmployment = true;
-	        },
-	        openPersonalInfo: function() {
-	            serv.displayPersonalInfo = true;
-	        },
-	        openWorks: function() {
-	            serv.displayWorks = true;
-	        },
-	        openPeerReview: function() {
-	            serv.displayPeerReview = true;
-	        },
-	        togglePeerReviews : function() {
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        }   
-	    };
-	    return serv;
-	}]);
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	// Controller for notifications
-	angular.module('orcidApp').controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-	    $scope.displayBody = {};
-	    notificationsSrvc.displayBody = {};    
-	    $scope.notificationsSrvc = notificationsSrvc;
-	    $scope.notifications = notificationsSrvc.notifications;
-	    $scope.showMore = notificationsSrvc.showMore;
-	    $scope.areMore = notificationsSrvc.areMore;
-	    $scope.archive = notificationsSrvc.archive;
-	    $scope.getNotifications = notificationsSrvc.getNotifications;
-	    $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-	    $scope.notificationsSrvc = notificationsSrvc;
-	    $scope.bulkChecked = notificationsSrvc.bulkChecked;
-	    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
-	    $scope.toggleDisplayBody = function (notificationId) {
-	        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
-	        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
-	        notificationsSrvc.flagAsRead(notificationId);
-	        iframeResize(notificationId);
-	    };    
-	    
-	    $scope.$watch(function () { return notificationsSrvc.bulkChecked }, function (newVal, oldVal) {
-	        if (typeof newVal !== 'undefined') {
-	            $scope.bulkChecked = notificationsSrvc.bulkChecked;
-	        }
-	    });
-
-	    notificationsSrvc.getNotifications();    
-	    notificationsSrvc.getNotificationAlerts();
-	        
-	}]);
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
 	    var defaultMaxResults = 10;
 	    var serv = {
@@ -12913,6 +12810,107 @@
 	            
 	            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;
 	        }
+	    };
+	    return serv;
+	}]);
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory(
+	    'utilsService', 
+	    function() {
+	        var utilsService = {
+	            contains: function(arr, obj) {
+	                var index = arr.length;
+	                while (index--) {
+	                    if (arr[index] === obj) {
+	                       return true;
+	                    }
+	                }
+	                return false;
+	            },
+
+	            formColorBoxResize: function() {
+	                if (isMobile()) {
+	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+	                }
+	                else {
+	                    // IE8 and below doesn't take auto height
+	                    // however the default div height
+	                    // is auto anyway
+	                    $.colorbox.resize({width:'800px'});
+	                    
+	                }
+	            },
+
+	            getParameterByName: function( name ) {
+	                var _name = name,
+	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
+	                    results = regex.exec(location.search)
+	                ;
+	                
+	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	                
+	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	            }
+	        };
+	        return utilsService;
+	    }
+	);
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	    var serv = {
+	        displayEducation: true,
+	        displayEmployment: true,
+	        displayFunding: true,
+	        displayPersonalInfo: true,
+	        displayWorks: true,
+	        displayPeerReview: true,
+	        toggleEducation: function() {
+	            serv.displayEducation = !serv.displayEducation;
+	        },
+	        toggleEmployment: function() {
+	            serv.displayEmployment = !serv.displayEmployment;
+	        },
+	        toggleFunding: function() {
+	            serv.displayFunding = !serv.displayFunding;
+	        },
+	        togglePersonalInfo: function() {
+	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
+	        },
+	        toggleWorks: function() {
+	            serv.displayWorks = !serv.displayWorks;
+	        },
+	        togglePeerReview: function() {              
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        },
+	        openEducation: function() {
+	            serv.displayEducation = true;
+	        },
+	        openFunding: function() {
+	            serv.displayFunding = true;
+	        },
+	        openEmployment: function() {
+	            serv.displayEmployment = true;
+	        },
+	        openPersonalInfo: function() {
+	            serv.displayPersonalInfo = true;
+	        },
+	        openWorks: function() {
+	            serv.displayWorks = true;
+	        },
+	        openPeerReview: function() {
+	            serv.displayPeerReview = true;
+	        },
+	        togglePeerReviews : function() {
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        }   
 	    };
 	    return serv;
 	}]);
