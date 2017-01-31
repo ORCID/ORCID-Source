@@ -80,7 +80,7 @@ import org.xml.sax.SAXException;
 public class ValidateV2SamplesTest {
     @Test
     public void testUnmarshallPersonalDetails() throws SAXException, URISyntaxException {
-        PersonalDetails personalDetails = (PersonalDetails) unmarshallFromPath("/record_2.0/samples/personal-details-2.0.xml", PersonalDetails.class,
+        PersonalDetails personalDetails = (PersonalDetails) unmarshallFromPath("/record_2.0/samples/read_samples/personal-details-2.0.xml", PersonalDetails.class,
                 "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(personalDetails);
         // Check bio
@@ -108,13 +108,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallPersonalDetails() throws JAXBException, SAXException, URISyntaxException {
-        PersonalDetails object = (PersonalDetails) unmarshallFromPath("/record_2.0/samples/personal-details-2.0.xml", PersonalDetails.class);        
+        PersonalDetails object = (PersonalDetails) unmarshallFromPath("/record_2.0/samples/read_samples/personal-details-2.0.xml", PersonalDetails.class);        
         marshall(object, "/record_2.0/personal-details-2.0.xsd");                        
     }
 
     @Test
     public void testUnmarshallResearcherUrl() throws SAXException, URISyntaxException {
-        ResearcherUrls rUrls = (ResearcherUrls) unmarshallFromPath("/record_2.0/samples/researcher-urls-2.0.xml", ResearcherUrls.class,
+        ResearcherUrls rUrls = (ResearcherUrls) unmarshallFromPath("/record_2.0/samples/read_samples/researcher-urls-2.0.xml", ResearcherUrls.class,
                 "/record_2.0/researcher-url-2.0.xsd");
         assertNotNull(rUrls);
         assertNotNull(rUrls.getResearcherUrls());
@@ -129,7 +129,7 @@ public class ValidateV2SamplesTest {
         assertEquals("http://www.orcid.org/8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retriveSourceUri());
         assertEquals("8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retrieveSourcePath());
 
-        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0/samples/researcher-url-2.0.xml", ResearcherUrl.class);
+        ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0/samples/read_samples/researcher-url-2.0.xml", ResearcherUrl.class);
         assertNotNull(rUrl);
         assertEquals("Site # 1", rUrl.getUrlName());
         assertNotNull(rUrl.getUrl());
@@ -142,13 +142,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallResearcherUrl() throws JAXBException, SAXException, URISyntaxException {
-        ResearcherUrls object = (ResearcherUrls) unmarshallFromPath("/record_2.0/samples/researcher-urls-2.0.xml", ResearcherUrls.class);
+        ResearcherUrls object = (ResearcherUrls) unmarshallFromPath("/record_2.0/samples/read_samples/researcher-urls-2.0.xml", ResearcherUrls.class);
         marshall(object, "/record_2.0/researcher-url-2.0.xsd");
     }
 
     @Test
     public void testUnmarshallAddress() throws SAXException, URISyntaxException {
-        Addresses addresses = (Addresses) unmarshallFromPath("/record_2.0/samples/addresses-2.0.xml", Addresses.class, "/record_2.0/address-2.0.xsd");
+        Addresses addresses = (Addresses) unmarshallFromPath("/record_2.0/samples/read_samples/addresses-2.0.xml", Addresses.class, "/record_2.0/address-2.0.xsd");
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
         assertEquals(2, addresses.getAddress().size());
@@ -166,7 +166,7 @@ public class ValidateV2SamplesTest {
             }
         }
 
-        Address address = (Address) unmarshallFromPath("/record_2.0/samples/address-2.0.xml", Address.class);
+        Address address = (Address) unmarshallFromPath("/record_2.0/samples/read_samples/address-2.0.xml", Address.class);
         assertNotNull(address);
         assertNotNull(address.getPutCode());
         assertNotNull(address.getCreatedDate());
@@ -178,13 +178,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallAddress() throws JAXBException, SAXException, URISyntaxException {
-        Addresses object = (Addresses) unmarshallFromPath("/record_2.0/samples/addresses-2.0.xml", Addresses.class);
+        Addresses object = (Addresses) unmarshallFromPath("/record_2.0/samples/read_samples/addresses-2.0.xml", Addresses.class);
         marshall(object, "/record_2.0/address-2.0.xsd");
     }
 
     @Test
     public void testUnmarshallBiography() throws SAXException, URISyntaxException {
-        Biography bio = (Biography) unmarshallFromPath("/record_2.0/samples/biography-2.0.xml", Biography.class, "/record_2.0/personal-details-2.0.xsd");
+        Biography bio = (Biography) unmarshallFromPath("/record_2.0/samples/read_samples/biography-2.0.xml", Biography.class, "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(bio);
         assertEquals("biography V2.0", bio.getContent());
         assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
@@ -192,13 +192,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallBiography() throws JAXBException, SAXException, URISyntaxException {
-        Biography object = (Biography) unmarshallFromPath("/record_2.0/samples/biography-2.0.xml", Biography.class);
+        Biography object = (Biography) unmarshallFromPath("/record_2.0/samples/read_samples/biography-2.0.xml", Biography.class);
         marshall(object, "/record_2.0/personal-details-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallCreditName() throws SAXException, URISyntaxException {
-        CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0/samples/credit-name-2.0.xml", CreditName.class,
+        CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0/samples/read_samples/credit-name-2.0.xml", CreditName.class,
                 "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(creditName);
         assertEquals("credit-name", creditName.getContent());        
@@ -206,13 +206,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallCreditName() throws JAXBException, SAXException, URISyntaxException {
-        CreditName object = (CreditName) unmarshallFromPath("/record_2.0/samples/credit-name-2.0.xml", CreditName.class);
+        CreditName object = (CreditName) unmarshallFromPath("/record_2.0/samples/read_samples/credit-name-2.0.xml", CreditName.class);
         marshall(object, "/record_2.0/personal-details-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallExternalIdentifiers() throws SAXException, URISyntaxException {
-        PersonExternalIdentifiers externalIdentifiers = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0/samples/external-identifiers-2.0.xml",
+        PersonExternalIdentifiers externalIdentifiers = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0/samples/read_samples/external-identifiers-2.0.xml",
                 PersonExternalIdentifiers.class, "/record_2.0/person-external-identifier-2.0.xsd");
         assertNotNull(externalIdentifiers);
         assertNotNull(externalIdentifiers.getExternalIdentifiers());
@@ -229,7 +229,7 @@ public class ValidateV2SamplesTest {
             assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
         }
 
-        PersonExternalIdentifier extId = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0/samples/external-identifier-2.0.xml", PersonExternalIdentifier.class);
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0/samples/read_samples/external-identifier-2.0.xml", PersonExternalIdentifier.class);
         assertNotNull(extId);
         assertEquals("A-0003", extId.getType());
         assertEquals(Long.valueOf(1), extId.getPutCode());
@@ -245,14 +245,14 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallExternalIdentifiers() throws JAXBException, SAXException, URISyntaxException {
-        PersonExternalIdentifiers object = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0/samples/external-identifiers-2.0.xml",
+        PersonExternalIdentifiers object = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0/samples/read_samples/external-identifiers-2.0.xml",
                 PersonExternalIdentifiers.class);
         marshall(object, "/record_2.0/person-external-identifier-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallKeyword() throws SAXException, URISyntaxException {
-        Keywords keywords = (Keywords) unmarshallFromPath("/record_2.0/samples/keywords-2.0.xml", Keywords.class, "/record_2.0/keyword-2.0.xsd");
+        Keywords keywords = (Keywords) unmarshallFromPath("/record_2.0/samples/read_samples/keywords-2.0.xml", Keywords.class, "/record_2.0/keyword-2.0.xsd");
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
         assertEquals(2, keywords.getKeywords().size());
@@ -267,7 +267,7 @@ public class ValidateV2SamplesTest {
             assertEquals("8888-8888-8888-8880", keyword.getSource().retrieveSourcePath());
         }
 
-        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0/samples/keyword-2.0.xml", Keyword.class);
+        Keyword keyword = (Keyword) unmarshallFromPath("/record_2.0/samples/read_samples/keyword-2.0.xml", Keyword.class);
         assertNotNull(keyword);
         assertEquals("keyword1", keyword.getContent());
         assertEquals(Long.valueOf(1), keyword.getPutCode());
@@ -280,13 +280,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallKeyword() throws JAXBException, SAXException, URISyntaxException {
-        Keywords object = (Keywords) unmarshallFromPath("/record_2.0/samples/keywords-2.0.xml", Keywords.class);
+        Keywords object = (Keywords) unmarshallFromPath("/record_2.0/samples/read_samples/keywords-2.0.xml", Keywords.class);
         marshall(object, "/record_2.0/keyword-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallName() throws SAXException, URISyntaxException {
-        Name name = (Name) unmarshallFromPath("/record_2.0/samples/name-2.0.xml", Name.class, "/record_2.0/personal-details-2.0.xsd");
+        Name name = (Name) unmarshallFromPath("/record_2.0/samples/read_samples/name-2.0.xml", Name.class, "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(name);
         assertNotNull(name.getCreditName());
         assertEquals("credit-name", name.getCreditName().getContent());
@@ -300,13 +300,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallName() throws JAXBException, SAXException, URISyntaxException {
-        Name object = (Name) unmarshallFromPath("/record_2.0/samples/name-2.0.xml", Name.class);
+        Name object = (Name) unmarshallFromPath("/record_2.0/samples/read_samples/name-2.0.xml", Name.class);
         marshall(object, "/record_2.0/personal-details-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallOtherNames() throws SAXException, URISyntaxException {
-        OtherNames otherNames = (OtherNames) unmarshallFromPath("/record_2.0/samples/other-names-2.0.xml", OtherNames.class,
+        OtherNames otherNames = (OtherNames) unmarshallFromPath("/record_2.0/samples/read_samples/other-names-2.0.xml", OtherNames.class,
                 "/record_2.0/personal-details-2.0.xsd");
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
@@ -322,7 +322,7 @@ public class ValidateV2SamplesTest {
             assertEquals("8888-8888-8888-8880", otherName.getSource().retrieveSourcePath());
         }
 
-        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0/samples/other-name-2.0.xml", OtherName.class);
+        OtherName otherName = (OtherName) unmarshallFromPath("/record_2.0/samples/read_samples/other-name-2.0.xml", OtherName.class);
         assertNotNull(otherName);
         assertEquals("Other Name #1", otherName.getContent());
         assertEquals(Long.valueOf(1), otherName.getPutCode());
@@ -335,13 +335,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallOtherNames() throws JAXBException, SAXException, URISyntaxException {
-        OtherNames object = (OtherNames) unmarshallFromPath("/record_2.0/samples/other-names-2.0.xml", OtherNames.class);
+        OtherNames object = (OtherNames) unmarshallFromPath("/record_2.0/samples/read_samples/other-names-2.0.xml", OtherNames.class);
         marshall(object, "/record_2.0/other-name-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallEmails() throws SAXException, URISyntaxException {
-        Emails emails = (Emails) unmarshallFromPath("/record_2.0/samples/emails-2.0.xml", Emails.class, "/record_2.0/email-2.0.xsd");
+        Emails emails = (Emails) unmarshallFromPath("/record_2.0/samples/read_samples/emails-2.0.xml", Emails.class, "/record_2.0/email-2.0.xsd");
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
         assertEquals(2, emails.getEmails().size());
@@ -359,7 +359,7 @@ public class ValidateV2SamplesTest {
             }
         }
 
-        Email email = (Email) unmarshallFromPath("/record_2.0/samples/email-2.0.xml", Email.class);
+        Email email = (Email) unmarshallFromPath("/record_2.0/samples/read_samples/email-2.0.xml", Email.class);
         assertNotNull(email);
         assertNotNull(email.getPutCode());
         assertNotNull(email.getCreatedDate());
@@ -370,13 +370,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallEmails() throws JAXBException, SAXException, URISyntaxException {
-        Emails object = (Emails) unmarshallFromPath("/record_2.0/samples/emails-2.0.xml", Emails.class);
+        Emails object = (Emails) unmarshallFromPath("/record_2.0/samples/read_samples/emails-2.0.xml", Emails.class);
         marshall(object, "/record_2.0/email-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallPerson() throws SAXException, URISyntaxException {
-        Person person = (Person) unmarshallFromPath("/record_2.0/samples/person-2.0.xml", Person.class, "/record_2.0/person-2.0.xsd");
+        Person person = (Person) unmarshallFromPath("/record_2.0/samples/read_samples/person-2.0.xml", Person.class, "/record_2.0/person-2.0.xsd");
         assertNotNull(person);
         assertNotNull(person.getName());
         assertEquals("give-names", person.getName().getGivenNames().getContent());
@@ -504,13 +504,13 @@ public class ValidateV2SamplesTest {
 
     @Test
     public void testMarshallPerson() throws JAXBException, SAXException, URISyntaxException {
-        Person object = (Person) unmarshallFromPath("/record_2.0/samples/person-2.0.xml", Person.class);
+        Person object = (Person) unmarshallFromPath("/record_2.0/samples/read_samples/person-2.0.xml", Person.class);
         marshall(object, "/record_2.0/person-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallPreferences() throws SAXException, URISyntaxException {
-        Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0/samples/preferences-2.0.xml", Preferences.class,
+        Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0/samples/read_samples/preferences-2.0.xml", Preferences.class,
                 "/record_2.0/preferences-2.0.xsd");
         assertNotNull(preferences);   
         assertNotNull(preferences.getLocale());
@@ -519,13 +519,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallPreferences() throws JAXBException, SAXException, URISyntaxException {
-        Preferences object = (Preferences) unmarshallFromPath("/record_2.0/samples/preferences-2.0.xml", Preferences.class);
+        Preferences object = (Preferences) unmarshallFromPath("/record_2.0/samples/read_samples/preferences-2.0.xml", Preferences.class);
         marshall(object, "/record_2.0/preferences-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallHistory() throws SAXException, URISyntaxException {
-        History history = (History) unmarshallFromPath("/record_2.0/samples/history-2.0.xml", History.class, "/record_2.0/history-2.0.xsd");
+        History history = (History) unmarshallFromPath("/record_2.0/samples/read_samples/history-2.0.xml", History.class, "/record_2.0/history-2.0.xsd");
         assertNotNull(history);           
         assertNotNull(history.getSource());
         assertEquals("http://orcid.org/8888-8888-8888-8880", history.getSource().retriveSourceUri());
@@ -561,13 +561,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallHistory() throws JAXBException, SAXException, URISyntaxException {
-        History object = (History) unmarshallFromPath("/record_2.0/samples/history-2.0.xml", History.class);
+        History object = (History) unmarshallFromPath("/record_2.0/samples/read_samples/history-2.0.xml", History.class);
         marshall(object, "/record_2.0/history-2.0.xsd");        
     }
     
     @Test
     public void testUnmarshallActivities() throws SAXException, URISyntaxException {
-        ActivitiesSummary activities = (ActivitiesSummary) unmarshallFromPath("/record_2.0/samples/activities-2.0.xml", ActivitiesSummary.class,
+        ActivitiesSummary activities = (ActivitiesSummary) unmarshallFromPath("/record_2.0/samples/read_samples/activities-2.0.xml", ActivitiesSummary.class,
                 "/record_2.0/activities-2.0.xsd");
         assertNotNull(activities);
         assertNotNull(activities.getEducations());
@@ -755,13 +755,13 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testmarshallActivities() throws JAXBException, SAXException, URISyntaxException {
-        ActivitiesSummary object = (ActivitiesSummary) unmarshallFromPath("/record_2.0/samples/activities-2.0.xml", ActivitiesSummary.class);
+        ActivitiesSummary object = (ActivitiesSummary) unmarshallFromPath("/record_2.0/samples/read_samples/activities-2.0.xml", ActivitiesSummary.class);
         marshall(object, "/record_2.0/activities-2.0.xsd");
     }
     
     @Test
     public void testUnmarshallRecord() throws SAXException, URISyntaxException {
-        Record record = (Record) unmarshallFromPath("/record_2.0/samples/record-2.0.xml", Record.class, "/record_2.0/record-2.0.xsd");
+        Record record = (Record) unmarshallFromPath("/record_2.0/samples/read_samples/record-2.0.xml", Record.class, "/record_2.0/record-2.0.xsd");
         assertNotNull(record);
         //Check activities
         assertNotNull(record.getActivitiesSummary());
@@ -1023,7 +1023,7 @@ public class ValidateV2SamplesTest {
     
     @Test
     public void testMarshallRecord() throws JAXBException, SAXException, URISyntaxException {
-        Record object = (Record) unmarshallFromPath("/record_2.0/samples/record-2.0.xml", Record.class);
+        Record object = (Record) unmarshallFromPath("/record_2.0/samples/read_samples/record-2.0.xml", Record.class);
         marshall(object, "/record_2.0/record-2.0.xsd");
     }
     
