@@ -55,5 +55,5 @@
 		</work:contributor>
 	</work:contributors>
 	<common:language-code>en</common:language-code>
-	<common:country visibility="private">AF</common:country>		
+	<common:country>AF</common:country>		
 </work:work>
