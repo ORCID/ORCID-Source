@@ -287,17 +287,6 @@
 	                    ng-show="showEditDeprecate" ng-cloak>
 	                    <td colspan="2">
 	                        <div class="editTablePadCell35 close-account-container">
-<<<<<<< HEAD
-								                      
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
-	                            
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}
-								<a
-	                                href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
-	                                target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more")}</a>
-	                            </p>
-	                            
-=======
 	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
 	                            
 	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}
@@ -305,7 +294,6 @@
 	                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
 	                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
 	                            </p>
->>>>>>> userDrivenDeprecationUi
 	                            <div>
 	                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
 	                                <div class="relative">
@@ -323,22 +311,12 @@
 	                                        class="input-xlarge" /> <span class="required">*</span>
 	                                </div>
 	                            </div>
-<<<<<<< HEAD
-	                            <span class="orcid-error"
-	                                ng-show="deprecateProfilePojo.errors.length > 0">
-	                                <div ng-repeat='error in deprecateProfilePojo.errors'
-	                                    ng-bind-html="error"></div>
-	                            </span>  
-	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.deprecate_record")}</button>
-	                            
-=======
 	                           <span class="orcid-error"
 	                                ng-show="deprecateProfilePojo.errors.length > 0">
 	                                <div ng-repeat='error in deprecateProfilePojo.errors'
 	                                    ng-bind-html="error"></div>
 	                            </span>
 	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
->>>>>>> userDrivenDeprecationUi
 	                        </div>
 	                    </td>
 	                </tr>
