@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,6 +68,7 @@ import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -279,7 +281,9 @@ public class SetUpClientsAndUsers {
     @Resource
     protected BiographyManager biographyManager;
     @Resource
-    protected RecordNameManager recordNameManager;
+    protected RecordNameManager recordNameManager;    
+    @Resource
+    protected ClientDetailsDao clientDetailsDao;
     
     @Before
     public void before() throws Exception {
@@ -337,8 +341,11 @@ public class SetUpClientsAndUsers {
         Map<String, String> client2Params = getParams(client2ClientId);
         ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
         if (client2 == null) {
-            createClient(client2Params);
-        }        
+            createClient(client2Params);            
+        } 
+        
+        //Ensure persistent tokens is disabled for client # 2
+        clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -635,7 +642,7 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
         
-        ClientType clientType = ClientType.PREMIUM_CREATOR;
+        ClientType clientType = ClientType.PREMIUM_CREATOR;        
         
         if(params.containsKey(CLIENT_TYPE)) {
             clientType = ClientType.fromValue(params.get(CLIENT_TYPE));
@@ -662,18 +669,24 @@ public class SetUpClientsAndUsers {
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
         String memberId = params.get(MEMBER_ID);
         
-        Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
-        if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
-            scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        Set<String> scopes = null;
+        
+        if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
+            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
+        } else {
+            scopes = orcidClientGroupManager.premiumCreatorScopes();
+            if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
+                scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+            }
+                   
+            //Add scopes to allow group read and update
+            scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+            scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+            
+            //Add notifications scope
+            scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());            
         }
-               
-        //Add scopes to allow group read and update
-        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
-        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
-        
-        //Add notifications scope
-        scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
-        
+            
         clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
     }
