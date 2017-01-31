@@ -279,7 +279,7 @@
                 <!-- Deprecate duplicate account -->
                 <#if RequestParameters['UserDeprecation']??>
 	                <tr>
-	                    <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.deprecateAccount")}</th>
+	                    <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>
 	                    <td><a href="" ng-click="toggleDeprecateEdit()"
 	                        ng-bind="deprecateToggleText"></a></td>
 	                </tr>
@@ -287,6 +287,7 @@
 	                    ng-show="showEditDeprecate" ng-cloak>
 	                    <td colspan="2">
 	                        <div class="editTablePadCell35 close-account-container">
+<<<<<<< HEAD
 								                      
 	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
 	                            
@@ -296,6 +297,15 @@
 	                                target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more")}</a>
 	                            </p>
 	                            
+=======
+	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
+	                            
+	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}
+	                                <a
+	                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
+	                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+	                            </p>
+>>>>>>> userDrivenDeprecationUi
 	                            <div>
 	                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
 	                                <div class="relative">
@@ -313,6 +323,7 @@
 	                                        class="input-xlarge" /> <span class="required">*</span>
 	                                </div>
 	                            </div>
+<<<<<<< HEAD
 	                            <span class="orcid-error"
 	                                ng-show="deprecateProfilePojo.errors.length > 0">
 	                                <div ng-repeat='error in deprecateProfilePojo.errors'
@@ -320,6 +331,14 @@
 	                            </span>  
 	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.deprecate_record")}</button>
 	                            
+=======
+	                           <span class="orcid-error"
+	                                ng-show="deprecateProfilePojo.errors.length > 0">
+	                                <div ng-repeat='error in deprecateProfilePojo.errors'
+	                                    ng-bind-html="error"></div>
+	                            </span>
+	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
+>>>>>>> userDrivenDeprecationUi
 	                        </div>
 	                    </td>
 	                </tr>
@@ -579,23 +598,46 @@
 </script>
 
 <script type="text/ng-template" id="confirm-deprecate-account-modal">
-    <div style="padding: 20px;"><h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>
-       <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
-       <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
-       <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><span ng-repeat="email in deprecateProfilePojo.deprecatingEmails"><span ng-bind="email"></span></span><br />
-       <p><@orcid.msg 'deprecate_orcid_modal.description' /></p>
-       <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
-       <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
-       <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><span ng-repeat="email in deprecateProfilePojo.primaryEmails"><span ng-bind="email"></span></span><br />
-       <span><@orcid.msg 'deprecate_orcid_modal.warning' /></span>
-       <button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button>
-       <button class="btn" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel'/></button>
+    <div class="lightbox-container confirm-deprecate-account-modal">
+       <div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">		
+				<h2><@orcid.msg 'deprecate_orcid_modal.heading' /></h2>		 
+				<span class="orcid-error italic"><@orcid.msg 'deprecate_orcid_modal.warning_1' /><br /><strong class="italic"><@orcid.msg 'deprecate_orcid_modal.warning_2' /></strong></span>
+		        <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong><br />
+		        <span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span><br />
+		        <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.deprecatingAccountName"></span><br />
+		        <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.deprecatingEmails" ng-bind="email"></li></ul><br /><br />
+		        <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong><br />
+		        <span ng-bind="deprecateProfilePojo.primaryOrcid"></span><br />
+		        <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span ng-bind="deprecateProfilePojo.primaryAccountName"></span><br />
+		        <span><@orcid.msg 'deprecate_orcid_modal.emails_label' /></span><ul class="inline comma"><li ng-repeat="email in deprecateProfilePojo.primaryEmails" ng-bind="email" ></li></ul><br /><br />
+			</div>			
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="pull-left">
+	      			<button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'deprecate_orcid_modal.confirm'/></button><a href="" class="cancel-right" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_modal.cancel' /></a>
+				</div>
+			</div>
+		</div>
     </div>
 </script>
 
 <script type="text/ng-template" id="deprecate-account-confirmation-modal">
-    <div style="padding: 20px;">
-       <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+	<div class="lightbox-container deprecate-account-confirmation-modal">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
+				<h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>	
+       			<p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text' />&nbsp;<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+    		</div>
+    	</div>
+    	<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="pull-left">
+	      			<a href="" ng-click="closeModal()"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></a>
+				</div>
+			</div>
+		</div>
     </div>
 </script>
 

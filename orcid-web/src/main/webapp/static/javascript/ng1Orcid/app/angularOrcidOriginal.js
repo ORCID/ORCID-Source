@@ -1616,7 +1616,6 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                     overlayClose:true,
                     close: '',
                     });
-                $.colorbox.resize({width:"780px" , height:"200px"});
                 $scope.$apply();
             }
         }).fail(function() {
