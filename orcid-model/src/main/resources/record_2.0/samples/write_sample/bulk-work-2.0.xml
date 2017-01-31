@@ -5,13 +5,6 @@
 	xmlns:bulk="http://www.orcid.org/ns/bulk" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.0.xsd">
-	<error:error>
-		<error:response-code>0</error:response-code>
-		<error:developer-message>error:developer-message0</error:developer-message>
-		<error:user-message>error:user-message0</error:user-message>
-		<error:error-code>0</error:error-code>
-		<error:more-info>http://tempuri.org/0</error:more-info>
-	</error:error>
 	<work:work>
 		<work:title>
 			<common:title>Current treatment of left main coronary artery disease # 1</common:title>
@@ -52,11 +45,4 @@
 			</common:external-id>
 		</common:external-ids>
 	</work:work>
-	<error:error>
-		<error:response-code>1</error:response-code>
-		<error:developer-message>error:developer-message1</error:developer-message>
-		<error:user-message>error:user-message1</error:user-message>
-		<error:error-code>1</error:error-code>
-		<error:more-info>http://tempuri.org/1</error:more-info>
-	</error:error>
 </bulk:bulk>
