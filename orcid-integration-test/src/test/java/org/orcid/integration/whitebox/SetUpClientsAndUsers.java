@@ -67,6 +67,7 @@ import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -279,7 +280,9 @@ public class SetUpClientsAndUsers {
     @Resource
     protected BiographyManager biographyManager;
     @Resource
-    protected RecordNameManager recordNameManager;
+    protected RecordNameManager recordNameManager;    
+    @Resource
+    protected ClientDetailsDao clientDetailsDao;
     
     @Before
     public void before() throws Exception {
@@ -337,8 +340,11 @@ public class SetUpClientsAndUsers {
         Map<String, String> client2Params = getParams(client2ClientId);
         ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
         if (client2 == null) {
-            createClient(client2Params);
-        }        
+            createClient(client2Params);            
+        } 
+        
+        //Ensure persistent tokens is disabled for client # 2
+        clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }

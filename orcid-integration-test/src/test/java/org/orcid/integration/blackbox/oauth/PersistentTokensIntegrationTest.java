@@ -19,11 +19,17 @@ package org.orcid.integration.blackbox.oauth;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -78,94 +84,17 @@ public class PersistentTokensIntegrationTest extends BlackBoxBaseV2Release {
         // Lives less than an hour
         assertTrue(expiresIn <= 60 * 60);
     }
-}
 
-// TODO:
-/**
- * 
- * 
- * @Test public void createAuthenticatedTokenToGeneratePersistentTokenTest()
- *       throws InterruptedException { List<String> items = new
- *       ArrayList<String>(); items.add("enablePersistentToken"); String
- *       authorizationCode =
- *       webDriverHelper.obtainAuthorizationCode("/orcid-works/create",
- *       CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, true);
- *       assertFalse(PojoUtil.isEmpty(authorizationCode));
- * 
- *       OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity =
- *       authorizationCodeDetailDao.find(authorizationCode);
- *       assertNotNull(authorizationCodeEntity);
- *       assertTrue(authorizationCodeEntity.isPersistent()); }
- * 
- * @Test public void createNonPersistentAuthenticatedTokenTest() throws
- *       InterruptedException { List<String> items = new ArrayList<String>();
- *       items.add("enablePersistentToken"); String authorizationCode =
- *       webDriverHelper.obtainAuthorizationCode("/orcid-works/create",
- *       CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
- *       assertFalse(PojoUtil.isEmpty(authorizationCode));
- * 
- *       OrcidOauth2AuthoriziationCodeDetail authorizationCodeEntity =
- *       authorizationCodeDetailDao.find(authorizationCode);
- *       assertNotNull(authorizationCodeEntity);
- *       assertFalse(authorizationCodeEntity.isPersistent()); }
- * 
- * @Test public void createPersistentToken() throws InterruptedException,
- *       JSONException { Date beforeCreatingToken = twentyYearsTime();
- *       List<String> items = new ArrayList<String>();
- *       items.add("enablePersistentToken"); String authorizationCode =
- *       webDriverHelper.obtainAuthorizationCode("/orcid-works/create",
- *       CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, true);
- *       assertFalse(PojoUtil.isEmpty(authorizationCode)); String accessToken =
- *       obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri,
- *       "/orcid-works/create"); assertFalse(PojoUtil.isEmpty(accessToken));
- *       OrcidOauth2TokenDetail tokenEntity =
- *       oauth2TokenDetailDao.findByTokenValue(accessToken);
- *       assertNotNull(tokenEntity); assertTrue(tokenEntity.isPersistent());
- *       Date tokenExpiration = tokenEntity.getTokenExpiration();
- *       assertNotNull(tokenExpiration); Thread.sleep(2000); Date
- *       afterCreatingToken = twentyYearsTime();
- * 
- *       //confirm the token expires in 20 years
- *       assertTrue(tokenExpiration.after(beforeCreatingToken));
- *       assertTrue(tokenExpiration.before(afterCreatingToken)); }
- * 
- * @Test public void createNonPersistentToken() throws InterruptedException,
- *       JSONException { Date beforeCreatingToken = oneHoursTime(); List<String>
- *       items = new ArrayList<String>(); items.add("enablePersistentToken");
- *       String authorizationCode =
- *       webDriverHelper.obtainAuthorizationCode("/orcid-works/create",
- *       CLIENT_DETAILS_ID, "michael@bentine.com", "password", items, false);
- *       assertFalse(PojoUtil.isEmpty(authorizationCode)); String accessToken =
- *       obtainAccessToken(CLIENT_DETAILS_ID, authorizationCode, redirectUri,
- *       "/orcid-works/create"); assertFalse(PojoUtil.isEmpty(accessToken));
- *       OrcidOauth2TokenDetail tokenEntity =
- *       oauth2TokenDetailDao.findByTokenValue(accessToken);
- *       assertNotNull(tokenEntity); assertFalse(tokenEntity.isPersistent());
- *       Date tokenExpiration = tokenEntity.getTokenExpiration();
- *       assertNotNull(tokenExpiration); Thread.sleep(2000); Date
- *       afterCreatingToken = oneHoursTime();
- * 
- *       //confirm the token expires in 1 hour
- *       assertTrue(tokenExpiration.after(beforeCreatingToken));
- *       assertTrue(tokenExpiration.before(afterCreatingToken)); }
- * 
- * @Test public void
- *       persistentTokenCheckboxNotVisibleWhenPersistentTokensIsDisabledOnClient()
- *       {
- *       webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s",
- *       webBaseUrl, NO_PERSISTENT_TOKEN_CLIENT_DETAILS_ID,
- *       "/orcid-bio/read-limited", redirectUri));
- * 
- *       // Switch to the login form By scopesUl = By.id("scopes-ul"); By
- *       switchFromLinkLocator = By.id("enablePersistentToken"); (new
- *       WebDriverWait(webDriver,
- *       DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(scopesUl));
- * 
- *       try { webDriver.findElement(switchFromLinkLocator); fail("Element
- *       enablePersistentToken should not be displayed"); }
- *       catch(NoSuchElementException e) {
- * 
- *       } }
- * 
- * 
- */
+    @Test
+    public void persistentTokenCheckboxNotVisibleWhenPersistentTokensIsDisabledOnClient() {
+        getWebDriver().get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", getWebBaseUrl(), getClient2ClientId(),
+                "/orcid-bio/read-limited", getClient2RedirectUri()));
+
+        try {
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("enablePersistentToken")), getWebDriver());
+            fail("Element enablePersistentToken should not be displayed");
+        } catch (TimeoutException e) {
+
+        }
+    }
+}
