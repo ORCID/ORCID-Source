@@ -99,7 +99,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public MemberDetails retrieveDetails(String memberId) {
         List<Member> members = retrieveMembers();
-        Optional<Member> match = members.stream().filter(e -> memberId.equals(e.getId())).findFirst();
+        Optional<Member> match = members.stream().filter(e -> {
+            String id = e.getId();
+            String legacyId = id.substring(0, 15);
+            return memberId.equalsIgnoreCase(id) || memberId.equals(legacyId);
+        }).findFirst();
         if (match.isPresent()) {
             Member salesForceMember = match.get();
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
