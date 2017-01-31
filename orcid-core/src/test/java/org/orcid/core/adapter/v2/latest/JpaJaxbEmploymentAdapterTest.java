@@ -135,7 +135,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/employment-2.0.xml";
         if(full) {
-            name = "/record_2.0/samples/read_samples//employment-full-2.0.xml";
+            name = "/record_2.0/samples/read_samples/employment-full-2.0.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Employment) unmarshaller.unmarshal(inputStream);
