@@ -19,7 +19,6 @@ package org.orcid.api.common;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,15 +88,19 @@ public class WebDriverHelper {
         return authorizationCode;
     }
 
-    public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected)
+    public String obtainAuthorizationCode(String scopes, String clientId, String userId, String password, boolean longLife)
             throws InterruptedException {
-        BBBUtil.logUserOut(webBaseUrl, webDriver);
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, orcid, redirectUri, scopes, null, userId, password, true, webDriver);    
+        String currentUrl = obtainFullAuthorizationCodeResponse(scopes, clientId, userId, password, longLife);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertNotNull(authorizationCode);
         return authorizationCode;
+    }
+    
+    public String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife) {
+        BBBUtil.logUserOut(webBaseUrl, webDriver);
+        return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, webDriver);  
     }
 
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {

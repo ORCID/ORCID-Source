@@ -36,6 +36,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.BlackBoxWebDriver;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -95,7 +96,7 @@ public class PublicOauthClientTest extends DBUnitTest {
     @Before
     @Transactional
     public void before() {
-        webDriver = new FirefoxDriver();
+        webDriver = BlackBoxWebDriver.getWebDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
 
@@ -113,12 +114,7 @@ public class PublicOauthClientTest extends DBUnitTest {
         for (ProfileEntity profile : profileDao.getAll()) {
             profileDao.updateLastModifiedDateWithoutResult(profile.getId());
         }
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
-    }
+    }   
 
     @Test
     public void testPublicClient() throws JSONException, InterruptedException {
