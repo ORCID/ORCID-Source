@@ -20,9 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
@@ -43,11 +40,7 @@ public class OauthHelper {
     
     private InternalOAuthAPIService<ClientResponse> internalClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
-    private T1OAuthAPIService<ClientResponse> oauthT1Client;        
-
-    private List<String> items = new ArrayList<String>();
-    
-    {items.add("enablePersistentToken");}
+    private T1OAuthAPIService<ClientResponse> oauthT1Client;            
     
     public void setWebDriverHelper(WebDriverHelper webDriverHelper) {
         this.webDriverHelper = webDriverHelper;
@@ -81,9 +74,8 @@ public class OauthHelper {
         return obtainAccessToken(clientId, clientSecret, scopes, email, password, redirectUri, false);
     }
     
-    public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri, boolean persistent) throws JSONException, InterruptedException {
-        String authorizationCode = null;
-        authorizationCode = getAuthorizationCode(clientId, scopes, email, password, persistent);        
+    public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri, boolean longLife) throws JSONException, InterruptedException {
+        String authorizationCode = getAuthorizationCode(clientId, scopes, email, password, longLife);        
         assertNotNull(authorizationCode);
         assertFalse(PojoUtil.isEmpty(authorizationCode));              
         ClientResponse tokenResponse = getClientResponse(clientId, clientSecret, scopes, redirectUri, authorizationCode);
@@ -94,9 +86,13 @@ public class OauthHelper {
         assertNotNull(accessToken);
         return accessToken;
     }
+            
+    public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
+        return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, longLife);
+    }
     
-    public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean persistent) throws InterruptedException {
-        return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, items, persistent);
+    public String getFullAuthorizationCodeUrl(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
+        return webDriverHelper.obtainFullAuthorizationCodeResponse(scopes, clientId, email, password, longLife);
     }
     
     public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String redirectUri, String authorizationCode) {

@@ -32,10 +32,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.InitializeDataHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.BlackBoxWebDriver;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -104,41 +107,18 @@ public class PerActivityAPINewScopesTest extends IntegrationTestBase {
     @Before
     public void before() {
         String webBaseUrl = (String) context.getBean("webBaseUrl");
-        WebDriver webDriver = new FirefoxDriver();
+        WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
         WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, getRedirectUri());
         oauthHelper.setWebDriverHelper(webDriverHelper);
     }
-    
-    @After
-    public void after() {
-        oauthHelper.closeWebDriver();
-    }
-    
+        
     @AfterClass
     public static void afterClass() throws Exception {
         InitializeDataHelper idh = (InitializeDataHelper) context.getBean("initializeDataHelper");
         idh.deleteProfile(user.getOrcidIdentifier().getPath());
         idh.deleteClient(client.getClientId());
         idh.deleteProfile(member.getGroupOrcid().getValue());             
-    }
-
-    @Test
-    public void createNonPersistentTokenTest() throws InterruptedException, JSONException {
-        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/activities/update", email, password, getRedirectUri());
-        assertFalse(PojoUtil.isEmpty(accessToken));
-        OrcidOauth2TokenDetail tokenEntity = oauth2TokenDetailDao.findByTokenValue(accessToken);
-        assertNotNull(tokenEntity);
-        assertFalse(tokenEntity.isPersistent());
-    }
-    
-    @Test
-    public void createPersistentTokenTest() throws InterruptedException, JSONException {
-        String accessToken = oauthHelper.obtainAccessToken(client.getClientId(), client.getClientSecret(), "/activities/update", email, password, getRedirectUri(), true);
-        assertFalse(PojoUtil.isEmpty(accessToken));
-        OrcidOauth2TokenDetail tokenEntity = oauth2TokenDetailDao.findByTokenValue(accessToken);
-        assertNotNull(tokenEntity);
-        assertTrue(tokenEntity.isPersistent());
-    }
+    }    
 
     @Test
     public void addWorkTest() throws Exception {
