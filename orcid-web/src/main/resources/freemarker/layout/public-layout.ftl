@@ -19,7 +19,7 @@
 <#assign verDateTime = startupDate?datetime>
 <#macro base ver="${verDateTime?iso_utc}">
 <!DOCTYPE html>
-<html class="no-js oldie ng-app:orcidApp"  ng-app="orcidApp" id="ng-app" lang="en">
+<html class="no-js oldie" lang="en">
 <#include "/common/html-head.ftl" />
 <body data-baseurl="<@orcid.rootPath '/'/>">
 <#nested />
@@ -170,7 +170,7 @@
 									<#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
 								</a></li>
 							<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-							<li ng-controller="NotificationsAlertCtrl">
+							<li ng-controller="NotificationsCountCtrl">
 								<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
 							</li>
 							</@security.authorize>

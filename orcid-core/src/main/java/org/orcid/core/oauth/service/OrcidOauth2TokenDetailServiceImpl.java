@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -230,4 +231,20 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
             return null;
         }
     }
+    
+    @Override
+    public boolean doesClientKnowUser(String clientId, String userOrcid) {
+        List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userOrcid);
+        if (existingTokens == null || existingTokens.isEmpty()) {
+            return false;
+        }
+        Date now = new Date();
+        for (OrcidOauth2TokenDetail token : existingTokens) {
+            if (token.getTokenExpiration() != null && token.getTokenExpiration().after(now)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

@@ -56,6 +56,8 @@ public interface OrcidOauth2TokenDetailService {
     
     List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName);
     
+    boolean doesClientKnowUser(String clientId, String userName);
+    
     /**
      * This should NOT delete the row, but merely set it as disabled
      * 
@@ -88,4 +90,5 @@ public interface OrcidOauth2TokenDetailService {
     void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
     
     int findCountByUserName(String userName, long lastModified);
+
 }

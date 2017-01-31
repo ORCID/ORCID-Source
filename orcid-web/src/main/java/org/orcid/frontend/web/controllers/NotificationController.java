@@ -100,6 +100,7 @@ public class NotificationController extends BaseController {
             @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
+        notifications = archiveObsoleteNotifications(currentOrcid, notifications);
         addSubjectToNotifications(notifications);
         setOverwrittenSourceName(notifications);
         return notifications;
@@ -109,8 +110,17 @@ public class NotificationController extends BaseController {
     public @ResponseBody List<Notification> getNotificationAlertJson() {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findNotificationAlertsByOrcid(currentOrcid);
+        notifications = archiveObsoleteNotifications(currentOrcid, notifications);
         notifications = notifications.stream().filter(n -> !userSession.getSuppressedNotificationAlertIds().contains(n.getPutCode())).collect(Collectors.toList());
         addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    private List<Notification> archiveObsoleteNotifications(String currentOrcid, List<Notification> notifications) {
+        if (!userSession.isObsoleteNotificationAlertsCheckDone()) {
+            notifications = notificationManager.filterActionedNotificationAlerts(notifications, currentOrcid);
+            userSession.setObsoleteNotificationAlertsCheckDone(true);
+        }
         return notifications;
     }
 

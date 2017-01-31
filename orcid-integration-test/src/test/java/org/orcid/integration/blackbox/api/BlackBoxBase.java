@@ -365,10 +365,30 @@ public class BlackBoxBase {
     }
     
     /**
+     * AUTHORIZATION CODE FUNCTIONS
+     * @throws InterruptedException 
+     */
+    public String getAuthorizationCode(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife) throws InterruptedException {
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper); 
+        return oauthHelper.getAuthorizationCode(clientId, scopes, userId, password, longLife);
+    }
+    
+    public String getFullAuthorizationCodeUrl(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife) throws InterruptedException {
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper); 
+        return oauthHelper.getFullAuthorizationCodeUrl(clientId, scopes, userId, password, longLife);
+    }
+    
+    /**
      * ACCESS TOKEN FUNCTIONS
      * */
     public String getAccessToken(List<String> scopes) throws InterruptedException, JSONException{
         return getAccessToken(getUser1OrcidId(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+    }
+    
+    public ClientResponse getAccessTokenResponse(String clientId, String clientSecret, String clientRedirectUri, String authorizationCode) {
+        return oauthHelper.getClientResponse(clientId, clientSecret, null, clientRedirectUri, authorizationCode);
     }
     
     public String getAccessToken(String userName, String userPassword, List<String> scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {                
@@ -382,6 +402,21 @@ public class BlackBoxBase {
         WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);                        
         String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);
+        accessTokens.put(accessTokenKey, token);
+        return token;
+    }
+    
+    public String getAccessToken(String userName, String userPassword, List<String> scopes, String clientId, String clientSecret, String clientRedirectUri, boolean longLife) throws InterruptedException, JSONException {                
+        Collections.sort(scopes);
+        String scopesString = StringUtils.join(scopes, " ");
+        String accessTokenKey = clientId + ":" + userName + ":" + scopesString;
+        if(accessTokens.containsKey(accessTokenKey)) {
+            return accessTokens.get(accessTokenKey);
+        }
+        
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);                        
+        String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri, longLife);
         accessTokens.put(accessTokenKey, token);
         return token;
     }
@@ -729,11 +764,12 @@ public class BlackBoxBase {
     }
         
     public void removeAllWorks() {
+        waitForAngular();
         List<WebElement> trashCans = findWorksTrashCans();
         while (!trashCans.isEmpty()) {
             for (WebElement trashCan : trashCans) {
                 ngAwareClick(trashCan);
-                waitForAngular();
+                waitForCboxComplete();
                 By deleteButton = By.xpath("//div[@id='colorbox']//div[@class='btn btn-danger']");
                 waitForElementVisibility(deleteButton);
                 ngAwareClick(findElement(deleteButton));
@@ -785,6 +821,7 @@ public class BlackBoxBase {
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -979,8 +1016,6 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")));
         
-        By ajaxLoader = By.xpath("//div[@id='DelegatesCtrl']//span[@id='ajax-loader']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.visibilityOfElementLocated(ajaxLoader)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.noSpinners();
         

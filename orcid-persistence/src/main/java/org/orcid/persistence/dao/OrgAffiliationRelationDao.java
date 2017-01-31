@@ -18,8 +18,8 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRelationEntity, Long> {
@@ -102,14 +102,6 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @return a list of all affiliations that belongs to the given user and matches the given type                 
      * */
     List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type);
-    
-    /**
-     * Get all affiliations that matches the given type
-     * @param type
-     *          The affiliation type
-     * @return a list of all affiliations that matches the given type                 
-     * */
-    List<OrgAffiliationRelationEntity> getByType(AffiliationType type);
     
     /**
      * Get all affiliations that belongs to the given user

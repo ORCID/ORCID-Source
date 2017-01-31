@@ -28,6 +28,17 @@
  *  
  */
 
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
+angular.element(function() {
+    angular.bootstrap(
+        document, 
+        ['orcidApp']
+    );
+});
+//angular.bootstrap(document.body, ['orcidApp'], {});
+
+
 /*
  * 1 - Utility functions 
  */
@@ -116,6 +127,7 @@ function addComma(str) {
     return str;
 }
 
+//Needs refactor for dw object
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
         if (dw.contributors[idx].contributorSequence == null
@@ -129,6 +141,7 @@ function removeBadContributors(dw) {
     }
 }
 
+//Needs refactor for dw object
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
         if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
@@ -150,8 +163,6 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
 /*************************************************
  * 3 - Angular Services
@@ -4028,12 +4039,6 @@ angular.module('orcidApp').controller('SocialCtrl',['$scope', '$compile', 'disco
 
 }]);
 
-
-// Controller to show alert for unread notifications
-angular.module('orcidApp').controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
-    notificationsSrvc.retrieveUnreadCount();
-}]);
 
 angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
     $scope.isDroppedDown = false;
