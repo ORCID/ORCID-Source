@@ -1605,6 +1605,7 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                         });
                 }
                 $scope.$apply();
+                $.colorbox.resize();
             }
         }).fail(function() {
             // something bad is happening!
@@ -1628,12 +1629,12 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                     close: '',
                     });
                 $scope.$apply();
+                $.colorbox.resize();
             }
         }).fail(function() {
             // something bad is happening!
             console.log("error confirming account deprecation");
         });
-        $.colorbox.close();
     };
 
     $scope.closeModal = function() {

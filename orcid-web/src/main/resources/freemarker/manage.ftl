@@ -606,7 +606,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
 				<h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2>	
-       			<p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text' />&nbsp;<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
+       			<p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.deprecatingOrcid"></span>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;${baseUriHttp}/<span ng-bind="deprecateProfilePojo.primaryOrcid"></span></p>
     		</div>
     	</div>
     	<div class="row">
