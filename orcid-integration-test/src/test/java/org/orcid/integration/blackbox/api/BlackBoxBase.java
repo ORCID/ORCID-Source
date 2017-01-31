@@ -374,6 +374,12 @@ public class BlackBoxBase {
         return oauthHelper.getAuthorizationCode(clientId, scopes, userId, password, longLife);
     }
     
+    public String getFullAuthorizationCodeUrl(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife) throws InterruptedException {
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper); 
+        return oauthHelper.getFullAuthorizationCodeUrl(clientId, scopes, userId, password, longLife);
+    }
+    
     /**
      * ACCESS TOKEN FUNCTIONS
      * */

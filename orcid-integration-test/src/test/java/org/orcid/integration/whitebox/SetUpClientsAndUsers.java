@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -641,7 +642,7 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
         
-        ClientType clientType = ClientType.PREMIUM_CREATOR;
+        ClientType clientType = ClientType.PREMIUM_CREATOR;        
         
         if(params.containsKey(CLIENT_TYPE)) {
             clientType = ClientType.fromValue(params.get(CLIENT_TYPE));
@@ -668,18 +669,24 @@ public class SetUpClientsAndUsers {
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
         String memberId = params.get(MEMBER_ID);
         
-        Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
-        if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
-            scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        Set<String> scopes = null;
+        
+        if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
+            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
+        } else {
+            scopes = orcidClientGroupManager.premiumCreatorScopes();
+            if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
+                scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+            }
+                   
+            //Add scopes to allow group read and update
+            scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+            scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+            
+            //Add notifications scope
+            scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());            
         }
-               
-        //Add scopes to allow group read and update
-        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
-        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
-        
-        //Add notifications scope
-        scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
-        
+            
         clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
     }

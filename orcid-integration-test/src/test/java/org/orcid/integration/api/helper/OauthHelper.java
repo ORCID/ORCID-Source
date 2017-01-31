@@ -86,9 +86,13 @@ public class OauthHelper {
         assertNotNull(accessToken);
         return accessToken;
     }
-    
+            
     public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
         return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, longLife);
+    }
+    
+    public String getFullAuthorizationCodeUrl(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
+        return webDriverHelper.obtainFullAuthorizationCodeResponse(scopes, clientId, email, password, longLife);
     }
     
     public ClientResponse getClientResponse(String clientId, String clientSecret, String scopes, String redirectUri, String authorizationCode) {
