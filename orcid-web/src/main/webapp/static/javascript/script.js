@@ -30,6 +30,128 @@ if (!(window.console && console.log)) {
     };
 };
 
+/*
+ * 1 - Utility functions 
+ */
+function openImportWizardUrl(url) {
+    var win = window.open(url, "_target");
+    setTimeout( function() {
+        if(!win || win.outerHeight === 0) {
+            //First Checking Condition Works For IE & Firefox
+            //Second Checking Condition Works For Chrome
+            window.location.href = url;
+        }
+    }, 250);
+    $.colorbox.close();
+}
+
+function contains(arr, obj) {
+    var index = arr.length;
+    while (index--) {
+       if (arr[index] === obj) {
+           return true;
+       }
+    }
+    return false;
+}
+
+function formatDate(oldDate) {
+    var date = new Date(oldDate);
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    if(month < 10) {
+        month = '0' + month;
+    }
+    if(day < 10) {
+        day = '0' + day;
+    }
+    return (year + '-' + month + '-' + day);
+}
+
+function getScripts(scripts, callback) {
+    var progress = 0;
+    var internalCallback = function () {        
+        if (++progress == scripts.length - 1) {
+            callback();
+        }
+    };    
+    scripts.forEach(function(script) {        
+        $.getScript(script, internalCallback);        
+    });
+}
+
+function formColorBoxWidth() {
+    return isMobile()? '100%': '800px';
+}
+
+function formColorBoxResize() {
+    if (isMobile())
+        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+    else
+        // IE8 and below doesn't take auto height
+        // however the default div height
+        // is auto anyway
+        $.colorbox.resize({width:'800px'});
+}
+
+function fixZindexIE7(target, zindex){
+    if(isIE() == 7){
+        $(target).each(function(){
+            $(this).css('z-index', zindex);
+            --zindex;
+        });
+    }
+}
+
+function emptyTextField(field) {
+    if (field != null
+        && field.value != null
+        && field.value.trim() != '') {
+        return false;
+    }
+    return true;
+}
+
+function addComma(str) {
+    if (str.length > 0) return str + ', ';
+    return str;
+}
+
+function removeBadContributors(dw) {
+    for (var idx in dw.contributors) {
+        if (dw.contributors[idx].contributorSequence == null
+            && dw.contributors[idx].email == null
+            && dw.contributors[idx].orcid == null
+            && dw.contributors[idx].creditName == null
+            && dw.contributors[idx].contributorRole == null
+            && dw.contributors[idx].creditNameVisibility == null) {
+                dw.contributors.splice(idx,1);
+            }
+    }
+}
+
+function removeBadExternalIdentifiers(dw) {
+    for(var idx in dw.workExternalIdentifiers) {
+        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
+            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+            dw.workExternalIdentifiers.splice(idx,1);
+        }
+    }
+}
+
+function isEmail(email) {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 // add number padding function
 Number.prototype.pad = function(size) {
     var s = String(this);

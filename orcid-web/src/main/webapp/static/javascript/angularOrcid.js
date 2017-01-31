@@ -56,9 +56,9 @@
 
 	__webpack_require__(1);
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(14));
-	requireAll(__webpack_require__(20));
-	requireAll(__webpack_require__(22));
+	requireAll(__webpack_require__(17));
+	requireAll(__webpack_require__(24));
+	requireAll(__webpack_require__(26));
 
 /***/ },
 /* 1 */
@@ -94,127 +94,7 @@
 	 *  
 	 */
 
-	/*
-	 * 1 - Utility functions 
-	 */
-	function openImportWizardUrl(url) {
-	    var win = window.open(url, "_target");
-	    setTimeout( function() {
-	        if(!win || win.outerHeight === 0) {
-	            //First Checking Condition Works For IE & Firefox
-	            //Second Checking Condition Works For Chrome
-	            window.location.href = url;
-	        }
-	    }, 250);
-	    $.colorbox.close();
-	}
 
-	function contains(arr, obj) {
-	    var index = arr.length;
-	    while (index--) {
-	       if (arr[index] === obj) {
-	           return true;
-	       }
-	    }
-	    return false;
-	}
-
-	function formatDate(oldDate) {
-	    var date = new Date(oldDate);
-	    var day = date.getDate();
-	    var month = date.getMonth() + 1;
-	    var year = date.getFullYear();
-	    if(month < 10) {
-	        month = '0' + month;
-	    }
-	    if(day < 10) {
-	        day = '0' + day;
-	    }
-	    return (year + '-' + month + '-' + day);
-	}
-
-	function getScripts(scripts, callback) {
-	    var progress = 0;
-	    var internalCallback = function () {        
-	        if (++progress == scripts.length - 1) {
-	            callback();
-	        }
-	    };    
-	    scripts.forEach(function(script) {        
-	        $.getScript(script, internalCallback);        
-	    });
-	}
-
-	function formColorBoxWidth() {
-	    return isMobile()? '100%': '800px';
-	}
-
-	function formColorBoxResize() {
-	    if (isMobile())
-	        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	    else
-	        // IE8 and below doesn't take auto height
-	        // however the default div height
-	        // is auto anyway
-	        $.colorbox.resize({width:'800px'});
-	}
-
-	function fixZindexIE7(target, zindex){
-	    if(isIE() == 7){
-	        $(target).each(function(){
-	            $(this).css('z-index', zindex);
-	            --zindex;
-	        });
-	    }
-	}
-
-	function emptyTextField(field) {
-	    if (field != null
-	        && field.value != null
-	        && field.value.trim() != '') {
-	        return false;
-	    }
-	    return true;
-	}
-
-	function addComma(str) {
-	    if (str.length > 0) return str + ', ';
-	    return str;
-	}
-
-	function removeBadContributors(dw) {
-	    for (var idx in dw.contributors) {
-	        if (dw.contributors[idx].contributorSequence == null
-	            && dw.contributors[idx].email == null
-	            && dw.contributors[idx].orcid == null
-	            && dw.contributors[idx].creditName == null
-	            && dw.contributors[idx].contributorRole == null
-	            && dw.contributors[idx].creditNameVisibility == null) {
-	                dw.contributors.splice(idx,1);
-	            }
-	    }
-	}
-
-	function removeBadExternalIdentifiers(dw) {
-	    for(var idx in dw.workExternalIdentifiers) {
-	        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-	            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-	            dw.workExternalIdentifiers.splice(idx,1);
-	        }
-	    }
-	}
-
-	function isEmail(email) {
-	    var re = /\S+@\S+\.\S+/;
-	    return re.test(email);
-	}
-
-	function getParameterByName(name) {
-	    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-	        results = regex.exec(location.search);
-	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	}
 
 
 	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
@@ -8162,11 +8042,11 @@
 		"./FundingCtrl.js": 6,
 		"./KeywordsCtrl.js": 7,
 		"./NameCtrl.js": 8,
-		"./NotificationsCtrl.js": 9,
-		"./OtherNamesCtrl.js": 10,
-		"./languageCtrl.js": 11,
-		"./websitesCtrl.js": 12,
-		"./workCtrl.js": 13
+		"./NotificationsCtrl.js": 11,
+		"./OtherNamesCtrl.js": 12,
+		"./languageCtrl.js": 13,
+		"./websitesCtrl.js": 14,
+		"./workCtrl.js": 15
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9644,7 +9524,9 @@
 	}]);
 
 /***/ },
-/* 9 */
+/* 9 */,
+/* 10 */,
+/* 11 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9680,7 +9562,7 @@
 	}]);
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
@@ -9910,7 +9792,7 @@
 	}]);
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -10088,7 +9970,7 @@
 	}]);
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10368,7 +10250,7 @@
 	}]);
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11278,15 +11160,16 @@
 	);
 
 /***/ },
-/* 14 */
+/* 16 */,
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 15,
-		"./focusMe.js": 16,
-		"./modalEmailUnVerified.js": 17,
-		"./ngEnter.js": 18,
-		"./ngEnterSubmit.js": 19
+		"./fnForm.js": 18,
+		"./focusMe.js": 19,
+		"./modalEmailUnVerified.js": 20,
+		"./ngEnter.js": 21,
+		"./ngEnterSubmit.js": 22
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11299,11 +11182,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 14;
+	webpackContext.id = 17;
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports) {
 
 	/*
@@ -11339,7 +11222,7 @@
 	});
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11363,7 +11246,7 @@
 	);
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports) {
 
 	/*
@@ -11467,7 +11350,7 @@
 	);
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/*
@@ -11489,7 +11372,7 @@
 	});
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/*
@@ -11511,11 +11394,12 @@
 	});
 
 /***/ },
-/* 20 */
+/* 23 */,
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 21
+		"./ui.multiselect.js": 25
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11528,11 +11412,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 20;
+	webpackContext.id = 24;
 
 
 /***/ },
-/* 21 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11813,21 +11697,21 @@
 	}]);
 
 /***/ },
-/* 22 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 23,
-		"./affiliationsSrvc.js": 24,
-		"./bioBulkSrvc.js": 25,
-		"./commonSrvc.js": 26,
-		"./fundingSrvc.js": 27,
-		"./groupedActivitiesService.js": 28,
-		"./groupedActivitiesUtil.js": 29,
-		"./initialConfigService.js": 30,
-		"./notificationsSrvc.js": 31,
-		"./utilsService.js": 32,
-		"./workspaceSrvc.js": 33
+		"./actBulkSrvc.js": 27,
+		"./affiliationsSrvc.js": 28,
+		"./bioBulkSrvc.js": 29,
+		"./commonSrvc.js": 30,
+		"./fundingSrvc.js": 31,
+		"./groupedActivitiesService.js": 32,
+		"./groupedActivitiesUtil.js": 33,
+		"./initialConfigService.js": 34,
+		"./notificationsSrvc.js": 35,
+		"./utilsService.js": 36,
+		"./workspaceSrvc.js": 37
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11840,11 +11724,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 22;
+	webpackContext.id = 26;
 
 
 /***/ },
-/* 23 */
+/* 27 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11863,7 +11747,7 @@
 	}]);
 
 /***/ },
-/* 24 */
+/* 28 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -11992,7 +11876,7 @@
 	}]);
 
 /***/ },
-/* 25 */
+/* 29 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12012,7 +11896,7 @@
 	}]);
 
 /***/ },
-/* 26 */
+/* 30 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12077,7 +11961,7 @@
 	}]);
 
 /***/ },
-/* 27 */
+/* 31 */
 /***/ function(module, exports) {
 
 	/**
@@ -12288,7 +12172,7 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 32 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12406,7 +12290,7 @@
 
 
 /***/ },
-/* 29 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/*
@@ -12461,7 +12345,7 @@
 	*/
 
 /***/ },
-/* 30 */
+/* 34 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12488,7 +12372,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12729,7 +12613,7 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12775,7 +12659,7 @@
 	);
 
 /***/ },
-/* 33 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
