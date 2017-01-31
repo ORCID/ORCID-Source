@@ -114,7 +114,9 @@ public class SalesForceAdapterTest {
         member.setName("Org 1 Consortium Lead New Name");
         member.setWebsiteUrl(new URL("http://org1newsite.org"));
         JSONObject record = salesForceAdapter.createSaleForceRecordFromMember(member);
-        assertEquals("{\"Name\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}", record.toString());
+        assertEquals(
+                "{\"Name\":\"Org 1 Consortium Lead New Name\",\"Public_Display_Name__c\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}",
+                record.toString());
     }
 
     @Test

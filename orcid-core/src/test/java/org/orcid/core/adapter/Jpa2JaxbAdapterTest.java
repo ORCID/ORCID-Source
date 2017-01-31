@@ -43,7 +43,6 @@ import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -344,9 +343,9 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set affiliations
         TreeSet<OrgAffiliationRelationEntity> affiliations = new TreeSet<OrgAffiliationRelationEntity>();
         OrgAffiliationRelationEntity affiliation = new OrgAffiliationRelationEntity();
-        affiliation.setAffiliationType(AffiliationType.EDUCATION);
+        affiliation.setAffiliationType(org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION);
         affiliation.setOrg(newOrg);
-        affiliation.setVisibility(Visibility.PUBLIC);
+        affiliation.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         affiliation.setClientSourceId(clientId);
         affiliation.setId(24816L);
         affiliations.add(affiliation);

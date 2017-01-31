@@ -27,12 +27,21 @@ import java.util.Set;
 public class UserSession {
 
     private Set<Long> suppressedNotificationAlertIds;
+    private boolean obsoleteNotificationAlertsCheckDone;
 
     public Set<Long> getSuppressedNotificationAlertIds() {
         if (suppressedNotificationAlertIds == null) {
             suppressedNotificationAlertIds = new HashSet<>();
         }
         return suppressedNotificationAlertIds;
+    }
+
+    public boolean isObsoleteNotificationAlertsCheckDone() {
+        return obsoleteNotificationAlertsCheckDone;
+    }
+
+    public void setObsoleteNotificationAlertsCheckDone(boolean obsoleteNotificationAlertsCheckDone) {
+        this.obsoleteNotificationAlertsCheckDone = obsoleteNotificationAlertsCheckDone;
     }
 
 }

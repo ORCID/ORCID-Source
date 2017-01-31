@@ -85,7 +85,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     private PersonExternalIdentifier getExternalIdentifier() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PersonExternalIdentifier.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/external-identifier-2.0.xml";             
+        String name = "/record_2.0/samples/read_samples/external-identifier-2.0.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }

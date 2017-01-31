@@ -77,7 +77,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     private OtherName getOtherName() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { OtherName.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/other-name-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/other-name-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (OtherName) unmarshaller.unmarshal(inputStream);
     }

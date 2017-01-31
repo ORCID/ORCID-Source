@@ -216,4 +216,13 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         TypedQuery<String> query = entityManager.createQuery("select id from ClientDetailsEntity where id not like 'APP-%'", String.class);
         return query.getResultList();
     }
+    
+    @Override
+    @Transactional
+    public void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now(), persistentTokensEnabled = :isPersistenTokensEnabled where id = :clientId");
+        updateQuery.setParameter("clientId", clientId);
+        updateQuery.setParameter("isPersistenTokensEnabled", isPersistenTokensEnabled);
+        updateQuery.executeUpdate();
+    }
 }

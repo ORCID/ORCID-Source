@@ -54,11 +54,13 @@ if (typeof jQuery == 'undefined') {
     }
 </script>
 
+
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js?v=${ver}"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
+
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-cookies.min.js"></script>
@@ -74,16 +76,25 @@ if (typeof angular == 'undefined') {
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
 <script type="text/javascript">
-	var lang = OrcidCookie.getCookie('locale_v3');
-	var script = document.createElement("script");
-	script.type = "text/javascript";
+    var lang = OrcidCookie.getCookie('locale_v3');
+    var script = document.createElement("script");
+    script.type = "text/javascript";
     script.src = "https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit&hl=" + lang;
     document.body.appendChild(script);
 </script>
 
-<script src="${staticCdn}/javascript/angularjs/1.5.0/angular-recaptcha.min.js"></script>
+<script src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
+<script type="text/javascript">
+    var MTIProjectId='078e0d2f-8275-4c25-8aa9-5d902d8e4491';
+    (function() {
+        var mtiTracking = document.createElement('script');
+        mtiTracking.type='text/javascript';
+        mtiTracking.async='true';
+        mtiTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/t/trackingCode.js';
+        (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
+   })();
+</script>
 
 <script type="text/javascript">
    var script = document.createElement("script");
@@ -91,6 +102,8 @@ if (typeof angular == 'undefined') {
    script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
    document.body.appendChild(script);
 </script>
+
+<script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
 
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
