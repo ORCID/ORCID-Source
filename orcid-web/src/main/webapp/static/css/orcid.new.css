@@ -8496,6 +8496,18 @@ ul.comma li:last-child:after {
     padding-left: 20px!important;
 }
 
+.full-name {
+    float: right;
+}
+
+.pull-left {
+    float: right!important;
+}
+
+.table th, .table td {
+    text-align: right;
+}
+
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
     float: right;
 }

@@ -39,7 +39,7 @@
 </#if>
 
 <div class="row">
-	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
+	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix lhs">
         <#include "admin_menu.ftl"/>
     </div>
     <!-- Right side -->
