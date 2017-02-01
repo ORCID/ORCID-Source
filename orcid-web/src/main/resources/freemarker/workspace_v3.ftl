@@ -374,7 +374,7 @@
           <!-- BibTeX Export Layout -->         
           <div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
             <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
+              <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                 <p>
@@ -401,7 +401,7 @@
               </ul>
             </div>
             <div class="alert alert-block" ng-if="bibtexExportError">
-              <strong>Something went wrong, please try again...</strong>
+              <strong><@orcid.msg 'workspace.bibtexExporter.error'/></strong>
             </div>
           </div>    
           </#if>
