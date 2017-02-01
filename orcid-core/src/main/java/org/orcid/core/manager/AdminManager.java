@@ -16,9 +16,10 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
+
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
-
 
 /**
  * 
@@ -27,9 +28,13 @@ import org.orcid.pojo.ProfileDeprecationRequest;
  */
 public interface AdminManager {
     public static final String MANAGED_USER_PARAM = "managed";
-    public static final String TRUSTED_USER_PARAM = "trusted";        
-    
+    public static final String TRUSTED_USER_PARAM = "trusted";
+
     boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid);
+
     AdminDelegatesRequest startDelegationProcess(AdminDelegatesRequest request, String trusted, String managed);
+
     String removeSecurityQuestion(String orcid);
+
+    List<String> getLockReasons();
 }

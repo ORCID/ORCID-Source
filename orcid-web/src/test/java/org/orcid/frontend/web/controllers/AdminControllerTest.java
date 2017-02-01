@@ -40,6 +40,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.orcid.core.admin.LockReason;
+import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -58,6 +60,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
+import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -344,20 +347,24 @@ public class AdminControllerTest extends BaseControllerTest {
         
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("reviewed"))).thenReturn(reviewedProfile);
         
-        Mockito.when(orcidProfileManager.lockProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
-        Mockito.when(orcidProfileManager.lockProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("some", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("orcid", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to lock null profile"));
         
-        Mockito.when(orcidProfileManager.lockProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
-        Mockito.when(orcidProfileManager.lockProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("ids", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("or", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to lock locked profile"));
         
-        Mockito.when(orcidProfileManager.lockProfile("reviewed")).thenThrow(new RuntimeException("Controller shouldn't try to lock reviewed profile"));
+        Mockito.when(orcidProfileManager.lockProfile("reviewed", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to lock reviewed profile"));
         
-        Mockito.when(orcidProfileManager.lockProfile("emails")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("to")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("test")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("with")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("emails", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("to", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("test", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("with", LockReason.SPAM.getLabel())).thenReturn(true);
         
-        Map<String, Set<String>> results = adminController.lockAccounts(commaSeparatedValues);
+        LockAccounts lockAccounts = new LockAccounts();
+        lockAccounts.setOrcidsToLock(commaSeparatedValues);
+        lockAccounts.setLockReason(LockReason.SPAM.getLabel());
+        
+        Map<String, Set<String>> results = adminController.lockAccounts(lockAccounts);
         assertEquals(2, results.get("notFoundList").size());
         assertTrue(results.get("notFoundList").contains("some"));
         assertTrue(results.get("notFoundList").contains("orcid"));
@@ -375,7 +382,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, results.get("reviewedList").size());
         assertTrue(results.get("reviewedList").contains("reviewed"));
         
-        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString());
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString());
     }
     
     @Test
@@ -410,16 +417,16 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("test"))).thenReturn(lockedProfile);
         Mockito.when(orcidProfileManager.retrieveOrcidProfile(Mockito.eq("with"))).thenReturn(lockedProfile);
         
-        Mockito.when(orcidProfileManager.lockProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
-        Mockito.when(orcidProfileManager.lockProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("some", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
+        Mockito.when(orcidProfileManager.lockProfile("orcid", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to unlock null profile"));
         
-        Mockito.when(orcidProfileManager.lockProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
-        Mockito.when(orcidProfileManager.lockProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("ids", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
+        Mockito.when(orcidProfileManager.lockProfile("or", LockReason.SPAM.getLabel())).thenThrow(new RuntimeException("Controller shouldn't try to unlock unlocked profile"));
         
-        Mockito.when(orcidProfileManager.lockProfile("emails")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("to")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("test")).thenReturn(true);
-        Mockito.when(orcidProfileManager.lockProfile("with")).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("emails", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("to", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("test", LockReason.SPAM.getLabel())).thenReturn(true);
+        Mockito.when(orcidProfileManager.lockProfile("with", LockReason.SPAM.getLabel())).thenReturn(true);
         
         Map<String, Set<String>> results = adminController.unlockAccounts(commaSeparatedValues);
         assertEquals(2, results.get("notFoundList").size());
@@ -565,4 +572,18 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.verify(orcidProfileManager, Mockito.times(3)).retrieveOrcidProfileByEmail(Mockito.anyString());
         Mockito.verify(profileEntityManager, Mockito.times(4)).unreviewProfile(Mockito.anyString());
     }
+    
+    @Test
+    public void testGetLockReasons() {
+        AdminManager adminManager = Mockito.mock(AdminManager.class);
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "adminManager", adminManager);
+        
+        adminController.getLockReasons();
+        
+        Mockito.verify(adminManager, Mockito.times(1)).getLockReasons();
+    }
+    
+    
+    
 }

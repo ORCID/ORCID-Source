@@ -5401,11 +5401,28 @@
 	        $('#unlock_modal').toggle();
 	    };
 	    
+	    $scope.getLockReasons = function() {
+	        $.ajax({
+	            url: getBaseUri()+'/admin-actions/lock-reasons.json',
+	            dataType: 'json',
+	            success: function(data){
+	                $scope.lockReasons = data;
+	                $scope.lockReason = $scope.lockReasons[0];
+	                $scope.$apply();
+	            }
+	        }).fail(function(error) {
+	            // something bad is happening!
+	            console.log("Error while fetching lock reasons");
+	        });
+	    };
+	    
+	    $scope.getLockReasons();
+	    
 	    $scope.lockAccount = function() {
 	        $.ajax({
 	            url: getBaseUri()+'/admin-actions/lock-accounts.json',
 	            type: 'POST',
-	            data: $scope.orcidToLock,
+	            data: angular.toJson({ orcidsToLock: $scope.orcidToLock, lockReason: $scope.lockReason }),
 	            contentType: 'application/json;charset=UTF-8',
 	            dataType: 'json',
 	            success: function(data){

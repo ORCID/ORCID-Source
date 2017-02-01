@@ -16,13 +16,17 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.admin.LockReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
@@ -186,5 +190,10 @@ public class AdminManagerImpl implements AdminManager {
         }
         
         return null;
+    }
+
+    @Override
+    public List<String> getLockReasons() {
+        return Arrays.asList(LockReason.values()).stream().map(lr -> lr.getLabel()).collect(Collectors.toList());
     }
 }

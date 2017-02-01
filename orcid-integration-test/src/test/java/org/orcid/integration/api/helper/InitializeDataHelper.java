@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
+import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
@@ -242,7 +243,7 @@ public class InitializeDataHelper {
     }
 
     public boolean lockProfile(String orcid) throws Exception {
-        return orcidProfileManager.lockProfile(orcid);
+        return orcidProfileManager.lockProfile(orcid, LockReason.SPAM.getLabel());
     }
     
     public boolean unlockProfile(String orcid) throws Exception {

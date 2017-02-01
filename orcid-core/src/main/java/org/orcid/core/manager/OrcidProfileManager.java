@@ -233,7 +233,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * */
     OrcidProfile reactivateOrcidProfile(OrcidProfile orcidProfile);
     
-    boolean lockProfile(String orcid);
+    boolean lockProfile(String orcid, String lockReason);
 
     boolean unlockProfile(String orcid);
 
