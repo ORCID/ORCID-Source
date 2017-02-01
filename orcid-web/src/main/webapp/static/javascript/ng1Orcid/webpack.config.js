@@ -18,7 +18,7 @@ module.exports = {
         //library: "orcid",
         //libraryTarget: "var",
         path: __dirname,
-        filename: "../angularOrcid.js"
+        filename: "../angular_orcid_generated.js"
     },
     //Uglify won't work with the way things are declared at this moment
     plugins: [

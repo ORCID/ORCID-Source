@@ -52,14 +52,14 @@
 
 	__webpack_require__(1);
 	//require('./app/main.ts');
-	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(16));
-	requireAll(__webpack_require__(17));
-	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(24));
+	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(42));
+	requireAll(__webpack_require__(43));
+	requireAll(__webpack_require__(49));
+	requireAll(__webpack_require__(50));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(26));
-	requireAll(__webpack_require__(38));
+	requireAll(__webpack_require__(54));
+	requireAll(__webpack_require__(66));
 
 /***/ },
 /* 1 */
@@ -104,131 +104,6 @@
 	    );
 	});
 	//angular.bootstrap(document.body, ['orcidApp'], {});
-
-
-	/*
-	 * 1 - Utility functions 
-	 */
-	function openImportWizardUrl(url) {
-	    var win = window.open(url, "_target");
-	    setTimeout( function() {
-	        if(!win || win.outerHeight === 0) {
-	            //First Checking Condition Works For IE & Firefox
-	            //Second Checking Condition Works For Chrome
-	            window.location.href = url;
-	        }
-	    }, 250);
-	    $.colorbox.close();
-	}
-
-	function contains(arr, obj) {
-	    var index = arr.length;
-	    while (index--) {
-	       if (arr[index] === obj) {
-	           return true;
-	       }
-	    }
-	    return false;
-	}
-
-	function formatDate(oldDate) {
-	    var date = new Date(oldDate);
-	    var day = date.getDate();
-	    var month = date.getMonth() + 1;
-	    var year = date.getFullYear();
-	    if(month < 10) {
-	        month = '0' + month;
-	    }
-	    if(day < 10) {
-	        day = '0' + day;
-	    }
-	    return (year + '-' + month + '-' + day);
-	}
-
-	function getScripts(scripts, callback) {
-	    var progress = 0;
-	    var internalCallback = function () {        
-	        if (++progress == scripts.length - 1) {
-	            callback();
-	        }
-	    };    
-	    scripts.forEach(function(script) {        
-	        $.getScript(script, internalCallback);        
-	    });
-	}
-
-	function formColorBoxWidth() {
-	    return isMobile()? '100%': '800px';
-	}
-
-	function formColorBoxResize() {
-	    if (isMobile())
-	        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	    else
-	        // IE8 and below doesn't take auto height
-	        // however the default div height
-	        // is auto anyway
-	        $.colorbox.resize({width:'800px'});
-	}
-
-	function fixZindexIE7(target, zindex){
-	    if(isIE() == 7){
-	        $(target).each(function(){
-	            $(this).css('z-index', zindex);
-	            --zindex;
-	        });
-	    }
-	}
-
-	function emptyTextField(field) {
-	    if (field != null
-	        && field.value != null
-	        && field.value.trim() != '') {
-	        return false;
-	    }
-	    return true;
-	}
-
-	function addComma(str) {
-	    if (str.length > 0) return str + ', ';
-	    return str;
-	}
-
-	//Needs refactor for dw object
-	function removeBadContributors(dw) {
-	    for (var idx in dw.contributors) {
-	        if (dw.contributors[idx].contributorSequence == null
-	            && dw.contributors[idx].email == null
-	            && dw.contributors[idx].orcid == null
-	            && dw.contributors[idx].creditName == null
-	            && dw.contributors[idx].contributorRole == null
-	            && dw.contributors[idx].creditNameVisibility == null) {
-	                dw.contributors.splice(idx,1);
-	            }
-	    }
-	}
-
-	//Needs refactor for dw object
-	function removeBadExternalIdentifiers(dw) {
-	    for(var idx in dw.workExternalIdentifiers) {
-	        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-	            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-	            dw.workExternalIdentifiers.splice(idx,1);
-	        }
-	    }
-	}
-
-	function isEmail(email) {
-	    var re = /\S+@\S+\.\S+/;
-	    return re.test(email);
-	}
-
-	function getParameterByName(name) {
-	    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-	        results = regex.exec(location.search);
-	    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	}
 
 
 	/*************************************************
@@ -8245,23 +8120,51 @@
 	/* Do not add anything below, see file structure at the top of this file */
 
 /***/ },
-/* 2 */
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./BiographyCtrl.js": 3,
-		"./CountryCtrl.js": 4,
-		"./EmailEditCtrl.js": 5,
-		"./FundingCtrl.js": 6,
-		"./KeywordsCtrl.js": 7,
-		"./NameCtrl.js": 8,
-		"./NotificationAlertsCtrl.js": 9,
-		"./NotificationsCountCtrl.js": 10,
-		"./NotificationsCtrl.js": 11,
-		"./OtherNamesCtrl.js": 12,
-		"./languageCtrl.js": 13,
-		"./websitesCtrl.js": 14,
-		"./workCtrl.js": 15
+		"./BiographyCtrl.js": 31,
+		"./CountryCtrl.js": 32,
+		"./EmailEditCtrl.js": 33,
+		"./FundingCtrl.js": 34,
+		"./KeywordsCtrl.js": 35,
+		"./NameCtrl.js": 36,
+		"./NotificationAlertsCtrl.js": 67,
+		"./NotificationsCountCtrl.js": 68,
+		"./NotificationsCtrl.js": 37,
+		"./OtherNamesCtrl.js": 38,
+		"./languageCtrl.js": 39,
+		"./websitesCtrl.js": 40,
+		"./workCtrl.js": 41
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8274,11 +8177,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 2;
+	webpackContext.id = 30;
 
 
 /***/ },
-/* 3 */
+/* 31 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
@@ -8401,7 +8304,7 @@
 	}]);
 
 /***/ },
-/* 4 */
+/* 32 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -8669,7 +8572,7 @@
 	}]);
 
 /***/ },
-/* 5 */
+/* 33 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
@@ -8863,7 +8766,7 @@
 	}]);
 
 /***/ },
-/* 6 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/**
@@ -9432,7 +9335,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -9682,7 +9585,7 @@
 	}]);
 
 /***/ },
-/* 8 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
@@ -9741,36 +9644,7 @@
 	}]);
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	// Controller for notifications
-	angular.module('orcidApp').controller('NotificationAlertsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-	    $scope.notificationsSrvc = notificationsSrvc;
-	    notificationsSrvc.getNotificationAlerts();
-	}]);
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	// Controller to show alert for unread notifications
-	angular.module('orcidApp').controller('NotificationsCountCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-	    
-	    $scope.isCurrentPage = function(path){
-	        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
-	    }
-	    
-	    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
-	    // Pages that load notifications will get the unread count themselves
-	    if(!($scope.isCurrentPage('my-orcid') || $scope.isCurrentPage('inbox'))){
-	        notificationsSrvc.retrieveUnreadCount();
-	    }
-	    
-	}]);
-
-/***/ },
-/* 11 */
+/* 37 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9804,7 +9678,7 @@
 	}]);
 
 /***/ },
-/* 12 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
@@ -10034,7 +9908,7 @@
 	}]);
 
 /***/ },
-/* 13 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -10212,7 +10086,7 @@
 	}]);
 
 /***/ },
-/* 14 */
+/* 40 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10492,7 +10366,7 @@
 	}]);
 
 /***/ },
-/* 15 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11402,7 +11276,7 @@
 	);
 
 /***/ },
-/* 16 */
+/* 42 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11411,19 +11285,19 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 16;
+	webpackContext.id = 42;
 
 
 /***/ },
-/* 17 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 18,
-		"./focusMe.js": 19,
-		"./modalEmailUnVerified.js": 20,
-		"./ngEnter.js": 21,
-		"./ngEnterSubmit.js": 22
+		"./fnForm.js": 44,
+		"./focusMe.js": 45,
+		"./modalEmailUnVerified.js": 46,
+		"./ngEnter.js": 47,
+		"./ngEnterSubmit.js": 48
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11436,11 +11310,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 17;
+	webpackContext.id = 43;
 
 
 /***/ },
-/* 18 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/*
@@ -11476,7 +11350,7 @@
 	});
 
 /***/ },
-/* 19 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11500,7 +11374,7 @@
 	);
 
 /***/ },
-/* 20 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/*
@@ -11604,7 +11478,7 @@
 	);
 
 /***/ },
-/* 21 */
+/* 47 */
 /***/ function(module, exports) {
 
 	/*
@@ -11626,7 +11500,7 @@
 	});
 
 /***/ },
-/* 22 */
+/* 48 */
 /***/ function(module, exports) {
 
 	/*
@@ -11648,7 +11522,7 @@
 	});
 
 /***/ },
-/* 23 */
+/* 49 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11657,15 +11531,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 49;
 
 
 /***/ },
-/* 24 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 25
+		"./ui.multiselect.js": 51
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11678,11 +11552,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 24;
+	webpackContext.id = 50;
 
 
 /***/ },
-/* 25 */
+/* 51 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11963,21 +11837,23 @@
 	}]);
 
 /***/ },
-/* 26 */
+/* 52 */,
+/* 53 */,
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 27,
-		"./affiliationsSrvc.js": 28,
-		"./bioBulkSrvc.js": 29,
-		"./commonSrvc.js": 30,
-		"./fundingSrvc.js": 31,
-		"./groupedActivitiesService.js": 32,
-		"./groupedActivitiesUtil.js": 33,
-		"./initialConfigService.js": 34,
-		"./notificationsSrvc.js": 35,
-		"./utilsService.js": 36,
-		"./workspaceSrvc.js": 37
+		"./actBulkSrvc.js": 55,
+		"./affiliationsSrvc.js": 56,
+		"./bioBulkSrvc.js": 57,
+		"./commonSrvc.js": 58,
+		"./fundingSrvc.js": 59,
+		"./groupedActivitiesService.js": 60,
+		"./groupedActivitiesUtil.js": 61,
+		"./initialConfigService.js": 62,
+		"./notificationsSrvc.js": 63,
+		"./utilsService.js": 64,
+		"./workspaceSrvc.js": 65
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11990,11 +11866,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 26;
+	webpackContext.id = 54;
 
 
 /***/ },
-/* 27 */
+/* 55 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12013,7 +11889,7 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 56 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12142,7 +12018,7 @@
 	}]);
 
 /***/ },
-/* 29 */
+/* 57 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12162,7 +12038,7 @@
 	}]);
 
 /***/ },
-/* 30 */
+/* 58 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12227,7 +12103,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 59 */
 /***/ function(module, exports) {
 
 	/**
@@ -12438,7 +12314,7 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 60 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12556,7 +12432,7 @@
 
 
 /***/ },
-/* 33 */
+/* 61 */
 /***/ function(module, exports) {
 
 	/*
@@ -12611,7 +12487,7 @@
 	*/
 
 /***/ },
-/* 34 */
+/* 62 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12638,7 +12514,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 63 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12881,7 +12757,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 64 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13000,7 +12876,7 @@
 	);
 
 /***/ },
-/* 37 */
+/* 65 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13055,7 +12931,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 66 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13064,8 +12940,37 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 38;
+	webpackContext.id = 66;
 
+
+/***/ },
+/* 67 */
+/***/ function(module, exports) {
+
+	// Controller for notifications
+	angular.module('orcidApp').controller('NotificationAlertsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	    $scope.notificationsSrvc = notificationsSrvc;
+	    notificationsSrvc.getNotificationAlerts();
+	}]);
+
+/***/ },
+/* 68 */
+/***/ function(module, exports) {
+
+	// Controller to show alert for unread notifications
+	angular.module('orcidApp').controller('NotificationsCountCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
+	    
+	    $scope.isCurrentPage = function(path){
+	        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+	    }
+	    
+	    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
+	    // Pages that load notifications will get the unread count themselves
+	    if(!($scope.isCurrentPage('my-orcid') || $scope.isCurrentPage('inbox'))){
+	        notificationsSrvc.retrieveUnreadCount();
+	    }
+	    
+	}]);
 
 /***/ }
 /******/ ]);

@@ -240,4 +240,4 @@ See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integr
 * Finally help out by improving these instructions!    
 
 ## Updating the frontend javascript files
-[Webpack setup](https://github.com/ORCID/ORCID-Source/blob/orcid-web/src/main/webapp/static/javascript/readme.md)
+[Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
