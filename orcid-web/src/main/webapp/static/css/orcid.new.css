@@ -8484,3 +8484,22 @@ ul.comma li:last-child:after {
         max-width: 960px;
     }
 }
+
+
+/*************************** Right to left styles*/
+*{
+    text-align: right;
+}
+
+.lhs {
+    float: right;
+    padding-left: 20px!important;
+}
+
+.workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
+    float: right;
+}
+
+.workspace-section-content {
+    float: right;
+}
