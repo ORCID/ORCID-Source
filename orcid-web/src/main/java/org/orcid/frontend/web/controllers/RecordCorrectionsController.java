@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class recordCorrectionsController extends BaseController{
+public class RecordCorrectionsController extends BaseController{
 
     @RequestMapping("/record-corrections")
     public ModelAndView recordCorrections() {
