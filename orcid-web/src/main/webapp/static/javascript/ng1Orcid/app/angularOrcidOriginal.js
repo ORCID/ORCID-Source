@@ -1258,7 +1258,7 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
         $scope.showEditDeactivate = !$scope.showEditDeactivate;
         $scope.deactivateUpdateToggleText();
     };
-
+    
     $scope.fixIE7zIndexes = function() {
         fixZindexIE7('tr', 999999);
         fixZindexIE7('#privacy-settings', 5000);
@@ -1268,6 +1268,19 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
     $scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
     $scope.deactivateUpdateToggleText();
     $scope.fixIE7zIndexes();
+    
+    $scope.deprecateUpdateToggleText = function () {
+        if ($scope.showEditDeprecate) $scope.deprecateToggleText = om.get("manage.editTable.hide");
+        else $scope.deprecateToggleText = om.get("manage.editTable.removeDuplicate");
+    };
+
+    $scope.toggleDeprecateEdit = function() {
+        $scope.showEditDeprecate = !$scope.showEditDeprecate;
+        $scope.deprecateUpdateToggleText();
+    };
+
+    $scope.showEditDeprecate = (window.location.hash === "#editDeprecate");
+    $scope.deprecateUpdateToggleText();
 
     // privacy preferences edit row
     $scope.privacyPreferencesUpdateToggleText = function () {
@@ -1429,6 +1442,80 @@ angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$comp
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+}]);
+
+angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    $scope.getDeprecateProfile = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/deprecate-profile.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            console.log("An error occurred preparing deprecate profile");
+        });
+    };
+    
+    $scope.getDeprecateProfile();
+    
+    $scope.deprecateORCID = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/validate-deprecate-profile.json',
+            dataType: 'json',
+            data: angular.toJson($scope.deprecateProfilePojo),
+            type: 'POST',
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                if (data.errors.length > 0) {
+                    $scope.$apply();
+                } else {
+                    $.colorbox({
+                        html : $compile($('#confirm-deprecate-account-modal').html())($scope),
+                        escKey:false,
+                        overlayClose:true,
+                        close: '',
+                        });
+                }
+                $scope.$apply();
+                $.colorbox.resize();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with change DeactivateAccount");
+        });
+    };
+    
+    $scope.submitModal = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/confirm-deprecate-profile.json',
+            type: 'POST',
+            data: angular.toJson($scope.deprecateProfilePojo),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                $.colorbox({
+                    html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
+                    escKey:false,
+                    overlayClose:true,
+                    close: '',
+                    });
+                $scope.$apply();
+                $.colorbox.resize();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error confirming account deprecation");
+        });
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    
 }]);
 
 angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
@@ -3914,12 +4001,6 @@ angular.module('orcidApp').controller('SocialCtrl',['$scope', '$compile', 'disco
 
 }]);
 
-
-// Controller to show alert for unread notifications
-angular.module('orcidApp').controller('NotificationsAlertCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
-    $scope.getUnreadCount = notificationsSrvc.getUnreadCount;
-    notificationsSrvc.retrieveUnreadCount();
-}]);
 
 angular.module('orcidApp').controller('SwitchUserCtrl',['$scope', '$compile', '$document', function ($scope, $compile, $document){
     $scope.isDroppedDown = false;

@@ -252,7 +252,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = work.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
@@ -305,14 +305,14 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = funding.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateFunding(funding.getExternalIdentifiers());
     }
 
     public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -329,7 +329,7 @@ public class ActivityValidator {
     }
 
     public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -374,7 +374,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = peerReview.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
     }
 
@@ -442,12 +442,23 @@ public class ActivityValidator {
         return null;
     }
 
-    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    private static void validateVisibilityDoesntChangeLegacy(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {
                 throw new VisibilityMismatchException();
             }
             if (!updatedVisibility.value().equals(originalVisibility.value())) {
+                throw new VisibilityMismatchException();
+            }
+        }
+    }
+    
+    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
+        if (updatedVisibility != null) {
+            if (originalVisibility == null) {
+                throw new VisibilityMismatchException();
+            }
+            if (!updatedVisibility.equals(originalVisibility)) {
                 throw new VisibilityMismatchException();
             }
         }

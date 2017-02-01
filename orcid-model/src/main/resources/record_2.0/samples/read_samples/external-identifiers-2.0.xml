@@ -16,7 +16,8 @@
 		</common:source>
 		<common:external-id-type>common-name-1</common:external-id-type>
 		<common:external-id-value>id-reference-1</common:external-id-value>
-		<common:external-id-url>http://url/1</common:external-id-url>			
+		<common:external-id-url>http://url/1</common:external-id-url>
+		<common:external-id-relationship>self</common:external-id-relationship>				
 	</external-identifier:external-identifier>
 	<external-identifier:external-identifier visibility="public" put-code="2">
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
@@ -31,6 +32,7 @@
 		</common:source>
 		<common:external-id-type>common-name-2</common:external-id-type>
 		<common:external-id-value>id-reference-2</common:external-id-value>
-		<common:external-id-url>http://url/2</common:external-id-url>			
+		<common:external-id-url>http://url/2</common:external-id-url>
+		<common:external-id-relationship>self</common:external-id-relationship>				
 	</external-identifier:external-identifier>
 </external-identifier:external-identifiers>

@@ -38,7 +38,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
@@ -51,7 +50,6 @@ import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -60,11 +58,9 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
-import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -72,6 +68,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -129,20 +126,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityManager profileEntManager;
 
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
-
-    @Resource
-    private ActivityCacheManager cacheManager;
-
-    @Resource
-    private PeerReviewManager peerReviewManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -174,9 +162,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
 
-    @Resource
-    private OrcidMessageUtil orcidMessageUtil;
-    
     @Resource
     private SourceUtils sourceUtils;
     
@@ -372,7 +357,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("worksEmpty", true);
         }
 
-        affiliationMap = affiliationMap(orcid);
+        affiliationMap = affiliationMap(orcid, lastModifiedTime);
         if (affiliationMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -564,13 +549,13 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        Map<Long, Affiliation> affMap = affiliationMap(orcid);
+        //TODO
+        Map<Long, Affiliation> affMap = affiliationMap(orcid, profileEntManager.getLastModified(orcid));
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
-            Affiliation aff = affMap.get(Long.valueOf(id));
-            orcidMessageUtil.setSourceName(aff);
+            Affiliation aff = affMap.get(Long.valueOf(id));            
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
-            if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
+            if (aff != null && aff.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
                 AffiliationForm form = AffiliationForm.valueOf(aff);
                 form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
                 affs.add(form);
@@ -690,7 +675,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                         String contributorOrcid = contributor.getOrcid().getValue();
                         if (profileEntManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                            String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                            String publicContributorCreditName = activityCacheManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));                            
                         }
                     }
@@ -866,11 +851,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         return activityCacheManager.fundingMap(orcid, lastModified.getTime());
     }
 
-    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.affiliationMap(profile);
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, Long lastModified) {
+        return activityCacheManager.affiliationMap(orcid, lastModified);
     }
 
     public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {
@@ -889,7 +871,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
-    }       
+    }          
 }
 
 class OrcidInfo {

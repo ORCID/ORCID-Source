@@ -52,7 +52,7 @@ html {
 }
 
 a {
-    word-break: break-all;
+    word-break: break-word;
 }
 
 a:focus {
@@ -7159,6 +7159,32 @@ a:hover .mozilla-badge {
     height: 60px;
 }
 
+/* Deprecate account */
+.confirm-deprecate-account-modal,
+.deprecate-account-confirmation-modal{
+    /*matches .confirm-revoke-access-modal */
+    max-width: 600px;
+    padding-top: 15px;
+}
+
+.cancel-right {
+    margin-left: 15px;
+}
+
+.confirm-deprecate-account-modal .inline,
+.confirm-deprecate-account-modal .inline li {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+ul.comma li:after {
+    content: ", ";
+}
+
+ul.comma li:last-child:after {
+    content: "";
+}
 
 /* Media Queries */
 

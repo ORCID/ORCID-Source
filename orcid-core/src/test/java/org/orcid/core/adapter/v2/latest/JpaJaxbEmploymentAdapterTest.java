@@ -33,6 +33,7 @@ import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -76,16 +77,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
         //Source
-        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());
-        
-        //Check org values
-        assertEquals("common:name", oar.getOrg().getName());
-        assertEquals("common:city", oar.getOrg().getCity());
-        assertEquals("common:region", oar.getOrg().getRegion());        
-        assertEquals(Iso3166Country.AF.value(), oar.getOrg().getCountry().value());
-        assertEquals("common:disambiguated-organization-identifier", oar.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguation-source", oar.getOrg().getOrgDisambiguated().getSourceType());
-        
+        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());        
     }
 
     @Test
@@ -141,9 +133,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/employment-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/employment-2.0.xml";
         if(full) {
-            name = "/record_2.0/samples/employment-full-2.0.xml";
+            name = "/record_2.0/samples/read_samples/employment-full-2.0.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Employment) unmarshaller.unmarshal(inputStream);
@@ -159,7 +151,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setSource(new SourceEntity("APP-000000001"));
         
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
-        result.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.EMPLOYMENT);
+        result.setAffiliationType(AffiliationType.EMPLOYMENT);
         result.setDepartment("employment:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
@@ -167,7 +159,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
-        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
+        result.setVisibility(Visibility.PRIVATE);   
         result.setClientSourceId("APP-000000001");
         
         return result;
