@@ -370,7 +370,8 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return resource;
     }
 
-    private String getAccessToken() {
+    @Override
+    public String getAccessToken() {
         if (accessToken == null) {
             accessToken = getFreshAccessToken();
         }

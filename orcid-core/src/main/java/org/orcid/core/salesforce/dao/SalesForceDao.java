@@ -54,4 +54,6 @@ public interface SalesForceDao {
 
     void updateMember(Member member);
 
+    String getAccessToken();
+
 }
