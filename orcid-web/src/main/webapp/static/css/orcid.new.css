@@ -3594,6 +3594,9 @@ p.orcid-id-container {
     margin: 5px 0;
 }
 
+.admin-options p,
+.admin-options table,
+.admin-options h3,
 .admin-options h4 {
     margin-left: 15px;
 }
@@ -3825,6 +3828,17 @@ ul.sso-options li span {
 .developer-tools .create-client .dt-description textarea,
 .admin-edit-client .dt-description textarea {
     height: 150px;
+}
+
+.admin-edit-client table{
+    margin-bottom: 10px;
+}
+
+.admin-edit-client td,
+.admin-edit-client th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
 }
 
 .developer-tools .create-client .ruri {
