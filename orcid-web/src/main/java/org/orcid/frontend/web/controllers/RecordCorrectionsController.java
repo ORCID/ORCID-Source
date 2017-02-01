@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RecordCorrectionsController extends BaseController{
 
-    @RequestMapping("/record-corrections")
+    @RequestMapping(value={"/about/trust/integrity/record-corrections", "/record-corrections"})
     public ModelAndView recordCorrections() {
         ModelAndView mav = new ModelAndView("record-corrections");
         return mav;
