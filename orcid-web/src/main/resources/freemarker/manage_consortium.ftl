@@ -54,6 +54,23 @@
                         </div>
                     </div>                      
                 </div>
+                <div>
+                    <h2>
+                        <span><@spring.message "manage_consortium.contacts"/></span>
+                    </h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Email</th><th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="contact in consortium.contactsList">
+                                <td>{{contact.name}}</td><td>{{contact.email}}</td><td>contact.role</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
