@@ -17,7 +17,6 @@
 package org.orcid.integration.api.t1;
 
 import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.AUTHENTICATE_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH_NO_REGEX;
 import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
@@ -392,35 +391,8 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
     public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
         URI bioPathWithOrcid = UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid);
         return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
-    }
+    }    
     
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
-    @Path(AUTHENTICATE_PATH)
-    public ClientResponse authenticate(@PathParam("orcid") String orcid, String accessToken) {
-        URI bioPathWithOrcid = UriBuilder.fromPath(AUTHENTICATE_PATH).build(orcid);
-        return getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersHtml(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersXml(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersJson(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @Override
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
@@ -509,6 +481,24 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
 
     private WebResource.Builder addOauthHeader(WebResource webResource, String oAuthToken) {
         return webResource.header("Authorization", "Bearer " + oAuthToken);
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersHtml(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersXml(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersJson(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

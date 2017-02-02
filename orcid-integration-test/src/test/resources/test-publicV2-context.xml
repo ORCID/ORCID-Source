@@ -44,6 +44,11 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="t1OAuthClient_1_2" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="memberV2ApiClient_rc1" class="org.orcid.integration.blackbox.api.v2.rc1.MemberV2ApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
