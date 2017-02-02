@@ -3839,6 +3839,7 @@ ul.sso-options li span {
     padding: 3px 4px;
     vertical-align: top;
     font-size: 12px;
+    width: 25%;
 }
 
 .developer-tools .create-client .ruri {
