@@ -22,15 +22,15 @@
             <#include "includes/id_banner.ftl"/>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
-            <h1 id="manage-developer-tools">
-                <span><@spring.message "manage_consortium.heading"/></span>
-            </h1>
+            <h1 id="manage-consortium-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
+            <p><@spring.message "manage_consortium.manage_consortium_text_1"/></p>
             <div ng-show="consortium != null" ng-cloak>
-                <div class="admin-edit-client">
+                <div class="manage-consortium">
+                	<h2 id="manage-consortium-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
                     <!-- Name -->
                     <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <span><@orcid.msg 'manage_groups.group_name'/></span><br />
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.consortium_lead_name'/></label>
                             <input type="text" ng-model="consortium.name.value" class="full-width-input" />
                             <span class="orcid-error" ng-show="consortium.name.errors.length > 0">
                                 <div ng-repeat='error in consortium.name.errors' ng-bind-html="error"></div>
@@ -39,8 +39,8 @@
                     </div>
                     <!-- website -->
                     <div class="row">
-                        <div class="col-md-12 col-sm-12 col-xs-12">
-                            <span><@orcid.msg 'manage_consortium.website'/></span><br />
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.website'/></label>
                             <input type="text" ng-model="consortium.website.value" class="full-width-input" />
                             <span class="orcid-error" ng-show="consortium.website.errors.length > 0">
                                 <div ng-repeat='error in consortium.website.errors' ng-bind-html="error"></div>

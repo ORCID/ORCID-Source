@@ -476,7 +476,7 @@
                 <div ng-show="consortium != null" ng-cloak>
                     <div class="admin-edit-client">
                         <div class="row">
-                            <h3><@orcid.msg 'manage_consortium.heading'/></h3>
+                            <h3><@orcid.msg 'manage_consortium.consortium_lead'/></h3>
                         </div>                      
                         <div class="row">
 	                        <!-- Name -->

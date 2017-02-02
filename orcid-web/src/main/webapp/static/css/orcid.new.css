@@ -7201,6 +7201,14 @@ ul.comma li:last-child:after {
     content: "";
 }
 
+/*Consortia self service*/
+.manage-consortium label{
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin: .7em 0 .5em 0;
+}
+
 /* Media Queries */
 
 @media ( max-width: 767px) {
