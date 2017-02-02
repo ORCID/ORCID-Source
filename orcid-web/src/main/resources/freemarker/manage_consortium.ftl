@@ -23,14 +23,17 @@
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12">
             <h1 id="manage-consortium-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
-            <p><@spring.message "manage_consortium.manage_consortium_text_1"/></p>
+            <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
+            	<a href="<@orcid.rootPath '/members'/>" target="_blank"><@spring.message "manage_consortium.member_list_link"/></a>
+            	<@spring.message "manage_consortium.manage_consortium_text_2"/>
+            	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="consortium != null" ng-cloak>
                 <div class="manage-consortium">
                 	<h2 id="manage-consortium-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
-                            <label><@orcid.msg 'manage_consortium.consortium_lead_name'/></label>
+                            <label><@orcid.msg 'manage_consortium.org_name'/></label>
                             <input type="text" ng-model="consortium.name.value" class="full-width-input" />
                             <span class="orcid-error" ng-show="consortium.name.errors.length > 0">
                                 <div ng-repeat='error in consortium.name.errors' ng-bind-html="error"></div>
