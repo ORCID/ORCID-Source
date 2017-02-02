@@ -29,8 +29,10 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -93,7 +95,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource
     private ProfileDao profileDao;
-    
+
     @Resource
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
@@ -261,9 +263,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Test
     public void testValidateDeprecateProfileWithValidDataUsingOrcid() {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setPrimaryAccountName("B. Holiday");
-        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
-        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
         deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
         deprecateProfile.setDeprecatingPassword("password");
 
@@ -274,15 +273,17 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
         assertEquals("1000-2000-3000-4000", deprecateProfile.getDeprecatingOrcid());
         assertEquals("1000-2000-3000-4000@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
+        assertNotNull(deprecateProfile.getPrimaryEmails());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
     @Test
     public void testValidateDeprecateProfileWithValidDataUsingEmail() {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setPrimaryAccountName("B. Holiday");
-        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
-        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
         deprecateProfile.setDeprecatingOrcidOrEmail("1001-2002-3003-4004@orcid.org");
         deprecateProfile.setDeprecatingPassword("password");
 
@@ -293,6 +294,11 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
         assertEquals("1001-2002-3003-4004@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
         assertEquals("1001-2002-3003-4004", deprecateProfile.getDeprecatingOrcid());
+        assertNotNull(deprecateProfile.getPrimaryEmails());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
@@ -357,7 +363,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
     }
-    
+
     @Test
     public void testValidateDeprecateProfileWithInvalidDataDeactivatedProfileUsingEmail() {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
@@ -404,11 +410,11 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
     }
-    
+
     @Test
     public void testConfirmDeprecateProfileWithValidData() {
         when(profileEntityManager.deprecateProfile(Mockito.eq("1000-2000-3000-4000"), Mockito.eq("4444-4444-4444-4446"))).thenReturn(true);
-        
+
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryAccountName("B. Holiday");
         deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
@@ -423,11 +429,11 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
-    
+
     @Test
     public void testConfirmDeprecateProfileWithValidDataUnknownProblem() {
         when(profileEntityManager.deprecateProfile(Mockito.eq("1000-2000-3000-4000"), Mockito.eq("4444-4444-4444-4446"))).thenReturn(false);
-        
+
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryAccountName("B. Holiday");
         deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
@@ -470,7 +476,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         deprecateProfile.setDeprecatingEmails(Arrays.asList("1101-2202-3303-4404@orcid.org"));
         deprecateProfile.setDeprecatingAccountName("blah blah");
         deprecateProfile.setDeprecatingPassword("password");
-
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getErrors());
