@@ -83,18 +83,7 @@ if (typeof angular == 'undefined') {
     document.body.appendChild(script);
 </script>
 
-<script src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
-
-<script type="text/javascript">
-    var MTIProjectId='078e0d2f-8275-4c25-8aa9-5d902d8e4491';
-    (function() {
-        var mtiTracking = document.createElement('script');
-        mtiTracking.type='text/javascript';
-        mtiTracking.async='true';
-        mtiTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/t/trackingCode.js';
-        (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
-   })();
-</script>
+<script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
 <script type="text/javascript">
    var script = document.createElement("script");
