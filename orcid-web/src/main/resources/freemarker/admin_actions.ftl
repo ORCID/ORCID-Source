@@ -494,6 +494,10 @@
 					<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
 					<div class="controls">
 						<textarea id="orcid_to_lock" ng-model="orcidToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
+						<select ng-model="lockReason">
+							<option ng-repeat="reason in lockReasons" value="{{reason}}">{{reason}}</option>
+        				</select>
+        				<textarea id="lock_reason_description" ng-model="description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
 					</div>
 					<span id="bottom-confirm-lock-profile" ng-click="lockAccount()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
 				</div>

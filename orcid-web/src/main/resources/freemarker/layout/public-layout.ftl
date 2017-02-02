@@ -105,7 +105,7 @@
 		</div>
 		<!-- .row -->
 		<div class="row">			
-			<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated) && RequestParameters['publicRecordMenu']??>	
+			<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated) && (!(RequestParameters['publicRecordMenu']??) | RequestParameters['publicRecordMenu'] != 'false')>	
 				<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">
 					
 					<!-- Mobile View -->
@@ -170,7 +170,7 @@
 									<#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
 								</a></li>
 							<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-							<li ng-controller="NotificationsAlertCtrl">
+							<li ng-controller="NotificationsCountCtrl">
 								<a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
 							</li>
 							</@security.authorize>

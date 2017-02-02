@@ -36,6 +36,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.InitializeDataHelper;
 import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.blackbox.api.BlackBoxWebDriver;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -113,15 +114,10 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
 
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();        
+        webDriver = BlackBoxWebDriver.getWebDriver();        
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, getRedirectUri());
         oauthHelper.setWebDriverHelper(webDriverHelper);
-    }
-    
-    @After
-    public void after() {
-        webDriver.quit();
-    }            
+    }                  
     
     @Test
     public void authorizationCodeExpiresAfterXMinutesTest() throws InterruptedException, JSONException {
@@ -139,10 +135,8 @@ public class OauthAuthorizationCodeTest extends IntegrationTestBase {
         
         ClientResponse tokenResponse = oauthHelper.getClientResponse(client.getClientId(), client.getClientSecret(), "/orcid-works/create /webhook", getRedirectUri(), authorizationCode);
         assertEquals(400, tokenResponse.getStatus());
-        OrcidMessage result = tokenResponse.getEntity(OrcidMessage.class);
+        String result = tokenResponse.getEntity(String.class);
         assertNotNull(result);
-        assertNotNull(result.getErrorDesc());
-        assertEquals("Bad Request : Authorization code has expired", result.getErrorDesc().getContent());
-        
+        assertEquals("{\"error\":\"invalid_request\",\"error_description\":\"Authorization code has expired\"}", result);        
     }    
 }

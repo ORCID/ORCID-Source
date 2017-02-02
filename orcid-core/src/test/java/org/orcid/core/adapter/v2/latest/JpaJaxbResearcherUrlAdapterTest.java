@@ -83,7 +83,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     private ResearcherUrls getResearcherUrls() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearcherUrls.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/researcher-urls-2.0.xml";             
+        String name = "/record_2.0/samples/read_samples/researcher-urls-2.0.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }

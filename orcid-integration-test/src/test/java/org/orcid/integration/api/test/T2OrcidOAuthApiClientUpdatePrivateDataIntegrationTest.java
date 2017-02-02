@@ -39,6 +39,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.BlackBoxWebDriver;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -134,7 +135,7 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
     @Before
     @Transactional
     public void before() {
-        webDriver = new FirefoxDriver();
+        webDriver = BlackBoxWebDriver.getWebDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
 
@@ -168,11 +169,6 @@ public class T2OrcidOAuthApiClientUpdatePrivateDataIntegrationTest extends DBUni
             profileDao.updateLastModifiedDateWithoutResult(profile.getId());
         }
     }
-
-    @After
-    public void after() {
-        webDriver.quit();
-    }    
     
     /**
      * Check fetching information from a client that should have access to his

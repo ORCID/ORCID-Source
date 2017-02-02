@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -1003,6 +1004,17 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid) {
+        return notifications.stream().filter(n -> {
+            boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
+            if (alreadyConnected) {
+                flagAsArchived(userOrcid, n.getPutCode(), false);
+            }
+            return !alreadyConnected;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Notification findById(Long id) {
         return notificationAdapter.toNotification(notificationDao.find(id));
@@ -1184,4 +1196,5 @@ public class NotificationManagerImpl implements NotificationManager {
         notification.setBodyHtml(html);
         createNotification(orcidId, notification);
     }
+
 }

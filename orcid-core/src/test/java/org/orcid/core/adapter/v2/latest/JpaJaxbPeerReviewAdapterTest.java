@@ -165,9 +165,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/peer-review-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/peer-review-2.0.xml";
         if(full) {
-            name = "/record_2.0/samples/peer-review-full-2.0.xml";
+            name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);

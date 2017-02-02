@@ -32,11 +32,10 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SlackManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -60,7 +59,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource
-    protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
     
     @Resource
     protected NotificationManager notificationManager;
@@ -101,7 +100,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
-            boolean clientKnowsUser = doesClientKnowUser(userOrcid, clientDetails.getClientId());
+            boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
             //If the client doesn't know about the user yet, send a notification
             if(!clientKnowsUser) {
                 notificationManager.sendAcknowledgeMessage(userOrcid, clientDetails.getClientId());
@@ -134,22 +133,6 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             slackManager.sendSystemAlert(message);
         }
         return result;
-    }
-
-    private boolean doesClientKnowUser(String userOrcid, String clientId) {
-        List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userOrcid);
-        if(existingTokens == null || existingTokens.isEmpty()) {
-            return false;
-        }
-        
-        Date now = new Date();
-        for(OrcidOauth2TokenDetail token : existingTokens) {
-            if(token.getTokenExpiration() != null && token.getTokenExpiration().after(now)) {
-                return true;                                      
-            }
-        }
-        
-        return false;
     }
 
 }

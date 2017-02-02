@@ -170,9 +170,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/work-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/work-2.0.xml";
         if (full) {
-            name = "/record_2.0/samples/work-full-2.0.xml";
+            name = "/record_2.0/samples/read_samples/work-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

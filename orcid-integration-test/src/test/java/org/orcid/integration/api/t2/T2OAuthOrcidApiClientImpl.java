@@ -359,33 +359,6 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     
     @Override
     @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
-    @Path(AUTHENTICATE_PATH)
-    public ClientResponse authenticate(@PathParam("orcid") String orcid, String accessToken) {
-        URI bioPathWithOrcid = UriBuilder.fromPath(AUTHENTICATE_PATH).build(orcid);
-        return orcidClientHelper.getClientResponseWithToken(bioPathWithOrcid, VND_ORCID_JSON, accessToken);
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersHtml(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersXml(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ClientResponse viewExternalIdentifiersJson(@PathParam("orcid") String orcid, String accessToken) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path(PROFILE_GET_PATH)
     public ClientResponse viewFullDetailsHtml(@PathParam("orcid") String orcid, String accessToken) {
@@ -466,6 +439,24 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     public ClientResponse viewAffiliationDetailsXml(String orcid, String accessToken) {
         URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersHtml(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersXml(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ClientResponse viewExternalIdentifiersJson(String orcid, String accessToken) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

@@ -19,6 +19,7 @@ package org.orcid.core.salesforce.model;
 import java.io.Serializable;
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.salesforce.adapter.SalesForceAdapter;
 
 /**
@@ -51,7 +52,7 @@ public class Member implements Serializable {
     }
 
     public String getPublicDisplayName() {
-        return publicDisplayName;
+        return StringUtils.isNotBlank(publicDisplayName) ? publicDisplayName : name;
     }
 
     public void setPublicDisplayName(String publicDisplayName) {

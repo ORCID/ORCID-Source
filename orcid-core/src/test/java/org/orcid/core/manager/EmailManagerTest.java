@@ -63,8 +63,8 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(emailManager.emailExists("4444-4444-4444-4498@milligan.com"));
         assertTrue(emailManager.emailExists("MiXeD@cASe.com"));
         assertTrue(emailManager.emailExists("public_0000-0000-0000-0001@test.orcid.org"));
+        assertTrue(emailManager.emailExists("test@test.com"));
         
-        assertFalse(emailManager.emailExists("test@test.com"));
         assertFalse(emailManager.emailExists("0000-0000-0000-0001@test.orcid.org"));
         assertFalse(emailManager.emailExists("public_0000-0000-0000-0001@test.orcid"));
     }
