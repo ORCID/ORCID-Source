@@ -593,17 +593,21 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deprecateProfile;
         }
 
-        List<EmailEntity> emails = emailDao.findByOrcid(deprecatingEntity.getId());
+        List<EmailEntity> deprecatingEmails = emailDao.findByOrcid(deprecatingEntity.getId());
+        List<EmailEntity> primaryEmails = emailDao.findByOrcid(primaryEntity.getId());
+        
         String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
         String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
-        deprecateProfile.setPrimaryEmails(Arrays.asList(primaryDetails.getPrimaryEmail()));
         deprecateProfile.setPrimaryOrcid(primaryDetails.getOrcid());
         deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);
         deprecateProfile.setDeprecatingOrcid(deprecatingEntity.getId());
 
-        if (emails != null) {
-            deprecateProfile.setDeprecatingEmails(emails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+        if (deprecatingEmails != null) {
+            deprecateProfile.setDeprecatingEmails(deprecatingEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+        }
+        if (primaryEmails != null) {
+            deprecateProfile.setPrimaryEmails(primaryEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
         }
         return deprecateProfile;
     }
