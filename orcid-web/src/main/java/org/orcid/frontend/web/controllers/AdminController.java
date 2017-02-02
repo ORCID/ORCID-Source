@@ -656,7 +656,7 @@ public class AdminController extends BaseController {
                     } else if (profile.isReviewed()) {
                         reviewedIds.add(identifier);
                     } else {
-                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath(), lockAccounts.getLockReason());
+                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath(), lockAccounts.getLockReason(), lockAccounts.getDescription());
                         successIds.add(identifier);
                     }
                 }
@@ -670,7 +670,7 @@ public class AdminController extends BaseController {
         resendIdMap.put("reviewedList", reviewedIds);
         return resendIdMap;
     }
-    
+
     /**
      * Function to get reasons for locking account(s)
      * 

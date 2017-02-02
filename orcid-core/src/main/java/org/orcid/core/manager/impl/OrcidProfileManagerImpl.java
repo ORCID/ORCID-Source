@@ -1441,8 +1441,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @return true if the account was locked
      */
     @Override
-    public boolean lockProfile(String orcid, String lockReason) {
-        boolean wasLocked = profileDao.lockProfile(orcid, lockReason);
+    public boolean lockProfile(String orcid, String lockReason, String description) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
         if (wasLocked) {
             notificationManager.sendOrcidLockedEmail(retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY));
         }

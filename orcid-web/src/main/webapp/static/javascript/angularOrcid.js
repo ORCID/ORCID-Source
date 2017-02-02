@@ -5422,12 +5422,14 @@
 	        $.ajax({
 	            url: getBaseUri()+'/admin-actions/lock-accounts.json',
 	            type: 'POST',
-	            data: angular.toJson({ orcidsToLock: $scope.orcidToLock, lockReason: $scope.lockReason }),
+	            data: angular.toJson({ orcidsToLock: $scope.orcidToLock, lockReason: $scope.lockReason, description: $scope.description }),
 	            contentType: 'application/json;charset=UTF-8',
 	            dataType: 'json',
 	            success: function(data){
 	                $scope.result = data;
 	                $scope.orcidToLock = '';
+	                $scope.description = '';
+	                $scope.getLockReasons();
 	                $scope.$apply();
 	            }
 	        }).fail(function(error) {

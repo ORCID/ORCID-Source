@@ -96,6 +96,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Date accountExpiry;
     private Boolean recordLocked = Boolean.FALSE;
     private String reasonLocked;
+    private String reasonLockedDescription;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
@@ -191,7 +192,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     }
 
     /**
-     * @param lockedReason
+     * @param reasonLocked
      *            the reason the record was locked
      */
     public void setReasonLocked(String reasonLocked) {
@@ -199,11 +200,27 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     }
     
     /**
-     * @return the lockedReason
+     * @return the reasonLocked
      */
     @Column(name = "reason_locked")
     public String getReasonLocked() {
         return reasonLocked;
+    }
+    
+    /**
+     * @param reasonLockedDescription
+     *            a description of the reason the record was locked
+     */
+    public void setReasonLockedDescription(String reasonLockedDescription) {
+        this.reasonLockedDescription = reasonLockedDescription;
+    }
+    
+    /**
+     * @return the lockedReason
+     */
+    @Column(name = "reason_locked_description")
+    public String getReasonLockedDescription() {
+        return reasonLockedDescription;
     }
 
     /**

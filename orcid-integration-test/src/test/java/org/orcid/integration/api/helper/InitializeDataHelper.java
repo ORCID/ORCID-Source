@@ -243,7 +243,7 @@ public class InitializeDataHelper {
     }
 
     public boolean lockProfile(String orcid) throws Exception {
-        return orcidProfileManager.lockProfile(orcid, LockReason.SPAM.getLabel());
+        return orcidProfileManager.lockProfile(orcid, LockReason.SPAM.getLabel(), null);
     }
     
     public boolean unlockProfile(String orcid) throws Exception {

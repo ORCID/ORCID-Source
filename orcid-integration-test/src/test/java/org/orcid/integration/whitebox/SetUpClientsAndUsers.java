@@ -472,7 +472,7 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            orcidProfileManager.lockProfile(params.get(ORCID), LockReason.SPAM.getLabel());               
+            orcidProfileManager.lockProfile(params.get(ORCID), LockReason.SPAM.getLabel(), null);               
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {

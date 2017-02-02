@@ -645,8 +645,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * */
     @Override
     @Transactional
-    public boolean lockProfile(String orcid, String reason) {
-        return changeLockedStatus(orcid, true, reason);
+    public boolean lockProfile(String orcid, String reason, String description) {
+        return changeLockedStatus(orcid, true, reason, description);
     }
 
     /**
@@ -659,15 +659,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean unlockProfile(String orcid) {
-        return changeLockedStatus(orcid, false, null);
+        return changeLockedStatus(orcid, false, null, null);
     }
 
     @Transactional
-    private boolean changeLockedStatus(String orcid, boolean locked, String reason) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason where orcid=:orcid");
+    private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
+        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("locked", locked);
         query.setParameter("lockReason", reason);
+        query.setParameter("description", description);
         return query.executeUpdate() > 0;
     }
 
