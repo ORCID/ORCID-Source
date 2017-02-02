@@ -75,5 +75,17 @@ public class ManageConsortiumController extends BaseController {
         salesForceManager.updateMember(member);
         return consortium;
     }
+    
+    @RequestMapping(value = "/add-contact.json", method = RequestMethod.POST)
+    public @ResponseBody ConsortiumForm addContact(@RequestBody ConsortiumForm consortium) {
+        MemberDetails memberDetails = consortium.toMemberDetails();
+        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        Member member = memberDetails.getMember();
+        if (!usersAuthorizedAccountId.equals(member.getId())) {
+            throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
+        }
+        // XXX Add contact
+        return consortium;
+    }
 
 }

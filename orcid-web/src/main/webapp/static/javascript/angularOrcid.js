@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(16));
 	requireAll(__webpack_require__(17));
-	requireAll(__webpack_require__(23));
+	requireAll(__webpack_require__(18));
 	requireAll(__webpack_require__(24));
+	requireAll(__webpack_require__(25));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(26));
-	requireAll(__webpack_require__(38));
+	requireAll(__webpack_require__(27));
+	requireAll(__webpack_require__(39));
 
 /***/ },
 /* 1 */
@@ -8172,9 +8172,10 @@
 		"./NotificationsCountCtrl.js": 10,
 		"./NotificationsCtrl.js": 11,
 		"./OtherNamesCtrl.js": 12,
-		"./languageCtrl.js": 13,
-		"./websitesCtrl.js": 14,
-		"./workCtrl.js": 15
+		"./externalConsortiumCtrl.js": 13,
+		"./languageCtrl.js": 14,
+		"./websitesCtrl.js": 15,
+		"./workCtrl.js": 16
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -9950,6 +9951,305 @@
 /* 13 */
 /***/ function(module, exports) {
 
+	/**
+	* External consortium controller
+	*/
+	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', function manageConsortiumCtrl($scope, $compile, utilsService) {     
+	    $scope.consortium = null;
+	    $scope.results = new Array();
+	    $scope.numFound = 0;
+	    $scope.input = {};
+	    $scope.input.start = 0;
+	    $scope.input.rows = 10;
+	    $scope.showInitLoader = true;
+	    $scope.showLoader = false;
+	    $scope.effectiveUserOrcid = orcidVar.orcidId;
+	    $scope.realUserOrcid = orcidVar.realOrcidId;
+
+	    $scope.toggleFindConsortiumModal = function() {
+	         $scope.showFindModal = !$scope.showFindModal;
+	    };
+	    
+	    /**
+	     * GET
+	     * */
+	    $scope.getConsortium = function() {
+	         $.ajax({
+	              url: getBaseUri()+'/manage-consortium/get-consortium.json',
+	              type: 'GET',
+	              dataType: 'json',
+	              success: function(data){
+	                    $scope.consortium = data;
+	                    $scope.$apply();
+	              }
+	         }).fail(function(error) {
+	              // something bad is happening!
+	              console.log("Error getting the consortium");
+	         });
+	    };
+	    
+	    $scope.confirmUpdateConsortium = function() {
+	         $.colorbox({
+	              html : $compile($('#confirm-modal-consortium').html())($scope),
+	                    scrolling: true,
+	                    onLoad: function() {
+	                    $('#cboxClose').remove();
+	              },
+	              scrolling: true
+	         });
+
+	         $.colorbox.resize({width:"450px" , height:"175px"});
+	    };
+	    
+	    $scope.updateConsortium = function() {
+	         $.ajax({
+	              url: getBaseUri()+'/manage-consortium/update-consortium.json',
+	              contentType: 'application/json;charset=UTF-8',
+	              type: 'POST',
+	              dataType: 'json',
+	              data: angular.toJson($scope.consortium),
+	              success: function(data){
+	                    $scope.$apply(function(){
+	                         if(data.errors.length == 0){
+	                              $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+	                         } else {
+	                              $scope.consortium = data;
+	                         }
+	                    });
+	                    $scope.closeModal();
+	              }
+	         }).fail(function(error) {
+	              // something bad is happening!
+	              console.log("Error updating the consortium");
+	         });
+	    };
+	    
+	    $scope.closeModal = function() {
+	         $.colorbox.close();
+	    };
+	    
+	    $scope.search = function(){
+	        $scope.results = new Array();
+	        $scope.showLoader = true;
+	        $('#no-results-alert').hide();
+	        if(utilsService.isEmail($scope.input.text)){
+	            $scope.numFound = 0;
+	            $scope.start = 0;
+	            $scope.areMoreResults = 0;
+	            $scope.searchByEmail();
+	        }
+	        else{
+	            $scope.getResults();
+	        }
+	    };
+
+	    $scope.searchByEmail = function(){
+	        $.ajax({
+	            url: getBaseUri() + '/manage-consortium/search-for-contact-by-email/' + encodeURIComponent($scope.input.text) + '/',
+	            dataType: 'json',
+	            headers: { Accept: 'application/json'},
+	            success: function(data) {
+	                $scope.confirmAddContactByEmail(data);
+	                $scope.showLoader = false;
+	                $scope.$apply();
+	            }
+	        }).fail(function(){
+	            // something bad is happening!
+	            console.log("error doing search for contact by email");
+	        });
+
+	    };
+
+	    $scope.getResults = function(rows){
+	        $.ajax({
+	            url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
+	            dataType: 'json',
+	            headers: { Accept: 'application/json'},
+	            success: function(data) {
+	                var resultsContainer = data['orcid-search-results'];
+	                $scope.numFound = resultsContainer['num-found'];
+	                if(resultsContainer['orcid-search-result']){
+	                    $scope.numFound = resultsContainer['num-found'];
+	                    $scope.results = $scope.results.concat(resultsContainer['orcid-search-result']);
+	                }
+	                var tempResults = $scope.results;
+	                for(var index = 0; index < tempResults.length; index ++) {
+	                    if($scope.results[index]['orcid-profile']['orcid-bio']['personal-details'] == null) {
+	                        $scope.results.splice(index, 1);
+	                    } 
+	                }
+	                $scope.numFound = $scope.results.length;
+	                if(!$scope.numFound){
+	                    $('#no-results-alert').fadeIn(1200);
+	                }
+	                $scope.areMoreResults = $scope.numFound >= ($scope.start + $scope.rows);
+	                $scope.showLoader = false;
+	                $scope.$apply();
+	                var newSearchResults = $('.new-search-result');
+	                if(newSearchResults.length > 0){
+	                    newSearchResults.fadeIn(1200);
+	                    newSearchResults.removeClass('new-search-result');
+	                    var newSearchResultsTop = newSearchResults.offset().top;
+	                    var showMoreButtonTop = $('#show-more-button-container').offset().top;
+	                    var bottom = $(window).height();
+	                    if(showMoreButtonTop > bottom){
+	                        $('html, body').animate(
+	                            {
+	                                scrollTop: newSearchResultsTop
+	                            },
+	                            1000,
+	                            'easeOutQuint'
+	                        );
+	                    }
+	                }
+	            }
+	        }).fail(function(){
+	            // something bad is happening!
+	            console.log("error doing search for contacts");
+	        });
+	    };
+
+	    $scope.getMoreResults = function(){
+	        $scope.showLoader = true;
+	        $scope.start += 10;
+	        $scope.getResults();
+	    };
+
+	    $scope.concatPropertyValues = function(array, propertyName){
+	        if(typeof array === 'undefined'){
+	            return '';
+	        }
+	        else{
+	            return $.map(array, function(o){ return o[propertyName]; }).join(', ');
+	        }
+	    };
+
+	    $scope.areResults = function(){
+	        return $scope.numFound != 0;
+	    };
+
+	    $scope.getDisplayName = function(result){
+	        var personalDetails = result['orcid-profile']['orcid-bio']['personal-details'];
+	        var name = "";
+	        if(personalDetails != null) {
+	            var creditName = personalDetails['credit-name'];
+	            if(creditName != null){
+	                return creditName.value;
+	            }
+	            name = personalDetails['given-names'].value;
+	            if(personalDetails['family-name'] != null) {
+	                name = name + ' ' + personalDetails['family-name'].value;
+	            }
+	        }
+	        return name;
+	    };
+
+	    $scope.confirmAddContactByEmail = function(emailSearchResult){
+	        $scope.errors = [];
+	        $scope.emailSearchResult = emailSearchResult;
+	        $.colorbox({
+	            html : $compile($('#confirm-add-contact-by-email-modal').html())($scope),
+	            transition: 'fade',
+	            close: '',
+	            onLoad: function() {
+	                $('#cboxClose').remove();
+	            },
+	            onComplete: function() {$.colorbox.resize();},
+	            scrolling: true
+	        });
+	    };
+
+	    $scope.confirmAddContact = function(contactName, contactId, contactIdx){
+	        $scope.errors = [];
+	        $scope.contactNameToAdd = contactName;
+	        $scope.contactToAdd = contactId;
+	        $scope.contactIdx = contactIdx;
+	        $.colorbox({
+	            html : $compile($('#confirm-add-contact-modal').html())($scope),
+	            transition: 'fade',
+	            close: '',
+	            onLoad: function() {
+	                $('#cboxClose').remove();
+	            },
+	            onComplete: function() {$.colorbox.resize();},
+	            scrolling: true
+	        });
+	    };
+
+	    $scope.addContactByEmail = function(contactEmail) {
+	        $scope.errors = [];
+	        var addContact = {};
+	        addContact.contactEmail = $scope.input.text;
+	        addContact.password = $scope.password;
+	        $.ajax({
+	            url: getBaseUri() + '/manage-consortium/add-contact-by-email.json',
+	            type: 'POST',
+	            data: angular.toJson(addContact),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                if(data.errors.length === 0){
+	                    $scope.getContacts();
+	                    $scope.$apply();
+	                    $scope.closeModal();
+	                }
+	                else{
+	                    $scope.errors = data.errors;
+	                    $scope.$apply();
+	                }
+	            }
+	        }).fail(function() {
+	            console.log("Error adding contact.");
+	        });
+	    };
+
+	    $scope.addContact = function() {
+	        var addContact = {};
+	        addContact.contactToManage = $scope.contactToAdd;
+	        addContact.password = $scope.password;
+	        $.ajax({
+	            url: getBaseUri() + '/manage-consortium/add-contact.json',
+	            type: 'POST',
+	            data: angular.toJson(addContact),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                if(data.errors.length === 0){
+	                    $scope.getContacts();
+	                    $scope.results.splice($scope.contactIdx, 1);
+	                    $scope.$apply();
+	                    $scope.closeModal();
+	                }
+	                else{
+	                    $scope.errors = data.errors;
+	                    $scope.$apply();
+	                }
+	            }
+	        }).fail(function() {
+	            console.log("Error adding contact.");
+	        });
+	    };
+
+	    $scope.confirmRevoke = function(contactName, contactId) {
+	        $scope.errors = [];
+	        $scope.contactNameToRevoke = contactName;
+	        $scope.contactToRevoke = contactId;
+	        $.colorbox({
+	            html : $compile($('#revoke-contact-modal').html())($scope)
+
+	        });
+	        $.colorbox.resize();
+	    };
+
+	    
+	    // Init
+	    $scope.getConsortium();
+	    
+	}]);
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
 	    var productionLangList =
 	        [
@@ -10125,7 +10425,7 @@
 	}]);
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10405,7 +10705,7 @@
 	}]);
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11315,7 +11615,7 @@
 	);
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11324,19 +11624,19 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 16;
+	webpackContext.id = 17;
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 18,
-		"./focusMe.js": 19,
-		"./modalEmailUnVerified.js": 20,
-		"./ngEnter.js": 21,
-		"./ngEnterSubmit.js": 22
+		"./fnForm.js": 19,
+		"./focusMe.js": 20,
+		"./modalEmailUnVerified.js": 21,
+		"./ngEnter.js": 22,
+		"./ngEnterSubmit.js": 23
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11349,11 +11649,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 17;
+	webpackContext.id = 18;
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/*
@@ -11389,7 +11689,7 @@
 	});
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11413,7 +11713,7 @@
 	);
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/*
@@ -11517,7 +11817,7 @@
 	);
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/*
@@ -11539,7 +11839,7 @@
 	});
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	/*
@@ -11561,7 +11861,7 @@
 	});
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11570,15 +11870,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 24;
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 25
+		"./ui.multiselect.js": 26
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11591,11 +11891,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 24;
+	webpackContext.id = 25;
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11876,21 +12176,21 @@
 	}]);
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 27,
-		"./affiliationsSrvc.js": 28,
-		"./bioBulkSrvc.js": 29,
-		"./commonSrvc.js": 30,
-		"./fundingSrvc.js": 31,
-		"./groupedActivitiesService.js": 32,
-		"./groupedActivitiesUtil.js": 33,
-		"./initialConfigService.js": 34,
-		"./notificationsSrvc.js": 35,
-		"./utilsService.js": 36,
-		"./workspaceSrvc.js": 37
+		"./actBulkSrvc.js": 28,
+		"./affiliationsSrvc.js": 29,
+		"./bioBulkSrvc.js": 30,
+		"./commonSrvc.js": 31,
+		"./fundingSrvc.js": 32,
+		"./groupedActivitiesService.js": 33,
+		"./groupedActivitiesUtil.js": 34,
+		"./initialConfigService.js": 35,
+		"./notificationsSrvc.js": 36,
+		"./utilsService.js": 37,
+		"./workspaceSrvc.js": 38
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11903,11 +12203,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 26;
+	webpackContext.id = 27;
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11926,7 +12226,7 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12055,7 +12355,7 @@
 	}]);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12075,7 +12375,7 @@
 	}]);
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12140,7 +12440,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/**
@@ -12351,7 +12651,7 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12469,7 +12769,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/*
@@ -12524,7 +12824,7 @@
 	*/
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12551,7 +12851,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12794,7 +13094,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12913,7 +13213,7 @@
 	);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -12968,7 +13268,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -12977,7 +13277,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 38;
+	webpackContext.id = 39;
 
 
 /***/ }
