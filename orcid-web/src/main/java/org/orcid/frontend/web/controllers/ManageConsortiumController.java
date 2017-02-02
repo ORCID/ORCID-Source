@@ -20,10 +20,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -77,15 +75,9 @@ public class ManageConsortiumController extends BaseController {
     }
     
     @RequestMapping(value = "/add-contact.json", method = RequestMethod.POST)
-    public @ResponseBody ConsortiumForm addContact(@RequestBody ConsortiumForm consortium) {
-        MemberDetails memberDetails = consortium.toMemberDetails();
-        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
-        Member member = memberDetails.getMember();
-        if (!usersAuthorizedAccountId.equals(member.getId())) {
-            throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
-        }
-        // XXX Add contact
-        return consortium;
+    public @ResponseBody Contact addContact(@RequestBody Contact contact) {
+        salesForceManager.createContact(contact);
+        return contact;
     }
 
 }

@@ -49,6 +49,8 @@ public interface SalesForceManager {
     String retriveAccountIdByOrcid(String orcid);
     
     void updateMember(Member member);
+    
+    void createContact(Contact contact);
 
     /**
      * Clear caches

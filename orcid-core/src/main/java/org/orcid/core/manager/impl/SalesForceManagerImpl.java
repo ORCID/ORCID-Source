@@ -24,8 +24,11 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
@@ -34,6 +37,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.ReleaseNameUtils;
@@ -45,7 +49,7 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  * @author Will Simpson
  *
  */
-public class SalesForceManagerImpl implements SalesForceManager {
+public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements SalesForceManager {
 
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
@@ -70,6 +74,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource
     private EmailManager emailManager;
+
+    @Resource
+    private SourceManager sourceManager;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -158,6 +165,19 @@ public class SalesForceManagerImpl implements SalesForceManager {
     public void updateMember(Member member) {
         salesForceDao.updateMember(member);
         salesForceMembersListCache.removeAll();
+    }
+
+    @Override
+    public void createContact(Contact contact) {
+        contact.setAccountId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
+        if (StringUtils.isBlank(contact.getEmail())) {
+            String contactOrcid = contact.getOrcid();
+            Email primaryEmail = emailManager.getEmails(contactOrcid, getLastModified(contactOrcid)).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            contact.setEmail(primaryEmail.getEmail());
+        }
+        salesForceDao.createContact(contact);
+        // Need to make more granular!
+        evictAll();
     }
 
     @Override

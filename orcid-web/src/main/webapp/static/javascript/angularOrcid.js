@@ -10180,7 +10180,6 @@
 	        $scope.errors = [];
 	        var addContact = {};
 	        addContact.contactEmail = $scope.input.text;
-	        addContact.password = $scope.password;
 	        $.ajax({
 	            url: getBaseUri() + '/manage-consortium/add-contact-by-email.json',
 	            type: 'POST',
@@ -10204,8 +10203,9 @@
 
 	    $scope.addContact = function() {
 	        var addContact = {};
-	        addContact.contactToManage = $scope.contactToAdd;
-	        addContact.password = $scope.password;
+	        addContact.orcid = $scope.contactToAdd;
+	        addContact.name = $scope.contactNameToAdd;
+	        $scope.contactNameToAdd
 	        $.ajax({
 	            url: getBaseUri() + '/manage-consortium/add-contact.json',
 	            type: 'POST',

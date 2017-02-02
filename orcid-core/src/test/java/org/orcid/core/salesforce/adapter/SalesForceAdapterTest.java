@@ -133,7 +133,7 @@ public class SalesForceAdapterTest {
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
     }
-    
+
     @Test
     public void testCreateContactsFromJson() throws IOException, JSONException {
         String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_contacts_list.json"));
@@ -144,6 +144,14 @@ public class SalesForceAdapterTest {
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+    }
+
+    @Test
+    public void testCreateSalesForceRecordFromContact() {
+        Contact contact = new Contact();
+        contact.setAccountId("1234");
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
+        assertEquals("{\"AccountId\":\"1234\"}", contactJson.toString());
     }
 
 }

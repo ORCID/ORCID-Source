@@ -250,7 +250,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
 
     $scope.addContact = function() {
         var addContact = {};
-        addContact.contactToManage = $scope.contactToAdd;
+        addContact.orcid = $scope.contactToAdd;
+        addContact.name = $scope.contactNameToAdd;
+        $scope.contactNameToAdd
         $.ajax({
             url: getBaseUri() + '/manage-consortium/add-contact.json',
             type: 'POST',

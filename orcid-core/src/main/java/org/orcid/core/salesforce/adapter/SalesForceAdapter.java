@@ -131,6 +131,10 @@ public class SalesForceAdapter {
         }
     }
 
+    public JSONObject createSaleForceRecordFromContact(Contact contact) {
+        return mapperFacade.map(contact, JSONObject.class);
+    }
+
     public List<Member> createMembersListFromJson(JSONObject results) {
         List<Member> members = new ArrayList<>();
         try {

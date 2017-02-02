@@ -139,6 +139,32 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
+    public void createContact(Contact contact) {
+        try {
+            createContactInSalesForce(getAccessToken(), contact);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create contact, trying again.", e);
+            createContactInSalesForce(getFreshAccessToken(), contact);
+        }
+
+    }
+
+    private void createContactInSalesForce(String accessToken, Contact contact) {
+        LOGGER.info("About to create contact in SalesForce");
+        String accountId = contact.getAccountId();
+        validateSalesForceId(accountId);
+        WebResource resource = createContactResource();
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating contact in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return;
+    }
+    
+    @Override
     public void updateMember(Member member) {
         try {
             updateMemberInSalesForce(getAccessToken(), member);
@@ -169,6 +195,11 @@ public class SalesForceDaoImpl implements SalesForceDao {
     private WebResource createUpdateMemberResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/" + validateSalesForceId(accountId)).queryParam("_HttpMethod",
                 "PATCH");
+        return resource;
+    }
+    
+    private WebResource createContactResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Contact/");
         return resource;
     }
 

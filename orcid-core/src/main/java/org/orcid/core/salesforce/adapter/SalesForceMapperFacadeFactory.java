@@ -108,9 +108,13 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
 
     public void registerContactMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Contact, JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
-        classMap.field("role", "Member_Org_Role__c");
-        classMap.field("name", "Contact__r.Name");
-        classMap.field("email", "Contact__r.Email");
+        classMap.fieldAToB("name", "FirstName");
+        classMap.fieldAToB("name", "LastName");
+        classMap.fieldAToB("email", "Email");
+        classMap.fieldAToB("accountId", "AccountId");
+        classMap.fieldBToA("Member_Org_Role__c", "role");
+        classMap.fieldBToA("Contact__r.Name", "name");
+        classMap.fieldBToA("Contact__r.Email", "email");
         classMap.register();
     }
 

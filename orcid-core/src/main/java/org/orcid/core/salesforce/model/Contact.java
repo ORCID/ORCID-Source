@@ -27,10 +27,19 @@ public class Contact implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String accountId;
     private String name;
     private String email;
     private String role;
     private String orcid;
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
 
     public String getName() {
         return name;
@@ -66,7 +75,7 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesForceContact [name=" + name + ", email=" + email + ", role=" + role + "]";
+        return "Contact [accountId=" + accountId + ", name=" + name + ", email=" + email + ", role=" + role + ", orcid=" + orcid + "]";
     }
 
 }

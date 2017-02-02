@@ -53,6 +53,8 @@ public interface SalesForceDao {
     String validateSalesForceId(String memberId);
 
     void updateMember(Member member);
+    
+    void createContact(Contact contact);
 
     String getAccessToken();
 
