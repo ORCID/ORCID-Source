@@ -62,3 +62,9 @@ Deletes the record with put-code 1000
 Returns a list of group-id-records which belong to the page number 1, when the given page-size is 5. Also returns other fields('total', 'page', 'page-size') along with the group-id-record list.
 
 ``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0_rc3/group-id-record?page-size=5&page=1'``
+
+**Find existing Group-id-records by name**
+
+Returns a list of group-id-records with a name which match that in the the call ('orcid' in this example). As with view group-id-records the find results can be paged.
+
+```curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' 'https://api.qa.orcid.org/v2.0_rc3/group-id-record/?name=orcid&start=1&rows=10'```

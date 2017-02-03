@@ -30,16 +30,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
@@ -90,7 +90,7 @@ public class OrcidRecordToSolrDocument {
             if (record.getPerson().getOtherNames() != null){
                 if (record.getPerson().getOtherNames().getOtherNames() != null && !record.getPerson().getOtherNames().getOtherNames().isEmpty()){
                     List<String> names = new ArrayList<String>();
-                    for (org.orcid.jaxb.model.record_rc3.OtherName on : record.getPerson().getOtherNames().getOtherNames()){
+                    for (org.orcid.jaxb.model.record_v2.OtherName on : record.getPerson().getOtherNames().getOtherNames()){
                         names.add(on.getContent());
                     }
                     profileIndexDocument.setOtherNames(names);
@@ -98,7 +98,7 @@ public class OrcidRecordToSolrDocument {
             }
 
             if (record.getPerson().getEmails() != null && record.getPerson().getEmails().getEmails() != null){
-                for (org.orcid.jaxb.model.record_rc3.Email e : record.getPerson().getEmails().getEmails()){
+                for (org.orcid.jaxb.model.record_v2.Email e : record.getPerson().getEmails().getEmails()){
                     profileIndexDocument.addEmailAddress(e.getEmail());
                 }
             }
@@ -136,7 +136,7 @@ public class OrcidRecordToSolrDocument {
             if (record.getActivitiesSummary() != null){
                 if (record.getPerson().getKeywords() != null && record.getPerson().getKeywords().getKeywords() != null){
                     List<String> keywordValues = new ArrayList<String>();
-                    for (org.orcid.jaxb.model.record_rc3.Keyword keyword : record.getPerson().getKeywords().getKeywords()) {
+                    for (org.orcid.jaxb.model.record_v2.Keyword keyword : record.getPerson().getKeywords().getKeywords()) {
                         keywordValues.add(keyword.getContent());
                     }
                     profileIndexDocument.setKeywords(keywordValues);

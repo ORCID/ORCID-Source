@@ -43,6 +43,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.integration.api.helper.TokenStore;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.BlackBoxWebDriver;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -175,7 +176,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     @Before
     @Transactional
     public void before() {
-        webDriver = new FirefoxDriver();
+        webDriver = BlackBoxWebDriver.getWebDriver();
         redirectUri = webBaseUrl + "/oauth/playground";
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
 
@@ -191,11 +192,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
             profileDao.updateLastModifiedDateWithoutResult(profile.getId());
         }
 
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
     }
 
     @Test
@@ -266,7 +262,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         assertNotNull(errorMessage);
         assertNotNull(errorMessage.getErrorDesc());
         assertEquals(
-                "OAuth2 problem : One of the provided scopes is not allowed. Please refer to the list of allowed scopes at: http://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.",
+                "OAuth2 problem : One of the provided scopes is not allowed. Please refer to the list of allowed scopes at: https://support.orcid.org/knowledgebase/articles/120162-orcid-scopes.",
                 errorMessage.getErrorDesc().getContent());
     }
 

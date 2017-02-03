@@ -15,71 +15,71 @@
  * =============================================================================
  */
 
-.orcid-summary-widget{
-	width: 180px;
-	height: auto;
-	border: 1px solid #939598;
-	padding: 10px;
-	font-family: 'Helvetica', 'Sans serif', 'Verdana';
-	color: #939598;
-	background: #FFF;
+.orcid-summary-widget {
+    width: 180px;
+    height: auto;
+    border: 1px solid #939598;
+    padding: 10px;
+    font-family: 'Helvetica', 'Sans serif', 'Verdana';
+    color: #939598;
+    background: #FFF;
 }
 
-.orcid-summary-widget a{
-	text-decoration: none;
-	color: #939598;
+.orcid-summary-widget a {
+    text-decoration: none;
+    color: #939598;
 }
 
-.orcid-summary-widget .orcid-widget-details .orcid-logo{
-	background: url('//orcid.org/sites/all/themes/orcidResponsive/img/orcid-logo.png') 0 0 transparent;
-	height: 43px;
-	width: 140px;
-	margin: 0 auto 15px;
+.orcid-summary-widget .orcid-widget-details .orcid-logo {
+    background: url('//orcid.org/sites/all/themes/orcidResponsive/img/orcid-logo.png') 0 0 transparent;
+    height: 43px;
+    width: 140px;
+    margin: 0 auto 15px;
 }
 
-.orcid-summary-widget .orcid-widget-details .orcid-mini-logo{
-	background: url('//orcid.org/static/img/mini-icon.png') 0 0 transparent;
-	width: 20px;
-  	height: 20px;
+.orcid-summary-widget .orcid-widget-details .orcid-mini-logo {
+    background: url('//orcid.org/static/img/mini-icon.png') 0 0 transparent;
+    width: 20px;
+    height: 20px;
 }
 
-.orcid-summary-widget .orcid-widget-details{
-	text-align: center;
+.orcid-summary-widget .orcid-widget-details {
+    text-align: center;
 }
 
-.orcid-summary-widget .orcid-widget-details div{
-	margin: 5px 0;
+.orcid-summary-widget .orcid-widget-details div {
+    margin: 5px 0;
 }
 
-.orcid-summary-widget .orcid-widget-details .orcid-name{
-	font-size: 20px;
+.orcid-summary-widget .orcid-widget-details .orcid-name {
+    font-size: 20px;
 }
 
-.orcid-summary-widget .orcid-widget-details .orcid-id{
-	font-size: 12px;
-	margin-top: 10px;
+.orcid-summary-widget .orcid-widget-details .orcid-id {
+    font-size: 12px;
+    margin-top: 10px;
 }
 
-.orcid-summary-widget .orcid-widget-details .orcid-summary-items{
-	background: #939598;
-	padding: 5px;
-	color: #FFF;
-	margin-top: 10px;
-	font-size: 14px;
+.orcid-summary-widget .orcid-widget-details .orcid-summary-items {
+    background: #939598;
+    padding: 5px;
+    color: #FFF;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
-.orcid-summary-widget .orcid-widget-button{
-	padding: 5px;
-	color: #FFF;
-	background: #338caf;
-	text-decoration: none;
-	margin-top: 15px;
-	display: block;
-	text-align: center;
-	font-size: 14px;
+.orcid-summary-widget .orcid-widget-button {
+    padding: 5px;
+    color: #FFF;
+    background: #338caf;
+    text-decoration: none;
+    margin-top: 15px;
+    display: block;
+    text-align: center;
+    font-size: 14px;
 }
 
-.orcid-summary-widget .orcid-widget-button:hover{
-	color: #FFF;
-	background: #a6ce39;
+.orcid-summary-widget .orcid-widget-button:hover {
+    color: #FFF;
+    background: #a6ce39;
 }

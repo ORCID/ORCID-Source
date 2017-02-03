@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +34,16 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.common_rc3.Source;
+import org.orcid.frontend.web.controllers.helper.UserSession;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
-import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
-import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
+import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -81,6 +83,9 @@ public class NotificationController extends BaseController {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
+    @Resource
+    private UserSession userSession;
+    
     @RequestMapping
     public ModelAndView getNotifications() {
         ModelAndView mav = new ModelAndView("notifications");
@@ -95,6 +100,7 @@ public class NotificationController extends BaseController {
             @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
+        notifications = archiveObsoleteNotifications(currentOrcid, notifications);
         addSubjectToNotifications(notifications);
         setOverwrittenSourceName(notifications);
         return notifications;
@@ -104,7 +110,17 @@ public class NotificationController extends BaseController {
     public @ResponseBody List<Notification> getNotificationAlertJson() {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findNotificationAlertsByOrcid(currentOrcid);
+        notifications = archiveObsoleteNotifications(currentOrcid, notifications);
+        notifications = notifications.stream().filter(n -> !userSession.getSuppressedNotificationAlertIds().contains(n.getPutCode())).collect(Collectors.toList());
         addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    private List<Notification> archiveObsoleteNotifications(String currentOrcid, List<Notification> notifications) {
+        if (!userSession.isObsoleteNotificationAlertsCheckDone()) {
+            notifications = notificationManager.filterActionedNotificationAlerts(notifications, currentOrcid);
+            userSession.setObsoleteNotificationAlertsCheckDone(true);
+        }
         return notifications;
     }
 
@@ -235,6 +251,11 @@ public class NotificationController extends BaseController {
         }
         notificationManager.setActionedAndReadDate(notificationOrcid, id);
         return new ModelAndView("redirect:" + redirectUrl);
+    }
+    
+    @RequestMapping(value = "{id}/suppressAlert.json")
+    public @ResponseBody void suppressAlert(@PathVariable("id") String id) {
+        userSession.getSuppressedNotificationAlertIds().add(Long.valueOf(id));
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)

@@ -18,7 +18,6 @@ package org.orcid.core.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +25,10 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermissions;
-import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
+import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -80,6 +79,18 @@ public interface NotificationManager {
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
     public List<Notification> findNotificationAlertsByOrcid(String orcid);
+    
+    /**
+     * Filters the list of notification alerts by archiving any that have
+     * already been actioned
+     * 
+     * @param notifications
+     *            The list of notification alerts, as returned by
+     *            {@link #findNotificationAlertsByOrcid(String)}
+     * @return The list of notification alerts, minus any that have already been
+     *         actioned
+     */
+    public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid);
 
     public Notification findById(Long id);
 
@@ -88,6 +99,8 @@ public interface NotificationManager {
     public Notification createNotification(String orcid, Notification notification);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
+
+    Notification flagAsArchived(String orcid, Long id, boolean checkSource) throws OrcidNotificationAlreadyReadException;
 
     public Notification setActionedAndReadDate(String orcid, Long id);
 

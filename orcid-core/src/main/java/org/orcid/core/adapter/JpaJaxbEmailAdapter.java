@@ -19,7 +19,7 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
 public interface JpaJaxbEmailAdapter {

@@ -70,12 +70,12 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
       orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
+      orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?string};
       orcidVar.version = "${ver}";
+      orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
     </script>
-    
-    <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+
     <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
-    
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    

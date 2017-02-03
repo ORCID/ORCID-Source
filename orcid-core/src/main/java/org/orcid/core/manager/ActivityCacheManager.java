@@ -18,10 +18,9 @@ package org.orcid.core.manager;
 
 import java.util.LinkedHashMap;
 
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.WorkForm;
 
@@ -31,9 +30,9 @@ public interface ActivityCacheManager {
     
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid, long lastModified);
     
-    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile);
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified);
     
-    public LinkedHashMap<Long, Affiliation> affiliationMap(OrcidProfile profile);
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, long lastModified);
     
     public String getCreditName(ProfileEntity profile);
     

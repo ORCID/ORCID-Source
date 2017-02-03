@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

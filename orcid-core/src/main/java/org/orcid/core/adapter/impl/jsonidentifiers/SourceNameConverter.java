@@ -17,7 +17,7 @@
 package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.jaxb.model.common_rc3.SourceName;
+import org.orcid.jaxb.model.common_v2.SourceName;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.CustomConverter;

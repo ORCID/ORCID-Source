@@ -16,11 +16,15 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
@@ -44,6 +48,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private OrcidSecurityManager orcidSecurityManager;
     
     private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
+    
+    @Resource
+    private OrcidSearchManager orcidSearchManager;
+
+    private static final int MAX_SEARCH_ROWS = 100;
     
     @Override
     public Response viewStatusText() {
@@ -501,6 +510,15 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewPerson(orcid));
     }
+    
+    @Override
+    public Response searchByQuery(Map<String, List<String>> solrParams) {
+        return memberV2ApiServiceDelegator.searchByQuery(solrParams);
+    }
+    
+    public Response viewClient(String clientId) {
+       return memberV2ApiServiceDelegator.viewClient(clientId);
+    }
 
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
@@ -523,4 +541,5 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private void checkProfileStatus(String orcid) {        
         orcidSecurityManager.checkProfile(orcid);
     }
+
 }

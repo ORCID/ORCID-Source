@@ -55,6 +55,9 @@
 
       <#include "includes/print_record.ftl"/>
 
+
+      <modal-email-un-verified></modal-email-un-verified>
+
       <div class="qrcode-container">
         <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
           <div class="popover-help-container">
@@ -371,41 +374,34 @@
           <!-- BibTeX Export Layout -->         
           <div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
             <div class=box-border" ng-if="canReadFiles" ng-cloak>
-              <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer">Hide export BibTeX</span>
+              <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                 <p>
-                  Export your works to a BibTeX file. For more information see <a href="">exporting works</a>.
+	                <@orcid.msg 'workspace.bibtexExporter.intro'/>
                 </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
                 <span class="bibtext-options">                                        
-                  <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>             
-                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openBibtexExportDialog()">Export</span>                   
+                  <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
+                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
                 </span>                   
                 </div>
               </div>
             </div>
-            <div ng-if="loadingScripts" class="text-center ng-hide" ng-cloak>
-              <i id="" class="glyphicon glyphicon-refresh spin x2 green"></i>
-            </div>
-            <span class="dotted-bar" ng-if="scriptsLoaded"></span>
-            <div class="bottomBuffer" ng-if="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
+            <div class="bottomBuffer" ng-if="bibtexLoading && !bibtexExportError" ng-cloak>
+	          <span class="dotted-bar"></span>
               <ul class="inline-list">
                 <li>
-                  Generating BibTeX, please wait...
+	                <@orcid.msg 'workspace.bibtexExporter.generating'/>
                 </li>
                 <li>
                   &nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>    
                 </li>
               </ul>
-
             </div>
             <div class="alert alert-block" ng-if="bibtexExportError">
-              <strong>Something went wrong, please try again...</strong>
-            </div>
-            <div ng-if="bibtexGenerated && !bibtexExportError" class="bottomBuffer">              
-              <a download="orcid.bib" href="{{bibtexURL}}" id="downloadlink">Click to Download</a>
+              <strong><@orcid.msg 'workspace.bibtexExporter.error'/></strong>
             </div>
           </div>    
           </#if>
@@ -417,7 +413,7 @@
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                   <p>
-                  <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="http://support.orcid.org/knowledgebase/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
+                  <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="${knowledgeBaseUri}/articles/390530" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
                   </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
@@ -439,7 +435,7 @@
             <div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">             
               <div class="row full-height-row">   
                 <div class="col-md-9 col-sm-9 col-xs-7">
-                  <h3  class="workspace-title" ng-class="work.title.value == null ? 'bibtex-content-missing'">
+                  <h3 class="workspace-title" ng-class="work.title.value == null ? 'bibtex-content-missing' :  ''">
                     <span ng-if="work.title.value != null">{{work.title.value}}</span>
                     <span ng-if="work.title.value == null">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</span>
                     <span class="journaltitle" ng-if="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>
@@ -487,18 +483,27 @@
 </#escape>
 
 <script type="text/ng-template" id="verify-email-modal">  
-  <div class="lightbox-container">
+  <div class="lightbox-container"> 
     <div class="row">
-      <div class="col-md-12 col-xs-12 col-sm-12">
+      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="verifiedModalEnabled">
+        <!-- New -->
+        <h4><@orcid.msg 'workspace.your_primary_email_new'/></h4>
+        <p><@orcid.msg 'workspace.ensure_future_access1'/></p>
+        <p><@orcid.msg 'workspace.ensure_future_access2'/> <a href="mailto:{{emailsPojo.emails[0].value}}" target="_blank">{{emailsPojo.emails[0].value}}</a></p>
+        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
+        <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
+        <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
+      </div>
+
+      <div class="col-md-12 col-xs-12 col-sm-12" ng-if="!verifiedModalEnabled">
+        <!-- Original -->
         <h4><@orcid.msg 'workspace.your_primary_email'/></h4>
-        <@orcid.msg 'workspace.ensure_future_access'/>
-        <br />
-        <br />            
+        <p><@orcid.msg 'workspace.ensure_future_access'/></p>
         <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>        
         <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
       </div>
-    </div>    
-  </div>    
+    </div>
+  </div>
 </script>
 
 <script type="text/ng-template" id="combine-work-template">

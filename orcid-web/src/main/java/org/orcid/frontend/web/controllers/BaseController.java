@@ -51,6 +51,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -155,6 +156,9 @@ public class BaseController {
 
     @Resource
     protected CsrfTokenRepository csrfTokenRepository;
+    
+    @Resource
+    protected RecordNameManager recordNameManager;
 
     protected static final String EMPTY = "empty";
 
@@ -218,7 +222,7 @@ public class BaseController {
         return knowledgeBaseUri;
     }
 
-    @Value("${org.orcid.core.knowledgeBaseUri:http://support.orcid.org/knowledgebase}")
+    @Value("${org.orcid.core.knowledgeBaseUri:https://support.orcid.org/knowledgebase}")
     public void setKnowledgeBaseUri(String knowledgeBaseUri) {
         this.knowledgeBaseUri = knowledgeBaseUri;
     }
@@ -421,6 +425,18 @@ public class BaseController {
     @ModelAttribute("isPasswordConfirmationRequired")
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
+    } 
+    
+    @Value("${org.orcid.emailVerificationManualEdit.enabled:false}")
+    private boolean emailVerificationManualEditEnabled;
+    
+    @ModelAttribute("emailVerificationManualEditEnabled")
+    public boolean isEmailVerificationManualEditEnabled() {
+        return emailVerificationManualEditEnabled;
+    }
+
+    public void setEmailVerificationManualEditEnabled(boolean emailVerificationManualEditEnabled) {
+        this.emailVerificationManualEditEnabled = emailVerificationManualEditEnabled;
     }
 
     @ModelAttribute("request")

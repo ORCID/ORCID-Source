@@ -16,15 +16,18 @@
  */
 package org.orcid.api.publicV2.server;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -36,11 +39,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
+import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.search_v2.Result;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -59,9 +70,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
-
-    @Resource(name = "publicV2ApiServiceDelegatorRc3")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+    
+	@Resource(name = "publicV2ApiServiceDelegatorV2")
+	PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
     @Resource
     private ProfileDao profileDao;
@@ -722,12 +733,10 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @Test
+    @Test(expected = OrcidNoBioException.class)
     public void testViewBiographyWhereBiographyIsNull() {
-        Response response = serviceDelegator.viewBiography(userWithNoBio);
-        assertNotNull(response.getEntity());
-        Biography biography = (Biography) response.getEntity();
-        assertNull(biography.getContent());
+        serviceDelegator.viewBiography(userWithNoBio);
+        fail();
     }
 
     @Test(expected = OrcidNotClaimedException.class)
@@ -764,7 +773,45 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.viewPerson(unclaimedUserOrcid);
         fail();
     }
+    
+    @Test
+    public void testSearchByQuery() {
+        Search search = new Search();
+        Result result = new Result();
+        result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
+        search.getResults().add(result);
+        Response searchResponse = Response.ok(search).build();
+        PublicV2ApiServiceDelegatorImpl delegator = Mockito.mock(PublicV2ApiServiceDelegatorImpl.class);
+        Mockito.when(delegator.searchByQuery(Matchers.<Map<String, List<String>>>any())).thenReturn(searchResponse);
+        PublicV2ApiServiceVersionedDelegatorImpl versionedDelegator = new PublicV2ApiServiceVersionedDelegatorImpl();
+        versionedDelegator.setMemberV2ApiServiceDelegator(delegator);
+        Response response = versionedDelegator.searchByQuery(new HashMap<String, List<String>>());
+        
+        // just testing MemberV2ApiServiceDelegatorImpl's response is returned 
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Search);
+        assertEquals(1, ((Search) response.getEntity()).getResults().size());
+        assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
+    }
 
+    @Test(expected = NoResultException.class)
+    public void testViewClientNonExistent() {
+        serviceDelegator.viewClient("some-client-that-doesn't-exist");
+        fail();
+    }
+
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof Client);
+
+        Client client = (Client) response.getEntity();
+        assertEquals("Source Client 2", client.getName());
+        assertEquals("A test source client", client.getDescription());
+    }
+    
     private void updateProfileSubmissionDate(String orcid, int increment) {
         // Update the submission date so it is long enough
         ProfileEntity profileEntity = profileDao.find(orcid);

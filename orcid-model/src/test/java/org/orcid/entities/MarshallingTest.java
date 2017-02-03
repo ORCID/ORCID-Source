@@ -21,9 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -43,9 +40,6 @@ import org.orcid.jaxb.model.message.OrcidWorks;
  */
 
 public class MarshallingTest {
-
-    private static final List<String> GENESIS = new ArrayList<String>(
-            Arrays.asList("Peter Gabriel", "Tony Banks", "Anthony Phillips", "Mike Rutherford", "Chris Stewart"));
 
     @Test
     public void testMarshallingFullMessage() throws JAXBException {

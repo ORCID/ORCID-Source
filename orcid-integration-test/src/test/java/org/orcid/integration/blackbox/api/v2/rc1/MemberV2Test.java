@@ -91,88 +91,6 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }    
-    
-    @Test
-    public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
-        long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        workToCreate.setPutCode(null);
-        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId.setRelationship(Relationship.PART_OF);
-        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
-        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        gotWork.getWorkTitle().getTitle().setContent("updated title");
-        
-        //Save the original visibility
-        Visibility originalVisibility = gotWork.getVisibility();
-        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
-        
-        //Verify you cant update the visibility
-        gotWork.setVisibility(updatedVisibility);              
-        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
-        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
-        OrcidError error = putResponse.getEntity(OrcidError.class);
-        assertNotNull(error);
-        assertEquals(Integer.valueOf(9035), error.getErrorCode());
-                        
-        //Set the visibility again to the initial one
-        gotWork.setVisibility(originalVisibility);
-        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
-        assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
-        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
-        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-    }
-
-    @Test
-    public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
-        workToCreate.setPutCode(null);
-        workToCreate.setVisibility(Visibility.PUBLIC);
-        workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
-        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        wExtId.setRelationship(Relationship.SELF);
-        workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
-        assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + this.getUser1OrcidId() + "/work/\\d+"));
-        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-        Work gotWork = getResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        gotWork.getWorkTitle().getTitle().setContent("updated title");
-        String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
-        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotWork);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
-        ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-        assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
-        Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
-        assertEquals("Current treatment of left main coronary artery disease", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-    }
 
     @Test
     public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
@@ -238,7 +156,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         gotEducation.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEducation);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Education gotAfterUpdateEducation = getAfterUpdateResponse.getEntity(Education.class);
@@ -312,7 +230,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         gotEmployment.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotEmployment);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
@@ -405,7 +323,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotFunding);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Funding gotAfterUpdateFunding = getAfterUpdateResponse.getEntity(Funding.class);
@@ -502,7 +420,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         gotPeerReview.getSubjectName().getTitle().setContent("updated title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), profileCreateToken, gotPeerReview);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), putResponse.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         PeerReview gotAfterUpdatePeerReview = getAfterUpdateResponse.getEntity(PeerReview.class);

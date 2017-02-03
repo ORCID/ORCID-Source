@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.admin.LockReason;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -40,12 +42,13 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.common_rc3.CreditName;
+import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -62,11 +65,11 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.FamilyName;
-import org.orcid.jaxb.model.record_rc3.GivenNames;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -255,7 +258,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected WorkDao workDao;
     @Resource
-    protected OrgAffiliationRelationDao affiliationsDao;
+    protected OrgAffiliationRelationDao orgAffiliationRelationDao;
     @Resource
     protected ProfileFundingDao profileFundingDao;
     @Resource
@@ -278,6 +281,10 @@ public class SetUpClientsAndUsers {
     protected GivenPermissionToDao givenPermissionToDao;   
     @Resource
     protected BiographyManager biographyManager;
+    @Resource
+    protected RecordNameManager recordNameManager;    
+    @Resource
+    protected ClientDetailsDao clientDetailsDao;
     
     @Before
     public void before() throws Exception {
@@ -335,8 +342,11 @@ public class SetUpClientsAndUsers {
         Map<String, String> client2Params = getParams(client2ClientId);
         ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
         if (client2 == null) {
-            createClient(client2Params);
-        }        
+            createClient(client2Params);            
+        } 
+        
+        //Ensure persistent tokens is disabled for client # 2
+        clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -462,7 +472,7 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            orcidProfileManager.lockProfile(params.get(ORCID));               
+            orcidProfileManager.lockProfile(params.get(ORCID), LockReason.SPAM.getLabel(), null);               
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {
@@ -492,26 +502,28 @@ public class SetUpClientsAndUsers {
             }
 
             // Set default names
-            PersonalDetails personalDetails = new PersonalDetails();
             Name name = new Name();
             name.setCreditName(new CreditName(params.get(CREDIT_NAME)));
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
-            name.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            personalDetails.setName(name);            
-            orcidProfileManager.updateNames(orcid, personalDetails);
-                       
+            name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));                       
+            if(recordNameManager.exists(orcid)) {
+                recordNameManager.updateRecordName(orcid, name);
+            } else {
+                recordNameManager.createRecordName(orcid, name);
+            }
+                                   
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            org.orcid.jaxb.model.record_rc3.Biography bio = biographyManager.getBiography(orcid);
+            org.orcid.jaxb.model.record_v2.Biography bio = biographyManager.getBiography(orcid, 0L);
             if (bio == null || bio.getContent() == null) {
-                bio = new org.orcid.jaxb.model.record_rc3.Biography(params.get(BIO)); 
-                bio.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                bio = new org.orcid.jaxb.model.record_v2.Biography(params.get(BIO)); 
+                bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.createBiography(orcid, bio);
             } else {
                 bio.setContent(params.get(BIO));
-                bio.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                bio.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.updateBiography(orcid, bio);
             }
             
@@ -584,10 +596,10 @@ public class SetUpClientsAndUsers {
             }
             
             // Remove affiliations
-            List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);
+            List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);
             if (affiliations != null && !affiliations.isEmpty()) {
                 for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                    affiliationsDao.remove(affiliation.getId());
+                    orgAffiliationRelationDao.remove(affiliation.getId());
                 }
             }
 
@@ -615,6 +627,9 @@ public class SetUpClientsAndUsers {
                 }
             }
 
+            //Unlock just in case it is locked
+            profileDao.unlockProfile(orcid);
+            
             return true;
         }
         return false;
@@ -628,7 +643,7 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
         
-        ClientType clientType = ClientType.PREMIUM_CREATOR;
+        ClientType clientType = ClientType.PREMIUM_CREATOR;        
         
         if(params.containsKey(CLIENT_TYPE)) {
             clientType = ClientType.fromValue(params.get(CLIENT_TYPE));
@@ -655,18 +670,24 @@ public class SetUpClientsAndUsers {
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
         String memberId = params.get(MEMBER_ID);
         
-        Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
-        if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
-            scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        Set<String> scopes = null;
+        
+        if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
+            scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
+        } else {
+            scopes = orcidClientGroupManager.premiumCreatorScopes();
+            if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
+                scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+            }
+                   
+            //Add scopes to allow group read and update
+            scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+            scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+            
+            //Add notifications scope
+            scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());            
         }
-               
-        //Add scopes to allow group read and update
-        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
-        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
-        
-        //Add notifications scope
-        scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
-        
+            
         clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, true);
     }

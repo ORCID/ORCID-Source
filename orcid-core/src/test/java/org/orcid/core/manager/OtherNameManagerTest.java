@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,10 +35,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 public class OtherNameManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -59,7 +63,7 @@ public class OtherNameManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        otherNameManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", sourceManager); 
     }
     
     @AfterClass
@@ -117,6 +121,46 @@ public class OtherNameManagerTest extends BaseTest {
         
         assertNotNull(otherName);
         assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+    }
+    
+    @Test
+    public void getAllTest() {
+        String orcid = "0000-0000-0000-0003";
+        OtherNames elements = otherNameManager.getOtherNames(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getOtherNames());
+        assertEquals(5, elements.getOtherNames().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(OtherName element : elements.getOtherNames()) {
+            if(13 == element.getPutCode()){
+                found1 = true;
+            } else if(14 == element.getPutCode()){
+                found2 = true;
+            } else if(15 == element.getPutCode()){
+                found3 = true;
+            } else if(16 == element.getPutCode()){
+                found4 = true;
+            } else if(17 == element.getPutCode()){
+                found5 = true;
+            } else {
+                fail("Invalid put code found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void getPublicTest() {
+        String orcid = "0000-0000-0000-0003";        
+        OtherNames elements = otherNameManager.getPublicOtherNames(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getOtherNames());
+        assertEquals(1, elements.getOtherNames().size());
+        assertEquals(Long.valueOf(13), elements.getOtherNames().get(0).getPutCode());
     }
     
     private OtherName getOtherName() {

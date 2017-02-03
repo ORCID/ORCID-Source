@@ -74,7 +74,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Test    
     public void testAddProfileKeyword() {
         assertEquals(4, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
-        boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        boolean result = profileKeywordDao.addProfileKeyword("4444-4444-4444-4443", "new_keyword", "4444-4444-4444-4443", null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         assertTrue(result);    
         assertEquals(5, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());
         
@@ -82,7 +82,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         entity.setKeywordName("this is my keyword");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
         entity.setSourceId("4444-4444-4444-4443");
-        entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);        
+        entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);        
         
         profileKeywordDao.persist(entity);        
         assertEquals(6, profileKeywordDao.getProfileKeywors("4444-4444-4444-4443", 0L).size());

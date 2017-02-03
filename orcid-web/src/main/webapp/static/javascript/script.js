@@ -14,6 +14,132 @@
  *
  * =============================================================================
  */
+
+/*
+ * 1 - Utility functions 
+ */
+function openImportWizardUrl(url) {
+    var win = window.open(url, "_target");
+    setTimeout( function() {
+        if(!win || win.outerHeight === 0) {
+            //First Checking Condition Works For IE & Firefox
+            //Second Checking Condition Works For Chrome
+            window.location.href = url;
+        }
+    }, 250);
+    $.colorbox.close();
+}
+
+function contains(arr, obj) {
+    var index = arr.length;
+    while (index--) {
+       if (arr[index] === obj) {
+           return true;
+       }
+    }
+    return false;
+}
+
+function formatDate(oldDate) {
+    var date = new Date(oldDate);
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    if(month < 10) {
+        month = '0' + month;
+    }
+    if(day < 10) {
+        day = '0' + day;
+    }
+    return (year + '-' + month + '-' + day);
+}
+
+function getScripts(scripts, callback) {
+    var progress = 0;
+    var internalCallback = function () {        
+        if (++progress == scripts.length - 1) {
+            callback();
+        }
+    };    
+    scripts.forEach(function(script) {        
+        $.getScript(script, internalCallback);        
+    });
+}
+
+function formColorBoxWidth() {
+    return isMobile()? '100%': '800px';
+}
+
+function formColorBoxResize() {
+    if (isMobile())
+        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+    else
+        // IE8 and below doesn't take auto height
+        // however the default div height
+        // is auto anyway
+        $.colorbox.resize({width:'800px'});
+}
+
+function fixZindexIE7(target, zindex){
+    if(isIE() == 7){
+        $(target).each(function(){
+            $(this).css('z-index', zindex);
+            --zindex;
+        });
+    }
+}
+
+function emptyTextField(field) {
+    if (field != null
+        && field.value != null
+        && field.value.trim() != '') {
+        return false;
+    }
+    return true;
+}
+
+function addComma(str) {
+    if (str.length > 0) return str + ', ';
+    return str;
+}
+
+//Needs refactor for dw object
+function removeBadContributors(dw) {
+    for (var idx in dw.contributors) {
+        if (dw.contributors[idx].contributorSequence == null
+            && dw.contributors[idx].email == null
+            && dw.contributors[idx].orcid == null
+            && dw.contributors[idx].creditName == null
+            && dw.contributors[idx].contributorRole == null
+            && dw.contributors[idx].creditNameVisibility == null) {
+                dw.contributors.splice(idx,1);
+            }
+    }
+}
+
+//Needs refactor for dw object
+function removeBadExternalIdentifiers(dw) {
+    for(var idx in dw.workExternalIdentifiers) {
+        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
+            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+            dw.workExternalIdentifiers.splice(idx,1);
+        }
+    }
+}
+
+function isEmail(email) {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
+function getParameterByName(name) {
+    var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+
 //IE7 hack
 if (!(window.console && console.log)) {
     console = {
@@ -441,7 +567,7 @@ $(function() {
                             loginUrl = baseUrl + 'social/signin/auth.json';
                         }
                         $('form#loginForm').attr('disabled', 'disabled');
-                        $('#login-error-mess').hide();
+                        $('#login-error-mess, #login-deactivated-error').hide();
                         $('#ajax-loader').css('display', 'block');
                         $
                                 .ajax(
@@ -499,8 +625,8 @@ $(function() {
                                                             message = om
                                                                     .get('orcid.frontend.security.deprecated');
                                                     } else if (data.disabled) {
-                                                            message = om
-                                                                   .get('orcid.frontend.security.orcid_deactivated');
+                                                            showLoginDeactivatedError();
+                                                            return;
                                                     } else if (data.unclaimed) {
                                                         var resendClaimUrl = window.location
                                                                 + "/../resend-claim";
@@ -565,18 +691,19 @@ $(function() {
     };
     
     function showLoginError(message) {
-        if ($('form#loginForm #login-error-mess').length == 0) {
+        if ($('form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible').length == 0) {
              $(
-                "<div class='alert' id='login-error-mess'>"
+                "<div class='orcid-error' id='login-error-mess'>"
                         + message
                         + "</div>")
                 .hide()
                 .appendTo(
                         'form#loginForm')
                 .fadeIn('fast');
-        } else {
+        } 
+        else {
              $(
-             'form#loginForm #login-error-mess')
+             'form#loginForm #login-error-mess, form#loginForm #login-deactivated-error:visible')
              .fadeOut(
                     'fast',
                      function() {
@@ -587,7 +714,21 @@ $(function() {
                                          'fast');
                      });
         }
-        
+    }
+    
+    function showLoginDeactivatedError() {
+        angular.element($("#login-deactivated-error")).scope().showDeactivationError();
+        if ($('form#loginForm #login-error-mess').length == 0) {
+            $('form#loginForm #login-deactivated-error').fadeIn('fast');
+        } else {
+             $(
+             'form#loginForm #login-error-mess')
+             .fadeOut(
+                    'fast',
+                     function() {
+                        $('form#loginForm #login-deactivated-error').fadeIn('fast');
+                     });
+        }
     }
 
     // Privacy toggle
@@ -784,7 +925,7 @@ $(function() {
  * "citationType":{"errors":[],"value":"formatted-unspecified","required":true,"getRequiredMessage":null},"required":true,"getRequiredMessage":null},
  * "countryCode":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "countryName":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
- * "contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"creditNameVisibility":null}],
+ * "contributors":[{"errors":[],"contributorSequence":{"errors":[],"value":"","required":true,"getRequiredMessage":null},"email":null,"orcid":null,"uri":null,"creditName":null,"contributorRole":{"errors":[],"value":"","required":true,"getRequiredMessage":null}}],
  * "workExternalIdentifiers":[ { "errors":[],
  * "workExternalIdentifierId":{"errors":[],"value":null,"required":true,"getRequiredMessage":null},
  * "workExternalIdentifierType":{"errors":[],"value":"","required":true,"getRequiredMessage":null}
@@ -816,12 +957,28 @@ bibToWorkTypeMap['techreport'] = [ 'publication', 'report' ];
 bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];
 
 function workExternalIdentifierId(work, id, value) {
+	
+	//Define relationship type based on work type
+	var relationship = 'self';
+	if(id == 'issn') {
+		if(work.workType.value != 'book') {
+			relationship = 'part-of';
+		}
+	} else if(id == 'isbn') {
+		if(work.workType.value == 'book-chapter' || work.workType.value == 'conference-paper') {
+			relationship = 'part-of';
+		}
+	} 
+	
     var ident = {
         workExternalIdentifierId : {
             'value' : value
         },
         workExternalIdentifierType : {
             'value' : id
+        }, 
+        relationship : {
+        	'value' : relationship
         }
     };
     if (work.workExternalIdentifiers[0].workExternalIdentifierId.value == null)
@@ -834,10 +991,9 @@ function populateWorkAjaxForm(bibJson, work) {
 
     // get the bibtex back put it in the citation field
     var bibtex = bibtexParse.toBibtex([ bibJson ]);
-    work.citation.citation.value = bibtex;
-    work.citation.citationType.value = 'bibtex';
-
-    // set the work type based off the entry type
+    work.citation = {'citation': {'value': bibtex},'citationType': {'value': 'bibtex'}}
+    
+    // set the work type based off the entry type    
     if (bibJson.entryType) {
 
         var type = bibJson.entryType.toLowerCase();
@@ -3877,8 +4033,8 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['doi'] = function (id) {
-      if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'http://' + id;
-      return 'http://dx.doi.org/' + id;
+      if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'https://' + id;
+      return 'https://dx.doi.org/' + id;
    };
 
    typeMap['ethos'] = function (id) {
@@ -3966,12 +4122,16 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['kuid'] = function (id) {
-       return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
+       return 'https://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
    };
    
    typeMap['lensid'] = function (id) {
        if (id.toLowerCase().startsWith('www.lens.org')) return 'https://' + id;
        return 'https://www.lens.org/' + encodeURIComponent(id);
+   };
+   
+   typeMap['cienciaiul'] = function (id) {
+       return 'https://ciencia.iscte-iul.pt/id/' + encodeURIComponent(id);
    };
 
    exports.getLink = function(id, type) {

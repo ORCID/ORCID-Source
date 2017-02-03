@@ -19,8 +19,8 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public interface JpaJaxbPeerReviewAdapter {

@@ -17,6 +17,7 @@
 package org.orcid.api.common;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -61,16 +62,24 @@ public class OauthAuthorizationPageHelper {
         }
         
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
-
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
         
-        String result = webDriver.getCurrentUrl();
-        return result;
+        try {
+	        BBBUtil.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
+	        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+	            public Boolean apply(WebDriver d) {
+	                return d.getTitle().equals("ORCID Playground");
+	            }
+	        });
+        } catch(TimeoutException e) {
+        	//It might be the case that we are already in the ORCID Playground page, so, lets check for that case
+        	(new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+                public Boolean apply(WebDriver d) {
+                    return d.getTitle().equals("ORCID Playground");
+                }
+            });
+        }                
+        
+        return webDriver.getCurrentUrl();        
     }
     
     public static String authorizeOnAlreadyLoggedInUser(final WebDriver loggedInDriver, String baseUrl, String clientId, String redirectUri, String scopes, String stateParam) {

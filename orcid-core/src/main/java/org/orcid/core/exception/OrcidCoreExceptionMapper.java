@@ -35,13 +35,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
+
 public class OrcidCoreExceptionMapper {
     
     public static final String V2_RC1 = "2.0_rc1";
     public static final String V2_RC2 = "2.0_rc2";
-    public static final String V2_RC3 = "2.0_rc3";    
+    public static final String V2_RC3 = "2.0_rc3";
+    public static final String V2_RC4 = "2.0_rc4";
+    public static final String V2 = "2.0";
 
-    private static final String latest = "2.0_rc3";
+    private static final String latest = "2.0";
     
     @Resource
     private MessageSource messageSource;
@@ -55,6 +59,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDeprecatedException.class, new ImmutablePair<>(Response.Status.MOVED_PERMANENTLY, 9007));
 
         // 400
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(JsonParseException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9001));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalArgumentException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9006));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidBadRequestException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9012));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MismatchedPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9019));
@@ -71,8 +76,8 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OAuth2Exception.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9003));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidUnauthorizedException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9017));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidInvalidScopeException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9015));        
+        
         // 403
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(SecurityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9004));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalStateException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9005));
@@ -81,13 +86,16 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidForbiddenException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9014));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidVisibilityException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9013));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(VisibilityMismatchException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9035));
-
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidAccessControlException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9038));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNonPublicElementException.class, new ImmutablePair<>(Response.Status.FORBIDDEN, 9039));
+        
         // 404
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9011));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9016));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidClientNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9027));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidWebhookNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9028));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9029));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNoBioException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9041));
 
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
@@ -96,7 +104,8 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedElementException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9030));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeRequiredException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9031));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9032));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036));             
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036)); 
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidElementCantBeDeletedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9040)); 
     }
     
     public static Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {
@@ -109,8 +118,8 @@ public class OrcidCoreExceptionMapper {
         return pair != null ? pair : new ImmutablePair<>(Response.Status.INTERNAL_SERVER_ERROR, 9008);
     }
     
-    public org.orcid.jaxb.model.error_rc3.OrcidError getOrcidError(Throwable t) {
-        return (org.orcid.jaxb.model.error_rc3.OrcidError) getOrcidError(t, latest);
+    public org.orcid.jaxb.model.error_v2.OrcidError getOrcidError(Throwable t) {
+        return (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidError(t, latest);
     }
     
     public Object getOrcidError(Throwable t, String version) {
@@ -123,7 +132,11 @@ public class OrcidCoreExceptionMapper {
     
     public Object getOrcidError(Integer errorCode, Integer status, Throwable t, String version) {
         Object orcidError = null;
-        if(V2_RC3.equals(version)) {
+        if(V2.equals(version)) {
+        	orcidError = (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidErrorV2(errorCode, status, t);
+        } else if(V2_RC4.equals(version)) {
+            orcidError = (org.orcid.jaxb.model.error_rc4.OrcidError) getOrcidErrorV2Rc4(errorCode, status, t);
+        } else if(V2_RC3.equals(version)) {
             orcidError = (org.orcid.jaxb.model.error_rc3.OrcidError) getOrcidErrorV2Rc3(errorCode, status, t);
         } else if (V2_RC2.equals(version)) {
             orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
@@ -180,6 +193,36 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
 
+    private org.orcid.jaxb.model.error_rc4.OrcidError getOrcidErrorV2Rc4(int errorCode, int status, Throwable t) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.error_rc4.OrcidError orcidError = new org.orcid.jaxb.model.error_rc4.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
+        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
+        Map<String, String> params = null;
+        if (t instanceof ApplicationException) {
+            params = ((ApplicationException) t).getParams();
+        }
+        orcidError.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+        orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
+        return orcidError;
+    }
+    
+    private org.orcid.jaxb.model.error_v2.OrcidError getOrcidErrorV2(int errorCode, int status, Throwable t) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.error_v2.OrcidError orcidError = new org.orcid.jaxb.model.error_v2.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
+        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
+        Map<String, String> params = null;
+        if (t instanceof ApplicationException) {
+            params = ((ApplicationException) t).getParams();
+        }
+        orcidError.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+        orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
+        return orcidError;
+    }
+    
     private String getDeveloperMessage(int errorCode, Throwable t, Map<String, String> params) {
         Locale locale = localeManager.getLocale();
 

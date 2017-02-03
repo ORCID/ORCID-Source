@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.jaxb.model.common_rc3.OrganizationHolder;
+import org.orcid.jaxb.model.common_v2.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.persistence.dao.OrgDao;
@@ -148,9 +148,9 @@ public class OrgManagerImpl implements OrgManager {
             return null;
         
         OrgEntity orgEntity = new OrgEntity();
-        org.orcid.jaxb.model.common_rc3.Organization organization = holder.getOrganization();
+        org.orcid.jaxb.model.common_v2.Organization organization = holder.getOrganization();
         orgEntity.setName(organization.getName());
-        org.orcid.jaxb.model.common_rc3.OrganizationAddress address = organization.getAddress();
+        org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(Iso3166Country.fromValue(address.getCountry().value()));

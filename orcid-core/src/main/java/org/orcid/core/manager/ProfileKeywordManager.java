@@ -16,29 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 
-public interface ProfileKeywordManager {
-    void setSourceManager(SourceManager sourceManager); 
-    /**
-     * Return the list of keywords associated to a specific profile
-     * @param orcid
-     * @return 
-     *          the list of keywords associated with the orcid profile
-     * */
-    Keywords getKeywords(String orcid, long lastModified);
-    
-    /**
-     * Return the list of public keywords associated to a specific profile
-     * @param orcid
-     * @return 
-     *          the list of keywords associated with the orcid profile
-     * */
-    Keywords getPublicKeywords(String orcid, long lastModified);
-    
-    Keyword getKeyword(String orcid, Long putCode);
-
+public interface ProfileKeywordManager extends ProfileKeywordManagerReadOnly {
     boolean deleteKeyword(String orcid, Long putCode, boolean checkSource);
     
     Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest);

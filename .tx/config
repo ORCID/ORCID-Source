@@ -1,12 +1,6 @@
 [main]
 host = https://www.transifex.com
 
-[registry.api]
-file_filter = orcid-core/src/main/resources/i18n/api_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/api_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 [registry.email]
 file_filter = orcid-core/src/main/resources/i18n/email_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_en.properties

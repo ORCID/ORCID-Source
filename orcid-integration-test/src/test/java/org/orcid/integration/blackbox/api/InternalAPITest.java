@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,7 +93,7 @@ public class InternalAPITest {
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.PUBLIC);
         assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), clientResponse.getStatus());
     }
     
     @Test
@@ -105,7 +105,7 @@ public class InternalAPITest {
         params.add("scope", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         ClientResponse clientResponse = oauthHelper.getResponse(params, APIRequestType.MEMBER);
         assertNotNull(clientResponse);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), clientResponse.getStatus());
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), clientResponse.getStatus());
     }
     
     @Test

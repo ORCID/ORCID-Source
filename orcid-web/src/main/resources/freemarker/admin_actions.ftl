@@ -242,7 +242,7 @@
 	<div class="col-md-9 col-sm-12 col-xs-12 admin-options">	
 		<!-- Switch user -->
 		<a name="switch-user"></a>
-		<div ng-controller="switchUserCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="switchUserModalCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.switch_user' /></a>
@@ -278,7 +278,7 @@
 		
 		<!-- Reset password -->
 		<a name="reset-password"></a>
-		<div ng-controller="resetPasswordCtrl" class="workspace-accordion-item" ng-cloak>
+		<div ng-controller="resetPasswordCtrlModal" class="workspace-accordion-item" ng-cloak>
 			<p>
 				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
 				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.reset_password' /></a>
@@ -494,6 +494,10 @@
 					<label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
 					<div class="controls">
 						<textarea id="orcid_to_lock" ng-model="orcidToLock" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" ></textarea>
+						<select ng-model="lockReason">
+							<option ng-repeat="reason in lockReasons" value="{{reason}}">{{reason}}</option>
+        				</select>
+        				<textarea id="lock_reason_description" ng-model="description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
 					</div>
 					<span id="bottom-confirm-lock-profile" ng-click="lockAccount()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
 				</div>

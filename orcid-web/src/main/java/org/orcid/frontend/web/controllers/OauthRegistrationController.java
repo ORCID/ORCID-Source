@@ -65,7 +65,7 @@ public class OauthRegistrationController extends OauthControllerBase {
         if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
-        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response, false));
+        OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(StringUtils.EMPTY);
@@ -118,6 +118,10 @@ public class OauthRegistrationController extends OauthControllerBase {
                     // Set the redirect uri
                     if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
                         redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
+                    // remove email access scope if present but not granted
+                    if (requestInfoForm.containsEmailReadPrivateScope() && !form.isEmailAccessAllowed()) {
+                        requestInfoForm.removeEmailReadPrivateScope();
+                    }
                     // Set the scope param
                     if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()))
                         redirectUri += "&scope=" + requestInfoForm.getScopesAsString();
@@ -168,7 +172,7 @@ public class OauthRegistrationController extends OauthControllerBase {
                 Map<String, String> params = new HashMap<String, String>();
                 Map<String, String> approvalParams = new HashMap<String, String>();                   
                 
-                fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled());
+                fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled(), form.isEmailAccessAllowed());
 
                 // Authorize
                 try {

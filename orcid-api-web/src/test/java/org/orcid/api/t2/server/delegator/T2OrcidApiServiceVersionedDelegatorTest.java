@@ -109,7 +109,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     private T2OrcidApiServiceDelegator t2OrcidApiServiceDelegatorLatest;
 
     @Resource
-    private OrgAffiliationRelationDao orgAffiliationDao;
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
     
     @Mock
     private UriInfo mockedUriInfo;
@@ -470,7 +470,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4441", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4441", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).size());
     }      
     
     @Test
@@ -481,14 +481,14 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(5, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4446");
         response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4446", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(5, orgAffiliationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());               
+        assertEquals(5, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4446", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).size());               
     }
     
     @Test
@@ -512,7 +512,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         Response response = t2OrcidApiServiceDelegatorLatest.addAffiliations(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());                       
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());        
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).size());        
         
         orcidMessage = buildMessageWithAffiliation(AffiliationType.EDUCATION, "My dept", "My Role", "4444-4444-4444-4499");
         
@@ -533,9 +533,9 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
-        assertEquals(1, orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).size());    
+        assertEquals(1, orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).size());    
         
-        OrgAffiliationRelationEntity orgEntity = orgAffiliationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.message.AffiliationType.EDUCATION).get(0);
+        OrgAffiliationRelationEntity orgEntity = orgAffiliationRelationDao.getByUserAndType("4444-4444-4444-4499", org.orcid.jaxb.model.record_v2.AffiliationType.EDUCATION).get(0);
         assertNotNull(orgEntity);
         assertNotNull(orgEntity.getOrg());
         assertEquals("An institution", orgEntity.getOrg().getName());

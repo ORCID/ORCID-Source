@@ -23,14 +23,16 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
@@ -42,7 +44,13 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     private PeerReviewManager peerReviewManager;
     
     @Resource
+    private ProfileFundingManager profileFundingManager;
+    
+    @Resource
     private WorkManager workManager;
+    
+    @Resource
+    private AffiliationsManager affiliationsManager;
 
     @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")
     public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid, long lastModified) {
@@ -61,7 +69,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
-                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+                    if(peerReview.getVisibility().equals(Visibility.PUBLIC)) {
                         peerReviewMap.put(peerReview.getPutCode(), peerReview);
                     }
                 }
@@ -70,27 +78,26 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         return peerReviewMap;
     }
     
-    @Cacheable(value = "pub-funding-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, Funding> fundingMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-funding-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid, long lastModified) {
+    	List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified);
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getFundings() != null) {
-                for (Funding funding : profile.getOrcidActivities().getFundings().getFundings())
-                    if (Visibility.PUBLIC.equals(funding.getVisibility()))
-                        fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
-            }
-        }
+		if (fundings != null) {
+			for (Funding funding : fundings) {
+				if (funding.getVisibility().equals(Visibility.PUBLIC))
+					fundingMap.put(Long.valueOf(funding.getPutCode()), funding);
+			}
+		}
         return fundingMap;
     }
 
-    @Cacheable(value = "pub-affiliation-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, Affiliation> affiliationMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-affiliation-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, long lastModified) {
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        if (profile.getOrcidActivities() != null) {
-            if (profile.getOrcidActivities().getAffiliations() != null) {
-                for (Affiliation aff:profile.getOrcidActivities().getAffiliations().getAffiliation())
-                    if (Visibility.PUBLIC.equals(aff.getVisibility()))
-                        affiliationMap.put(Long.valueOf(aff.getPutCode()), aff);
+        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);        
+        for(Affiliation affiliation : affiliations) {
+            if(Visibility.PUBLIC.equals(affiliation.getVisibility())) {
+                affiliationMap.put(affiliation.getPutCode(), affiliation);
             }
         }
         return affiliationMap;
@@ -118,16 +125,8 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
     public String getPublicCreditName(ProfileEntity profile) {
         String publicCreditName = null;
-        if(profile != null) {
-            if(profile.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
-                if(!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
-                    publicCreditName = profile.getRecordNameEntity().getCreditName();
-                } else {
-                    String givenName = profile.getRecordNameEntity().getGivenNames();
-                    String familyName = profile.getRecordNameEntity().getFamilyName();
-                    publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                }
-            }            
+        if(profile != null && profile.getRecordNameEntity() != null) {
+            publicCreditName = RecordNameUtils.getPublicName(profile.getRecordNameEntity());        
         }
         
         return publicCreditName;

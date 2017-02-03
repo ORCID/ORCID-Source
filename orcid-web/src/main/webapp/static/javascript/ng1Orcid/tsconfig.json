@@ -1,0 +1,45 @@
+{
+  "angularCompilerOptions": {
+    "entryModule": "app/modules/ng2_app#Ng2AppModule"
+  },
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    //"noEmit": true,
+    //"noEmitHelpers": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      //"hammerjs",
+      "jasmine",
+      "node"
+      //"source-map",
+      //"uglify-js",
+      //"webpack"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "forkChecker": true,
+    "useWebpackText": true
+  },
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

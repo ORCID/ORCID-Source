@@ -16,17 +16,15 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 
-public interface ClientDetailsManager extends ClientDetailsService {
+public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
     /**
      * Creates a new client without any knowledge of the client id or secret.
      * This to assist in the creation of clients from the automated client
@@ -58,21 +56,13 @@ public interface ClientDetailsManager extends ClientDetailsService {
     ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
             Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);    
 
-    ClientDetailsEntity findByClientId(String orcid);
-
     void removeByClientId(String clientId);    
 
     public void addClientRedirectUri(String clientId, String uri);
 
     ClientDetailsEntity merge(ClientDetailsEntity clientDetails);    
 
-    List<ClientDetailsEntity> getAll();
-
     void updateLastModified(String clientId);
-    
-    Date getLastModified(String clientId);
-
-    Date getLastModifiedByIdp(String idp);
     
     /**
      * Set a new client secret for the specific client and set the other keys as
@@ -91,30 +81,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
      * */
     void cleanOldClientKeys();
 
-    boolean exists(String cliendId);
-    
-    /**
-     * Verifies if a client belongs to the given group id
-     * @param clientId
-     * @param groupId
-     * @return true if clientId belongs to groupId
-     * */
-    boolean belongsTo(String clientId, String groupId);
-    
-    /**
-     * Fetch all clients that belongs to a group
-     * @param groupId
-     *  Group id
-     * @return A list containing all clients that belongs to the given group
-     * */
-    List<ClientDetailsEntity> findByGroupId(String groupId);
-    
-    ClientDetailsEntity getPublicClient(String ownerId);
-    
-    String getMemberName(String clientId);
-
-    OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
-    
     /**
      * Utility function that will help us to create and persist a clientDetailsEntity giving all the details
      * */
@@ -122,5 +88,5 @@ public interface ClientDetailsManager extends ClientDetailsService {
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);
     
-    ClientDetailsEntity findByIdP(String idp);
+    ClientDetailsEntity findByIdP(String idp);    
 }

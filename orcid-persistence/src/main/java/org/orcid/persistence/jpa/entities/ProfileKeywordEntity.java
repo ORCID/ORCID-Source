@@ -30,7 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity

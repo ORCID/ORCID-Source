@@ -66,7 +66,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return d;
     }
     
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.FuzzyDate fuzzyDate) {
+    public static Date valueOf(org.orcid.jaxb.model.common_v2.FuzzyDate fuzzyDate) {
         Date d = new Date();
         if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
             d.setDay(fuzzyDate.getDay().getValue());
@@ -88,6 +88,18 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return pd;
     }
     
+    public org.orcid.jaxb.model.common_v2.FuzzyDate toV2FuzzyDate() {
+        org.orcid.jaxb.model.common_v2.FuzzyDate date = new org.orcid.jaxb.model.common_v2.FuzzyDate();
+        if (!PojoUtil.isEmpty(this.getDay()))
+            date.setDay(new org.orcid.jaxb.model.common_v2.Day(new Integer(this.getDay())));
+        if (!PojoUtil.isEmpty(this.getMonth()))
+            date.setMonth(new org.orcid.jaxb.model.common_v2.Month(new Integer(this.getMonth())));
+        if (!PojoUtil.isEmpty(this.getYear()))
+            date.setYear(new org.orcid.jaxb.model.common_v2.Year(new Integer(this.getYear())));
+        
+        return date;
+    }
+    
     public static Date valueOf(java.util.Date date) {
         Date newDate = new Date();
         Calendar cal = Calendar.getInstance();
@@ -98,14 +110,14 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return newDate;
     }
 
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.CreatedDate date) {
+    public static Date valueOf(org.orcid.jaxb.model.common_v2.CreatedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
         return newDate;
     }
 
-    public static Date valueOf(org.orcid.jaxb.model.common_rc3.LastModifiedDate date) {
+    public static Date valueOf(org.orcid.jaxb.model.common_v2.LastModifiedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
             return Date.valueOf(date.getValue().toGregorianCalendar().getTime());

@@ -16,38 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 
-public interface ExternalIdentifierManager {
-    void setSourceManager(SourceManager sourceManager); 
-    /**
-     * Return the list of public external identifiers associated to a specific
-     * profile
-     * 
-     * @param orcid
-     * @return the list of public external identifiers associated with the orcid
-     *         profile
-     */
-    PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified);
-
-    /**
-     * Return the list of external identifiers associated to a specific profile
-     * 
-     * @param orcid
-     * @return the list of external identifiers associated with the orcid
-     *         profile
-     */
-    PersonExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified);
-
-    /**
-     * Retrieve a external identifier from database
-     * 
-     * @param id
-     * @return the externalIdentifierEntity associated with the parameter id
-     */
-    PersonExternalIdentifier getExternalIdentifier(String orcid, Long id);
-
+public interface ExternalIdentifierManager extends ExternalIdentifierManagerReadOnly {
     /**
      * Add a new external identifier to a specific profile
      * 

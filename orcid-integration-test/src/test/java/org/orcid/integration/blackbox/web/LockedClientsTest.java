@@ -30,10 +30,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
-import org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -46,10 +46,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class LockedClientsTest extends BlackBoxBaseRC3 {    
-    @Resource(name = "memberV2ApiClient_rc3")
-    private MemberV2ApiClientImpl memberV2ApiClient;    
-    
+public class LockedClientsTest extends BlackBoxBaseV2Release {
+    @Resource(name = "memberV2ApiClient")
+    private MemberV2ApiClientImpl memberV2ApiClient;
+
     @Test
     public void testMember() throws InterruptedException, JSONException {
         // The member must be unlocked to begin the test
@@ -60,7 +60,7 @@ public class LockedClientsTest extends BlackBoxBaseRC3 {
         assertEquals(ClientResponse.Status.OK.getStatusCode(), getAllResponse.getStatus());
         Emails emails = getAllResponse.getEntity(Emails.class);
         assertNotNull(emails);
-        assertNotNull(emails.getEmails());        
+        assertNotNull(emails.getEmails());
 
         // Lock and try to get authorization code
         adminLockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getMember1Orcid());
@@ -73,8 +73,7 @@ public class LockedClientsTest extends BlackBoxBaseRC3 {
         String error = getAllResponse.getEntity(String.class);
         assertNotNull(error);
         assertTrue(error.contains("invalid_token"));
-        assertTrue(error.contains("The given client " + this.getClient1ClientId() + " is locked because his member " + this.getMember1Orcid() + " is also locked"));
-        
+        assertTrue("Incorrect error message: " + error, error.contains("The client is locked"));
         // unlock to finish
         adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getMember1Orcid());
     }

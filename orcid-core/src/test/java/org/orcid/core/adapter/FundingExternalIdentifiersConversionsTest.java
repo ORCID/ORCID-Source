@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifier;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 
 public class FundingExternalIdentifiersConversionsTest {
 
@@ -86,19 +86,19 @@ public class FundingExternalIdentifiersConversionsTest {
         ExternalIDs recordFei = new ExternalIDs();
         ExternalID f1 = new ExternalID();
         f1.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
-        f1.setUrl(new org.orcid.jaxb.model.common_rc3.Url("www.f1.com"));
+        f1.setUrl(new org.orcid.jaxb.model.common_v2.Url("www.f1.com"));
         f1.setValue("f1");
         recordFei.getExternalIdentifier().add(f1);
 
         ExternalID f2 = new ExternalID();
         f2.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
-        f2.setUrl(new org.orcid.jaxb.model.common_rc3.Url("www.f2.com"));
+        f2.setUrl(new org.orcid.jaxb.model.common_v2.Url("www.f2.com"));
         f2.setValue("f2");
         recordFei.getExternalIdentifier().add(f2);
 
         ExternalID f3 = new ExternalID();
         f3.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
-        f3.setUrl(new org.orcid.jaxb.model.common_rc3.Url("www.f3.com"));
+        f3.setUrl(new org.orcid.jaxb.model.common_v2.Url("www.f3.com"));
         f3.setValue("f3");
         recordFei.getExternalIdentifier().add(f3);
 

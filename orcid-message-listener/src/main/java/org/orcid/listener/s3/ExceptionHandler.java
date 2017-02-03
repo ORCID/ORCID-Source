@@ -19,7 +19,7 @@ package org.orcid.listener.s3;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.listener.exception.DeprecatedRecordException;

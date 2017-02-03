@@ -22,8 +22,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

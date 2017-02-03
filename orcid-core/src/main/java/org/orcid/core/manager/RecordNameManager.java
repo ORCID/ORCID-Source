@@ -16,19 +16,16 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
+import org.orcid.jaxb.model.record_v2.Name;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public interface RecordNameManager {
-    RecordNameEntity getRecordName(String orcid, long lastModified);
+public interface RecordNameManager extends RecordNameManagerReadOnly {
+    boolean updateRecordName(String orcid, Name name);
 
-    RecordNameEntity findByCreditName(String creditName);
-    
-    boolean updateRecordName(RecordNameEntity recordName);
-
-    void createRecordName(RecordNameEntity recordName);
+    void createRecordName(String orcid, Name name);
 }

@@ -52,7 +52,7 @@ public class AccountSettingsTest extends BlackBoxBase {
         openEditEmailsSectionOnAccountSettingsPage();
         //Add an email
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
-        addEmail(emailValue, org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+        addEmail(emailValue, org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         //Reload the account settings to confirm it was actually added
         showAccountSettingsPage();
         try {
@@ -67,13 +67,8 @@ public class AccountSettingsTest extends BlackBoxBase {
         removeEmail(emailValue);
         //Reload the account settings to confirm it was actually removed
         showAccountSettingsPage();
-        try {
-            //Look if it is still present
-            emailExists(emailValue);
-            fail("Email " + emailValue + " should not be there");
-        } catch (Exception e) {
-
-        }
+        // Look if it is still present
+        assertFalse("Email " + emailValue + " should not be there", emailExists(emailValue));
     }
 
     @Test

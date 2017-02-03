@@ -47,7 +47,7 @@
 			            <p><@orcid.msg ''/></p>
 						<p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
 						<p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-						<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+						<a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
 			        </div>
 			    </div>
             </div>
@@ -86,7 +86,7 @@
         <div class="relative">
             <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
-            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 && !showReactivationSent">
+            <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
 				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>
    			</span>
         </div>

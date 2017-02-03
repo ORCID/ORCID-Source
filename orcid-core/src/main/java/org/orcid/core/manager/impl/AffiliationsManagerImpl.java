@@ -16,50 +16,29 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbEducationAdapter;
-import org.orcid.core.adapter.JpaJaxbEmploymentAdapter;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.message.AffiliationType;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.ItemType;
+import org.orcid.jaxb.model.record_v2.AffiliationType;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 
-public class AffiliationsManagerImpl implements AffiliationsManager {
-
-    @Resource
-    OrgAffiliationRelationDao affiliationsDao;
-
-    @Resource
-    JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
-
-    @Resource
-    JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
-
+public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
     @Resource
     private OrgManager orgManager;
 
@@ -76,69 +55,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     private NotificationManager notificationManager;
     
     @Resource 
-    private ActivityValidator activityValidator;
+    private ActivityValidator activityValidator;        
     
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-
-    @Override
-    public OrgAffiliationRelationEntity findAffiliationByUserAndId(String userOrcid, Long affiliationId) {
-        if (PojoUtil.isEmpty(userOrcid) || affiliationId == null)
-            return null;
-        OrgAffiliationRelationEntity affiliation = affiliationsDao.getOrgAffiliationRelation(userOrcid, affiliationId);
-        return affiliation;
-    }
-
-    @Override
-    public List<OrgAffiliationRelationEntity> findAffiliationsByType(AffiliationType type) {
-        if (type == null)
-            return null;
-        return affiliationsDao.getByType(type);
-    }
-
-    @Override
-    public List<OrgAffiliationRelationEntity> findAffiliationsByUserAndType(String userOrcid, AffiliationType type) {
-        if (PojoUtil.isEmpty(userOrcid) || type == null)
-            return null;
-        return affiliationsDao.getByUserAndType(userOrcid, type);
-    }
-
-    /**
-     * Get an education based on the orcid and education id
-     * 
-     * @param orcid
-     *            The education owner
-     * @param affiliationId
-     *            The affiliation id
-     * @return the education
-     * */
-    @Override
-    public Education getEducationAffiliation(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
-        return jpaJaxbEducationAdapter.toEducation(entity);
-    }
-
-    /**
-     * Get a summary of an education affiliation based on the orcid and
-     * education id
-     * 
-     * @param orcid
-     *            The education owner
-     * @param affiliationId
-     *            The affiliation id
-     * @return the education summary
-     * */
-    @Override
-    public EducationSummary getEducationSummary(String userOrcid, Long affiliationId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, affiliationId);
-        return jpaJaxbEducationAdapter.toEducationSummary(entity);
-    }
-
     /**
      * Add a new education to the given user
      * 
@@ -171,9 +89,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        affiliationsDao.persist(educationEntity);
-        affiliationsDao.flush();
+        educationEntity.setAffiliationType(AffiliationType.EDUCATION);
+        orgAffiliationRelationDao.persist(educationEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
@@ -189,7 +107,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
-        OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
+        OrgAffiliationRelationEntity educationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         //Save the original source
         String existingSourceId = educationEntity.getSourceId();
@@ -212,41 +130,11 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
 
-        educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
-        educationEntity = affiliationsDao.merge(educationEntity);
-        affiliationsDao.flush();
+        educationEntity.setAffiliationType(AffiliationType.EDUCATION);
+        educationEntity = orgAffiliationRelationDao.merge(educationEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItem(educationEntity));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
-    }
-
-    /**
-     * Get an employment based on the orcid and education id
-     * 
-     * @param orcid
-     *            The employment owner
-     * @param employmentId
-     *            The employment id
-     * @return the employment
-     * */
-    @Override
-    public Employment getEmploymentAffiliation(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
-        return jpaJaxbEmploymentAdapter.toEmployment(entity);
-    }
-
-    /**
-     * Get a summary of an employment affiliation based on the orcid and
-     * education id
-     * 
-     * @param orcid
-     *            The employment owner
-     * @param employmentId
-     *            The employment id
-     * @return the employment summary
-     * */
-    public EmploymentSummary getEmploymentSummary(String userOrcid, Long employmentId) {
-        OrgAffiliationRelationEntity entity = findAffiliationByUserAndId(userOrcid, employmentId);
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
     }
 
     /**
@@ -281,9 +169,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        affiliationsDao.persist(employmentEntity);
-        affiliationsDao.flush();
+        employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT);
+        orgAffiliationRelationDao.persist(employmentEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -299,7 +187,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
-        OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
+        OrgAffiliationRelationEntity employmentEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();  
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
@@ -323,9 +211,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
 
-        employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
-        employmentEntity = affiliationsDao.merge(employmentEntity);
-        affiliationsDao.flush();
+        employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT);
+        employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
+        orgAffiliationRelationDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(employmentEntity));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
@@ -342,9 +230,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * */
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
-        OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);                
+        OrgAffiliationRelationEntity affiliationEntity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);                
         orcidSecurityManager.checkSource(affiliationEntity);
-        boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
+        boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if(result)
             notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
         return result; 
@@ -352,43 +240,13 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
 
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = orgAffiliationRelationEntity.getVisibility();
-        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            orgAffiliationRelationEntity.setVisibility(defaultWorkVisibility);            
+        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        if (profile.getClaimed()) { 
+            orgAffiliationRelationEntity.setVisibility(Visibility.fromValue(defaultWorkVisibility.value()));            
         } else if (incomingWorkVisibility == null) {
             orgAffiliationRelationEntity.setVisibility(Visibility.PRIVATE);
         }
-    }
-
-    /**
-     * Get the list of employments that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of employments that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "employments-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EmploymentSummary> getEmploymentSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> employmentEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EMPLOYMENT);
-        return jpaJaxbEmploymentAdapter.toEmploymentSummary(employmentEntities);
-    }
-
-    /**
-     * Get the list of educations that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of educations that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "educations-summaries", key = "#userOrcid.concat('-').concat(#lastModified)")
-    public List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified) {
-        List<OrgAffiliationRelationEntity> educationEntities = findAffiliationsByUserAndType(userOrcid, AffiliationType.EDUCATION);
-        return jpaJaxbEducationAdapter.toEducationSummary(educationEntities);
-    }
+    }    
 
     private Item createItem(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();
@@ -396,31 +254,28 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         item.setItemType(AffiliationType.EDUCATION.equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return item;
-    }
-    
-    @Override
-    public List<AffiliationForm> getAffiliations(String orcid) {
-        List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);        
-        List<AffiliationForm> result = new ArrayList<AffiliationForm>();
-        
-        if(affiliations != null) {
-            for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                AffiliationForm affiliationForm = AffiliationForm.valueOf(affiliation);
-                //Get the name from the name cache
-                if(!PojoUtil.isEmpty(affiliationForm.getSource())) {
-                    String sourceName = sourceNameCacheManager.retrieve(affiliationForm.getSource());
-                    affiliationForm.setSourceName(sourceName);
-                }
-                result.add(affiliationForm);
-            }
-        }
-        
-        return result;
-    }
+    }        
 
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
-        return affiliationsDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
+        return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
     }
-
+    
+    /**
+     * Deletes an affiliation.
+     * 
+     * It doesn't check the source of the element before delete it, so, it is
+     * intended to be used only by the user from the UI
+     * 
+     * @param userOrcid
+     *            The client orcid
+     *
+     * @param affiliationId
+     *            The affiliation id in the DB
+     * @return true if the relationship was deleted
+     */
+    @Override
+    public boolean removeAffiliation(String userOrcid, Long affiliationId) {
+        return orgAffiliationRelationDao.removeOrgAffiliationRelation(userOrcid, affiliationId);
+    }  
 }

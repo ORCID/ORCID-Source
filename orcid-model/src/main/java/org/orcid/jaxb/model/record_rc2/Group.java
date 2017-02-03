@@ -30,4 +30,6 @@ public interface Group {
     Collection<? extends GroupableActivity> getActivities();
 
     void setLastModifiedDate(LastModifiedDate lastModifiedDate);
+    
+    LastModifiedDate getLastModifiedDate();
 }

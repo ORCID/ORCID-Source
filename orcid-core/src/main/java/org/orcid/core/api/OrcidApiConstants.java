@@ -30,6 +30,7 @@ public class OrcidApiConstants {
     public static final String EXTERNAL_IDENTIFIER_PATH = "/{orcid}/orcid-bio/external-identifiers";
     public static final String STATUS_PATH = "/status";
     public static final String BIO_SEARCH_PATH = "/search/orcid-bio";
+    public static final String SEARCH_PATH = "/search";
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";
     public static final String AUTHENTICATE_PATH = "/{orcid}/authenticate";
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";
@@ -60,12 +61,6 @@ public class OrcidApiConstants {
     public static final String IDENTIFIER_PATH = "/identifiers";
     public static final String STATS = "/{type}";
     public static final String STATS_ALL = "/all";
-    public static final String CERIF_PATH = "/cerif/1_0";
-    public static final String CERIF_PERSONS_PATH = "/persons/{id}";
-    public static final String CERIF_PUBLICATIONS_PATH = "/publications/{id}";
-    public static final String CERIF_PRODUCTS_PATH = "/products/{id}";
-    public static final String CERIF_ENTITIES_PATH = "/entities";
-    public static final String CERIF_SEMANTICS_PATH = "/semantics";
     public static final String ERROR = "/error";
     public static final String ORCID_XML = "application/orcid+xml; qs=3";
     public static final String ORCID_JSON = "application/orcid+json; qs=2";

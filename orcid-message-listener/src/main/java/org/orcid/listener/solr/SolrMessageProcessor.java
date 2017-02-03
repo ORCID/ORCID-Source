@@ -23,10 +23,9 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.listener.solr.SolrIndexUpdater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -79,7 +78,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             return;
         }
         try{
-            Record record = orcid20ApiClient.fetchPublicProfile(orcid); 
+            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicProfile(orcid); 
             //get detailed funding so we can discover org name and id
             List<Funding> fundings = new ArrayList<Funding>();
             if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && record.getActivitiesSummary().getFundings().getFundingGroup() != null){

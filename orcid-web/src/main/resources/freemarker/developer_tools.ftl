@@ -69,7 +69,7 @@
 									<#if !hasVerifiedEmail>
 										<li><a href ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.link' /></a> <@orcid.msg 'developer_tools.public_member.verify.description' /></li>
 									</#if>
-									<li><a href="http://support.orcid.org/knowledgebase/articles/335483" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+									<li><a href="${knowledgeBaseUri}/articles/343182" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
 								</ul>
 							</div>
 						</div>													

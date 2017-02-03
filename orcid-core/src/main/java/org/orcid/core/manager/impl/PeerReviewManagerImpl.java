@@ -17,14 +17,10 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
@@ -34,39 +30,23 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.activities.ActivitiesGroup;
-import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
-import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.persistence.dao.PeerReviewDao;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
+import org.orcid.jaxb.model.notification.permission_v2.ItemType;
+import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-public class PeerReviewManagerImpl implements PeerReviewManager {
-
-    @Resource
-    private PeerReviewDao peerReviewDao;
-
-    @Resource
-    private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
+public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -79,9 +59,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Resource
     private LocaleManager localeManager;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
 
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
@@ -97,29 +74,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Override
-    public void setSourceManager(SourceManager sourceManager) {
-        this.sourceManager = sourceManager;
-    }
-
-    @Override
-    public PeerReview getPeerReview(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);                       
-        return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviewEntity);
-    }
-
-    @Override
-    public PeerReviewSummary getPeerReviewSummary(String orcid, Long peerReviewId) {
-        PeerReviewEntity peerReviewEntity = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntity);
-    }
-
-    @Override
-    public List<PeerReview> toPeerReviewList(Collection<PeerReviewEntity> peerReviews) {
-        return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviews);
-    }
-
+        
     @Override    
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -261,28 +216,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility);
     }
 
-    @Override
-    @Cacheable(value = "peer-reviews", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<PeerReview> findPeerReviews(String orcid, long lastModified) {
-        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
-        return toPeerReviewList(peerReviewEntities);
-    }
-
-    /**
-     * Get the list of peer reivews that belongs to a user
-     * 
-     * @param userOrcid
-     * @param lastModified
-     *            Last modified date used to check the cache
-     * @return the list of peer reviews that belongs to this user
-     * */
-    @Override
-    @Cacheable(value = "peer-reviews-summaries", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified) {
-        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getByUser(orcid);
-        return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
-    }
-
     private void validateGroupId(PeerReview peerReview) {
         if (!PojoUtil.isEmpty(peerReview.getGroupId())) {
             if (!groupIdRecordManager.exists(peerReview.getGroupId())) {
@@ -298,57 +231,4 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
         return item;
     }
-    
-    /**
-     * Generate a grouped list of peer reviews with the given list of peer reviews
-     * 
-     * @param peerReviews
-     *          The list of peer reviews to group
-     * @param justPublic
-     *          Specify if we want to group only the public elements in the given list
-     * @return PeerReviews element with the PeerReviewSummary elements grouped                  
-     * */
-    @Override
-    public PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        PeerReviews result = new PeerReviews();
-        for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
-                // If it is just public and the funding is not public, just
-                // ignore it
-            } else {
-                groupGenerator.group(peerReview);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> groupKeys = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
-            // Fill the peer review groups with the external identifiers
-            for (GroupAble groupKey : groupKeys) {
-                PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
-                ExternalID id = new ExternalID();
-                id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
-                id.setValue(key.getGroupId());
-                peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
-            }
-
-            // Fill the peer review group with the list of activities
-            for (GroupableActivity activity : activities) {
-                PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
-                peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
-            }
-
-            // Sort the peer reviews
-            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new GroupableActivityComparator());
-
-            result.getPeerReviewGroup().add(peerReviewGroup);
-        }
-
-        return result;
-    }
-
 }

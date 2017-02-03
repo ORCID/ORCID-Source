@@ -19,7 +19,7 @@ package org.orcid.core.adapter.impl;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.ObjectFactory;
 
-import org.orcid.jaxb.model.notification.permission_rc3.Item;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;

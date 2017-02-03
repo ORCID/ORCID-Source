@@ -203,7 +203,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
-    public List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common_rc3.Visibility visibility) {
+    public List<EmailEntity> findByOrcid(String orcid, org.orcid.jaxb.model.common_v2.Visibility visibility) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = :visibility", EmailEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", org.orcid.jaxb.model.message.Visibility.fromValue(visibility.value()));

@@ -16,7 +16,7 @@
  */
 package org.orcid.listener.exception;
 
-import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 
 public class DeprecatedRecordException extends Exception {

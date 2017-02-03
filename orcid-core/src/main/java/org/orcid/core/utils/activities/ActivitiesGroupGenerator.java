@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.record_rc3.GroupAble;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_v2.GroupAble;
+import org.orcid.jaxb.model.record_v2.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 

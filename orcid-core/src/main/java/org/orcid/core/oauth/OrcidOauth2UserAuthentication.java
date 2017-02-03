@@ -19,7 +19,7 @@ package org.orcid.core.oauth;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;

@@ -5,6 +5,10 @@
 		<common:title>Current treatment of left main coronary artery disease</common:title>
 	</work:title>
 	<work:journal-title>Cor et Vasa</work:journal-title>
+	<work:citation>
+		<work:citation-type>formatted-unspecified</work:citation-type>
+		<work:citation>work:citation</work:citation>
+	</work:citation>
 	<work:type>journal-article</work:type>
 	<common:publication-date>
 		<common:year>2015</common:year>

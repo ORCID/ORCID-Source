@@ -33,6 +33,16 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="notificationsClient_v2" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <bean id="notificationsClient_rc4" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc4"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="notificationsClient_rc3" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc3"/>
         <constructor-arg ref="jerseyClient"/>

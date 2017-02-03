@@ -16,6 +16,9 @@
  */
 package org.orcid.api.publicV2.server.delegator.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
@@ -251,7 +254,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         checkProfileStatus(orcid);
         return downgradeResponse(publicV2ApiServiceDelegator.viewRecord(orcid));
     }
-
+    
+    @Override
+    public Response searchByQuery(Map<String, List<String>> solrParams) {
+        return publicV2ApiServiceDelegator.searchByQuery(solrParams);
+    }
     
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
@@ -278,5 +285,10 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     public void setExternalVersion(String externalVersion) {
         this.externalVersion = externalVersion;
+    }
+
+    @Override
+    public Response viewClient(String clientId) {
+        return publicV2ApiServiceDelegator.viewClient(clientId);
     }
 }

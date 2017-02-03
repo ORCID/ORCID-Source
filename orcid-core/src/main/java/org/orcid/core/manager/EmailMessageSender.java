@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification_v2.Notification;
 
 /**
  * 

@@ -16,14 +16,17 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.util.ajax.JSON;
+import org.orcid.core.admin.LockReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
@@ -32,6 +35,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -159,7 +163,7 @@ public class AdminManagerImpl implements AdminManager {
         Map<String, String> params = new HashMap<String, String>();
         params.put(TRUSTED_USER_PARAM, trusted);
         params.put(MANAGED_USER_PARAM, managed);
-        String paramsString = JSON.toString(params);
+        String paramsString = JsonUtils.convertToJsonString(params);
         if (StringUtils.isNotBlank(paramsString)) {
             String encryptedParams = encryptionManager.encryptForExternalUse(paramsString);
             String base64EncodedParams = Base64.encodeBase64URLSafeString(encryptedParams.getBytes());
@@ -186,5 +190,10 @@ public class AdminManagerImpl implements AdminManager {
         }
         
         return null;
+    }
+
+    @Override
+    public List<String> getLockReasons() {
+        return Arrays.asList(LockReason.values()).stream().map(lr -> lr.getLabel()).collect(Collectors.toList());
     }
 }

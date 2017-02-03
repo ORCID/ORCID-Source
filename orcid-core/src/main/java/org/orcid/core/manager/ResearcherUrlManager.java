@@ -16,12 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
-public interface ResearcherUrlManager {
-    void setSourceManager(SourceManager sourceManager); 
-    
+public interface ResearcherUrlManager extends ResearcherUrlManagerReadOnly {
     /**
      * Delete a researcher url
      * @param orcid
@@ -30,29 +29,6 @@ public interface ResearcherUrlManager {
      * @return true if the researcher url was deleted
      * */
     boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource);      
-    
-    /**
-     * Return the list of public researcher urls associated to a specific profile
-     * @param orcid
-     * @return 
-     *          the list of public researcher urls associated with the orcid profile
-     * */
-    ResearcherUrls getPublicResearcherUrls(String orcid, long lastModified);
-    
-    /**
-     * Return the list of researcher urls associated to a specific profile
-     * @param orcid
-     * @return 
-     *          the list of researcher urls associated with the orcid profile
-     * */
-    ResearcherUrls getResearcherUrls(String orcid, long lastModified);
-    
-    /**
-     * Retrieve a researcher url from database
-     * @param id
-     * @return the ResearcherUrlEntity associated with the parameter id
-     * */
-    ResearcherUrl getResearcherUrl(String orcid, long id);
     
     /**
      * Add a new researcher url to a specific profile

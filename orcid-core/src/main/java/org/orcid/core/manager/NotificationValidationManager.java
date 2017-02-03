@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 
 /**
  * 

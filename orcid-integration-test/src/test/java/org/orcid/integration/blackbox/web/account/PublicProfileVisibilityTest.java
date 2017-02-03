@@ -29,24 +29,25 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
-import org.orcid.jaxb.model.common_rc3.Day;
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Month;
-import org.orcid.jaxb.model.common_rc3.Organization;
-import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.openqa.selenium.interactions.Actions;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Role;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -57,7 +58,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
+public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @BeforeClass
     public static void before() {
         signin();
@@ -165,17 +166,27 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
     }    
         
     @Test
-    public void addressPrivacyTest() throws InterruptedException, JSONException {
+    public void addressPrivacyTest() throws InterruptedException, JSONException {        
         openEditAddressModal();
         deleteAddresses();
-        createAddress(Iso3166Country.ZW.name());
-        changeAddressVisibility(Visibility.PRIVATE);  
+        createAddress(Iso3166Country.AD.name());
+        changeAddressVisibility(Visibility.PUBLIC);
         saveEditAddressModal();
-      
-        //Verify it doesn't appears again in the public page
+        
+        //Verify it appears again in the public page
+        showPublicProfilePage(getUser1OrcidId());
+        addressAppearsInPublicPage("Andorra");
+        
+        //Change visibility to private
+        showMyOrcidPage();
+        openEditAddressModal();
+        changeAddressVisibility(Visibility.PRIVATE);
+        saveEditAddressModal();
+        
+        //Verify it doesn't appears in the public page
         try {
             showPublicProfilePage(getUser1OrcidId());
-            addressAppearsInPublicPage("Zimbabwe");
+            addressAppearsInPublicPage("Andorra");
             fail();
         } catch(Exception e) {
             
@@ -190,21 +201,19 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
         //Verify it doesn't appears again in the public page
         try {
             showPublicProfilePage(getUser1OrcidId());
-            addressAppearsInPublicPage("Zimbabwe");
+            addressAppearsInPublicPage("Andorra");
             fail();
         } catch(Exception e) {
             
-        }
-                
-        //Change visibility to public again
+        }                               
+        
+        //Change it to public again and verify it appears in the public paget
         showMyOrcidPage();
         openEditAddressModal();
         changeAddressVisibility(Visibility.PUBLIC);
         saveEditAddressModal();
-        
-        //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
-        addressAppearsInPublicPage("Zimbabwe");
+        addressAppearsInPublicPage("Andorra");
         
         showMyOrcidPage();
         openEditAddressModal();
@@ -335,6 +344,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
         changeExternalIdentifiersVisibility(Visibility.LIMITED);
+        saveExternalIdentifiersModal();
         
         try {
             //Verify it doesn't appear in the public page
@@ -349,6 +359,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
         changeExternalIdentifiersVisibility(Visibility.PUBLIC);
+        saveExternalIdentifiersModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());

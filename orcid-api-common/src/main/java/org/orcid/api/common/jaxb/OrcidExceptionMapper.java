@@ -41,6 +41,8 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -61,6 +63,7 @@ import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.sun.jersey.api.NotFoundException;
 
@@ -81,7 +84,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final String LOCATION_HEADER = "location";
 
-    @Context 
+    private static final String OAUTH_TOKEN_REQUEST = "/oauth/token";
+
+    @Context
     private HttpServletRequest httpRequest;
 
     @Resource
@@ -91,11 +96,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private LocaleManager localeManager;
 
     @Resource
-    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;    
-    
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
+
     @Resource
     private OrcidSecurityManager securityManager;
-    
+
     @Override
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
@@ -111,27 +116,40 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             }
         }
 
+        if (isOAuthTokenRequest()) {
+            return oAuthErrorResponse(t);
+        }
+
         String apiVersion = getApiVersion();
-        
-        if(!PojoUtil.isEmpty(apiVersion)) {
+
+        if (!PojoUtil.isEmpty(apiVersion)) {
             switch (apiVersion) {
+            case OrcidCoreExceptionMapper.V2:
+            	return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
             case OrcidCoreExceptionMapper.V2_RC1:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC1);
             case OrcidCoreExceptionMapper.V2_RC2:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC2);      
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC2);
             case OrcidCoreExceptionMapper.V2_RC3:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC3);      
-            
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC3);
+            case OrcidCoreExceptionMapper.V2_RC4:
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);            
             }
-        } 
-        
-        //If there was no api version, check if it is notifications or a 1.2 error type
+        }
+
+        // If there was no api version, check if it is notifications or a 1.2
+        // error type
         switch (getApiSection()) {
         case NOTIFICATIONS:
-            return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC1);
+            return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
         default:
             return legacyErrorResponse(t);
         }
+    }
+
+    private Response oAuthErrorResponse(Throwable t) {
+        OAuthError error = OAuthErrorUtils.getOAuthError(t);
+        return Response.status(error.getResponseStatus()).entity(error).build();
     }
 
     private Response legacyErrorResponse(Throwable t) {
@@ -198,8 +216,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Not found : ", t);
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
-        } else if(ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("This version of the API does not support adding more than 10,000 works to a record. Please consider using the 2.0 API.", null);
+        } else if (ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity(
+                    "This version of the API does not support adding more than 10,000 works to a record. Please consider using the 2.0 API.", null);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
@@ -210,8 +229,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private OrcidMessage getLegacy500OrcidEntity(Throwable e) {
         OrcidMessage entity = new OrcidMessage();
         entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : messageSource.getMessage("apiError.unknown.exception", null,
-                localeManager.getLocale())));
+        entity.setErrorDesc(new ErrorDesc(
+                StringUtils.isNotBlank(e.getMessage()) ? e.getMessage() : messageSource.getMessage("apiError.unknown.exception", null, localeManager.getLocale())));
         return entity;
     }
 
@@ -242,28 +261,32 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         Object orcidError = orcidCoreExceptionMapper.getOrcidError(errorCode, status, t, version);
         return getOrcidErrorResponse(orcidError, t);
     }
-    
+
     private Response getOrcidErrorResponse(Throwable t, String version) {
         Object orcidError = orcidCoreExceptionMapper.getOrcidError(t, version);
-        return getOrcidErrorResponse(orcidError, t);        
+        return getOrcidErrorResponse(orcidError, t);
     }
-    
+
     private Response getOrcidErrorResponse(Object orcidError, Throwable t) {
         int statusCode = 0;
-        if(org.orcid.jaxb.model.error_rc1.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-           statusCode = ((org.orcid.jaxb.model.error_rc1.OrcidError) orcidError).getResponseCode(); 
+        if (org.orcid.jaxb.model.error_rc1.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.error_rc1.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.error_rc2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc2.OrcidError) orcidError).getResponseCode(); 
+            statusCode = ((org.orcid.jaxb.model.error_rc2.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.error_rc3.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.error_rc3.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.error_rc4.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.error_rc4.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+        	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
         }
-        
+
         if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
             OrcidDeprecatedException exception = (OrcidDeprecatedException) t;
             Map<String, String> params = exception.getParams();
             String location = null;
             if (params != null) {
-                if (params.containsKey(OrcidDeprecatedException.ORCID)) {                    
+                if (params.containsKey(OrcidDeprecatedException.ORCID)) {
                     location = getPrimaryRecordLocation(params);
                 }
             }
@@ -290,21 +313,26 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         return apiVersion;
     }
-        
+
+    private boolean isOAuthTokenRequest() {
+        String url = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getRequestURL().toString();
+        return url.endsWith(OAUTH_TOKEN_REQUEST);
+    }
+
     /**
      * Returns the location of the primary record for a deprecated record
-     * */
-    private String getPrimaryRecordLocation(Map<String, String> params) {        
+     */
+    private String getPrimaryRecordLocation(Map<String, String> params) {
         String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(httpRequest.getRequestURI());
-        String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));        
-        String originalRequest = httpRequest.getRequestURL().toString();                
-        
-        if(OrcidUrlManager.isSecure(httpRequest)) {
-            if(originalRequest.startsWith("http:")) {
+        String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
+        String originalRequest = httpRequest.getRequestURL().toString();
+
+        if (OrcidUrlManager.isSecure(httpRequest)) {
+            if (originalRequest.startsWith("http:")) {
                 originalRequest = originalRequest.replaceFirst("http:", "https:");
             }
         }
-        
+
         return originalRequest.replace(deprecatedOrcid, primaryOrcid);
     }
 }

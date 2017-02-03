@@ -25,10 +25,10 @@ import java.util.Properties;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -125,8 +125,8 @@ public class BBBUtil {
         } finally {
             logUserOut(baseUrl, webDriver);
         }
-    }
-
+    }    
+    
     public static void ngAwareClick(WebElement webElement){
         ngAwareClick(webElement, getWebDriver());
     }
@@ -134,11 +134,11 @@ public class BBBUtil {
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).perform();
-        waitForAngular(webDriver);
+        actions.moveToElement(webElement).perform();        
         actions.click(webElement).perform();
+        waitForAngular(webDriver);
     }
-
+    
     public static void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {
         waitForAngular();
         ((JavascriptExecutor) webDriver).executeScript(
@@ -177,7 +177,7 @@ public class BBBUtil {
     }
     
     public static void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
-        int wait = 20;
+        int wait = 15;
         int pollingInterval = 250;
         waitFor(wait, pollingInterval, expectedCondition, webDriver, true);
     }
@@ -299,9 +299,16 @@ public class BBBUtil {
         noSpinners();
     }
 
+    public static String executeJavaScript(String javaScript, WebElement webElement, WebDriver driver) {
+        JavascriptExecutor je = (JavascriptExecutor) driver;
+        Object result = je.executeScript(javaScript, webElement);
+        return result == null ? null : result.toString();
+    }
+    
     public static String executeJavaScript(String javaScript, WebElement webElement) {
         JavascriptExecutor je = (JavascriptExecutor) getWebDriver();
-        return (String) je.executeScript(javaScript, webElement).toString();
+        Object result = je.executeScript(javaScript, webElement);
+        return result == null ? null : result.toString();
     }
 
     public static final int TIMEOUT_SECONDS = 10;

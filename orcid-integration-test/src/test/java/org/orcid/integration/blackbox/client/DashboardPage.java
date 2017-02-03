@@ -26,7 +26,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class DashboardPage {

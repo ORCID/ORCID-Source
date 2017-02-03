@@ -23,12 +23,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidSearchException;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -38,6 +40,8 @@ import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.RelevancyScore;
+import org.orcid.jaxb.model.search_v2.Result;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
@@ -52,13 +56,16 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     @Resource
     private SolrDao solrDao;
+    
+    @Resource
+    private RecordManagerReadOnly recordManagerReadOnly;
 
     private static String SOLR = "SOLR";
 
     private static String DB = "DB";
 
     private OrcidProfileCacheManager orcidProfileCacheManager;
-
+    
     public SolrDao getSolrDao() {
         return solrDao;
     }
@@ -217,6 +224,24 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         orcidMessage.setOrcidSearchResults(searchResults);
         return orcidMessage;
 
+    }
+
+    @Override
+    public Search findOrcidIds(Map<String, List<String>> queryParameters) {
+        Search search = new Search();
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(queryParameters);
+        if (orcidSolrResults != null && orcidSolrResults.getResults() != null) {
+            List<Result> orcidIdList = orcidSolrResults.getResults().stream().map(r -> {
+                Result result = new Result();
+                result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
+                return result;
+            }).collect(Collectors.toList());
+            search.getResults().addAll(orcidIdList);
+            search.setNumFound(orcidSolrResults.getNumFound());
+        } else {
+            search.setNumFound(0L);
+        }                                
+        return search;
     }
 
 }

@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.persistence.dao.EmailDao;
@@ -64,9 +63,6 @@ public class SocialController extends BaseController {
 
     @Resource
     private UserConnectionDao userConnectionDao;
-
-    @Resource
-    private OrcidSecurityManager securityMgr;
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {

@@ -36,13 +36,16 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SourceNameCacheManagerTest extends BaseTest {
 
@@ -51,6 +54,9 @@ public class SourceNameCacheManagerTest extends BaseTest {
     
     @Mock
     private RecordNameDao mock_recordNameDao;
+    
+    @Mock
+    private ServletRequestAttributes requestAttributes;
     
     @Mock
     private ClientDetailsDao mock_clientDetailsDao;
@@ -140,6 +146,9 @@ public class SourceNameCacheManagerTest extends BaseTest {
         assertNotNull(sourceNameCacheManager);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", mock_recordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", mock_clientDetailsDao);
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }      
     
     @After
@@ -160,6 +169,14 @@ public class SourceNameCacheManagerTest extends BaseTest {
         assertEquals("Credit name for " + user1, name1);
         name1 = sourceNameCacheManager.retrieve(user1);
         assertEquals("Credit name for " + user1, name1);
+        name1 = sourceNameCacheManager.retrieve(user1);
+        assertEquals("Credit name for " + user1, name1);
+        name1 = sourceNameCacheManager.retrieve(user1);
+        assertEquals("Credit name for " + user1, name1);
+        name1 = sourceNameCacheManager.retrieve(user1);
+        assertEquals("Credit name for " + user1, name1);
+        name1 = sourceNameCacheManager.retrieve(user1);
+        assertEquals("Credit name for " + user1, name1);
         verify(mock_recordNameDao, times(1)).getRecordName(user1);
         verify(mock_clientDetailsDao, times(1)).existsAndIsNotPublicClient(user1);                        
         //Remove it from cache
@@ -167,7 +184,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
     }
     
     @Test    
-    public void testRecordNameDaoIsCalledOnlyIfRemoved() {
+    public void testRecordNameDaoCalledOnceEvenIfRemoved() {
         String user1 = USER_PUBLIC_NAME;
         String name1 = sourceNameCacheManager.retrieve(user1);
         assertEquals("Credit name for " + user1, name1);
@@ -176,9 +193,8 @@ public class SourceNameCacheManagerTest extends BaseTest {
         assertEquals("Credit name for " + user1, name1);
         sourceNameCacheManager.remove(user1);
         name1 = sourceNameCacheManager.retrieve(user1);
-        verify(mock_recordNameDao, times(3)).getRecordName(user1);
-        verify(mock_clientDetailsDao, times(3)).existsAndIsNotPublicClient(user1);
-        //Remove it from cache
+        verify(mock_recordNameDao, times(1)).getRecordName(user1);
+        verify(mock_clientDetailsDao, times(1)).existsAndIsNotPublicClient(user1);
         sourceNameCacheManager.remove(user1);
     }
     
@@ -207,4 +223,14 @@ public class SourceNameCacheManagerTest extends BaseTest {
         String name1 = sourceNameCacheManager.retrieve(user1);
         assertEquals("Am a CLIENT!!!!", name1);        
     }    
+    
+    @Test
+    public void testClientNamesGetCached() {
+        String client = OLD_FORMAT_CLIENT_ID;
+        String name1 = sourceNameCacheManager.retrieve(client);
+        String name2 = sourceNameCacheManager.retrieve(client);
+        assertEquals(name1, name2);
+        verify(mock_clientDetailsDao, times(1)).existsAndIsNotPublicClient(client);
+        verify(mock_clientDetailsDao, times(1)).find(client);
+    } 
 }

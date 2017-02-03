@@ -38,7 +38,7 @@
                                     <p><@orcid.msg ''/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-                                    <a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
                                 </div>
                             </div>
                         </div>
@@ -76,6 +76,17 @@
                             <div ng-repeat='error in register.passwordConfirm.errors' ng-bind-html="error"></div>
                         </span>
                     </div>
+                </div>
+                <div style="margin-bottom: 20px; margin-top: 10px;">
+                    <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label>
+                    <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+                    <@orcid.privacyToggle
+                        angularModel="register.activitiesVisibilityDefault.visibility"
+                        questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+                        clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}"
+                        publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+                        limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+                        privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
                 </div>
                 <div>
                     <div class="relative"  style="margin-bottom: 15px;">

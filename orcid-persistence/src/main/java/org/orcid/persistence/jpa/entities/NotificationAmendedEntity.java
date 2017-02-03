@@ -29,7 +29,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.persistence.jpa.entities.NotificationWorkEntity.ChronologicallyOrderedNotificationWorkEntityComparator;
 
 /**

@@ -18,12 +18,14 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
@@ -42,10 +43,14 @@ import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -59,14 +64,12 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Name;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -74,6 +77,7 @@ import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
+import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
@@ -134,23 +138,23 @@ public class ManageProfileController extends BaseWorkspaceController {
     private EmailDao emailDao;
 
     @Resource
-    private UserConnectionDao userConnectionDao;
+    private UserConnectionManager userConnectionManager;
 
     @Resource
     private OrcidSocialManager orcidSocialManager;
 
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private PersonalDetailsManager personalDetailsManager;
 
     @Resource
     private AddressManager addressManager;
-    
+
     @Resource
     private BiographyManager biographyManager;
-    
+
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -197,12 +201,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("hasVerifiedEmail")
-    public boolean hasVerifiedEmail() {        
+    public boolean hasVerifiedEmail() {
         String orcid = getCurrentUserOrcid();
         if (PojoUtil.isEmpty(orcid)) {
             return false;
         }
-            
+
         return emailManager.haveAnyEmailVerified(orcid);
     }
 
@@ -251,7 +255,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
             profileEntityManager.updateLastModifed(delegateOrcid);
-            Date delegateLastModified = profileEntityManager.getLastModified(delegateOrcid);
+            Date delegateLastModified = profileEntityManager.getLastModifiedDate(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
@@ -267,10 +271,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             details.setDelegateSummary(summary);
             summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
             String creditName = null;
-            if(delegateProfile.getRecordNameEntity() != null) {
+            if (delegateProfile.getRecordNameEntity() != null) {
                 creditName = delegateProfile.getRecordNameEntity().getCreditName();
-            }        
-                    
+            }
+
             if (StringUtils.isNotBlank(creditName)) {
                 summary.setCreditName(new CreditName(creditName));
             }
@@ -305,7 +309,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
-        List<UserconnectionEntity> userConnectionEntities = userConnectionDao.findByOrcid(orcid);
+        List<UserconnectionEntity> userConnectionEntities = userConnectionManager.findByOrcid(orcid);
         return userConnectionEntities;
     }
 
@@ -318,7 +322,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
-        userConnectionDao.remove(manageSocialAccount.getIdToManage());
+        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
         return manageSocialAccount;
     }
 
@@ -521,8 +525,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         }
 
-        String encryptedSecurityAnswer = securityDetails != null && securityDetails.getEncryptedSecurityAnswer() != null ? securityDetails.getEncryptedSecurityAnswer()
-                .getContent() : null;
+        String encryptedSecurityAnswer = securityDetails != null && securityDetails.getEncryptedSecurityAnswer() != null
+                ? securityDetails.getEncryptedSecurityAnswer().getContent() : null;
         String securityAnswer = StringUtils.isNotBlank(encryptedSecurityAnswer) ? encryptionManager.decryptForInternalUse(encryptedSecurityAnswer) : "";
 
         changeSecurityQuestionForm.setSecurityQuestionId(securityQuestionId);
@@ -563,6 +567,123 @@ public class ManageProfileController extends BaseWorkspaceController {
         return cp;
     }
 
+    @RequestMapping(value = "/deprecate-profile.json")
+    public @ResponseBody DeprecateProfile getDeprecateProfile() {
+        return new DeprecateProfile();
+    }
+
+    @RequestMapping(value = "/validate-deprecate-profile.json", method = RequestMethod.POST)
+    public @ResponseBody DeprecateProfile validateDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        validateFormData(deprecateProfile);
+        if (!deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        OrcidProfileUserDetails primaryDetails = getCurrentUser();
+        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(primaryDetails.getOrcid());
+        ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
+        
+        validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        List<EmailEntity> deprecatingEmails = emailDao.findByOrcid(deprecatingEntity.getId());
+        List<EmailEntity> primaryEmails = emailDao.findByOrcid(primaryEntity.getId());
+        
+        String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
+        String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
+        deprecateProfile.setPrimaryAccountName(primaryAccountName);
+        deprecateProfile.setPrimaryOrcid(primaryDetails.getOrcid());
+        deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);
+        deprecateProfile.setDeprecatingOrcid(deprecatingEntity.getId());
+
+        if (deprecatingEmails != null) {
+            deprecateProfile.setDeprecatingEmails(deprecatingEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+        }
+        if (primaryEmails != null) {
+            deprecateProfile.setPrimaryEmails(primaryEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+        }
+        return deprecateProfile;
+    }
+
+    @RequestMapping(value = "/confirm-deprecate-profile.json", method = RequestMethod.POST)
+    public @ResponseBody DeprecateProfile confirmDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        validateFormData(deprecateProfile);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        OrcidProfileUserDetails primaryDetails = getCurrentUser();
+        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(primaryDetails.getOrcid());
+        ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
+        
+        validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+        
+        validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId());
+        if (!deprecated) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
+        }
+        return deprecateProfile;
+    }
+
+    private void validateDeprecatingEntity(ProfileEntity deprecatingEntity, ProfileEntity primaryEntity, DeprecateProfile deprecateProfile) {
+        if (deprecatingEntity == null) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.profile_does_not_exist")));
+        } else if (primaryEntity.getId().equals(deprecatingEntity.getId())) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.profile_matches_current")));
+        }
+    }
+
+    private void validateFormData(DeprecateProfile deprecateProfile) {
+        List<String> errors = new ArrayList<>();
+        if (deprecateProfile.getDeprecatingPassword() == null || deprecateProfile.getDeprecatingPassword().trim().isEmpty()) {
+            errors.add(getMessage("deprecate_orcid.no_password_specified"));
+        }
+        if (deprecateProfile.getDeprecatingOrcidOrEmail() == null) {
+            errors.add(getMessage("deprecate_orcid.no_profile_specified"));
+        }
+        deprecateProfile.setErrors(errors);
+    }
+
+    private void validateDeprecateAccountRequest(DeprecateProfile deprecateProfile, ProfileEntity deprecatingEntity) {
+        if (!encryptionManager.hashMatches(deprecateProfile.getDeprecatingPassword(), deprecatingEntity.getEncryptedPassword())) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("check_password_modal.incorrect_password")));
+        } else if (deprecatingEntity.getDeprecatedDate() != null) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deprecated", deprecatingEntity.getId())));
+        } else if (deprecatingEntity.getDeactivationDate() != null) {
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deactivated", deprecatingEntity.getId())));
+        }
+    }
+
+    private ProfileEntity getDeprecatingEntity(DeprecateProfile deprecateProfile) {
+        if (deprecateProfile.getDeprecatingOrcidOrEmail().contains("@")) {
+            EmailEntity emailEntity = emailDao.findCaseInsensitive(deprecateProfile.getDeprecatingOrcidOrEmail());
+            if (emailEntity != null) {
+                return emailEntity.getProfile();
+            }
+        } else {
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(deprecateProfile.getDeprecatingOrcidOrEmail());
+            if (profileEntity != null) {
+                return profileEntity;
+            }
+        }
+        return null;
+    }
+
     @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
     public ModelAndView viewDeactivateOrcidAccount() {
         ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
@@ -590,7 +711,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         return result;
-    }    
+    }
 
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
@@ -617,9 +738,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
 
-    
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         return emailManager.getEmailsAsForm(getCurrentUserOrcid());
     }
 
@@ -768,71 +888,72 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
-    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {        
-        Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());        
-        
+    public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());
+
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
-        if(form != null && form.getAddresses() != null) {
+        if (form != null && form.getAddresses() != null) {
             Map<String, String> countries = retrieveIsoCountries();
-            for(AddressForm addressForm : form.getAddresses()) {
+            for (AddressForm addressForm : form.getAddresses()) {
                 addressForm.setCountryName(countries.get(addressForm.getIso2Country().getValue().name()));
             }
-        }        
-        
-        //Set the default visibility
-        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+        }
+
+        // Set the default visibility
+        if (profile != null && profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
         }
-        
-        //Return an empty country in case we dont have any
-        if(form.getAddresses() == null){
-           form.setAddresses(new ArrayList<AddressForm>()); 
+
+        // Return an empty country in case we dont have any
+        if (form.getAddresses() == null) {
+            form.setAddresses(new ArrayList<AddressForm>());
         }
-        
-        if(form.getAddresses().isEmpty()) {
+
+        if (form.getAddresses().isEmpty()) {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(1L);
             address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
             form.getAddresses().add(address);
-        }                
-        
+        }
+
         return form;
     }
-    
+
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm)
+            throws NoSuchRequestHandlingMethodException {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
-        if(addressesForm != null) {
-            if(addressesForm.getAddresses() != null) {
-                for(AddressForm form : addressesForm.getAddresses()) {
-                    if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
+        if (addressesForm != null) {
+            if (addressesForm.getAddresses() != null) {
+                for (AddressForm form : addressesForm.getAddresses()) {
+                    if (form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
                     } else {
                         form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
-                    }                                                                               
+                    }
                     copyErrors(form, addressesForm);
-                }                 
+                }
             }
 
-            if(!addressesForm.getErrors().isEmpty()) {
+            if (!addressesForm.getErrors().isEmpty()) {
                 return addressesForm;
             }
-            
-            Addresses addresses = addressesForm.toAddresses();                    
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses);            
+
+            Addresses addresses = addressesForm.toAddresses();
+            addressManager.updateAddresses(getCurrentUserOrcid(), addresses);
         }
         return addressesForm;
     }
-    
+
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
-        Name name = personalDetailsManager.getName(getCurrentUserOrcid());
+        String currentOrcid = getCurrentUserOrcid();
+        Name name = recordNameManager.getRecordName(currentOrcid, profileEntityManager.getLastModified(currentOrcid));
         NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
@@ -840,28 +961,35 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
     public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
-        
-        //Strip any html code from names before validating them
-        if(!PojoUtil.isEmpty(nf.getFamilyName())){
+
+        // Strip any html code from names before validating them
+        if (!PojoUtil.isEmpty(nf.getFamilyName())) {
             nf.getFamilyName().setValue(OrcidStringUtils.stripHtml(nf.getFamilyName().getValue()));
         }
-        
-        if(!PojoUtil.isEmpty(nf.getGivenNames())) {
+
+        if (!PojoUtil.isEmpty(nf.getGivenNames())) {
             nf.getGivenNames().setValue(OrcidStringUtils.stripHtml(nf.getGivenNames().getValue()));
         }
-        
-        if(!PojoUtil.isEmpty(nf.getCreditName())) {
+
+        if (!PojoUtil.isEmpty(nf.getCreditName())) {
             nf.getCreditName().setValue(OrcidStringUtils.stripHtml(nf.getCreditName().getValue()));
         }
-        
+
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
         givenNameValidate(nf.getGivenNames());
         copyErrors(nf.getGivenNames(), nf);
         if (nf.getErrors().size() > 0)
             return nf;
-        PersonalDetails personalDetails = nf.toPersonalDetails();
-        orcidProfileManager.updateNames(getCurrentUserOrcid(), personalDetails);
+        Name name = nf.toName();
+
+        String orcid = getCurrentUserOrcid();
+        if (recordNameManager.exists(orcid)) {
+            recordNameManager.updateRecordName(orcid, name);
+        } else {
+            recordNameManager.createRecordName(orcid, name);
+        }
+
         return nf;
     }
 
@@ -875,34 +1003,34 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)
     public @ResponseBody BiographyForm setBiographyFormJson(@RequestBody BiographyForm bf) {
         bf.setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(bf.getBiography())) {
+        if (bf.getBiography() != null) {
             validateBiography(bf.getBiography());
             copyErrors(bf.getBiography(), bf);
             if (bf.getErrors().size() > 0)
                 return bf;
-            
+
             Biography bio = new Biography();
-            if(bf.getBiography() != null) {
+            if (bf.getBiography() != null) {
                 bio.setContent(bf.getBiography().getValue());
             }
-            if(bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.common_rc3.Visibility v = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+            if (bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
+                org.orcid.jaxb.model.common_v2.Visibility v = org.orcid.jaxb.model.common_v2.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
                 bio.setVisibility(v);
             }
-            
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            if(profile.getBiographyEntity() != null) {
-                biographyManager.updateBiography(getCurrentUserOrcid(), bio);
+
+            String orcid = getCurrentUserOrcid();
+            if (biographyManager.exists(orcid)) {
+                biographyManager.updateBiography(orcid, bio);
             } else {
-                biographyManager.createBiography(getCurrentUserOrcid(), bio);    
-            }            
+                biographyManager.createBiography(orcid, bio);
+            }
         }
         return bf;
-    }    
+    }
 
     /**
      * Check if the user have twitter enabled
-     * */
+     */
     @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
     public @ResponseBody boolean isTwitterEnabled() {
         String orcid = getEffectiveUserOrcid();
@@ -911,7 +1039,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * Get a user request to authorize twitter and return the authorization URL
-     * */
+     */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
     public @ResponseBody String goToTwitterAuthPage() throws Exception {
         String authUrl = orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());
@@ -920,7 +1048,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * Get the twitter credentials and enable it on the user profile
-     * */
+     */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
     public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {
         OrcidProfile profile = getEffectiveProfile();
@@ -940,7 +1068,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * Disable twitter access
-     * */
+     */
     @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
     public @ResponseBody boolean disableTwitter() throws Exception {
         String orcid = getEffectiveUserOrcid();
@@ -950,7 +1078,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * Authorize a delegate request done by an admin
-     * */
+     */
     @RequestMapping(value = { "/authorize-delegates" }, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
         ModelAndView mav = new ModelAndView("manage");
@@ -979,7 +1107,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         // the granting
                         // user is visible to them immediately
                         profileEntityManager.updateLastModifed(trustedOrcid);
-                        Date delegateLastModified = profileEntityManager.getLastModified(trustedOrcid);
+                        Date delegateLastModified = profileEntityManager.getLastModifiedDate(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
                         permission.setGiver(managedOrcid);
                         ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
@@ -995,7 +1123,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         details.setDelegateSummary(summary);
                         summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
                         String creditName = null;
-                        if(delegateProfile.getRecordNameEntity() != null) {
+                        if (delegateProfile.getRecordNameEntity() != null) {
                             creditName = delegateProfile.getRecordNameEntity().getCreditName();
                         }
                         if (StringUtils.isNotBlank(creditName)) {
@@ -1029,11 +1157,11 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     /**
      * @throws UnsupportedEncodingException
-     * */
+     */
     @SuppressWarnings("unchecked")
     private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException {
         String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));
-        Map<String, String> params = (HashMap<String, String>) JSON.parse(jsonString);
+        Map<String, String> params = (Map<String, String>) JsonUtils.readObjectFromJsonString(jsonString, Map.class);
         return params;
     }
 
@@ -1042,11 +1170,10 @@ public class ManageProfileController extends BaseWorkspaceController {
      * 
      * @param orcid
      *            The profile id to check
-     * */
+     */
     private void verifyPrimaryEmailIfNeeded(String orcid) {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
     }
-
 }

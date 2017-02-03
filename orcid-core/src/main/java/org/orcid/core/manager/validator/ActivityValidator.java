@@ -33,31 +33,31 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.jaxb.model.common_rc3.Amount;
-import org.orcid.jaxb.model.common_rc3.Contributor;
-import org.orcid.jaxb.model.common_rc3.ContributorOrcid;
-import org.orcid.jaxb.model.common_rc3.Day;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Month;
-import org.orcid.jaxb.model.common_rc3.PublicationDate;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.record_rc3.CitationType;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.FundingTitle;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkContributors;
-import org.orcid.jaxb.model.record_rc3.WorkTitle;
-import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.jaxb.model.common_v2.Amount;
+import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.PublicationDate;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingTitle;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkContributors;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -252,7 +252,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = work.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
@@ -305,14 +305,14 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = funding.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateFunding(funding.getExternalIdentifiers());
     }
 
     public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -329,7 +329,7 @@ public class ActivityValidator {
     }
 
     public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -374,7 +374,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = peerReview.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
         }
     }
 
@@ -442,12 +442,23 @@ public class ActivityValidator {
         return null;
     }
 
-    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    private static void validateVisibilityDoesntChangeLegacy(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {
                 throw new VisibilityMismatchException();
             }
             if (!updatedVisibility.value().equals(originalVisibility.value())) {
+                throw new VisibilityMismatchException();
+            }
+        }
+    }
+    
+    private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
+        if (updatedVisibility != null) {
+            if (originalVisibility == null) {
+                throw new VisibilityMismatchException();
+            }
+            if (!updatedVisibility.equals(originalVisibility)) {
                 throw new VisibilityMismatchException();
             }
         }

@@ -18,6 +18,8 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,12 +35,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc3.Country;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 /**
  * 
@@ -66,7 +70,7 @@ public class AddressManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        addressManager.setSourceManager(sourceManager);
+        TargetProxyHelper.injectIntoProxy(addressManager, "sourceManager", sourceManager);        
     }
     
     @AfterClass
@@ -122,6 +126,46 @@ public class AddressManagerTest extends BaseTest {
         
         assertNotNull(address);
         assertEquals(Long.valueOf(0), address.getDisplayIndex());       
+    }
+    
+    @Test
+    public void getAllTest() {
+        String orcid = "0000-0000-0000-0003";
+        Addresses elements = addressManager.getAddresses(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getAddress());
+        assertEquals(5, elements.getAddress().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        for(Address element : elements.getAddress()) {
+            if(9 == element.getPutCode()){
+                found1 = true;
+            } else if(10 == element.getPutCode()){
+                found2 = true;
+            } else if(11 == element.getPutCode()){
+                found3 = true;
+            } else if(12 == element.getPutCode()){
+                found4 = true;
+            } else if(13 == element.getPutCode()){
+                found5 = true;
+            } else {
+                fail("Invalid put code found: " + element.getPutCode());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+    }
+    
+    @Test
+    public void getPublicTest() {
+        String orcid = "0000-0000-0000-0003";        
+        Addresses elements = addressManager.getPublicAddresses(orcid, System.currentTimeMillis());
+        assertNotNull(elements);
+        assertNotNull(elements.getAddress());
+        assertEquals(1, elements.getAddress().size());
+        assertEquals(Long.valueOf(9), elements.getAddress().get(0).getPutCode());
     }
     
     private Address getAddress(Iso3166Country country) {

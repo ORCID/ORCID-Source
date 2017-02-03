@@ -27,8 +27,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -40,6 +44,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
@@ -53,30 +58,33 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource(name = "manageProfileController")
@@ -90,13 +98,13 @@ public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
-    
+
     @Resource(name = "adminController")
     AdminController adminController;
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Mock
     private OrcidIndexManager mockOrcidIndexManager;
 
@@ -116,7 +124,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     private GivenPermissionToDao givenPermissionToDao;
 
     @Mock
-    private ProfileEntityManager profileEntityManager;        
+    private ProfileEntityManager profileEntityManager;
 
     /**
      * The classes loaded from the app context are in fact proxies to the
@@ -152,6 +160,50 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void setUpTestProfiles() {
         createProfileStub("4444-4444-4444-4446");
         createProfileStub("5555-5555-5555-555X");
+        persistProfilesForDeprecateProfileTests();
+    }
+
+    private void persistProfilesForDeprecateProfileTests() {
+        persistProfileForDeprecateProfileTest("1000-2000-3000-4000", "1000-2000-3000-4000@orcid.org", "blah", "blah", false, false);
+        persistProfileForDeprecateProfileTest("1001-2002-3003-4004", "1001-2002-3003-4004@orcid.org", "singlename", null, false, false);
+        persistProfileForDeprecateProfileTest("1101-2202-3303-4404", "1101-2202-3303-4404@orcid.org", "erm", "err", true, false);
+        persistProfileForDeprecateProfileTest("1111-2222-3333-4444", "1111-2222-3333-4444@orcid.org", "erm", "err", false, true);
+    }
+
+    private void persistProfileForDeprecateProfileTest(String orcid, String email, String givenNames, String familyName, boolean deprecated, boolean deactivated) {
+        ProfileEntity existing = profileDao.find(orcid);
+        if (existing == null) {
+            ProfileEntity testProfile = new ProfileEntity();
+            testProfile.setId(orcid);
+            testProfile.setEncryptedPassword(encryptionManager.hashForInternalUse("password"));
+
+            EmailEntity emailEntity = new EmailEntity();
+            emailEntity.setId(email);
+            emailEntity.setProfile(testProfile);
+            emailEntity.setVisibility(Visibility.PUBLIC);
+            emailEntity.setPrimary(true);
+            emailEntity.setCurrent(true);
+            emailEntity.setVerified(true);
+            testProfile.setEmails(Sets.newHashSet(emailEntity));
+
+            RecordNameEntity recordName = new RecordNameEntity();
+            recordName.setGivenNames(givenNames);
+
+            if (familyName != null) {
+                recordName.setFamilyName(familyName);
+            }
+
+            recordName.setProfile(testProfile);
+            recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+            testProfile.setRecordNameEntity(recordName);
+            if (deprecated) {
+                testProfile.setDeprecatedDate(new Date());
+            }
+            if (deactivated) {
+                testProfile.setDeactivationDate(new Date());
+            }
+            profileDao.persist(testProfile);
+        }
     }
 
     private void createProfileStub(String testOrcid) {
@@ -193,7 +245,277 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("ManagePersonalInfo", activeTab);
         assertNotNull(model.get("securityQuestions"));
     }
-    
+
+    @Test
+    public void testGetDeprecateProfile() {
+        DeprecateProfile deprecateProfile = controller.getDeprecateProfile();
+        assertNotNull(deprecateProfile);
+        assertNull(deprecateProfile.getPrimaryOrcid());
+        assertNull(deprecateProfile.getPrimaryAccountName());
+        assertNull(deprecateProfile.getPrimaryEmails());
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNull(deprecateProfile.getDeprecatingEmails());
+        assertNull(deprecateProfile.getDeprecatingOrcid());
+        assertNull(deprecateProfile.getDeprecatingPassword());
+        assertTrue(deprecateProfile.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithValidDataUsingOrcid() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getDeprecatingAccountName());
+        assertNotNull(deprecateProfile.getDeprecatingEmails());
+        assertEquals("blah blah", deprecateProfile.getDeprecatingAccountName());
+        assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals("1000-2000-3000-4000", deprecateProfile.getDeprecatingOrcid());
+        assertEquals("1000-2000-3000-4000@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
+        assertNotNull(deprecateProfile.getPrimaryEmails());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
+        assertTrue(deprecateProfile.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithValidDataUsingEmail() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setDeprecatingOrcidOrEmail("1001-2002-3003-4004@orcid.org");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getDeprecatingAccountName());
+        assertNotNull(deprecateProfile.getDeprecatingEmails());
+        assertEquals("singlename", deprecateProfile.getDeprecatingAccountName());
+        assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals("1001-2002-3003-4004@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
+        assertEquals("1001-2002-3003-4004", deprecateProfile.getDeprecatingOrcid());
+        assertNotNull(deprecateProfile.getPrimaryEmails());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
+        assertTrue(deprecateProfile.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataBadCredentialsUsingEmail() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1001-2002-3003-4004@orcid.org");
+        deprecateProfile.setDeprecatingPassword("wrong password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataBadCredentialsUsingOrcid() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingPassword("wrong password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNull(deprecateProfile.getDeprecatingEmails());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataAlreadyDeprecatedProfileUsingEmail() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1101-2202-3303-4404@orcid.org");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataAlreadyDeprecatedProfileUsingOrcid() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1101-2202-3303-4404");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNull(deprecateProfile.getDeprecatingEmails());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataDeactivatedProfileUsingEmail() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1111-2222-3333-4444@orcid.org");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataDeactivatedProfileUsingOrcid() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1111-2222-3333-4444");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNull(deprecateProfile.getDeprecatingEmails());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testValidateDeprecateProfileWithInvalidDataMatchingAccounts() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("4444-4444-4444-4446");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNull(deprecateProfile.getDeprecatingAccountName());
+        assertNull(deprecateProfile.getDeprecatingEmails());
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithValidData() {
+        when(profileEntityManager.deprecateProfile(Mockito.eq("1000-2000-3000-4000"), Mockito.eq("4444-4444-4444-4446"))).thenReturn(true);
+
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingOrcid("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("1000-2000-3000-4000@orcid.org"));
+        deprecateProfile.setDeprecatingAccountName("blah blah");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertTrue(deprecateProfile.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithValidDataUnknownProblem() {
+        when(profileEntityManager.deprecateProfile(Mockito.eq("1000-2000-3000-4000"), Mockito.eq("4444-4444-4444-4446"))).thenReturn(false);
+
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcid("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("1000-2000-3000-4000@orcid.org"));
+        deprecateProfile.setDeprecatingAccountName("blah blah");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithInvalidDataBadCredentials() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcid("1000-2000-3000-4000");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("1000-2000-3000-4000@orcid.org"));
+        deprecateProfile.setDeprecatingAccountName("blah blah");
+        deprecateProfile.setDeprecatingPassword("wrong password");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithInvalidDataAlreadyDeprecatedProfile() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcid("1101-2202-3303-4404");
+        deprecateProfile.setDeprecatingOrcidOrEmail("1101-2202-3303-4404");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("1101-2202-3303-4404@orcid.org"));
+        deprecateProfile.setDeprecatingAccountName("blah blah");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithInvalidDataDeactivatedProfile() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingOrcid("1111-2222-3333-4444");
+        deprecateProfile.setDeprecatingOrcidOrEmail("1111-2222-3333-4444");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("1111-2222-3333-4444@orcid.org"));
+        deprecateProfile.setDeprecatingAccountName("blah blah");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileWithInvalidDataMatchingAccounts() {
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryAccountName("B. Holiday");
+        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
+        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingAccountName("B. Holiday");
+        deprecateProfile.setDeprecatingOrcid("4444-4444-4444-4446");
+        deprecateProfile.setDeprecatingOrcidOrEmail("4444-4444-4444-4446");
+        deprecateProfile.setDeprecatingEmails(Arrays.asList("josiah_carberry@brown.edu"));
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile.getErrors());
+        assertEquals(1, deprecateProfile.getErrors().size());
+    }
+
     @Test
     public void testUpdatePastAffiliations() throws Exception {
 
@@ -237,29 +559,29 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
         ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
         delegateProfile.setRecordNameEntity(new RecordNameEntity());
-        delegateProfile.getRecordNameEntity().setCreditName("Test Delegate Credit Name");        
+        delegateProfile.getRecordNameEntity().setCreditName("Test Delegate Credit Name");
         when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
         ManageDelegate addDelegate = new ManageDelegate();
         addDelegate.setDelegateToManage("5555-5555-5555-555X");
         addDelegate.setPassword("password");
         controller.addDelegate(addDelegate);
         verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
-    }   
-    
+    }
+
     @Test
-    public void testValidateBiography() {        
+    public void testValidateBiography() {
         BiographyForm bf = new BiographyForm();
-        //No NPE exception on empty bio
+        // No NPE exception on empty bio
         controller.setBiographyFormJson(bf);
         assertNotNull(bf.getErrors());
         assertTrue(bf.getErrors().isEmpty());
         String bio = StringUtils.repeat('a', 5001);
         bf.setBiography(Text.valueOf(bio));
         controller.setBiographyFormJson(bf);
-        assertEquals(1, bf.getErrors().size());        
+        assertEquals(1, bf.getErrors().size());
         assertEquals(controller.getMessage("Length.changePersonalInfoForm.biography"), bf.getErrors().get(0));
         bio = StringUtils.repeat('a', 5000);
-        bf.setBiography(Text.valueOf(bio));        
+        bf.setBiography(Text.valueOf(bio));
         controller.setBiographyFormJson(bf);
         assertTrue(bf.getErrors().isEmpty());
         BiographyForm updatedBf = controller.getBiographyForm();
@@ -267,7 +589,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertTrue(updatedBf.getErrors().isEmpty());
         assertNotNull(updatedBf.getBiography());
     }
-    
+
     @Test
     public void testStripHtmlFromNames() throws NoSuchRequestHandlingMethodException {
         NamesForm nf = new NamesForm();
@@ -278,14 +600,14 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("Credit Name", nf.getCreditName().getValue());
         assertEquals("Given Names", nf.getGivenNames().getValue());
         assertEquals("Family Name", nf.getFamilyName().getValue());
-        
+
         NamesForm nfFromDB = controller.getNameForm();
         assertNotNull(nfFromDB);
         assertEquals("Credit Name", nfFromDB.getCreditName().getValue());
         assertEquals("Given Names", nfFromDB.getGivenNames().getValue());
         assertEquals("Family Name", nfFromDB.getFamilyName().getValue());
     }
-    
+
     public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
         return new TypeSafeMatcher<List<DelegationDetails>>() {
 

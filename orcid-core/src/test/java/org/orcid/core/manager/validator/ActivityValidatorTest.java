@@ -34,55 +34,55 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.jaxb.model.common_rc3.Amount;
-import org.orcid.jaxb.model.common_rc3.Contributor;
-import org.orcid.jaxb.model.common_rc3.ContributorAttributes;
-import org.orcid.jaxb.model.common_rc3.ContributorEmail;
-import org.orcid.jaxb.model.common_rc3.ContributorOrcid;
-import org.orcid.jaxb.model.common_rc3.ContributorRole;
-import org.orcid.jaxb.model.common_rc3.Country;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.common_rc3.Day;
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Month;
-import org.orcid.jaxb.model.common_rc3.Organization;
-import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc3.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.common_rc3.PublicationDate;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.SourceClientId;
-import org.orcid.jaxb.model.common_rc3.SourceName;
-import org.orcid.jaxb.model.common_rc3.SourceOrcid;
-import org.orcid.jaxb.model.common_rc3.Subtitle;
-import org.orcid.jaxb.model.common_rc3.Title;
-import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.record_rc3.Citation;
-import org.orcid.jaxb.model.record_rc3.CitationType;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.FundingContributor;
-import org.orcid.jaxb.model.record_rc3.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_rc3.FundingContributorRole;
-import org.orcid.jaxb.model.record_rc3.FundingContributors;
-import org.orcid.jaxb.model.record_rc3.FundingTitle;
-import org.orcid.jaxb.model.record_rc3.FundingType;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Role;
-import org.orcid.jaxb.model.record_rc3.SequenceType;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.jaxb.model.record_rc3.WorkContributors;
-import org.orcid.jaxb.model.record_rc3.WorkTitle;
-import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.jaxb.model.common_v2.Amount;
+import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorAttributes;
+import org.orcid.jaxb.model.common_v2.ContributorEmail;
+import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.common_v2.ContributorRole;
+import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.common_v2.PublicationDate;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
+import org.orcid.jaxb.model.common_v2.SourceName;
+import org.orcid.jaxb.model.common_v2.SourceOrcid;
+import org.orcid.jaxb.model.common_v2.Subtitle;
+import org.orcid.jaxb.model.common_v2.Title;
+import org.orcid.jaxb.model.common_v2.TranslatedTitle;
+import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.record_v2.Citation;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.FundingContributorAttributes;
+import org.orcid.jaxb.model.record_v2.FundingContributorRole;
+import org.orcid.jaxb.model.record_v2.FundingContributors;
+import org.orcid.jaxb.model.record_v2.FundingTitle;
+import org.orcid.jaxb.model.record_v2.FundingType;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Role;
+import org.orcid.jaxb.model.record_v2.SequenceType;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkContributors;
+import org.orcid.jaxb.model.record_v2.WorkTitle;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -342,7 +342,7 @@ public class ActivityValidatorTest {
         Contributor contributor = new Contributor();
         contributor.setContributorAttributes(attributes);
         contributor.setContributorOrcid(contributorOrcid);
-        contributor.setCreditName(new CreditName("credit name", Visibility.PUBLIC));
+        contributor.setCreditName(new CreditName("credit name"));
         contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
         
         WorkContributors contributors = new WorkContributors(Stream.of(contributor).collect(Collectors.toList()));        
@@ -475,41 +475,41 @@ public class ActivityValidatorTest {
     @Test
     public void validateEmployment_validEmploymentTest() {
         Employment employment = getEmployment();
-        activityValidator.validateEmployment(employment, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEmployment(employment, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidPutCodeException.class)
     public void validateEmployment_invalidPutCodeTest() {
         Employment employment = getEmployment();
         employment.setPutCode(1L);
-        activityValidator.validateEmployment(employment, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEmployment(employment, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validateEmployment_dontChangeVisibilityTest() {
         Employment employment = getEmployment();
         employment.setVisibility(Visibility.LIMITED);
-        activityValidator.validateEmployment(employment, null, false, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEmployment(employment, null, false, true, Visibility.PUBLIC);
     }
     
     @Test
     public void validateEducation_validEducationTest() {
         Education education = getEducation();
-        activityValidator.validateEducation(education, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEducation(education, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidPutCodeException.class)
     public void validateEducation_invalidPutCodeTest() {
         Education education = getEducation();
         education.setPutCode(1L);
-        activityValidator.validateEducation(education, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEducation(education, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validateEducation_dontChangeVisibilityTest() {
         Education education = getEducation();
         education.setVisibility(Visibility.LIMITED);
-        activityValidator.validateEducation(education, null, false, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateEducation(education, null, false, true, Visibility.PUBLIC);
     }
     
     public Employment getEmployment() {

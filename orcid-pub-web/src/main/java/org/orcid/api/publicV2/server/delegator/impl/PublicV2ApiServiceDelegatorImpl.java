@@ -18,8 +18,9 @@ package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -29,66 +30,68 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.AddressManager;
-import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
-import org.orcid.core.manager.GroupIdRecordManager;
-import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.PersonalDetailsManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RecordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.aop.AccessControl;
-import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
+import org.orcid.core.manager.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.read_only.OtherNameManagerReadOnly;
+import org.orcid.core.manager.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
-import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Educations;
-import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Fundings;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc3.Works;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
-import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.Education;
-import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.jaxb.model.record_rc3.Employment;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc3.Work;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.WebhookDao;
+import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_v2.Educations;
+import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_v2.Employments;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.Fundings;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,71 +112,66 @@ import de.undercouch.citeproc.csl.CSLItemData;
 public class PublicV2ApiServiceDelegatorImpl
         implements PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> {
 
+    // Activities managers
     @Resource
-    private WorkManager workManager;
-
-    @Resource
-    private ProfileFundingManager profileFundingManager;
+    private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
     @Resource
-    private AffiliationsManager affiliationsManager;
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource
-    private PeerReviewManager peerReviewManager;
+    private ActivitiesSummaryManagerReadOnly activitiesSummaryManagerReadOnly;
+
+    // Person managers
+    @Resource
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
 
     @Resource
-    private WebhookDao webhookDao;
+    private OtherNameManagerReadOnly otherNameManagerReadOnly;
 
     @Resource
-    private ProfileDao profileDao;
+    private EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource
-    private SourceManager sourceManager;
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
-
-    @Resource(name = "visibilityFilterV2")
-    private VisibilityFilterV2 visibilityFilter;
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
 
     @Resource
-    private GroupIdRecordManager groupIdRecordManager;
+    private ProfileKeywordManagerReadOnly profileKeywordManagerReadOnly;
 
     @Resource
-    private LocaleManager localeManager;
+    private AddressManagerReadOnly addressManagerReadOnly;
 
     @Resource
-    private ResearcherUrlManager researcherUrlManager;
+    private BiographyManagerReadOnly biographyManagerReadOnly;
 
     @Resource
-    private OtherNameManager otherNameManager;
+    private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
+
+    // Record manager
+    @Resource
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
     @Resource
-    private EmailManager emailManager;
+    private RecordManagerReadOnly recordManagerReadOnly;
+
+    // Other managers
+    @Resource
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
     @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
-    @Resource
-    private PersonalDetailsManager personalDetailsManager;
-
-    @Resource
-    private ProfileKeywordManager keywordsManager;
+    private SourceUtils sourceUtilsReadOnly;
     
     @Resource
-    private AddressManager addressManager;
-    
-    @Resource
-    private BiographyManager biographyManager;
+    private ContributorUtils contributorUtilsReadOnly;
 
     @Resource
     private RecordManager recordManager;
@@ -181,11 +179,25 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private SourceUtils sourceUtils;
     
-    private long getLastModifiedTime(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
-        return (lastModified == null) ? 0 : lastModified.getTime();        
-    }
+    @Resource
+    private OrcidSearchManager orcidSearchManager;
+
+    @Resource
+    private PublicAPISecurityManagerV2 publicAPISecurityManagerV2;
     
+    @Resource
+    private LocaleManager localeManager;
+
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;    
+
+    private long getLastModifiedTime(String orcid) {
+        return profileEntityManagerReadOnly.getLastModified(orcid);
+    }
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -202,48 +214,48 @@ public class PublicV2ApiServiceDelegatorImpl
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewActivities(String orcid) {
-        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getPublicActivitiesSummary(orcid), orcid);
+        ActivitiesSummary as = activitiesSummaryManagerReadOnly.getPublicActivitiesSummary(orcid);
+        publicAPISecurityManagerV2.filter(as);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
-        sourceUtils.setSourceName(as);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(as);
+        sourceUtilsReadOnly.setSourceName(as);
         return Response.ok(as).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
-        orcidSecurityManager.checkIsPublic(w);
+        Work w = workManagerReadOnly.getWork(orcid, putCode, lastModifiedTime);
+        publicAPISecurityManagerV2.checkIsPublic(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);
+        sourceUtilsReadOnly.setSourceName(w);
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         return Response.ok(w).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorks(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        List<WorkSummary> works = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works publicWorks = workManager.groupWorks(works, true);
-        publicWorks = visibilityFilter.filter(publicWorks, orcid);
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid, lastModifiedTime);
+        Works publicWorks = workManagerReadOnly.groupWorks(works, true);
+        publicAPISecurityManagerV2.filter(publicWorks);
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
-        sourceUtils.setSourceName(publicWorks);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
+        sourceUtilsReadOnly.setSourceName(publicWorks);
         return Response.ok(publicWorks).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewWorkCitation(String orcid, Long putCode) { 
+    public Response viewWorkCitation(String orcid, Long putCode) {
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity entity = profileEntityManagerReadOnly.findByOrcid(orcid);
         String creditName = null;
         RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
-        if(recordNameEntity != null) {
+        if (recordNameEntity != null) {
             if (!recordNameEntity.getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
                 creditName = recordNameEntity.getCreditName();
                 if (StringUtils.isBlank(creditName)) {
@@ -255,320 +267,346 @@ public class PublicV2ApiServiceDelegatorImpl
                 }
             }
         }
-        
-        WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
-        CSLItemData item = tran.toCiteproc(w, creditName ,true);
+
+        WorkToCiteprocTranslator tran = new WorkToCiteprocTranslator();
+        CSLItemData item = tran.toCiteproc(w, creditName, true);
         return Response.ok(item).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, Long putCode) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
+        WorkSummary ws = workManagerReadOnly.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkIsPublic(ws);
+        publicAPISecurityManagerV2.checkIsPublic(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
-        sourceUtils.setSourceName(ws);
+        sourceUtilsReadOnly.setSourceName(ws);
         return Response.ok(ws).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFunding(String orcid, Long putCode) {
-        Funding f = profileFundingManager.getFunding(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(f);
+        Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
-        sourceUtils.setSourceName(f);
+        sourceUtilsReadOnly.setSourceName(f);
+        contributorUtilsReadOnly.filterContributorPrivateData(f);
         return Response.ok(f).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
-    public Response viewFundings(String orcid) {        
-        List<FundingSummary> fundings = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
-        Fundings publicFundings = profileFundingManager.groupFundings(fundings, true);
-        publicFundings = visibilityFilter.filter(publicFundings, orcid);        
+    public Response viewFundings(String orcid) {
+        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
+        publicAPISecurityManagerV2.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
-        sourceUtils.setSourceName(publicFundings);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicFundings);
+        sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.FUNDING_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewFundingSummary(String orcid, Long putCode) {
-        FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(fs);
+        FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
-        sourceUtils.setSourceName(fs);
+        sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducation(String orcid, Long putCode) {
-        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(e);
+        Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
-        sourceUtils.setSourceName(e);
+        sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
-    public Response viewEducations(String orcid) {        
-        List<EducationSummary> educations = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
+    public Response viewEducations(String orcid) {
+        List<EducationSummary> educations = affiliationsManagerReadOnly.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
         Educations publicEducations = new Educations();
-        for(EducationSummary summary : educations) {
-            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+        for (EducationSummary summary : educations) {
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtils.setSourceName(summary);
+                sourceUtilsReadOnly.setSourceName(summary);
                 publicEducations.getSummaries().add(summary);
             }
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEducations);
+        ActivityUtils.setPathToEducations(publicEducations, orcid);
         return Response.ok(publicEducations).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducationSummary(String orcid, Long putCode) {
-        EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(es);
+        EducationSummary es = affiliationsManagerReadOnly.getEducationSummary(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
-        sourceUtils.setSourceName(es);
+        sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmployment(String orcid, Long putCode) {
-        Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(e);
+        Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
-        sourceUtils.setSourceName(e);
+        sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
-    public Response viewEmployments(String orcid) {        
-        List<EmploymentSummary> employments = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
+    public Response viewEmployments(String orcid) {
+        List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
         Employments publicEmployments = new Employments();
-        for(EmploymentSummary summary : employments) {
-            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+        for (EmploymentSummary summary : employments) {
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
-                sourceUtils.setSourceName(summary);
+                sourceUtilsReadOnly.setSourceName(summary);
                 publicEmployments.getSummaries().add(summary);
             }
         }
-        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicEmployments);
+        ActivityUtils.setPathToEmployments(publicEmployments, orcid);
         return Response.ok(publicEmployments).build();
     }
-    
-    @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
+
+    @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(es);
+        EmploymentSummary es = affiliationsManagerReadOnly.getEmploymentSummary(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(es);
         ActivityUtils.setPathToActivity(es, orcid);
-        sourceUtils.setSourceName(es);
+        sourceUtilsReadOnly.setSourceName(es);
         return Response.ok(es).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReview(String orcid, Long putCode) {
-        PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(peerReview);
+        PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
-        sourceUtils.setSourceName(peerReview);
+        sourceUtilsReadOnly.setSourceName(peerReview);
         return Response.ok(peerReview).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviews(String orcid) {
-        List<PeerReviewSummary> peerReviews = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
-        PeerReviews publicPeerReviews = peerReviewManager.groupPeerReviews(peerReviews, true);
-        publicPeerReviews = visibilityFilter.filter(publicPeerReviews, orcid);
+        List<PeerReviewSummary> peerReviews = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));
+        PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
+        publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
-        sourceUtils.setSourceName(publicPeerReviews);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
+        sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PEER_REVIEW_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(summary);
+        PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
-        sourceUtils.setSourceName(summary);
+        sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecord(Long putCode) {
-        GroupIdRecord record = groupIdRecordManager.getGroupIdRecord(putCode);
+        GroupIdRecord record = groupIdRecordManagerReadOnly.getGroupIdRecord(putCode);
         return Response.ok(record).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.GROUP_ID_RECORD_READ, enableAnonymousAccess = true)
     public Response viewGroupIdRecords(String pageSize, String pageNum) {
-        GroupIdRecords records = groupIdRecordManager.getGroupIdRecords(pageSize, pageNum);
+        GroupIdRecords records = groupIdRecordManagerReadOnly.getGroupIdRecords(pageSize, pageNum);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(records);
         return Response.ok(records).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrls(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
+        ResearcherUrls researcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
-        sourceUtils.setSourceName(researcherUrls);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(researcherUrls);
+        sourceUtilsReadOnly.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(researcherUrl);
+        ResearcherUrl researcherUrl = researcherUrlManagerReadOnly.getResearcherUrl(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
-        sourceUtils.setSourceName(researcherUrl);
+        sourceUtilsReadOnly.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmails(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Emails emails = emailManager.getPublicEmails(orcid, lastModifiedTime);
+        Emails emails = emailManagerReadOnly.getPublicEmails(orcid, lastModifiedTime);
+        publicAPISecurityManagerV2.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
-        sourceUtils.setSourceName(emails);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
+        sourceUtilsReadOnly.setSourceName(emails);
         return Response.ok(emails).build();
     }
-    
-    @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
-    public Response viewPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
-        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
-        sourceUtils.setSourceName(personalDetails);
-        return Response.ok(personalDetails).build();
-    }    
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
+    public Response viewPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
+        publicAPISecurityManagerV2.filter(personalDetails);
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(personalDetails);
+        sourceUtilsReadOnly.setSourceName(personalDetails);
+        return Response.ok(personalDetails).build();
+    }
+
+    @Override
     public Response viewOtherNames(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        OtherNames otherNames = otherNameManagerReadOnly.getPublicOtherNames(orcid, lastModifiedTime);
+        publicAPISecurityManagerV2.filter(otherNames);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
-        sourceUtils.setSourceName(otherNames);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(otherNames);
+        sourceUtilsReadOnly.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherName(String orcid, Long putCode) {
-        OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(otherName);
+        OtherName otherName = otherNameManagerReadOnly.getOtherName(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
-        sourceUtils.setSourceName(otherName);
+        sourceUtilsReadOnly.setSourceName(otherName);
         return Response.ok(otherName).build();
-    }    
-    
+    }
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifiers(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
+        PersonExternalIdentifiers extIds = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        publicAPISecurityManagerV2.filter(extIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
-        sourceUtils.setSourceName(extIds);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(extIds);
+        sourceUtilsReadOnly.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(extId);
+        PersonExternalIdentifier extId = externalIdentifierManagerReadOnly.getExternalIdentifier(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
-        sourceUtils.setSourceName(extId);
+        sourceUtilsReadOnly.setSourceName(extId);
         return Response.ok(extId).build();
-    }    
-    
+    }
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewBiography(String orcid) {
-        Biography bio = biographyManager.getBiography(orcid);
-        orcidSecurityManager.checkIsPublic(bio);
+        Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
+        publicAPISecurityManagerV2.checkIsPublic(bio);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }
-            
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
         long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = keywordsManager.getPublicKeywords(orcid, lastModifiedTime);
+        Keywords keywords = profileKeywordManagerReadOnly.getPublicKeywords(orcid, lastModifiedTime);
+        publicAPISecurityManagerV2.filter(keywords);
         ElementUtils.setPathToKeywords(keywords, orcid);
-        sourceUtils.setSourceName(keywords);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(keywords);
+        sourceUtilsReadOnly.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeyword(String orcid, Long putCode) {
-        Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(keyword);
+        Keyword keyword = profileKeywordManagerReadOnly.getKeyword(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
-        sourceUtils.setSourceName(keyword);
+        sourceUtilsReadOnly.setSourceName(keyword);
         return Response.ok(keyword).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
+        Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
+        publicAPISecurityManagerV2.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
-        sourceUtils.setSourceName(addresses);
+        //Set the latest last modified
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(addresses);
+        sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddress(String orcid, Long putCode) {
-        Address address = addressManager.getAddress(orcid, putCode);
-        orcidSecurityManager.checkIsPublic(address);
+        Address address = addressManagerReadOnly.getAddress(orcid, putCode);
+        publicAPISecurityManagerV2.checkIsPublic(address);
         ElementUtils.setPathToAddress(address, orcid);
-        sourceUtils.setSourceName(address);
+        sourceUtilsReadOnly.setSourceName(address);
         return Response.ok(address).build();
     }
-    
+
     @Override
-    @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewPerson(String orcid) {
-        Person person = profileEntityManager.getPublicPersonDetails(orcid);
+        Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
+        publicAPISecurityManagerV2.filter(person);
         ElementUtils.setPathToPerson(person, orcid);
-        sourceUtils.setSourceName(person);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
+        sourceUtilsReadOnly.setSourceName(person);
         return Response.ok(person).build();
+    }
+
+    @Override
+    public Response viewRecord(String orcid) {
+        Record record = recordManagerReadOnly.getPublicRecord(orcid);
+        publicAPISecurityManagerV2.filter(record);
+        if (record.getPerson() != null) {
+            sourceUtilsReadOnly.setSourceName(record.getPerson());
+        }
+        if (record.getActivitiesSummary() != null) {
+            ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
+            sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
+        }
+        ElementUtils.setPathToRecord(record, orcid);
+        Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
+        return Response.ok(record).build();
     }
     
     @Override
-    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
-    public Response viewRecord(String orcid) {
-        Record record = recordManager.getPublicRecord(orcid);
-        if(record.getPerson() != null) {
-            ElementUtils.setPathToPerson(record.getPerson(), orcid);
-            sourceUtils.setSourceName(record.getPerson());
+    public Response searchByQuery(Map<String, List<String>> solrParams) {
+        validateSearchParams(solrParams);
+        Search search = orcidSearchManager.findOrcidIds(solrParams);
+        return Response.ok(search).build();
+    }
+
+    private void validateSearchParams(Map<String, List<String>> queryMap) {
+        List<String> rowsList = queryMap.get("rows");
+        if (rowsList != null && !rowsList.isEmpty()) {
+            try {
+                String rowsString = rowsList.get(0);
+                int rows = Integer.valueOf(rowsString);
+                if (rows < 0 || rows > OrcidSearchManager.MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(
+                            localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
+                }
+            } catch (NumberFormatException e) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+            }
+        } else {
+            // Set the default number of results
+            queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
         }
-        if(record.getActivitiesSummary() != null) {
-            ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
-            ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
-            sourceUtils.setSourceName(record.getActivitiesSummary());
-        }         
-        return Response.ok(record).build();
+    }
+
+    @Override
+    public Response viewClient(String clientId) {
+        Client client = clientDetailsManager.getClient(clientId);
+        return Response.ok(client).build();
     }
 }

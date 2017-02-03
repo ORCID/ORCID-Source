@@ -33,12 +33,12 @@ import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.PeerReviewType;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.PeerReviewType;
+import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -173,8 +173,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
      */
     private List<String> createPeerReviewIdList(HttpServletRequest request) {
         String orcid = getCurrentUserOrcid();
-        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
-        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified.getTime());
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, profileEntityManager.getLastModified(orcid));
         
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         HashMap<Long, PeerReviewForm> peerReviewMap = new HashMap<>();

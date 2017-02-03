@@ -136,7 +136,7 @@
         <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;com.fasterxml.jackson.jaxrs.json</param-value>
+            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
