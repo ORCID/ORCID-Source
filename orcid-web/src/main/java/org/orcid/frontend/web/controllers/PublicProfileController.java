@@ -58,11 +58,11 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
@@ -732,27 +732,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
             throw new Exception(getMessage("web.orcid.securityhash.exception"));
         OrcidInfo result = new OrcidInfo();
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        result.setOrcid(orcid);
-
-        if (profile.getOrcidBio().getPersonalDetails().getCreditName() != null
-                && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent())
-                && profile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().equals(Visibility.PUBLIC)) {
-            result.setName(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        } else {
-            String name = "";
-
-            if (profile.getOrcidBio().getPersonalDetails().getGivenNames() != null
-                    && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent())) {
-                name += profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent();
-            }
-
-            if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null
-                    && !PojoUtil.isEmpty(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent())) {
-                name += " " + profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent();
-            }
-            result.setName(name);
-        }
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        
+        result.setName(RecordNameUtils.getPublicName(profile.getRecordNameEntity()));
 
         Locale locale = null;
         if (!StringUtil.isBlank(localeParam)) {

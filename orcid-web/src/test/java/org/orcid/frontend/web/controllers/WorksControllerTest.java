@@ -40,8 +40,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -115,7 +115,7 @@ public class WorksControllerTest extends BaseControllerTest {
         assertNotNull(work.getTitle());
         assertEquals("Journal article A", work.getTitle().getValue());
         assertNotNull(work.getVisibility());
-        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        assertEquals(Visibility.PUBLIC, work.getVisibility().getVisibility());
         assertEquals("journal-article", work.getWorkType().getValue());
     }
 

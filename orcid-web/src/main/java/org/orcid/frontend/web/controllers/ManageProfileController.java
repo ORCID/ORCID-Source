@@ -42,14 +42,13 @@ import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -172,15 +171,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
         this.profileEntityManager = profileEntityManager;
-    }
-
-    @ModelAttribute("visibilities")
-    public Map<String, String> retrieveVisibilitiesAsMap() {
-        Map<String, String> visibilities = new LinkedHashMap<String, String>();
-        visibilities.put(Visibility.PUBLIC.value(), "Public");
-        visibilities.put(Visibility.LIMITED.value(), "Limited");
-        visibilities.put(Visibility.PRIVATE.value(), "Private");
-        return visibilities;
     }
 
     @ModelAttribute("externalIdentifierRefData")

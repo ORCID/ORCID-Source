@@ -62,7 +62,6 @@ import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -301,16 +300,6 @@ public class BaseController {
 
     public void setDomainsAllowingRobots(List<String> domainsAllowingRobots) {
         this.domainsAllowingRobots = domainsAllowingRobots;
-    }
-
-    @ModelAttribute("visibilities")
-    public Map<String, String> retrieveVisibilitiesAsMap() {
-        Map<String, String> visibilities = new LinkedHashMap<String, String>();
-        visibilities.put(Visibility.PUBLIC.value(), "Public");
-        visibilities.put(Visibility.LIMITED.value(), "Limited");
-        visibilities.put(Visibility.PRIVATE.value(), "Private");
-        return visibilities;
-
     }
 
     @ModelAttribute("startupDate")
