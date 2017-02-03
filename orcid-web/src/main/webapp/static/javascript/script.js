@@ -4033,8 +4033,8 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['doi'] = function (id) {
-      if (id.toLowerCase().startsWith('dx.doi.org') || id.startsWith('dx.doi.org')) return 'https://' + id;
-      return 'https://dx.doi.org/' + id;
+      if (id.toLowerCase().startsWith('dx.doi.org') || id.toLowerCase().startsWith('doi.org') ) return 'https://' + id;
+      return 'https://doi.org/' + id;
    };
 
    typeMap['ethos'] = function (id) {
