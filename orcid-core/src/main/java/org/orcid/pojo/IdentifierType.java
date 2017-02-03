@@ -38,12 +38,10 @@ public class IdentifierType implements Serializable{
     private String description;
     private Date dateCreated;
     private Date lastModified;
-    
-    @Override
-    public String toString() {
-        return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", dateCreated="
-                + dateCreated + ", lastModified=" + lastModified + ", sourceClient=" + sourceClient + ", deprecated=" + deprecated + ", description=" + description +"]";
-    }
+    private Boolean caseSensitive;
+    private String primaryUse;
+
+    private Boolean deprecated = Boolean.FALSE;    
     private ClientDetailsEntity sourceClient;
     
     public String getName() {
@@ -102,7 +100,23 @@ public class IdentifierType implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
-    private Boolean deprecated = Boolean.FALSE;
-    
-    //source?
+    public Boolean getCaseSensitive() {
+        return caseSensitive;
+    }
+    public void setCaseSensitive(Boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+    public String getPrimaryUse() {        
+        return primaryUse;
+    }
+    public void setPrimaryUse(String primaryUse) {
+        this.primaryUse = primaryUse;
+    }
+    @Override
+    public String toString() {
+        return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", description="
+                + description + ", dateCreated=" + dateCreated + ", lastModified=" + lastModified + ", caseSensitive=" + caseSensitive + ", primaryUse=" + primaryUse
+                + ", deprecated=" + deprecated + ", sourceClient=" + sourceClient + "]";
+    }
+
 }

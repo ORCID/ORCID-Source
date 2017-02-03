@@ -38,7 +38,9 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
     private String id_validation_regex;
     private String id_resolution_prefix;
     private Boolean id_deprecated = Boolean.FALSE;
-    
+    private Boolean case_sensitive;
+    private String primary_use;
+
     private ClientDetailsEntity sourceClient;
     
     @Column(name = "id_name")
@@ -97,6 +99,24 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
 
     public void setSourceClient(ClientDetailsEntity sourceClient) {
         this.sourceClient = sourceClient;
+    }
+
+    @Column(name = "case_sensitive")
+    public Boolean getCaseSensitive() {
+        return case_sensitive;
+    }
+
+    public void setCaseSensitive(Boolean case_sensitive) {
+        this.case_sensitive = case_sensitive;
+    }
+    
+    @Column(name = "primary_use")
+    public String getPrimaryUse() {
+        return primary_use;
+    }
+
+    public void setPrimaryUse(String primary_use) {
+        this.primary_use = primary_use;
     }
 
 }
