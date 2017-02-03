@@ -79,8 +79,7 @@ public class OauthAuthorizationPageHelper {
             });
         }                
         
-        String result = webDriver.getCurrentUrl();
-        return result;
+        return webDriver.getCurrentUrl();        
     }
     
     public static String authorizeOnAlreadyLoggedInUser(final WebDriver loggedInDriver, String baseUrl, String clientId, String redirectUri, String scopes, String stateParam) {

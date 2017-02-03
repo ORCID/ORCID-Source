@@ -1768,6 +1768,30 @@
     />
     
     <email
+        orcid="4444-4444-4444-4446"
+        email="test@test.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4446"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4446"
+        email="user@user.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4446"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />
+    
+    <email
         orcid="4444-4444-4444-4447"
         email="otis@reading.com"
         is_primary="true"

@@ -50,6 +50,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -633,11 +634,12 @@ public class AdminController extends BaseController {
      * @return true if the account was locked, false otherwise
      */
     @RequestMapping(value = "/lock-accounts.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> lockAccounts(@RequestBody String orcidIds) {
+    public @ResponseBody Map<String, Set<String>> lockAccounts(@RequestBody LockAccounts lockAccounts) {
         Set<String> lockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
         Set<String> reviewedIds = new HashSet<String>();
+        String orcidIds = lockAccounts.getOrcidsToLock();
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
@@ -654,7 +656,7 @@ public class AdminController extends BaseController {
                     } else if (profile.isReviewed()) {
                         reviewedIds.add(identifier);
                     } else {
-                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath());
+                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath(), lockAccounts.getLockReason(), lockAccounts.getDescription());
                         successIds.add(identifier);
                     }
                 }
@@ -667,6 +669,16 @@ public class AdminController extends BaseController {
         resendIdMap.put("alreadyLockedList", lockedIds);
         resendIdMap.put("reviewedList", reviewedIds);
         return resendIdMap;
+    }
+
+    /**
+     * Function to get reasons for locking account(s)
+     * 
+     * @return list of reasons for locking accounts
+     */
+    @RequestMapping(value = "/lock-reasons.json")
+    public @ResponseBody List<String> getLockReasons() {
+        return adminManager.getLockReasons();
     }
 
     /**

@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.admin.LockReason;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
@@ -471,7 +472,7 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            orcidProfileManager.lockProfile(params.get(ORCID));               
+            orcidProfileManager.lockProfile(params.get(ORCID), LockReason.SPAM.getLabel(), null);               
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {
