@@ -3,46 +3,57 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
         [
             {
                 "value": "cs",
+                "direction": "lr",
                 "label": "čeština"
             },
             {
                 "value": "en",
+                "direction": "lr",
                 "label": "English"
             },
             {
                 "value": 'es',
+                "direction": "lr",
                 "label": 'Español'
             },
             {
                 "value": 'fr',
+                "direction": "lr",
                 "label": 'Français'
             },
             {
                 "value": 'it',
+                "direction": "lr",
                 "label": 'Italiano'
             },
             {
                 "value": 'ja',
+                "direction": "lr",
                 "label": '日本語'
             },
             {
                 "value": 'ko',
+                "direction": "lr",
                 "label": '한국어'
             },
             {
                 "value": 'pt',
+                "direction": "lr",
                 "label": 'Português'
             },
             {
                 "value": 'ru',
+                "direction": "lr",
                 "label": 'Русский'
             },
             {
                 "value": 'zh_CN',
+                "direction": "lr",
                 "label": '简体中文'
             },
             {
                 "value": 'zh_TW',
+                "direction": "lr",
                 "label": '繁體中文'
             }
         ];
@@ -50,58 +61,72 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
         [
             {
                 "value": "cs",
+                "direction": "lr",
                 "label": "čeština"
             },
             {
                 "value": "en",
+                "direction": "lr",
                 "label": "English"
             },
             {
                 "value": 'es',
+                "direction": "lr",
                 "label": 'Español'
             },
             {
                 "value": 'fr',
+                "direction": "lr",
                 "label": 'Français'
             },
             {
                 "value": 'it',
+                "direction": "lr",
                 "label": 'Italiano'
             },
             {
                 "value": 'ja',
+                "direction": "rl",
                 "label": '日本語'
             },
             {
                 "value": 'ko',
+                "direction": "rl",
                 "label": '한국어'
             },
             {
                 "value": 'lr',
+                "direction": "lr",
                 "label": 'lr'
             },
             {
                 "value": 'pt',
+                "direction": "lr",
                 "label": 'Português'
             },
             {
                 "value": 'rl',
+                "direction": "rl",
                 "label": 'rl'
             },
             {
                 "value": 'ru',
+                "direction": "lr",
                 "label": 'Русский'
             },
             {
                 "value": 'xx',
+                "direction": "lr",
                 "label": 'X'
             },
             {
                 "value": 'zh_CN',
+                "direction": "lr",
                 "label": '简体中文'
             },
             {
                 "value": 'zh_TW',
+                "direction": "rl",
                 "label": '繁體中文'
             }
         ];
@@ -117,6 +142,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
 
     //Load Language that is set in the cookie or set default language to english
     $scope.getCurrentLanguage = function(){
+
         $scope.language = $scope.languages[0]; //Default
         typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
         angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
@@ -125,6 +151,9 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
                 $scope.widgetSrvc.locale = $scope.language.value; 
             }
         });
+        
+        document.body.className += " lang-" + $scope.language.direction;
+        document.getElementsByTagName('html')[0].setAttribute('lang', $scope.language.value);
     };
 
     $scope.getCurrentLanguage(); //Checking for the current language value

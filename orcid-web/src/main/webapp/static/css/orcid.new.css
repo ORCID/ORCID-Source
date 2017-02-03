@@ -8510,43 +8510,43 @@ ul.comma li:last-child:after {
 
 
 /*************************** Right to left styles*/
-*{
+.lang-rl *{
     text-align: right;
 }
 
-.header .navigation > .menu {
+.lang-rl .header .navigation > .menu {
     display: flex;
     flex-direction: column-reverse;
     flex-wrap: wrap-reverse;
 }
 
-.header .navigation>.menu>li.active-trail>.menu {
+.lang-rl .header .navigation>.menu>li.active-trail>.menu {
     display: flex;
     flex-direction: column-reverse;
     flex-wrap: wrap-reverse;
 }
 
-.lhs {
+.lang-rl .lhs {
     float: right;
     padding-left: 20px!important;
 }
 
-.full-name {
+.lang-rl .full-name {
     float: right;
 }
 
-.pull-left {
+.lang-rl .pull-left {
     float: right!important;
 }
 
-.table th, .table td {
+.lang-rl .table th, .table td {
     text-align: right;
 }
 
-.workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
+.lang-rl .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
     float: right;
 }
 
-.workspace-section-content {
+.lang-rl .workspace-section-content {
     float: right;
 }
