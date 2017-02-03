@@ -126,7 +126,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());
         entity.setLastModified(new Date());
-        entity.setCaseSensitive(id.getCaseSensitive());
+        entity.setIsCaseSensitive(id.getCaseSensitive());
         entity.setPrimaryUse(id.getPrimaryUse());
         entity = idTypeDao.updateIdentifierType(entity);
         return adapter.fromEntity(entity);

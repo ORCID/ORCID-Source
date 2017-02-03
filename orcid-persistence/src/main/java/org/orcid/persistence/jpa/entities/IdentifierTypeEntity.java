@@ -32,14 +32,16 @@ import javax.persistence.Table;
 public class IdentifierTypeEntity extends BaseEntity<Long>{
 
     private static final long serialVersionUID = 1L;
-
+   
+    private static final String DEFUALT_USE = "work";
+    
     private Long id;
     private String id_name;
     private String id_validation_regex;
     private String id_resolution_prefix;
     private Boolean id_deprecated = Boolean.FALSE;
-    private Boolean case_sensitive;
-    private String primary_use;
+    private Boolean case_sensitive = Boolean.FALSE;
+    private String primary_use = DEFUALT_USE;
 
     private ClientDetailsEntity sourceClient;
     
@@ -100,15 +102,6 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
     public void setSourceClient(ClientDetailsEntity sourceClient) {
         this.sourceClient = sourceClient;
     }
-
-    @Column(name = "case_sensitive")
-    public Boolean getCaseSensitive() {
-        return case_sensitive;
-    }
-
-    public void setCaseSensitive(Boolean case_sensitive) {
-        this.case_sensitive = case_sensitive;
-    }
     
     @Column(name = "primary_use")
     public String getPrimaryUse() {
@@ -117,6 +110,15 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
 
     public void setPrimaryUse(String primary_use) {
         this.primary_use = primary_use;
+    }
+    
+    @Column(name = "case_sensitive")
+    public Boolean getIsCaseSensitive() {
+        return case_sensitive;
+    }
+
+    public void setIsCaseSensitive(Boolean case_sensitive) {
+        this.case_sensitive = case_sensitive;
     }
 
 }

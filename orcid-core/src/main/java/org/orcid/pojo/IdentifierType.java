@@ -19,8 +19,6 @@ package org.orcid.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -40,8 +38,8 @@ public class IdentifierType implements Serializable{
     private Date lastModified;
     private Boolean caseSensitive;
     private String primaryUse;
-
     private Boolean deprecated = Boolean.FALSE;    
+    
     private ClientDetailsEntity sourceClient;
     
     public String getName() {
