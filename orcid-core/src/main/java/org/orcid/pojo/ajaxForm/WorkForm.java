@@ -730,7 +730,12 @@ public class WorkForm implements ErrorsInterface, Serializable {
             if (other.dateSortString != null)
                 return false;
         } else if (!dateSortString.equals(other.dateSortString))
-            return false;       
+            return false;
+        if (errors == null) {
+            if (other.errors != null)
+                return false;
+        } else if (!errors.equals(other.errors))
+            return false;
         if (journalTitle == null) {
             if (other.journalTitle != null)
                 return false;
@@ -796,7 +801,10 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 return false;
         } else if (!url.equals(other.url))
             return false;
-        if (visibility != other.visibility)
+        if (visibility == null) {
+            if (other.visibility != null)
+                return false;
+        } else if (!visibility.equals(other.visibility))
             return false;
         if (workCategory == null) {
             if (other.workCategory != null)
@@ -814,5 +822,5 @@ public class WorkForm implements ErrorsInterface, Serializable {
         } else if (!workType.equals(other.workType))
             return false;
         return true;
-    }        
+    }
 }
