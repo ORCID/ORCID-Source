@@ -946,7 +946,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
                 .getSendMemberUpdateRequests();
-        Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
+        org.orcid.jaxb.model.common_v2.Visibility activitiesVisibilityDefault = (preferences.getActivitiesVisibilityDefault().getValue() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value());
         boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
                 .getDeveloperToolsEnabled().isValue();
         float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
