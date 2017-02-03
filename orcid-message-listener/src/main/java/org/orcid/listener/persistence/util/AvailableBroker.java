@@ -21,7 +21,7 @@ public enum AvailableBroker {
 	 * The name variable of the available broker should match the column name in
 	 * the record_status table
 	 */
-	DUMP_STATUS_1_2_API("api_1_2_dump_status"), DUMP_STATUS_2_0_API("api_2_0_dump_status");
+	DUMP_STATUS_1_2_API("api_1_2_dump_status"), DUMP_STATUS_2_0_API("api_2_0_dump_status"), SOLR("api_2_0_solr_status");
 
 	private final String name;
 
