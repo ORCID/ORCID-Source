@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
@@ -133,6 +134,10 @@ public class SalesForceAdapter {
 
     public JSONObject createSaleForceRecordFromContact(Contact contact) {
         return mapperFacade.map(contact, JSONObject.class);
+    }
+
+    public JSONObject createSaleForceRecordFromContactRole(ContactRole contactRole) {
+        return mapperFacade.map(contactRole, JSONObject.class);
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {

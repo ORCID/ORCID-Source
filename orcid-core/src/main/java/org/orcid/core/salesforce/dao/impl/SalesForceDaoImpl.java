@@ -30,6 +30,7 @@ import org.orcid.core.salesforce.adapter.SalesForceAdapter;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -139,17 +140,17 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public void createContact(Contact contact) {
+    public String createContact(Contact contact) {
         try {
-            createContactInSalesForce(getAccessToken(), contact);
+            return createContactInSalesForce(getAccessToken(), contact);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to create contact, trying again.", e);
-            createContactInSalesForce(getFreshAccessToken(), contact);
+            return createContactInSalesForce(getFreshAccessToken(), contact);
         }
 
     }
 
-    private void createContactInSalesForce(String accessToken, Contact contact) {
+    private String createContactInSalesForce(String accessToken, Contact contact) {
         LOGGER.info("About to create contact in SalesForce");
         String accountId = contact.getAccountId();
         validateSalesForceId(accountId);
@@ -161,9 +162,35 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error creating contact in SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return;
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
     }
-    
+
+    @Override
+    public void createContactRole(ContactRole contact) {
+        try {
+            createContactRoleInSalesForce(getAccessToken(), contact);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create contact role, trying again.", e);
+            createContactRoleInSalesForce(getFreshAccessToken(), contact);
+        }
+
+    }
+
+    private void createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+        LOGGER.info("About to create contact role in SalesForce");
+        validateSalesForceId(contactRole.getAccountId());
+        validateSalesForceId(contactRole.getContactId());
+        WebResource resource = createContactRoleResource();
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating contact role in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+    }
+
     @Override
     public void updateMember(Member member) {
         try {
@@ -197,9 +224,14 @@ public class SalesForceDaoImpl implements SalesForceDao {
                 "PATCH");
         return resource;
     }
-    
+
     private WebResource createContactResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Contact/");
+        return resource;
+    }
+
+    private WebResource createContactRoleResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Membership_Contact_Role__c/");
         return resource;
     }
 

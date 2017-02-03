@@ -33,6 +33,8 @@ import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SlugUtils;
@@ -175,7 +177,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             Email primaryEmail = emailManager.getEmails(contactOrcid, getLastModified(contactOrcid)).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
             contact.setEmail(primaryEmail.getEmail());
         }
-        salesForceDao.createContact(contact);
+        String contactId = salesForceDao.createContact(contact);
+        ContactRole contactRole = new ContactRole();
+        contactRole.setContactId(contactId);
+        contactRole.setRole(ContactRoleType.TECHNICAL_CONTACT);
+        contactRole.setAccountId(contact.getAccountId());
+        salesForceDao.createContactRole(contactRole);
         // Need to make more granular!
         evictAll();
     }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 
@@ -54,7 +55,13 @@ public interface SalesForceDao {
 
     void updateMember(Member member);
     
-    void createContact(Contact contact);
+    /**
+     * 
+     * @return the contact id
+     */
+    String createContact(Contact contact);
+    
+    void createContactRole(ContactRole contact);
 
     String getAccessToken();
 
