@@ -10045,7 +10045,7 @@
 
 	    $scope.searchByEmail = function(){
 	        $.ajax({
-	            url: getBaseUri() + '/manage-consortium/search-for-contact-by-email/' + encodeURIComponent($scope.input.text) + '/',
+	            url: getBaseUri() + '/manage/search-for-delegate-by-email/' + encodeURIComponent($scope.input.text) + '/',
 	            dataType: 'json',
 	            headers: { Accept: 'application/json'},
 	            success: function(data) {
@@ -10179,22 +10179,14 @@
 	    $scope.addContactByEmail = function(contactEmail) {
 	        $scope.errors = [];
 	        var addContact = {};
-	        addContact.contactEmail = $scope.input.text;
+	        addContact.email = $scope.input.text;
 	        $.ajax({
 	            url: getBaseUri() + '/manage-consortium/add-contact-by-email.json',
 	            type: 'POST',
 	            data: angular.toJson(addContact),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
-	                if(data.errors.length === 0){
-	                    $scope.getContacts();
-	                    $scope.$apply();
-	                    $scope.closeModal();
-	                }
-	                else{
-	                    $scope.errors = data.errors;
-	                    $scope.$apply();
-	                }
+	                $scope.$apply();
 	            }
 	        }).fail(function() {
 	            console.log("Error adding contact.");

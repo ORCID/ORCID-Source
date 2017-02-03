@@ -66,7 +66,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
-                                <td>{{contact.name}}</td><td>{{contact.email}}</td><td>contact.role</td>
+                                <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{contact.role}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -156,4 +156,29 @@
 	       </div>
 	    </div>
 	</script>
+	
+	<script type="text/ng-template" id="confirm-add-contact-by-email-modal">
+    <div style="padding: 20px;">
+        <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+        <div ng-show="emailSearchResult.isSelf">
+            <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+        </div>
+        <div ng-show="!emailSearchResult.found" >
+            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+            <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
+            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+        </div>
+        <div ng-show="!emailSearchResult.isSelf && emailSearchResult.found">
+            <p>{{input.text}}</p>
+            <form ng-submit="addContactByEmail(input.text)">
+                <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
+                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+            </form>
+            <div ng-show="errors.length === 0">
+                <br></br>
+            </div>
+        </div>
+    </div>
+</script>
 </@public>

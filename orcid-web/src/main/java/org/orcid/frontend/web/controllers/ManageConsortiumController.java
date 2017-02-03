@@ -25,6 +25,8 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +46,9 @@ public class ManageConsortiumController extends BaseController {
 
     @Resource
     private SalesForceManager salesForceManager;
+
+    @Resource
+    private EmailDao emailDao;
 
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
@@ -73,7 +78,16 @@ public class ManageConsortiumController extends BaseController {
         salesForceManager.updateMember(member);
         return consortium;
     }
-    
+
+    @RequestMapping(value = "/add-contact-by-email.json")
+    public @ResponseBody Contact addDelegateByEmail(@RequestBody Contact contact) {
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(contact.getEmail());
+        contact.setOrcid(emailEntity.getProfile().getId());
+        contact.setName(emailEntity.getProfile().getRecordNameEntity().getGivenNames());
+        salesForceManager.createContact(contact);
+        return contact;
+    }
+
     @RequestMapping(value = "/add-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact addContact(@RequestBody Contact contact) {
         salesForceManager.createContact(contact);
