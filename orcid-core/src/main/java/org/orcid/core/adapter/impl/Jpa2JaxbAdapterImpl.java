@@ -529,7 +529,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 // the funding relation
                 CreditName creditName = contributor.getCreditName();
                 if (creditName != null) {                    
-                    creditName.setVisibility(Visibility.valueOf(profileFundingEntity.getVisibility().value()));                                       
+                    creditName.setVisibility(Visibility.fromValue(profileFundingEntity.getVisibility().value()));                                       
                 } 
                 // Strip out any contributor emails
                 contributor.setContributorEmail(null);

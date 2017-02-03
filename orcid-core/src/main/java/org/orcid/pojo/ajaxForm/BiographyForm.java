@@ -39,7 +39,7 @@ public class BiographyForm implements ErrorsInterface, Serializable {
             if(bio.getVisibility() != null) {
                 bf.setVisiblity(Visibility.valueOf(bio.getVisibility()));
             } else {
-                bf.setVisiblity(Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value())));
+                bf.setVisiblity(Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value())));
             }
         }
         return bf;

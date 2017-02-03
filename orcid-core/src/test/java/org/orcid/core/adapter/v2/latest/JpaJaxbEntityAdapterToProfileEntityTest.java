@@ -17,8 +17,8 @@
 package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -43,7 +43,6 @@ import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -138,7 +137,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         EmailEntity primaryEmail = emailMap.get("josiah_carberry@brown.edu");
         assertNotNull(primaryEmail);
-        assertEquals(Visibility.LIMITED, primaryEmail.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, primaryEmail.getVisibility());
         assertTrue(primaryEmail.getPrimary());
         assertTrue(primaryEmail.getCurrent());
         assertTrue(primaryEmail.getVerified());
@@ -146,7 +145,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
         assertNotNull(nonPrimaryEmail1);
-        assertEquals(Visibility.LIMITED, nonPrimaryEmail1.getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, nonPrimaryEmail1.getVisibility());
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
@@ -243,7 +242,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidMessage.getOrcidProfile());
         List<WorkEntity> works = new ArrayList<WorkEntity>(profileEntity.getWorks());
         assertEquals(1, works.size());
-        assertTrue(works.get(0).getWorkType().equals(WorkType.DATA_SET));
+        assertTrue(works.get(0).getWorkType().equals(org.orcid.jaxb.model.record_v2.WorkType.DATA_SET));
     }
 
     private OrcidMessage getOrcidMessage(String orcidMessagePath) throws JAXBException {
