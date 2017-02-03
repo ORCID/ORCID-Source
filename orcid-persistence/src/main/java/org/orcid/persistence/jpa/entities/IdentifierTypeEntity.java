@@ -112,7 +112,8 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
         this.primary_use = primary_use;
     }
     
-    @Column(name = "case_sensitive")
+    @Column(name = "`case_sensitive`")
+    //this is in single backslashes to make it work with HSQLDB
     public Boolean getIsCaseSensitive() {
         return case_sensitive;
     }
