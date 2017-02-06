@@ -180,7 +180,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String contactId = salesForceDao.createContact(contact);
         ContactRole contactRole = new ContactRole();
         contactRole.setContactId(contactId);
-        contactRole.setRole(ContactRoleType.TECHNICAL_CONTACT);
+        contactRole.setRole(ContactRoleType.OTHER_CONTACT);
         contactRole.setAccountId(contact.getAccountId());
         salesForceDao.createContactRole(contactRole);
         // Need to make more granular!
