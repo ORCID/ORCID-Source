@@ -268,14 +268,46 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
 
     $scope.confirmRevoke = function(contactName, contactId) {
-        $scope.errors = [];
         $scope.contactNameToRevoke = contactName;
         $scope.contactToRevoke = contactId;
         $.colorbox({
-            html : $compile($('#revoke-contact-modal').html())($scope)
+            html : $compile($('#revoke-contact-modal').html())($scope),
+            transition: 'fade',
+            close: '',
+            onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            onComplete: function() {$.colorbox.resize();},
+            scrolling: true
 
         });
         $.colorbox.resize();
+    };
+    
+    $scope.revoke = function () {
+        var revokeContact = {};
+        revokeContact.contactToManage = $scope.contactToRevoke;
+        revokeContact.password = $scope.password;
+        $.ajax({
+            url: getBaseUri() + '/manage-consortium/revokeContact.json',
+            type: 'POST',
+            data:  angular.toJson(revokeContact),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getContacts();
+                    $scope.$apply();
+                    $scope.closeModal();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("$ContactCtrl.revoke() error");
+        });
     };
 
     
