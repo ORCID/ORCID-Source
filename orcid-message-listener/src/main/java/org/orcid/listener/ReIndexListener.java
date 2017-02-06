@@ -19,7 +19,8 @@ package org.orcid.listener;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
-import org.orcid.listener.common.LastModifiedMessageProcessor;
+import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -35,7 +36,10 @@ public class ReIndexListener {
     Logger LOG = LoggerFactory.getLogger(ReIndexListener.class);
     
     @Resource
-    private LastModifiedMessageProcessor processor;
+    private S3MessageProcessor s3Processor;
+
+    @Resource
+    private SolrMessageProcessor solrProcessor;
 
     /**
      * Processes messages on receipt.
@@ -50,6 +54,7 @@ public class ReIndexListener {
         LastModifiedMessage message = new LastModifiedMessage(map);
         String orcid = message.getOrcid();
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + orcid + " " + message.getLastUpdated());
-        processor.accept(message);               
+        s3Processor.accept(message);               
+        solrProcessor.accept(message);               
     }         
 }

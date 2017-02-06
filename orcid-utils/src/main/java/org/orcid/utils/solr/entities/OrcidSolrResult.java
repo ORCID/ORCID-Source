@@ -25,9 +25,7 @@ public class OrcidSolrResult {
     private String email;
     private String givenNames;
     private String familyName;
-    private Collection<String> currentPrimaryInstitutionAffiliationNames;
-    private Collection<String> currentInstitutionAffiliationNames;
-    private Collection<String> pastInstitutionAffiliationNames;
+    private Collection<String> institutionAffiliationNames;
     private String creditName;
     private Collection<String> otherNames;
     private String publicProfileMessage;
@@ -72,28 +70,12 @@ public class OrcidSolrResult {
         this.familyName = familyName;
     }
 
-    public Collection<String> getCurrentPrimaryInstitutionAffiliationNames() {
-        return currentPrimaryInstitutionAffiliationNames;
+    public Collection<String> getInstitutionAffiliationNames() {
+        return institutionAffiliationNames;
     }
 
-    public void setCurrentPrimaryInstitutionAffiliationNames(Collection<String> currentPrimaryInstitutionAffiliationNames) {
-        this.currentPrimaryInstitutionAffiliationNames = currentPrimaryInstitutionAffiliationNames;
-    }
-
-    public Collection<String> getCurrentInstitutionAffiliationNames() {
-        return currentInstitutionAffiliationNames;
-    }
-
-    public void setCurrentInstitutionAffiliationNames(Collection<String> currentInstitutionAffiliationNames) {
-        this.currentInstitutionAffiliationNames = currentInstitutionAffiliationNames;
-    }
-
-    public Collection<String> getPastInstitutionAffiliationNames() {
-        return pastInstitutionAffiliationNames;
-    }
-
-    public void setPastInstitutionAffiliationNames(Collection<String> pastInstitutionAffiliationNames) {
-        this.pastInstitutionAffiliationNames = pastInstitutionAffiliationNames;
+    public void setInstitutionAffiliationNames(Collection<String> institutionAffiliationNames) {
+        this.institutionAffiliationNames = institutionAffiliationNames;
     }
 
     public String getCreditName() {

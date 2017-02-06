@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.converters;
+package org.orcid.listener.solr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +55,7 @@ import org.orcid.utils.solr.entities.OrcidSolrDocument;
 public class OrcidProfileToSolrDocument {
 
     
+    @Deprecated 
     public OrcidSolrDocument convert(OrcidProfile profile) {
         // Check if the profile is locked
         if (profile.isLocked()) {

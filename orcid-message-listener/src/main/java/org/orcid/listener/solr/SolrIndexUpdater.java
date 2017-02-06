@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.clients;
+package org.orcid.listener.solr;
 
 import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
 import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
@@ -30,12 +30,9 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.converters.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -44,29 +41,9 @@ public class SolrIndexUpdater {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexUpdater.class);
 
-    @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
-    private boolean isSolrIndexingEnalbed;
-    @Value("${org.orcid.core.indexPublicProfile:false}")
-    private boolean indexPublicProfile;
-        
     @Resource(name = "solrServer")
     private SolrServer solrServer;
     
-    private OrcidRecordToSolrDocument recordConv;
-    
-    public SolrIndexUpdater(){
-        recordConv = new OrcidRecordToSolrDocument(indexPublicProfile);
-    }
-    
-    public void updateSolrIndex(Record record, String v12profileXML) {        
-        LOG.info("Updating using Record " + record.getOrcidIdentifier().getPath() + " in SOLR index");
-        if(!isSolrIndexingEnalbed) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }        
-        this.persist(recordConv.convert(record, v12profileXML));
-    }
-
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {
             solrServer.addBean(orcidSolrDocument);
@@ -77,7 +54,7 @@ public class SolrIndexUpdater {
             throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
         }
 
-    }
+    } 
 
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
@@ -102,11 +79,7 @@ public class SolrIndexUpdater {
      * @param orcid
      * @param lastUpdated
      */
-    public void updateSolrIndexForLockedRecord(String orcid, Date lastUpdated) {
-        if(!isSolrIndexingEnalbed) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }
+    public void updateSolrIndexForLockedOrDeprecatedRecord(String orcid, Date lastUpdated) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(orcid);        
         profileIndexDocument.setProfileLastModifiedDate(lastUpdated); 

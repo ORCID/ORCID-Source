@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
@@ -107,6 +108,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertEquals("doi: Identificateur dobjet numérique",id.getDescription());
         id = idTypeMan.fetchIdentifierTypeByDatabaseName("OTHER_ID",null);
         assertEquals("other-id",id.getName());
+        assertFalse(id.getCaseSensitive());
         assertEquals("Other identifier type",id.getDescription());
     }
     
@@ -145,6 +147,8 @@ public class IdentifierTypeManagerTest extends BaseTest {
         ClientDetailsEntity client = new ClientDetailsEntity();
         client.setClientName(CLIENT_1_ID);
         id.setSourceClient(client);
+        id.setPrimaryUse("pu"+seed);
+        id.setCaseSensitive(true);
         return id;
     }
     

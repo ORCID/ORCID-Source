@@ -48,15 +48,6 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.GIVEN_NAMES)
     private String givenNames;
 
-    @Field(SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES)
-    private List<String> affiliatePastInstitutionNames;
-
-    @Field(SolrConstants.AFFILIATE_PRIMARY_INSTITUTION_NAMES)
-    private List<String> affiliatePrimaryInstitutionNames;
-
-    @Field(SolrConstants.AFFILIATE_INSTITUTION_NAME)
-    private List<String> affiliateInstitutionNames;
-
     @Field(SolrConstants.CREDIT_NAME)
     private String creditName;
 
@@ -208,6 +199,14 @@ public class OrcidSolrDocument {
     //e.g. arxiv-part-of
     @Field("*"+SolrConstants.DYNAMIC_PART_OF)
     private Map<String, List<String>> partOfIds;
+    
+    //e.g. ringgold-org-id
+    @Field("*"+SolrConstants.DYNAMIC_ORGANISATION_ID)
+    private Map<String, List<String>> organisationIds;
+    
+    //e.g. education-org-name
+    @Field("*"+SolrConstants.DYNAMIC_ORGANISATION_NAME)
+    private Map<String, List<String>> organisationNames;
 
     public String getOrcid() {
         return orcid;
@@ -241,22 +240,6 @@ public class OrcidSolrDocument {
 
     public void setGivenAndFamilyNames(String givenAndFamilyNames) {
         this.givenAndFamilyNames = givenAndFamilyNames;
-    }
-
-    public List<String> getPastInstitutionNames() {
-        return affiliatePastInstitutionNames;
-    }
-
-    public void setPastInstitutionNames(List<String> pastInstitutionNames) {
-        this.affiliatePastInstitutionNames = pastInstitutionNames;
-    }
-
-    public List<String> getAffiliateInstitutionNames() {
-        return affiliateInstitutionNames;
-    }
-
-    public void setAffiliateInstitutionNames(List<String> affiliateInstitutionNames) {
-        this.affiliateInstitutionNames = affiliateInstitutionNames;
     }
 
     public String getCreditName() {
@@ -387,9 +370,6 @@ public class OrcidSolrDocument {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((affiliateInstitutionNames == null) ? 0 : affiliateInstitutionNames.hashCode());
-        result = prime * result + ((affiliatePastInstitutionNames == null) ? 0 : affiliatePastInstitutionNames.hashCode());
-        result = prime * result + ((affiliatePrimaryInstitutionNames == null) ? 0 : affiliatePrimaryInstitutionNames.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
         result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
@@ -442,6 +422,8 @@ public class OrcidSolrDocument {
         result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
         result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
         result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
+        result = prime * result + ((organisationIds == null) ? 0 : organisationIds.hashCode());
+        result = prime * result + ((organisationNames == null) ? 0 : organisationNames.hashCode());
         return result;
     }
 
@@ -454,21 +436,6 @@ public class OrcidSolrDocument {
         if (getClass() != obj.getClass())
             return false;
         OrcidSolrDocument other = (OrcidSolrDocument) obj;
-        if (affiliateInstitutionNames == null) {
-            if (other.affiliateInstitutionNames != null)
-                return false;
-        } else if (!affiliateInstitutionNames.equals(other.affiliateInstitutionNames))
-            return false;
-        if (affiliatePastInstitutionNames == null) {
-            if (other.affiliatePastInstitutionNames != null)
-                return false;
-        } else if (!affiliatePastInstitutionNames.equals(other.affiliatePastInstitutionNames))
-            return false;
-        if (affiliatePrimaryInstitutionNames == null) {
-            if (other.affiliatePrimaryInstitutionNames != null)
-                return false;
-        } else if (!affiliatePrimaryInstitutionNames.equals(other.affiliatePrimaryInstitutionNames))
-            return false;
         if (creditName == null) {
             if (other.creditName != null)
                 return false;
@@ -732,24 +699,20 @@ public class OrcidSolrDocument {
         } else if (!partOfIds.equals(other.partOfIds))
             return false;
         
+        if (organisationIds == null) {
+            if (other.organisationIds != null)
+                return false;
+        } else if (!organisationIds.equals(other.organisationIds))
+            return false;
+        
+        if (organisationNames == null) {
+            if (other.organisationNames != null)
+                return false;
+        } else if (!organisationNames.equals(other.organisationNames))
+            return false;
+        
         
         return true;
-    }
-
-    public List<String> getAffiliatePastInstitutionNames() {
-        return affiliatePastInstitutionNames;
-    }
-
-    public void setAffiliatePastInstitutionNames(List<String> affiliatePastInstitutionNames) {
-        this.affiliatePastInstitutionNames = affiliatePastInstitutionNames;
-    }
-
-    public List<String> getAffiliatePrimaryInstitutionNames() {
-        return affiliatePrimaryInstitutionNames;
-    }
-
-    public void setAffiliatePrimaryInstitutionNames(List<String> affiliatePrimaryInstitutionNames) {
-        this.affiliatePrimaryInstitutionNames = affiliatePrimaryInstitutionNames;
     }
 
     private void generateCombinedGivenAndFamilyNames() {
@@ -1044,6 +1007,22 @@ public class OrcidSolrDocument {
 
     public void setPartOfIds(Map<String, List<String>> partOfIds) {
         this.partOfIds = partOfIds;
+    }
+    
+    public Map<String, List<String>> getOrganisationIds() {
+        return organisationIds;
+    }
+
+    public void setOrganisationIds(Map<String, List<String>> organisationIds) {
+        this.organisationIds = organisationIds;
+    }
+    
+    public Map<String, List<String>> getOrganisationNames() {
+        return organisationNames;
+    }
+
+    public void setOrganisationNames(Map<String, List<String>> organisationNames) {
+        this.organisationNames = organisationNames;
     }
     
     
