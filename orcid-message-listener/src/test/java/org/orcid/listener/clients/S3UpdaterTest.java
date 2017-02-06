@@ -32,7 +32,8 @@ import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.service.S3MessagingService;
+import org.orcid.listener.s3.S3MessagingService;
+import org.orcid.listener.s3.S3Updater;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 

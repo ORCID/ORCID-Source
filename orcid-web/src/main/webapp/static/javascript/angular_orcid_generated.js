@@ -9993,6 +9993,10 @@
 	    var testingLangList =
 	        [
 	            {
+	                "value": "ar",
+	                "label": "العربية"
+	            },
+	            {
 	                "value": "cs",
 	                "direction": "lr",
 	                "label": "čeština"

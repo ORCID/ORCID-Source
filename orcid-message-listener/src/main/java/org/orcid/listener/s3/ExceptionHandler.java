@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener.s3;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
@@ -22,11 +22,10 @@ import javax.xml.bind.JAXBException;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.listener.clients.Orcid12APIClient;
-import org.orcid.listener.clients.Orcid20APIClient;
-import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.orcid.Orcid12APIClient;
+import org.orcid.listener.orcid.Orcid20APIClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

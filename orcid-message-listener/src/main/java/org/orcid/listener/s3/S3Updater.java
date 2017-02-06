@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.clients;
+package org.orcid.listener.s3;
 
 import java.io.StringWriter;
 
@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.service.S3MessagingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -255,5 +255,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void processProfilesWithReindexFlagAndAddToMessageQueue();
 
-    void processProfilesWithFailedFlagAndAddToMessageQueue();    
+    void processProfilesWithFailedFlagAndAddToMessageQueue();
+
+    void processProfilesWithPendingFlagAndAddToMessageQueue();    
 }

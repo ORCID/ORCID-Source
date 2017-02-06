@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.util;
+package org.orcid.listener.s3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;

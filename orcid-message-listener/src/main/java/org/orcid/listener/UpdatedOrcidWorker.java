@@ -14,10 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener;
 
 import javax.annotation.Resource;
 
+import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,11 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidWorker.class);
 
     @Resource
-    private LastModifiedMessageProcessor processor;
+    private S3MessageProcessor s3Processor;
+
+    @Resource
+    private SolrMessageProcessor solrProcessor;
+
 
     /**
      * Fires when the queue evicts after an inactivity period.
@@ -42,7 +48,8 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
             LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue '" + m.getLastUpdated() + "' Removal cause " + removal.getCause() );            
-            processor.accept(m);
+            s3Processor.accept(m);
+            solrProcessor.accept(m);
         }
     }
 }
