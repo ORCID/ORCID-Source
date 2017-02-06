@@ -90,12 +90,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }
-
-    @Test
-    public void testCantGetTokenForInternalScopes() {
-        //TODO
-    }
+    }    
         
     @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {

@@ -56,9 +56,12 @@ public class OauthAuthorizationPageHelper {
         if (!longLife) {
             //     disablePersistentToken
             WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
-            if (persistentElement.isSelected())
+            if(persistentElement.isDisplayed()) {
+                if (persistentElement.isSelected()) {
                     BBBUtil.ngAwareClick(persistentElement,webDriver);
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+                }
+                (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            }            
         }
         
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));

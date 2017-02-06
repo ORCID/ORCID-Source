@@ -90,7 +90,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingId", profileFundingId);
-        query.setParameter("visibility", visibility.name());
+        query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
     }
 

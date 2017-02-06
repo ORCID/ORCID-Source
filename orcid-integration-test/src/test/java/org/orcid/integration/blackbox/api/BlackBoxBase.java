@@ -755,7 +755,7 @@ public class BlackBoxBase {
             for (WebElement we : wList) {
                 String putCode = we.getAttribute("orcid-put-code");
                 putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
+                String deleteJsStr = "angular.element(document.body).injector().get('worksSrvc').deleteWork('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
                 BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
             }
@@ -833,7 +833,7 @@ public class BlackBoxBase {
             for (WebElement we : wList) {
                 String putCode = we.getAttribute("education-put-code");
                 putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'education'}});";
+                String deleteJsStr = "angular.element(document.body).injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'education'}});";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
                 BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
             }
@@ -890,7 +890,7 @@ public class BlackBoxBase {
             for (WebElement we : wList) {
                 String putCode = we.getAttribute("employment-put-code");
                 putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'employment'}});";
+                String deleteJsStr = "angular.element(document.body).injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'employment'}});";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
                 BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
             }
@@ -960,7 +960,7 @@ public class BlackBoxBase {
             for (WebElement we : wList) {
                 String putCode = we.getAttribute("funding-put-code");
                 putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('fundingSrvc').deleteFunding('" + putCode + "');";
+                String deleteJsStr = "angular.element(document.body).injector().get('fundingSrvc').deleteFunding('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
                 BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
             }
