@@ -115,7 +115,7 @@ public class WorksControllerTest extends BaseControllerTest {
         assertNotNull(work.getTitle());
         assertEquals("Journal article A", work.getTitle().getValue());
         assertNotNull(work.getVisibility());
-        assertEquals(Visibility.PUBLIC, work.getVisibility().getVisibility());
+        assertEquals(Visibility.PUBLIC, work.getVisibility());
         assertEquals("journal-article", work.getWorkType().getValue());
     }
 

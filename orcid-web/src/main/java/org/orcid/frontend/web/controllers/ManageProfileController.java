@@ -86,6 +86,7 @@ import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
@@ -854,9 +855,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
 
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
@@ -868,6 +867,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }
 
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
         // Set the default visibility
         if (profile != null && profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
@@ -961,7 +962,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody BiographyForm getBiographyForm() {
         Biography bio = biographyManager.getBiography(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));
-        return BiographyForm.valueOf(bio);
+        BiographyForm form = BiographyForm.valueOf(bio);
+        if(form.getVisiblity() == null) {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            
+            form.setVisiblity(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
+        return form;
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)

@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.record_v2.Biography;
 
 public class BiographyForm implements ErrorsInterface, Serializable {
@@ -38,9 +37,7 @@ public class BiographyForm implements ErrorsInterface, Serializable {
             bf.setBiography(Text.valueOf(bio.getContent()));
             if(bio.getVisibility() != null) {
                 bf.setVisiblity(Visibility.valueOf(bio.getVisibility()));
-            } else {
-                bf.setVisiblity(Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value())));
-            }
+            } 
         }
         return bf;
     }        

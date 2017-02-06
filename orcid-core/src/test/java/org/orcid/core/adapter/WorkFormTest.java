@@ -200,7 +200,7 @@ public class WorkFormTest {
         form.setTitle(Text.valueOf("Title"));
         form.setTranslatedTitle(new TranslatedTitleForm("Translated Title", "es"));
         form.setUrl(Text.valueOf("http://myurl.com"));
-        form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));        
+        form.setVisibility(Visibility.PUBLIC);        
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));
