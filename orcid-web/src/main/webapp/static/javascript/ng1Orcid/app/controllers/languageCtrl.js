@@ -61,6 +61,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
         [
             {
                 "value": "ar",
+                "direction": "rl",
                 "label": "العربية"
             },
             {
@@ -75,7 +76,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
             },
             {
                 "value": 'es',
-                "direction": "lr",
+                "direction": "rl",
                 "label": 'Español'
             },
             {
@@ -115,7 +116,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
             },
             {
                 "value": 'ru',
-                "direction": "lr",
+                "direction": "rl",
                 "label": 'Русский'
             },
             {

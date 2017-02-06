@@ -9994,6 +9994,7 @@
 	        [
 	            {
 	                "value": "ar",
+	                "direction": "rl",
 	                "label": "العربية"
 	            },
 	            {
@@ -10008,7 +10009,7 @@
 	            },
 	            {
 	                "value": 'es',
-	                "direction": "lr",
+	                "direction": "rl",
 	                "label": 'Español'
 	            },
 	            {
@@ -10048,7 +10049,7 @@
 	            },
 	            {
 	                "value": 'ru',
-	                "direction": "lr",
+	                "direction": "rl",
 	                "label": 'Русский'
 	            },
 	            {
