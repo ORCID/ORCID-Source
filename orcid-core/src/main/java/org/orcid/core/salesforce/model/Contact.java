@@ -65,6 +65,14 @@ public class Contact implements Serializable {
         this.role = role;
     }
 
+    public boolean isMainContact() {
+        return ContactRoleType.MAIN_CONTACT.value().equals(role);
+    }
+
+    public boolean isTechnicalContact() {
+        return ContactRoleType.TECHNICAL_CONTACT.value().equals(role);
+    }
+
     public String getOrcid() {
         return orcid;
     }

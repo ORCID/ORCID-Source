@@ -61,19 +61,19 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>Role</th>
+                                <th>Name</th><th>Email</th><th>Role</th><th>Main contact</th><th>Technical contact</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
-                                <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{contact.role}}</td>
+                                <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{contact.role}}</td><td><input type="checkbox" ng-model="contact.mainContact"></input></td><td><input type="checkbox" ng-model="contact.technicalContact"></input></td>
                             </tr>
                         </tbody>
                     </table>
                     <div>
                         <form ng-submit="search()">
-                            <input type="text" placeholder="<@orcid.msg 'manage_delegation.searchplaceholder'/>" class="input-xlarge inline-input" ng-model="input.text"></input>
-                            <input type="submit" class="btn btn-primary" value="<@orcid.msg 'search_for_contacts.btnSearch'/>"></input>
+                            <input type="text" placeholder="Email" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="submit" class="btn btn-primary" value="Search"></input>
                         </form>
                     </div>
                     <div>
