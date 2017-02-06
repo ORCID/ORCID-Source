@@ -21,7 +21,7 @@
 	
 	
 	if (host == 'localhost'){
-		baseURL = '//localhost:8080/orcid-web';
+		baseURL = '//localhost:8443/orcid-web';
 	}else if(host == 'qa.orcid.org'){
 		baseURL = '//qa.orcid.org';
 	}else if(host == 'sandbox.orcid.org'){
