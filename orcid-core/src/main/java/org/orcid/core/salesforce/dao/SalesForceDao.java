@@ -44,6 +44,8 @@ public interface SalesForceDao {
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
 
     List<Contact> retrieveContactsByAccountId(String accountId);
+    
+    List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
 
     /**
      * @return The sales force object id, if valid.
@@ -62,7 +64,10 @@ public interface SalesForceDao {
     String createContact(Contact contact);
     
     void createContactRole(ContactRole contact);
+    
+    void removeContactRole(String contactRoleId);
 
     String getAccessToken();
+
 
 }

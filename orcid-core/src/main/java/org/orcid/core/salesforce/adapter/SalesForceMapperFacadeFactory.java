@@ -112,6 +112,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
 
     private void registerContactMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Contact, JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Contact__c");
         classMap.fieldAToB("name", "FirstName");
         classMap.fieldAToB("name", "LastName");
         classMap.fieldAToB("email", "Email");
@@ -125,7 +126,9 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private void registerContactRoleMap(MapperFactory mapperFactory) {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new ContactRoleConverter());
+        converterFactory.registerConverter(new ReverseContactRoleConverter());
         ClassMapBuilder<ContactRole, JSONObject> classMap = mapperFactory.classMap(ContactRole.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
         classMap.field("accountId", "Organization__c");
         classMap.field("contactId", "Contact__c");
         classMap.field("role", "Member_Org_Role__c");
@@ -195,14 +198,16 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         }
     }
 
-    private class ContactRoleConverter extends BidirectionalConverter<ContactRoleType, Object> {
+    private class ContactRoleConverter extends CustomConverter<ContactRoleType, Object> {
         @Override
-        public String convertTo(ContactRoleType source, Type<Object> destinationType) {
+        public Object convert(ContactRoleType source, Type<? extends Object> destinationType) {
             return source.value();
         }
+    }
 
+    private class ReverseContactRoleConverter extends CustomConverter<Object, ContactRoleType> {
         @Override
-        public ContactRoleType convertFrom(Object source, Type<ContactRoleType> destinationType) {
+        public ContactRoleType convert(Object source, Type<? extends ContactRoleType> destinationType) {
             return ContactRoleType.fromValue(source.toString());
         }
     }

@@ -27,11 +27,20 @@ public class Contact implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String id;
     private String accountId;
     private String name;
     private String email;
     private String role;
     private String orcid;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountId() {
         return accountId;
@@ -83,7 +92,7 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "Contact [accountId=" + accountId + ", name=" + name + ", email=" + email + ", role=" + role + ", orcid=" + orcid + "]";
+        return "Contact [id=" + id + ", accountId=" + accountId + ", name=" + name + ", email=" + email + ", role=" + role + ", orcid=" + orcid + "]";
     }
 
 }

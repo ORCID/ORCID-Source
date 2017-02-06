@@ -51,6 +51,8 @@ public interface SalesForceManager {
     void updateMember(Member member);
     
     void createContact(Contact contact);
+    
+    void removeContact(Contact contact);
 
     /**
      * Clear caches

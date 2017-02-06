@@ -135,6 +135,15 @@ public class SalesForceAdapter {
     public JSONObject createSaleForceRecordFromContact(Contact contact) {
         return mapperFacade.map(contact, JSONObject.class);
     }
+    
+    public List<ContactRole> createContactRolesFromJson(JSONObject object) {
+        try {
+            List<JSONObject> contactRoles = extractObjectListFromRecords(object);
+            return contactRoles.stream().map(e -> mapperFacade.map(e, ContactRole.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contact roles list from SalesForce JSON", e);
+        }
+    }
 
     public JSONObject createSaleForceRecordFromContactRole(ContactRole contactRole) {
         return mapperFacade.map(contactRole, JSONObject.class);

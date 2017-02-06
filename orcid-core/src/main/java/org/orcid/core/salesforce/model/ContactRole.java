@@ -22,9 +22,20 @@ package org.orcid.core.salesforce.model;
  *
  */
 public class ContactRole {
+
+    // The SalesForce Id of the role object itself
+    private String id;
     private String accountId;
     private String contactId;
     private ContactRoleType role;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getAccountId() {
         return accountId;
@@ -52,7 +63,7 @@ public class ContactRole {
 
     @Override
     public String toString() {
-        return "ContactRole [accountId=" + accountId + ", contactId=" + contactId + ", role=" + role + "]";
+        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", role=" + role + "]";
     }
 
 }

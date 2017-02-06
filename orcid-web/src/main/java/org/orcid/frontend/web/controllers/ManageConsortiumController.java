@@ -93,5 +93,11 @@ public class ManageConsortiumController extends BaseController {
         salesForceManager.createContact(contact);
         return contact;
     }
+    
+    @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
+    public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
+        salesForceManager.removeContact(contact);
+        return contact;
+    }
 
 }
