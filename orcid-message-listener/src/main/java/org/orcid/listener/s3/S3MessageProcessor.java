@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.common;
+package org.orcid.listener.s3;
 
 import java.util.function.Consumer;
 
@@ -24,9 +24,8 @@ import javax.xml.bind.JAXBException;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.clients.Orcid12APIClient;
-import org.orcid.listener.clients.Orcid20APIClient;
-import org.orcid.listener.clients.S3Updater;
+import org.orcid.listener.orcid.Orcid12APIClient;
+import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
@@ -47,12 +46,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  *
  */
 @Component
-public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessage> {
+public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 
-	Logger LOG = LoggerFactory.getLogger(LastModifiedMessageProcessor.class);
-
-	@Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
-	private boolean solrIndexingEnabled;
+	Logger LOG = LoggerFactory.getLogger(S3MessageProcessor.class);
 
 	@Value("${org.orcid.message-listener.api12Enabled:true}")
 	private boolean is12IndexingEnabled;
@@ -149,4 +145,5 @@ public class LastModifiedMessageProcessor implements Consumer<LastModifiedMessag
 			}
 		}
 	}
+
 }

@@ -36,13 +36,15 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.clients.Orcid12APIClient;
-import org.orcid.listener.clients.Orcid20APIClient;
-import org.orcid.listener.clients.S3Updater;
+import org.orcid.listener.orcid.Orcid12APIClient;
+import org.orcid.listener.orcid.Orcid20APIClient;
+import org.orcid.listener.s3.S3Updater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.listener.s3.ExceptionHandler;
+import org.orcid.listener.s3.S3MessageProcessor;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -57,7 +59,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class LastModifiedMessageProcessorTest {
 
     @Resource
-    private LastModifiedMessageProcessor processor;
+    private S3MessageProcessor processor;
     
     @Mock
     private Orcid12APIClient mock_orcid12ApiClient;

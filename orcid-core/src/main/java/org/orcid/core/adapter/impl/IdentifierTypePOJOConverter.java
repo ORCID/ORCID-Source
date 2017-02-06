@@ -36,6 +36,8 @@ public class IdentifierTypePOJOConverter {
         entity.setDateCreated(id.getDateCreated());
         entity.setLastModified(id.getLastModified());
         entity.setSourceClient(id.getSourceClient());
+        entity.setPrimaryUse(id.getPrimaryUse());
+        entity.setIsCaseSensitive(id.getCaseSensitive());
         return entity;
     }
     
@@ -49,6 +51,8 @@ public class IdentifierTypePOJOConverter {
         id.setDateCreated(new Date(entity.getDateCreated().getTime()));
         id.setLastModified(new Date(entity.getLastModified().getTime()));
         id.setSourceClient(entity.getSourceClient());
+        id.setCaseSensitive(entity.getIsCaseSensitive());
+        id.setPrimaryUse(entity.getPrimaryUse());
         return id;
     }
 }

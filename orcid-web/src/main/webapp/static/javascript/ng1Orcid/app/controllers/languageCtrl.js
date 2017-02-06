@@ -49,6 +49,10 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
     var testingLangList =
         [
             {
+                "value": "ar",
+                "label": "العربية"
+            },
+            {
                 "value": "cs",
                 "label": "čeština"
             },

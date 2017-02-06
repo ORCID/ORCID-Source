@@ -31,6 +31,7 @@ public class RecordStatusEntity {
 	private String orcid;
 	private Integer dumpStatus12Api;
 	private Integer dumpStatus20Api;
+	private Integer solrStatus20Api;
 
 	@Id
 	@Column(name = "orcid", length = 19)
@@ -77,4 +78,13 @@ public class RecordStatusEntity {
 	public void setDumpStatus20Api(Integer dumpStatus20Api) {
 		this.dumpStatus20Api = dumpStatus20Api;
 	}
+	
+        @Column(name = "api_2_0_solr_status")
+        public Integer getSolrStatus20Api() {
+            return solrStatus20Api;
+        }
+    
+        public void setSolrStatus20Api(Integer solrStatus20Api) {
+            this.solrStatus20Api = solrStatus20Api;
+        }
 }

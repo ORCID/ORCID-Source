@@ -19,8 +19,6 @@ package org.orcid.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -38,12 +36,10 @@ public class IdentifierType implements Serializable{
     private String description;
     private Date dateCreated;
     private Date lastModified;
+    private Boolean caseSensitive;
+    private String primaryUse;
+    private Boolean deprecated = Boolean.FALSE;    
     
-    @Override
-    public String toString() {
-        return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", dateCreated="
-                + dateCreated + ", lastModified=" + lastModified + ", sourceClient=" + sourceClient + ", deprecated=" + deprecated + ", description=" + description +"]";
-    }
     private ClientDetailsEntity sourceClient;
     
     public String getName() {
@@ -102,7 +98,23 @@ public class IdentifierType implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
-    private Boolean deprecated = Boolean.FALSE;
-    
-    //source?
+    public Boolean getCaseSensitive() {
+        return caseSensitive;
+    }
+    public void setCaseSensitive(Boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+    public String getPrimaryUse() {        
+        return primaryUse;
+    }
+    public void setPrimaryUse(String primaryUse) {
+        this.primaryUse = primaryUse;
+    }
+    @Override
+    public String toString() {
+        return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", description="
+                + description + ", dateCreated=" + dateCreated + ", lastModified=" + lastModified + ", caseSensitive=" + caseSensitive + ", primaryUse=" + primaryUse
+                + ", deprecated=" + deprecated + ", sourceClient=" + sourceClient + "]";
+    }
+
 }

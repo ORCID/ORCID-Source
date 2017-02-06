@@ -71,6 +71,8 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         e1.setResolutionPrefix("http://whatever.com/{id}");
         e1.setValidationRegex("blah");        
         e1.setSourceClient(clientDetailsDao.findByClientId("APP-6666666666666666",new Date().getTime()));  
+        e1.setIsCaseSensitive(true);
+        e1.setPrimaryUse("pu");
         IdentifierTypeEntity e2 = idTypeDao.addIdentifierType(e1);
         assertNotNull(e2.getId());
 
@@ -84,6 +86,8 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertTrue((new Date()).after(e1.getDateCreated()));
         assertTrue((new Date()).after(e1.getLastModified()));
         assertEquals("APP-6666666666666666",e1.getSourceClient().getId());
+        assertTrue(e1.getIsCaseSensitive());
+        assertEquals("pu",e1.getPrimaryUse());
         
         //update
         //e1 = idTypeDao.getEntityByName("TEST_A");
