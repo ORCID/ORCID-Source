@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -40,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
@@ -81,6 +83,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
     
     @Mock
     private HttpServletRequest request;
@@ -325,6 +330,19 @@ public class PublicProfileControllerTest extends DBUnitTest {
         profileEntity.setSubmissionDate(new Date());
         profileDao.merge(profileEntity);
         profileDao.flush();
+    }
+    
+    @Test
+    public void testGetInfo() throws Exception {
+        String orcid = "0000-0000-0000-0002";
+        String hash = encryptionManager.sha256Hash(orcid);
+        OrcidInfo orcidInfo = publicProfileController.getInfo(orcid, hash, null);
+        assertEquals("", orcidInfo.getName());
+        
+        orcid = "0000-0000-0000-0003";
+        hash = encryptionManager.sha256Hash(orcid);
+        orcidInfo = publicProfileController.getInfo(orcid, hash, null);
+        assertEquals("Credit Name", orcidInfo.getName());
     }
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
