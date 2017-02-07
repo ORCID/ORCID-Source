@@ -489,10 +489,12 @@
         <!-- New -->
         <h4><@orcid.msg 'workspace.your_primary_email_new'/></h4>
         <p><@orcid.msg 'workspace.ensure_future_access1'/></p>
-        <p><@orcid.msg 'workspace.ensure_future_access2'/> <a href="mailto:{{emailsPojo.emails[0].value}}" target="_blank">{{emailsPojo.emails[0].value}}</a></p>
+        <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{emailsPojo.emails[0].value}}</strong></p>
         <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
-        <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
-        <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
+        <div class="topBuffer">
+        	<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
+        	<a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
+        </div>
       </div>
 
       <div class="col-md-12 col-xs-12 col-sm-12" ng-if="!verifiedModalEnabled">
