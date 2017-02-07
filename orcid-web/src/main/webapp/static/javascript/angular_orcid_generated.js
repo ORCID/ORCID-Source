@@ -10234,6 +10234,7 @@
 	    };
 	    
 	    $scope.update = function (contact) {
+	        var done = false;
 	        if(contact.mainContact){
 	            for(var i in $scope.consortium.contactsList){
 	                var other = $scope.consortium.contactsList[i];
@@ -10242,10 +10243,11 @@
 	                    other.role = null;
 	                    var nextContact = contact;
 	                    $scope.updateCall(other, function() {  $scope.updateCall(nextContact); })
+	                    done = true;
 	                }
 	            }
 	        }
-	        else{
+	        if(!done){
 	            $scope.updateCall(contact);
 	        }
 	        

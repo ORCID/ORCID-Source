@@ -35,7 +35,7 @@ public class ContactsCacheEntryFactory implements CacheEntryFactory {
     @Override
     public Object createEntry(Object key) throws Exception {
         String accountId = (String) key;
-        return salesForceDao.retrieveContactsByAccountId(accountId);
+        return salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
     }
 
 }

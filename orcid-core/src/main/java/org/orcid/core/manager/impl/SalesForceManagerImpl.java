@@ -171,13 +171,17 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void createContact(Contact contact) {
-        contact.setAccountId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        contact.setAccountId(accountId);
         if (StringUtils.isBlank(contact.getEmail())) {
             String contactOrcid = contact.getOrcid();
             Email primaryEmail = emailManager.getEmails(contactOrcid, getLastModified(contactOrcid)).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
             contact.setEmail(primaryEmail.getEmail());
         }
-        String contactId = salesForceDao.createContact(contact);
+        List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> contact.getOrcid().equals(c.getOrcid()))
+                .findFirst();
+        String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
         ContactRole contactRole = new ContactRole();
         contactRole.setContactId(contactId);
         contactRole.setRole(ContactRoleType.OTHER_CONTACT);

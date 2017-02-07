@@ -42,8 +42,10 @@ public interface SalesForceDao {
     Consortium retrieveConsortium(String consortiumId);
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
+    
+    List<Contact> retrieveAllContactsByAccountId(String accountId);
 
-    List<Contact> retrieveContactsByAccountId(String accountId);
+    List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
     
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
 

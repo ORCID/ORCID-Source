@@ -138,7 +138,7 @@ public class SalesForceAdapterTest {
     public void testCreateContactsFromJson() throws IOException, JSONException {
         String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_contacts_list.json"));
         JSONObject inputObject = new JSONObject(inputString);
-        List<Contact> contactsList = salesForceAdapter.createContactsFromJson(inputObject);
+        List<Contact> contactsList = salesForceAdapter.createContactsWithRolesFromJson(inputObject);
         assertEquals(2, contactsList.size());
         Contact contact = contactsList.get(0);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
