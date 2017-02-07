@@ -27,14 +27,25 @@
     <!--  Keep this fast! No DB, No Liquibase! Blackbox external testing only. -->
     
     <import resource="classpath*:orcid-api-client-context.xml" />
-    
+        
     <bean id="t2OAuthClient" class="org.orcid.integration.api.t2.T2OAuthOrcidApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}"/>
+        <constructor-arg value="${org.orcid.t2.client.base_url}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <!-- t2OAuthClient is used to get access token, so, it should not use the version -->
+    <bean id="t2OAuthClient_1_2" class="org.orcid.integration.api.t2.T2OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.t2.client.base_url}/v1.2"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
     <bean id="t1OAuthClient" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
+    <bean id="t1OAuthClient_1_2" class="org.orcid.integration.api.t1.T1OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     

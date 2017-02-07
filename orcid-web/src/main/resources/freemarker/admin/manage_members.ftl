@@ -458,8 +458,8 @@
         <a name="find-consortium"></a>
         <div ng-controller="internalConsortiumCtrl" class="workspace-accordion-item" ng-cloak>           
             <p>
-                <a ng-show="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>
-                <a ng-hide="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.find_consortium'/></a>             
+                <a ng-show="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'manage_members.manage_consortia'/></a>
+                <a ng-hide="showFindModal" ng-click="toggleFindConsortiumModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'manage_members.manage_consortia'/></a>             
             </p>
             <div class="collapsible bottom-margin-small admin-modal" id="find_consortium_modal" ng-show="showFindModal">    
                 <!-- Find -->
@@ -476,28 +476,24 @@
                 <div ng-show="consortium != null" ng-cloak>
                     <div class="admin-edit-client">
                         <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h3><@orcid.msg 'manage_consortium.heading'/></h3>
-                            </div>
+                            <h3><@orcid.msg 'manage_consortium.consortium_lead'/></h3>
                         </div>                      
-                        <!-- Name -->
                         <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <span><@orcid.msg 'manage_groups.group_name'/></span><br />
-                                <i>{{consortium.name.value}}</i><br />
-                            </div>
+	                        <!-- Name -->
+	                        <p>{{consortium.name.value}}</p>
                         </div>
-                        <!-- website -->
                         <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <span><@orcid.msg 'manage_consortium.website'/></span><br />
-                                <i>{{consortium.website.value}}</i><br />
-                            </div>
-                        </div>
                         <!-- Contacts -->
-                        <div ng-repeat="contact in consortium.contactsList">
-                            <span>{{contact.name}} {{contact.email}} {{contact.role}} {{contact.orcid}}
-                        </div>
+                        	<h4><@orcid.msg 'manage_consortium.contacts_heading'/></h4>
+	                        <table>
+	                        	<tr>
+	                        		<th>Name</th><th>Email</th><th>Role</th><th>ORCID iD</th>
+	                        	</tr>
+		                        <tr ng-repeat="contact in consortium.contactsList">
+		                            <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{contact.role}}</td><td>{{contact.orcid}}</td>
+		                        </tr>
+		                    </table>
+		                </div>
                         <!-- Buttons -->
                         <div class="row">
                             <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">

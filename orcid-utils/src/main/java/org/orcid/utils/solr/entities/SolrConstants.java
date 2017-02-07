@@ -86,4 +86,10 @@ public class SolrConstants {
     public static final String IS_FUNDING_ORG = "is-funding-org";
     public static final String DYNAMIC_SELF = "-self";
     public static final String DYNAMIC_PART_OF = "-part-of";
+    public static final String DYNAMIC_ORGANISATION_ID = "-org-id";
+    public static final String RINGGOLD_ORGANISATION_ID = "ringgold-org-id";
+    public static final String FUNDREF_ORGANISATION_ID = "fundref-org-id";
+    public static final String DYNAMIC_ORGANISATION_NAME = "-org-name";
+    public static final String AFFILIATION_ORGANISATION_NAME = "affiliation-org-name";
+    public static final String FUNDING_ORGANISATION_NAME = "funding-org-name";
 }

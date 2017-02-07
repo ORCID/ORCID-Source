@@ -1441,8 +1441,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @return true if the account was locked
      */
     @Override
-    public boolean lockProfile(String orcid) {
-        boolean wasLocked = profileDao.lockProfile(orcid);
+    public boolean lockProfile(String orcid, String lockReason, String description) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
         if (wasLocked) {
             notificationManager.sendOrcidLockedEmail(retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY));
         }
@@ -1855,6 +1855,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * TODO: Disabled until we get move our solr indexing to the message listener 
      * */
     @Override
+    public void processProfilesWithPendingFlagAndAddToMessageQueue(){
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, JmsDestination.UPDATED_ORCIDS);
+    }
+    
+    /**
+     * TODO: Disabled until we get move our solr indexing to the message listener 
+     * */
+    @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
     }
@@ -1972,7 +1980,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
                 
-                //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
+                //TODO: This code exists so we can run old indexing and S3 updating in parallel
+                // IF you just want MQ driven indexing, you need to disable the old calls in the 
+                // context and enable the new ones.
                 if(messaging.isEnabled()) {
                     Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
                     LastModifiedMessage mess = new LastModifiedMessage(orcid, lastModifiedFromDb);
@@ -1984,11 +1994,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         LOG.info("Record " + orcid + " was sent to the message queue");
                     } else {
                         LOG.error("Record " + orcid + " couldnt been sent to the message queue");
-                        // TODO: we need a better way to handle failures, but,
-                        // for now, we set it as re-index again, so, SOLR will
-                        // not pick it again since it have the same last
-                        // modified date, and, we will try sending it again to
-                        // the MQ later
                         profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
                     }
                 }

@@ -77,7 +77,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     private Email getEmail() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Email.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/email-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/email-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Email) unmarshaller.unmarshal(inputStream);
     }

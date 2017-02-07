@@ -495,9 +495,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
 
     private OrcidSolrDocument solrDocFilteredByAffilliationVisibility() {
         OrcidSolrDocument orcidSolrDocument = fullyPopulatedSolrDocumentForPersistence();
-        orcidSolrDocument.setAffiliatePastInstitutionNames(null);
-        orcidSolrDocument.setAffiliatePrimaryInstitutionNames(null);
-        orcidSolrDocument.setAffiliateInstitutionNames(null);
         OrcidProfile orcidProfile = orcidProfileLimitedVisiblityAffiliations();
         OrcidMessage orcidMessage = createFilteredOrcidMessage(orcidProfile);
         orcidSolrDocument.setPublicProfileMessage(orcidMessage.toString());

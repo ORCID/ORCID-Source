@@ -628,10 +628,16 @@
 		<field name="primary-record" type="string" indexed="true"
 			stored="true" multiValued="false" />
 			
+			
+			
 		<!-- work external identifier fields -->
 		<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
 		<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
 		
+		<!-- education and employment ids -->
+		<dynamicField name="*-org-id" type="string" indexed="true" stored="false" multiValued="true"/>
+		<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
+			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
 			pattern in the name attribute must have a "*" only at the start or the end. 

@@ -39,131 +39,6 @@ angular.element(function() {
 //angular.bootstrap(document.body, ['orcidApp'], {});
 
 
-/*
- * 1 - Utility functions 
- */
-function openImportWizardUrl(url) {
-    var win = window.open(url, "_target");
-    setTimeout( function() {
-        if(!win || win.outerHeight === 0) {
-            //First Checking Condition Works For IE & Firefox
-            //Second Checking Condition Works For Chrome
-            window.location.href = url;
-        }
-    }, 250);
-    $.colorbox.close();
-}
-
-function contains(arr, obj) {
-    var index = arr.length;
-    while (index--) {
-       if (arr[index] === obj) {
-           return true;
-       }
-    }
-    return false;
-}
-
-function formatDate(oldDate) {
-    var date = new Date(oldDate);
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-    if(month < 10) {
-        month = '0' + month;
-    }
-    if(day < 10) {
-        day = '0' + day;
-    }
-    return (year + '-' + month + '-' + day);
-}
-
-function getScripts(scripts, callback) {
-    var progress = 0;
-    var internalCallback = function () {        
-        if (++progress == scripts.length - 1) {
-            callback();
-        }
-    };    
-    scripts.forEach(function(script) {        
-        $.getScript(script, internalCallback);        
-    });
-}
-
-function formColorBoxWidth() {
-    return isMobile()? '100%': '800px';
-}
-
-function formColorBoxResize() {
-    if (isMobile())
-        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-    else
-        // IE8 and below doesn't take auto height
-        // however the default div height
-        // is auto anyway
-        $.colorbox.resize({width:'800px'});
-}
-
-function fixZindexIE7(target, zindex){
-    if(isIE() == 7){
-        $(target).each(function(){
-            $(this).css('z-index', zindex);
-            --zindex;
-        });
-    }
-}
-
-function emptyTextField(field) {
-    if (field != null
-        && field.value != null
-        && field.value.trim() != '') {
-        return false;
-    }
-    return true;
-}
-
-function addComma(str) {
-    if (str.length > 0) return str + ', ';
-    return str;
-}
-
-//Needs refactor for dw object
-function removeBadContributors(dw) {
-    for (var idx in dw.contributors) {
-        if (dw.contributors[idx].contributorSequence == null
-            && dw.contributors[idx].email == null
-            && dw.contributors[idx].orcid == null
-            && dw.contributors[idx].creditName == null
-            && dw.contributors[idx].contributorRole == null
-            && dw.contributors[idx].creditNameVisibility == null) {
-                dw.contributors.splice(idx,1);
-            }
-    }
-}
-
-//Needs refactor for dw object
-function removeBadExternalIdentifiers(dw) {
-    for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
-        }
-    }
-}
-
-function isEmail(email) {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-}
-
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
-
-
 /*************************************************
  * 3 - Angular Services
  *************************************************/
@@ -1383,7 +1258,7 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
         $scope.showEditDeactivate = !$scope.showEditDeactivate;
         $scope.deactivateUpdateToggleText();
     };
-
+    
     $scope.fixIE7zIndexes = function() {
         fixZindexIE7('tr', 999999);
         fixZindexIE7('#privacy-settings', 5000);
@@ -1393,6 +1268,19 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
     $scope.showEditDeactivate = (window.location.hash === "#editDeactivate");
     $scope.deactivateUpdateToggleText();
     $scope.fixIE7zIndexes();
+    
+    $scope.deprecateUpdateToggleText = function () {
+        if ($scope.showEditDeprecate) $scope.deprecateToggleText = om.get("manage.editTable.hide");
+        else $scope.deprecateToggleText = om.get("manage.editTable.removeDuplicate");
+    };
+
+    $scope.toggleDeprecateEdit = function() {
+        $scope.showEditDeprecate = !$scope.showEditDeprecate;
+        $scope.deprecateUpdateToggleText();
+    };
+
+    $scope.showEditDeprecate = (window.location.hash === "#editDeprecate");
+    $scope.deprecateUpdateToggleText();
 
     // privacy preferences edit row
     $scope.privacyPreferencesUpdateToggleText = function () {
@@ -1554,6 +1442,80 @@ angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$comp
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+}]);
+
+angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    $scope.getDeprecateProfile = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/deprecate-profile.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                $scope.$apply();
+            }
+        }).fail(function() {
+            console.log("An error occurred preparing deprecate profile");
+        });
+    };
+    
+    $scope.getDeprecateProfile();
+    
+    $scope.deprecateORCID = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/validate-deprecate-profile.json',
+            dataType: 'json',
+            data: angular.toJson($scope.deprecateProfilePojo),
+            type: 'POST',
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                if (data.errors.length > 0) {
+                    $scope.$apply();
+                } else {
+                    $.colorbox({
+                        html : $compile($('#confirm-deprecate-account-modal').html())($scope),
+                        escKey:false,
+                        overlayClose:true,
+                        close: '',
+                        });
+                }
+                $scope.$apply();
+                $.colorbox.resize();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error with change DeactivateAccount");
+        });
+    };
+    
+    $scope.submitModal = function() {
+        $.ajax({
+            url: getBaseUri() + '/account/confirm-deprecate-profile.json',
+            type: 'POST',
+            data: angular.toJson($scope.deprecateProfilePojo),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.deprecateProfilePojo = data;
+                $.colorbox({
+                    html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
+                    escKey:false,
+                    overlayClose:true,
+                    close: '',
+                    });
+                $scope.$apply();
+                $.colorbox.resize();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("error confirming account deprecation");
+        });
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+    
 }]);
 
 angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
@@ -5247,16 +5209,35 @@ angular.module('orcidApp').controller('profileLockingCtrl', ['$scope', '$compile
         $('#unlock_modal').toggle();
     };
     
+    $scope.getLockReasons = function() {
+        $.ajax({
+            url: getBaseUri()+'/admin-actions/lock-reasons.json',
+            dataType: 'json',
+            success: function(data){
+                $scope.lockReasons = data;
+                $scope.lockReason = $scope.lockReasons[0];
+                $scope.$apply();
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error while fetching lock reasons");
+        });
+    };
+    
+    $scope.getLockReasons();
+    
     $scope.lockAccount = function() {
         $.ajax({
             url: getBaseUri()+'/admin-actions/lock-accounts.json',
             type: 'POST',
-            data: $scope.orcidToLock,
+            data: angular.toJson({ orcidsToLock: $scope.orcidToLock, lockReason: $scope.lockReason, description: $scope.description }),
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data){
                 $scope.result = data;
                 $scope.orcidToLock = '';
+                $scope.description = '';
+                $scope.getLockReasons();
                 $scope.$apply();
             }
         }).fail(function(error) {

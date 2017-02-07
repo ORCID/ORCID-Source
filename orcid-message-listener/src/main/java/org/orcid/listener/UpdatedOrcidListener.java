@@ -20,8 +20,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.listener.common.UpdatedOrcidExpringQueue;
-import org.orcid.listener.common.UpdatedOrcidWorker;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;

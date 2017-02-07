@@ -25,7 +25,7 @@ xample:
 		return 'http://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
 	};
 	
-Update the test. Add the new id to the list: 
+Update the org.orcid.core.manager.IdentifierTypeManagerTest test. Add the new id to the list: 
 `private List<String> v2Ids = Arrays.asList(new String[]{"pdb","kuid",”your-new-type”});`
 
 

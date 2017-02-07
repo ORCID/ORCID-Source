@@ -17,7 +17,6 @@
 package org.orcid.integration.api.t1;
 
 import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.AUTHENTICATE_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
@@ -30,7 +29,6 @@ import static org.orcid.core.api.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -350,10 +348,4 @@ public interface T1OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     @Consumes(value = { MediaType.WILDCARD })
     @Path(WEBHOOKS_PATH)
     T unregisterWebhook(String orcid, String webhookUri, String token);
-
-        
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_XML })
-    @Path(AUTHENTICATE_PATH)
-    T authenticate(String orcid, String accessToken);
 }

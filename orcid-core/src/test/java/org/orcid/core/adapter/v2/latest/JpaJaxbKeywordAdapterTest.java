@@ -81,7 +81,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     private Keyword getKeyword() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Keyword.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0/samples/keyword-2.0.xml";
+        String name = "/record_2.0/samples/read_samples/keyword-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Keyword) unmarshaller.unmarshal(inputStream); 
     }
