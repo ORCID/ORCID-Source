@@ -80,10 +80,10 @@ public class ManageConsortiumController extends BaseController {
     }
 
     @RequestMapping(value = "/add-contact-by-email.json")
-    public @ResponseBody Contact addDelegateByEmail(@RequestBody Contact contact) {
+    public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
         EmailEntity emailEntity = emailDao.findCaseInsensitive(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
-        contact.setName(emailEntity.getProfile().getRecordNameEntity().getGivenNames());
+        contact.setName(emailEntity.getProfile().getId());
         salesForceManager.createContact(contact);
         return contact;
     }
@@ -93,13 +93,13 @@ public class ManageConsortiumController extends BaseController {
         salesForceManager.createContact(contact);
         return contact;
     }
-    
+
     @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
         salesForceManager.removeContact(contact);
         return contact;
     }
-    
+
     @RequestMapping(value = "/update-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);

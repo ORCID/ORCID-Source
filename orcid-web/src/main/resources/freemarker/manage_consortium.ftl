@@ -59,7 +59,7 @@
                 </div>
                 <div>
                     <h2>
-                        <span><@spring.message "manage_consortium.contacts"/></span>
+                        <span><@spring.message "manage_consortium.contacts_heading"/></span>
                     </h2>
                     <table>
                         <thead>
