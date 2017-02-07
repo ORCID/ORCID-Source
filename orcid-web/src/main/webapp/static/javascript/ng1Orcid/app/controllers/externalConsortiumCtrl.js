@@ -252,8 +252,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 if(data.errors.length === 0){
-                    $scope.getContacts();
-                    $scope.results.splice($scope.contactIdx, 1);
+                    $scope.getConsortium();
                     $scope.$apply();
                     $scope.closeModal();
                 }
@@ -290,6 +289,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data:  angular.toJson($scope.contactToRevoke),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
+                $scope.getConsortium();
                 $scope.$apply();
                 $scope.closeModal();
             }
