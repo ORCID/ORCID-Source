@@ -137,37 +137,37 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
-    
+
     @Resource
     private AddressManager addressManager;
 
     @Resource
     private PersonalDetailsManager personalDetailsManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-    
+
     @Resource
     private OtherNameManager otherNameManager;
-    
+
     @Resource
     private ProfileKeywordManager keywordManager;
-    
+
     @Resource
     private ResearcherUrlManager researcherUrlManager;
-    
+
     @Resource
     private EmailManager emailManager;
-    
+
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
 
     @Resource
     private SourceUtils sourceUtils;
-    
+
     @Resource
     private ActivitiesSummaryManager activitiesSummaryManager;
-    
+
     public static int ORCID_HASH_LENGTH = 8;
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
@@ -186,30 +186,30 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         if (!profileEntManager.orcidExists(orcid)) {
             return new ModelAndView("error-404");
-        }        
-               
+        }
+
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        
+
         try {
-            //Check if the profile is deprecated, non claimed or locked
+            // Check if the profile is deprecated, non claimed or locked
             orcidSecurityManager.checkProfile(orcid);
-        } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
+        } catch (OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
-            
-            if(e instanceof OrcidDeprecatedException) {
+
+            if (e instanceof OrcidDeprecatedException) {
                 PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
-                if(publicPersonalDetails.getName() != null) {
+                if (publicPersonalDetails.getName() != null) {
                     Name name = publicPersonalDetails.getName();
-                    if(name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
-                        if(name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                    if (name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+                        if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                             displayName = name.getCreditName().getContent();
                         } else {
-                            if(name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                            if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
                                 displayName = name.getGivenNames().getContent() + " ";
                             }
-                            if(name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                            if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
                                 displayName += name.getFamilyName().getContent();
                             }
                         }
@@ -217,139 +217,140 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
                 mav.addObject("deprecated", true);
                 mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
-            } else if(e instanceof OrcidNotClaimedException) {
+            } else if (e instanceof OrcidNotClaimedException) {
                 displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
             } else {
                 mav.addObject("locked", true);
-                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");
+                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
+                        + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
-            
-            if(!PojoUtil.isEmpty(displayName)) {
+
+            if (!PojoUtil.isEmpty(displayName)) {
                 mav.addObject("title", getMessage("layout.public-layout.title", displayName, orcid));
                 mav.addObject("displayName", displayName);
-            }            
+            }
             return mav;
-        }                
-        
+        }
+
         Date lastModified = profile.getLastModified();
         long lastModifiedTime = 0;
-        if(lastModified != null) {
+        if (lastModified != null) {
             lastModifiedTime = lastModified.getTime();
         }
-        
+
         ModelAndView mav = null;
         mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
-        
+
         boolean isProfileEmtpy = true;
 
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
         }
-        
+
         PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
-        
-        //Fill personal details
-        if(publicPersonalDetails != null) {
+
+        // Fill personal details
+        if (publicPersonalDetails != null) {
             // Get display name
             String displayName = "";
-            
-            if(publicPersonalDetails.getName() != null) {
+
+            if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
-                if(name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
-                    if(name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                if (name.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
+                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                         displayName = name.getCreditName().getContent();
                     } else {
-                        if(name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
                             displayName = name.getGivenNames().getContent() + " ";
                         }
-                        if(name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
                             displayName += name.getFamilyName().getContent();
                         }
                     }
                 }
             }
-                        
+
             if (!PojoUtil.isEmpty(displayName)) {
                 // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
                 // and Researchers
                 mav.addObject("title", getMessage("layout.public-layout.title", displayName.trim(), orcid));
                 mav.addObject("displayName", displayName);
             }
-                        
+
             // Get biography
             if (publicPersonalDetails.getBiography() != null) {
                 Biography bio = publicPersonalDetails.getBiography();
-                if(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
                     isProfileEmtpy = false;
                     mav.addObject("biography", bio);
-                }            
+                }
             }
-            
-            //Fill other names
+
+            // Fill other names
             OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
-            if(publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
+            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
                 Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while(it.hasNext()) {
+                while (it.hasNext()) {
                     OtherName otherName = it.next();
-                    if(!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                    if (!org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(otherName.getVisibility())) {
                         it.remove();
                     }
                 }
             }
             Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
-            mav.addObject("publicGroupedOtherNames", groupedOtherNames);            
+            mav.addObject("publicGroupedOtherNames", groupedOtherNames);
         }
-        
-        //Fill biography elements
 
-        //Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);        
-        Map<String, String> countryNames = new HashMap<String, String>();        
-        if(publicAddresses != null && publicAddresses.getAddress() != null) {
+        // Fill biography elements
+
+        // Fill country
+        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        Map<String, String> countryNames = new HashMap<String, String>();
+        if (publicAddresses != null && publicAddresses.getAddress() != null) {
             Address publicAddress = null;
-            //The primary address will be the one with the lowest display index            
-            for(Address address : publicAddresses.getAddress()) {
-            	countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));            	
-                if(publicAddress == null) {
-                   publicAddress = address;
+            // The primary address will be the one with the lowest display index
+            for (Address address : publicAddresses.getAddress()) {
+                countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));
+                if (publicAddress == null) {
+                    publicAddress = address;
                 }
-            }            
-            if(publicAddress != null) {
-                mav.addObject("publicAddress", publicAddress);                
+            }
+            if (publicAddress != null) {
+                mav.addObject("publicAddress", publicAddress);
                 mav.addObject("countryNames", countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);        
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
                 mav.addObject("publicGroupedAddresses", groupedAddresses);
             }
         }
-                        
-        //Fill keywords
+
+        // Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
-        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);        
-        mav.addObject("publicGroupedKeywords", groupedKeywords);        
-        
-        //Fill researcher urls
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
+        mav.addObject("publicGroupedKeywords", groupedKeywords);
+
+        // Fill researcher urls
         ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
         Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
         mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
-        
-        //Fill emails
+
+        // Fill emails
         Emails publicEmails = emailManager.getPublicEmails(orcid, lastModifiedTime);
         Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
         mav.addObject("publicGroupedEmails", groupedEmails);
-        
-        //Fill external identifiers
+
+        // Fill external identifiers
         PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
-    	Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
         mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
-                
+
         LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
-        
+
         minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModified.getTime());
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
@@ -377,7 +378,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         } else {
             mav.addObject("peerReviewsEmpty", true);
         }
-        
+
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -389,7 +390,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("affiliationIdsJson", StringEscapeUtils.escapeEcmaScript(affiliationIdsJson));
             mav.addObject("fundingIdsJson", StringEscapeUtils.escapeEcmaScript(fundingIdsJson));
             mav.addObject("peerReviewIdsJson", StringEscapeUtils.escapeEcmaScript(peerReviewIdsJson));
-            mav.addObject("isProfileEmpty", isProfileEmtpy);            
+            mav.addObject("isProfileEmpty", isProfileEmtpy);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {
@@ -401,8 +402,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!profile.isReviewed()) {
             if (isProfileValidForIndex(profile)) {
                 int countTokens = orcidOauth2TokenService.findCountByUserName(orcid, lastModifiedTime);
-                if (!profile.isAccountNonLocked() || countTokens == 0 || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod())
-                        && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
+                if (!profile.isAccountNonLocked() || countTokens == 0
+                        || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod()) && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
                     mav.addObject("noIndex", true);
                 }
             } else {
@@ -412,119 +413,119 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return mav;
     }
-    
-	private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
-		if (keywords == null || keywords.getKeywords() == null) {
-			return null;
-		}
 
-		/* Grouping items */
-		LinkedHashMap<String, List<Keyword>> groups = new LinkedHashMap<String, List<Keyword>>();
-		for (Keyword k : keywords.getKeywords()) {
-			if (groups.containsKey(k.getContent())) {
-				groups.get(k.getContent()).add(k);
-			} else {
-				List<Keyword> list = new ArrayList<Keyword>();
-				list.add(k);
-				groups.put(k.getContent(), list);
-			}
-		}
-		
-		return groups;
-	}
-    
-    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses){
-    	if (addresses == null || addresses.getAddress() == null){
-    		return null;
-    	}
-    	LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();    	
-    	for (Address k : addresses.getAddress()) {
-    		if (groups.containsKey(k.getCountry().getValue().value())) {
-    			groups.get(k.getCountry().getValue().value()).add(k);
-    		} else {
-    			List<Address> list = new ArrayList<Address>();
-    			list.add(k);
-    			groups.put(k.getCountry().getValue().value(), list);    			
-    		}
-    	}
-		
-    	return groups;
-    }
-    
-    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
-    	
-    	if (otherNames == null || otherNames.getOtherNames() == null){
-    		return null;
-    	}
-    	LinkedHashMap<String, List<OtherName>> groups = new LinkedHashMap<String, List<OtherName>>();    	
-    	for (OtherName o : otherNames.getOtherNames()) {
-    		if (groups.containsKey(o.getContent())) {    			
-    			groups.get(o.getContent()).add(o);
-    		} else {
-    			List<OtherName> list = new ArrayList<OtherName>();
-    			list.add(o);
-    			groups.put(o.getContent(), list);    			
-    		}
-    	}
-		return groups;
-		
-    } 
-    
-    private Map<String, List<Email>> groupEmails(Emails emails){    	
-    	if (emails == null || emails.getEmails() == null){
-    		return null;
-    	}
-    	Map<String, List<Email>> groups = new TreeMap<String, List<Email>>();    	
-    	for (Email e : emails.getEmails()) {    		
-    		if (groups.containsKey(e.getEmail())) {
-    			groups.get(e.getEmail()).add(e);
-    		} else {
-    			List<Email> list = new ArrayList<Email>();
-    			list.add(e);
-    			groups.put(e.getEmail(), list);    			
-    		}
-    	}
-    	
-    	return groups;
-    }    
-    
-    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {    	
-    	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
-    		return null;
-    	}    	
-        LinkedHashMap<String, List<ResearcherUrl>> groups = new LinkedHashMap<String, List<ResearcherUrl>>();
-    	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {    		
-    		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();    		
-    		if (groups.containsKey(urlValue)) {
-    			groups.get(urlValue).add(r);
-    		} else {
-    			List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
-    			list.add(r);
-    			groups.put(urlValue, list);
-    		}
-    	}    	
+    private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
+        if (keywords == null || keywords.getKeywords() == null) {
+            return null;
+        }
+
+        /* Grouping items */
+        LinkedHashMap<String, List<Keyword>> groups = new LinkedHashMap<String, List<Keyword>>();
+        for (Keyword k : keywords.getKeywords()) {
+            if (groups.containsKey(k.getContent())) {
+                groups.get(k.getContent()).add(k);
+            } else {
+                List<Keyword> list = new ArrayList<Keyword>();
+                list.add(k);
+                groups.put(k.getContent(), list);
+            }
+        }
+
         return groups;
     }
-    
-    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
-    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers() == null){
-    		return null;
-    	}    	
-    	LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();    	
-    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifiers()) {
-    		String pairKey = ei.getType() + ":" + ei.getValue();    		
-    		if (groups.containsKey(pairKey)) {
-    			groups.get(pairKey).add(ei);
-    		} else {
-    			List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
-    			list.add(ei);
-    			groups.put(pairKey, list);    			
-    		}
-    	}
-    	
-		return groups;
+
+    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses) {
+        if (addresses == null || addresses.getAddress() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();
+        for (Address k : addresses.getAddress()) {
+            if (groups.containsKey(k.getCountry().getValue().value())) {
+                groups.get(k.getCountry().getValue().value()).add(k);
+            } else {
+                List<Address> list = new ArrayList<Address>();
+                list.add(k);
+                groups.put(k.getCountry().getValue().value(), list);
+            }
+        }
+
+        return groups;
     }
-    
+
+    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames) {
+
+        if (otherNames == null || otherNames.getOtherNames() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<OtherName>> groups = new LinkedHashMap<String, List<OtherName>>();
+        for (OtherName o : otherNames.getOtherNames()) {
+            if (groups.containsKey(o.getContent())) {
+                groups.get(o.getContent()).add(o);
+            } else {
+                List<OtherName> list = new ArrayList<OtherName>();
+                list.add(o);
+                groups.put(o.getContent(), list);
+            }
+        }
+        return groups;
+
+    }
+
+    private Map<String, List<Email>> groupEmails(Emails emails) {
+        if (emails == null || emails.getEmails() == null) {
+            return null;
+        }
+        Map<String, List<Email>> groups = new TreeMap<String, List<Email>>();
+        for (Email e : emails.getEmails()) {
+            if (groups.containsKey(e.getEmail())) {
+                groups.get(e.getEmail()).add(e);
+            } else {
+                List<Email> list = new ArrayList<Email>();
+                list.add(e);
+                groups.put(e.getEmail(), list);
+            }
+        }
+
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {
+        if (researcherUrls == null || researcherUrls.getResearcherUrls() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<ResearcherUrl>> groups = new LinkedHashMap<String, List<ResearcherUrl>>();
+        for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {
+            String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();
+            if (groups.containsKey(urlValue)) {
+                groups.get(urlValue).add(r);
+            } else {
+                List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
+                list.add(r);
+                groups.put(urlValue, list);
+            }
+        }
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
+        if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();
+        for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifiers()) {
+            String pairKey = ei.getType() + ":" + ei.getValue();
+            if (groups.containsKey(pairKey)) {
+                groups.get(pairKey).add(ei);
+            } else {
+                List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
+                list.add(ei);
+                groups.put(pairKey, list);
+            }
+        }
+
+        return groups;
+    }
+
     private boolean isProfileValidForIndex(ProfileEntity profile) {
         String orcid = profile.getId();
         if (orcid != null) {
@@ -549,11 +550,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        //TODO
+        // TODO
         Map<Long, Affiliation> affMap = affiliationMap(orcid, profileEntManager.getLastModified(orcid));
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
-            Affiliation aff = affMap.get(Long.valueOf(id));            
+            Affiliation aff = affMap.get(Long.valueOf(id));
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
             if (aff != null && aff.getVisibility().equals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC)) {
                 AffiliationForm form = AffiliationForm.valueOf(aff);
@@ -603,7 +604,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-        
+
         HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
 
         List<WorkForm> works = new ArrayList<WorkForm>();
@@ -650,7 +651,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid));
         sourceUtils.setSourceName(workObj);
-        
+
         if (workObj != null) {
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -676,7 +677,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (profileEntManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = activityCacheManager.getPublicCreditName(profileEntity);
-                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));                            
+                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                         }
                     }
                 }
@@ -710,12 +711,13 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
             }
 
-            //Set the numeric id (the table id in the group_id_record table) of the group id
-            if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
+            // Set the numeric id (the table id in the group_id_record table) of
+            // the group id
+            if (form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
                 GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue()).get();
                 form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
             }
-            
+
             peerReviews.add(form);
         }
         return peerReviews;
@@ -732,9 +734,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
             throw new Exception(getMessage("web.orcid.securityhash.exception"));
         OrcidInfo result = new OrcidInfo();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        
-        result.setName(RecordNameUtils.getPublicName(profile.getRecordNameEntity()));
+        result.setOrcid(orcid);        
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        String name = RecordNameUtils.getPublicName(profileEntity.getRecordNameEntity());
+        name = name != null ? name : "";
+        result.setName(name);
 
         Locale locale = null;
         if (!StringUtil.isBlank(localeParam)) {
@@ -820,7 +824,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     /**
      * Get group information based on the group id
-     * @throws UnsupportedEncodingException 
+     * 
+     * @throws UnsupportedEncodingException
      */
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") Long groupId) {
@@ -828,8 +833,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
-    	OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();        
+        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         return activityCacheManager.fundingMap(orcid, lastModified.getTime());
     }
 
@@ -853,7 +858,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
-    }          
+    }
 }
 
 class OrcidInfo {
