@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -40,6 +41,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -47,6 +49,9 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.UserConnectionStatus;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -54,6 +59,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -83,6 +89,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource
     private BiographyManager biographyManager;
     
+    @Resource
+    private UserConnectionDao userConnectionDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
@@ -107,13 +116,31 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Test    
     public void testDeprecateProfile() throws Exception {
-    	ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");        
+        UserconnectionPK pk = new UserconnectionPK();
+        pk.setProviderid("providerId");
+        pk.setProvideruserid("provideruserid");
+        pk.setUserid("4444-4444-4444-4441");
+        
+        UserconnectionEntity userConnection = new UserconnectionEntity();
+        userConnection.setAccesstoken("blah");
+        userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
+        userConnection.setDisplayname("blah");
+        userConnection.setDateCreated(new Date());
+        userConnection.setLastModified(new Date());
+        userConnection.setEmail("blah@blah.com");
+        userConnection.setOrcid("4444-4444-4444-4441");
+        userConnection.setId(pk);
+        userConnection.setRank(1);
+        userConnectionDao.persist(userConnection);
+        
+        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
         boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         assertTrue(result);
         profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
         assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
+        assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
     }
     
     @Test    
