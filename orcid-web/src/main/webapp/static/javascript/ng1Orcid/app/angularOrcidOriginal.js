@@ -2305,7 +2305,7 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
                         close: '',
                         scrolling: false
                     });
-                    $.colorbox.resize();
+                    $.colorbox.resize({width:"500px"});
                 };
                 $scope.loading = false;
                 $scope.$apply();

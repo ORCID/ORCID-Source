@@ -2372,7 +2372,7 @@
 	                        close: '',
 	                        scrolling: false
 	                    });
-	                    $.colorbox.resize();
+	                    $.colorbox.resize({width:"500px"});
 	                };
 	                $scope.loading = false;
 	                $scope.$apply();
@@ -11774,7 +11774,7 @@
 	                emailVerifiedObj = data;
 	                $.colorbox(
 	                    {
-	                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><a href="mailto:' + data.emails[0].value + '" target="_blank">' + data.emails[0].value + '</a></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div>'))(scope),
+	                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><strong>' + data.emails[0].value + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '<div class="topBuffer"></button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div></div>'))(scope),
 	                        escKey: true,
 	                        overlayClose: true,
 	                        transition: 'fade',
@@ -11782,7 +11782,7 @@
 	                        scrolling: false
 	                    }
 	                );
-	                $.colorbox.resize({height:"250px", width:"500px"});
+	                $.colorbox.resize({width:"500px"});
 	            }
 
 	            var verifyEmail = function( scope ){
@@ -11811,7 +11811,7 @@
 	                    close: '',
 	                    scrolling: false
 	                });
-	                $.colorbox.resize({height:"200px", width:"500px"});
+	                $.colorbox.resize({width:"500px"});
 	            }
 
 	            function link( scope, element, attrs ) {
