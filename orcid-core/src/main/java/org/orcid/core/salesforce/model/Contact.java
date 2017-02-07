@@ -70,7 +70,7 @@ public class Contact implements Serializable {
     }
 
     public String getName() {
-        return firstName + lastName;
+        return firstName + " " + lastName;
     }
 
     public String getEmail() {

@@ -16,11 +16,11 @@
  */
 package org.orcid.core.manager.impl;
 
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,8 @@ import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.test.LambdaMatcher;
 import org.orcid.test.TargetProxyHelper;
+
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * 
@@ -60,12 +62,33 @@ public class SalesForceManagerImplTest {
     @Mock
     private SalesForceConnectionDao salesForceConnectionDao;
 
+    @Mock
+    private SelfPopulatingCache salesForceMembersListCache;
+
+    @Mock
+    private SelfPopulatingCache salesForceMemberDetailsCache;
+
+    @Mock
+    private SelfPopulatingCache salesForceConsortiaListCache;
+
+    @Mock
+    private SelfPopulatingCache salesForceConsortiumCache;
+
+    @Mock
+    private SelfPopulatingCache salesForceContactsCache;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceDao", salesForceDao);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConnectionDao", salesForceConnectionDao);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceMembersListCache", salesForceMembersListCache);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceMemberDetailsCache", salesForceMemberDetailsCache);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConsortiaListCache", salesForceConsortiaListCache);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConsortiumCache", salesForceConsortiumCache);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceContactsCache", salesForceContactsCache);
+
         setUpUser();
         setUpContact1();
         setUpContact2();
