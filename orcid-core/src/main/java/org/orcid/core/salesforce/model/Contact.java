@@ -31,7 +31,8 @@ public class Contact implements Serializable {
 
     private String id;
     private String accountId;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String role = ContactRoleType.OTHER_CONTACT.value();
     private String orcid;
@@ -52,12 +53,24 @@ public class Contact implements Serializable {
         this.accountId = accountId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        return firstName + lastName;
     }
 
     public String getEmail() {
@@ -107,7 +120,8 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "Contact [id=" + id + ", accountId=" + accountId + ", name=" + name + ", email=" + email + ", role=" + role + ", orcid=" + orcid + "]";
+        return "Contact [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", role=" + role
+                + ", orcid=" + orcid + "]";
     }
 
 }
