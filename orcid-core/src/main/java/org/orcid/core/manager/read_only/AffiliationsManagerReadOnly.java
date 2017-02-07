@@ -86,5 +86,11 @@ public interface AffiliationsManagerReadOnly {
      * */
     List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);  
     
+    /**
+     * Get the list of all affiliations that belongs to a user
+     * @param userOrcid
+     * 
+     * @return the list of all affiliations that belongs to this user
+     * */
     List<Affiliation> getAffiliations(String orcid);
 }

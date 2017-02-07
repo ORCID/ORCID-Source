@@ -22,16 +22,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
-import org.orcid.jaxb.model.message.CreatedDate;
-import org.orcid.jaxb.model.message.Day;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.Month;
-import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.Year;
+import org.orcid.jaxb.model.common_v2.CreatedDate;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.PublicationDate;
+import org.orcid.jaxb.model.common_v2.Year;
+import org.orcid.utils.DateUtils;
 
 public class Date implements ErrorsInterface, Required, Serializable {
 
@@ -44,17 +42,6 @@ public class Date implements ErrorsInterface, Required, Serializable {
     private boolean required = true;
     private String getRequiredMessage;
     
-    private transient DatatypeFactory datatypeFactory = null;
-
-    public Date() {
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            // We're in serious trouble and can't carry on
-            throw new IllegalStateException("Cannot create new DatatypeFactory");
-        }    
-    }
-    
     public static Date valueOf(FuzzyDate fuzzyDate) {
         Date d = new Date();
         if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
@@ -64,18 +51,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
             d.setYear(fuzzyDate.getYear().getValue());
         return d;
-    }
-    
-    public static Date valueOf(org.orcid.jaxb.model.common_v2.FuzzyDate fuzzyDate) {
-        Date d = new Date();
-        if (fuzzyDate.getDay() != null && fuzzyDate.getDay().getValue() !=null)
-            d.setDay(fuzzyDate.getDay().getValue());
-        if (fuzzyDate.getMonth() != null && fuzzyDate.getMonth().getValue() !=null)
-            d.setMonth(fuzzyDate.getMonth().getValue());
-        if (fuzzyDate.getYear() != null && fuzzyDate.getYear().getValue() !=null)
-            d.setYear(fuzzyDate.getYear().getValue());
-        return d;
-    }
+    }        
 
     public FuzzyDate toFuzzyDate() {
         PublicationDate pd = new PublicationDate();
@@ -86,19 +62,7 @@ public class Date implements ErrorsInterface, Required, Serializable {
         if (!PojoUtil.isEmpty(this.getYear()))
             pd.setYear(new Year(new Integer(this.getYear())));
         return pd;
-    }
-    
-    public org.orcid.jaxb.model.common_v2.FuzzyDate toV2FuzzyDate() {
-        org.orcid.jaxb.model.common_v2.FuzzyDate date = new org.orcid.jaxb.model.common_v2.FuzzyDate();
-        if (!PojoUtil.isEmpty(this.getDay()))
-            date.setDay(new org.orcid.jaxb.model.common_v2.Day(new Integer(this.getDay())));
-        if (!PojoUtil.isEmpty(this.getMonth()))
-            date.setMonth(new org.orcid.jaxb.model.common_v2.Month(new Integer(this.getMonth())));
-        if (!PojoUtil.isEmpty(this.getYear()))
-            date.setYear(new org.orcid.jaxb.model.common_v2.Year(new Integer(this.getYear())));
-        
-        return date;
-    }
+    }        
     
     public static Date valueOf(java.util.Date date) {
         Date newDate = new Date();
@@ -110,20 +74,6 @@ public class Date implements ErrorsInterface, Required, Serializable {
         return newDate;
     }
 
-    public static Date valueOf(org.orcid.jaxb.model.common_v2.CreatedDate date) {
-        Date newDate = new Date();
-        if (date != null && date.getValue() != null)
-            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
-        return newDate;
-    }
-
-    public static Date valueOf(org.orcid.jaxb.model.common_v2.LastModifiedDate date) {
-        Date newDate = new Date();
-        if (date != null && date.getValue() != null)
-            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
-        return newDate;
-    }
-    
     public static Date valueOf(CreatedDate date) {
         Date newDate = new Date();
         if (date != null && date.getValue() != null)
@@ -156,16 +106,12 @@ public class Date implements ErrorsInterface, Required, Serializable {
     
     public LastModifiedDate toLastModifiedDate() {
         GregorianCalendar cal = toCalendar();
-        LastModifiedDate lastModifiedDate = new LastModifiedDate();
-        lastModifiedDate.setValue(datatypeFactory.newXMLGregorianCalendar(cal));
-        return lastModifiedDate;
+        return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal));        
     }
     
     public CreatedDate toCreatedDate() {
         GregorianCalendar cal = toCalendar();
-        CreatedDate createdDate = new CreatedDate();
-        createdDate.setValue(datatypeFactory.newXMLGregorianCalendar(cal));
-        return createdDate;
+        return new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal));        
     }
   
     public List<String> getErrors() {

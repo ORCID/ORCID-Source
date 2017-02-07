@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
@@ -122,13 +123,39 @@ public class SalesForceAdapter {
 
     public List<Contact> createContactsFromJson(JSONObject object) {
         try {
+            List<JSONObject> objectsList = extractObjectListFromRecords(object);
+            return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting all contacts list from SalesForce JSON", e);
+        }
+    }
+
+    public List<Contact> createContactsWithRolesFromJson(JSONObject object) {
+        try {
             JSONObject firstRecord = extractFirstRecord(object);
             JSONObject contactRoles = firstRecord.getJSONObject("Membership_Contact_Roles__r");
             List<JSONObject> objectsList = extractObjectListFromRecords(contactRoles);
             return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
         } catch (JSONException e) {
-            throw new RuntimeException("Error getting contacts list from SalesForce JSON", e);
+            throw new RuntimeException("Error getting contacts with roles list from SalesForce JSON", e);
         }
+    }
+
+    public JSONObject createSaleForceRecordFromContact(Contact contact) {
+        return mapperFacade.map(contact, JSONObject.class);
+    }
+
+    public List<ContactRole> createContactRolesFromJson(JSONObject object) {
+        try {
+            List<JSONObject> contactRoles = extractObjectListFromRecords(object);
+            return contactRoles.stream().map(e -> mapperFacade.map(e, ContactRole.class)).collect(Collectors.toList());
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contact roles list from SalesForce JSON", e);
+        }
+    }
+
+    public JSONObject createSaleForceRecordFromContactRole(ContactRole contactRole) {
+        return mapperFacade.map(contactRole, JSONObject.class);
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {
@@ -216,7 +243,8 @@ public class SalesForceAdapter {
         Contact contact = new Contact();
         contact.setRole(extractString(contactRecord, "Role"));
         JSONObject contactDetails = extractObject(contactRecord, "Contact");
-        contact.setName(extractString(contactDetails, "Name"));
+        contact.setFirstName(extractString(contactDetails, "FirstName"));
+        contact.setLastName(extractString(contactDetails, "LastName"));
         contact.setEmail(extractString(contactDetails, "Email"));
         return contact;
     }

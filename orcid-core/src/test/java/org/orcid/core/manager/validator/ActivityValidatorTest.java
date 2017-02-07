@@ -100,49 +100,49 @@ public class ActivityValidatorTest {
     @Test
     public void validateWork_validWorkTest() {
         Work work = getWork();
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTitleValidationException.class)
     public void validateWork_emptyTitleTest() {
         Work work = getWork();
         work.getWorkTitle().getTitle().setContent(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_emptyTranslatedTitleWithLanguageCodeTest() {
         Work work = getWork();
         work.getWorkTitle().getTranslatedTitle().setContent(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_translatedTitleWithInvalidLanguageCodeTest() {
         Work work = getWork();
         work.getWorkTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_translatedTitleWithNoLanguageCodeTest() {
         Work work = getWork();
         work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_emptyTypeTest() {
         Work work = getWork();
         work.setWorkType(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_invalidLanguageCodeTest() {
         Work work = getWork();
         work.setLanguageCode("xx");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
@@ -150,7 +150,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.getPublicationDate().getYear().setValue("invalid");
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(ActivityTypeValidationException e) {
             
@@ -159,7 +159,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.getPublicationDate().getMonth().setValue("invalid");
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(ActivityTypeValidationException e) {
             
@@ -168,7 +168,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.getPublicationDate().getDay().setValue("invalid");
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(ActivityTypeValidationException e) {
             
@@ -177,7 +177,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.setPublicationDate(new PublicationDate(null, new Month(1), new Day(1)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -186,7 +186,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.setPublicationDate(new PublicationDate(new Year(2017), null, new Day(1)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -195,7 +195,7 @@ public class ActivityValidatorTest {
         try {
             Work work = getWork();
             work.setPublicationDate(new PublicationDate(null, null, new Day(1)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -205,7 +205,7 @@ public class ActivityValidatorTest {
             Work work = getWork();
             //Invalid 2 digits year
             work.setPublicationDate(new PublicationDate(new Year(25), new Month(1), new Day(1)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -215,7 +215,7 @@ public class ActivityValidatorTest {
             Work work = getWork();
             //Invalid 3 digits month
             work.setPublicationDate(new PublicationDate(new Year(2017), new Month(100), new Day(1)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -225,7 +225,7 @@ public class ActivityValidatorTest {
             Work work = getWork();
             //Invalid 3 digits day
             work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), new Day(100)));
-            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -233,91 +233,91 @@ public class ActivityValidatorTest {
         
         Work work = getWork();
         work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), null));
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
         
         work = getWork();
         work.setPublicationDate(new PublicationDate(new Year(2017), null, null));
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
                 
         work = getWork();
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_invalidCitationTypeTest() {
         Work work = getWork();
         work.getWorkCitation().setWorkCitationType(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);        
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);        
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_emptyCitationTest() {
         Work work = getWork();
         work.getWorkCitation().setCitation(null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_contributorOrcidInvalidOrcidTest() {
         Work work = getWork();
         work.getWorkContributors().getContributor().get(0).getContributorOrcid().setPath("invalid");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_contributorOrcidInvalidUriTest() {
         Work work = getWork();
         work.getWorkContributors().getContributor().get(0).getContributorOrcid().setUri("http://invalid.org");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_emptyContributorCreditNameTest() {
         Work work = getWork();
         work.getWorkContributors().getContributor().get(0).getCreditName().setContent("");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = OrcidValidationException.class)
     public void validateWork_emptyContributorEmailTest() {
         Work work = getWork();
         work.getWorkContributors().getContributor().get(0).getContributorEmail().setValue("");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_emptyCountryTest() {
         Work work = getWork();        
         work.getCountry().setValue((Iso3166Country) null);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidPutCodeException.class)
     public void validateWork_invalidPutCodeTest() {
         Work work = getWork();
         work.setPutCode(1L);
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validateWork_changeVisibilityTest() {
         Work work = getWork();
         work.setVisibility(Visibility.LIMITED);
-        activityValidator.validateWork(work, null, false, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, false, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateWork_invalidExternalIdentifierTypeTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("invalid");
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateWork_emptyExternalIdentifierValueTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");;
-        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateWork(work, null, true, true, Visibility.PUBLIC);
     }
     
     public Work getWork() {
@@ -360,28 +360,28 @@ public class ActivityValidatorTest {
     @Test
     public void validateFunding_validFundingTest() {
         Funding funding = getFunding();
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTitleValidationException.class)
     public void validateFunding_emptyTitleTest() {
         Funding funding = getFunding();
         funding.getTitle().getTitle().setContent(null);
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validateFunding_invalidTranslatedTitleLanguageCodeTest() {
         Funding funding = getFunding();
         funding.getTitle().getTranslatedTitle().setLanguageCode("xx");
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateFunding_emptyExternalIdentifiersTest() {
         Funding funding = getFunding();
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
@@ -389,7 +389,7 @@ public class ActivityValidatorTest {
         try {
             Funding funding = getFunding();
             funding.getAmount().setCurrencyCode(null);
-            activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -398,7 +398,7 @@ public class ActivityValidatorTest {
         try {
             Funding funding = getFunding();
             funding.getAmount().setContent(null);
-            activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
             fail();
         } catch(OrcidValidationException e) {
             
@@ -409,21 +409,21 @@ public class ActivityValidatorTest {
     public void validateFunding_invalidPutCodeTest() {
         Funding funding = getFunding();
         funding.setPutCode(1L);
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validateFunding_dontChangeVisibilityTest() {
         Funding funding = getFunding();
         funding.setVisibility(Visibility.LIMITED);
-        activityValidator.validateFunding(funding, null, false, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, false, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validateFunding_invalidExternalIdentifiersTest() {
         Funding funding = getFunding();
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
-        activityValidator.validateFunding(funding, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validateFunding(funding, null, true, true, Visibility.PUBLIC);
     }
     
     public Funding getFunding() {
@@ -540,14 +540,14 @@ public class ActivityValidatorTest {
     @Test
     public void validatePeerReview_validPeerReviewTest() {
         PeerReview pr = getPeerReview();
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_invalidExternalIdentifiersTest() {        
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setType(null);
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidPutCodeException.class)
@@ -556,42 +556,42 @@ public class ActivityValidatorTest {
         when(source.getSourceName()).thenReturn("source name");
         PeerReview pr = getPeerReview();
         pr.setPutCode(1L);
-        activityValidator.validatePeerReview(pr, source, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, source, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityTypeValidationException.class)
     public void validatePeerReview_invalidPeerReviewTypeTest() {        
         PeerReview pr = getPeerReview();
         pr.setType(null);
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_noExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().clear();
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_emptyExternalIdentifierValueTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void validatePeerReview_invalidSubjectExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getSubjectExternalIdentifier().setType(null);
-        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, true, true, Visibility.PUBLIC);
     }
     
     @Test(expected = VisibilityMismatchException.class)
     public void validatePeerReview_dontChangeVisibilityTest() {        
         PeerReview pr = getPeerReview();
         pr.setVisibility(Visibility.LIMITED);
-        activityValidator.validatePeerReview(pr, null, false, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
     
     public PeerReview getPeerReview() {

@@ -63,9 +63,8 @@ import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -580,7 +579,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
-                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+                form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
             }
             // Set translated title language name
             if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
@@ -735,11 +734,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (orcidHash.length() > 5 && !encryptionManager.sha256Hash(orcid).startsWith(orcidHash))
             throw new Exception(getMessage("web.orcid.securityhash.exception"));
         OrcidInfo result = new OrcidInfo();
-        result.setOrcid(orcid);
-        
+        result.setOrcid(orcid);        
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         String name = RecordNameUtils.getPublicName(profileEntity.getRecordNameEntity());
-        result.setName(name != null ? name : "");
+        name = name != null ? name : "";
+        result.setName(name);
 
         Locale locale = null;
         if (!StringUtil.isBlank(localeParam)) {

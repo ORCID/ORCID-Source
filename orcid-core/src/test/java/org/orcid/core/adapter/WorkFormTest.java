@@ -28,7 +28,6 @@ import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.orcid.jaxb.model.common_v2.ContributorEmail;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.CreatedDate;
@@ -41,9 +40,10 @@ import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Year;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.WorkCategory;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.record_v2.WorkCategory;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -192,7 +192,7 @@ public class WorkFormTest {
         publicationDate.setMonth("03");
         publicationDate.setYear("2015");
         form.setPublicationDate(publicationDate);
-        form.setDateSortString(PojoUtil.createDateSortString(null, new FuzzyDate(2015, 3, 3)));
+        form.setDateSortString(PojoUtil.createDateSortString(null, FuzzyDate.valueOf(2015, 3, 3)));
         form.setPutCode(Text.valueOf("1"));
         form.setShortDescription(Text.valueOf("Short description"));
         form.setSource("0000-0000-0000-0000");        
@@ -200,7 +200,7 @@ public class WorkFormTest {
         form.setTitle(Text.valueOf("Title"));
         form.setTranslatedTitle(new TranslatedTitleForm("Translated Title", "es"));
         form.setUrl(Text.valueOf("http://myurl.com"));
-        form.setVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);        
+        form.setVisibility(Visibility.PUBLIC);        
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(Text.valueOf("External Identifier ID"));

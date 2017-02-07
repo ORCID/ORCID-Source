@@ -18,6 +18,8 @@ package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 
  * @author Will Simpson
@@ -27,17 +29,48 @@ public class Contact implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
+    private String id;
+    private String accountId;
+    private String firstName;
+    private String lastName;
     private String email;
-    private String role;
+    private String role = ContactRoleType.OTHER_CONTACT.value();
     private String orcid;
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
     }
 
     public String getEmail() {
@@ -48,12 +81,33 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isMainContact() {
+        return ContactRoleType.MAIN_CONTACT.value().equals(role);
+    }
+
+    public void setMainContact(boolean isMainContact) {
+        if (isMainContact) {
+            setRole(ContactRoleType.MAIN_CONTACT.value());
+        }
+    }
+
+    public boolean isTechnicalContact() {
+        return ContactRoleType.TECHNICAL_CONTACT.value().equals(role);
+    }
+
+    public void setTechnicalContact(boolean isTechnicalContact) {
+        if (isTechnicalContact) {
+            setRole(ContactRoleType.TECHNICAL_CONTACT.value());
+        }
     }
 
     public String getOrcid() {
@@ -66,7 +120,8 @@ public class Contact implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesForceContact [name=" + name + ", email=" + email + ", role=" + role + "]";
+        return "Contact [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", role=" + role
+                + ", orcid=" + orcid + "]";
     }
 
 }

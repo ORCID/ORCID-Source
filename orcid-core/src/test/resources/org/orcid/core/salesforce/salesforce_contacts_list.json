@@ -20,7 +20,8 @@
             "type" : "Contact",
             "url" : "/services/data/v20.0/sobjects/Contact/003J000001OTbUaIAL"
           },
-          "Name" : "Contact1FirstName Contact1LastName",
+          "FirstName" : "Contact1FirstName",
+          "LastName" : "Contact1LastName",
           "Email" : "contact1@mailinator.com"
         },
         "Member_Org_Role__c" : "Main relationship contact (OFFICIAL)"
@@ -35,7 +36,8 @@
             "type" : "Contact",
             "url" : "/services/data/v20.0/sobjects/Contact/003J000001OTbUbIAL"
           },
-          "Name" : "Contact2FirstName Contact2LastName",
+          "FirstName" : "Contact2FirstName",
+          "LastName" : "Contact2LastName",
           "Email" : "contact2@mailinator.com"
         },
         "Member_Org_Role__c" : "Technical contact"

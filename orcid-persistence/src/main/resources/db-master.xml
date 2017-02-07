@@ -227,4 +227,5 @@
 	<include file="/db/updates/add_column_reason_locked.xml" />
 	<include file="/db/updates/add_column_reason_locked_description.xml" />
 	<include file="/db/updates/identifier-types/add-case-to-id-types.xml" />
+	<include file="/db/updates/identifier-types/update-kuid-url2.xml" />
 </databaseChangeLog>

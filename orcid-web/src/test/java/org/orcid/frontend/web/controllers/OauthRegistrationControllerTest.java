@@ -47,7 +47,6 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -125,7 +124,7 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         
         OauthRegistrationForm reg = new OauthRegistrationForm();
         org.orcid.pojo.ajaxForm.Visibility fv = new org.orcid.pojo.ajaxForm.Visibility();
-        fv.setVisibility(Visibility.PUBLIC);
+        fv.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         reg.setActivitiesVisibilityDefault(fv);        
         reg.setEmail(email);
         reg.setEmailConfirm(email);

@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -171,8 +170,8 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-            org.orcid.jaxb.model.message.Visibility v = org.orcid.jaxb.model.message.Visibility.fromValue(profile.getActivitiesVisibilityDefault() == null
-                    ? OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value() : profile.getActivitiesVisibilityDefault().value());
+            Visibility v = profile.getActivitiesVisibilityDefault() == null
+                    ? Visibility.fromValue(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault();
             w.setVisibility(v);
         }
 
@@ -391,31 +390,7 @@ public class WorksController extends BaseWorkspaceController {
         Work updatedWork = workForm.toWork();
         // Edit work
         workManager.updateWork(userOrcid, updatedWork, false);
-    }
-
-    /**
-     * Returns a map containing the language code and name for each language
-     * supported.
-     * 
-     * @return A map of the form [language_code, language_name] containing all
-     *         supported languages
-     */
-    @RequestMapping(value = "/languages.json", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> getLanguageMap(HttpServletRequest request) {
-        return lm.buildLanguageMap(localeManager.getLocale(), false);
-    }
-
-    /**
-     * Returns a map containing the iso country code and the name for each
-     * country.\
-     * 
-     * @return A map of the form [iso_code, country_name] containing all
-     *         existing countries.
-     */
-    @RequestMapping(value = "/countries.json", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> getCountriesMap(HttpServletRequest request) {
-        return retrieveIsoCountries();
-    }
+    }   
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
     public @ResponseBody List<WorkForm> validatesWork(@RequestBody List<WorkForm> works) {
@@ -715,7 +690,7 @@ public class WorksController extends BaseWorkspaceController {
      * updates visibility of works
      */
     @RequestMapping(value = "/{workIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
-    public @ResponseBody ArrayList<Long> updateVisibilitys(@PathVariable("workIdsStr") String workIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
+    public @ResponseBody ArrayList<Long> updateVisibility(@PathVariable("workIdsStr") String workIdsStr, @PathVariable("visibilityStr") String visibilityStr) {
         // make sure this is a users work
         String orcid = getEffectiveUserOrcid();
         ArrayList<Long> workIds = new ArrayList<Long>();

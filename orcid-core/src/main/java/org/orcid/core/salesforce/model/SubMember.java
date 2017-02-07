@@ -16,12 +16,16 @@
  */
 package org.orcid.core.salesforce.model;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Will Simpson
  *
  */
-public class SubMember {
+public class SubMember implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String slug;
     private Opportunity opportunity;

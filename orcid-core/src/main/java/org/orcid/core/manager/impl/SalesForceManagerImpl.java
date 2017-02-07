@@ -24,16 +24,22 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.utils.ReleaseNameUtils;
@@ -45,7 +51,7 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  * @author Will Simpson
  *
  */
-public class SalesForceManagerImpl implements SalesForceManager {
+public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements SalesForceManager {
 
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
@@ -70,6 +76,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource
     private EmailManager emailManager;
+
+    @Resource
+    private SourceManager sourceManager;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -99,7 +108,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public MemberDetails retrieveDetails(String memberId) {
         List<Member> members = retrieveMembers();
-        Optional<Member> match = members.stream().filter(e -> memberId.equals(e.getId())).findFirst();
+        Optional<Member> match = members.stream().filter(e -> {
+            String id = e.getId();
+            String legacyId = id.substring(0, 15);
+            return memberId.equalsIgnoreCase(id) || memberId.equals(legacyId);
+        }).findFirst();
         if (match.isPresent()) {
             Member salesForceMember = match.get();
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
@@ -154,6 +167,57 @@ public class SalesForceManagerImpl implements SalesForceManager {
     public void updateMember(Member member) {
         salesForceDao.updateMember(member);
         salesForceMembersListCache.removeAll();
+    }
+
+    @Override
+    public void createContact(Contact contact) {
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        contact.setAccountId(accountId);
+        if (StringUtils.isBlank(contact.getEmail())) {
+            String contactOrcid = contact.getOrcid();
+            Email primaryEmail = emailManager.getEmails(contactOrcid, getLastModified(contactOrcid)).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            contact.setEmail(primaryEmail.getEmail());
+        }
+        List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> contact.getOrcid().equals(c.getOrcid()))
+                .findFirst();
+        String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
+        ContactRole contactRole = new ContactRole();
+        contactRole.setContactId(contactId);
+        contactRole.setRole(ContactRoleType.OTHER_CONTACT);
+        contactRole.setAccountId(contact.getAccountId());
+        salesForceDao.createContactRole(contactRole);
+        // Need to make more granular!
+        evictAll();
+    }
+
+    @Override
+    public void removeContact(Contact contact) {
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
+        contactRoles.forEach(r -> salesForceDao.removeContactRole(r.getId()));
+        // Need to make more granular!
+        evictAll();
+    }
+
+    @Override
+    public void updateContact(Contact contact) {
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
+        roles.stream().filter(r -> {
+            return !contact.getRole().equals(r.getRole().value());
+        }).forEach(r -> {
+            salesForceDao.removeContactRole(r.getId());
+        });
+        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRole()))) {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setAccountId(accountId);
+            contactRole.setContactId(contact.getId());
+            contactRole.setRole(ContactRoleType.fromValue(contact.getRole()));
+            salesForceDao.createContactRole(contactRole);
+        }
+        // Need to make more granular!
+        evictAll();
     }
 
     @Override
