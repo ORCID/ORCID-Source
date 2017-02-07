@@ -156,9 +156,6 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
                 $scope.widgetSrvc.locale = $scope.language.value; 
             }
         });
-        
-        document.body.className += " lang-" + $scope.language.direction;
-        document.getElementsByTagName('html')[0].setAttribute('lang', $scope.language.value);
     };
 
     $scope.getCurrentLanguage(); //Checking for the current language value
