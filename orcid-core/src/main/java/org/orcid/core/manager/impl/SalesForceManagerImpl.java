@@ -197,6 +197,24 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
+    public void updateContact(Contact contact) {
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
+        roles.stream().filter(r -> {
+            return !contact.getRole().equals(r.getRole().value());
+        }).forEach(r -> {
+            salesForceDao.removeContactRole(r.getId());
+        });
+        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRole()))) {
+            ContactRole contactRole = new ContactRole();
+            contactRole.setAccountId(accountId);
+            contactRole.setContactId(contact.getId());
+            contactRole.setRole(ContactRoleType.fromValue(contact.getRole()));
+            salesForceDao.createContactRole(contactRole);
+        }
+    }
+
+    @Override
     public void evictAll() {
         salesForceMembersListCache.removeAll();
         salesForceMemberDetailsCache.removeAll();
