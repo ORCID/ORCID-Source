@@ -31,7 +31,7 @@ public class Contact implements Serializable {
     private String accountId;
     private String name;
     private String email;
-    private String role;
+    private String role = ContactRoleType.OTHER_CONTACT.value();
     private String orcid;
 
     public String getId() {
@@ -78,8 +78,20 @@ public class Contact implements Serializable {
         return ContactRoleType.MAIN_CONTACT.value().equals(role);
     }
 
+    public void setMainContact(boolean isMainContact) {
+        if (isMainContact) {
+            setRole(ContactRoleType.MAIN_CONTACT.value());
+        }
+    }
+
     public boolean isTechnicalContact() {
         return ContactRoleType.TECHNICAL_CONTACT.value().equals(role);
+    }
+
+    public void setTechnicalContact(boolean isTechnicalContact) {
+        if (isTechnicalContact) {
+            setRole(ContactRoleType.TECHNICAL_CONTACT.value());
+        }
     }
 
     public String getOrcid() {

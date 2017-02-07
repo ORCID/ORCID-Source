@@ -212,6 +212,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             contactRole.setRole(ContactRoleType.fromValue(contact.getRole()));
             salesForceDao.createContactRole(contactRole);
         }
+        // Need to make more granular!
+        evictAll();
     }
 
     @Override

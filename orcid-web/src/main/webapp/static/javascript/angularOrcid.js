@@ -10251,7 +10251,21 @@
 	            console.log("$ContactCtrl.revoke() error");
 	        });
 	    };
-
+	    
+	    $scope.update = function (contact) {
+	        $.ajax({
+	            url: getBaseUri() + '/manage-consortium/update-contact.json',
+	            type: 'POST',
+	            data:  angular.toJson(contact),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            // something bad is happening!
+	            console.log("$ContactCtrl.update() error");
+	        });
+	    };
 	    
 	    // Init
 	    $scope.getConsortium();
