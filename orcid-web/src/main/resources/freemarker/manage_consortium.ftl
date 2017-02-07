@@ -57,6 +57,77 @@
                         </div>
                     </div>                      
                 </div>
+                <div>
+                    <h2>
+                        <span><@spring.message "manage_consortium.contacts_heading"/></span>
+                    </h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Email</th><th>Main contact</th><th>Technical contact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="contact in consortium.contactsList">
+                                <td>{{contact.name}}</td><td>{{contact.email}}</td>
+                                <td><input type="checkbox" ng-model="contact.mainContact" ng-change="update(contact)"></input></td>
+                                <td><input type="checkbox" ng-model="contact.technicalContact" ng-change="update(contact)"></input></td>
+                                <td width="5%" class="tooltip-container">
+                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)"
+                                        class="glyphicon glyphicon-trash grey">
+                                        <div class="popover popover-tooltip top">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@spring.message "manage.revokeaccess"/></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+		    				</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <form ng-submit="search()">
+                            <input type="text" placeholder="Email" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="submit" class="btn btn-primary" value="Search"></input>
+                        </form>
+                    </div>
+                    <div>
+	                    <table class="ng-cloak table" ng-show="areResults()">
+	                        <thead>
+	                            <tr>
+	                                <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+	                                <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+	                                <th width="10%"></th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <tr ng-repeat='result in results' class="new-search-result">
+	                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
+	                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+	                                <td width="10%">
+	                                    <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
+	                                        <span ng-show="!contactsByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+	                                            ng-click="confirmAddContact(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+	                                            class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+	                                        <a ng-show="contactsByOrcid[result['orcid-profile']['orcid-identifier'].path]"
+	                                            ng-click="confirmRevoke(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
+	                                            class="glyphicon glyphicon-trash grey"
+	                                            title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+	                                    </span>
+	                                    <span ng-show="effectiveUserOrcid === result['orcid-profile']['orcid-identifier'].path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                    <div id="show-more-button-container">
+	                        <button id="show-more-button" type="submit" class="ng-cloak btn" ng-click="getMoreResults()" ng-show="areMoreResults">Show more</button>
+	                        <span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+	                    </div>
+                    </div>
+                <div id="no-results-alert" class="orcid-hide alert alert-error no-contact-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
+                </div>
             </div>
         </div>
     </div>
@@ -75,4 +146,59 @@
             </div>
         </div>
     </script>
+    <script type="text/ng-template" id="confirm-add-contact-modal">
+	    <div style="padding: 20px;">
+	       <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	       <div ng-show="effectiveUserOrcid === contactToAdd">
+	          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
+	          <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	       </div>
+	       <div ng-hide="effectiveUserOrcid === contactToAdd">
+	          <p>{{contactNameToAdd}} ({{contactToAdd}})</p>
+	          <form ng-submit="addContact()">
+	              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
+	              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	          </form>
+	       </div>
+	       <div ng-show="errors.length === 0">
+	           <br></br>
+	       </div>
+	    </div>
+	</script>
+	
+	<script type="text/ng-template" id="confirm-add-contact-by-email-modal">
+	    <div style="padding: 20px;">
+	        <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	        <div ng-show="!emailSearchResult.found" >
+	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
+	            <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
+	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	        </div>
+	        <div ng-show="emailSearchResult.found">
+	            <p>{{input.text}}</p>
+	            <form ng-submit="addContactByEmail(input.text)">
+	                <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
+	                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	            </form>
+	            <div ng-show="errors.length === 0">
+	                <br></br>
+	            </div>
+	        </div>
+	    </div>
+    </script>
+    
+    <script type="text/ng-template" id="revoke-contact-modal">
+	    <div class="lightbox-container">
+	        <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
+	        <form ng-submit="revoke(contactToRevoke)">
+	            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	        </form>
+	        <div ng-show="errors.length === 0">
+	            <br></br>
+	        </div>
+	    </div>
+    </script>
+
 </@public>

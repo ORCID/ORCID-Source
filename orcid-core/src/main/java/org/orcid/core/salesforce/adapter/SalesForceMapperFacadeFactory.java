@@ -23,6 +23,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -69,6 +71,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         converterFactory.registerConverter(new ReverseURLConverter());
         registerMemberMap(mapperFactory);
         registerContactMap(mapperFactory);
+        registerContactRoleMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -106,11 +109,31 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.register();
     }
 
-    public void registerContactMap(MapperFactory mapperFactory) {
+    private void registerContactMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Contact, JSONObject> classMap = mapperFactory.classMap(Contact.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("orcid", "ORCID_iD_Path__c");
+        classMap.fieldAToB("firstName", "FirstName");
+        classMap.fieldAToB("lastName", "LastName");
+        classMap.fieldAToB("email", "Email");
+        classMap.fieldAToB("accountId", "AccountId");
+        classMap.fieldBToA("Member_Org_Role__c", "role");
+        classMap.fieldBToA("Contact__r.FirstName", "firstName");
+        classMap.fieldBToA("Contact__r.LastName", "lastName");
+        classMap.fieldBToA("Contact__r.Email", "email");
+        classMap.fieldBToA("Contact__c", "id");
+        classMap.register();
+    }
+
+    private void registerContactRoleMap(MapperFactory mapperFactory) {
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter(new ContactRoleConverter());
+        converterFactory.registerConverter(new ReverseContactRoleConverter());
+        ClassMapBuilder<ContactRole, JSONObject> classMap = mapperFactory.classMap(ContactRole.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("accountId", "Organization__c");
+        classMap.field("contactId", "Contact__c");
         classMap.field("role", "Member_Org_Role__c");
-        classMap.field("name", "Contact__r.Name");
-        classMap.field("email", "Contact__r.Email");
         classMap.register();
     }
 
@@ -174,6 +197,20 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
             } catch (MalformedURLException e) {
                 return null;
             }
+        }
+    }
+
+    private class ContactRoleConverter extends CustomConverter<ContactRoleType, Object> {
+        @Override
+        public Object convert(ContactRoleType source, Type<? extends Object> destinationType) {
+            return source.value();
+        }
+    }
+
+    private class ReverseContactRoleConverter extends CustomConverter<Object, ContactRoleType> {
+        @Override
+        public ContactRoleType convert(Object source, Type<? extends ContactRoleType> destinationType) {
+            return ContactRoleType.fromValue(source.toString());
         }
     }
 
