@@ -229,7 +229,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 primaryEmailEntity.setId(orcidClientGroup.getEmail().toLowerCase().trim());
                 primaryEmailEntity.setCurrent(true);
                 primaryEmailEntity.setVerified(true);
-                primaryEmailEntity.setVisibility(Visibility.PRIVATE);
+                primaryEmailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
                 groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
             if(groupProfileEntity.getRecordNameEntity() == null) {

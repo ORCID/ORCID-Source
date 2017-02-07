@@ -101,7 +101,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      *          The affiliation type
      * @return a list of all affiliations that belongs to the given user and matches the given type                 
      * */
-    List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type);
+    List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, AffiliationType type);        
     
     /**
      * Get all affiliations that belongs to the given user

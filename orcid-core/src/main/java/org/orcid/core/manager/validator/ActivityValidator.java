@@ -68,7 +68,7 @@ public class ActivityValidator {
     @Resource
     private ExternalIDValidator externalIDValidator;
 
-    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -252,14 +252,14 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = work.getVisibility();
-            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
     public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -305,7 +305,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = funding.getVisibility();
-            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
 
         externalIDValidator.validateFunding(funding.getExternalIdentifiers());
@@ -346,7 +346,7 @@ public class ActivityValidator {
     }
 
     public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
-            org.orcid.jaxb.model.message.Visibility originalVisibility) {
+            Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
@@ -374,7 +374,7 @@ public class ActivityValidator {
         // Check that we are not changing the visibility
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = peerReview.getVisibility();
-            validateVisibilityDoesntChangeLegacy(updatedVisibility, originalVisibility);
+            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
     }
 
@@ -440,17 +440,6 @@ public class ActivityValidator {
             return (source.getSourceClientId() != null) ? source.getSourceClientId().getPath() : source.getSourceOrcid().getPath();
         }
         return null;
-    }
-
-    private static void validateVisibilityDoesntChangeLegacy(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
-        if (updatedVisibility != null) {
-            if (originalVisibility == null) {
-                throw new VisibilityMismatchException();
-            }
-            if (!updatedVisibility.value().equals(originalVisibility.value())) {
-                throw new VisibilityMismatchException();
-            }
-        }
     }
     
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {

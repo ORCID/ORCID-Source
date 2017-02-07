@@ -61,7 +61,7 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         if (keyword.getVisibility() != null) {
             form.setVisibility(Visibility.valueOf(keyword.getVisibility()));
         } else {
-            form.setVisibility(Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()));
+            form.setVisibility(Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())));
         }
 
         if (keyword.getCreatedDate() != null) {

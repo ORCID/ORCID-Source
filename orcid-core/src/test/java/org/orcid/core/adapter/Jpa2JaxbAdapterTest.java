@@ -43,6 +43,7 @@ import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -54,8 +55,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
@@ -234,7 +234,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(userOrcid);
 
         // Set default visibility
-        profile.setActivitiesVisibilityDefault(Visibility.LIMITED);
+        profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
 
         // Set name
         RecordNameEntity name = new RecordNameEntity();
@@ -313,7 +313,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         WorkEntity work = new WorkEntity();
         work.setWorkType(WorkType.OTHER);
         work.setTitle("My work title");
-        work.setVisibility(Visibility.PUBLIC);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         work.setDisplayIndex(20000L);
         work.setClientSourceId(clientId);
         work.setId(24816L);
@@ -333,7 +333,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         ProfileFundingEntity funding = new ProfileFundingEntity();
         funding.setOrg(newOrg);
         funding.setTitle("My funding title");
-        funding.setVisibility(Visibility.PUBLIC);
+        funding.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         funding.setDisplayIndex(20000L);
         funding.setClientSourceId(clientId);
         funding.setId(24816L);
@@ -368,7 +368,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertEquals(1, orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().size());
         assertEquals("My work title", orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkTitle().getTitle().getContent());
         assertEquals("24816", orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getVisibility());
         checkSource(orcidProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getSource(), clientId);
 
         // Check fundings
@@ -377,19 +377,20 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertEquals(1, orcidProfile.getOrcidActivities().getFundings().getFundings().size());
         assertEquals("My funding title", orcidProfile.getOrcidActivities().getFundings().getFundings().get(0).getTitle().getTitle().getContent());
         assertEquals("24816", orcidProfile.getOrcidActivities().getFundings().getFundings().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidActivities().getFundings().getFundings().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidActivities().getFundings().getFundings().get(0).getVisibility());
         checkSource(orcidProfile.getOrcidActivities().getFundings().getFundings().get(0).getSource(), clientId);
 
         // Check affiliations
         assertNotNull(orcidProfile.getOrcidActivities().getAffiliations());
         assertNotNull(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation());
         assertEquals(1, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().size());
+        assertEquals(AffiliationType.EDUCATION, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getType());
         assertEquals("My org name", orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getName());
         assertEquals("San Jose", orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getAddress().getCity());
         assertEquals(org.orcid.jaxb.model.message.Iso3166Country.CR,
                 orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getOrganization().getAddress().getCountry());
         assertEquals("24816", orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getPutCode());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getVisibility());
         checkSource(orcidProfile.getOrcidActivities().getAffiliations().getAffiliation().get(0).getSource(), clientId);
 
         // Check biography
@@ -399,45 +400,45 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails());
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName());
         assertEquals("My credit name", orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
 
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames());
         assertEquals("My given names", orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getVisibility());
 
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName());
         assertEquals("My family name", orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getVisibility());
 
         // Check other names
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames());
         assertNotNull(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
         assertEquals(1, orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
 
         // Check biography
         assertNotNull(orcidProfile.getOrcidBio().getBiography());
         assertEquals("This is my biography", orcidProfile.getOrcidBio().getBiography().getContent());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getBiography().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getBiography().getVisibility());
 
         // Check address
         assertNotNull(orcidProfile.getOrcidBio().getContactDetails());
         assertNotNull(orcidProfile.getOrcidBio().getContactDetails().getAddress());
         assertNotNull(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry());
         assertEquals(org.orcid.jaxb.model.message.Iso3166Country.US, orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
 
         // Check keywords
         assertNotNull(orcidProfile.getOrcidBio().getKeywords());
         assertNotNull(orcidProfile.getOrcidBio().getKeywords().getKeyword());
         assertEquals(1, orcidProfile.getOrcidBio().getKeywords().getKeyword().size());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getKeywords().getVisibility());
         assertEquals("My keyword", orcidProfile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
 
         // Check researcher urls
         assertNotNull(orcidProfile.getOrcidBio().getResearcherUrls());
         assertNotNull(orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
         assertEquals(1, orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("My rUrl", orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
         assertEquals("http://orcid.org", orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
@@ -449,7 +450,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertEquals("My common name", orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
         assertEquals("My refrence", orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdReference().getContent());
         assertEquals("http://orcid.org", orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdUrl().getValue());
-        assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
         checkSource(orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getSource(), clientId);
     }
 

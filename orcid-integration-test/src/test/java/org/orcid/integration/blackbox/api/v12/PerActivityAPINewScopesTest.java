@@ -188,7 +188,10 @@ public class PerActivityAPINewScopesTest extends BlackBoxBaseV2Release {
         String clientSecret = getClient1ClientSecret();
         String userId = getUser1OrcidId();
         String password = getUser1Password();
-
+        String giveName = getUser1GivenName();
+        String familyName = getUser1FamilyNames();
+        String creditName = getUser1CreditName();        
+        
         String accessToken = getAccessToken(userId, password, Arrays.asList("/person/update", "/orcid-bio/read-limited"), clientId, clientSecret, clientRedirectUri,
                 true);
         OrcidMessage orcidMessage = new OrcidMessage();
@@ -199,9 +202,9 @@ public class PerActivityAPINewScopesTest extends BlackBoxBaseV2Release {
         PersonalDetails personalDetails = new PersonalDetails();
         personalDetails.setGivenNames(new GivenNames("My given name"));
         personalDetails.setFamilyName(new FamilyName("My family name"));
-        CreditName creditName = new CreditName("My credit name");
-        creditName.setVisibility(Visibility.LIMITED);
-        personalDetails.setCreditName(creditName);
+        CreditName creditNameElement = new CreditName("My credit name");
+        creditNameElement.setVisibility(Visibility.LIMITED);
+        personalDetails.setCreditName(creditNameElement);
         orcidBio.setPersonalDetails(personalDetails);
         orcidProfile.setOrcidBio(orcidBio);
 
@@ -221,6 +224,42 @@ public class PerActivityAPINewScopesTest extends BlackBoxBaseV2Release {
         assertEquals("My family name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName());
         assertEquals("My credit name", orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertEquals(Visibility.LIMITED, orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        
+        //Rollback changes
+        orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
+        orcidProfile = new OrcidProfile();
+        orcidMessage.setOrcidProfile(orcidProfile);
+        orcidBio = new OrcidBio();
+        personalDetails = new PersonalDetails();
+        personalDetails.setGivenNames(new GivenNames(giveName));
+        personalDetails.setFamilyName(new FamilyName(familyName));
+        creditNameElement = new CreditName(creditName);
+        creditNameElement.setVisibility(Visibility.PUBLIC);
+        personalDetails.setCreditName(creditNameElement);
+        orcidBio.setPersonalDetails(personalDetails);
+        orcidProfile.setOrcidBio(orcidBio);
+
+        clientResponse = t2OAuthClient_1_2.updateBioDetailsXml(userId, orcidMessage, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        orcidMessageWithBio = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithBio);
+        assertNotNull(orcidMessageWithBio.getOrcidProfile());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames());
+        assertEquals(giveName, orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName());
+        assertEquals(familyName, orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertNotNull(orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName());
+        assertEquals(creditName, orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, orcidMessageWithBio.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        
     }
 
     @Test

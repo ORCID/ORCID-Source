@@ -575,7 +575,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         ProfileEntity toClear = profileDao.find(orcid);
         toClear.setLastModified(new Date());
         toClear.setDeactivationDate(new Date());
-        toClear.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        toClear.setActivitiesVisibilityDefault(Visibility.PRIVATE);
         toClear.setIndexingStatus(IndexingStatus.REINDEX);
         
         // Remove works
@@ -635,7 +635,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (emails != null) {
             // For each email in the deprecated profile                            
             for (EmailEntity email : emails) {
-                email.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }        
         }
         
@@ -662,7 +662,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void reactivate(String orcid, String givenNames, String familyName, String password, org.orcid.jaxb.model.message.Visibility defaultVisibility) {
+    public void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
