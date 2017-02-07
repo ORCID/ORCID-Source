@@ -279,6 +279,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 name.setPath(deprecatedOrcid);
                 recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
+            
+            userConnectionDao.deleteByOrcid(deprecatedOrcid);  
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
