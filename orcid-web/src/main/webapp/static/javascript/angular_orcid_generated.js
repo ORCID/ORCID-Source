@@ -10186,8 +10186,7 @@
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
 	                if(data.errors.length === 0){
-	                    $scope.getContacts();
-	                    $scope.results.splice($scope.contactIdx, 1);
+	                    $scope.getConsortium();
 	                    $scope.$apply();
 	                    $scope.closeModal();
 	                }
@@ -10224,6 +10223,7 @@
 	            data:  angular.toJson($scope.contactToRevoke),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
+	                $scope.getConsortium();
 	                $scope.$apply();
 	                $scope.closeModal();
 	            }
@@ -10234,6 +10234,24 @@
 	    };
 	    
 	    $scope.update = function (contact) {
+	        if(contact.mainContact){
+	            for(var i in $scope.consortium.contactsList){
+	                var other = $scope.consortium.contactsList[i];
+	                if(other.id !== contact.id && other.mainContact){
+	                    other.mainContact = false;
+	                    other.role = null;
+	                    var nextContact = contact;
+	                    $scope.updateCall(other, function() {  $scope.updateCall(nextContact); })
+	                }
+	            }
+	        }
+	        else{
+	            $scope.updateCall(contact);
+	        }
+	        
+	    };
+	    
+	    $scope.updateCall = function(contact, nextFunction){
 	        $.ajax({
 	            url: getBaseUri() + '/manage-consortium/update-contact.json',
 	            type: 'POST',
@@ -10241,12 +10259,15 @@
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
 	                $scope.$apply();
+	                if(nextFunction){
+	                    nextFunction();
+	                }
 	            }
 	        }).fail(function() {
 	            // something bad is happening!
 	            console.log("$ContactCtrl.update() error");
 	        });
-	    };
+	    }
 	    
 	    // Init
 	    $scope.getConsortium();

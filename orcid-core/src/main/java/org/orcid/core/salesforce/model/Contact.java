@@ -18,6 +18,8 @@ package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 
  * @author Will Simpson
@@ -66,6 +68,7 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getRole() {
         return role;
     }

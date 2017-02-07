@@ -300,6 +300,24 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
     
     $scope.update = function (contact) {
+        if(contact.mainContact){
+            for(var i in $scope.consortium.contactsList){
+                var other = $scope.consortium.contactsList[i];
+                if(other.id !== contact.id && other.mainContact){
+                    other.mainContact = false;
+                    other.role = null;
+                    var nextContact = contact;
+                    $scope.updateCall(other, function() {  $scope.updateCall(nextContact); })
+                }
+            }
+        }
+        else{
+            $scope.updateCall(contact);
+        }
+        
+    };
+    
+    $scope.updateCall = function(contact, nextFunction){
         $.ajax({
             url: getBaseUri() + '/manage-consortium/update-contact.json',
             type: 'POST',
@@ -307,12 +325,15 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 $scope.$apply();
+                if(nextFunction){
+                    nextFunction();
+                }
             }
         }).fail(function() {
             // something bad is happening!
             console.log("$ContactCtrl.update() error");
         });
-    };
+    }
     
     // Init
     $scope.getConsortium();
