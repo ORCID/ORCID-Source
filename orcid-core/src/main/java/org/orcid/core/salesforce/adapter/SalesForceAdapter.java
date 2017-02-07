@@ -243,7 +243,8 @@ public class SalesForceAdapter {
         Contact contact = new Contact();
         contact.setRole(extractString(contactRecord, "Role"));
         JSONObject contactDetails = extractObject(contactRecord, "Contact");
-        contact.setName(extractString(contactDetails, "Name"));
+        contact.setFirstName(extractString(contactDetails, "FirstName"));
+        contact.setLastName(extractString(contactDetails, "LastName"));
         contact.setEmail(extractString(contactDetails, "Email"));
         return contact;
     }

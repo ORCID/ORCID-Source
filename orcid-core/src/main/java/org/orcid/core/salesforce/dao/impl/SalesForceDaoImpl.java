@@ -502,7 +502,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createContactsWithRolesResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select (Select Contact__c, Contact__r.Name, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
+                "Select (Select Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
                         + validateSalesForceId(accountId) + "'");
         return resource;
     }

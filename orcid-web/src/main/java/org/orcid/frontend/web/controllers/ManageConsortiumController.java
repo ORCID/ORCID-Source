@@ -25,8 +25,10 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +45,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = { "/manage-consortium" })
 public class ManageConsortiumController extends BaseController {
+
+    private static final String NOT_PUBLIC = "not public";
 
     @Resource
     private SalesForceManager salesForceManager;
@@ -83,7 +87,14 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
         EmailEntity emailEntity = emailDao.findCaseInsensitive(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
-        contact.setName(emailEntity.getProfile().getId());
+        RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
+        if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
+            contact.setFirstName(recordNameEntity.getGivenNames());
+            contact.setLastName(recordNameEntity.getFamilyName());
+        } else {
+            contact.setFirstName(NOT_PUBLIC);
+            contact.setLastName(NOT_PUBLIC);
+        }
         salesForceManager.createContact(contact);
         return contact;
     }
