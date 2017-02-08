@@ -33,22 +33,32 @@
                         <phase>generate-resources</phase>
                     </execution>
                     <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>webpack build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>-p</arguments>
-                        </configuration>
+                        <!--configuration>
+                            <arguments>-p -config 1.config.js</arguments>
+                        </configuration-->
                     </execution>
                 </executions>
                 <configuration>
-                    <nodeVersion>v4.6.0</nodeVersion>
-                    <npmVersion>2.15.9</npmVersion>
+                    <nodeVersion>v6.9.5</nodeVersion>
+                    <npmVersion>4.1.2</npmVersion>
                     <downloadRoot>https://nodejs.org/dist/</downloadRoot>
-                    <!--npmDownloadRoot>http://registry.npmjs.org/npm/-/</npmDownloadRoot-->
-                    <workingDirectory>../orcid-web/src/main/webapp/static/javascript/ng1Orcid/</workingDirectory>
+                    <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
+		    <workingDirectory>/opt/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
                     <installDirectory>target</installDirectory>
                     <environmentVariables>
                         <eirslett_ver>1.3</eirslett_ver>
