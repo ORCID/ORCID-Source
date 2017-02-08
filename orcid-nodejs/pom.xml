@@ -60,6 +60,8 @@
                     <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
                     <!-- path to folder containing package.json 
                     <workingDirectory>/opt/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
+                    Windows
+                    <workingDirectory>C:/Documents and Settings/%USER%/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
                     -->
                     <workingDirectory>~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
                     <installDirectory>target</installDirectory>
