@@ -46,6 +46,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -97,6 +98,9 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Mock 
     private ProfileEntityManager profileEntityManager;
     
+    @Mock
+    private OrcidProfileManager orcidProfileManager;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -112,7 +116,8 @@ public class RegistrationControllerTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(registrationController, "registrationManager", registrationManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);                 
+        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
     }
     
     @Test
