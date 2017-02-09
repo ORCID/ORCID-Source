@@ -16,6 +16,10 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,21 +42,23 @@ import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class RegistrationManagerImpl implements RegistrationManager {
+public class RegistrationManagerImpl implements RegistrationManager, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
+    
+    private static final String COMMON_PASSWORDS_FILENAME = "common_passwords.txt";
 
     @Resource
     private ProfileDao profileDao;
@@ -63,24 +69,26 @@ public class RegistrationManagerImpl implements RegistrationManager {
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
-    
+
     @Resource
     private EmailManager emailManager;
 
     @Resource
     private PasswordGenerationManager passwordResetManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private AdminManager adminManager;
-    
+
     @Resource
     private TransactionTemplate transactionTemplate;
+
+    private List<String> commonPasswords;
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;
@@ -119,7 +127,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         return new VerifyRegistrationToken(decryptedParams);
     }
 
-    @Override    
+    @Override
     public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
         String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
         try {
@@ -129,30 +137,30 @@ public class RegistrationManagerImpl implements RegistrationManager {
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
                         String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
                         emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
-                        OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);                    
+                        OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);
                         String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
-                        ProfileDeprecationRequest result = new ProfileDeprecationRequest();  
-                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);                    
+                        ProfileDeprecationRequest result = new ProfileDeprecationRequest();
+                        adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
                         notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
                         profileEntityCacheManager.remove(unclaimedOrcid);
                         return minimalProfile;
                     } else {
                         return createMinimalProfile(orcidProfile, usedCaptcha);
                     }
-                } 
+                }
             });
             return profile;
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new InvalidRequestException("Unable to register user due: " + e.getMessage(), e.getCause());
-        }        
+        }
     }
 
     /**
      * Creates a minimal record
      * 
      * @param orcidProfile
-     *          The record to create
-     * @return the new record         
+     *            The record to create
+     * @return the new record
      */
     private OrcidProfile createMinimalProfile(OrcidProfile orcidProfile, boolean usedCaptcha) {
         OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
@@ -169,7 +177,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * Validates if the given email address could be auto deprecated
      * 
      * @param emailAddress
-     *          The email we want to check
+     *            The email we want to check
      */
     private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) throws InvalidRequestException {
         // If the email doesn't exists, just return
@@ -201,5 +209,29 @@ public class RegistrationManagerImpl implements RegistrationManager {
             throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
         }
         return unclaimedOrcid;
+    }
+
+    @Override
+    public boolean passwordIsCommon(String password) {
+        return commonPasswords.contains(password);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        LOGGER.info("Building common passwords list...");
+        commonPasswords = new ArrayList<>();
+        InputStream inputStream = getClass().getResourceAsStream(COMMON_PASSWORDS_FILENAME);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try {
+            String line = reader.readLine();
+            while (line != null) {
+                commonPasswords.add(line.trim());
+                line = reader.readLine();
+            }
+        } finally {
+            reader.close();
+        }
+        LOGGER.info("Built list of " + commonPasswords.size() + " common passwords");
     }
 }
