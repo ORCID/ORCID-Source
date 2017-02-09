@@ -31,6 +31,8 @@ public interface RegistrationManager {
     void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
 
     OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha);
+    
+    boolean passwordIsCommon(String password);
 
     Long getCount();
 }

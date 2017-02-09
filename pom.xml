@@ -259,6 +259,7 @@ the software.
                             <exclude>docs/**</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
                         	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
+                        	<exclude>**/src/main/resources/**/*common_passwords.txt</exclude>
                         	<exclude>**/.gitignore</exclude>
                         	<exclude>**/.gitattributes</exclude>
                         	<exclude>**/rebel.xml</exclude>

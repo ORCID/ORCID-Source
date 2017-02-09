@@ -261,7 +261,10 @@
                             
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
                             <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}
+                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
+                                <a
+	                                    href="${knowledgeBaseUri}/articles/580410"
+	                                    target="_blank" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a> 
                             </p>
                             
                                                             
@@ -288,16 +291,17 @@
 	                    <td colspan="2">
 	                        <div class="editTablePadCell35 close-account-container">
 	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
+	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}</p>
 	                            
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}
+	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
 	                                <a
-	                                    href="${knowledgeBaseUri}/articles/148970-closing-an-orcid-account"
+	                                    href="${knowledgeBaseUri}/articles/580410"
 	                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
 	                            </p>
 	                            <div>
 	                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
 	                                <div class="relative">
-	                                    <input id="emailOrId" name="emailOrId" ng-enter="deprecateORCID()" 
+	                                    <input id="emailOrId" type="text" name="emailOrId" ng-enter="deprecateORCID()" 
 	                                        ng-model="deprecateProfilePojo.deprecatingOrcidOrEmail" class="input-xlarge" />
 	                                    <span class="required">*</span>
 	                                </div>

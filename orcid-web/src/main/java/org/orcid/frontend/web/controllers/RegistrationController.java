@@ -471,10 +471,15 @@ public class RegistrationController extends BaseController {
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             setError(password, "Pattern.registrationForm.password");
         }
+        
+        if (registrationManager.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
 
         if (passwordConfirm.getValue() != null) {
             passwordConfirmValidate(passwordConfirm, password);
         }
+        
     }
 
     @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
