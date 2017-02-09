@@ -6883,6 +6883,7 @@ a:hover .mozilla-badge {
 .member-list h2 a:visited {
     color: #a6ce39;
     text-decoration: none;
+    white-space: normal;
 }
 
 .member-list h1 a:hover,
