@@ -155,7 +155,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveAffiliationTypesAsMap() {
         Map<String, String> affiliationTypes = new LinkedHashMap<String, String>();
         for (AffiliationType affiliationType : AffiliationType.values()) {
-            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(AffiliationType.class, affiliationType.value())));
+            affiliationTypes.put(affiliationType.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.AffiliationType.class, affiliationType.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(affiliationTypes);
     }
@@ -164,7 +164,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveFundingTypesAsMap() {
         Map<String, String> grantTypes = new LinkedHashMap<String, String>();
         for (FundingType fundingType : FundingType.values()) {
-            grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(FundingType.class, fundingType.value())));
+            grantTypes.put(fundingType.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, fundingType.value())));
         }
         return FunctionsOverCollections.sortMapsByValues(grantTypes);
     }
@@ -281,7 +281,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new TreeMap<String, String>();
         try{
             for (ContributorRole contributorRole : ContributorRole.values()) {
-                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.ContributorRole.class, contributorRole.value())));
             }
             return FunctionsOverCollections.sortMapsByValues(map);
         }catch(Exception e){
@@ -295,7 +295,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new LinkedHashMap<String, String>();
 
         for (FundingContributorRole contributorRole : FundingContributorRole.values()) {
-            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(FundingContributorRole.class, contributorRole.value())));
+            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingContributorRole.class, contributorRole.value())));
         }
         return map;
     }
@@ -305,7 +305,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         Map<String, String> map = new LinkedHashMap<String, String>();
 
         for (SequenceType sequenceType : SequenceType.values()) {
-            map.put(sequenceType.value(), getMessage(buildInternationalizationKey(SequenceType.class, sequenceType.value())));
+            map.put(sequenceType.value(), getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.SequenceType.class, sequenceType.value())));
         }
 
         return FunctionsOverCollections.sortMapsByValues(map);

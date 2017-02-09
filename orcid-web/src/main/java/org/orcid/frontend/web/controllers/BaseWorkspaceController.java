@@ -16,7 +16,6 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,8 +33,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -93,15 +90,6 @@ public class BaseWorkspaceController extends BaseController {
         return localeManager.getCountries(locale);
     }
 
-    @ModelAttribute("emailVisibilities")
-    public Map<String, String> getEmailVisibilities() {
-        Map<String, String> emailVisibilities = new HashMap<String, String>();
-        emailVisibilities.put(Visibility.REGISTERED_ONLY.value(), "Registered users only");
-        emailVisibilities.put(Visibility.LIMITED.value(), "Trusted users only");
-        emailVisibilities.put(Visibility.PUBLIC.value(), "Publicly available (not recommended)");
-        return emailVisibilities;
-    }
-
     @ModelAttribute("allDates")
     public Map<String, String> getAllDates() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -125,23 +113,6 @@ public class BaseWorkspaceController extends BaseController {
             request.getSession().setAttribute(ORCID_ID_HASH, hash);
         }
         return hash;
-    }
-
-    public String getCountryName(OrcidProfile profile) {
-        return getCountryName(profile, false);
-    }
-
-    public String getCountryName(OrcidProfile profile, boolean checkVisibility) {
-        if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getAddress() != null
-                && profile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
-            if (checkVisibility) {
-                if (!Visibility.PUBLIC.equals(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility()))
-                    return null;
-            }
-            Map<String, String> countries = retrieveIsoCountries();
-            return countries.get(profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue().value());
-        }
-        return null;
     }
 
     public String getcountryName(String Iso3166Country) {

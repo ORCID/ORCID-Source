@@ -34,7 +34,7 @@ import org.orcid.core.manager.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;

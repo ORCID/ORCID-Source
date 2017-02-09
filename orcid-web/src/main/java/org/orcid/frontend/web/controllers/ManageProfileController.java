@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,20 +42,18 @@ import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -66,6 +63,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -88,6 +86,7 @@ import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
@@ -175,20 +174,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         this.profileEntityManager = profileEntityManager;
     }
 
-    @ModelAttribute("visibilities")
-    public Map<String, String> retrieveVisibilitiesAsMap() {
-        Map<String, String> visibilities = new LinkedHashMap<String, String>();
-        visibilities.put(Visibility.PUBLIC.value(), "Public");
-        visibilities.put(Visibility.LIMITED.value(), "Limited");
-        visibilities.put(Visibility.PRIVATE.value(), "Private");
-        return visibilities;
-    }
-
     @ModelAttribute("externalIdentifierRefData")
     public Map<String, String> retrieveExternalIdentifierRefData() {
         Map<String, String> types = new HashMap<String, String>();
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            types.put(type.value(), buildInternationalizationKey(WorkExternalIdentifierType.class, type.value()));
+            types.put(type.value(), buildInternationalizationKey(org.orcid.jaxb.model.message.WorkExternalIdentifierType.class, type.value()));
         }
         return types;
     }
@@ -731,20 +721,21 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
-    public @ResponseBody Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
+    public @ResponseBody org.orcid.jaxb.model.message.Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
-        Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        org.orcid.jaxb.model.message.Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
         notificationManager.sendOrcidDeactivateEmail(currentProfile);
         return email;
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        return emailManager.getEmailsAsForm(getCurrentUserOrcid());
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
+        Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));       
+        return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
         // Check password
         if (orcidSecurityManager.isPasswordConfirmationRequired()
@@ -753,20 +744,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (errors.isEmpty()) {
+            OrcidProfile currentProfile = getEffectiveProfile();
+            org.orcid.jaxb.model.message.Email oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
             String newPrime = null;
-            String oldPrime = null;
             List<String> emailErrors = new ArrayList<String>();
 
             // clear errros
             email.setErrors(new ArrayList<String>());
 
             // if blank
-            if (email.getValue() == null || email.getValue().trim().equals("")) {
+            if (PojoUtil.isEmpty(email.getValue())) {
                 emailErrors.add(getMessage("Email.personalInfoForm.email"));
-            }
-            OrcidProfile currentProfile = getEffectiveProfile();
-            List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
-
+            }            
+            
             MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
             // make sure there are no dups
             validateEmailAddress(email.getValue(), false, false, request, mbr);
@@ -778,26 +768,18 @@ public class ManageProfileController extends BaseWorkspaceController {
 
             if (emailErrors.size() == 0) {
                 if (email.isPrimary()) {
-                    for (Email curEmail : emails) {
-                        if (curEmail.isPrimary())
-                            oldPrime = curEmail.getValue();
-                        curEmail.setPrimary(false);
-                    }
                     newPrime = email.getValue();
                 }
-
-                emails.add(email);
-                currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-                email.setSource(sourceManager.retrieveSourceOrcid());
-                emailManager.addEmail(currentProfile.getOrcidIdentifier().getPath(), email);
+                
+                emailManager.addEmail(getCurrentUserOrcid(), email.toV2Email());
 
                 // send verifcation email for new address
                 notificationManager.sendVerificationEmail(currentProfile, email.getValue());
 
                 // if primary also send change notification.
-                if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime)) {
+                if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime.getValue())) {
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-                    notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime));
+                    notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 }
 
             }
@@ -809,48 +791,35 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody org.orcid.pojo.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.Email email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email deleteEmailJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         List<String> emailErrors = new ArrayList<String>();
-
-        // clear errros
+        String currentUserOrcid = getCurrentUserOrcid();
+        // clear erros
         email.setErrors(new ArrayList<String>());
 
         // if blank
         if (email.getValue() == null || email.getValue().trim().equals("")) {
             emailErrors.add(getMessage("Email.personalInfoForm.email"));
         }
-        OrcidProfile currentProfile = getEffectiveProfile();
-        List<Email> emails = currentProfile.getOrcidBio().getContactDetails().getEmail();
-
-        if (email.isPrimary()) {
+        
+        if (emailManager.isPrimaryEmail(currentUserOrcid, email.getValue())) {
             emailErrors.add(getMessage("manage.email.primaryEmailDeletion"));
         }
 
         email.setErrors(emailErrors);
 
-        if (emailErrors.size() == 0) {
-            Iterator<Email> emailIterator = emails.iterator();
-            while (emailIterator.hasNext()) {
-                Email nextEmail = emailIterator.next();
-                if (nextEmail.getValue().equals(email.getValue())) {
-                    emailIterator.remove();
-                }
-            }
-            currentProfile.getOrcidBio().getContactDetails().setEmail(emails);
-            emailManager.removeEmail(currentProfile.getOrcidIdentifier().getPath(), email.getValue());
+        if (emailErrors.size() == 0) {            
+            emailManager.removeEmail(currentUserOrcid, email.getValue());
         }
         return email;
     }
-
-    @SuppressWarnings("unchecked")
+    
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {
-        org.orcid.pojo.Email newPrime = null;
-        org.orcid.pojo.Email oldPrime = null;
+        org.orcid.pojo.ajaxForm.Email newPrime = null;
         List<String> allErrors = new ArrayList<String>();
 
-        for (org.orcid.pojo.Email email : emails.getEmails()) {
-
+        for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
             MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
             validateEmailAddress(email.getValue(), request, mbr);
             List<String> emailErrors = new ArrayList<String>();
@@ -868,16 +837,13 @@ public class ManageProfileController extends BaseWorkspaceController {
             allErrors.add("A Primary Email Must be selected");
         }
 
-        OrcidProfile currentProfile = getEffectiveProfile();
-        if (currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null)
-            oldPrime = new org.orcid.pojo.Email(currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-
         emails.setErrors(allErrors);
         if (allErrors.size() == 0) {
-            currentProfile.getOrcidBio().getContactDetails().setEmail((List<Email>) (Object) emails.getEmails());
-            emailManager.updateEmails(currentProfile.getOrcidIdentifier().getPath(), currentProfile.getOrcidBio().getContactDetails().getEmail());
-            if (newPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
-                notificationManager.sendEmailAddressChangedNotification(currentProfile, new Email(oldPrime.getValue()));
+            OrcidProfile currentProfile = getEffectiveProfile();
+            org.orcid.jaxb.model.message.Email oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+            emailManager.updateEmails(getCurrentUserOrcid(), emails.toV2Emails());
+            if (oldPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
+                notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 if (!newPrime.isVerified()) {
                     notificationManager.sendVerificationEmail(currentProfile, newPrime.getValue());
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
@@ -889,9 +855,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
 
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
@@ -903,6 +867,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }
 
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
         // Set the default visibility
         if (profile != null && profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
@@ -995,9 +961,13 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody BiographyForm getBiographyForm() {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        BiographyForm bf = BiographyForm.valueOf(profileEntity);
-        return bf;
+        Biography bio = biographyManager.getBiography(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));
+        BiographyForm form = BiographyForm.valueOf(bio);
+        if(form.getVisiblity() == null) {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());            
+            form.setVisiblity(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
+        return form;
     }
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.POST)

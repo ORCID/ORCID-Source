@@ -176,7 +176,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("affiliationType", type);
         return query.getResultList();
-    }    
+    }        
     
     /**
      * Get all affiliations that belongs to the given user

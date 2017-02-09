@@ -40,10 +40,9 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     boolean haveAnyEmailVerified(String orcid);
     
-    @Deprecated
-    org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid);
-    
     Emails getEmails(String orcid, long lastModified);
     
     Emails getPublicEmails(String orcid, long lastModified);
+    
+    boolean isPrimaryEmail(String orcid, String email);
 }

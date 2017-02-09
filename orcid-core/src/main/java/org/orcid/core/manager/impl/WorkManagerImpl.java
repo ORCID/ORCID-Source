@@ -311,7 +311,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-        Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
+        Visibility originalVisibility = workEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
@@ -336,7 +336,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
         orcidSecurityManager.checkSource(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
-        workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(originalVisibility.value()));
+        workEntity.setVisibility(originalVisibility);
         
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
@@ -366,12 +366,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-        org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = workEntity.getVisibility();
-        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        Visibility incomingWorkVisibility = workEntity.getVisibility();
+        Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
             workEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
-            workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         }
     }
 

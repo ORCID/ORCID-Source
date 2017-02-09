@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -44,6 +45,11 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersistentTokensIntegrationTest extends BlackBoxBaseV2Release {
 
+    @Before
+    public void before() {
+        signout();
+    }
+    
     @Test
     public void createLongLivedTokenTest() throws InterruptedException, JSONException {
         String clientId = getClient1ClientId();
@@ -69,8 +75,8 @@ public class PersistentTokensIntegrationTest extends BlackBoxBaseV2Release {
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
         String clientSecret = getClient1ClientSecret();
-        String userId = getUser1OrcidId();
-        String password = getUser1Password();
+        String userId = getUser2OrcidId();
+        String password = getUser2Password();
         String scope = "/orcid-works/create";
         String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, false);
         assertNotNull(authorizationCode);

@@ -4122,7 +4122,7 @@ this.w3cLatexCharMap = {
    };
    
    typeMap['kuid'] = function (id) {
-       return 'https://koreamed.org/SearchBasic.php?RID=' + encodeURIComponent(id);
+       return 'https://koreamed.org/article/' + encodeURIComponent(id);
    };
    
    typeMap['lensid'] = function (id) {

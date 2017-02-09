@@ -29,7 +29,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.interactions.Actions;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.common_v2.Day;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
@@ -324,7 +323,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @Test
     public void externalIdentifiersPrivacyTest() throws InterruptedException, JSONException {
         String extId = "added-ext-id-" + System.currentTimeMillis();
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
+        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE));
         //Create a new external identifier and set it to public
         createExternalIdentifier(extId, getUser1OrcidId(), accessToken);
         showMyOrcidPage();
@@ -534,7 +533,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
         // Create peer review group               
-        String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
+        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE));
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review

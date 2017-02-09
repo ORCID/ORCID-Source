@@ -56,7 +56,8 @@ public class NamesForm implements ErrorsInterface, Serializable {
             if (name.getVisibility() != null) {
                 nf.setNamesVisibility(Visibility.valueOf(name.getVisibility()));
             } else {
-                nf.setNamesVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
+                org.orcid.jaxb.model.common_v2.Visibility v = org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+                nf.setNamesVisibility(Visibility.valueOf(v));
             }
         }
 

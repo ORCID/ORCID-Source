@@ -45,7 +45,7 @@ import org.orcid.test.TargetProxyHelper;
 
 public class ResearcherUrlManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
