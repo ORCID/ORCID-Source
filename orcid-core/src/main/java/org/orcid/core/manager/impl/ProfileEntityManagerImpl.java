@@ -87,6 +87,7 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -387,8 +388,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
                         Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
                         String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {                            
-                            scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                        for (ScopePathType tempScope : scopesGrantedToClient) {        
+                            try {
+                                scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                            } catch (NoSuchMessageException e) {
+                                LOGGER.warn("No message to display for scope " + tempScope.toString());
+                            }
                         }
                         //If there is at least one scope in this token, fill the application summary element
                         if(!scopePathMap.isEmpty()) {
