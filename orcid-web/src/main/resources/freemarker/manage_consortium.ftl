@@ -158,12 +158,13 @@
     </script>
     <script type="text/ng-template" id="confirm-add-contact-modal">
 	    <div style="padding: 20px;">
-	       <h3><@orcid.msg 'manage_consortium.add_contact_confirm_heading'/></h3>
+	       <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	       <div ng-show="effectiveUserOrcid === contactToAdd">
 	          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
 	          <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	       </div>
 	       <div ng-hide="effectiveUserOrcid === contactToAdd">
+	       		
 	          <p>{{contactNameToAdd}} ({{contactToAdd}})</p>
 	          <form ng-submit="addContact()">
 	              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
@@ -178,10 +179,10 @@
 	
 	<script type="text/ng-template" id="confirm-add-contact-by-email-modal">
 	    <div style="padding: 20px;">
-	        <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	            <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
+	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/></p>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </div>
 	        <div ng-show="emailSearchResult.found">
@@ -199,10 +200,10 @@
     
     <script type="text/ng-template" id="revoke-contact-modal">
 	    <div class="lightbox-container">
-	        <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+	        <h3><@orcid.msg 'manage_consortium.remove_contact_confirm_heading'/></h3>
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
-	            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
+	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">

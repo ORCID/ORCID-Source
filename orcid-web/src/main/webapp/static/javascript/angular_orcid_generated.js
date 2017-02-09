@@ -10167,7 +10167,9 @@
 	            data: angular.toJson(addContact),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
+	                //$scope.closeModal();
 	                $scope.$apply();
+	                window.location.reload();
 	            }
 	        }).fail(function() {
 	            console.log("Error adding contact.");
