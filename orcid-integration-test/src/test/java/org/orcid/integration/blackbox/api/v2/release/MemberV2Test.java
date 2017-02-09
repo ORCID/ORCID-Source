@@ -99,7 +99,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
 
     @Test
     public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0/samples/education-2.0.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0/samples/read_samples/education-2.0.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -144,7 +144,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
 
     @Test
     public void testUpdateEducationWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Education education = (Education) unmarshallFromPath("/record_2.0/samples/education-2.0.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0/samples/read_samples/education-2.0.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -174,7 +174,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
 
     @Test
     public void createViewUpdateAndDeleteEmployment() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/employment-2.0.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/read_samples/employment-2.0.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -220,7 +220,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
 
     @Test
     public void testUpdateEmploymentWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/employment-2.0.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/read_samples/employment-2.0.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
         String accessToken = getAccessToken();
@@ -251,7 +251,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     @Test
     public void createViewUpdateAndDeleteFunding() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/funding-2.0.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/read_samples/funding-2.0.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -306,7 +306,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     @Test
     public void testUpdateFundingWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/funding-2.0.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/read_samples/funding-2.0.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -346,7 +346,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     @Test
     public void createViewUpdateAndDeletePeerReview() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0/samples/read_samples/peer-review-2.0.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -400,7 +400,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     @Test
     public void testUpdatePeerReviewWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
+        PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0/samples/read_samples/peer-review-2.0.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
         peerReviewToCreate.setVisibility(Visibility.PUBLIC);
@@ -440,15 +440,15 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Education education = (Education) unmarshallFromPath("/record_2.0/samples/education-2.0.xml", Education.class);
+        Education education = (Education) unmarshallFromPath("/record_2.0/samples/read_samples/education-2.0.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
 
-        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/employment-2.0.xml", Employment.class);
+        Employment employment = (Employment) unmarshallFromPath("/record_2.0/samples/read_samples/employment-2.0.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
 
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/funding-2.0.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/read_samples/funding-2.0.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -458,17 +458,18 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
                 
-        Work work = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         work.setPutCode(null);
         work.setVisibility(Visibility.PUBLIC);
         work.getExternalIdentifiers().getExternalIdentifier().clear();
+        work.setSource(null);
         ExternalID wExtId = new ExternalID();
         wExtId.setValue("Work Id " + time);
         wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
 
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/read_samples/peer-review-2.0.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setVisibility(Visibility.PUBLIC);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
@@ -722,7 +723,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     
     @Test
     public void testPeerReviewMustHaveAtLeastOneExtId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/read_samples/peer-review-2.0.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId(groupRecords.get(0).getGroupId());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
@@ -734,14 +735,12 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
     }    
     
-    
-    
     @Test
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE);
         String accessToken =  getAccessToken(scopes);
-        Work work1 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         org.orcid.jaxb.model.record_v2.WorkTitle title1 = new org.orcid.jaxb.model.record_v2.WorkTitle();
@@ -761,7 +760,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), postResponse.getStatus());
         
-        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/funding-2.0.xml", Funding.class);
+        Funding funding = (Funding) unmarshallFromPath("/record_2.0/samples/read_samples/funding-2.0.xml", Funding.class);
         funding.setPutCode(null);
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -779,7 +778,7 @@ public class MemberV2Test extends BlackBoxBaseV2Release {
     
     @Test
     public void testAddPeerReviewWithInvalidGroupingId() throws JSONException, InterruptedException, URISyntaxException {
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/peer-review-2.0.xml", PeerReview.class);
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0/samples/read_samples/peer-review-2.0.xml", PeerReview.class);
         peerReview.setPutCode(null);
         peerReview.setGroupId("Invalid group id " + System.currentTimeMillis());
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
