@@ -42,16 +42,16 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--execution>
                         <id>webpack build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                        <!--configuration>
-                            <arguments>-p -config 1.config.js</arguments>
-                        </configuration-->
-                    </execution>
+                        <configuration>
+                            <arguments>-p -config webpack.config.js</arguments>
+                        </configuration>
+                    </execution-->
                 </executions>
                 <configuration>
                     <nodeVersion>v6.9.5</nodeVersion>
