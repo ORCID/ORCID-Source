@@ -261,7 +261,10 @@
                             
                             <h4>${springMacroRequestContext.getMessage("deactivate_orcid.anotherAccount")}</h4>
                             <p>
-                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")} <a href='mailto:${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}'>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.support_email")}</a> ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}
+                                ${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.a")}&nbsp;<strong>${springMacroRequestContext.getMessage("deactivate_orcid.duplicate_orcid.b")}</strong>
+                                <a
+	                                    href="${knowledgeBaseUri}/articles/580410"
+	                                    target="_blank" class="no-wrap">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a> 
                             </p>
                             
                                                             
