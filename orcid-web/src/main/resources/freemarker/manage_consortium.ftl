@@ -135,7 +135,7 @@
                 <!-- Buttons -->
                 <div class="row">
                     <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
+                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'freemarker.btnsaveallchanges'/></span>
                     </div>
                 </div> 
             </div>
@@ -157,7 +157,7 @@
         </div>
     </script>
     <script type="text/ng-template" id="confirm-add-contact-modal">
-	    <div style="padding: 20px;">
+	    <div class="lightbox-container">
 	       <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	       <div ng-show="effectiveUserOrcid === contactToAdd">
 	          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
@@ -168,7 +168,7 @@
 	          <p>{{contactNameToAdd}} ({{contactToAdd}})</p>
 	          <form ng-submit="addContact()">
 	              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
-	              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 	          </form>
 	       </div>
 	       <div ng-show="errors.length === 0">
@@ -178,7 +178,7 @@
 	</script>
 	
 	<script type="text/ng-template" id="confirm-add-contact-by-email-modal">
-	    <div style="padding: 20px;">
+	    <div class="lightbox-container">
 	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
@@ -189,11 +189,8 @@
 	            <p>{{input.text}}</p>
 	            <form ng-submit="addContactByEmail(input.text)">
 	                <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
-	                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	                <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	            </form>
-	            <div ng-show="errors.length === 0">
-	                <br></br>
-	            </div>
 	        </div>
 	    </div>
     </script>
@@ -204,7 +201,7 @@
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
-	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
 	            <br></br>

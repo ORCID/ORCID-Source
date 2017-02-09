@@ -2179,7 +2179,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #333;
     border-radius: 0;
     min-height: 50px;
-    heigth: auto;
+    height: auto;
 }
 
 .alert-icon-large {
@@ -2575,6 +2575,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .lightbox-container {
     padding: 5px 15px 30px;
+}
+
+.lightbox-container .cancel-option{
+    margin: 0 10px;
 }
 
 .no-icon {
@@ -7202,6 +7206,14 @@ ul.comma li:last-child:after {
 }
 
 /*Consortia self service*/
+.manage-consortium #ajax-loader i{
+    margin-top: 10px;
+}
+
+.manage-consortium .alert{
+    margin: 10px 0;
+}
+
 .manage-consortium label,
 .manage-consortium h3
 {
