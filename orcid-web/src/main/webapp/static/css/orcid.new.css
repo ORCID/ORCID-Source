@@ -7202,12 +7202,27 @@ ul.comma li:last-child:after {
 }
 
 /*Consortia self service*/
-.manage-consortium label{
+.manage-consortium label,
+.manage-consortium h3
+{
     display: block;
     font-size: 14px;
     font-weight: bold;
     margin: .7em 0 .5em 0;
 }
+
+.manage-consortium table{
+    margin-bottom: 20px;
+}
+
+.manage-consortium td,
+.manage-consortium th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
+    width: 25%;
+}
+
 
 /* Media Queries */
 
