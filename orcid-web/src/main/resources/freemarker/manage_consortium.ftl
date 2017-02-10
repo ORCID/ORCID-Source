@@ -21,14 +21,14 @@
         <div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">
             <#include "includes/id_banner.ftl"/>
         </div>
-        <div class="col-md-9 col-sm-12 col-xs-12">
+        <div class="col-md-9 col-sm-12 col-xs-12 manage-consortium">
             <h1 id="manage-consortium-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
             <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
             	<a href="<@orcid.rootPath '/members'/>" target="_blank"><@spring.message "manage_consortium.member_list_link"/></a>
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="consortium != null" ng-cloak>
-                <div class="manage-consortium">
+                <div>
                 	<h2 id="manage-consortium-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
                     <!-- Name -->
                     <div class="row">
@@ -49,18 +49,15 @@
                                 <div ng-repeat='error in consortium.website.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
-                    </div>
-                    <!-- Buttons -->
-                    <div class="row">
-                        <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-                            <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'admin.edit_client.btn.update'/></span>
-                        </div>
-                    </div>                      
+                    </div>                     
                 </div>
                 <div>
-                    <h2>
-                        <span><@spring.message "manage_consortium.contacts_heading"/></span>
-                    </h2>
+                    <h3>
+                        <@spring.message "manage_consortium.contacts_heading"/>
+                    </h3>
+                    <p>
+                        <@spring.message "manage_consortium.contacts_text"/>
+                    </p>
                     <table>
                         <thead>
                             <tr>
@@ -69,16 +66,17 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
-                                <td>{{contact.name}}</td><td>{{contact.email}}</td>
+                                <td>{{contact.name}}</td>
+                                <td>{{contact.email}}</td>
                                 <td><input type="checkbox" ng-model="contact.mainContact" ng-change="update(contact)"></input></td>
                                 <td><input type="checkbox" ng-model="contact.technicalContact" ng-change="update(contact)"></input></td>
-                                <td width="5%" class="tooltip-container">
+                                <td class="tooltip-container">
                                     <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)"
                                         class="glyphicon glyphicon-trash grey">
                                         <div class="popover popover-tooltip top">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <span><@spring.message "manage.revokeaccess"/></span>
+                                                <span><@spring.message "manage_consortium.remove_contact"/></span>
                                             </div>
                                         </div>
                                     </a>
@@ -88,8 +86,14 @@
                         </tbody>
                     </table>
                     <div>
+                    	<h3>
+                        	<@spring.message "manage_consortium.add_contacts_heading"/>
+                    	</h3>
+                    	<p>
+                    		<@spring.message "manage_consortium.add_contacts_search_for"/>
+                    	</p>
                         <form ng-submit="search()">
-                            <input type="text" placeholder="Email" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="text" placeholder="Email address" class="input-xlarge inline-input" ng-model="input.text"></input>
                             <input type="submit" class="btn btn-primary" value="Search"></input>
                         </form>
                     </div>
@@ -97,16 +101,16 @@
 	                    <table class="ng-cloak table" ng-show="areResults()">
 	                        <thead>
 	                            <tr>
-	                                <th width="20%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
-	                                <th width="25%">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-	                                <th width="10%"></th>
+	                                <th>${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+	                                <th>${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+	                                <th></th>
 	                            </tr>
 	                        </thead>
 	                        <tbody>
 	                            <tr ng-repeat='result in results' class="new-search-result">
-	                                <td width="20%"><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
-	                                <td width="25%" class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
-	                                <td width="10%">
+	                                <td><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank" ng-bind="getDisplayName(result)"></a></td>
+	                                <td class='search-result-orcid-id'><a href="{{result['orcid-profile']['orcid-identifier'].uri}}" target="_blank">{{result['orcid-profile']['orcid-identifier'].path}}</td>
+	                                <td>
 	                                    <span ng-show="effectiveUserOrcid !== result['orcid-profile']['orcid-identifier'].path">
 	                                        <span ng-show="!contactsByOrcid[result['orcid-profile']['orcid-identifier'].path]"
 	                                            ng-click="confirmAddContact(result['orcid-profile']['orcid-bio']['personal-details']['given-names'].value + ' ' + result['orcid-profile']['orcid-bio']['personal-details']['family-name'].value, result['orcid-profile']['orcid-identifier'].path, $index)"
@@ -128,6 +132,12 @@
                     </div>
                 <div id="no-results-alert" class="orcid-hide alert alert-error no-contact-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
                 </div>
+                <!-- Buttons -->
+                <div class="row">
+                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'freemarker.btnsaveallchanges'/></span>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
@@ -147,17 +157,18 @@
         </div>
     </script>
     <script type="text/ng-template" id="confirm-add-contact-modal">
-	    <div style="padding: 20px;">
-	       <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	    <div class="lightbox-container">
+	       <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	       <div ng-show="effectiveUserOrcid === contactToAdd">
 	          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>
 	          <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	       </div>
 	       <div ng-hide="effectiveUserOrcid === contactToAdd">
+	       		
 	          <p>{{contactNameToAdd}} ({{contactToAdd}})</p>
 	          <form ng-submit="addContact()">
 	              <button class="btn btn-primary" ><@orcid.msg 'manage.spanadd'/></button>
-	              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	              <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 	          </form>
 	       </div>
 	       <div ng-show="errors.length === 0">
@@ -167,33 +178,30 @@
 	</script>
 	
 	<script type="text/ng-template" id="confirm-add-contact-by-email-modal">
-	    <div style="padding: 20px;">
-	        <h3><@orcid.msg 'manage_delegation.addtrustedindividual'/></h3>
+	    <div class="lightbox-container">
+	        <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	        <div ng-show="!emailSearchResult.found" >
 	            <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-	            <p><@orcid.msg 'manage_delegation.musthaveanaccount'/></p>
+	            <p><@orcid.msg 'manage_consortium.add_contacts_must_have_account'/></p>
 	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
 	        </div>
 	        <div ng-show="emailSearchResult.found">
 	            <p>{{input.text}}</p>
 	            <form ng-submit="addContactByEmail(input.text)">
 	                <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
-	                <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	                <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	            </form>
-	            <div ng-show="errors.length === 0">
-	                <br></br>
-	            </div>
 	        </div>
 	    </div>
     </script>
     
     <script type="text/ng-template" id="revoke-contact-modal">
 	    <div class="lightbox-container">
-	        <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
+	        <h3><@orcid.msg 'manage_consortium.remove_contact_confirm_heading'/></h3>
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
-	            <button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
-	            <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
+	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
 	            <br></br>

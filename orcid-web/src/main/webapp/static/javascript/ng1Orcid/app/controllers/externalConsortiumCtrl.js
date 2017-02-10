@@ -234,6 +234,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 $scope.$apply();
+                window.location.reload();
             }
         }).fail(function() {
             console.log("Error adding contact.");
