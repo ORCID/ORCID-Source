@@ -521,7 +521,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
-        profile.setLocale(locale);
+        if(locale != null) {
+            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+        }
         if(claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());

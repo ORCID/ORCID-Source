@@ -42,7 +42,7 @@ public class FundingGroup implements Group, Serializable {
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     private ExternalIDs identifiers;
-    @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
+    @XmlElement(name = "funding-summary", namespace = "http://www.orcid.org/ns/funding")
     private List<FundingSummary> fundingSummary;
 
     public ExternalIDs getIdentifiers() {

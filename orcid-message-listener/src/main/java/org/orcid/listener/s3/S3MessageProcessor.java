@@ -106,6 +106,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 				// threw a
 				// runtime exception
 				LOG.error("Unable to fetch record " + orcid + " for 1.2 API");
+				LOG.error(e.getMessage(), e);
 				recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
 			}
 		}
@@ -141,6 +142,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 				// threw a
 				// runtime exception
 				LOG.error("Unable to fetch record " + orcid + " for 2.0 API");
+				LOG.error(e.getMessage(), e);
 				recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
 			}
 		}

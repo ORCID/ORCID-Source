@@ -43,6 +43,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
@@ -154,6 +155,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private BiographyManager biographyManager;
+    
+    @Resource
+    private RegistrationManager registrationManager;
 
     @Resource
     private RecordNameManager recordNameManager;
@@ -544,6 +548,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
             errors.add(getMessage("FieldMatch.registrationForm"));
+        } 
+
+        if (registrationManager.passwordIsCommon(cp.getPassword())) {
+            errors.add(getMessage("password.too_common", cp.getPassword()));
         }
 
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getEffectiveProfile().getPassword())) {

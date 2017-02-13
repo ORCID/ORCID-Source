@@ -42,7 +42,7 @@ public class PeerReviewGroup implements Group, Serializable {
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     private ExternalIDs identifiers;
-    @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
+    @XmlElement(name = "peer-review-summary", namespace = "http://www.orcid.org/ns/peer-review")
     private List<PeerReviewSummary> peerReviewSummary;
 
     public ExternalIDs getIdentifiers() {

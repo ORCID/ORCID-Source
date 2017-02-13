@@ -22,6 +22,10 @@ angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'e
             if(isIE() == 7) $scope.fixZindexesIE7();
         });
     };
+    
+    $scope.$on('rebuildEmails', function(event, data) {
+        emailSrvc.emails = data;
+    });
 
     //init
     $scope.password = null;

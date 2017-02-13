@@ -43,7 +43,7 @@ import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -69,15 +69,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class RegistrationManagerImpl implements RegistrationManager, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
-    
+
     private static final String COMMON_PASSWORDS_FILENAME = "common_passwords.txt";
-    
+
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
-    
+
     @Resource
-    private ProfileDao profileDao;        
+    private ProfileDao profileDao;
 
     @Resource
     private EmailManager emailManager;
@@ -95,9 +95,9 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     private TransactionTemplate transactionTemplate;
 
     @Resource
-    private OrcidGenerationManager orcidGenerationManager;        
-    
-    private List<String> commonPasswords;    
+    private OrcidGenerationManager orcidGenerationManager;
+
+    private List<String> commonPasswords;
 
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -170,14 +170,13 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
-        // TODO: 2.0 object for OrcidType
-        newRecord.setOrcidType(OrcidType.USER);        
+        newRecord.setOrcidType(OrcidType.USER);
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
         newRecord.setClaimed(true);
         newRecord.setEnableDeveloperTools(false);
-        newRecord.setRecordLocked(false);                
+        newRecord.setRecordLocked(false);
         newRecord.setReviewed(false);
         newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
         newRecord.setUsedRecaptchaOnRegistration(usedCaptcha);
@@ -187,7 +186,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         } else {
             newRecord.setSendEmailFrequencyDays(Float.valueOf(registration.getSendEmailFrequencyDays().getValue()));
         }
-        
+
         if (registration.getSendMemberUpdateRequests() == null) {
             newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
         } else {
@@ -195,15 +194,14 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         }
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
         newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
-        newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());        
-        // TODO: 2.0 object for Locale
-        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.message.Locale.EN : org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
+        newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());
+        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.common_v2.Locale.EN : org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.toString()));
         // Visibility defaults
         newRecord.setActivitiesVisibilityDefault(Visibility.fromValue(registration.getActivitiesVisibilityDefault().getVisibility().value()));
-        
+
         // Encrypt the password
-        newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));                
-        
+        newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));
+
         // Set the email
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setId(registration.getEmail().getValue().trim());
@@ -217,29 +215,29 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         Set<EmailEntity> emails = new HashSet<>();
         emails.add(emailEntity);
         newRecord.setEmails(emails);
-        
-        //Set the name
+
+        // Set the name
         RecordNameEntity recordNameEntity = new RecordNameEntity();
         recordNameEntity.setDateCreated(now);
         recordNameEntity.setLastModified(now);
         // Name is public by default
         recordNameEntity.setVisibility(Visibility.PUBLIC);
-        if(!PojoUtil.isEmpty(registration.getFamilyNames())) {
+        if (!PojoUtil.isEmpty(registration.getFamilyNames())) {
             recordNameEntity.setFamilyName(registration.getFamilyNames().getValue().trim());
         }
-        if(!PojoUtil.isEmpty(registration.getGivenNames())) {
+        if (!PojoUtil.isEmpty(registration.getGivenNames())) {
             recordNameEntity.setGivenNames(registration.getGivenNames().getValue().trim());
-        }                
+        }
         recordNameEntity.setProfile(newRecord);
         newRecord.setRecordNameEntity(recordNameEntity);
-        
-        //Set authority 
+
+        // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         newRecord.setAuthorities(authorities);
-        
+
         profileDao.persist(newRecord);
         profileDao.flush();
         return newRecord.getId();
