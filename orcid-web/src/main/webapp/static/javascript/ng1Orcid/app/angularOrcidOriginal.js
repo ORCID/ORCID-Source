@@ -654,7 +654,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 url: getBaseUri() + '/account/emails.json',
                 type: 'GET',
                 dataType: 'json',
-                success: function(data) {                       
+                success: function(data) { 
                     serv.emails = data;
                     for (var i in data.emails){
                         if (data.emails[i].primary){
@@ -1444,7 +1444,8 @@ angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$comp
     };
 }]);
 
-angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', '$rootScope', 'emailSrvc', function ($scope, $compile, $rootScope, emailSrvc) {
+    $scope.emailSrvc = emailSrvc;
     $scope.getDeprecateProfile = function() {
         $.ajax({
             url: getBaseUri() + '/account/deprecate-profile.json',
@@ -1496,7 +1497,10 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.deprecateProfilePojo = data;
+                $scope.getDeprecateProfile();
+                emailSrvc.getEmails(function(emailData) {
+                    $rootScope.$broadcast('rebuildEmails', emailData);
+                });
                 $.colorbox({
                     html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
                     escKey:false,
