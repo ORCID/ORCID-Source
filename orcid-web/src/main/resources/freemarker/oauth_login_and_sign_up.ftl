@@ -301,10 +301,12 @@
 
                                 <div style="margin-bottom: 15px;"> 
                                     <div class="row">
-                                        <label for="termsConditions" class="col-sm-12">
-                                            <@orcid.msg 'register.labelTermsofUse'/>
-                                            <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
-                                        </label>
+                                        <div class="col-sm-12">
+                                            <label for="termsConditions">
+                                                <@orcid.msg 'register.labelTermsofUse'/>
+                                                <span class="required"  ng-class="{'text-error':register.termsOfUse.value == false}">*</span>
+                                            </label>
+                                        </div>
                                         <div class="col-sm-12">                 
                                             <p>
                                                 <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" ng-model="registrationForm.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
