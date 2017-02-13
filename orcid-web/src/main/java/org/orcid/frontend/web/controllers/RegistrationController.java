@@ -18,9 +18,9 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -30,43 +30,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
-import org.orcid.core.constants.DefaultPreferences;
-import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ReferredBy;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.message.SendOrcidNews;
-import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -76,7 +56,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidRequestUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -110,7 +89,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  */
 @Controller
 public class RegistrationController extends BaseController {
-
     public static Pattern givenNamesPattern = Pattern.compile("given_names=([^&]*)");
     public static Pattern familyNamesPattern = Pattern.compile("family_names=([^&]*)");
     public static Pattern emailPattern = Pattern.compile("email=([^&]*)");
@@ -126,16 +104,10 @@ public class RegistrationController extends BaseController {
     private static Random rand = new Random();
 
     @Resource
-    private OrcidUrlManager orcidUrlManager;
-
-    @Resource
     private RegistrationManager registrationManager;
 
     @Resource
     private AuthenticationManager authenticationManager;    
-
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
@@ -170,11 +142,8 @@ public class RegistrationController extends BaseController {
     @Resource
     private ProfileEntityManager profileEntityManager;
 
-    @Resource
-    private AdminManager adminManager;
     
-    @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;    
+    
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -222,56 +191,6 @@ public class RegistrationController extends BaseController {
         if (numCheck % 2 != 0)
             numCheck += 1;
         return numCheck;
-    }
-
-    public static OrcidProfile toProfile(Registration reg, HttpServletRequest request) {
-        OrcidProfile profile = new OrcidProfile();
-        OrcidBio bio = new OrcidBio();
-
-        ContactDetails contactDetails = new ContactDetails();
-        contactDetails.addOrReplacePrimaryEmail(new org.orcid.jaxb.model.message.Email(reg.getEmail().getValue()));
-        Preferences preferences = new Preferences();
-        preferences.setSendChangeNotifications(new SendChangeNotifications(reg.getSendChangeNotifications().getValue()));
-        preferences.setSendOrcidNews(new SendOrcidNews(reg.getSendOrcidNews().getValue()));
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.fromValue(reg.getActivitiesVisibilityDefault().getVisibility().value())));
-        preferences.setNotificationsEnabled(DefaultPreferences.NOTIFICATIONS_ENABLED);
-        if (PojoUtil.isEmpty(reg.getSendEmailFrequencyDays())) {
-            preferences.setSendEmailFrequencyDays(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS);
-        } else {
-            preferences.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays().getValue());
-        }
-
-        if (reg.getSendMemberUpdateRequests() == null) {
-            preferences.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
-        } else {
-            preferences.setSendMemberUpdateRequests(reg.getSendMemberUpdateRequests().getValue());
-        }
-
-        PersonalDetails personalDetails = new PersonalDetails();
-        personalDetails.setFamilyName(new FamilyName(reg.getFamilyNames().getValue()));
-        personalDetails.setGivenNames(new GivenNames(reg.getGivenNames().getValue()));
-
-        bio.setContactDetails(contactDetails);
-        bio.setPersonalDetails(personalDetails);
-        OrcidInternal internal = new OrcidInternal();
-        internal.setPreferences(preferences);
-        profile.setOrcidBio(bio);
-        if (!PojoUtil.isEmpty(reg.getReferredBy()))
-            internal.setReferredBy(new ReferredBy(reg.getReferredBy().getValue()));
-
-        profile.setOrcidInternal(internal);
-
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.fromValue(reg.getCreationType().getValue()));
-
-        profile.setOrcidHistory(orcidHistory);
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-
-        profile.setPassword(reg.getPassword().getValue());
-
-        profile.setUserLastIp(OrcidRequestUtil.getIpAddress(request));
-        return profile;
     }
 
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
@@ -356,8 +275,12 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
-        try {        
-            createMinimalRegistrationAndLogUserIn(request, response, toProfile(reg, request), usedCaptcha);
+        try {                    
+            // Locale
+            Locale locale = RequestContextUtils.getLocale(request);            
+            // Ip
+            String ip = OrcidRequestUtil.getIpAddress(request);            
+            createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
         } catch(Exception e) {
             r.getErrors().add(getMessage("register.error.generalError"));
             return r;
@@ -598,11 +521,10 @@ public class RegistrationController extends BaseController {
 
     }
 
-    public void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, OrcidProfile profileToSave,
-            boolean usedCaptchaVerification) {
-    	String unencryptedPassword = profileToSave.getPassword();
-        profileToSave = createMinimalRegistration(request, profileToSave, usedCaptchaVerification);
-        String orcidId = profileToSave.getOrcidIdentifier().getPath();        
+    private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
+            boolean usedCaptchaVerification, Locale locale, String ip) {
+    	String unencryptedPassword = registration.getPassword().getValue();
+    	String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
     }
 
@@ -624,17 +546,16 @@ public class RegistrationController extends BaseController {
         }
     }
 
-    public OrcidProfile createMinimalRegistration(HttpServletRequest request, OrcidProfile profileToSave, boolean usedCaptchaVerification) {
-        orcidProfileManager.addLocale(profileToSave, RequestContextUtils.getLocale(request));
+    public String createMinimalRegistration(HttpServletRequest request, Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
+        String email = registration.getEmail().getValue();                
+        
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
-        profileToSave = registrationManager.createMinimalRegistration(profileToSave, usedCaptchaVerification);
-        notificationManager.sendWelcomeEmail(profileToSave, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
+        notificationManager.sendWelcomeEmail(newUserOrcid, email);
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
-                new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
-        return profileToSave;
+                new Object[] { newUserOrcid, email, sessionId });
+        return newUserOrcid;
     }                
 }

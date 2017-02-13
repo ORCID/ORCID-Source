@@ -20,26 +20,38 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.PasswordGenerationManager;
+import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.VerifyRegistrationToken;
-import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -59,22 +71,16 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
     
     private static final String COMMON_PASSWORDS_FILENAME = "common_passwords.txt";
-
-    @Resource
-    private ProfileDao profileDao;
-
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
-
+    
     private EncryptionManager encryptionManager;
 
     private NotificationManager notificationManager;
+    
+    @Resource
+    private ProfileDao profileDao;        
 
     @Resource
     private EmailManager emailManager;
-
-    @Resource
-    private PasswordGenerationManager passwordResetManager;
 
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -88,11 +94,10 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     @Resource
     private TransactionTemplate transactionTemplate;
 
-    private List<String> commonPasswords;
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
+    @Resource
+    private OrcidGenerationManager orcidGenerationManager;        
+    
+    private List<String> commonPasswords;    
 
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -128,28 +133,27 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
     }
 
     @Override
-    public OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha) {
-        String emailAddress = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+    public String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
+        String emailAddress = registration.getEmail().getValue();
         try {
-            OrcidProfile profile = transactionTemplate.execute(new TransactionCallback<OrcidProfile>() {
-                public OrcidProfile doInTransaction(TransactionStatus status) {
+            String orcidId = transactionTemplate.execute(new TransactionCallback<String>() {
+                public String doInTransaction(TransactionStatus status) {
                     if (emailManager.emailExists(emailAddress)) {
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
                         String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);
                         emailManager.removeEmail(unclaimedOrcid, emailAddress, true);
-                        OrcidProfile minimalProfile = createMinimalProfile(orcidProfile, usedCaptcha);
-                        String newUserOrcid = minimalProfile.getOrcidIdentifier().getPath();
+                        String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
                         adminManager.deprecateProfile(result, unclaimedOrcid, newUserOrcid);
-                        notificationManager.sendAutoDeprecateNotification(minimalProfile, unclaimedOrcid);
+                        notificationManager.sendAutoDeprecateNotification(newUserOrcid, unclaimedOrcid);
                         profileEntityCacheManager.remove(unclaimedOrcid);
-                        return minimalProfile;
+                        return newUserOrcid;
                     } else {
-                        return createMinimalProfile(orcidProfile, usedCaptcha);
+                        return createMinimalProfile(registration, usedCaptcha, locale, ip);
                     }
                 }
             });
-            return profile;
+            return orcidId;
         } catch (Exception e) {
             throw new InvalidRequestException("Unable to register user due: " + e.getMessage(), e.getCause());
         }
@@ -162,15 +166,83 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
      *            The record to create
      * @return the new record
      */
-    private OrcidProfile createMinimalProfile(OrcidProfile orcidProfile, boolean usedCaptcha) {
-        OrcidProfile minimalProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, usedCaptcha);
-        // Set source to the new email
-        String sourceId = minimalProfile.getOrcidIdentifier().getPath();
-        List<Email> emails = minimalProfile.getOrcidBio().getContactDetails().getEmail();
-        for (Email email : emails)
-            emailManager.addSourceToEmail(email.getValue(), sourceId);
-        LOGGER.debug("Created minimal orcid and assigned id of {}", orcidProfile.getOrcidIdentifier().getPath());
-        return minimalProfile;
+    private String createMinimalProfile(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
+        Date now = new Date();
+        String orcid = orcidGenerationManager.createNewOrcid();
+        ProfileEntity newRecord = new ProfileEntity();
+        // TODO: 2.0 object for OrcidType
+        newRecord.setOrcidType(OrcidType.USER);        
+        newRecord.setDateCreated(now);
+        newRecord.setLastModified(now);
+        newRecord.setSubmissionDate(now);
+        newRecord.setClaimed(true);
+        newRecord.setEnableDeveloperTools(false);
+        newRecord.setRecordLocked(false);                
+        newRecord.setReviewed(false);
+        newRecord.setEnableNotifications(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        newRecord.setUsedRecaptchaOnRegistration(usedCaptcha);
+        newRecord.setUserLastIp(ip);
+        if (PojoUtil.isEmpty(registration.getSendEmailFrequencyDays())) {
+            newRecord.setSendEmailFrequencyDays(Float.valueOf(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS));
+        } else {
+            newRecord.setSendEmailFrequencyDays(Float.valueOf(registration.getSendEmailFrequencyDays().getValue()));
+        }
+        
+        if (registration.getSendMemberUpdateRequests() == null) {
+            newRecord.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
+        } else {
+            newRecord.setSendMemberUpdateRequests(registration.getSendMemberUpdateRequests().getValue());
+        }
+        newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
+        newRecord.setSendChangeNotifications(registration.getSendChangeNotifications().getValue());
+        newRecord.setSendOrcidNews(registration.getSendOrcidNews().getValue());        
+        // TODO: 2.0 object for Locale
+        newRecord.setLocale(locale == null ? org.orcid.jaxb.model.message.Locale.EN : org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
+        // Visibility defaults
+        newRecord.setActivitiesVisibilityDefault(Visibility.fromValue(registration.getActivitiesVisibilityDefault().getVisibility().value()));
+        
+        // Encrypt the password
+        newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));                
+        
+        // Set the email
+        EmailEntity emailEntity = new EmailEntity();
+        emailEntity.setId(registration.getEmail().getValue().trim());
+        emailEntity.setProfile(newRecord);
+        emailEntity.setPrimary(true);
+        emailEntity.setCurrent(true);
+        emailEntity.setVerified(false);
+        // Email is private by default
+        emailEntity.setVisibility(Visibility.PRIVATE);
+        emailEntity.setSourceId(orcid);
+        Set<EmailEntity> emails = new HashSet<>();
+        emails.add(emailEntity);
+        newRecord.setEmails(emails);
+        
+        //Set the name
+        RecordNameEntity recordNameEntity = new RecordNameEntity();
+        recordNameEntity.setDateCreated(now);
+        recordNameEntity.setLastModified(now);
+        // Name is public by default
+        recordNameEntity.setVisibility(Visibility.PUBLIC);
+        if(!PojoUtil.isEmpty(registration.getFamilyNames())) {
+            recordNameEntity.setFamilyName(registration.getFamilyNames().getValue().trim());
+        }
+        if(!PojoUtil.isEmpty(registration.getGivenNames())) {
+            recordNameEntity.setGivenNames(registration.getGivenNames().getValue().trim());
+        }                
+        recordNameEntity.setProfile(newRecord);
+        newRecord.setRecordNameEntity(recordNameEntity);
+        
+        //Set authority 
+        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
+        authorities.add(authority);
+        newRecord.setAuthorities(authorities);
+        
+        profileDao.persist(newRecord);
+        profileDao.flush();
+        return newRecord.getId();
     }
 
     /**

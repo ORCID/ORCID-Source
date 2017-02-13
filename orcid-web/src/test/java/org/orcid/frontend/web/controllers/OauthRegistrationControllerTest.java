@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +47,9 @@ import org.mockito.stubbing.Answer;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
@@ -143,19 +144,16 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         oauthRegistrationController.registerAndAuthorize(servletRequest, servletResponse, reg);
         
         ArgumentCaptor<HttpServletRequest> argument1 = ArgumentCaptor.forClass(HttpServletRequest.class);
-        ArgumentCaptor<OrcidProfile> argument2 = ArgumentCaptor.forClass(OrcidProfile.class);
+        ArgumentCaptor<Registration> argument2 = ArgumentCaptor.forClass(Registration.class);
         ArgumentCaptor<Boolean> argument3 = ArgumentCaptor.forClass(Boolean.class);
-        
-        
-        verify(registrationController).createMinimalRegistration(argument1.capture(), argument2.capture(), argument3.capture());
+        ArgumentCaptor<Locale> argument4 = ArgumentCaptor.forClass(Locale.class);
+        ArgumentCaptor<String> argument5 = ArgumentCaptor.forClass(String.class);        
+                
+        verify(registrationController).createMinimalRegistration(argument1.capture(), argument2.capture(), argument3.capture(), argument4.capture(), argument5.capture());
         assertNotNull(argument2.getValue());
-        OrcidProfile profile = argument2.getValue();
-        assertNotNull(profile.getOrcidBio());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails().getGivenNames());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails().getFamilyName());
-        
-        assertEquals("Given Names", profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Family Name", profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());        
+        Registration registration = argument2.getValue();
+        assertEquals(email.getValue(), registration.getEmail().getValue());
+        assertEquals("Given Names", registration.getGivenNames().getValue());
+        assertEquals("Family Name", registration.getFamilyNames().getValue());               
     }
 }

@@ -25,9 +25,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -126,22 +126,10 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(servletRequest.getSession()).thenReturn(session);
         Text email = Text.valueOf(System.currentTimeMillis() + "@test.orcid.org");
         
-        when(registrationManager.createMinimalRegistration(Matchers.any(OrcidProfile.class),eq(false))).thenAnswer(new Answer<OrcidProfile>(){
+        when(registrationManager.createMinimalRegistration(Matchers.any(Registration.class), eq(false), Matchers.any(java.util.Locale.class), Matchers.anyString())).thenAnswer(new Answer<String>(){
             @Override
-            public OrcidProfile answer(InvocationOnMock invocation) throws Throwable {
-                OrcidProfile orcidProfile = new OrcidProfile();
-                orcidProfile.setOrcidIdentifier("0000-0000-0000-0000");
-                OrcidBio bio = new OrcidBio();
-                ContactDetails contactDetails = new ContactDetails();
-                Email newEmail = new Email();
-                newEmail.setPrimary(true);
-                newEmail.setValue(email.getValue());
-                List<Email> emails = new ArrayList<Email>();
-                emails.add(newEmail);
-                contactDetails.setEmail(emails);
-                bio.setContactDetails(contactDetails);
-                orcidProfile.setOrcidBio(bio);        
-                return orcidProfile;
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return "0000-0000-0000-0000";                
             }
         });
         Registration reg = new Registration();
@@ -162,18 +150,15 @@ public class RegistrationControllerTest extends DBUnitTest {
         reg.setCreationType(Text.valueOf(CreationMethod.API.value()));
         registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
         
-        ArgumentCaptor<OrcidProfile> argument = ArgumentCaptor.forClass(OrcidProfile.class);
+        ArgumentCaptor<Registration> argument1 = ArgumentCaptor.forClass(Registration.class);
         ArgumentCaptor<Boolean> argument2 = ArgumentCaptor.forClass(Boolean.class);
-        verify(registrationManager).createMinimalRegistration(argument.capture(), argument2.capture());
-        assertNotNull(argument.getValue());
-        OrcidProfile profile = argument.getValue();
-        assertNotNull(profile.getOrcidBio());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails().getGivenNames());
-        assertNotNull(profile.getOrcidBio().getPersonalDetails().getFamilyName());
-        
-        assertEquals("Given Names", profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Family Name", profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());        
+        ArgumentCaptor<Locale> argument3 = ArgumentCaptor.forClass(Locale.class);
+        ArgumentCaptor<String> argument4 = ArgumentCaptor.forClass(String.class);        
+        verify(registrationManager).createMinimalRegistration(argument1.capture(), argument2.capture(), argument3.capture(), argument4.capture());
+        assertNotNull(argument1.getValue());
+        Registration form = argument1.getValue();
+        assertEquals("Given Names", form.getGivenNames().getValue());
+        assertEquals("Family Name", form.getFamilyNames().getValue());        
     }
     
     @Test

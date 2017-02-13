@@ -88,7 +88,6 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -2151,12 +2150,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     public void clearOrcidProfileCache() {
         orcidProfileCacheManager.removeAll();
-    }
-
-    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
-        if (orcidProfile.getOrcidPreferences() == null)
-            orcidProfile.setOrcidPreferences(new OrcidPreferences());
-        orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
     /**
