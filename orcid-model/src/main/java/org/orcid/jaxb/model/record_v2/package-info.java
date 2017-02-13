@@ -24,6 +24,7 @@
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/record", xmlns = {
         @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"),        
         @javax.xml.bind.annotation.XmlNs(prefix = "address", namespaceURI = "http://www.orcid.org/ns/address"),
+        @javax.xml.bind.annotation.XmlNs(prefix = "bulk", namespaceURI = "http://www.orcid.org/ns/bulk"),
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),        
         @javax.xml.bind.annotation.XmlNs(prefix = "deprecated", namespaceURI = "http://www.orcid.org/ns/deprecated"),
         @javax.xml.bind.annotation.XmlNs(prefix = "education", namespaceURI = "http://www.orcid.org/ns/education"),
