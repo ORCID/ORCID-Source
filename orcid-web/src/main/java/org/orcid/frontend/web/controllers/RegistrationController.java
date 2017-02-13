@@ -794,6 +794,10 @@ public class RegistrationController extends BaseController {
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             setError(password, "Pattern.registrationForm.password");
         }
+        
+        if (registrationManager.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
 
         // validate passwords match
         if (retypedPassword.getValue() != null && !retypedPassword.getValue().equals(password.getValue())) {
