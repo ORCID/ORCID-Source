@@ -33,7 +33,7 @@ ${verificationUrl}?lang=${locale}
 <@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /><@emailMacros.space />${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
 <@emailMacros.msg "email.welcome.next_steps.1.description.2" />
 
-<@emailMacros.msg "email.welcome.next_steps.1.description.tips" />
+<@emailMacros.msg "email.welcome.next_steps.1.description.tips" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.link.text" /> 
 
 <@emailMacros.msg "email.welcome.next_steps.2" />
 
@@ -41,7 +41,7 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.welcome.need_help" />
 
-<@emailMacros.msg "email.welcome.need_help.description" />
+<@emailMacros.msg "email.welcome.need_help.description" /><@emailMacros.space /><@emailMacros.msg "email.welcome.need_help.description.link.text" /> 
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
