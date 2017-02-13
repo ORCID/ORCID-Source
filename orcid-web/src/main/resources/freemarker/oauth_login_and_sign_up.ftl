@@ -45,6 +45,7 @@
                 <p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
                 <p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
             </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <#if shibbolethEnabled> 
@@ -227,8 +228,8 @@
                                 <span class="orcid-error" ng-show="showReactivationSent" ng-cloak>
                                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                                 </span>	                            	            
-                        </div>        
-
+                            </div>        
+                        </div> 
                         <div class="form-group clear-fix">
                             <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
                             <div class="col-sm-9 col-xs-9-fix bottomBuffer">
