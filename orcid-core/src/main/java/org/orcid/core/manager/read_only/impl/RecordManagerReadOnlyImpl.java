@@ -118,7 +118,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         org.orcid.jaxb.model.common_v2.Locale profileEntityLocale = profile.getLocale();
         if (profileEntityLocale != null) {
-            preferences.setLocale(org.orcid.jaxb.model.message.Locale.fromValue(profileEntityLocale.value()));
+            preferences.setLocale(profileEntityLocale);
         }
         return preferences;
     }
