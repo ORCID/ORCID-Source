@@ -102,6 +102,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch (Exception e){
             LOG.error("Unable to fetch record " + orcid + " for SOLR");
+            LOG.error(e.getMessage(), e);
             recordStatusManager.markAsFailed(orcid, AvailableBroker.SOLR);
         }
     }
