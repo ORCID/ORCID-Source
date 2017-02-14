@@ -189,7 +189,7 @@ public class ClaimController extends BaseController {
                     if (!claimed) {
                         throw new IllegalStateException("Unable to claim record " + orcid);
                     }
-                    String encryptedPassword = encryptionManager.encryptForInternalUse(claim.getPassword().getValue());
+                    String encryptedPassword = encryptionManager.hashForInternalUse(claim.getPassword().getValue());
                     //Update the password
                     profileEntityManager.updatePassword(orcid, encryptedPassword);
                     //Notify

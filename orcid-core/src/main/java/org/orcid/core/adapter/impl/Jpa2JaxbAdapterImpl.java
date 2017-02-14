@@ -134,7 +134,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
 
         OrcidProfile profile = new OrcidProfile();
-        OrcidType type = OrcidType.fromValue(profileEntity.getOrcidType().value());
+        OrcidType type = (profileEntity.getOrcidType() == null) ? null : OrcidType.fromValue(profileEntity.getOrcidType().value());
         profile.setOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getId())));
         // load deprecation info
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
