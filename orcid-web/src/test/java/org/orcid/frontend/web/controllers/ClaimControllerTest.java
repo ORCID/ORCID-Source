@@ -25,18 +25,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -55,7 +51,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,40 +61,38 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
-import com.google.common.collect.Lists;
-
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
 public class ClaimControllerTest {
-    
+
     @Resource
     private ClaimController claimController;
-    
-    @Mock 
+
+    @Mock
     private ProfileEntityManager profileEntityManager;
-    
+
     @Mock
     private EncryptionManager encryptionManager;
-    
+
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Mock
     private EmailManager emailManager;
-    
+
     @Mock
     private NotificationManager notificationManager;
-    
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);        
+        MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(claimController, "encryptionManager", encryptionManager);
-        TargetProxyHelper.injectIntoProxy(claimController, "emailManager", emailManager); 
+        TargetProxyHelper.injectIntoProxy(claimController, "emailManager", emailManager);
         TargetProxyHelper.injectIntoProxy(claimController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(claimController, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(claimController, "notificationManager", notificationManager);
     }
-    
+
     @Test
     public void testResendEmailFailIfTheProfileIsAlreadyClaimed() {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
@@ -107,7 +100,7 @@ public class ClaimControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(true));
         EmailAddressForm emailAddressForm = new EmailAddressForm();
-        //Testing with profile 4444-4444-4444-4446
+        // Testing with profile 4444-4444-4444-4446
         emailAddressForm.setUserEmailAddress("billie@holiday.com");
         ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
         assertNotNull(mav);
@@ -124,7 +117,7 @@ public class ClaimControllerTest {
         when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("4444-4444-4444-4446");
         when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(false));
         EmailAddressForm emailAddressForm = new EmailAddressForm();
-        //Testing with profile 4444-4444-4444-4446
+        // Testing with profile 4444-4444-4444-4446
         emailAddressForm.setUserEmailAddress("billie@holiday.com");
         ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
         assertNotNull(mav);
@@ -133,7 +126,7 @@ public class ClaimControllerTest {
         assertTrue(mav.getModel().containsKey("claimResendSuccessful"));
         assertTrue((Boolean) mav.getModel().get("claimResendSuccessful"));
     }
-    
+
     @Test
     @Transactional
     public void testClaim() {
@@ -146,9 +139,9 @@ public class ClaimControllerTest {
         when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
         when(request.getLocale()).thenReturn(java.util.Locale.US);
         String orcid = "0000-0000-0000-0001";
-        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);       
+        when(emailManager.findOrcidIdByEmail(email)).thenReturn(orcid);
         when(profileEntityManager.claimProfileAndUpdatePreferences(any(String.class), any(String.class), any(Locale.class), any(Claim.class))).thenReturn(true);
-        
+
         Claim claim = new Claim();
         claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PRIVATE));
         claim.setPassword(Text.valueOf("passwordTest1"));
@@ -169,7 +162,7 @@ public class ClaimControllerTest {
             fail();
         }
     }
-    
+
     private ProfileEntity getProfileEntityToTestClaimResend(boolean claimed) {
         ProfileEntity entity = new ProfileEntity();
         entity.setId("0000-0000-0000-000X");
@@ -181,7 +174,7 @@ public class ClaimControllerTest {
         entity.setEmails(emails);
         return entity;
     }
-    
+
     private ProfileEntity getProfileEntityToTestClam(boolean claimed) {
         ProfileEntity entity = new ProfileEntity();
         entity.setId("0000-0000-0000-0001");

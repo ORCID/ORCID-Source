@@ -91,7 +91,7 @@ public class ClaimController extends BaseController {
 
     @Resource
     private OrcidProfileCacheManager orcidProfileCacheManager;
-    
+
     @Resource
     private TransactionTemplate transactionTemplate;
 
@@ -132,11 +132,11 @@ public class ClaimController extends BaseController {
             if (!isEmailOkForCurrentUser(decryptedEmail)) {
                 return new ModelAndView("wrong_user");
             }
-            
+
             if (profileEntityManager.isProfileClaimedByEmail(decryptedEmail)) {
                 return new ModelAndView("redirect:/signin?alreadyClaimed");
             }
-            return new ModelAndView("claim");            
+            return new ModelAndView("claim");
         } catch (EncryptionOperationNotPossibleException e) {
             LOGGER.warn("Error decypting claim email from the claim profile link");
             return new ModelAndView("redirect:/signin?invalidClaimUrl");
@@ -154,7 +154,7 @@ public class ClaimController extends BaseController {
         }
 
         String orcid = emailManager.findOrcidIdByEmail(decryptedEmail);
-        
+
         if (PojoUtil.isEmpty(orcid)) {
             throw new OrcidBadRequestException("Unable to find an ORCID ID for the given email: " + decryptedEmail);
         }
@@ -178,28 +178,29 @@ public class ClaimController extends BaseController {
         if (claim.getErrors().size() > 0) {
             return claim;
         }
-        
-        //Do it in a transaction
+
+        // Do it in a transaction
         try {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 public void doInTransactionWithoutResult(TransactionStatus status) {
                     Locale requestLocale = RequestContextUtils.getLocale(request);
-                    org.orcid.jaxb.model.common_v2.Locale userLocale = (requestLocale == null) ? null : org.orcid.jaxb.model.common_v2.Locale.fromValue(requestLocale.toString());
+                    org.orcid.jaxb.model.common_v2.Locale userLocale = (requestLocale == null) ? null
+                            : org.orcid.jaxb.model.common_v2.Locale.fromValue(requestLocale.toString());
                     boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
                     if (!claimed) {
                         throw new IllegalStateException("Unable to claim record " + orcid);
                     }
                     String encryptedPassword = encryptionManager.hashForInternalUse(claim.getPassword().getValue());
-                    //Update the password
+                    // Update the password
                     profileEntityManager.updatePassword(orcid, encryptedPassword);
-                    //Notify
+                    // Notify
                     notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
                 }
             });
-            
+
         } catch (Exception e) {
             throw new InvalidRequestException("Unable to claim record due: " + e.getMessage(), e.getCause());
-        }        
+        }
 
         automaticallyLogin(request, claim.getPassword().getValue(), orcid);
         // detech this situation
@@ -209,8 +210,8 @@ public class ClaimController extends BaseController {
         else
             claim.setUrl(targetUrl);
         return claim;
-    }    
-    
+    }
+
     @RequestMapping(value = "/claim/wrong_user", method = RequestMethod.GET)
     public ModelAndView claimWrongUser(HttpServletRequest request) {
         return new ModelAndView("wrong_user");
@@ -235,7 +236,7 @@ public class ClaimController extends BaseController {
             mav.addAllObjects(bindingResult.getModel());
             return mav;
         }
-        
+
         // if the email can't be found on the system, then add to errors
         if (emailManager.emailExists(userEmailAddress)) {
             String[] codes = { "orcid.frontend.reset.password.email_not_found" };
