@@ -238,7 +238,7 @@ public class ClaimController extends BaseController {
         }
 
         // if the email can't be found on the system, then add to errors
-        if (emailManager.emailExists(userEmailAddress)) {
+        if (!emailManager.emailExists(userEmailAddress)) {
             String[] codes = { "orcid.frontend.reset.password.email_not_found" };
             String[] args = { userEmailAddress };
             bindingResult.addError(new FieldError("userEmailAddress", "userEmailAddress", userEmailAddress, false, codes, args, "Email not found"));

@@ -98,9 +98,10 @@ public class ClaimControllerTest {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
+        when(emailManager.emailExists("billie@holiday.com")).thenReturn(true);
+        when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("0000-0000-0000-0000");        
         when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(true));
         EmailAddressForm emailAddressForm = new EmailAddressForm();
-        // Testing with profile 4444-4444-4444-4446
         emailAddressForm.setUserEmailAddress("billie@holiday.com");
         ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
         assertNotNull(mav);
@@ -114,10 +115,10 @@ public class ClaimControllerTest {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("4444-4444-4444-4446");
+        when(emailManager.emailExists("billie@holiday.com")).thenReturn(true);
+        when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("0000-0000-0000-0000");
         when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(false));
         EmailAddressForm emailAddressForm = new EmailAddressForm();
-        // Testing with profile 4444-4444-4444-4446
         emailAddressForm.setUserEmailAddress("billie@holiday.com");
         ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
         assertNotNull(mav);
