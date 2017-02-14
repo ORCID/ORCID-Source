@@ -491,7 +491,7 @@ public class RegistrationController extends BaseController {
             emailEntity.setVerified(true);
             emailEntity.setCurrent(true);
             emailDao.merge(emailEntity);
-            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.message.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");

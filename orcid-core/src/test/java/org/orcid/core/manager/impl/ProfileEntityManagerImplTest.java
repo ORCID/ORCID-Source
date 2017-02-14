@@ -39,7 +39,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;

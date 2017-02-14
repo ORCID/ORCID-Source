@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.pojo.ApplicationSummary;

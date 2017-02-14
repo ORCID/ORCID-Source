@@ -170,6 +170,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
+        newRecord.setId(orcid);
         newRecord.setOrcidType(OrcidType.USER);
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
@@ -220,6 +221,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         RecordNameEntity recordNameEntity = new RecordNameEntity();
         recordNameEntity.setDateCreated(now);
         recordNameEntity.setLastModified(now);
+        recordNameEntity.setProfile(newRecord);
         // Name is public by default
         recordNameEntity.setVisibility(Visibility.PUBLIC);
         if (!PojoUtil.isEmpty(registration.getFamilyNames())) {
@@ -227,12 +229,12 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         }
         if (!PojoUtil.isEmpty(registration.getGivenNames())) {
             recordNameEntity.setGivenNames(registration.getGivenNames().getValue().trim());
-        }
-        recordNameEntity.setProfile(newRecord);
+        }        
         newRecord.setRecordNameEntity(recordNameEntity);
 
         // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+        authority.setProfileEntity(newRecord);
         authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);

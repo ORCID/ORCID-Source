@@ -42,7 +42,7 @@ import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;

@@ -50,7 +50,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;

@@ -255,7 +255,7 @@ public class ClaimController extends BaseController {
     @Transactional
     private OrcidProfile confirmEmailAndClaim(String orcid, String email, Claim claim, HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         Locale requestLocale = RequestContextUtils.getLocale(request);
-        org.orcid.jaxb.model.message.Locale userLocale = requestLocale == null ? null : org.orcid.jaxb.model.message.Locale.fromValue(requestLocale.toString());
+        org.orcid.jaxb.model.common_v2.Locale userLocale = (requestLocale == null) ? null : org.orcid.jaxb.model.common_v2.Locale.fromValue(requestLocale.toString());
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, email, userLocale, claim);
         if (!claimed) {
             throw new IllegalStateException("Unable to claim record " + orcid);
