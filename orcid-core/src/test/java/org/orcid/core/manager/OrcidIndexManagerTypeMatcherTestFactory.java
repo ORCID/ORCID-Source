@@ -16,8 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+import org.mockito.ArgumentMatcher;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 
@@ -35,11 +34,11 @@ class OrcidIndexManagerTypeMatcherTestFactory {
     private OrcidIndexManagerTypeMatcherTestFactory() {
     }
 
-    public static TypeSafeMatcher<OrcidProfile> orcidBasicProfileCreate() {
-        return new TypeSafeMatcher<OrcidProfile>() {
+    public static ArgumentMatcher<OrcidProfile> orcidBasicProfileCreate() {
+        return new ArgumentMatcher<OrcidProfile>() {
 
             @Override
-            public boolean matchesSafely(OrcidProfile orcidProfile) {
+            public boolean matches(OrcidProfile orcidProfile) {
                 if (!"4444-4444-4444-0001".equals(orcidProfile.getOrcidIdentifier().getPath())) {
                     return false;
                 }
@@ -53,12 +52,6 @@ class OrcidIndexManagerTypeMatcherTestFactory {
                 boolean matchesGivenNameCorrectly = "Reserved For Claim".equals(personDetails.getGivenNames().getContent());
 
                 return matchesGivenNameCorrectly;
-
-            }
-
-            @Override
-            public void describeTo(Description arg0) {
-                // TODO Auto-generated method stub
 
             }
 
