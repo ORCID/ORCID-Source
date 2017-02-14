@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 public class OAuthAuthorizeNotSignedInFilterTest {
 
     @InjectMocks
-    OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
+    OAuthAuthorizeNotSignedInFilter oaFilter;
 
     @Mock
     OrcidUrlManager orcidUrlManager;

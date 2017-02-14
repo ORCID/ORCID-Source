@@ -20,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,12 +35,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.manager.EncryptionManager;
@@ -605,20 +604,16 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("Family Name", nfFromDB.getFamilyName().getValue());
     }
 
-    public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
-        return new TypeSafeMatcher<List<DelegationDetails>>() {
+    public static ArgumentMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
+        return new ArgumentMatcher<List<DelegationDetails>>() {
 
             @Override
-            public boolean matchesSafely(List<DelegationDetails> delegatesAdded) {
+            public boolean matches(List<DelegationDetails> delegatesAdded) {
                 if (delegatesAdded != null && delegatesAdded.size() == 1) {
                     DelegationDetails delegationDetails = delegatesAdded.get(0);
                     return "5555-5555-5555-555X".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
                 }
                 return false;
-            }
-
-            @Override
-            public void describeTo(Description arg0) {
             }
 
         };

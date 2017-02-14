@@ -59,7 +59,7 @@ public class ContributorUtilsTest {
     private ProfileEntityManager profileEntityManager;
 
     @InjectMocks
-    private ContributorUtils contributorUtils = new ContributorUtils();
+    private ContributorUtils contributorUtils;
     
     @Before
     public void setUp() {

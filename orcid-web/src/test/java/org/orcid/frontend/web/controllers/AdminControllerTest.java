@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.ArgumentMatchers.isNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -389,7 +391,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, results.get("reviewedList").size());
         assertTrue(results.get("reviewedList").contains("reviewed"));
 
-        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
     }
 
     @Test
