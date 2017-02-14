@@ -35,7 +35,6 @@ import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.forms.EmailAddressForm;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -128,12 +127,11 @@ public class ClaimController extends BaseController {
             if (!isEmailOkForCurrentUser(decryptedEmail)) {
                 return new ModelAndView("wrong_user");
             }
-            OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-            if (profileToClaim.getOrcidHistory().isClaimed()) {
+            
+            if (profileEntityManager.isProfileClaimedByEmail(decryptedEmail)) {
                 return new ModelAndView("redirect:/signin?alreadyClaimed");
             }
-            ModelAndView mav = new ModelAndView("claim");
-            return mav;
+            return new ModelAndView("claim");            
         } catch (EncryptionOperationNotPossibleException e) {
             LOGGER.warn("Error decypting claim email from the claim profile link");
             return new ModelAndView("redirect:/signin?invalidClaimUrl");
@@ -150,9 +148,8 @@ public class ClaimController extends BaseController {
             return claim;
         }
 
-        Map<String, String> emails = emailManager.findOricdIdsByCommaSeparatedEmails(decryptedEmail);
-        String orcid = emails.get(decryptedEmail);
-
+        String orcid = emailManager.findOrcidIdByEmail(decryptedEmail);
+        
         if (PojoUtil.isEmpty(orcid)) {
             throw new OrcidBadRequestException("Unable to find an ORCID ID for the given email: " + decryptedEmail);
         }
