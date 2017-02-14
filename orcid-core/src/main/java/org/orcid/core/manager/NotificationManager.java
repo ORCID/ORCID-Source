@@ -63,6 +63,8 @@ public interface NotificationManager {
 
     void sendOrcidLockedEmail(OrcidProfile orcidToLock);
 
+    void sendApiRecordCreationEmail(String toEmail, String orcid);
+    
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
     void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail);

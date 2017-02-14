@@ -76,4 +76,8 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility);
 
+    public void updatePassword(String orcid, String encryptedPassword);
+    
+    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer);
+    
 }

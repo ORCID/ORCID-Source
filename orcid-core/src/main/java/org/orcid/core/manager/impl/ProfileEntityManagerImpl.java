@@ -681,4 +681,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
     }
+
+    @Override
+    public void updatePassword(String orcid, String encryptedPassword) {
+        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+    }
+
+    @Override
+    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
+    }
 }

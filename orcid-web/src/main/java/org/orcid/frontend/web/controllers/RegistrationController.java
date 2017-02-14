@@ -141,9 +141,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-
-    
-    
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -164,7 +161,6 @@ public class RegistrationController extends BaseController {
         reg.getTermsOfUse().setValue(false);        
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
         
-
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
             if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {

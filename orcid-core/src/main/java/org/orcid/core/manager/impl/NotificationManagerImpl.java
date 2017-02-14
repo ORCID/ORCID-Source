@@ -47,6 +47,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -184,6 +185,9 @@ public class NotificationManagerImpl implements NotificationManager {
     @Resource
     private OrcidProfileManager orcidProfileManager;
 
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+    
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
@@ -687,9 +691,14 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
+        OrcidProfile profile = orcidProfileCacheManager.retrieve(orcid);
+        sendApiRecordCreationEmail(toEmail, profile);
+    }
+    
+    @Override
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
-
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
