@@ -2087,12 +2087,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-
-        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.fromValue(profileEntity.getOrcidType().value());
+        if (userType.equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        else if (userType.equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+        else if (userType.equals(OrcidType.GROUP)) {
             switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
