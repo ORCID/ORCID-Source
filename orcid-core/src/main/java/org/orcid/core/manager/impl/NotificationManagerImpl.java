@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
@@ -368,7 +368,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = null;
         verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        boolean needsVerification = !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified() && orcidProfile.getType().equals(OrcidType.USER)
+        boolean needsVerification = !orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified() && orcidProfile.getType().equals(org.orcid.jaxb.model.message.OrcidType.USER)
                 && !orcidProfile.isDeactivated();
         if (needsVerification) {
             templateParams.put("verificationUrl", verificationUrl);

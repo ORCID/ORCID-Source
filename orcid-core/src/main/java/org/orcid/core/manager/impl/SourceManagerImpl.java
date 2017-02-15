@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -176,7 +176,8 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType();
+                            org.orcid.jaxb.model.message.OrcidType legacyOrcidType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType(); 
+                            OrcidType sourceUserType = legacyOrcidType == null ? null : OrcidType.fromValue(legacyOrcidType.value());
                             return OrcidType.ADMIN.equals(sourceUserType);
                         }
                     }
