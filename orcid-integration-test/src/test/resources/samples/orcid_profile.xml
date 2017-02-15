@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+	<message-version>1.2</message-version>
+	<orcid-profile type="user">
+		<orcid-preferences>
+			<locale>en</locale>
+		</orcid-preferences>
+		<orcid-bio>
+			<personal-details>
+				<given-names>given names</given-names>
+				<family-name>family name</family-name>
+				<credit-name>credit name</credit-name>
+				<other-names>
+					<other-name>Other 1</other-name>
+					<other-name>Other 2</other-name>
+				</other-names>
+			</personal-details>
+			<biography>Lets test some crazy stuff! How about a 1000 chars in japanese é›£ãƒ•ãƒ‰ã‚‡ä¸‰ç‚¹93éšŠã?¯æ¯”åŸ¼å›žã?¸ç¾Žå®?æŠ•ãƒˆã?—ãƒ¬æ‰‹æŽ¡ã‚·é ˜é¦¬å…¬ãƒŽãƒ?æ°?ç´°ã‚±ãƒ­ã‚¦ãƒŒä¿‚å…¥ãƒ²ãƒ?ãƒŒãƒ±åŽšé™¢ã?²ã‚ƒã?Šå·?çš„ã?°ã?´ã‚¤ã?Žè¨€æ??ã‚ªã‚µæ‰€ç†±ã‚µè‡ªé€šã‚’ã?¶ã?¡ã‚¹å¾Œç­†æœ¬åœ¨è¦ªã‚‚ã€‚ä»•é€€ãƒ‹ãƒ¬ãƒˆç”±ç•Œãƒ•ã?±ã?—åº«è¶Šãƒˆãƒ¡ã‚­ãƒ›æ?¥è»¢ã‚’å?Šåˆ¥ã?©ã?°éˆ´å†…ãƒˆå…¨41ç§€ã?‹ã‚…ã‚„æžœç‰©å¿ƒãƒžã‚ªãƒ«è¨Žèµ¤ãƒ¢ãƒŠãƒžãƒ•å?‚æœˆã‚¹ã?©ã?“ã‚„åº§å¿µã‚³ã‚½è¨€ç¤¾ã??é£Ÿç?†ãƒ©ã‚»å¯¾æ¼”ã?Žã?®å¤‰ç?†ã?‹ãƒ©åºƒæš®ã‚¯ã‚¹ãƒ?ãƒ†ä¸Šé€²å‚‘ã‚†ã??ã‚¹ã€‚16è¦?ã?¹å?—è?–ã‚¦ãƒ?ã‚µèª?åºœãƒ?é•·æ‚ªã?Ÿã‚„ã?µèƒ½ä½?ã?¨ã?œã?¹çŽ‹æ˜¯ã?«ã?©æ–°æ–­åˆ‡å¹´ã‚»ãƒ†ä¸?ç´€ã?¤ãƒ‰ã‚‡æ­³çœŒã‚ªã‚¹ãƒ‹è³ª38ç¢?ã‚Œå®¹57é›‘ã‚¹ãƒ?ãƒ¢è€?æ³‰ã‚·ãƒ˜ãƒ’é–¢è£•ã‚ˆã?¯ãƒ©ã‚¯æ›´è¨˜å…†ãƒ ã‚¿ãƒ¯ãƒ©æŠ•å›°ã‚…ã‚“ã?œæ²»æœ¨ã?žã?»ç´°é€šã‚¦ãƒ¤å¹´è¦§ãƒˆé?‹ç?¾ã?–ã‚¤ã?Ÿã?­å†Š7ç¸¾ã‚ˆã‚†æš®èª‰ã‚½ã‚µãƒˆæŠ•46è»½ãƒ­çµ‚æ™‚ã‚¤å¿…è¿«ã?®è§¦å‹‡å›²é€Ÿã??ã‚¤ã?™ã€‚ç‰¹ã?ªã‚¤ã‚Šãƒ‰é€šçµ?ã?¾é³¥å¯„è‚²ã?¼ã?¹ã??æ‹¶å¥ˆæ‹³ãƒŠã‚³å›žæ›¸ãƒžã‚¯é?“æœˆã‚¹ã?©ã?°ã?›ç¤¾çš„ã‚±æŽ¢å°½ã‚¿ã‚¨ãƒ›æž?åŠ›ãƒˆãƒ«å®³åœ°ã?¹ã?£æ²»é›»ã?¯éš›æ??ãƒ¨åˆ¥æ–­ãƒ„ã‚«ã‚¦æ–‡å›½ãƒ©ãƒ’å¿œæ²»ã?´ã?¶æˆ¦75å?Žå?¦ç¦?è¾ž4å¸?ã?Šã? ã?‚ã?¸å¹³æ‚ªç”±ã?”ã?¨ç¦?è€…ãƒ’ãƒ¯ã‚³ã‚¿é•·å¼·ã?µã?¦è¦‹éš›ã?¾ã‚’ã?¥è³ªç›¸æŠ½ç¶±ã‚‚ã?ˆã€‚å?“å?´68ç‚¹å®‡ã?©ã?®ã‚†å¼?é•·å®Ÿ52æŸ“ã?ªæ†¶ã‚ªèª¿æµ„ã‚‚ã‚†é«˜äº¬ã‚»ãƒ?ãƒ˜ãƒŸä¸–æ›„ã‚¿ãƒ‹å?ˆæ?±ã‚‰ã?­ç´„ç’°ãƒªç?†è?žè©±å­¦ã?»å¿ƒè¤’ã?¼ã?©ã?°ã?“è£œç¦?ç?ƒã?‹ã‚’é?‹äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? ã?¦é‡Žé‡?æŽ¢ã?Œã??ã‚‡ä¼šä¸ŠãƒŸãƒ˜ç¤¾69ç‚¹ãƒ«ãƒ©ã‚³æ†¶ã‚ªèª¿æµ„ã‚‚ã‚†é«˜äº¬ã‚»ãƒ?ãƒ˜ãƒŸä¸–æ›„ã‚¿ãƒ‹å?ˆæ?±ã‚‰ã?­ç´„ç’°ãƒªç?†è?žè©±å­¦ã?»å¿ƒè¤’ã?¼ã?©ã?°ã?“è£œç¦?ç?ƒã?‹ã‚’é?‹äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? ã?¦é‡Žé‡?æŽ¢ã?Œã??ã‚‡ä¼šä¸ŠãƒŸãƒ˜ç¤¾69ç‚¹ãƒ«ãƒ©ã‚³ æ†¶ã‚ªèª¿æµ„ã‚‚ã‚†é«˜äº¬ã‚»ãƒ?ãƒ˜ãƒŸä¸–æ›„ã‚¿ãƒ‹å?ˆæ?±ã‚‰ã?­ç´„ç’°ãƒªç?†è?žè©±å­¦ã?»å¿ƒè¤’ã?¼ã?©ã?°ã?“è£œç¦?ç?ƒã?‹ã‚’é?‹äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? ã?¦é‡Žé‡?æŽ¢ã?Œã??ã‚‡ä¼šä¸ŠãƒŸãƒ˜ç¤¾69ç‚¹ãƒ«ãƒ©ã‚³ æ†¶ã‚ªèª¿æµ„ã‚‚ã‚†é«˜äº¬ã‚»ãƒ?ãƒ˜ãƒŸä¸–æ›„ã‚¿ãƒ‹å?ˆæ?±ã‚‰ã?­ç´„ç’°ãƒªç?†è?žè©±å­¦ã?»å¿ƒè¤’ã?¼ã?©ã?°ã?“è£œç¦?ç?ƒã?‹ã‚’é?‹äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? ã?¦é‡Žé‡?æŽ¢ã?Œã??ã‚‡ä¼šä¸ŠãƒŸãƒ˜ç¤¾69ç‚¹ãƒ«ãƒ©ã‚³ æ†¶ã‚ªèª¿æµ„ã‚‚ã‚†é«˜äº¬ã‚»ãƒ?ãƒ˜ãƒŸä¸–æ›„ã‚¿ãƒ‹å?ˆæ?±ã‚‰ã?­ç´„ç’°ãƒªç?†è?žè©±å­¦ã?»å¿ƒè¤’ã?¼ã?©ã?°ã?“è£œç¦?ç?ƒã?‹ã‚’é?‹äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? ã?¦é‡Žé‡?æŽ¢ã?Œã??ã‚‡ä¼šä¸ŠãƒŸãƒ˜ç¤¾69ç‚¹ãƒ«ãƒ©ã‚³äººã?­ã?®åˆ¤è¨€ãƒ?ãƒ„ãƒ¦ã‚¿ç´šæŠ•ã?¨ã??ã‚‰ã?œè¾ºç½ªã‚µæ”¾å”±ã‚»è«‹æœˆè©¦ã‚»ãƒ„ãƒ²ãƒªç¥¨ç›£ç¬‘æ€ æ®Šã?¼ã‚¹ã?Šã€‚æ–­ã??ã? </biography>
+			<researcher-urls>
+				<researcher-url>
+					<url>http://www.wjrs.co.uk</url>
+				</researcher-url>
+				<researcher-url>
+					<url>http://www.vvs.com</url>
+				</researcher-url>
+			</researcher-urls>
+			<contact-details>
+				<email primary="true">user1@test.orcid.org</email>
+				<address>
+                    <country>US</country>
+                </address> 
+			</contact-details>
+			<keywords>
+				<keyword>Pavement Studies</keyword>
+				<keyword>Advanced Tea Making</keyword>
+			</keywords>
+			<external-identifiers>
+				<external-identifier>
+					<external-id-common-name>extId#1</external-id-common-name>
+					<external-id-reference>extId#1</external-id-reference>
+					<external-id-url>http://orcid.org/extId#1</external-id-url>
+				</external-identifier>
+				<external-identifier>
+					<external-id-common-name>extId#2</external-id-common-name>
+					<external-id-reference>extId#2</external-id-reference>
+					<external-id-url>http://orcid.org/extId#2</external-id-url>
+				</external-identifier>
+			</external-identifiers>
+		</orcid-bio>
+		<orcid-activities>
+			<affiliations>
+				<affiliation visibility="public">
+					<type>education</type>
+					<department-name>department-name</department-name>
+					<role-title>role-title</role-title>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</affiliation>
+				<affiliation visibility="public">
+					<type>employment</type>
+					<department-name>department-name</department-name>
+					<role-title>role-title</role-title>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</affiliation>
+			</affiliations>
+			<orcid-works>
+				<orcid-work visibility="public">
+					<work-title>
+						<title>title</title>
+						<subtitle>subtitle</subtitle>
+					</work-title>
+					<journal-title>journal title</journal-title>
+					<short-description>description</short-description>
+					<work-citation>
+						<work-citation-type>formatted-unspecified</work-citation-type>
+						<citation>citation</citation>
+					</work-citation>
+					<work-type>book</work-type>
+					<publication-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</publication-date>
+					<work-external-identifiers>
+						<work-external-identifier>
+							<work-external-identifier-type>doi</work-external-identifier-type>
+							<work-external-identifier-id>10.5555/12345ABCDE</work-external-identifier-id>
+						</work-external-identifier>
+					</work-external-identifiers>
+					<url>http://orcid.org</url>
+					<work-contributors>
+						<contributor>							
+							<credit-name>credit-name</credit-name>
+							<contributor-email>contributor@test.orcid.org</contributor-email>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>author</contributor-role>
+							</contributor-attributes>
+						</contributor>
+					</work-contributors>
+					<language-code>en</language-code>
+					<country>US</country>
+				</orcid-work>
+			</orcid-works>
+			<funding-list>
+				<funding>
+					<funding-type>grant</funding-type>
+					<organization-defined-type>organization-defined-type</organization-defined-type>
+					<funding-title>
+						<title>title</title>
+					</funding-title>
+					<short-description>short-description</short-description>
+					<amount currency-code="USD">1000</amount>
+					<url>http://orcid.org</url>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<funding-external-identifiers>
+						<funding-external-identifier>
+							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
+							<funding-external-identifier-value>funding-external-identifier-value</funding-external-identifier-value>
+							<funding-external-identifier-url>http://orcid.org</funding-external-identifier-url>
+						</funding-external-identifier>
+					</funding-external-identifiers>
+					<funding-contributors>
+						<funding-contributor>
+							<credit-name visibility="public">credit-name</credit-name>
+							<contributor-email>test@test.orcid.org</contributor-email>
+							<funding-contributor-attributes>
+								<funding-contributor-role>lead</funding-contributor-role>
+							</funding-contributor-attributes>
+						</funding-contributor>
+					</funding-contributors>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</funding>
+			</funding-list>
+		</orcid-activities>
+	</orcid-profile>
+</orcid-message>

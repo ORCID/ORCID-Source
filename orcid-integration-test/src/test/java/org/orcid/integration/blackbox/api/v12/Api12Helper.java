@@ -163,4 +163,13 @@ public class Api12Helper {
         ClientResponse clientResponse = oauthT2Client.addAffiliationsXml(userOrcid, orcidMessage, token);
         assertEquals(201, clientResponse.getStatus());        
     }    
+    
+    protected static String createRecord(String token, OrcidMessage newRecord, T2OAuthAPIService<ClientResponse> oauthT2Client) throws Exception {
+        ClientResponse response = oauthT2Client.createProfileXML(newRecord, token);
+        // assign orcid any time it's created for use in tear-down
+        String orcidFromLocation = response.getLocation().getPath();
+        orcidFromLocation = orcidFromLocation.replace("/orcid-profile", "");
+        orcidFromLocation = orcidFromLocation.substring(orcidFromLocation.lastIndexOf("/") + 1);
+        return orcidFromLocation;        
+    }
 }
