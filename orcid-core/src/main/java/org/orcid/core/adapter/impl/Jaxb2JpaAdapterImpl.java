@@ -71,7 +71,6 @@ import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -176,7 +175,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
 
         profileEntity.setId(orcidString);
-        profileEntity.setOrcidType(profile.getType());
+        profileEntity.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.fromValue(profile.getType().value()));
         profileEntity.setGroupType(profile.getGroupType());
         setBioDetails(profileEntity, profile.getOrcidBio());            
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
@@ -1084,9 +1083,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setPreferencesDetails(ProfileEntity profileEntity, OrcidPreferences orcidPreferences) {
         if (orcidPreferences != null) {
             if (orcidPreferences.getLocale() != null)
-                profileEntity.setLocale(orcidPreferences.getLocale());
+                profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(orcidPreferences.getLocale().value()));
             else
-                profileEntity.setLocale(Locale.EN);
+                profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN);
         }
     }    
 

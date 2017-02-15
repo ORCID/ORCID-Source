@@ -42,6 +42,7 @@ import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -158,6 +159,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private RegistrationManager registrationManager;
 
+    @Resource
+    private RecordNameManager recordNameManager;
+    
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }

@@ -56,9 +56,9 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -521,7 +521,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
-        profile.setLocale(locale);
+        if(locale != null) {
+            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+        }
         if(claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
@@ -678,5 +680,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
+    }
+
+    @Override
+    public void updatePassword(String orcid, String encryptedPassword) {
+        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+    }
+
+    @Override
+    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
     }
 }

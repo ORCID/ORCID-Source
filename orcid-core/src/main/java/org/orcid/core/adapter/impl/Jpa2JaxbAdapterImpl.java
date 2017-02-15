@@ -134,7 +134,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
 
         OrcidProfile profile = new OrcidProfile();
-        OrcidType type = profileEntity.getOrcidType();
+        OrcidType type = (profileEntity.getOrcidType() == null) ? null : OrcidType.fromValue(profileEntity.getOrcidType().value());
         profile.setOrcidIdentifier(new OrcidIdentifier(getOrcidIdBase(profileEntity.getId())));
         // load deprecation info
         profile.setOrcidDeprecated(getOrcidDeprecated(profileEntity));
@@ -988,7 +988,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (profileEntity.getLocale() == null)
             orcidPreferences.setLocale(Locale.EN);
         else
-            orcidPreferences.setLocale(profileEntity.getLocale());
+            orcidPreferences.setLocale(org.orcid.jaxb.model.message.Locale.fromValue(profileEntity.getLocale().value()));
         return orcidPreferences;
     }
 

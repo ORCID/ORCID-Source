@@ -25,7 +25,7 @@ import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -96,7 +96,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             // must match <property name="cookieName" value="locale_v3"
             // />
             clr.setCookieName("locale_v3");
-            Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
+            Locale cookieLocale = org.orcid.jaxb.model.common_v2.Locale.fromValue(clr.resolveLocale(request).toString());
 
             // update the users preferences, so that
             // send out emails in their last chosen language

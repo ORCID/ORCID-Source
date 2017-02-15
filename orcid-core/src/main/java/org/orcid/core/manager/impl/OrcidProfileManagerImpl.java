@@ -88,7 +88,6 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -2088,12 +2087,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-
-        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.fromValue(profileEntity.getOrcidType().value());
+        if (userType.equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        else if (userType.equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+        else if (userType.equals(OrcidType.GROUP)) {
             switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
@@ -2151,12 +2150,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     public void clearOrcidProfileCache() {
         orcidProfileCacheManager.removeAll();
-    }
-
-    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
-        if (orcidProfile.getOrcidPreferences() == null)
-            orcidProfile.setOrcidPreferences(new OrcidPreferences());
-        orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
     /**

@@ -168,7 +168,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendWelcomeEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        notificationManager.sendWelcomeEmail(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test

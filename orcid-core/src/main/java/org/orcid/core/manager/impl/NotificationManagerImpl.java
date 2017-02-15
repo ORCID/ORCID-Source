@@ -47,6 +47,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -185,6 +186,9 @@ public class NotificationManagerImpl implements NotificationManager {
     private OrcidProfileManager orcidProfileManager;
 
     @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
+    
+    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
@@ -231,12 +235,14 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendWelcomeEmail(OrcidProfile orcidProfile, String email) {
+    public void sendWelcomeEmail(String userOrcid, String email) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = LocaleUtils.toLocale(profileEntity.getLocale() == null ? org.orcid.jaxb.model.message.Locale.EN.value() : profileEntity.getLocale().value());
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.register.thanks", orcidProfile);
-        String emailName = deriveEmailFriendlyName(orcidProfile);
+        String subject = getSubject("email.subject.register.thanks", userLocale);
+        String emailName = deriveEmailFriendlyName(profileEntity);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+        String orcidId = userOrcid;
         String baseUri = orcidUrlManager.getBaseUrl();
         String baseUriHttp = orcidUrlManager.getBaseUriHttp();
 
@@ -266,7 +272,7 @@ public class NotificationManagerImpl implements NotificationManager {
             templateParams.put("source_name_if_exists", ".");
         }
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("welcome_email.ftl", templateParams);
@@ -685,9 +691,14 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
+        OrcidProfile profile = orcidProfileCacheManager.retrieve(orcid);
+        sendApiRecordCreationEmail(toEmail, profile);
+    }
+    
+    @Override
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile) {
-
         Source source = null;
         CustomEmailEntity customEmail = null;
         if (createdProfile.getOrcidHistory() != null && createdProfile.getOrcidHistory().getSource() != null) {
@@ -1164,21 +1175,21 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid) {
-        String orcidId = orcidProfile.getOrcidIdentifier().getPath();
+    public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid) {
+        ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(deprecatedProfileEntity.getSource().getSourceId());        
-        Locale userLocale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        Locale userLocale = LocaleUtils.toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.message.Locale.EN.value() : primaryProfileEntity.getLocale().value());
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.auto_deprecate", orcidProfile);
+        String subject = getSubject("email.subject.auto_deprecate", userLocale);
         String baseUri = orcidUrlManager.getBaseUrl();
         Date deprecatedAccountCreationDate = deprecatedProfileEntity.getDateCreated();
         
         // Create map of template params
-        templateParams.put("primaryId", orcidId);
-        templateParams.put("name", deriveEmailFriendlyName(orcidProfile));        
+        templateParams.put("primaryId", primaryOrcid);
+        templateParams.put("name", deriveEmailFriendlyName(primaryProfileEntity));        
         templateParams.put("baseUri", baseUri);        
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());
@@ -1194,7 +1205,7 @@ public class NotificationManagerImpl implements NotificationManager {
         notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject(subject);
         notification.setBodyHtml(html);
-        createNotification(orcidId, notification);
+        createNotification(primaryOrcid, notification);
     }
 
 }

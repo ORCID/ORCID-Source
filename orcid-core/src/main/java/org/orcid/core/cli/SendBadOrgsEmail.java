@@ -196,7 +196,7 @@ public class SendBadOrgsEmail {
     }
 
     private Locale calculateLocale(ProfileEntity profile) {
-        Locale locale = profile.getLocale();
+        Locale locale = (profile.getLocale() == null) ? null : Locale.fromValue(profile.getLocale().value());
         if (locale == null) {
             locale = Locale.EN;
         }

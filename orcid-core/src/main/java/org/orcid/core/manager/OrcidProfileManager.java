@@ -17,7 +17,6 @@
 package org.orcid.core.manager;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -243,9 +242,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void updateLastModifiedDate(String orcid);
 
-    void clearOrcidProfileCache();
-
-    public void addLocale(OrcidProfile orcidProfile, Locale locale);
+    void clearOrcidProfileCache();    
 
     public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus);
     
