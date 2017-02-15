@@ -40,21 +40,20 @@
 	                                <div id="name-help" class="popover bottom">
 								        <div class="arrow"></div>
 								        <div class="popover-content">
-	                                        <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
-	                                        <ul>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}</li>
-	                                            <li>
-		                                            <ul>
-		                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
-		                                            	<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
-		                                            </ul>
-	                                            </li>
-	                                            <li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
-	                                        </ul>                         
-	                                        <br />              
-	                                        <p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
-								        </div>                
+									    	<p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
+									        <ul>
+												<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
+												<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}
+													<ul>
+														<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelalphacharacter")}</li>
+														<li>${springMacroRequestContext.getMessage("password_one_time_reset.labelanyoffollow")}<br /> ! @ # $ % ^ * ( ) ~ `{ } [ ] | \ &amp; _</li>
+													</ul>
+												</li>
+												<li>${springMacroRequestContext.getMessage("password_one_time_reset.labeloptionallyspace")}</li>
+											</ul>                         
+											<p>${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswords")}<a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/10_million_password_list_top_1000.txt" target="_blank">${springMacroRequestContext.getMessage("password_one_time_reset.commonpasswordslink")}</a></p>             
+											<p><strong>${springMacroRequestContext.getMessage("password_one_time_reset.examplesunmoon")}</strong></p>
+										</div>                
 								    </div>
 	                            </div>
 	                            <span class="orcid-error" ng-show="register.password.errors.length > 0">
