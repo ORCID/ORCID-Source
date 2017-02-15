@@ -2530,6 +2530,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .popover-help-container ul {
     list-style-type: disc;
+    padding-left: 16px;
+}
+
+.popover-help-container ul ul{
+    list-style-type: circle;
 }
 
 .no-touch .popover-help-container:hover .popover {
