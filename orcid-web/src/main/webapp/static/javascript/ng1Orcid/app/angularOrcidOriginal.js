@@ -673,6 +673,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
         
+        getEmailPrimary: function() {
+            return serv.primaryEmail;
+        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -2537,13 +2540,9 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work

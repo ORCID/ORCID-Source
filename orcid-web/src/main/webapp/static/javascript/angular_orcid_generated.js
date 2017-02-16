@@ -740,6 +740,9 @@
 	            });
 	        },
 	        
+	        getEmailPrimary: function() {
+	            return serv.primaryEmail;
+	        },
 
 	        initInputEmail: function() {
 	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -2604,13 +2607,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8199,13 +8198,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8329,17 +8324,13 @@
 	    var showEmailVerificationModal = function(){
 	        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
 	    };
-	    
+
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8803,13 +8794,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -9377,13 +9364,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -10499,13 +10482,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -10680,7 +10659,6 @@
 	    }
 	        
 	    $scope.openEditModal = function(){
-	        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
 	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            $.colorbox({
@@ -10832,13 +10810,9 @@
 	            $scope.emailSrvc.getEmails(
 	                function(data) {
 	                    emails = data.emails;
-	                    data.emails.forEach(
-	                        function(element){
-	                            if(element.verified == true) {
-	                                emailVerified = true;
-	                            }
-	                        }
-	                    );
+	                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                        emailVerified = true;
+	                    }
 	                }
 	            );
 	            /////////////////////// End of verified email logic for work
