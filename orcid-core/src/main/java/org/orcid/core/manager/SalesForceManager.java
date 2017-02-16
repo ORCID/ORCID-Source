@@ -59,6 +59,8 @@ public interface SalesForceManager {
     void updateContact(Contact contact);
 
     void removeContact(Contact contact);
+    
+    void removeContactRole(Contact contact);
 
     /**
      * Clear caches

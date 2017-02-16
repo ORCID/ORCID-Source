@@ -58,7 +58,7 @@ public class ManageConsortiumController extends BaseController {
 
     @Resource
     private EmailDao emailDao;
-    
+
     @ModelAttribute("contactRoleTypes")
     public Map<String, String> retrieveContactRoleTypesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
@@ -67,7 +67,7 @@ public class ManageConsortiumController extends BaseController {
         }
         return map;
     }
-    
+
     @ModelAttribute("communityTypes")
     public Map<String, String> retrieveCommunityTypesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
@@ -130,7 +130,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
-        salesForceManager.removeContact(contact);
+        salesForceManager.removeContactRole(contact);
         return contact;
     }
 
