@@ -704,6 +704,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             for (i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
+                    serv.primaryEmail = email;
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
@@ -2294,7 +2295,7 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
                 $scope.emailsPojo = data;
                 $scope.$apply();
                 for (i in $scope.emailsPojo.emails) {
-                    if ($scope.emailsPojo.emails[i].primary) {
+                    if ($scope.emailsPojo.emails[i].primary  == true) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
                         if ($scope.emailsPojo.emails[i].verified) {
                             primeVerified = true;
