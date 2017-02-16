@@ -1,0 +1,110 @@
+#!/usr/bin/env jython
+# A script to check for missing properties in a bunch of i18n properties files
+# Assumes you have ORCID-Source checked out in ~/git
+# # Developed using Jython 2.5.3 and Java 1.7.0_45
+# ./check_i18n.jy
+
+import codecs
+import glob
+import logging
+import optparse
+import os
+import re
+import sys
+from java.io import FileInputStream
+from java.io import FileOutputStream
+from java.io import InputStreamReader
+from java.io import OutputStreamWriter
+from java.util import Collections
+from java.util import Properties
+from java.lang import System
+from __builtin__ import None
+
+# Init
+
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+info = logging.info
+
+# Config
+
+LICENSE_HEADER_LINES = [u'\n', u' =============================================================================\n', u'\n', u' ORCID (R) Open Source\n', u' http://orcid.org\n', u'\n', u' Copyright (c) 2012-2014 ORCID, Inc.\n', u' Licensed under an MIT-Style License (MIT)\n', u' http://orcid.org/open-source-license\n', u'\n', u' This copyright and license information (including a link to the full license)\n', u' shall be included in its entirety in all copies or substantial portion of\n', u' the software.\n', u'\n', u' =============================================================================\n', u'\n', u'\n']
+
+resource_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+EN_SUFFIX = '_en.properties'
+LR_SUFFIX = '_lr.properties'
+RL_SUFFIX = '_rl.properties'
+XX_SUFFIX = '_xx.properties'
+
+# Function definitions
+
+class SortedProperties(Properties):
+    def keys(self):
+        return Collections.enumeration(sorted(self.super__keys()))
+
+def load_props(properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    fis = FileInputStream(path)
+    isr = InputStreamReader(fis, 'UTF-8')
+    props = SortedProperties()
+    props.load(isr)
+    fis.close()
+    return props
+
+def store_props(props, comment_lines , properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    comment_string = str.join('', comment_lines)
+    fos = FileOutputStream(path)
+    osw = OutputStreamWriter(fos, 'UTF-8')
+    props.store(osw, comment_string)
+    fos.close();
+    tidy_license_header(path)
+  
+def detect_and_set_line_separator(line):
+    match = re.search('[\r\n]{1,2}$', line)
+    if(match):
+        System.setProperty('line.separator', match.group(0))
+
+def tidy_license_header(path):
+    file = codecs.open(path, 'r', 'UTF-8')
+    lines = file.readlines()
+    file.close
+    # Need to insert a blank line after the license, otherwise messes up the license check
+    rule_count = 0
+    for index, line in enumerate(lines):
+        if line.startswith('# ====='):
+            rule_count += 1
+            if (rule_count == 2):
+                lines.insert(index + 2, "\n")
+                break
+    file = codecs.open(path, 'w', 'UTF-8')
+    file.write(str.join('', lines))
+    file.close
+
+# Start of script
+
+for prefix in ('messages', 'javascript', 'email'):
+    info("Checking i18n resources with prefix " + prefix)
+    
+    en_filename = prefix + EN_SUFFIX
+    lr_filename = prefix + LR_SUFFIX
+    rl_filename = prefix + RL_SUFFIX
+    xx_filename = prefix + XX_SUFFIX
+
+    values = {lr_filename : "LR", rl_filename : "RL", xx_filename : "X"}
+
+    en_props = load_props(os.path.join(resource_dir, en_filename))
+
+    dir_listing = os.listdir(resource_dir)
+    other_filenames = [xx_filename, lr_filename, rl_filename]
+
+    for other_filename in other_filenames:
+        info("Comparing messages in: " + other_filename)
+        value = values[other_filename]
+        other_props = load_props(os.path.join(resource_dir, other_filename))
+        for prop in sorted(en_props):
+            other_prop = other_props.getProperty(prop)
+            if(other_prop == None):
+                info("Missing property: " + prop)
+                other_props.put(prop, value)
+        store_props(other_props, LICENSE_HEADER_LINES, other_filename)
+
