@@ -338,6 +338,10 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
         });
     }
     
+    $scope.buildOrcidUri = function(orcid){
+        return orcidVar.baseUri + '/' + orcid;
+    }
+    
     // Init
     $scope.getConsortium();
     

@@ -10280,6 +10280,10 @@
 	        });
 	    }
 	    
+	    $scope.buildOrcidUri = function(orcid){
+	        return orcidVar.baseUri + '/' + orcid;
+	    }
+	    
 	    // Init
 	    $scope.getConsortium();
 	    

@@ -97,13 +97,14 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>Role</th>
+                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
+                                <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
                                 <td>
 								    <select id="contactRoles" name="contactRoles"
 								    	class="input-xlarge"
