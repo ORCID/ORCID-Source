@@ -22,9 +22,7 @@ import static org.orcid.core.utils.JsonUtils.extractString;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -36,7 +34,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
-import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
@@ -93,29 +90,6 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting consortium record from SalesForce JSON", e);
         }
         return null;
-    }
-
-    public Map<String, List<Contact>> createContactsFromJsonLegacy(JSONObject results) {
-        Map<String, List<Contact>> map = new HashMap<>();
-        try {
-            JSONArray records = results.getJSONArray("records");
-            for (int i = 0; i < records.length(); i++) {
-                JSONObject record = records.getJSONObject(i);
-                String oppId = extractString(record, "Id");
-                List<Contact> contacts = new ArrayList<>();
-                JSONObject opportunityContactRoleObject = extractObject(record, "OpportunityContactRoles");
-                if (opportunityContactRoleObject != null) {
-                    JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
-                    for (int j = 0; j < contactRecords.length(); j++) {
-                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(j)));
-                    }
-                }
-                map.put(oppId, contacts);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
-        }
-        return map;
     }
 
     Contact createContactFromJson(JSONObject record) {
@@ -238,16 +212,6 @@ public class SalesForceAdapter {
             LOGGER.info("Malformed resource URL for member: {}", name, e);
         }
         return integration;
-    }
-
-    private Contact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
-        Contact contact = new Contact();
-        contact.setRole(ContactRoleType.fromValue(extractString(contactRecord, "Role")));
-        JSONObject contactDetails = extractObject(contactRecord, "Contact");
-        contact.setFirstName(extractString(contactDetails, "FirstName"));
-        contact.setLastName(extractString(contactDetails, "LastName"));
-        contact.setEmail(extractString(contactDetails, "Email"));
-        return contact;
     }
 
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {

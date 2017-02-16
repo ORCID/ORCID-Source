@@ -133,7 +133,7 @@ public class SalesForceAdapterTest {
         Contact contact = salesForceAdapter.createContactFromJson(contactRole);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class SalesForceAdapterTest {
         Contact contact = contactsList.get(0);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
     }
 
     @Test

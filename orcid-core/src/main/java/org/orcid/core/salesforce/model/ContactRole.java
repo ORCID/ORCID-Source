@@ -16,18 +16,29 @@
  */
 package org.orcid.core.salesforce.model;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Will Simpson
  *
  */
-public class ContactRole {
+public class ContactRole implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // The SalesForce Id of the role object itself
     private String id;
     private String accountId;
     private String contactId;
-    private ContactRoleType role;
+    private ContactRoleType roleType;
+
+    public ContactRole() {
+    }
+
+    public ContactRole(ContactRoleType role) {
+        this.roleType = role;
+    }
 
     public String getId() {
         return id;
@@ -53,17 +64,17 @@ public class ContactRole {
         this.contactId = contactId;
     }
 
-    public ContactRoleType getRole() {
-        return role;
+    public ContactRoleType getRoleType() {
+        return roleType;
     }
 
-    public void setRole(ContactRoleType role) {
-        this.role = role;
+    public void setRoleType(ContactRoleType roleType) {
+        this.roleType = roleType;
     }
 
     @Override
     public String toString() {
-        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", role=" + role + "]";
+        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", role=" + roleType + "]";
     }
 
 }

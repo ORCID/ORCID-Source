@@ -107,10 +107,10 @@
                                 <td>
 								    <select id="contactRoles" name="contactRoles"
 								    	class="input-xlarge"
-								     	ng-model="contact.role"
+								     	ng-model="contact.role.roleType"
 								     	ng-change="update(contact)">
 										<#list contactRoleTypes?keys as key>
-											<option value="${key}" ng-selected="contact.role === '${key}'">${contactRoleTypes[key]}</option>
+											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
 								    </select>
                                 </td>

@@ -41,7 +41,7 @@ public enum ContactRoleType {
                 return c;
             }
         }
-        throw new IllegalArgumentException(v);
+        return null;
     }
 
 }

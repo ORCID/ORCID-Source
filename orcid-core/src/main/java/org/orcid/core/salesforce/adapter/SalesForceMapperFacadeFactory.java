@@ -121,11 +121,14 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.fieldAToB("lastName", "LastName");
         classMap.fieldAToB("email", "Email");
         classMap.fieldAToB("accountId", "AccountId");
-        classMap.fieldBToA("Member_Org_Role__c", "role");
+        classMap.fieldBToA("Member_Org_Role__c", "role.roleType");
         classMap.fieldBToA("Contact__r.FirstName", "firstName");
         classMap.fieldBToA("Contact__r.LastName", "lastName");
         classMap.fieldBToA("Contact__r.Email", "email");
         classMap.fieldBToA("Contact__c", "id");
+        classMap.fieldBToA("Contact__c", "role.contactId");
+        classMap.fieldBToA("AccountId", "role.accountId");
+        classMap.fieldBToA("Id", "role.id");
         classMap.register();
     }
 
@@ -137,7 +140,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("id", "Id");
         classMap.field("accountId", "Organization__c");
         classMap.field("contactId", "Contact__c");
-        classMap.field("role", "Member_Org_Role__c");
+        classMap.field("roleType", "Member_Org_Role__c");
         classMap.register();
     }
 

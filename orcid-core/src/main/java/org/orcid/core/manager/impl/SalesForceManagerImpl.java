@@ -179,12 +179,11 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             contact.setEmail(primaryEmail.getEmail());
         }
         List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
-        Optional<Contact> existingContact = existingContacts.stream().filter(c -> contact.getOrcid().equals(c.getOrcid()))
-                .findFirst();
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> contact.getOrcid().equals(c.getOrcid())).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
         ContactRole contactRole = new ContactRole();
         contactRole.setContactId(contactId);
-        contactRole.setRole(ContactRoleType.OTHER_CONTACT);
+        contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
         contactRole.setAccountId(contact.getAccountId());
         salesForceDao.createContactRole(contactRole);
         // Need to make more granular!
@@ -204,16 +203,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void updateContact(Contact contact) {
         String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        roles.stream().filter(r -> {
-            return !contact.getRole().equals(r.getRole().value());
-        }).forEach(r -> {
-            salesForceDao.removeContactRole(r.getId());
-        });
-        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRole()))) {
+        salesForceDao.removeContactRole(contact.getRole().getId());
+        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRoleType()))) {
             ContactRole contactRole = new ContactRole();
             contactRole.setAccountId(accountId);
             contactRole.setContactId(contact.getId());
-            contactRole.setRole(contact.getRole());
+            contactRole.setRoleType(contact.getRole().getRoleType());
             salesForceDao.createContactRole(contactRole);
         }
         // Need to make more granular!
