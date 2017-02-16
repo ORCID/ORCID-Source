@@ -61,15 +61,23 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>Main contact</th><th>Technical contact</th>
+                                <th>Name</th><th>Email</th><th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
-                                <td><input type="checkbox" ng-model="contact.mainContact" ng-change="update(contact)"></input></td>
-                                <td><input type="checkbox" ng-model="contact.technicalContact" ng-change="update(contact)"></input></td>
+                                <td>
+								    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+								    	class="input-xlarge"
+								     	ng-model="contact.role"
+								     	ng-change="update(contact)">
+										<#list contactRoleTypes?keys as key>
+											<option value="${key}" ng-selected="contact.role === '${key}'">${contactRoleTypes[key]}</option>
+										</#list>
+								    </select>
+                                </td>
                                 <td class="tooltip-container">
                                     <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)"
                                         class="glyphicon glyphicon-trash grey">

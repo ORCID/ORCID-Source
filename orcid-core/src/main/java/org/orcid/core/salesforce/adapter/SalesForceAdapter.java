@@ -36,6 +36,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
@@ -241,7 +242,7 @@ public class SalesForceAdapter {
 
     private Contact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
         Contact contact = new Contact();
-        contact.setRole(extractString(contactRecord, "Role"));
+        contact.setRole(ContactRoleType.fromValue(extractString(contactRecord, "Role")));
         JSONObject contactDetails = extractObject(contactRecord, "Contact");
         contact.setFirstName(extractString(contactDetails, "FirstName"));
         contact.setLastName(extractString(contactDetails, "LastName"));

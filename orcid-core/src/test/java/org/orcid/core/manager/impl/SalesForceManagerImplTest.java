@@ -124,7 +124,7 @@ public class SalesForceManagerImplTest {
         Contact contact = new Contact();
         contact.setId("contact2Id");
         contact.setAccountId("account1");
-        contact.setRole(ContactRoleType.TECHNICAL_CONTACT.value());
+        contact.setRole(ContactRoleType.TECHNICAL_CONTACT);
         salesForceManager.updateContact(contact);
         verify(salesForceDao, times(1)).createContactRole(argThat(r -> {
             return "contact2Id".equals(r.getContactId()) && "account1Id".equals(r.getAccountId()) && ContactRoleType.TECHNICAL_CONTACT.equals(r.getRole());

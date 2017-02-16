@@ -34,7 +34,7 @@ public class Contact implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private String role = ContactRoleType.OTHER_CONTACT.value();
+    private ContactRoleType role = ContactRoleType.OTHER_CONTACT;
     private String orcid;
 
     public String getId() {
@@ -81,32 +81,31 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
-    @JsonIgnore
-    public String getRole() {
+    public ContactRoleType getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ContactRoleType role) {
         this.role = role;
     }
 
     public boolean isMainContact() {
-        return ContactRoleType.MAIN_CONTACT.value().equals(role);
+        return ContactRoleType.MAIN_CONTACT.equals(role);
     }
 
     public void setMainContact(boolean isMainContact) {
         if (isMainContact) {
-            setRole(ContactRoleType.MAIN_CONTACT.value());
+            setRole(ContactRoleType.MAIN_CONTACT);
         }
     }
 
     public boolean isTechnicalContact() {
-        return ContactRoleType.TECHNICAL_CONTACT.value().equals(role);
+        return ContactRoleType.TECHNICAL_CONTACT.equals(role);
     }
 
     public void setTechnicalContact(boolean isTechnicalContact) {
         if (isTechnicalContact) {
-            setRole(ContactRoleType.TECHNICAL_CONTACT.value());
+            setRole(ContactRoleType.TECHNICAL_CONTACT);
         }
     }
 

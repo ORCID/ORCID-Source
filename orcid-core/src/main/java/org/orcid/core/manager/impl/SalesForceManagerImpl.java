@@ -213,7 +213,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             ContactRole contactRole = new ContactRole();
             contactRole.setAccountId(accountId);
             contactRole.setContactId(contact.getId());
-            contactRole.setRole(ContactRoleType.fromValue(contact.getRole()));
+            contactRole.setRole(contact.getRole());
             salesForceDao.createContactRole(contactRole);
         }
         // Need to make more granular!

@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 
 /**
@@ -131,7 +132,7 @@ public class SalesForceAdapterTest {
         Contact contact = salesForceAdapter.createContactFromJson(contactRole);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole());
     }
 
     @Test
@@ -143,7 +144,7 @@ public class SalesForceAdapterTest {
         Contact contact = contactsList.get(0);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole());
     }
 
     @Test
