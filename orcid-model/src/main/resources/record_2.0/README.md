@@ -143,7 +143,7 @@ The swagger interfaces to the API available at:
 | /person/update     |POST, PUT, DELETE| 3-legged OAuth| When expired or revoked by user | Member API   |
 | /read-limited     |GET| 3-legged OAuth| When expired or revoked by user | Member API   |
 | /read-public     |GET| Client credentials| When revoked by ORCID | Public API and Member API  |
-| /webhooks     |PUT, DELETE| Client credentials| When revoked by ORCID | Premium Member API  |
+| /webhook     |PUT, DELETE| Client credentials| When revoked by ORCID | Premium Member API  |
 
 
 ### Calls
