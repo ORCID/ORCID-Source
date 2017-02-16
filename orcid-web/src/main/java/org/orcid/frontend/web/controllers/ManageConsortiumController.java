@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
@@ -62,6 +63,15 @@ public class ManageConsortiumController extends BaseController {
     public Map<String, String> retrieveContactRoleTypesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (ContactRoleType type : ContactRoleType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
+    
+    @ModelAttribute("communityTypes")
+    public Map<String, String> retrieveCommunityTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (CommunityType type : CommunityType.values()) {
             map.put(type.name(), type.value());
         }
         return map;

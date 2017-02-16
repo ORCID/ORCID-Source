@@ -49,7 +49,43 @@
                                 <div ng-repeat='error in consortium.website.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
-                    </div>                     
+                    </div>
+                    <!-- Public display email -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.email'/></label>
+                            <input type="text" ng-model="consortium.email.value" class="full-width-input" />
+                            <span class="orcid-error" ng-show="consortium.email.errors.length > 0">
+                                <div ng-repeat='error in consortium.email.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Description -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.description'/></label>
+                            <textarea ng-model="consortium.description.value" class="full-width-input" ></textarea>
+                            <span class="orcid-error" ng-show="consortium.description.errors.length > 0">
+                                <div ng-repeat='error in consortium.description.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Community -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.community'/></label>
+                             <select id="communities" name="communities"
+								    	class="input-xlarge"
+								     	ng-model="contact.community">
+										<#list communityTypes?keys as key>
+											<option value="${key}" ng-selected="contact.community === '${key}'">${communityTypes[key]}</option>
+										</#list>
+								    </select>            
+                            <span class="orcid-error" ng-show="consortium.community.errors.length > 0">
+                                <div ng-repeat='error in consortium.community.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <h3>
@@ -69,7 +105,7 @@
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td>
-								    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+								    <select id="contactRoles" name="contactRoles"
 								    	class="input-xlarge"
 								     	ng-model="contact.role"
 								     	ng-change="update(contact)">
