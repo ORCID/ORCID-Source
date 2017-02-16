@@ -134,13 +134,7 @@ With 2.0 the address field can be repeated
 - [read work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/work-2.0.xml)
 - [write full work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-full-2.0.xml)
 - [write simple work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-simple-2.0.xml)
-- [read works] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/works-2.0.xml)
-
-**Note:** These files contain system-generated elements/attributes that are returned when reading items from ORCID, but should not be included when posting items to ORCID
-- put-code (exception: include put-code when updating items using the PUT method)
-- source
-- created-date
-- last-modified-date
+- [read works-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/works-2.0.xml)
 
 ## REST API Reference
 
