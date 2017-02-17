@@ -10175,8 +10175,9 @@
 	            data: angular.toJson(addContact),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
+	                $scope.getConsortium();
 	                $scope.$apply();
-	                window.location.reload();
+	                $scope.closeModal();
 	            }
 	        }).fail(function() {
 	            console.log("Error adding contact.");
@@ -10269,6 +10270,7 @@
 	            data:  angular.toJson(contact),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
+	                contact.role.id = data.role.id;
 	                $scope.$apply();
 	                if(nextFunction){
 	                    nextFunction();
@@ -10278,6 +10280,10 @@
 	            // something bad is happening!
 	            console.log("$ContactCtrl.update() error");
 	        });
+	    }
+	    
+	    $scope.buildOrcidUri = function(orcid){
+	        return orcidVar.baseUri + '/' + orcid;
 	    }
 	    
 	    // Init

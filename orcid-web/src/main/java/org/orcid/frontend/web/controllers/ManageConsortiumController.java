@@ -16,13 +16,17 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -31,6 +35,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,6 +58,24 @@ public class ManageConsortiumController extends BaseController {
 
     @Resource
     private EmailDao emailDao;
+
+    @ModelAttribute("contactRoleTypes")
+    public Map<String, String> retrieveContactRoleTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (ContactRoleType type : ContactRoleType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
+
+    @ModelAttribute("communityTypes")
+    public Map<String, String> retrieveCommunityTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (CommunityType type : CommunityType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
 
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
@@ -107,7 +130,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
-        salesForceManager.removeContact(contact);
+        salesForceManager.removeContactRole(contact);
         return contact;
     }
 

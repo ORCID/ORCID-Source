@@ -65,7 +65,11 @@ public interface SalesForceDao {
      */
     String createContact(Contact contact);
     
-    void createContactRole(ContactRole contact);
+    /**
+     * 
+     * @return the contact role id
+     */
+    String createContactRole(ContactRole contact);
     
     void removeContactRole(String contactRoleId);
 
