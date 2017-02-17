@@ -233,8 +233,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data: angular.toJson(addContact),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
+                $scope.getConsortium();
                 $scope.$apply();
-                window.location.reload();
+                $scope.closeModal();
             }
         }).fail(function() {
             console.log("Error adding contact.");
