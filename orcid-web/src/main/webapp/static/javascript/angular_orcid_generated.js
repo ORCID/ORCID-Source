@@ -10270,6 +10270,7 @@
 	            data:  angular.toJson(contact),
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
+	                contact.role.id = data.role.id;
 	                $scope.$apply();
 	                if(nextFunction){
 	                    nextFunction();

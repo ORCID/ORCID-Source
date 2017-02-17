@@ -187,17 +187,17 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public void createContactRole(ContactRole contact) {
+    public String createContactRole(ContactRole contact) {
         try {
-            createContactRoleInSalesForce(getAccessToken(), contact);
+            return createContactRoleInSalesForce(getAccessToken(), contact);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to create contact role, trying again.", e);
-            createContactRoleInSalesForce(getFreshAccessToken(), contact);
+            return createContactRoleInSalesForce(getFreshAccessToken(), contact);
         }
 
     }
 
-    private void createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+    private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
         LOGGER.info("About to create contact role in SalesForce");
         validateSalesForceId(contactRole.getAccountId());
         validateSalesForceId(contactRole.getContactId());
@@ -209,6 +209,8 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error creating contact role in SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
     }
 
     @Override
