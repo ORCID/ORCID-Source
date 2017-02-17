@@ -225,7 +225,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         OrcidError error = response.getEntity(OrcidError.class);
         assertNotNull(error);
-        assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: Access token is for a different record", error.getDeveloperMessage());
+        assertEquals("401 Unauthorized: The client application is not authorized for this ORCID record.", error.getDeveloperMessage());
         assertEquals(Integer.valueOf(9017), error.getErrorCode());
     }
 }
