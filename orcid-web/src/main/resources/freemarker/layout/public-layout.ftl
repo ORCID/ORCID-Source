@@ -34,13 +34,21 @@
 <#macro footer></#macro>
 <#macro public css=[] js=[] classes=[] other=[] nav="" >
 <@base>
-<#if devSandboxUrl != ''>
+<!--<#if devSandboxUrl != ''>
 	<div class="dev-watermark"></div>
-</#if>
+</#if>-->
 <div class="container">
+	<!--<div id="pi-banner" style="position: absolute;">
+				<svg height="250" width="100">
+					<polygon points="0,0 0,200 50,250 100,200 100,0" style="fill:#338caf;" />
+					Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>-->
 	<div class="header center" ng-controller="headerCtrl">
+		
 		<div class="row">
-
+			
+			
 			<div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
 				id="search" ng-show="searchVisible == true || settingsVisible == true" ng-cloak>
 				
@@ -487,6 +495,14 @@
 				</#if>
 			</div>
 			<div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
+				<div id="pi-banner" style="position: absolute;">
+					<!--<svg height="250" width="100">
+						<polygon points="0,0 0,200 50,250 100,200 100,0" style="fill:#338caf;" />
+						Sorry, your browser does not support inline SVG.
+					</svg>-->
+					<a href="${aboutUri}/news"><img
+						src="${staticCdn}/img/orcid-pi-day.png" alt="ORCID Pi day banner" /></a>
+				</div>
 				<h1>
 					<a href="${aboutUri}"><img
 						src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>

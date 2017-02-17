@@ -7241,6 +7241,13 @@ ul.comma li:last-child:after {
     width: 25%;
 }
 
+/*Pi day*/
+#pi-banner{
+    position: absolute;
+    top: -40px;
+    left: -8em;
+}
+
 
 /* Media Queries */
 
