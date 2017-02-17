@@ -673,6 +673,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
         
+        getEmailPrimary: function() {
+            return serv.primaryEmail;
+        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -701,6 +704,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             for (i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
+                    serv.primaryEmail = email;
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
@@ -2291,7 +2295,7 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
                 $scope.emailsPojo = data;
                 $scope.$apply();
                 for (i in $scope.emailsPojo.emails) {
-                    if ($scope.emailsPojo.emails[i].primary) {
+                    if ($scope.emailsPojo.emails[i].primary  == true) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
                         if ($scope.emailsPojo.emails[i].verified) {
                             primeVerified = true;
@@ -2537,13 +2541,9 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work

@@ -740,6 +740,9 @@
 	            });
 	        },
 	        
+	        getEmailPrimary: function() {
+	            return serv.primaryEmail;
+	        },
 
 	        initInputEmail: function() {
 	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -768,6 +771,7 @@
 	            for (i in serv.emails.emails) {
 	                if (serv.emails.emails[i] == email) {
 	                    serv.emails.emails[i].primary = true;
+	                    serv.primaryEmail = email;
 	                } else {
 	                    serv.emails.emails[i].primary = false;
 	                }
@@ -2358,7 +2362,7 @@
 	                $scope.emailsPojo = data;
 	                $scope.$apply();
 	                for (i in $scope.emailsPojo.emails) {
-	                    if ($scope.emailsPojo.emails[i].primary) {
+	                    if ($scope.emailsPojo.emails[i].primary  == true) {
 	                        $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
 	                        if ($scope.emailsPojo.emails[i].verified) {
 	                            primeVerified = true;
@@ -2604,13 +2608,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8199,13 +8199,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8329,17 +8325,13 @@
 	    var showEmailVerificationModal = function(){
 	        $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
 	    };
-	    
+
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -8803,13 +8795,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -9377,13 +9365,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -10505,13 +10489,9 @@
 	    $scope.emailSrvc.getEmails(
 	        function(data) {
 	            emails = data.emails;
-	            data.emails.forEach(
-	                function(element){
-	                    if(element.verified == true) {
-	                        emailVerified = true;
-	                    }
-	                }
-	            );
+	            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                emailVerified = true;
+	            }
 	        }
 	    );
 	    /////////////////////// End of verified email logic for work
@@ -10686,7 +10666,6 @@
 	    }
 	        
 	    $scope.openEditModal = function(){
-	        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
 	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
 	            $scope.bulkEditShow = false;
 	            $.colorbox({
@@ -10838,13 +10817,9 @@
 	            $scope.emailSrvc.getEmails(
 	                function(data) {
 	                    emails = data.emails;
-	                    data.emails.forEach(
-	                        function(element){
-	                            if(element.verified == true) {
-	                                emailVerified = true;
-	                            }
-	                        }
-	                    );
+	                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+	                        emailVerified = true;
+	                    }
 	                }
 	            );
 	            /////////////////////// End of verified email logic for work
@@ -11778,18 +11753,21 @@
 	        '$compile',
 	        '$rootScope',
 	        '$timeout',
-	        function( $compile, $rootScope, $timeout ) {
+	        'emailSrvc',
+	        function( $compile, $rootScope, $timeout, emailSrvc ) {
 
 	            var closeModal = function(){
 	                $.colorbox.remove();
 	                $('modal-email-un-verified').html('<div id="modal-email-unverified-container"></div>');
-	            }
+	            };
 
 	            var openModal = function( scope, data ){
-	                emailVerifiedObj = data;
+	                scope.emailPrimary = emailSrvc.getEmailPrimary().value;
+	                scope.emailVerifiedObj = data;
+
 	                $.colorbox(
 	                    {
-	                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><strong>' + data.emails[0].value + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div></div>'))(scope),
+	                        html : $compile($('#modal-email-unverified-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.ensure_future_access") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") + '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()">' + om.get("orcid.frontend.workspace.send_verification") + '</button><a class="cancel-option inner-row" ng-click="closeColorBox()">' + om.get("orcid.frontend.freemarker.btncancel") + '</a></div></div></div></div>'))(scope),
 	                        escKey: true,
 	                        overlayClose: true,
 	                        transition: 'fade',
@@ -11798,14 +11776,14 @@
 	                    }
 	                );
 	                $.colorbox.resize({width:"500px"});
-	            }
+	            };
 
 	            var verifyEmail = function( scope ){
 	                var colorboxHtml = null;
 	                $.ajax({
 	                    url: getBaseUri() + '/account/verifyEmail.json',
 	                    type: 'get',
-	                    data:  { "email": emailVerifiedObj.emails[0].value },
+	                    data:  { "email": scope.emailPrimary },
 	                    contentType: 'application/json;charset=UTF-8',
 	                    dataType: 'json',
 	                    success: function(data) {
@@ -11827,7 +11805,7 @@
 	                    scrolling: false
 	                });
 	                $.colorbox.resize({width:"500px"});
-	            }
+	            };
 
 	            function link( scope, element, attrs ) {
 
