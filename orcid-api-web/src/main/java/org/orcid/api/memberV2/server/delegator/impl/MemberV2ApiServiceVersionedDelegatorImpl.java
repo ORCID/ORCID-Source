@@ -51,8 +51,6 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     
     @Resource
     private OrcidSearchManager orcidSearchManager;
-
-    private static final int MAX_SEARCH_ROWS = 100;
     
     @Override
     public Response viewStatusText() {
