@@ -71,7 +71,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://cs10.salesforce.com}")
     private String apiBaseUrl;
 
-    @Value("${org.orcid.core.salesForce.clientLoggingEnabled}")
+    @Value("${org.orcid.core.salesForce.clientLoggingEnabled:false}")
     private boolean clientLoggingEnabled;
 
     @Resource
