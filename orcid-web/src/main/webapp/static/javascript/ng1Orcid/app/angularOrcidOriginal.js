@@ -1500,8 +1500,7 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
             data: angular.toJson($scope.deprecateProfilePojo),
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data) {
-                $scope.getDeprecateProfile();
+            success: function(data) {                
                 emailSrvc.getEmails(function(emailData) {
                     $rootScope.$broadcast('rebuildEmails', emailData);
                 });
@@ -1510,6 +1509,7 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                     escKey:false,
                     overlayClose:true,
                     close: '',
+                    onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
                     });
                 $scope.$apply();
                 $.colorbox.resize();
