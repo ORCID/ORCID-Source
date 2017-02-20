@@ -4,6 +4,7 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
         memberDetails: {},
         currentMemberDetails: null,
         consortiaList: null,
+        communityTypes: {},
         getMembersList: function() {
             $.ajax({
                 url: getBaseUri() + '/members/members.json',
@@ -61,6 +62,27 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
                 });
             }
         },
+        getCommunityTypes: function() {
+            if(serv.currentMemberDetails == null){
+                var url = getBaseUri() + '/members/communityTypes.json';
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    success: function(data) {
+                        for(var i in data){
+                            serv.communityTypes[i] = data[i];
+                        }
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with community types");
+                    serv.feed = [];
+                    $rootScope.$apply();
+                });
+            }
+        },
         getConsortiaList: function() {
             $.ajax({
                 url: getBaseUri() + '/consortia/consortia.json',
@@ -81,6 +103,6 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
             return orcidVar.baseUri + '/members/' + slug;
         }
     };
-
+    serv.getCommunityTypes();
     return serv; 
 }]);
