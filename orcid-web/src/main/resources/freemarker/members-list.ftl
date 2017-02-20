@@ -45,7 +45,7 @@
 							<select ng-model="by_country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
-            				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
+            				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as membersListSrvc.communityTypes[member.researchCommunity] for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
             				<button class="btn btn-primary" ng-click="clearFilters()">Reset</button>
