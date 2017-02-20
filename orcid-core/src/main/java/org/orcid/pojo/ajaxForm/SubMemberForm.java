@@ -82,18 +82,16 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
         return form;
     }
 
-    public MemberDetails toMemberDetails() {
-        MemberDetails memberDetails = new MemberDetails();
+    public Member toMember() {
         Member member = new Member();
-        memberDetails.setMember(member);
-        member.setId(getAccountId());
+        member.setName(getName().getValue());
         member.setPublicDisplayName(getName().getValue());
         try {
             member.setWebsiteUrl(new URL(getWebsite().getValue()));
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error parsing website", e);
         }
-        return memberDetails;
+        return member;
     }
 
 }

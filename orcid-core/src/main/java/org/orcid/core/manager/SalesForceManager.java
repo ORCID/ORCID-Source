@@ -47,6 +47,12 @@ public interface SalesForceManager {
     void enableAccess(String accountId, List<Contact> contactsList);
 
     String retriveAccountIdByOrcid(String orcid);
+    
+    /**
+     * 
+     * @return the accountId of the member
+     */
+    String createMember(Member member);
 
     void updateMember(Member member);
 

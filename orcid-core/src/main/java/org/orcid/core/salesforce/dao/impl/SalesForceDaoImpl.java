@@ -241,6 +241,31 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public String createMember(Member member) {
+        try {
+            return createMemberInSalesForce(getAccessToken(), member);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create member, trying again.", e);
+            return createMemberInSalesForce(getFreshAccessToken(), member);
+        }
+
+    }
+
+    private String createMemberInSalesForce(String accessToken, Member member) {
+        LOGGER.info("About to create member in SalesForce");
+        WebResource resource = createMemberResource();
+        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating member in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
+    }
+
+    @Override
     public void updateMember(Member member) {
         try {
             updateMemberInSalesForce(getAccessToken(), member);
@@ -266,6 +291,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return;
+    }
+
+    private WebResource createMemberResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/");
+        return resource;
     }
 
     private WebResource createUpdateMemberResource(String accountId) {

@@ -56,6 +56,12 @@ public interface SalesForceDao {
      *             could contain something malicious.
      */
     String validateSalesForceId(String memberId);
+    
+    /**
+     * 
+     * @return the accountId of the member
+     */
+    String createMember(Member member);
 
     void updateMember(Member member);
     
@@ -74,6 +80,5 @@ public interface SalesForceDao {
     void removeContactRole(String contactRoleId);
 
     String getAccessToken();
-
 
 }

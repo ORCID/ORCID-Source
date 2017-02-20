@@ -144,6 +144,7 @@ public class ManageConsortiumController extends BaseController {
     
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
     public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
+        salesForceManager.createMember(subMember.toMember());
         return subMember;
     }
 
