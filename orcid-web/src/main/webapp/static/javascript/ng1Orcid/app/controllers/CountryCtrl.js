@@ -24,17 +24,13 @@ angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$
     var showEmailVerificationModal = function(){
         $rootScope.$broadcast('emailVerifiedObj', {flag: emailVerified, emails: emails});
     };
-    
+
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work

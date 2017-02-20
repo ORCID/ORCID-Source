@@ -25,13 +25,9 @@ angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work
@@ -206,7 +202,6 @@ angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '
     }
         
     $scope.openEditModal = function(){
-        console.log( configuration.showModalManualEditVerificationEnabled == false, configuration.showModalManualEditVerificationEnabled );
         if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             $scope.bulkEditShow = false;
             $.colorbox({

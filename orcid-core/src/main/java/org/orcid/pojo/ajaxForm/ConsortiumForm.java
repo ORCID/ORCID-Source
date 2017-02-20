@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -33,6 +34,9 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
+    private Text email;
+    private Text description;
+    private Text community;
     private List<Contact> contactsList;
 
     public String getAccountId() {
@@ -69,6 +73,30 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         this.website = website;
     }
 
+    public Text getEmail() {
+        return email;
+    }
+
+    public void setEmail(Text email) {
+        this.email = email;
+    }
+
+    public Text getDescription() {
+        return description;
+    }
+
+    public void setDescription(Text description) {
+        this.description = description;
+    }
+
+    public Text getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(Text community) {
+        this.community = community;
+    }
+
     public List<Contact> getContactsList() {
         return contactsList;
     }
@@ -83,6 +111,12 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         form.setAccountId(member.getId());
         form.setName(Text.valueOf(member.getPublicDisplayName()));
         form.setWebsite(Text.valueOf(member.getWebsiteUrl().toString()));
+        form.setEmail(Text.valueOf(member.getPublicDisplayEmail()));
+        form.setDescription(Text.valueOf(member.getDescription()));
+        CommunityType researchCommunity = member.getResearchCommunity();
+        if (researchCommunity != null) {
+            form.setCommunity(Text.valueOf(researchCommunity.name()));
+        }
         return form;
     }
 
@@ -97,6 +131,9 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error parsing website", e);
         }
+        member.setPublicDisplayEmail(getEmail().getValue());
+        member.setDescription(getDescription().getValue());
+        member.setResearchCommunity(CommunityType.valueOf(getCommunity().getValue()));
         return memberDetails;
     }
 

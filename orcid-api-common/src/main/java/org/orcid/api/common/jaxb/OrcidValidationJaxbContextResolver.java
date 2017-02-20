@@ -201,14 +201,20 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type, apiVersion);
             Unmarshaller unmarshaller = getJAXBContext(apiVersion).createUnmarshaller();
             // Old OrcidMessage APIs - do not validate here as we will
-            // break "broke" integrations 
-            if (!type.equals(OrcidMessage.class)) {
-                if (schemaFilenamePrefix != null) {
-                    Schema schema = getSchema(schemaFilenamePrefix, apiVersion);
-                    unmarshaller.setSchema(schema);
-                    unmarshaller.setEventHandler(new OrcidValidationHandler());
-                }
+            // break "broke" integrations
+            // Lets not validate WorkBulk here, we will delegate that to 
+            // the controller
+            if (OrcidMessage.class.equals(type) 
+                    || org.orcid.jaxb.model.record_rc3.WorkBulk.class.equals(type) 
+                    || org.orcid.jaxb.model.record_rc4.WorkBulk.class.equals(type)
+                    || org.orcid.jaxb.model.record_v2.WorkBulk.class.equals(type)) {
+                return unmarshaller;
             }
+            if (schemaFilenamePrefix != null) {
+                Schema schema = getSchema(schemaFilenamePrefix, apiVersion);
+                unmarshaller.setSchema(schema);
+                unmarshaller.setEventHandler(new OrcidValidationHandler());
+            }            
             return unmarshaller;
         } catch (JAXBException e) {
             throw new WebApplicationException(getResponse(e));
@@ -220,9 +226,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     public void validate(Object toValidate) {
         String apiVersion = getApiVersion();
         String schemaFilenamePrefix = getSchemaFilenamePrefix(toValidate.getClass(), apiVersion);
-        Schema schema;
         try {
-            schema = getSchema(schemaFilenamePrefix, apiVersion);
+            Schema schema = getSchema(schemaFilenamePrefix, apiVersion);
             JAXBContext context = JAXBContext.newInstance(toValidate.getClass());
             Source source = new JAXBSource(context, toValidate);        
             Validator validator = schema.newValidator();

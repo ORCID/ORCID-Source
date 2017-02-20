@@ -21,13 +21,13 @@ package org.orcid.core.salesforce.model;
  * @author Will Simpson
  *
  */
-public enum ContactRoleType {
-    MAIN_CONTACT("Main relationship contact (OFFICIAL)"), TECHNICAL_CONTACT("Technical contact"), INVOICE_CONTACT("Invoice contact"), COMMS_CONTACT(
-            "Comms contact"), OTHER_CONTACT("Other contact");
+public enum CommunityType {
+
+    ASSOCIATION("Association"), FUNDER("Funder"), GOVERNMENT("Government"), REPOSITORY("Repository/Profile Org"), RESEARCH_INSTITUTE("Research Institute");
 
     private final String value;
 
-    ContactRoleType(String v) {
+    CommunityType(String v) {
         value = v;
     }
 
@@ -35,8 +35,8 @@ public enum ContactRoleType {
         return value;
     }
 
-    public static ContactRoleType fromValue(String v) {
-        for (ContactRoleType c : ContactRoleType.values()) {
+    public static CommunityType fromValue(String v) {
+        for (CommunityType c : CommunityType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

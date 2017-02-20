@@ -22,6 +22,7 @@ import java.net.URL;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
@@ -77,6 +78,9 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
 
     public void registerMemberMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Member, JSONObject> classMap = mapperFactory.classMap(Member.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        ConverterFactory converterFactory = mapperFactory.getConverterFactory();
+        converterFactory.registerConverter(new CommunityTypeConverter());
+        converterFactory.registerConverter(new ReverseCommunityTypeConverter());
         classMap.field("id", "Id");
         classMap.field("name", "Name");
         classMap.field("publicDisplayName", "Public_Display_Name__c");
@@ -117,11 +121,14 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.fieldAToB("lastName", "LastName");
         classMap.fieldAToB("email", "Email");
         classMap.fieldAToB("accountId", "AccountId");
-        classMap.fieldBToA("Member_Org_Role__c", "role");
+        classMap.fieldBToA("Member_Org_Role__c", "role.roleType");
         classMap.fieldBToA("Contact__r.FirstName", "firstName");
         classMap.fieldBToA("Contact__r.LastName", "lastName");
         classMap.fieldBToA("Contact__r.Email", "email");
         classMap.fieldBToA("Contact__c", "id");
+        classMap.fieldBToA("Contact__c", "role.contactId");
+        classMap.fieldBToA("AccountId", "role.accountId");
+        classMap.fieldBToA("Id", "role.id");
         classMap.register();
     }
 
@@ -133,7 +140,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("id", "Id");
         classMap.field("accountId", "Organization__c");
         classMap.field("contactId", "Contact__c");
-        classMap.field("role", "Member_Org_Role__c");
+        classMap.field("roleType", "Member_Org_Role__c");
         classMap.register();
     }
 
@@ -211,6 +218,20 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         @Override
         public ContactRoleType convert(Object source, Type<? extends ContactRoleType> destinationType) {
             return ContactRoleType.fromValue(source.toString());
+        }
+    }
+
+    private class CommunityTypeConverter extends CustomConverter<CommunityType, Object> {
+        @Override
+        public Object convert(CommunityType source, Type<? extends Object> destinationType) {
+            return source.value();
+        }
+    }
+
+    private class ReverseCommunityTypeConverter extends CustomConverter<Object, CommunityType> {
+        @Override
+        public CommunityType convert(Object source, Type<? extends CommunityType> destinationType) {
+            return CommunityType.fromValue(source.toString());
         }
     }
 

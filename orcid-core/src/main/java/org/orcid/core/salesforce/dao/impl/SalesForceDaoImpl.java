@@ -187,17 +187,17 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public void createContactRole(ContactRole contact) {
+    public String createContactRole(ContactRole contact) {
         try {
-            createContactRoleInSalesForce(getAccessToken(), contact);
+            return createContactRoleInSalesForce(getAccessToken(), contact);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to create contact role, trying again.", e);
-            createContactRoleInSalesForce(getFreshAccessToken(), contact);
+            return createContactRoleInSalesForce(getFreshAccessToken(), contact);
         }
 
     }
 
-    private void createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+    private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
         LOGGER.info("About to create contact role in SalesForce");
         validateSalesForceId(contactRole.getAccountId());
         validateSalesForceId(contactRole.getContactId());
@@ -209,6 +209,8 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error creating contact role in SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
     }
 
     @Override
@@ -502,7 +504,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private WebResource createContactsWithRolesResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select (Select Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
                         + validateSalesForceId(accountId) + "'");
         return resource;
     }
