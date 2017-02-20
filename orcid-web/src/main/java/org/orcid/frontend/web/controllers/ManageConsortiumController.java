@@ -34,6 +34,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -139,6 +140,11 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);
         return contact;
+    }
+    
+    @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
+        return subMember;
     }
 
 }

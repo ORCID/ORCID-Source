@@ -195,6 +195,17 @@
 					<p>This consortium does not have any members yet.</p>
 					<hr></hr>
                 </div>
+                <h3>New consortium member</h3>
+                <form>
+                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
+                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+	                        <span id="bottom-confirm-update-consortium" ng-click="addSubMember()" class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></span>
+	                    </div>
+	                </div> 
+                </form>
 		    </div>
         </div>
     </div>

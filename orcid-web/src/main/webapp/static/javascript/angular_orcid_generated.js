@@ -9782,7 +9782,6 @@
 	    $scope.showLoader = false;
 	    $scope.effectiveUserOrcid = orcidVar.orcidId;
 	    $scope.realUserOrcid = orcidVar.realOrcidId;
-
 	    $scope.toggleFindConsortiumModal = function() {
 	         $scope.showFindModal = !$scope.showFindModal;
 	    };
@@ -10109,6 +10108,28 @@
 	            console.log("$ContactCtrl.update() error");
 	        });
 	    }
+	    
+	    $scope.addSubMember = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/manage-consortium/add-sub-member.json',
+	            type: 'POST',
+	            data: angular.toJson($scope.newSubMember),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                if(data.errors.length === 0){
+	                    $scope.getConsortium();
+	                    $scope.$apply();
+	                    $scope.closeModal();
+	                }
+	                else{
+	                    $scope.errors = data.errors;
+	                    $scope.$apply();
+	                }
+	            }
+	        }).fail(function() {
+	            console.log("Error adding submember.");
+	        });
+	    };
 	    
 	    $scope.buildOrcidUri = function(orcid){
 	        return orcidVar.baseUri + '/' + orcid;
