@@ -184,6 +184,18 @@
                     </div>
                 </div> 
             </div>
+            <div>
+                <h3>Consortium Members</h3>
+                <hr></hr>
+            	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
+					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
+					<hr></hr>
+            	</div>
+                <div ng-hide="consortium.subMembers.length"> 
+					<p>This consortium does not have any members yet.</p>
+					<hr></hr>
+                </div>
+		    </div>
         </div>
     </div>
     <script type="text/ng-template" id="confirm-modal-consortium">

@@ -27,6 +27,7 @@ import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.SubMember;
 
 public class ConsortiumForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -39,6 +40,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private Text description;
     private Text community;
     private List<Contact> contactsList;
+    private List<SubMember> subMembers;
     private Map<String, String> roleMap;
 
     public String getAccountId() {
@@ -106,7 +108,15 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     public void setContactsList(List<Contact> contactsList) {
         this.contactsList = contactsList;
     }
-    
+
+    public List<SubMember> getSubMembers() {
+        return subMembers;
+    }
+
+    public void setSubMembers(List<SubMember> subMembers) {
+        this.subMembers = subMembers;
+    }
+
     public Map<String, String> getRoleMap() {
         return roleMap;
     }
@@ -127,6 +137,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         if (researchCommunity != null) {
             form.setCommunity(Text.valueOf(researchCommunity.name()));
         }
+        form.setSubMembers(memberDetails.getSubMembers());
         return form;
     }
 

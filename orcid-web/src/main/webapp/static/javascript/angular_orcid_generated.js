@@ -9770,7 +9770,8 @@
 	/**
 	* External consortium controller
 	*/
-	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', function manageConsortiumCtrl($scope, $compile, utilsService) {     
+	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+	    $scope.membersListSrvc = membersListSrvc;
 	    $scope.consortium = null;
 	    $scope.results = new Array();
 	    $scope.numFound = 0;
