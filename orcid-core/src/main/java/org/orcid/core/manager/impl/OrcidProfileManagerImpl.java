@@ -88,7 +88,6 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -382,12 +381,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
+        Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
+        
         if (existingProfileEntity != null) {
             //Dont delete the existing elements anymore
             //profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
-            setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
-            setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
-            setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
+            setWorkPrivacy(orcidProfile, defaultVisibility);
+            setAffiliationPrivacy(orcidProfile, defaultVisibility);
+            setFundingPrivacy(orcidProfile, defaultVisibility);
         }
         dedupeWorks(orcidProfile);
         dedupeAffiliations(orcidProfile);
@@ -395,8 +396,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         
         Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
-        
-        Visibility defaultVisibility = existingProfileEntity.getActivitiesVisibilityDefault();
+                
         if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
             defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
@@ -945,7 +945,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
         boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
                 .getSendMemberUpdateRequests();
-        Visibility activitiesVisibilityDefault = preferences.getActivitiesVisibilityDefault().getValue();
+        org.orcid.jaxb.model.common_v2.Visibility activitiesVisibilityDefault = (preferences.getActivitiesVisibilityDefault().getValue() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value());
         boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
                 .getDeveloperToolsEnabled().isValue();
         float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
@@ -2087,12 +2087,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-
-        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.fromValue(profileEntity.getOrcidType().value());
+        if (userType.equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        else if (userType.equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+        else if (userType.equals(OrcidType.GROUP)) {
             switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
@@ -2152,12 +2152,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         orcidProfileCacheManager.removeAll();
     }
 
-    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
-        if (orcidProfile.getOrcidPreferences() == null)
-            orcidProfile.setOrcidPreferences(new OrcidPreferences());
-        orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
-    }
-
     /**
      * Sets the default visibility of each bio element present in the
      * orcidProfile object
@@ -2173,9 +2167,13 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 if(useMemberDefaults) {
-                    profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
+                    profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value()));
                 } else {
-                    profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
+                    if(defaultVisibility != null) {
+                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
+                    } else {
+                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().value()));
+                    }
                 }                
             }
             

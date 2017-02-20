@@ -55,8 +55,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     private NotificationManager notificationManager;
     
     @Resource 
-    private ActivityValidator activityValidator;        
-    
+    private ActivityValidator activityValidator;
+
     /**
      * Add a new education to the given user
      * 
@@ -239,11 +239,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     }
 
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
-        Visibility incomingWorkVisibility = orgAffiliationRelationEntity.getVisibility();
-        org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+        Visibility incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
+        Visibility defaultElementVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) { 
-            orgAffiliationRelationEntity.setVisibility(Visibility.fromValue(defaultWorkVisibility.value()));            
-        } else if (incomingWorkVisibility == null) {
+            orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);            
+        } else if (incomingElementVisibility == null) {
             orgAffiliationRelationEntity.setVisibility(Visibility.PRIVATE);
         }
     }    
@@ -260,7 +260,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
     }
-    
+
     /**
      * Deletes an affiliation.
      * 
@@ -277,5 +277,5 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public boolean removeAffiliation(String userOrcid, Long affiliationId) {
         return orgAffiliationRelationDao.removeOrgAffiliationRelation(userOrcid, affiliationId);
-    }  
+    }        
 }

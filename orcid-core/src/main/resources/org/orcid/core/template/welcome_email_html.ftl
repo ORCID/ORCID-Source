@@ -58,7 +58,7 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /><@emailMacros.space />${baseUri}/my-orcid<@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.1.2" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.2" />
 				<br /><br />
-				<@emailMacros.msg "email.welcome.next_steps.1.description.tips" />				
+				<@emailMacros.msg "email.welcome.next_steps.1.description.tips" /> <a href='<@emailMacros.msg "email.welcome.next_steps.1.description.link.href" />' target="_blank"><@emailMacros.msg "email.welcome.next_steps.1.description.link.text" /></a>				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 				<strong><@emailMacros.msg "email.welcome.next_steps.2" /></strong>
@@ -70,7 +70,7 @@
 				<strong><@emailMacros.msg "email.welcome.need_help" /></strong>
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.welcome.need_help.description" />
+				<@emailMacros.msg "email.welcome.need_help.description" /> <a href='<@emailMacros.msg "email.welcome.need_help.description.link.href" />' target="_blank"><@emailMacros.msg "email.welcome.need_help.description.link.text" /></a>.
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />

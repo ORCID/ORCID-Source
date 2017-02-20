@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {

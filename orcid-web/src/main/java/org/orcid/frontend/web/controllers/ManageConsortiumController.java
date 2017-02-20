@@ -16,19 +16,26 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,8 +51,31 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/manage-consortium" })
 public class ManageConsortiumController extends BaseController {
 
+    private static final String NOT_PUBLIC = "not public";
+
     @Resource
     private SalesForceManager salesForceManager;
+
+    @Resource
+    private EmailDao emailDao;
+
+    @ModelAttribute("contactRoleTypes")
+    public Map<String, String> retrieveContactRoleTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (ContactRoleType type : ContactRoleType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
+
+    @ModelAttribute("communityTypes")
+    public Map<String, String> retrieveCommunityTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (CommunityType type : CommunityType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
 
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
@@ -74,6 +104,40 @@ public class ManageConsortiumController extends BaseController {
         }
         salesForceManager.updateMember(member);
         return consortium;
+    }
+
+    @RequestMapping(value = "/add-contact-by-email.json")
+    public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
+        EmailEntity emailEntity = emailDao.findCaseInsensitive(contact.getEmail());
+        contact.setOrcid(emailEntity.getProfile().getId());
+        RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
+        if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
+            contact.setFirstName(recordNameEntity.getGivenNames());
+            contact.setLastName(recordNameEntity.getFamilyName());
+        } else {
+            contact.setFirstName(NOT_PUBLIC);
+            contact.setLastName(NOT_PUBLIC);
+        }
+        salesForceManager.createContact(contact);
+        return contact;
+    }
+
+    @RequestMapping(value = "/add-contact.json", method = RequestMethod.POST)
+    public @ResponseBody Contact addContact(@RequestBody Contact contact) {
+        salesForceManager.createContact(contact);
+        return contact;
+    }
+
+    @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
+    public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
+        salesForceManager.removeContactRole(contact);
+        return contact;
+    }
+
+    @RequestMapping(value = "/update-contact.json", method = RequestMethod.POST)
+    public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
+        salesForceManager.updateContact(contact);
+        return contact;
     }
 
 }

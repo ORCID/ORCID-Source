@@ -654,7 +654,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 url: getBaseUri() + '/account/emails.json',
                 type: 'GET',
                 dataType: 'json',
-                success: function(data) {                       
+                success: function(data) { 
                     serv.emails = data;
                     for (var i in data.emails){
                         if (data.emails[i].primary){
@@ -673,6 +673,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
         
+        getEmailPrimary: function() {
+            return serv.primaryEmail;
+        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -701,6 +704,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             for (i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
+                    serv.primaryEmail = email;
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
@@ -1444,7 +1448,8 @@ angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$comp
     };
 }]);
 
-angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
+angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compile', '$rootScope', 'emailSrvc', function ($scope, $compile, $rootScope, emailSrvc) {
+    $scope.emailSrvc = emailSrvc;
     $scope.getDeprecateProfile = function() {
         $.ajax({
             url: getBaseUri() + '/account/deprecate-profile.json',
@@ -1496,7 +1501,10 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.deprecateProfilePojo = data;
+                $scope.getDeprecateProfile();
+                emailSrvc.getEmails(function(emailData) {
+                    $rootScope.$broadcast('rebuildEmails', emailData);
+                });
                 $.colorbox({
                     html : $compile($('#deprecate-account-confirmation-modal').html())($scope),
                     escKey:false,
@@ -2287,7 +2295,7 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
                 $scope.emailsPojo = data;
                 $scope.$apply();
                 for (i in $scope.emailsPojo.emails) {
-                    if ($scope.emailsPojo.emails[i].primary) {
+                    if ($scope.emailsPojo.emails[i].primary  == true) {
                         $scope.primaryEmail = $scope.emailsPojo.emails[i].value;
                         if ($scope.emailsPojo.emails[i].verified) {
                             primeVerified = true;
@@ -2305,7 +2313,7 @@ angular.module('orcidApp').controller('VerifyEmailCtrl', ['$scope', '$compile', 
                         close: '',
                         scrolling: false
                     });
-                    $.colorbox.resize();
+                    $.colorbox.resize({width:"500px"});
                 };
                 $scope.loading = false;
                 $scope.$apply();
@@ -2533,13 +2541,9 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work

@@ -16,8 +16,9 @@
  */
 package org.orcid.pojo;
 
+import org.orcid.pojo.ajaxForm.Email;
+
 public class AddEmail extends Email {
-    private static final long serialVersionUID = 2L;
     protected String password;
 
     public String getPassword() {

@@ -30,6 +30,7 @@ import org.orcid.core.salesforce.adapter.SalesForceAdapter;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -120,12 +121,32 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public List<Contact> retrieveContactsByAccountId(String accountId) {
+    public List<Contact> retrieveAllContactsByAccountId(String accountId) {
         try {
-            return retrieveContactsFromSalesForceByAccountId(getAccessToken(), accountId);
+            return retrieveAllContactsFromSalesForceByAccountId(getAccessToken(), accountId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve all contacts, trying again.", e);
+            return retrieveAllContactsFromSalesForceByAccountId(getFreshAccessToken(), accountId);
+        }
+    }
+
+    @Override
+    public List<Contact> retrieveContactsWithRolesByAccountId(String accountId) {
+        try {
+            return retrieveContactsWithRolesFromSalesForceByAccountId(getAccessToken(), accountId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve contacts with roles, trying again.", e);
+            return retrieveContactsWithRolesFromSalesForceByAccountId(getFreshAccessToken(), accountId);
+        }
+    }
+
+    @Override
+    public List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId) {
+        try {
+            return retrieveContactRolesFromSalesForceByContactIdAndAccountId(getAccessToken(), contactId, accountId);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
-            return retrieveContactsFromSalesForceByAccountId(getFreshAccessToken(), accountId);
+            return retrieveContactRolesFromSalesForceByContactIdAndAccountId(getFreshAccessToken(), contactId, accountId);
         }
     }
 
@@ -136,6 +157,82 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+
+    @Override
+    public String createContact(Contact contact) {
+        try {
+            return createContactInSalesForce(getAccessToken(), contact);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create contact, trying again.", e);
+            return createContactInSalesForce(getFreshAccessToken(), contact);
+        }
+
+    }
+
+    private String createContactInSalesForce(String accessToken, Contact contact) {
+        LOGGER.info("About to create contact in SalesForce");
+        String accountId = contact.getAccountId();
+        validateSalesForceId(accountId);
+        WebResource resource = createContactResource();
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating contact in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
+    }
+
+    @Override
+    public String createContactRole(ContactRole contact) {
+        try {
+            return createContactRoleInSalesForce(getAccessToken(), contact);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create contact role, trying again.", e);
+            return createContactRoleInSalesForce(getFreshAccessToken(), contact);
+        }
+
+    }
+
+    private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
+        LOGGER.info("About to create contact role in SalesForce");
+        validateSalesForceId(contactRole.getAccountId());
+        validateSalesForceId(contactRole.getContactId());
+        WebResource resource = createContactRoleResource();
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating contact role in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
+    }
+
+    @Override
+    public void removeContactRole(String contactRoleId) {
+        try {
+            removeContactRoleInSalesForce(getAccessToken(), contactRoleId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to remove contact role, trying again.", e);
+            removeContactRoleInSalesForce(getFreshAccessToken(), contactRoleId);
+        }
+    }
+
+    private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
+        LOGGER.info("About to remove contact role in SalesForce");
+        validateSalesForceId(contactRoleId);
+        WebResource resource = removeContactRoleResource(contactRoleId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 204) {
+            throw new RuntimeException("Error removing contact role in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
     }
 
     @Override
@@ -169,6 +266,21 @@ public class SalesForceDaoImpl implements SalesForceDao {
     private WebResource createUpdateMemberResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/" + validateSalesForceId(accountId)).queryParam("_HttpMethod",
                 "PATCH");
+        return resource;
+    }
+
+    private WebResource createContactResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Contact/");
+        return resource;
+    }
+
+    private WebResource createContactRoleResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Membership_Contact_Role__c/");
+        return resource;
+    }
+
+    private WebResource removeContactRoleResource(String contactRoleId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Membership_Contact_Role__c/" + validateSalesForceId(contactRoleId));
         return resource;
     }
 
@@ -351,26 +463,83 @@ public class SalesForceDaoImpl implements SalesForceDao {
      *             expired.
      * 
      */
-    private List<Contact> retrieveContactsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
+    private List<Contact> retrieveAllContactsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of all contacts from SalesForce");
+        validateSalesForceId(accountId);
+        WebResource resource = createAllContactsResource(accountId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting all contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
+    }
+
+    private WebResource createAllContactsResource(String accountId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "Select Id, AccountId, Name, Email, ORCID_iD_Path__c From Contact Where AccountId='" + validateSalesForceId(accountId) + "'");
+        return resource;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
-        WebResource resource = createContactsResource(accountId);
+        WebResource resource = createContactsWithRolesResource(accountId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
+        return salesForceAdapter.createContactsWithRolesFromJson(response.getEntity(JSONObject.class));
     }
 
-    private WebResource createContactsResource(String accountId) {
+    private WebResource createContactsWithRolesResource(String accountId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select (Select Id, Contact__r.Name, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='" + accountId + "'");
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
+                        + validateSalesForceId(accountId) + "'");
         return resource;
     }
 
-    private String getAccessToken() {
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<ContactRole> retrieveContactRolesFromSalesForceByContactIdAndAccountId(String accessToken, String contactId, String accountId)
+            throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of contact roles from SalesForce");
+        validateSalesForceId(contactId);
+        validateSalesForceId(accountId);
+        WebResource resource = createContactRolesResource(contactId, accountId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return salesForceAdapter.createContactRolesFromJson(response.getEntity(JSONObject.class));
+    }
+
+    private WebResource createContactRolesResource(String contactId, String accountId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '" + validateSalesForceId(contactId)
+                        + "' And Organization__c='" + validateSalesForceId(accountId) + "'");
+        return resource;
+    }
+
+    @Override
+    public String getAccessToken() {
         if (accessToken == null) {
             accessToken = getFreshAccessToken();
         }

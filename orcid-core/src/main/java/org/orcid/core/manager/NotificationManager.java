@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -36,7 +35,7 @@ public interface NotificationManager {
 
     // void sendRegistrationEmail(RegistrationEntity registration, URI baseUri);
 
-    void sendWelcomeEmail(OrcidProfile orcidProfile, String email);
+    void sendWelcomeEmail(String userOrcid, String email);
 
     void sendVerificationEmail(OrcidProfile orcidProfile, String email);
 
@@ -64,9 +63,11 @@ public interface NotificationManager {
 
     void sendOrcidLockedEmail(OrcidProfile orcidToLock);
 
+    void sendApiRecordCreationEmail(String toEmail, String orcid);
+    
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
-    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail);
+    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 
@@ -116,7 +117,7 @@ public interface NotificationManager {
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
     
-    public void sendAutoDeprecateNotification(OrcidProfile orcidProfile, String deprecatedOrcid);
+    public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid);
 
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 

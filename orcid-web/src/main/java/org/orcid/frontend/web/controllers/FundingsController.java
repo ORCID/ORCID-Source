@@ -40,7 +40,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.FundingType;
+import org.orcid.jaxb.model.record_v2.FundingType;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -139,7 +139,7 @@ public class FundingsController extends BaseWorkspaceController {
         result.setUrl(new Text());
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility() : profile.getActivitiesVisibilityDefault());
+        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().value()) : profile.getActivitiesVisibilityDefault());
         
         result.setVisibility(v);
         Date startDate = new Date();
@@ -222,7 +222,7 @@ public class FundingsController extends BaseWorkspaceController {
                 try {
                     FundingForm form = FundingForm.valueOf(funding);                                        
                     if (funding.getType() != null) {
-                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+                        form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
                     }
                     // Set translated title language name
                     if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {
@@ -303,7 +303,7 @@ public class FundingsController extends BaseWorkspaceController {
         FundingForm form = FundingForm.valueOf(funding);
                
         if (funding.getType() != null) {
-            form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
+            form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(org.orcid.jaxb.model.message.FundingType.class, funding.getType().value())));
         }
         // Set translated title language name
         if (!(funding.getTitle().getTranslatedTitle() == null) && !StringUtils.isEmpty(funding.getTitle().getTranslatedTitle().getLanguageCode())) {

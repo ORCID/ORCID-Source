@@ -27,8 +27,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.WorkType;
 
 /**
  * An object that will contain the minimum work information needed to display

@@ -32,13 +32,9 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     $scope.emailSrvc.getEmails(
         function(data) {
             emails = data.emails;
-            data.emails.forEach(
-                function(element){
-                    if(element.verified == true) {
-                        emailVerified = true;
-                    }
-                }
-            );
+            if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                emailVerified = true;
+            }
         }
     );
     /////////////////////// End of verified email logic for work

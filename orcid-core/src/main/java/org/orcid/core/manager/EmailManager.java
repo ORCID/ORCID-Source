@@ -16,10 +16,9 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Collection;
-
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
 
 
 /**
@@ -29,7 +28,7 @@ import org.orcid.jaxb.model.message.Email;
  */
 public interface EmailManager extends EmailManagerReadOnly {
 
-    void updateEmails(String orcid, Collection<Email> emails);
+    void updateEmails(String orcid, Emails emails);
 
     void addEmail(String orcid, Email email);
     

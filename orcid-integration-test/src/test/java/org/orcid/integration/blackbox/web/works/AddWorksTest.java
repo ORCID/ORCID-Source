@@ -87,11 +87,7 @@ public class AddWorksTest extends BlackBoxBase {
         deleteAllByWorkName(workNameA, webDriver);
         deleteAllByWorkName(workNameB, webDriver);
         deleteAllByWorkName(workNameC, webDriver);
-    }
-    
-    public void addComplete() {
-        
-    }
+    }        
 
     public static void addSimple(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
@@ -133,7 +129,7 @@ public class AddWorksTest extends BlackBoxBase {
             for (WebElement we : wList) {
                 String putCode = we.getAttribute("orcid-put-code");
                 putCode = "" + putCode;
-                String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
+                String deleteJsStr = "angular.element(document.body).injector().get('worksSrvc').deleteWork('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
                 waitWorksLoaded(wait, webDriver);
             }
@@ -152,7 +148,7 @@ public class AddWorksTest extends BlackBoxBase {
     }
     
     public static void reloadWorks(WebDriver webDriver, WebDriverWait wait) {
-        ((JavascriptExecutor) webDriver).executeScript("angular.element('*[ng-app]').injector().get('worksSrvc').loadAbbrWorks()");
+        ((JavascriptExecutor) webDriver).executeScript("angular.element(document.body).injector().get('worksSrvc').loadAbbrWorks()");
         waitWorksLoaded(wait, webDriver);
     }
     

@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.ArgumentMatchers.isNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -52,9 +54,9 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -294,8 +296,9 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void verifyEmailTest() {
-        // Add not verified email
-        Email email = new Email("not-verified@email.com");
+        //Add not verified email
+        Email email = new Email();
+        email.setEmail("not-verified@email.com");
         email.setCurrent(false);
         email.setPrimary(false);
         email.setVerified(false);
@@ -388,7 +391,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, results.get("reviewedList").size());
         assertTrue(results.get("reviewedList").contains("reviewed"));
 
-        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
     }
 
     @Test

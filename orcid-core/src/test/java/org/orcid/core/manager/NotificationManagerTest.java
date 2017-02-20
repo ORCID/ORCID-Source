@@ -58,18 +58,16 @@ import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.custom_v2.NotificationCustom;
-import org.orcid.jaxb.model.notification_v2.Notification;
-import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
+import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -170,7 +168,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendWelcomeEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        notificationManager.sendWelcomeEmail(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test
@@ -223,7 +221,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
         EmailEntity delegateEmail = new EmailEntity();
         delegateEmail.setId("jimmy@dove.com");
-        delegateEmail.setVisibility(Visibility.PRIVATE);
+        delegateEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
         delegateEmail.setCurrent(true);
         delegateEmail.setVerified(true);
         delegateProfileEntity.setPrimaryEmail(delegateEmail);
@@ -291,9 +289,8 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testChangeEmailAddress() throws Exception {
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            Email originalEmail = new Email("original@email.com");
-            notificationManager.sendEmailAddressChangedNotification(orcidProfile, originalEmail);
+            OrcidProfile orcidProfile = getProfile(locale);            
+            notificationManager.sendEmailAddressChangedNotification(orcidProfile, "original@email.com");
         }
     }
 

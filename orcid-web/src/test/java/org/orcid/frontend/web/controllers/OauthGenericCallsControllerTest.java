@@ -19,16 +19,15 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.oauth.OAuthError;
@@ -43,7 +42,7 @@ public class OauthGenericCallsControllerTest {
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
 
     @InjectMocks
-    private OauthGenericCallsController controller = new OauthGenericCallsController();
+    private OauthGenericCallsController controller;
 
     @Before
     public void setUp() {
@@ -52,7 +51,7 @@ public class OauthGenericCallsControllerTest {
 
     @Test
     public void testObtainOauth2TokenPost() {
-        when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(anyString(), Matchers.<MultivaluedMap<String, String>> any())).thenReturn(
+        when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenReturn(
                 Response.ok("some-success-entity").build());
         ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
         assertNotNull(responseEntity);
@@ -62,7 +61,7 @@ public class OauthGenericCallsControllerTest {
 
     @Test
     public void testObtainOauth2TokenPostLockedClient() {
-        when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(anyString(), Matchers.<MultivaluedMap<String, String>> any())).thenThrow(
+        when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenThrow(
                 new LockedException("Client is locked"));
         ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
         assertNotNull(responseEntity);

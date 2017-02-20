@@ -2179,7 +2179,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #333;
     border-radius: 0;
     min-height: 50px;
-    heigth: auto;
+    height: auto;
 }
 
 .alert-icon-large {
@@ -2530,6 +2530,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .popover-help-container ul {
     list-style-type: disc;
+    padding-left: 16px;
+}
+
+.popover-help-container ul ul{
+    list-style-type: circle;
 }
 
 .no-touch .popover-help-container:hover .popover {
@@ -2575,6 +2580,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .lightbox-container {
     padding: 5px 15px 30px;
+}
+
+.lightbox-container .cancel-option{
+    margin: 0 10px;
 }
 
 .no-icon {
@@ -6883,6 +6892,7 @@ a:hover .mozilla-badge {
 .member-list h2 a:visited {
     color: #a6ce39;
     text-decoration: none;
+    white-space: normal;
 }
 
 .member-list h1 a:hover,
@@ -7202,12 +7212,35 @@ ul.comma li:last-child:after {
 }
 
 /*Consortia self service*/
-.manage-consortium label{
+.manage-consortium #ajax-loader i{
+    margin-top: 10px;
+}
+
+.manage-consortium .alert{
+    margin: 10px 0;
+}
+
+.manage-consortium label,
+.manage-consortium h3
+{
     display: block;
     font-size: 14px;
     font-weight: bold;
     margin: .7em 0 .5em 0;
 }
+
+.manage-consortium table{
+    margin-bottom: 20px;
+}
+
+.manage-consortium td,
+.manage-consortium th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
+    width: 25%;
+}
+
 
 /* Media Queries */
 

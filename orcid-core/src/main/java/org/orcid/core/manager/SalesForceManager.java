@@ -47,8 +47,20 @@ public interface SalesForceManager {
     void enableAccess(String accountId, List<Contact> contactsList);
 
     String retriveAccountIdByOrcid(String orcid);
-    
+
     void updateMember(Member member);
+
+    void createContact(Contact contact);
+
+    /**
+     * Updates the roles as specified by the boolean properties in the contact
+     * object
+     */
+    void updateContact(Contact contact);
+
+    void removeContact(Contact contact);
+    
+    void removeContactRole(Contact contact);
 
     /**
      * Clear caches

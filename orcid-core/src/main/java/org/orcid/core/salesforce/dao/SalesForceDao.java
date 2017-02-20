@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 
@@ -41,8 +42,12 @@ public interface SalesForceDao {
     Consortium retrieveConsortium(String consortiumId);
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
+    
+    List<Contact> retrieveAllContactsByAccountId(String accountId);
 
-    List<Contact> retrieveContactsByAccountId(String accountId);
+    List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
+    
+    List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
 
     /**
      * @return The sales force object id, if valid.
@@ -53,5 +58,22 @@ public interface SalesForceDao {
     String validateSalesForceId(String memberId);
 
     void updateMember(Member member);
+    
+    /**
+     * 
+     * @return the contact id
+     */
+    String createContact(Contact contact);
+    
+    /**
+     * 
+     * @return the contact role id
+     */
+    String createContactRole(ContactRole contact);
+    
+    void removeContactRole(String contactRoleId);
+
+    String getAccessToken();
+
 
 }

@@ -628,7 +628,9 @@
     
     <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImpl" />
     
-    <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl" />
+    <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl">
+        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
+    </bean>
 
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	

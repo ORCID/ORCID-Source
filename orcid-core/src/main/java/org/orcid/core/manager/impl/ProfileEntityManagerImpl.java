@@ -56,9 +56,9 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -87,6 +87,7 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -279,6 +280,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 name.setPath(deprecatedOrcid);
                 recordNameManager.updateRecordName(deprecatedOrcid, name);                
             } 
+            
+            userConnectionDao.deleteByOrcid(deprecatedOrcid);  
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
@@ -385,8 +388,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
                         Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
                         String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {                            
-                            scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                        for (ScopePathType tempScope : scopesGrantedToClient) {        
+                            try {
+                                scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                            } catch (NoSuchMessageException e) {
+                                LOGGER.warn("No message to display for scope " + tempScope.toString());
+                            }
                         }
                         //If there is at least one scope in this token, fill the application summary element
                         if(!scopePathMap.isEmpty()) {
@@ -514,7 +521,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
-        profile.setLocale(locale);
+        if(locale != null) {
+            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+        }
         if(claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
@@ -573,7 +582,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         ProfileEntity toClear = profileDao.find(orcid);
         toClear.setLastModified(new Date());
         toClear.setDeactivationDate(new Date());
-        toClear.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        toClear.setActivitiesVisibilityDefault(Visibility.PRIVATE);
         toClear.setIndexingStatus(IndexingStatus.REINDEX);
         
         // Remove works
@@ -633,7 +642,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (emails != null) {
             // For each email in the deprecated profile                            
             for (EmailEntity email : emails) {
-                email.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+                email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
             }        
         }
         
@@ -660,7 +669,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void reactivate(String orcid, String givenNames, String familyName, String password, org.orcid.jaxb.model.message.Visibility defaultVisibility) {
+    public void reactivate(String orcid, String givenNames, String familyName, String password, Visibility defaultVisibility) {
         LOGGER.info("About to reactivate record, orcid={}", orcid);
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         profileEntity.setDeactivationDate(null);
@@ -671,5 +680,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
+    }
+
+    @Override
+    public void updatePassword(String orcid, String encryptedPassword) {
+        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+    }
+
+    @Override
+    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
     }
 }

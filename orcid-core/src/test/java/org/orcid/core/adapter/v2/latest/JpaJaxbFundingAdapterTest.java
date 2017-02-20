@@ -179,8 +179,8 @@ public class JpaJaxbFundingAdapterTest {
         result.setTitle("funding:title");
         result.setTranslatedTitle("funding:translatedTitle");
         result.setTranslatedTitleLanguageCode("ES");
-        result.setType(org.orcid.jaxb.model.message.FundingType.SALARY_AWARD);
-        result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        result.setType(FundingType.SALARY_AWARD);
+        result.setVisibility(Visibility.PRIVATE);
         return result;
     }
 

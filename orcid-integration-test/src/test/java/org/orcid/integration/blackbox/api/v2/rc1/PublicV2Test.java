@@ -90,12 +90,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-    }
-
-    @Test
-    public void testCantGetTokenForInternalScopes() {
-        //TODO
-    }
+    }    
         
     @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
@@ -518,7 +513,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -532,7 +527,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
     }
 
@@ -570,7 +565,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -584,7 +579,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
     }
 
@@ -617,7 +612,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
@@ -625,7 +620,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
 
@@ -664,7 +659,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -676,7 +671,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
     
@@ -715,7 +710,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -727,7 +722,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
 

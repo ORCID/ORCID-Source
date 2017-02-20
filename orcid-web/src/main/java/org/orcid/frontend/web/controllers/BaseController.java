@@ -47,11 +47,10 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -62,8 +61,9 @@ import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SiteConstants;
+import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -134,9 +134,6 @@ public class BaseController {
     protected EmailManager emailManager;
     
     @Resource
-    protected NotificationManager notificationManager;
-
-    @Resource
     private StatisticsCacheManager statisticsCacheManager;
 
     @Resource
@@ -149,17 +146,17 @@ public class BaseController {
     protected OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
     private InternalSSOManager internalSSOManager;
 
     @Resource
     protected CsrfTokenRepository csrfTokenRepository;
     
     @Resource
-    protected RecordNameManager recordNameManager;
-
+    private RegistrationManager registrationManager;
+    
+    @Resource
+    private SecurityQuestionManager securityQuestionManager;
+    
     protected static final String EMPTY = "empty";
 
     @Value("${org.orcid.recaptcha.web_site_key:}")
@@ -301,16 +298,6 @@ public class BaseController {
 
     public void setDomainsAllowingRobots(List<String> domainsAllowingRobots) {
         this.domainsAllowingRobots = domainsAllowingRobots;
-    }
-
-    @ModelAttribute("visibilities")
-    public Map<String, String> retrieveVisibilitiesAsMap() {
-        Map<String, String> visibilities = new LinkedHashMap<String, String>();
-        visibilities.put(Visibility.PUBLIC.value(), "Public");
-        visibilities.put(Visibility.LIMITED.value(), "Limited");
-        visibilities.put(Visibility.PRIVATE.value(), "Private");
-        return visibilities;
-
     }
 
     @ModelAttribute("startupDate")
@@ -788,4 +775,47 @@ public class BaseController {
         return targetUrl != null ? targetUrl : getBaseUri() + "/my-orcid";
     }
 
+    protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
+        passwordConfirm.setErrors(new ArrayList<String>());
+        // validate passwords match
+        if (passwordConfirm.getValue() == null || !passwordConfirm.getValue().equals(password.getValue())) {
+            setError(passwordConfirm, "FieldMatch.registrationForm");
+        }
+    }
+
+    protected void passwordValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
+        }
+        
+        if (registrationManager.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
+
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
+        }
+        
+    }
+    
+    protected void termsOfUserValidate(Checkbox termsOfUser) {
+        termsOfUser.setErrors(new ArrayList<String>());
+        if (termsOfUser.getValue() != true) {
+            setError(termsOfUser, "validations.acceptTermsAndConditions");
+        }
+    }
+    
+    @ModelAttribute("securityQuestions")
+    public Map<String, String> retrieveSecurityQuestionsAsMap() {
+        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
+
+        for (String key : securityQuestions.keySet()) {
+            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
+        }
+
+        return securityQuestionsWithMessages;
+    }
 }
