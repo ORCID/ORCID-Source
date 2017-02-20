@@ -214,6 +214,10 @@ public class SalesForceAdapter {
         return integration;
     }
 
+    public Opportunity createOpportunityFromSalesForceRecord(JSONObject jsonObject) {
+        return mapperFacade.map(jsonObject, Opportunity.class);
+    }
+
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
         String urlString = tidyUrl(extractString(record, key));
         return urlString != null ? new URL(urlString) : null;

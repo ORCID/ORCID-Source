@@ -27,6 +27,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.Opportunity;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -71,6 +72,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         converterFactory.registerConverter(new URLConverter());
         converterFactory.registerConverter(new ReverseURLConverter());
         registerMemberMap(mapperFactory);
+        registerOpportunityMap(mapperFactory);
         registerContactMap(mapperFactory);
         registerContactRoleMap(mapperFactory);
         return mapperFactory.getMapperFacade();
@@ -110,6 +112,18 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
                 }
             }
         });
+        classMap.register();
+    }
+    
+    private void registerOpportunityMap(MapperFactory mapperFactory) {
+        ClassMapBuilder<Opportunity, JSONObject> classMap = mapperFactory.classMap(Opportunity.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
+        classMap.field("id", "Id");
+        classMap.field("targetAccountId", "AccountId");
+        classMap.field("stageName", "StageName");
+        classMap.field("closeDate", "CloseDate");
+        classMap.field("type", "Type");
+        classMap.field("membershipStartDate", "Membership_Start_Date__c");
+        classMap.field("membershipEndDate", "Membership_End_Date__c");
         classMap.register();
     }
 
