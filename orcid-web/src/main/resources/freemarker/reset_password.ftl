@@ -32,9 +32,9 @@
 			        	<strong><span ng-bind="requestResetPassword.successMessage" /></strong>
 			        </div>
         			<div class="control-group">
-            			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
+            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
                			<div class="controls">                    	
-               				<input ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
+               				<input id="email" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
                				<span class="required">*</span>
                			</div>
                			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
