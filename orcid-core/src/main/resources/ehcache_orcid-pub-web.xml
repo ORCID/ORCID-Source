@@ -38,25 +38,25 @@
 	</cache>
 
 	<cache name="pub-min-works-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		timeToLiveSeconds="3600" maxElementsOnDisk="10000" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
 	<cache name="pub-peer-reviews-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		timeToLiveSeconds="3600" maxElementsOnDisk="10000" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
 	<cache name="pub-affiliation-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		timeToLiveSeconds="3600" maxElementsOnDisk="10000" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
 	<cache name="pub-funding-maps" maxElementsInMemory="500"
-		timeToLiveSeconds="86400" maxElementsOnDisk="50000" copyOnRead="false"
+		timeToLiveSeconds="3600" maxElementsOnDisk="10000" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
@@ -121,32 +121,32 @@
 		<persistence strategy="none" />
 	</cache>
 
-	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="works" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
-	<cache name="fundings" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="fundings" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
-	<cache name="peer-reviews" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="peer-reviews" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
 	<cache name="credit-name" maxElementsInMemory="5000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
+		maxElementsOnDisk="10000" timeToLiveSeconds="3600" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 
 	<cache name="pub-credit-name" maxElementsInMemory="5000"
-		maxElementsOnDisk="50000" timeToLiveSeconds="86400" copyOnRead="false"
+		maxElementsOnDisk="10000" timeToLiveSeconds="3600" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
@@ -163,194 +163,194 @@
 		<persistence strategy="none" />
 	</cache>
 	
-	<cache name="educations-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="educations-summaries" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="employments-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="employments-summaries" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>		
 	
-	<cache name="fundings-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="fundings-summaries" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="peer-reviews-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="peer-reviews-summaries" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="works-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="works-summaries" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="public-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-works" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="single-work" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="single-work" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="single-work-summary" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="single-work-summary" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 	
-	<cache name="dao-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-works" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>	
 	
-	<cache name="dao-public-works" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-public-works" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="keywords" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-keywords" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 				
-	<cache name="dao-keywords" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-keywords" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>				
 															
-	<cache name="other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="other-names" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-other-names" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 	
-	<cache name="minimized-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="minimized-other-names" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 			
-	<cache name="dao-other-names" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-other-names" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>		
 																		
-	<cache name="address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="address" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-address" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="primary-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="primary-address" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="dao-address" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-address" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 		
-	<cache name="researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 				
-	<cache name="dao-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-researcher-urls" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>	
 		
-	<cache name="external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 				
-	<cache name="dao-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="dao-external-identifiers" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>			
 			
-	<cache name="record-name" maxElementsInMemory="2000" timeToLiveSeconds="43200"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="record-name" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="biography" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 				
-	<cache name="public-biography" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-biography" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="emails" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="emails" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="public-emails" maxElementsInMemory="2000" timeToLiveSeconds="86400"
-		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+	<cache name="public-emails" maxElementsInMemory="2000" timeToLiveSeconds="3600"
+		maxElementsOnDisk="10000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
