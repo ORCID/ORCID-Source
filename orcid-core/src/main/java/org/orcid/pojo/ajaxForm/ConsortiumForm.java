@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
@@ -38,6 +39,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private Text description;
     private Text community;
     private List<Contact> contactsList;
+    private Map<String, String> roleMap;
 
     public String getAccountId() {
         return accountId;
@@ -103,6 +105,14 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
 
     public void setContactsList(List<Contact> contactsList) {
         this.contactsList = contactsList;
+    }
+    
+    public Map<String, String> getRoleMap() {
+        return roleMap;
+    }
+
+    public void setRoleMap(Map<String, String> roleMap) {
+        this.roleMap = roleMap;
     }
 
     public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
