@@ -841,7 +841,7 @@ angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', fun
     serv.getDiscoFeed();
     return serv; 
 }]);
-*/
+
 angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
@@ -928,7 +928,6 @@ angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($
 
     return serv; 
 }]);
-
 angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
     return {
           clearFilters : function ($scope){
@@ -1195,6 +1194,7 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
     };
     return peerReviewSrvc;
 }]);
+*/
 
 /*
  * CONTROLLERS
