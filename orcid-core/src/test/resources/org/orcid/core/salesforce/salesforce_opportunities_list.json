@@ -15,7 +15,7 @@
     "AccountId": "[ORG2 ACCOUNT ID]",
     "Name": "2017 Membership-Org 2 Consortium Member",
     "StageName": "Invoice Paid",
-    "CloseDate": "2017-01-01",
+    "CloseDate": "2016-12-21",
     "Type": "New",
     "member_type__c": "[PREMIUM CONSORTIUM MEMBER ID]",
     "Membership_Start_Date__c": "2017-01-01",

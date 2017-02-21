@@ -114,7 +114,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         });
         classMap.register();
     }
-    
+
     private void registerOpportunityMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Opportunity, JSONObject> classMap = mapperFactory.classMap(Opportunity.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
@@ -124,6 +124,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("type", "Type");
         classMap.field("membershipStartDate", "Membership_Start_Date__c");
         classMap.field("membershipEndDate", "Membership_End_Date__c");
+        classMap.field("consortiumLeadId", "Consortia_Lead__c");
         classMap.register();
     }
 

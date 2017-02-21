@@ -126,13 +126,14 @@ public class SalesForceAdapterTest {
     public void testCreateOpportunityFromSalesForceRecord() throws IOException, JSONException {
         String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_opportunities_list.json"));
         JSONArray inputArray = new JSONArray(inputString);
-        Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(0));
-        assertEquals("[ORG1 ACCOUNT ID]", opportunity.getTargetAccountId());
-        assertEquals("Agreement Signed", opportunity.getStageName());
-        assertEquals("2015-12-21", opportunity.getCloseDate());
-        assertEquals("National Consortium", opportunity.getType());
+        Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(1));
+        assertEquals("[ORG2 ACCOUNT ID]", opportunity.getTargetAccountId());
+        assertEquals("Invoice Paid", opportunity.getStageName());
+        assertEquals("2016-12-21", opportunity.getCloseDate());
+        assertEquals("New", opportunity.getType());
         assertEquals("2017-01-01", opportunity.getMembershipStartDate());
         assertEquals("2017-12-31", opportunity.getMembershipEndDate());
+        assertEquals("[ORG1 ACCOUNT ID]", opportunity.getConsortiumLeadId());
     }
 
     @Test

@@ -35,6 +35,7 @@ public class Opportunity implements Serializable {
     private String type;
     private String membershipStartDate;
     private String membershipEndDate;
+    private String consortiumLeadId;
 
     public String getId() {
         return id;
@@ -100,10 +101,19 @@ public class Opportunity implements Serializable {
         this.membershipEndDate = membershipEndDate;
     }
 
+    public String getConsortiumLeadId() {
+        return consortiumLeadId;
+    }
+
+    public void setConsortiumLeadId(String consortiumLeadId) {
+        this.consortiumLeadId = consortiumLeadId;
+    }
+
     @Override
     public String toString() {
         return "Opportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", stageName=" + stageName + ", closeDate=" + closeDate
-                + ", type=" + type + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + "]";
+                + ", type=" + type + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + ", consortiumLeadId="
+                + consortiumLeadId + "]";
     }
 
 }
