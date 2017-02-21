@@ -55,6 +55,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
@@ -818,4 +819,13 @@ public class BaseController {
 
         return securityQuestionsWithMessages;
     }
+
+    protected Map<String, String> generateSalesForceRoleMap() {
+        Map<String, String> roleMap = new HashMap<>();
+        for(ContactRoleType roleType : ContactRoleType.values()){
+            roleMap.put(roleType.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, roleType.name())));
+        }
+        return roleMap;
+    }
+    
 }

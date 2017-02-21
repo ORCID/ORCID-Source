@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(18));
-	requireAll(__webpack_require__(19));
-	requireAll(__webpack_require__(25));
-	requireAll(__webpack_require__(26));
-	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
+	requireAll(__webpack_require__(21));
+	requireAll(__webpack_require__(22));
 	requireAll(__webpack_require__(28));
-	requireAll(__webpack_require__(40));
+	requireAll(__webpack_require__(29));
+	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
+	requireAll(__webpack_require__(31));
+	requireAll(__webpack_require__(44));
 
 /***/ },
 /* 1 */
@@ -910,93 +910,6 @@
 	    return serv; 
 	}]);
 
-	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
-	    var serv = {
-	        membersList: null,
-	        memberDetails: {},
-	        currentMemberDetails: null,
-	        consortiaList: null,
-	        getMembersList: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/members/members.json',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.membersList = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with members list");
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getDetails: function(memberId, consortiumLeadId) {
-	            if(serv.memberDetails[memberId] == null){
-	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
-	                if(consortiumLeadId != null){
-	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
-	                }
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.memberDetails[memberId] = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getCurrentMemberDetailsBySlug: function(memberSlug) {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.currentMemberDetails = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details by slug");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getConsortiaList: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/consortia/consortia.json',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.consortiaList = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with consortia list");
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getMemberPageUrl: function(slug) {
-	            return orcidVar.baseUri + '/members/' + slug;
-	        }
-	    };
-
-	    return serv; 
-	}]);
-
 	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
 	    return {
 	          clearFilters : function ($scope){
@@ -1567,8 +1480,7 @@
 	            data: angular.toJson($scope.deprecateProfilePojo),
 	            contentType: 'application/json;charset=UTF-8',
 	            dataType: 'json',
-	            success: function(data) {
-	                $scope.getDeprecateProfile();
+	            success: function(data) {                
 	                emailSrvc.getEmails(function(emailData) {
 	                    $rootScope.$broadcast('rebuildEmails', emailData);
 	                });
@@ -1577,6 +1489,7 @@
 	                    escKey:false,
 	                    overlayClose:true,
 	                    close: '',
+	                    onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
 	                    });
 	                $scope.$apply();
 	                $.colorbox.resize();
@@ -7328,79 +7241,6 @@
 	    
 	}]);
 
-	angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    $scope.displayMoreDetails = {};
-	    
-	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-	        membersListSrvc.getDetails(memberId, consortiumLeadId);
-	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-	    }
-	    
-	    //render html from salesforce data
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	    //create alphabetical list for filter
-	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-	    $scope.alphabet = alphaStr.toUpperCase().split("");
-	    $scope.activeLetter = '';
-	    $scope.activateLetter = function(letter) {
-	      $scope.activeLetter = letter
-	    };
-	    
-	    //clear filters 
-	    $scope.clearFilters = function(){
-	        return clearMemberListFilterSrvc.clearFilters($scope);
-	    }
-	        
-	    // populate the members feed
-	    membersListSrvc.getMembersList();
-	    
-	}]);
-
-	angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	}]);
-
-	angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    $scope.displayMoreDetails = {};
-	    
-	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-	        membersListSrvc.getDetails(memberId, consortiumLeadId);
-	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-	    }
-	    
-	    //render html from salesforce data
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	    //create alphabetical list for filter
-	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-	    $scope.alphabet = alphaStr.toUpperCase().split("");
-	    $scope.activeLetter = '';
-	    $scope.activateLetter = function(letter) {
-	      $scope.activeLetter = letter
-	    };
-	    
-	    //clear filters
-	    $scope.clearFilters = function(){
-	        return clearMemberListFilterSrvc.clearFilters($scope);
-	    }
-	        
-	    // populate the consortia feed
-	    membersListSrvc.getConsortiaList();    
-	    
-	}]);
-
 	angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
 	    $scope.emailSrvc = emailSrvc;
 	    $scope.showEdit = false;
@@ -8148,20 +7988,23 @@
 
 	var map = {
 		"./BiographyCtrl.js": 3,
-		"./CountryCtrl.js": 4,
-		"./EmailEditCtrl.js": 5,
-		"./FundingCtrl.js": 6,
-		"./KeywordsCtrl.js": 7,
-		"./NameCtrl.js": 8,
-		"./NotificationAlertsCtrl.js": 9,
-		"./NotificationsCountCtrl.js": 10,
-		"./NotificationsCtrl.js": 11,
-		"./OtherNamesCtrl.js": 12,
-		"./RequestPasswordResetCtrl.js": 13,
-		"./externalConsortiumCtrl.js": 14,
-		"./languageCtrl.js": 15,
-		"./websitesCtrl.js": 16,
-		"./workCtrl.js": 17
+		"./ConsortiaListController.js": 4,
+		"./CountryCtrl.js": 5,
+		"./EmailEditCtrl.js": 6,
+		"./FundingCtrl.js": 7,
+		"./KeywordsCtrl.js": 8,
+		"./MemberPageController.js": 9,
+		"./MembersListController.js": 10,
+		"./NameCtrl.js": 11,
+		"./NotificationAlertsCtrl.js": 12,
+		"./NotificationsCountCtrl.js": 13,
+		"./NotificationsCtrl.js": 14,
+		"./OtherNamesCtrl.js": 15,
+		"./RequestPasswordResetCtrl.js": 16,
+		"./externalConsortiumCtrl.js": 17,
+		"./languageCtrl.js": 18,
+		"./websitesCtrl.js": 19,
+		"./workCtrl.js": 20
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8298,6 +8141,42 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    $scope.displayMoreDetails = {};
+	    
+	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+	        membersListSrvc.getDetails(memberId, consortiumLeadId);
+	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+	    }
+	    
+	    //render html from salesforce data
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	    //create alphabetical list for filter
+	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+	    $scope.alphabet = alphaStr.toUpperCase().split("");
+	    $scope.activeLetter = '';
+	    $scope.activateLetter = function(letter) {
+	      $scope.activeLetter = letter
+	    };
+	    
+	    //clear filters
+	    $scope.clearFilters = function(){
+	        return clearMemberListFilterSrvc.clearFilters($scope);
+	    }
+	        
+	    // populate the consortia feed
+	    membersListSrvc.getConsortiaList();    
+	    
+	}]);
+
+/***/ },
+/* 5 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -8561,7 +8440,7 @@
 	}]);
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
@@ -8759,7 +8638,7 @@
 	}]);
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/**
@@ -9324,7 +9203,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -9570,7 +9449,56 @@
 	}]);
 
 /***/ },
-/* 8 */
+/* 9 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	}]);
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    $scope.displayMoreDetails = {};
+	    
+	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+	        membersListSrvc.getDetails(memberId, consortiumLeadId);
+	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+	    }
+	    
+	    //render html from salesforce data
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	    //create alphabetical list for filter
+	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+	    $scope.alphabet = alphaStr.toUpperCase().split("");
+	    $scope.activeLetter = '';
+	    $scope.activateLetter = function(letter) {
+	      $scope.activeLetter = letter
+	    };
+	    
+	    //clear filters 
+	    $scope.clearFilters = function(){
+	        return clearMemberListFilterSrvc.clearFilters($scope);
+	    }
+	        
+	    // populate the members feed
+	    membersListSrvc.getMembersList();
+	    
+	}]);
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
@@ -9629,7 +9557,7 @@
 	}]);
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9639,7 +9567,7 @@
 	}]);
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports) {
 
 	// Controller to show alert for unread notifications
@@ -9658,7 +9586,7 @@
 	}]);
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9692,7 +9620,7 @@
 	}]);
 
 /***/ },
-/* 12 */
+/* 15 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
@@ -9922,7 +9850,7 @@
 	}]);
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
@@ -9977,7 +9905,7 @@
 	}]);
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/**
@@ -10333,7 +10261,7 @@
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -10515,7 +10443,7 @@
 	}]);
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10790,7 +10718,7 @@
 	}]);
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11696,7 +11624,7 @@
 	);
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11705,19 +11633,19 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 18;
+	webpackContext.id = 21;
 
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 20,
-		"./focusMe.js": 21,
-		"./modalEmailUnVerified.js": 22,
-		"./ngEnter.js": 23,
-		"./ngEnterSubmit.js": 24
+		"./fnForm.js": 23,
+		"./focusMe.js": 24,
+		"./modalEmailUnVerified.js": 25,
+		"./ngEnter.js": 26,
+		"./ngEnterSubmit.js": 27
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11730,11 +11658,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 19;
+	webpackContext.id = 22;
 
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports) {
 
 	/*
@@ -11770,7 +11698,7 @@
 	});
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11794,7 +11722,7 @@
 	);
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/*
@@ -11901,7 +11829,7 @@
 	);
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/*
@@ -11923,7 +11851,7 @@
 	});
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/*
@@ -11945,7 +11873,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11954,15 +11882,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 25;
+	webpackContext.id = 28;
 
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 27
+		"./ui.multiselect.js": 30
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11975,11 +11903,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 26;
+	webpackContext.id = 29;
 
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -12260,21 +12188,22 @@
 	}]);
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 29,
-		"./affiliationsSrvc.js": 30,
-		"./bioBulkSrvc.js": 31,
-		"./commonSrvc.js": 32,
-		"./fundingSrvc.js": 33,
-		"./groupedActivitiesService.js": 34,
-		"./groupedActivitiesUtil.js": 35,
-		"./initialConfigService.js": 36,
-		"./notificationsSrvc.js": 37,
-		"./utilsService.js": 38,
-		"./workspaceSrvc.js": 39
+		"./actBulkSrvc.js": 32,
+		"./affiliationsSrvc.js": 33,
+		"./bioBulkSrvc.js": 34,
+		"./commonSrvc.js": 35,
+		"./fundingSrvc.js": 36,
+		"./groupedActivitiesService.js": 37,
+		"./groupedActivitiesUtil.js": 38,
+		"./initialConfigService.js": 39,
+		"./membersListSrvc.js": 40,
+		"./notificationsSrvc.js": 41,
+		"./utilsService.js": 42,
+		"./workspaceSrvc.js": 43
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12287,11 +12216,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 28;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12310,7 +12239,7 @@
 	}]);
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12439,7 +12368,7 @@
 	}]);
 
 /***/ },
-/* 31 */
+/* 34 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12459,7 +12388,7 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12524,7 +12453,7 @@
 	}]);
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -12735,7 +12664,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12853,7 +12782,7 @@
 
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/*
@@ -12908,7 +12837,7 @@
 	*/
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12935,7 +12864,121 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 40 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+	    var serv = {
+	        membersList: null,
+	        memberDetails: {},
+	        currentMemberDetails: null,
+	        consortiaList: null,
+	        communityTypes: {},
+	        getMembersList: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/members/members.json',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.membersList = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with members list");
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getDetails: function(memberId, consortiumLeadId) {
+	            if(serv.memberDetails[memberId] == null){
+	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
+	                if(consortiumLeadId != null){
+	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
+	                }
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.memberDetails[memberId] = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getCurrentMemberDetailsBySlug: function(memberSlug) {
+	            if(serv.currentMemberDetails == null){
+	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.currentMemberDetails = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details by slug");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getCommunityTypes: function() {
+	            if(serv.currentMemberDetails == null){
+	                var url = getBaseUri() + '/members/communityTypes.json';
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        for(var i in data){
+	                            serv.communityTypes[i] = data[i];
+	                        }
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with community types");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getConsortiaList: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/consortia/consortia.json',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.consortiaList = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with consortia list");
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getMemberPageUrl: function(slug) {
+	            return orcidVar.baseUri + '/members/' + slug;
+	        }
+	    };
+	    serv.getCommunityTypes();
+	    return serv; 
+	}]);
+
+
+/***/ },
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13178,7 +13221,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13297,7 +13340,7 @@
 	);
 
 /***/ },
-/* 39 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13352,7 +13395,7 @@
 	}]);
 
 /***/ },
-/* 40 */
+/* 44 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13361,7 +13404,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 40;
+	webpackContext.id = 44;
 
 
 /***/ }

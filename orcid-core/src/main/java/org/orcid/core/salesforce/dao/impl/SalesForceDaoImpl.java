@@ -38,6 +38,7 @@ import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.sun.jersey.api.client.Client;
@@ -45,9 +46,10 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 
-public class SalesForceDaoImpl implements SalesForceDao {
+public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceDaoImpl.class);
 
@@ -68,6 +70,9 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://cs10.salesforce.com}")
     private String apiBaseUrl;
+
+    @Value("${org.orcid.core.salesForce.clientLoggingEnabled:false}")
+    private boolean clientLoggingEnabled;
 
     @Resource
     private SalesForceAdapter salesForceAdapter;
@@ -572,6 +577,13 @@ public class SalesForceDaoImpl implements SalesForceDao {
         if (response.getStatus() == 401) {
             throw new SalesForceUnauthorizedException("Unauthorized reponse from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body= " + response.getEntity(String.class));
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (clientLoggingEnabled) {
+            client.addFilter(new LoggingFilter());
         }
     }
 

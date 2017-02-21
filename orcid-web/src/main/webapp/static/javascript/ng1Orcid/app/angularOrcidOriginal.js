@@ -843,93 +843,6 @@ angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', fun
     return serv; 
 }]);
 
-angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
-    var serv = {
-        membersList: null,
-        memberDetails: {},
-        currentMemberDetails: null,
-        consortiaList: null,
-        getMembersList: function() {
-            $.ajax({
-                url: getBaseUri() + '/members/members.json',
-                dataType: 'json',
-                cache: true,
-                success: function(data) {
-                    serv.membersList = data;
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                // something bad is happening!
-                console.log("error with members list");
-                serv.feed = [];
-                $rootScope.$apply();
-            });
-        },
-        getDetails: function(memberId, consortiumLeadId) {
-            if(serv.memberDetails[memberId] == null){
-                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
-                if(consortiumLeadId != null){
-                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
-                }
-                $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    cache: true,
-                    success: function(data) {
-                        serv.memberDetails[memberId] = data;
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with member details");
-                    serv.feed = [];
-                    $rootScope.$apply();
-                });
-            }
-        },
-        getCurrentMemberDetailsBySlug: function(memberSlug) {
-            if(serv.currentMemberDetails == null){
-                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-                $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    cache: true,
-                    success: function(data) {
-                        serv.currentMemberDetails = data;
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with member details by slug");
-                    serv.feed = [];
-                    $rootScope.$apply();
-                });
-            }
-        },
-        getConsortiaList: function() {
-            $.ajax({
-                url: getBaseUri() + '/consortia/consortia.json',
-                dataType: 'json',
-                cache: true,
-                success: function(data) {
-                    serv.consortiaList = data;
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                // something bad is happening!
-                console.log("error with consortia list");
-                serv.feed = [];
-                $rootScope.$apply();
-            });
-        },
-        getMemberPageUrl: function(slug) {
-            return orcidVar.baseUri + '/members/' + slug;
-        }
-    };
-
-    return serv; 
-}]);
-
 angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
     return {
           clearFilters : function ($scope){
@@ -1500,8 +1413,7 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
             data: angular.toJson($scope.deprecateProfilePojo),
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            success: function(data) {
-                $scope.getDeprecateProfile();
+            success: function(data) {                
                 emailSrvc.getEmails(function(emailData) {
                     $rootScope.$broadcast('rebuildEmails', emailData);
                 });
@@ -1510,6 +1422,7 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
                     escKey:false,
                     overlayClose:true,
                     close: '',
+                    onClosed: function(){ $scope.deprecateProfilePojo = null; $scope.$apply(); },
                     });
                 $scope.$apply();
                 $.colorbox.resize();
@@ -7258,79 +7171,6 @@ angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoS
             $scope.loadedFeed = true;
         }
     });
-    
-}]);
-
-angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-    $scope.membersListSrvc = membersListSrvc;
-    $scope.displayMoreDetails = {};
-    
-    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-        membersListSrvc.getDetails(memberId, consortiumLeadId);
-        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-    }
-    
-    //render html from salesforce data
-    $scope.renderHtml = function (htmlCode) {
-        return $sce.trustAsHtml(htmlCode);
-    };
-    
-    //create alphabetical list for filter
-    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-    $scope.alphabet = alphaStr.toUpperCase().split("");
-    $scope.activeLetter = '';
-    $scope.activateLetter = function(letter) {
-      $scope.activeLetter = letter
-    };
-    
-    //clear filters 
-    $scope.clearFilters = function(){
-        return clearMemberListFilterSrvc.clearFilters($scope);
-    }
-        
-    // populate the members feed
-    membersListSrvc.getMembersList();
-    
-}]);
-
-angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
-    $scope.membersListSrvc = membersListSrvc;
-    
-    $scope.renderHtml = function (htmlCode) {
-        return $sce.trustAsHtml(htmlCode);
-    };
-    
-}]);
-
-angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-    $scope.membersListSrvc = membersListSrvc;
-    $scope.displayMoreDetails = {};
-    
-    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-        membersListSrvc.getDetails(memberId, consortiumLeadId);
-        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-    }
-    
-    //render html from salesforce data
-    $scope.renderHtml = function (htmlCode) {
-        return $sce.trustAsHtml(htmlCode);
-    };
-    
-    //create alphabetical list for filter
-    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-    $scope.alphabet = alphaStr.toUpperCase().split("");
-    $scope.activeLetter = '';
-    $scope.activateLetter = function(letter) {
-      $scope.activeLetter = letter
-    };
-    
-    //clear filters
-    $scope.clearFilters = function(){
-        return clearMemberListFilterSrvc.clearFilters($scope);
-    }
-        
-    // populate the consortia feed
-    membersListSrvc.getConsortiaList();    
     
 }]);
 
