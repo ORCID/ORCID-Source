@@ -44,6 +44,7 @@ angular.element(function() {
  *************************************************/
 
 //Dependencie: removeBadContributors, dw object. Can't move yet
+/*
 angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
@@ -784,8 +785,6 @@ angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
     return serv; 
 });
 
-
-
 angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     var widgetSrvc = {
         locale: 'en',
@@ -842,7 +841,7 @@ angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', fun
     serv.getDiscoFeed();
     return serv; 
 }]);
-
+*/
 angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
