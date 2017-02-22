@@ -59,6 +59,7 @@ a:focus {
     outline: thin dotted #333;
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
+    text-decoration: none;
 }
 
 a:hover,
@@ -6487,18 +6488,23 @@ a:hover .mozilla-badge {
     text-align: center;
     font-size: 20px;
     color: #494A4C;
+    margin-bottom: 20px;
 }
 
 .login #login-reset {
     margin-top: 5px;
 }
 
+/* Reset password */
+.reset-password .controls{
+    margin-bottom: 15px;
+}
 
 /* Social Login */
 
 .login .social-login {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .login .social-login .title {
