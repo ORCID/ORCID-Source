@@ -64,7 +64,7 @@ import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.pojo.PasswordResetRequest;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -122,7 +122,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     @Test
     public void testPasswordResetUserNotFound() {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
-        PasswordResetRequest resetRequest = new PasswordResetRequest();
+        EmailRequest resetRequest = new EmailRequest();
         resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
@@ -141,7 +141,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         deactivatedProfile.setOrcidHistory(orcidHistory);
         
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
-        PasswordResetRequest resetRequest = new PasswordResetRequest();
+        EmailRequest resetRequest = new EmailRequest();
         resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());

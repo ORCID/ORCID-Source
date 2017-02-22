@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-public class PasswordResetRequest implements ErrorsInterface {
+public class EmailRequest implements ErrorsInterface {
     
     private List<String> errors;
     

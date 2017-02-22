@@ -43,7 +43,7 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$c
                 $scope.$apply();
             }
         }).fail(function(){
-            console.log("error validating validate-reset-password.json");
+            console.log("error posting to /reset-password.json");
         });  
     }
     

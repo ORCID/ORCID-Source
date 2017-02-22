@@ -18,12 +18,12 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
@@ -33,10 +33,10 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -52,9 +52,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -220,42 +217,46 @@ public class ClaimController extends BaseController {
     @RequestMapping(value = "/resend-claim", method = RequestMethod.GET)
     public ModelAndView viewResendClaimEmail(@RequestParam(value = "email", required = false) String email) {
         ModelAndView mav = new ModelAndView("resend_claim");
-        EmailAddressForm emailAddressForm = new EmailAddressForm();
-        emailAddressForm.setUserEmailAddress(email);
-        mav.addObject(emailAddressForm);
         return mav;
     }
 
-    @RequestMapping(value = "/resend-claim", method = RequestMethod.POST)
-    public ModelAndView resendClaimEmail(HttpServletRequest request, @ModelAttribute @Valid EmailAddressForm emailAddressForm, BindingResult bindingResult) {
-        String userEmailAddress = emailAddressForm.getUserEmailAddress();
-        ModelAndView mav = new ModelAndView("resend_claim");
-        // if the email doesn't exist, or any other form errors.. don't bother
-        // hitting db
-        if (bindingResult.hasErrors()) {
-            mav.addAllObjects(bindingResult.getModel());
-            return mav;
+    @RequestMapping(value = "/resend-claim.json", method = RequestMethod.GET)
+    public @ResponseBody EmailRequest getResendClaimRequest() {
+        return new EmailRequest();
+    }
+
+    @RequestMapping(value = "/validate-resend-claim.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest validateResendClaimRequest(@RequestBody EmailRequest resendClaimRequest) {
+        List<String> errors = new ArrayList<>();
+        resendClaimRequest.setErrors(errors);
+        if (!validateEmailAddress(resendClaimRequest.getEmail())) {
+            errors.add(getMessage("Email.resendClaim.invalidEmail"));
+        }
+        return resendClaimRequest;
+    }
+
+    @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest resendClaimEmail(@RequestBody EmailRequest resendClaimRequest) {
+        String email = resendClaimRequest.getEmail();
+        List<String> errors = new ArrayList<>();
+        resendClaimRequest.setErrors(errors);
+
+        if (!emailManager.emailExists(email)) {
+            errors.add(getMessage("orcid.frontend.reset.password.email_not_found", email));
+            return resendClaimRequest;
         }
 
-        // if the email can't be found on the system, then add to errors
-        if (!emailManager.emailExists(userEmailAddress)) {
-            String[] codes = { "orcid.frontend.reset.password.email_not_found" };
-            String[] args = { userEmailAddress };
-            bindingResult.addError(new FieldError("userEmailAddress", "userEmailAddress", userEmailAddress, false, codes, args, "Email not found"));
-            mav.addAllObjects(bindingResult.getModel());
-            return mav;
-        } else {
-            String orcid = emailManager.findOrcidIdByEmail(userEmailAddress);
-            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-            if (profile != null && profile.getClaimed()) {
-                mav.addObject("alreadyClaimed", true);
-                return mav;
-            } else {
-                notificationManager.sendApiRecordCreationEmail(userEmailAddress, orcid);
-                mav.addObject("claimResendSuccessful", true);
-                return mav;
-            }
+        String orcid = emailManager.findOrcidIdByEmail(email);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+
+        if (profile != null && profile.getClaimed()) {
+            errors.add(getMessage("orcid.frontend.security.already_claimed_with_link"));
+            return resendClaimRequest;
         }
+
+        notificationManager.sendApiRecordCreationEmail(email, orcid);
+        resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
+        return resendClaimRequest;
     }
 
     private void automaticallyLogin(HttpServletRequest request, String password, String orcid) {
