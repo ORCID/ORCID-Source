@@ -95,6 +95,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public List<Member> retrieveMembersByWebsite(String websiteUrl) {
+        return retry(accessToken -> retrieveMembersByWebsiteFromSalesForce(accessToken, websiteUrl));
+    }
+
+    @Override
     public Consortium retrieveConsortium(String consortiumId) {
         return retry(accessToken -> retrieveConsortiumFromSalesForce(accessToken, consortiumId));
     }
@@ -178,6 +183,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+
+    private String escapeStringInput(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replace("'", "\\'");
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {
@@ -300,6 +312,23 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      *             expired.
      * 
      */
+    private List<Member> retrieveMembersByWebsiteFromSalesForce(String accessToken, String websiteUrl) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of members from SalesForce by website");
+        WebResource resource = createQueryResource(
+                String.format("SELECT Account.Id, Account.Website from Account WHERE Active_Member__c=TRUE and Account.Website = '%s'", escapeStringInput(websiteUrl)));
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting members by website from SalesForce");
+        return salesForceAdapter.createMembersListFromJson(result);
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
     private List<Member> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of consortia from SalesForce");
         WebResource resource = createQueryResource(
@@ -349,16 +378,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         if (consortiumLeadId == null) {
             return null;
         }
-        WebResource resource = createParentOrgResource(consortiumLeadId);
+        WebResource resource = createQueryResource("SELECT Public_Display_Name__c from Account WHERE Id='%s'", consortiumLeadId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting parent org name from SalesForce");
         return salesForceAdapter.extractParentOrgNameFromJson(result);
-    }
-
-    private WebResource createParentOrgResource(String consortiumLeadId) {
-        WebResource resource = createQueryResource("SELECT Public_Display_Name__c from Account WHERE Id='%s'", consortiumLeadId);
-        return resource;
     }
 
     /**

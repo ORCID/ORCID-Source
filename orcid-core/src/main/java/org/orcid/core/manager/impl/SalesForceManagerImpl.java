@@ -179,8 +179,14 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public String createMember(Member member) {
-        String accountId = salesForceDao.createMember(member);
         Opportunity opportunity = new Opportunity();
+        Optional<Member> firstExistingMember = salesForceDao.retrieveMembersByWebsite(member.getWebsiteUrl().toString()).stream().findFirst();
+        String accountId = null;
+        if (firstExistingMember.isPresent()) {
+            accountId = firstExistingMember.get().getId();
+        } else {
+            accountId = salesForceDao.createMember(member);
+        }
         opportunity.setTargetAccountId(accountId);
         opportunity.setConsortiumLeadId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
         opportunity.setType(OPPORTUNITY_TYPE);

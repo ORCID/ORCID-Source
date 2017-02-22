@@ -37,6 +37,8 @@ public interface SalesForceDao {
     static final String TECH_LEAD_ROLE = "Tech Lead";
 
     List<Member> retrieveMembers();
+    
+    List<Member> retrieveMembersByWebsite(String websiteUrl);
 
     List<Member> retrieveConsortia();
 
