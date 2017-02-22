@@ -134,17 +134,50 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public String createContact(Contact contact) {
+        return retry(accessToken -> createContactInSalesForce(accessToken, contact));
+    }
+
+    @Override
+    public String createContactRole(ContactRole contact) {
+        return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
+    }
+
+    @Override
+    public void removeContactRole(String contactRoleId) {
+        retryConsumer(accessToken -> removeContactRoleInSalesForce(accessToken, contactRoleId));
+    }
+
+    @Override
+    public String createMember(Member member) {
+        return retry(accessToken -> createMemberInSalesForce(accessToken, member));
+    }
+
+    @Override
+    public void updateMember(Member member) {
+        retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
+    }
+
+    @Override
+    public String createOpportunity(Opportunity opportunity) {
+        return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
+    }
+
+    @Override
+    public String getAccessToken() {
+        if (accessToken == null) {
+            accessToken = getFreshAccessToken();
+        }
+        return accessToken;
+    }
+
+    @Override
     public String validateSalesForceId(String salesForceId) {
         if (!salesForceId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
         return salesForceId;
-    }
-
-    @Override
-    public String createContact(Contact contact) {
-        return retry(accessToken -> createContactInSalesForce(accessToken, contact));
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {
@@ -159,11 +192,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return result.optString("id");
     }
 
-    @Override
-    public String createContactRole(ContactRole contact) {
-        return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
-    }
-
     private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
         LOGGER.info("About to create contact role in SalesForce");
         validateSalesForceId(contactRole.getAccountId());
@@ -176,11 +204,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return result.optString("id");
     }
 
-    @Override
-    public void removeContactRole(String contactRoleId) {
-        retryConsumer(accessToken -> removeContactRoleInSalesForce(accessToken, contactRoleId));
-    }
-
     private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
         LOGGER.info("About to remove contact role in SalesForce");
         validateSalesForceId(contactRoleId);
@@ -188,11 +211,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         ClientResponse response = doDeleteRequest(resource, accessToken);
         checkAuthorization(response);
         checkResponse(response, 204, "Error removing contact role in SalesForce");
-    }
-
-    @Override
-    public String createMember(Member member) {
-        return retry(accessToken -> createMemberInSalesForce(accessToken, member));
     }
 
     private String createMemberInSalesForce(String accessToken, Member member) {
@@ -203,11 +221,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating member in SalesForce");
         return result.optString("id");
-    }
-
-    @Override
-    public void updateMember(Member member) {
-        retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
     }
 
     private void updateMemberInSalesForce(String accessToken, Member member) {
@@ -222,11 +235,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         checkResponse(response, 204, "Error updating member in SalesForce");
         return;
-    }
-
-    @Override
-    public String createOpportunity(Opportunity opportunity) {
-        return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
     }
 
     private String createOpportunityInSalesForce(String accessToken, Opportunity member) {
@@ -501,14 +509,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             LOGGER.debug("Unauthorized to access SalesForce, trying consumer again.", e);
             consumer.accept(getFreshAccessToken());
         }
-    }
-
-    @Override
-    public String getAccessToken() {
-        if (accessToken == null) {
-            accessToken = getFreshAccessToken();
-        }
-        return accessToken;
     }
 
     private String getFreshAccessToken() {
