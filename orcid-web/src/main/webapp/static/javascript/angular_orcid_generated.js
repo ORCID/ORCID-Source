@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(22));
-	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(29));
-	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(17));
+	requireAll(__webpack_require__(18));
+	requireAll(__webpack_require__(24));
+	requireAll(__webpack_require__(25));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(32));
-	requireAll(__webpack_require__(45));
+	requireAll(__webpack_require__(27));
+	requireAll(__webpack_require__(39));
 
 /***/ },
 /* 1 */
@@ -7988,24 +7988,24 @@
 
 	var map = {
 		"./BiographyCtrl.js": 3,
-		"./ConsortiaListController.js": 4,
-		"./CountryCtrl.js": 5,
-		"./EmailEditCtrl.js": 6,
-		"./FundingCtrl.js": 7,
-		"./KeywordsCtrl.js": 8,
-		"./MemberPageController.js": 9,
-		"./MembersListController.js": 10,
-		"./NameCtrl.js": 11,
-		"./NotificationAlertsCtrl.js": 12,
-		"./NotificationsCountCtrl.js": 13,
-		"./NotificationsCtrl.js": 14,
-		"./OtherNamesCtrl.js": 15,
-		"./RequestPasswordResetCtrl.js": 16,
-		"./RequestResendClaimCtrl.js": 17,
-		"./externalConsortiumCtrl.js": 18,
-		"./languageCtrl.js": 19,
-		"./websitesCtrl.js": 20,
-		"./workCtrl.js": 21
+		"./ConsortiaListController.js": 40,
+		"./CountryCtrl.js": 4,
+		"./EmailEditCtrl.js": 5,
+		"./FundingCtrl.js": 6,
+		"./KeywordsCtrl.js": 7,
+		"./MemberPageController.js": 41,
+		"./MembersListController.js": 42,
+		"./NameCtrl.js": 8,
+		"./NotificationAlertsCtrl.js": 9,
+		"./NotificationsCountCtrl.js": 10,
+		"./NotificationsCtrl.js": 11,
+		"./OtherNamesCtrl.js": 12,
+		"./RequestPasswordResetCtrl.js": 43,
+		"./RequestResendClaimCtrl.js": 44,
+		"./externalConsortiumCtrl.js": 13,
+		"./languageCtrl.js": 14,
+		"./websitesCtrl.js": 15,
+		"./workCtrl.js": 16
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8142,42 +8142,6 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    $scope.displayMoreDetails = {};
-	    
-	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-	        membersListSrvc.getDetails(memberId, consortiumLeadId);
-	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-	    }
-	    
-	    //render html from salesforce data
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	    //create alphabetical list for filter
-	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-	    $scope.alphabet = alphaStr.toUpperCase().split("");
-	    $scope.activeLetter = '';
-	    $scope.activateLetter = function(letter) {
-	      $scope.activeLetter = letter
-	    };
-	    
-	    //clear filters
-	    $scope.clearFilters = function(){
-	        return clearMemberListFilterSrvc.clearFilters($scope);
-	    }
-	        
-	    // populate the consortia feed
-	    membersListSrvc.getConsortiaList();    
-	    
-	}]);
-
-/***/ },
-/* 5 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -8441,7 +8405,7 @@
 	}]);
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
@@ -8639,7 +8603,7 @@
 	}]);
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	/**
@@ -9204,7 +9168,7 @@
 	}]);
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -9450,56 +9414,7 @@
 	}]);
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	}]);
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
-	    $scope.membersListSrvc = membersListSrvc;
-	    $scope.displayMoreDetails = {};
-	    
-	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
-	        membersListSrvc.getDetails(memberId, consortiumLeadId);
-	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
-	    }
-	    
-	    //render html from salesforce data
-	    $scope.renderHtml = function (htmlCode) {
-	        return $sce.trustAsHtml(htmlCode);
-	    };
-	    
-	    //create alphabetical list for filter
-	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
-	    $scope.alphabet = alphaStr.toUpperCase().split("");
-	    $scope.activeLetter = '';
-	    $scope.activateLetter = function(letter) {
-	      $scope.activeLetter = letter
-	    };
-	    
-	    //clear filters 
-	    $scope.clearFilters = function(){
-	        return clearMemberListFilterSrvc.clearFilters($scope);
-	    }
-	        
-	    // populate the members feed
-	    membersListSrvc.getMembersList();
-	    
-	}]);
-
-/***/ },
-/* 11 */
+/* 8 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
@@ -9558,7 +9473,7 @@
 	}]);
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9568,7 +9483,7 @@
 	}]);
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports) {
 
 	// Controller to show alert for unread notifications
@@ -9587,7 +9502,7 @@
 	}]);
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports) {
 
 	// Controller for notifications
@@ -9621,7 +9536,7 @@
 	}]);
 
 /***/ },
-/* 15 */
+/* 12 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
@@ -9851,129 +9766,7 @@
 	}]);
 
 /***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
-	    
-	    $scope.getRequestResetPassword = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/reset-password.json',
-	            dataType: 'json',
-	            success: function(data) {
-	                $scope.requestResetPassword = data;
-	                $scope.$apply();
-	            }
-	        }).fail(function(){
-	            console.log("error getting reset-password.json");
-	        });  
-	    };
-	    
-	    $scope.validateRequestPasswordReset = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/validate-reset-password.json',
-	            dataType: 'json',
-	            type: 'POST',
-	            data:  angular.toJson($scope.requestResetPassword),
-	            contentType: 'application/json;charset=UTF-8',
-	            success: function(data) {
-	                $scope.requestResetPassword = data;
-	                $scope.requestResetPassword.successMessage = null;
-	                $scope.$apply();
-	            }
-	        }).fail(function() {
-	            console.log("error validating validate-reset-password.json");
-	        });  
-	    };
-	    
-	    $scope.postPasswordResetRequest = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/reset-password.json',
-	            dataType: 'json',
-	            type: 'POST',
-	            data:  angular.toJson($scope.requestResetPassword),
-	            contentType: 'application/json;charset=UTF-8',
-	            success: function(data) {
-	                $scope.requestResetPassword = data;
-	                $scope.requestResetPassword.email = "";
-	                $scope.$apply();
-	            }
-	        }).fail(function(){
-	            console.log("error posting to /reset-password.json");
-	        });  
-	    }
-	    
-	}]);
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('RequestResendClaimCtrl', ['$scope', '$compile', function RequestResendClaimCtrl($scope, $compile) {
-	    
-	    $scope.getRequestResendClaim = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/resend-claim.json',
-	            dataType: 'json',
-	            success: function(data) {
-	                $scope.requestResendClaim = data;
-	                $scope.requestResendClaim.email = getParameterByName("email");
-	                $scope.$apply();
-	            }
-	        }).fail(function(e) {
-	            console.log("error getting resend-claim.json");
-	            logAjaxError(e);
-	        });  
-	    };
-	    
-	    $scope.validateRequestResendClaim = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/validate-resend-claim.json',
-	            dataType: 'json',
-	            type: 'POST',
-	            data:  angular.toJson($scope.requestResendClaim),
-	            contentType: 'application/json;charset=UTF-8',
-	            success: function(data) {
-	                $scope.requestResendClaim = data;
-	                $scope.requestResendClaim.successMessage = null;
-	                $scope.$apply();
-	            }
-	        }).fail(function() {
-	            console.log("error validating validate-resend-claim.json");
-	        });  
-	    };
-	    
-	    $scope.postResendClaimRequest = function() {
-	        $.ajax({
-	            url: getBaseUri() + '/resend-claim.json',
-	            dataType: 'json',
-	            type: 'POST',
-	            data:  angular.toJson($scope.requestResendClaim),
-	            contentType: 'application/json;charset=UTF-8',
-	            success: function(data) {
-	                $scope.requestResendClaim = data;
-	                $scope.requestResendClaim.email = "";
-	                $scope.$apply();
-	            }
-	        }).fail(function(){
-	            console.log("error posting to /resend-claim.json");
-	        });  
-	    }
-	    
-	    var getParameterByName = function(name) {
-	        var url = window.location.href;
-	        name = name.replace(/[\[\]]/g, "\\$&");
-	        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-	            results = regex.exec(url);
-	        if (!results) return null;
-	        if (!results[2]) return '';
-	        return decodeURIComponent(results[2].replace(/\+/g, " "));
-	    };
-	    
-	}]);
-
-/***/ },
-/* 18 */
+/* 13 */
 /***/ function(module, exports) {
 
 	/**
@@ -10329,7 +10122,7 @@
 
 
 /***/ },
-/* 19 */
+/* 14 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -10511,7 +10304,7 @@
 	}]);
 
 /***/ },
-/* 20 */
+/* 15 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -10786,7 +10579,7 @@
 	}]);
 
 /***/ },
-/* 21 */
+/* 16 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -11692,7 +11485,7 @@
 	);
 
 /***/ },
-/* 22 */
+/* 17 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11701,19 +11494,19 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 22;
+	webpackContext.id = 17;
 
 
 /***/ },
-/* 23 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 24,
-		"./focusMe.js": 25,
-		"./modalEmailUnVerified.js": 26,
-		"./ngEnter.js": 27,
-		"./ngEnterSubmit.js": 28
+		"./fnForm.js": 19,
+		"./focusMe.js": 20,
+		"./modalEmailUnVerified.js": 21,
+		"./ngEnter.js": 22,
+		"./ngEnterSubmit.js": 23
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11726,11 +11519,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 18;
 
 
 /***/ },
-/* 24 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/*
@@ -11766,7 +11559,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 20 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -11790,7 +11583,7 @@
 	);
 
 /***/ },
-/* 26 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/*
@@ -11897,7 +11690,7 @@
 	);
 
 /***/ },
-/* 27 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/*
@@ -11919,7 +11712,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 23 */
 /***/ function(module, exports) {
 
 	/*
@@ -11941,7 +11734,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 24 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11950,15 +11743,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 29;
+	webpackContext.id = 24;
 
 
 /***/ },
-/* 30 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 31
+		"./ui.multiselect.js": 26
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11971,11 +11764,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 25;
 
 
 /***/ },
-/* 31 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -12256,22 +12049,22 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 33,
-		"./affiliationsSrvc.js": 34,
-		"./bioBulkSrvc.js": 35,
-		"./commonSrvc.js": 36,
-		"./fundingSrvc.js": 37,
-		"./groupedActivitiesService.js": 38,
-		"./groupedActivitiesUtil.js": 39,
-		"./initialConfigService.js": 40,
-		"./membersListSrvc.js": 41,
-		"./notificationsSrvc.js": 42,
-		"./utilsService.js": 43,
-		"./workspaceSrvc.js": 44
+		"./actBulkSrvc.js": 28,
+		"./affiliationsSrvc.js": 29,
+		"./bioBulkSrvc.js": 30,
+		"./commonSrvc.js": 31,
+		"./fundingSrvc.js": 32,
+		"./groupedActivitiesService.js": 33,
+		"./groupedActivitiesUtil.js": 34,
+		"./initialConfigService.js": 35,
+		"./membersListSrvc.js": 45,
+		"./notificationsSrvc.js": 36,
+		"./utilsService.js": 37,
+		"./workspaceSrvc.js": 38
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12284,11 +12077,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 27;
 
 
 /***/ },
-/* 33 */
+/* 28 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12307,7 +12100,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 29 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12436,7 +12229,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 30 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12456,7 +12249,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 31 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12521,7 +12314,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/**
@@ -12732,7 +12525,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 33 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12850,7 +12643,7 @@
 
 
 /***/ },
-/* 39 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/*
@@ -12905,7 +12698,7 @@
 	*/
 
 /***/ },
-/* 40 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12932,121 +12725,7 @@
 	}]);
 
 /***/ },
-/* 41 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
-	    var serv = {
-	        membersList: null,
-	        memberDetails: {},
-	        currentMemberDetails: null,
-	        consortiaList: null,
-	        communityTypes: {},
-	        getMembersList: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/members/members.json',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.membersList = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with members list");
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getDetails: function(memberId, consortiumLeadId) {
-	            if(serv.memberDetails[memberId] == null){
-	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
-	                if(consortiumLeadId != null){
-	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
-	                }
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.memberDetails[memberId] = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getCurrentMemberDetailsBySlug: function(memberSlug) {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.currentMemberDetails = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details by slug");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getCommunityTypes: function() {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/communityTypes.json';
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        for(var i in data){
-	                            serv.communityTypes[i] = data[i];
-	                        }
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with community types");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getConsortiaList: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/consortia/consortia.json',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.consortiaList = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with consortia list");
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getMemberPageUrl: function(slug) {
-	            return orcidVar.baseUri + '/members/' + slug;
-	        }
-	    };
-	    serv.getCommunityTypes();
-	    return serv; 
-	}]);
-
-
-/***/ },
-/* 42 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13289,7 +12968,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13408,7 +13087,7 @@
 	);
 
 /***/ },
-/* 44 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13463,7 +13142,7 @@
 	}]);
 
 /***/ },
-/* 45 */
+/* 39 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13472,7 +13151,343 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 45;
+	webpackContext.id = 39;
+
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    $scope.displayMoreDetails = {};
+	    
+	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+	        membersListSrvc.getDetails(memberId, consortiumLeadId);
+	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+	    }
+	    
+	    //render html from salesforce data
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	    //create alphabetical list for filter
+	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+	    $scope.alphabet = alphaStr.toUpperCase().split("");
+	    $scope.activeLetter = '';
+	    $scope.activateLetter = function(letter) {
+	      $scope.activeLetter = letter
+	    };
+	    
+	    //clear filters
+	    $scope.clearFilters = function(){
+	        return clearMemberListFilterSrvc.clearFilters($scope);
+	    }
+	        
+	    // populate the consortia feed
+	    membersListSrvc.getConsortiaList();    
+	    
+	}]);
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	}]);
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('MembersListController',['$scope', '$sce', 'membersListSrvc', 'clearMemberListFilterSrvc', function ($scope, $sce, membersListSrvc, clearMemberListFilterSrvc){
+	    $scope.membersListSrvc = membersListSrvc;
+	    $scope.displayMoreDetails = {};
+	    
+	    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+	        membersListSrvc.getDetails(memberId, consortiumLeadId);
+	        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+	    }
+	    
+	    //render html from salesforce data
+	    $scope.renderHtml = function (htmlCode) {
+	        return $sce.trustAsHtml(htmlCode);
+	    };
+	    
+	    //create alphabetical list for filter
+	    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+	    $scope.alphabet = alphaStr.toUpperCase().split("");
+	    $scope.activeLetter = '';
+	    $scope.activateLetter = function(letter) {
+	      $scope.activeLetter = letter
+	    };
+	    
+	    //clear filters 
+	    $scope.clearFilters = function(){
+	        return clearMemberListFilterSrvc.clearFilters($scope);
+	    }
+	        
+	    // populate the members feed
+	    membersListSrvc.getMembersList();
+	    
+	}]);
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
+
+	    $scope.resetPasswordUpdateToggleText = function () {
+	        if ($scope.showResetPassword) $scope.resetPasswordToggleText = om.get("manage.editTable.hide");
+	        else $scope.resetPasswordToggleText = om.get("login.forgotten_password");
+	    };
+
+	    $scope.toggleResetPassword = function() {
+	        $scope.showResetPassword = !$scope.showResetPassword;
+	        //$scope.resetPasswordUpdateToggleText();
+	    };
+
+	    // init reset password
+	    $scope.showResetPassword = (window.location.hash === "#resetPassword");
+	    //$scope.resetPasswordUpdateToggleText();
+	    $scope.resetPasswordToggleText = om.get("login.forgotten_password");
+	    
+	    $scope.getRequestResetPassword = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/reset-password.json',
+	            dataType: 'json',
+	            success: function(data) {
+	                $scope.requestResetPassword = data;
+	                $scope.$apply();
+	            }
+	        }).fail(function(){
+	            console.log("error getting reset-password.json");
+	        });  
+	    };
+	    
+	    $scope.validateRequestPasswordReset = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/validate-reset-password.json',
+	            dataType: 'json',
+	            type: 'POST',
+	            data:  angular.toJson($scope.requestResetPassword),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                $scope.requestResetPassword = data;
+	                $scope.requestResetPassword.successMessage = null;
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            console.log("error validating validate-reset-password.json");
+	        });  
+	    };
+	    
+	    $scope.postPasswordResetRequest = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/reset-password.json',
+	            dataType: 'json',
+	            type: 'POST',
+	            data:  angular.toJson($scope.requestResetPassword),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                $scope.requestResetPassword = data;
+	                $scope.requestResetPassword.email = "";
+	                $scope.$apply();
+	            }
+	        }).fail(function(){
+	            console.log("error posting to /reset-password.json");
+	        });  
+	    }
+	    
+	}]);
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('RequestResendClaimCtrl', ['$scope', '$compile', function RequestResendClaimCtrl($scope, $compile) {
+	    
+	    $scope.getRequestResendClaim = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/resend-claim.json',
+	            dataType: 'json',
+	            success: function(data) {
+	                $scope.requestResendClaim = data;
+	                $scope.requestResendClaim.email = getParameterByName("email");
+	                $scope.$apply();
+	            }
+	        }).fail(function(e) {
+	            console.log("error getting resend-claim.json");
+	            logAjaxError(e);
+	        });  
+	    };
+	    
+	    $scope.validateRequestResendClaim = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/validate-resend-claim.json',
+	            dataType: 'json',
+	            type: 'POST',
+	            data:  angular.toJson($scope.requestResendClaim),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                $scope.requestResendClaim = data;
+	                $scope.requestResendClaim.successMessage = null;
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            console.log("error validating validate-resend-claim.json");
+	        });  
+	    };
+	    
+	    $scope.postResendClaimRequest = function() {
+	        $.ajax({
+	            url: getBaseUri() + '/resend-claim.json',
+	            dataType: 'json',
+	            type: 'POST',
+	            data:  angular.toJson($scope.requestResendClaim),
+	            contentType: 'application/json;charset=UTF-8',
+	            success: function(data) {
+	                $scope.requestResendClaim = data;
+	                $scope.requestResendClaim.email = "";
+	                $scope.$apply();
+	            }
+	        }).fail(function(){
+	            console.log("error posting to /resend-claim.json");
+	        });  
+	    }
+	    
+	    var getParameterByName = function(name) {
+	        var url = window.location.href;
+	        name = name.replace(/[\[\]]/g, "\\$&");
+	        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	            results = regex.exec(url);
+	        if (!results) return null;
+	        if (!results[2]) return '';
+	        return decodeURIComponent(results[2].replace(/\+/g, " "));
+	    };
+	    
+	}]);
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+	    var serv = {
+	        membersList: null,
+	        memberDetails: {},
+	        currentMemberDetails: null,
+	        consortiaList: null,
+	        communityTypes: {},
+	        getMembersList: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/members/members.json',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.membersList = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with members list");
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getDetails: function(memberId, consortiumLeadId) {
+	            if(serv.memberDetails[memberId] == null){
+	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
+	                if(consortiumLeadId != null){
+	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
+	                }
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.memberDetails[memberId] = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getCurrentMemberDetailsBySlug: function(memberSlug) {
+	            if(serv.currentMemberDetails == null){
+	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.currentMemberDetails = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details by slug");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getCommunityTypes: function() {
+	            if(serv.currentMemberDetails == null){
+	                var url = getBaseUri() + '/members/communityTypes.json';
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        for(var i in data){
+	                            serv.communityTypes[i] = data[i];
+	                        }
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with community types");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+	        getConsortiaList: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/consortia/consortia.json',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.consortiaList = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with consortia list");
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getMemberPageUrl: function(slug) {
+	            return orcidVar.baseUri + '/members/' + slug;
+	        }
+	    };
+	    serv.getCommunityTypes();
+	    return serv; 
+	}]);
 
 
 /***/ }
