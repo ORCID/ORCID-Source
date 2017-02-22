@@ -131,9 +131,12 @@ public class SalesForceAdapterTest {
         assertEquals("Invoice Paid", opportunity.getStageName());
         assertEquals("2016-12-21", opportunity.getCloseDate());
         assertEquals("New", opportunity.getType());
+        assertEquals("[PREMIUM CONSORTIUM MEMBER ID]", opportunity.getMemberType());
         assertEquals("2017-01-01", opportunity.getMembershipStartDate());
         assertEquals("2017-12-31", opportunity.getMembershipEndDate());
         assertEquals("[ORG1 ACCOUNT ID]", opportunity.getConsortiumLeadId());
+        assertEquals("2017 Membership-Org 2 Consortium Member", opportunity.getName());
+        assertEquals("[CONSORTIUM MEMBER RECORD TYPE ID]", opportunity.getRecordTypeId());
     }
 
     @Test

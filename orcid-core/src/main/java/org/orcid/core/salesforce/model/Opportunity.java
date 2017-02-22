@@ -33,9 +33,12 @@ public class Opportunity implements Serializable {
     private String stageName;
     private String closeDate;
     private String type;
+    private String memberType;
     private String membershipStartDate;
     private String membershipEndDate;
     private String consortiumLeadId;
+    private String name;
+    private String recordTypeId;
 
     public String getId() {
         return id;
@@ -85,6 +88,14 @@ public class Opportunity implements Serializable {
         this.type = type;
     }
 
+    public String getMemberType() {
+        return memberType;
+    }
+
+    public void setMemberType(String memberType) {
+        this.memberType = memberType;
+    }
+
     public String getMembershipStartDate() {
         return membershipStartDate;
     }
@@ -109,11 +120,27 @@ public class Opportunity implements Serializable {
         this.consortiumLeadId = consortiumLeadId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRecordTypeId() {
+        return recordTypeId;
+    }
+
+    public void setRecordTypeId(String recordTypeId) {
+        this.recordTypeId = recordTypeId;
+    }
+
     @Override
     public String toString() {
         return "Opportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + ", stageName=" + stageName + ", closeDate=" + closeDate
-                + ", type=" + type + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate + ", consortiumLeadId="
-                + consortiumLeadId + "]";
+                + ", type=" + type + ", memberType=" + memberType + ", membershipStartDate=" + membershipStartDate + ", membershipEndDate=" + membershipEndDate
+                + ", consortiumLeadId=" + consortiumLeadId + ", name=" + name + ", recordTypeId=" + recordTypeId + "]";
     }
 
 }

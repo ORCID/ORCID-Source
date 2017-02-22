@@ -122,9 +122,12 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("stageName", "StageName");
         classMap.field("closeDate", "CloseDate");
         classMap.field("type", "Type");
+        classMap.field("memberType", "member_type__c");
         classMap.field("membershipStartDate", "Membership_Start_Date__c");
         classMap.field("membershipEndDate", "Membership_End_Date__c");
         classMap.field("consortiumLeadId", "Consortia_Lead__c");
+        classMap.field("name", "Name");
+        classMap.field("recordTypeId", "RecordTypeId");
         classMap.register();
     }
 
