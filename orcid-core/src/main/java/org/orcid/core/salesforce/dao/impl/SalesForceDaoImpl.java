@@ -151,7 +151,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About to create contact in SalesForce");
         String accountId = contact.getAccountId();
         validateSalesForceId(accountId);
-        WebResource resource = createContactResource();
+        WebResource resource = createObjectsResource("/Contact/");
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
         ClientResponse response = doPostRequest(resource, contactJson, accessToken);
         checkAuthorization(response);
@@ -168,7 +168,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About to create contact role in SalesForce");
         validateSalesForceId(contactRole.getAccountId());
         validateSalesForceId(contactRole.getContactId());
-        WebResource resource = createContactRoleResource();
+        WebResource resource = createObjectsResource("/Membership_Contact_Role__c/");
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
         ClientResponse response = doPostRequest(resource, contactJson, accessToken);
         checkAuthorization(response);
@@ -184,7 +184,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
         LOGGER.info("About to remove contact role in SalesForce");
         validateSalesForceId(contactRoleId);
-        WebResource resource = removeContactRoleResource(contactRoleId);
+        WebResource resource = createObjectsResource("/Membership_Contact_Role__c/", contactRoleId);
         ClientResponse response = doDeleteRequest(resource, accessToken);
         checkAuthorization(response);
         checkResponse(response, 204, "Error removing contact role in SalesForce");
@@ -197,7 +197,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private String createMemberInSalesForce(String accessToken, Member member) {
         LOGGER.info("About to create member in SalesForce");
-        WebResource resource = createMemberResource();
+        WebResource resource = createObjectsResource("/Account/");
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
         ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
@@ -214,7 +214,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About update member in SalesForce");
         String accountId = member.getId();
         validateSalesForceId(accountId);
-        WebResource resource = createUpdateMemberResource(accountId);
+        WebResource resource = createObjectsResource("/Account/", accountId).queryParam("_HttpMethod", "PATCH");
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
         // SalesForce doesn't allow the Id in the body
         memberJson.remove("Id");
@@ -231,43 +231,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private String createOpportunityInSalesForce(String accessToken, Opportunity member) {
         LOGGER.info("About to create opportunity in SalesForce");
-        WebResource resource = createOpportunityResource();
+        WebResource resource = createObjectsResource("/Opportunity/");
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromOpportunity(member);
         ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating opportunity in SalesForce");
         return result.optString("id");
-    }
-
-    private WebResource createMemberResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/");
-        return resource;
-    }
-
-    private WebResource createOpportunityResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Opportunity/");
-        return resource;
-    }
-
-    private WebResource createUpdateMemberResource(String accountId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/" + validateSalesForceId(accountId)).queryParam("_HttpMethod",
-                "PATCH");
-        return resource;
-    }
-
-    private WebResource createContactResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Contact/");
-        return resource;
-    }
-
-    private WebResource createContactRoleResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Membership_Contact_Role__c/");
-        return resource;
-    }
-
-    private WebResource removeContactRoleResource(String contactRoleId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Membership_Contact_Role__c/" + validateSalesForceId(contactRoleId));
-        return resource;
     }
 
     private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {
@@ -298,7 +267,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     private JSONObject retrieveMembersObject(String accessToken) {
-        WebResource resource = createMemberListResource();
+        WebResource resource = createQueryResource(
+                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         return checkResponse(response, 200, "Error getting member list from SalesForce");
@@ -308,12 +278,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         WebResource nextResource = creatNextRecordsResource(nextRecordsUrl);
         ClientResponse nextResponse = doGetRequest(nextResource, accessToken);
         return checkResponse(nextResponse, 200, "Error getting next results for member list from SalesForce");
-    }
-
-    private WebResource createMemberListResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
-        return resource;
     }
 
     private WebResource creatNextRecordsResource(String nextRecordsUrl) {
@@ -330,17 +294,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private List<Member> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of consortia from SalesForce");
-        WebResource resource = createConsortiaListResource();
+        WebResource resource = createQueryResource(
+                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortia list from SalesForce");
         return salesForceAdapter.createMembersListFromJson(result);
-    }
-
-    private WebResource createConsortiaListResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
-        return resource;
     }
 
     /**
@@ -353,18 +312,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Consortium retrieveConsortiumFromSalesForce(String accessToken, String consortiumId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
-        WebResource resource = createConsortiumResource(consortiumId);
+        WebResource resource = createQueryResource(
+                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
+                consortiumId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortium from SalesForce");
         return salesForceAdapter.createConsortiumFromJson(result);
-    }
-
-    private WebResource createConsortiumResource(String consortiumId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
-                        + validateSalesForceId(consortiumId) + "'");
-        return resource;
     }
 
     /**
@@ -395,8 +349,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     private WebResource createParentOrgResource(String consortiumLeadId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Public_Display_Name__c from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
+        WebResource resource = createQueryResource("SELECT Public_Display_Name__c from Account WHERE Id='%s'", consortiumLeadId);
         return resource;
     }
 
@@ -408,18 +361,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      * 
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
-        WebResource resource = createIntegrationListResource(memberId);
+        WebResource resource = createQueryResource(
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='%s'",
+                memberId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting integrations list from SalesForce");
         return salesForceAdapter.createIntegrationsListFromJson(result);
-    }
-
-    private WebResource createIntegrationListResource(String memberId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
-                        + validateSalesForceId(memberId) + "'");
-        return resource;
     }
 
     /**
@@ -432,17 +380,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Contact> retrieveAllContactsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of all contacts from SalesForce");
         validateSalesForceId(accountId);
-        WebResource resource = createAllContactsResource(accountId);
+        WebResource resource1 = createQueryResource("Select Id, AccountId, Name, Email, ORCID_iD_Path__c From Contact Where AccountId='%s'", accountId);
+        WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting all contacts from SalesForce");
         return salesForceAdapter.createContactsFromJson(result);
-    }
-
-    private WebResource createAllContactsResource(String accountId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select Id, AccountId, Name, Email, ORCID_iD_Path__c From Contact Where AccountId='" + validateSalesForceId(accountId) + "'");
-        return resource;
     }
 
     /**
@@ -455,18 +398,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
-        WebResource resource = createContactsWithRolesResource(accountId);
+        WebResource resource = createQueryResource(
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='%s'",
+                accountId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactsWithRolesFromJson(result);
-    }
-
-    private WebResource createContactsWithRolesResource(String accountId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='"
-                        + validateSalesForceId(accountId) + "'");
-        return resource;
     }
 
     /**
@@ -481,18 +419,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contact roles from SalesForce");
         validateSalesForceId(contactId);
         validateSalesForceId(accountId);
-        WebResource resource = createContactRolesResource(contactId, accountId);
+        WebResource resource1 = createQueryResource(
+                "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '%s' And Organization__c='%s'", contactId, accountId);
+        WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactRolesFromJson(result);
-    }
-
-    private WebResource createContactRolesResource(String contactId, String accountId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '" + validateSalesForceId(contactId)
-                        + "' And Organization__c='" + validateSalesForceId(accountId) + "'");
-        return resource;
     }
 
     /**
@@ -504,17 +437,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private String retrievePremiumConsortiumMemberTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get premium consortium member type ID from SalesForce");
-        WebResource resource = createPremiumConsortiumMemberTypeIdResource();
+        WebResource resource1 = createQueryResource("Select Id From Member_Type__c Where Name =  'Premium Consortium Member'");
+        WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
         return salesForceAdapter.extractIdFromFirstRecord(result);
-    }
-
-    private WebResource createPremiumConsortiumMemberTypeIdResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select Id From Member_Type__c Where Name =  'Premium Consortium Member'");
-        return resource;
     }
 
     /**
@@ -526,17 +454,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private String retrieveConsortiumMemberRecordTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium member record type ID from SalesForce");
-        WebResource resource = createConsortiumMemberRecordTypeIdResource();
+        WebResource resource1 = createQueryResource("Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
+        WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortium member record type ID from SalesForce");
         return salesForceAdapter.extractIdFromFirstRecord(result);
-    }
-
-    private WebResource createConsortiumMemberRecordTypeIdResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
-        return resource;
     }
 
     private <T> T retry(Function<String, T> function) {
@@ -546,6 +469,29 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             LOGGER.debug("Unauthorized to access SalesForce, trying function again.", e);
             return function.apply(getFreshAccessToken());
         }
+    }
+
+    private WebResource createObjectsResource(String path) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects" + path);
+        return resource;
+    }
+
+    private WebResource createObjectsResource(String path, String id) {
+        validateSalesForceId(id);
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects" + path + id);
+        return resource;
+    }
+
+    private WebResource createQueryResource(String query) {
+        return client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q", query);
+    }
+
+    private WebResource createQueryResource(String query, String... ids) {
+        for (String id : ids) {
+            validateSalesForceId(id);
+        }
+        String formattedQuery = String.format(query, ids);
+        return client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q", formattedQuery);
     }
 
     private void retryConsumer(Consumer<String> consumer) {
