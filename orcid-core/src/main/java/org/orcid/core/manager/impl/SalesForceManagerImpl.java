@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,11 +39,13 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
 
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
@@ -52,6 +56,12 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  *
  */
 public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements SalesForceManager {
+
+    private static final String OPPORTUNITY_TYPE = "New";
+
+    private static final String OPPORTUNITY_STAGE_NAME = "Invoice Paid";
+
+    private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
@@ -81,6 +91,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private SourceManager sourceManager;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    private String premiumConsortiumMemberTypeId;
+
+    private String consortiumMemberRecordTypeId;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -162,18 +176,68 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
         return connection != null ? connection.getSalesForceAccountId() : null;
     }
-    
+
     @Override
     public String createMember(Member member) {
         String accountId = salesForceDao.createMember(member);
-        salesForceMembersListCache.removeAll();
+        Opportunity opportunity = new Opportunity();
+        opportunity.setTargetAccountId(accountId);
+        opportunity.setConsortiumLeadId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
+        opportunity.setType(OPPORTUNITY_TYPE);
+        opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
+        opportunity.setStageName(OPPORTUNITY_STAGE_NAME);
+        opportunity.setCloseDate(calculateCloseDate());
+        opportunity.setMembershipStartDate(calculateMembershipStartDate());
+        opportunity.setMembershipEndDate(calculateMembershipEndDate());
+        opportunity.setRecordTypeId(getConsortiumMemberRecordTypeId());
+        opportunity.setName(OPPORTUNITY_NAME);
+        createOpportunity(opportunity);
+        evictAll();
         return accountId;
+    }
+
+    private String calculateCloseDate() {
+        return DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date()).toXMLFormat();
+    }
+
+    private String calculateMembershipStartDate() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        return String.format("%s-01-01", year);
+    }
+
+    private String calculateMembershipEndDate() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        return String.format("%s-12-31", year);
+    }
+
+    private String getPremiumConsortiumMemberTypeId() {
+        if (premiumConsortiumMemberTypeId == null) {
+            premiumConsortiumMemberTypeId = salesForceDao.retrievePremiumConsortiumMemberTypeId();
+        }
+        return premiumConsortiumMemberTypeId;
+        // return "a00J000000EznSRIAZ";
+    }
+
+    private String getConsortiumMemberRecordTypeId() {
+        if (consortiumMemberRecordTypeId == null) {
+            consortiumMemberRecordTypeId = salesForceDao.retrieveConsortiumMemberRecordTypeId();
+        }
+        return consortiumMemberRecordTypeId;
     }
 
     @Override
     public void updateMember(Member member) {
         salesForceDao.updateMember(member);
         salesForceMembersListCache.removeAll();
+    }
+
+    @Override
+    public String createOpportunity(Opportunity opportunity) {
+        String accountId = salesForceDao.createOpportunity(opportunity);
+        salesForceMembersListCache.removeAll();
+        return accountId;
     }
 
     @Override
@@ -239,6 +303,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         salesForceConsortiaListCache.removeAll();
         salesForceConsortiumCache.removeAll();
         salesForceContactsCache.removeAll();
+        premiumConsortiumMemberTypeId = null;
+        consortiumMemberRecordTypeId = null;
     }
 
     private List<SubMember> findSubMembers(String memberId) {

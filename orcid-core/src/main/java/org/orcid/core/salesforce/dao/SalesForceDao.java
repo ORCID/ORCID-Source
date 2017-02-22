@@ -23,6 +23,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -48,6 +49,10 @@ public interface SalesForceDao {
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
     
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
+    
+    String retrievePremiumConsortiumMemberTypeId();
+    
+    String retrieveConsortiumMemberRecordTypeId();
 
     /**
      * @return The sales force object id, if valid.
@@ -64,6 +69,12 @@ public interface SalesForceDao {
     String createMember(Member member);
 
     void updateMember(Member member);
+    
+    /**
+     * 
+     * @return the opportunity id
+     */
+    String createOpportunity(Opportunity member);
     
     /**
      * 

@@ -22,6 +22,7 @@ import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -55,6 +56,12 @@ public interface SalesForceManager {
     String createMember(Member member);
 
     void updateMember(Member member);
+    
+    /**
+     * 
+     * @return the id of the opportunity
+     */
+    String createOpportunity(Opportunity opportunity);
 
     void createContact(Contact contact);
 

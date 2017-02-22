@@ -34,6 +34,7 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -152,6 +153,26 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
             return retrieveContactRolesFromSalesForceByContactIdAndAccountId(getFreshAccessToken(), contactId, accountId);
+        }
+    }
+
+    @Override
+    public String retrievePremiumConsortiumMemberTypeId() {
+        try {
+            return retrievePremiumConsortiumMemberTypeIdFromSalesForce(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve premium consortium member type ID, trying again.", e);
+            return retrievePremiumConsortiumMemberTypeIdFromSalesForce(getFreshAccessToken());
+        }
+    }
+
+    @Override
+    public String retrieveConsortiumMemberRecordTypeId() {
+        try {
+            return retrieveConsortiumMemberRecordTypeIdFromSalesForce(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve consortium member record type ID, trying again.", e);
+            return retrieveConsortiumMemberRecordTypeIdFromSalesForce(getFreshAccessToken());
         }
     }
 
@@ -293,8 +314,38 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return;
     }
 
+    @Override
+    public String createOpportunity(Opportunity opportunity) {
+        try {
+            return createOpportunityInSalesForce(getAccessToken(), opportunity);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to create opportunity, trying again.", e);
+            return createOpportunityInSalesForce(getFreshAccessToken(), opportunity);
+        }
+
+    }
+
+    private String createOpportunityInSalesForce(String accessToken, Opportunity member) {
+        LOGGER.info("About to create opportunity in SalesForce");
+        WebResource resource = createOpportunityResource();
+        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromOpportunity(member);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        checkAuthorization(response);
+        if (response.getStatus() != 201) {
+            throw new RuntimeException("Error creating opportunity in SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return result.optString("id");
+    }
+
     private WebResource createMemberResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Account/");
+        return resource;
+    }
+
+    private WebResource createOpportunityResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects/Opportunity/");
         return resource;
     }
 
@@ -570,6 +621,58 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '" + validateSalesForceId(contactId)
                         + "' And Organization__c='" + validateSalesForceId(accountId) + "'");
+        return resource;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private String retrievePremiumConsortiumMemberTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get premium consortium member type ID from SalesForce");
+        WebResource resource = createPremiumConsortiumMemberTypeIdResource();
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting premium consortium member type ID from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return salesForceAdapter.extractIdFromFirstRecord(result);
+    }
+
+    private WebResource createPremiumConsortiumMemberTypeIdResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "Select Id From Member_Type__c Where Name =  'Premium Consortium Member'");
+        return resource;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private String retrieveConsortiumMemberRecordTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get consortium member record type ID from SalesForce");
+        WebResource resource = createConsortiumMemberRecordTypeIdResource();
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting consortium member record type ID from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        JSONObject result = (JSONObject) response.getEntity(JSONObject.class);
+        return salesForceAdapter.extractIdFromFirstRecord(result);
+    }
+
+    private WebResource createConsortiumMemberRecordTypeIdResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
         return resource;
     }
 

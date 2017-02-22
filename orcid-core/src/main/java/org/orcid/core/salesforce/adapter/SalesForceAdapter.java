@@ -218,6 +218,11 @@ public class SalesForceAdapter {
         return mapperFacade.map(jsonObject, Opportunity.class);
     }
 
+    public JSONObject createSaleForceRecordFromOpportunity(Opportunity opportunity) {
+        JSONObject jsonObject = mapperFacade.map(opportunity, JSONObject.class);
+        return jsonObject;
+    }
+
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
         String urlString = tidyUrl(extractString(record, key));
         return urlString != null ? new URL(urlString) : null;
@@ -250,6 +255,16 @@ public class SalesForceAdapter {
     private JSONObject extractFirstRecord(JSONObject object) throws JSONException {
         JSONArray records = object.getJSONArray("records");
         return records.getJSONObject(0);
+    }
+
+    public String extractIdFromFirstRecord(JSONObject object) {
+        JSONObject firstRecord;
+        try {
+            firstRecord = extractFirstRecord(object);
+            return firstRecord.optString("Id");
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting ID from first record", e);
+        }
     }
 
     public static String extractIdFromUrl(String url) {
