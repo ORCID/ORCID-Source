@@ -202,7 +202,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         validateSalesForceId(accountId);
         WebResource resource = createContactResource();
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        ClientResponse response = doPostRequest(resource, contactJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact in SalesForce");
         return result.optString("id");
@@ -225,7 +225,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         validateSalesForceId(contactRole.getContactId());
         WebResource resource = createContactRoleResource();
         JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContactRole(contactRole);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, contactJson);
+        ClientResponse response = doPostRequest(resource, contactJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact role in SalesForce");
         return result.optString("id");
@@ -265,7 +265,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About to create member in SalesForce");
         WebResource resource = createMemberResource();
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating member in SalesForce");
         return result.optString("id");
@@ -290,7 +290,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromMember(member);
         // SalesForce doesn't allow the Id in the body
         memberJson.remove("Id");
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         checkResponse(response, 204, "Error updating member in SalesForce");
         return;
@@ -311,7 +311,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About to create opportunity in SalesForce");
         WebResource resource = createOpportunityResource();
         JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromOpportunity(member);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, memberJson);
+        ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating opportunity in SalesForce");
         return result.optString("id");
@@ -649,6 +649,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private ClientResponse doGetRequest(WebResource resource, String accessToken) {
         return resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+    }
+    
+    private ClientResponse doPostRequest(WebResource resource, JSONObject bodyJson, String accessToken) {
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, bodyJson);
+        return response;
     }
 
     private void checkAuthorization(ClientResponse response) {
