@@ -36,7 +36,7 @@
 			<column name="num_changed" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="type" type="VARCHAR(255)">
+			<column name="type" type="TEXT">
 				<constraints nullable="false" />
 			</column>	
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
