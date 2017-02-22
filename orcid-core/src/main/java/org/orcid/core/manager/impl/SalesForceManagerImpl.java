@@ -223,7 +223,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             premiumConsortiumMemberTypeId = salesForceDao.retrievePremiumConsortiumMemberTypeId();
         }
         return premiumConsortiumMemberTypeId;
-        // return "a00J000000EznSRIAZ";
     }
 
     private String getConsortiumMemberRecordTypeId() {
