@@ -245,7 +245,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About to remove contact role in SalesForce");
         validateSalesForceId(contactRoleId);
         WebResource resource = removeContactRoleResource(contactRoleId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class);
+        ClientResponse response = doDeleteRequest(resource, accessToken);
         checkAuthorization(response);
         checkResponse(response, 204, "Error removing contact role in SalesForce");
     }
@@ -653,6 +653,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     
     private ClientResponse doPostRequest(WebResource resource, JSONObject bodyJson, String accessToken) {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, bodyJson);
+        return response;
+    }
+    
+    private ClientResponse doDeleteRequest(WebResource resource, String accessToken) {
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class);
         return response;
     }
 
