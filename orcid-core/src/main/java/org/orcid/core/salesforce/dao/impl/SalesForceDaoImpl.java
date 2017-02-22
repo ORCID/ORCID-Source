@@ -399,7 +399,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersObject(String accessToken) {
         WebResource resource = createMemberListResource();
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -410,7 +410,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersNextObject(String accessToken, String nextRecordsUrl) {
         WebResource nextResource = creatNextRecordsResource(nextRecordsUrl);
-        ClientResponse nextResponse = nextResource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse nextResponse = doGetRequest(nextResource, accessToken);
         if (nextResponse.getStatus() != 200) {
             throw new RuntimeException("Error getting next results for member list from SalesForce, status code =  " + nextResponse.getStatus() + ", reason = "
                     + nextResponse.getStatusInfo().getReasonPhrase() + ", body = " + nextResponse.getEntity(String.class));
@@ -439,7 +439,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Member> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of consortia from SalesForce");
         WebResource resource = createConsortiaListResource();
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting consortia list from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -465,7 +465,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createConsortiumResource(consortiumId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting consortium from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -502,7 +502,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             return null;
         }
         WebResource resource = createParentOrgResource(consortiumLeadId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting parent org name from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -526,7 +526,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         WebResource resource = createIntegrationListResource(memberId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -553,7 +553,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of all contacts from SalesForce");
         validateSalesForceId(accountId);
         WebResource resource = createAllContactsResource(accountId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting all contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -579,7 +579,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
         WebResource resource = createContactsWithRolesResource(accountId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -608,7 +608,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         validateSalesForceId(contactId);
         validateSalesForceId(accountId);
         WebResource resource = createContactRolesResource(contactId, accountId);
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -634,7 +634,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private String retrievePremiumConsortiumMemberTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get premium consortium member type ID from SalesForce");
         WebResource resource = createPremiumConsortiumMemberTypeIdResource();
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting premium consortium member type ID from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -660,7 +660,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private String retrieveConsortiumMemberRecordTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium member record type ID from SalesForce");
         WebResource resource = createConsortiumMemberRecordTypeIdResource();
-        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Error getting consortium member record type ID from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -704,6 +704,10 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             throw new RuntimeException("Error getting access token from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
+    }
+
+    private ClientResponse doGetRequest(WebResource resource, String accessToken) {
+        return resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
     }
 
     private void checkAuthorization(ClientResponse response) {
