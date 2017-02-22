@@ -43,7 +43,7 @@ import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.pojo.PasswordResetRequest;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
@@ -106,12 +106,12 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
-    public @ResponseBody PasswordResetRequest getPasswordResetRequest() {
-        return new PasswordResetRequest();
+    public @ResponseBody EmailRequest getPasswordResetRequest() {
+        return new EmailRequest();
     }
 
     @RequestMapping(value = "/validate-reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody PasswordResetRequest validateResetPasswordRequest(@RequestBody PasswordResetRequest passwordResetRequest) {
+    public @ResponseBody EmailRequest validateResetPasswordRequest(@RequestBody EmailRequest passwordResetRequest) {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
@@ -121,7 +121,7 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody PasswordResetRequest issuePasswordResetRequest(@RequestBody PasswordResetRequest passwordResetRequest) {
+    public @ResponseBody EmailRequest issuePasswordResetRequest(@RequestBody EmailRequest passwordResetRequest) {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
