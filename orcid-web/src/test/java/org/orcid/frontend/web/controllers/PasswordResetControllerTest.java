@@ -17,10 +17,12 @@
 package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -28,11 +30,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.AfterClass;
@@ -42,19 +49,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.jaxb.model.message.DeactivationDate;
+import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -70,69 +80,71 @@ import com.google.common.collect.Lists;
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
 public class PasswordResetControllerTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-    
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
+            "/data/BiographyEntityData.xml");
+
     @Resource(name = "passwordResetController")
     private PasswordResetController passwordResetController;
-    
+
     @Mock
     private RegistrationManager registrationManager;
-    
+
     @Mock
     private OrcidProfileManager orcidProfileManager;
-    
+
     @Mock
     private EncryptionManager encryptionManager;
-    
+
     @Mock
     private HttpServletRequest servletRequest;
-    
+
     @Mock
     private HttpServletResponse servletResponse;
-    
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-    
+
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Lists.reverse(DATA_FILES));
     }
-    
+
     @Before
     public void before() {
-        MockitoAnnotations.initMocks(this);        
+        MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "orcidProfileManager", orcidProfileManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);                        
-    }
-    
-    @Test
-    public void testPasswordResetInvalidEmailDataProvidedToForm() {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(true);
-        EmailAddressForm resetPasswordForm = new EmailAddressForm();
-        // return a mocked profile -
-        ModelAndView modelAndView = passwordResetController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
-        assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(String.class), any(OrcidProfile.class));
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
     }
 
     @Test
     public void testPasswordResetUserNotFound() {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        BindingResult bindingResult = mock(BindingResult.class);
-        EmailAddressForm resetPasswordForm = new EmailAddressForm();
-        resetPasswordForm.setUserEmailAddress("jimmy");
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("jimmy")).thenReturn(null);
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
+        assertNotNull(resetRequest.getErrors());
+        assertFalse(resetRequest.getErrors().isEmpty());
+    }
 
-        // return a mocked profile -
-        ModelAndView modelAndView = passwordResetController.issuePasswordResetRequest(servletRequest, resetPasswordForm, bindingResult);
-        assertEquals("reset_password", modelAndView.getViewName());
-        verify(registrationManager, times(0)).resetUserPassword(any(String.class), any(OrcidProfile.class));
+    @Test
+    public void testPasswordResetUserDeactivated() throws DatatypeConfigurationException {
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidHistory.setDeactivationDate(new DeactivationDate(date));
+
+        OrcidProfile deactivatedProfile = new OrcidProfile();
+        deactivatedProfile.setOrcidHistory(orcidHistory);
+        
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
+        EmailRequest resetRequest = new EmailRequest();
+        resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
+        assertNotNull(resetRequest.getErrors());
+        assertFalse(resetRequest.getErrors().isEmpty());
     }
 
     @Test
@@ -176,23 +188,24 @@ public class PasswordResetControllerTest extends DBUnitTest {
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
-    
+
     @Test
     public void testStandAloneSecurityQuestionsView() throws Exception {
 
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
         String encryptedLink = "this is encrypted. No really, it is.";
         String expiredLink = "this link has expired.";
-        when(encryptionManager.decryptForExternalUse(eq(new String(Base64.decodeBase64(encryptedLink), "UTF-8")))).thenReturn(
-                "email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(encryptionManager.decryptForExternalUse(eq(new String(Base64.decodeBase64(expiredLink), "UTF-8")))).thenReturn(
-                "email=any@orcid.org&issueDate=1970-05-29T17:04:27");
+        when(encryptionManager.decryptForExternalUse(eq(new String(Base64.decodeBase64(encryptedLink), "UTF-8"))))
+                .thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(encryptionManager.decryptForExternalUse(eq(new String(Base64.decodeBase64(expiredLink), "UTF-8"))))
+                .thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
 
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
 
         ModelAndView modelAndView = passwordResetController.buildAnswerSecurityQuestionView(encryptedLink, redirectAttributes);
         assertEquals("answer_security_question", modelAndView.getViewName());
-        // assertEquals("What is your all-time favorite sports team?",modelAndView.getModel().get("securityQuestionText"));
+        // assertEquals("What is your all-time favorite sports
+        // team?",modelAndView.getModel().get("securityQuestionText"));
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
         modelAndView = passwordResetController.buildAnswerSecurityQuestionView(expiredLink, redirectAttributes);
         assertEquals("redirect:/reset-password", modelAndView.getViewName());
@@ -242,7 +255,8 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail("any@orcid.org")).thenReturn(orcidWithSecurityQuestion());
         when(bindingResult.hasErrors()).thenReturn(true);
         PasswordTypeAndConfirmForm passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
-        ModelAndView failedView = passwordResetController.confirmPasswordOneTimeResetView(servletRequest, servletResponse, "encrypted link", passwordTypeAndConfirmForm, bindingResult, redirectAttributes);
+        ModelAndView failedView = passwordResetController.confirmPasswordOneTimeResetView(servletRequest, servletResponse, "encrypted link", passwordTypeAndConfirmForm,
+                bindingResult, redirectAttributes);
         verify(orcidProfileManager, times(0)).updatePasswordInformation(orcidWithSecurityQuestion());
         assertEquals("password_one_time_reset", failedView.getViewName());
 
@@ -252,10 +266,11 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
-        ModelAndView successView = passwordResetController
-                .confirmPasswordOneTimeResetView(servletRequest, servletResponse, "encrypted link", passwordTypeAndConfirmForm, bindingResult, redirectAttributes);
+        ModelAndView successView = passwordResetController.confirmPasswordOneTimeResetView(servletRequest, servletResponse, "encrypted link", passwordTypeAndConfirmForm,
+                bindingResult, redirectAttributes);
         verify(orcidProfileManager, times(1)).updatePasswordInformation(orcidWithSecurityQuestion());
-        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid") || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
+        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid")
+                || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
     }
 
     @Test
@@ -270,8 +285,8 @@ public class PasswordResetControllerTest extends DBUnitTest {
         // redirect
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
         when(bindingResult.hasErrors()).thenReturn(true);
-        ModelAndView validationFailedView = passwordResetController.submitPasswordReset(servletRequest, servletResponse, "encrypted string not expired", oneTimeResetPasswordForm, bindingResult,
-                redirectAttributes);
+        ModelAndView validationFailedView = passwordResetController.submitPasswordReset(servletRequest, servletResponse, "encrypted string not expired",
+                oneTimeResetPasswordForm, bindingResult, redirectAttributes);
         assertEquals("password_one_time_reset_optional_security_questions", validationFailedView.getViewName());
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
@@ -279,33 +294,34 @@ public class PasswordResetControllerTest extends DBUnitTest {
         oneTimeResetPasswordForm.setPassword(Text.valueOf("password"));
         when(bindingResult.hasErrors()).thenReturn(false);
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
-        ModelAndView successView = passwordResetController
-                .submitPasswordReset(servletRequest, servletResponse, "encrypted string not expired", oneTimeResetPasswordForm, bindingResult, redirectAttributes);
-        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid") || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
+        ModelAndView successView = passwordResetController.submitPasswordReset(servletRequest, servletResponse, "encrypted string not expired", oneTimeResetPasswordForm,
+                bindingResult, redirectAttributes);
+        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid")
+                || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
         // finally check expiry works
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
 
-        ModelAndView expiredView = passwordResetController.submitPasswordReset(servletRequest, servletResponse, "encrypted string that's expired", oneTimeResetPasswordForm, bindingResult,
-                redirectAttributes);
+        ModelAndView expiredView = passwordResetController.submitPasswordReset(servletRequest, servletResponse, "encrypted string that's expired",
+                oneTimeResetPasswordForm, bindingResult, redirectAttributes);
         assertEquals("redirect:/reset-password", expiredView.getViewName());
         verify(redirectAttributes, times(1)).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
-            
+
     @Test
     public void testResetPasswordDontFailIfAnyFieldIsEmtpy() {
-        PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();        
+        PasswordTypeAndConfirmForm form = new PasswordTypeAndConfirmForm();
         passwordResetController.resetPasswordConfirmValidate(form);
         form.setPassword(new Text());
         form.setRetypedPassword(null);
         passwordResetController.resetPasswordConfirmValidate(form);
         form.setPassword(null);
         form.setRetypedPassword(new Text());
-        passwordResetController.resetPasswordConfirmValidate(form);               
+        passwordResetController.resetPasswordConfirmValidate(form);
     }
-    
+
     private OrcidProfile orcidWithSecurityQuestion() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setSecurityQuestionAnswer("Answer");
@@ -315,5 +331,5 @@ public class PasswordResetControllerTest extends DBUnitTest {
         orcidInternal.setSecurityDetails(securityDetails);
         orcidProfile.setOrcidInternal(orcidInternal);
         return orcidProfile;
-    }  
+    }
 }

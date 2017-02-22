@@ -22,8 +22,7 @@
 			<common:external-id>
 				<common:external-id-type>arxiv</common:external-id-type>
 				<common:external-id-value>123456</common:external-id-value>
-				<common:external-id-url>http://arxiv.org/abs/123456
-				</common:external-id-url>
+				<common:external-id-url>http://arxiv.org/abs/123456</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
@@ -44,17 +43,21 @@
 			</common:source>
 			<work:title>
 				<common:title>Work # 1</common:title>
-			</work:title>
+			</work:title>			
 			<common:external-ids>
 				<common:external-id>
 					<common:external-id-type>arxiv</common:external-id-type>
 					<common:external-id-value>123456</common:external-id-value>
-					<common:external-id-url>http://arxiv.org/abs/123456
-					</common:external-id-url>
+					<common:external-id-url>http://arxiv.org/abs/123456</common:external-id-url>
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
 			<work:type>conference-paper</work:type>
+			<common:publication-date>
+				<common:year>2017</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:publication-date>
 		</work:work-summary>
 	</activities:group>
 	<activities:group>
@@ -64,8 +67,7 @@
 			<common:external-id>
 				<common:external-id-type>bibcode</common:external-id-type>
 				<common:external-id-value>4567</common:external-id-value>
-				<common:external-id-url>http://adsabs.harvard.edu/abs/4567
-				</common:external-id-url>
+				<common:external-id-url>http://adsabs.harvard.edu/abs/4567</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
@@ -91,12 +93,16 @@
 				<common:external-id>
 					<common:external-id-type>bibcode</common:external-id-type>
 					<common:external-id-value>4567</common:external-id-value>
-					<common:external-id-url>http://adsabs.harvard.edu/abs/4567
-					</common:external-id-url>
+					<common:external-id-url>http://adsabs.harvard.edu/abs/4567</common:external-id-url>
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
 			<work:type>journal-article</work:type>
+			<common:publication-date>
+				<common:year>2017</common:year>
+				<common:month>03</common:month>
+				<common:day>03</common:day>
+			</common:publication-date>
 		</work:work-summary>
 	</activities:group>
 </activities:works>

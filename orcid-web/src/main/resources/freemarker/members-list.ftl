@@ -45,7 +45,7 @@
 							<select ng-model="by_country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
-            				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
+            				<select ng-model="by_researchCommunity" ng-options="member.researchCommunity as membersListSrvc.communityTypes[member.researchCommunity] for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
             				<button class="btn btn-primary" ng-click="clearFilters()">Reset</button>
@@ -61,7 +61,7 @@
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.publicDisplayName}}</a></h2>	                        
-	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
+	                        	<p ng-cloak>{{membersListSrvc.communityTypes[member.researchCommunity]}} | {{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
 	                        	<p>

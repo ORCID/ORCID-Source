@@ -18,9 +18,10 @@ package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,19 +36,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
@@ -58,7 +59,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -95,37 +95,32 @@ public class ClaimControllerTest {
 
     @Test
     public void testResendEmailFailIfTheProfileIsAlreadyClaimed() {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(emailManager.emailExists("billie@holiday.com")).thenReturn(true);
         when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("0000-0000-0000-0000");        
-        when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(true));
-        EmailAddressForm emailAddressForm = new EmailAddressForm();
-        emailAddressForm.setUserEmailAddress("billie@holiday.com");
-        ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
-        assertNotNull(mav);
-        assertNotNull(mav.getModel());
-        assertTrue(mav.getModel().containsKey("alreadyClaimed"));
-        assertTrue((Boolean) mav.getModel().get("alreadyClaimed"));
+        when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(getProfileEntityToTestClaimResend(true));
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail("billie@holiday.com");
+        emailRequest = claimController.resendClaimEmail(emailRequest);
+        assertNotNull(emailRequest);
+        assertNull(emailRequest.getSuccessMessage());
+        assertNotNull(emailRequest.getErrors());
+        assertFalse(emailRequest.getErrors().isEmpty());
     }
 
     @Test
     public void testResendClaimEmail() {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
         when(emailManager.emailExists("billie@holiday.com")).thenReturn(true);
         when(emailManager.findOrcidIdByEmail("billie@holiday.com")).thenReturn("0000-0000-0000-0000");
-        when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClaimResend(false));
-        EmailAddressForm emailAddressForm = new EmailAddressForm();
-        emailAddressForm.setUserEmailAddress("billie@holiday.com");
-        ModelAndView mav = claimController.resendClaimEmail(servletRequest, emailAddressForm, bindingResult);
-        assertNotNull(mav);
-        assertNotNull(mav.getModel());
-        assertFalse(mav.getModel().containsKey("alreadyClaimed"));
-        assertTrue(mav.getModel().containsKey("claimResendSuccessful"));
-        assertTrue((Boolean) mav.getModel().get("claimResendSuccessful"));
+        when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(getProfileEntityToTestClaimResend(false));
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail("billie@holiday.com");
+        emailRequest = claimController.resendClaimEmail(emailRequest);
+        assertNotNull(emailRequest);
+        assertNotNull(emailRequest.getSuccessMessage());
     }
 
     @Test
@@ -133,7 +128,7 @@ public class ClaimControllerTest {
     public void testClaim() {
         String email = "public_0000-0000-0000-0001@test.orcid.org";
         SecurityContextHolder.getContext().setAuthentication(null);
-        when(profileEntityCacheManager.retrieve(Matchers.anyString())).thenReturn(getProfileEntityToTestClam(false));
+        when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(getProfileEntityToTestClam(false));
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
