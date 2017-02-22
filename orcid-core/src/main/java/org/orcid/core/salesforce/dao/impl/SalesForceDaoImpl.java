@@ -19,6 +19,8 @@ package org.orcid.core.salesforce.dao.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -84,32 +86,17 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public List<Member> retrieveConsortia() {
-        try {
-            return retrieveConsortiaFromSalesForce(getAccessToken());
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve consortia list, trying again.", e);
-            return retrieveConsortiaFromSalesForce(getFreshAccessToken());
-        }
+        return retry(accessToken -> retrieveConsortiaFromSalesForce(accessToken));
     }
 
     @Override
     public List<Member> retrieveMembers() {
-        try {
-            return retrieveMembersFromSalesForce(getAccessToken());
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve members list, trying again.", e);
-            return retrieveMembersFromSalesForce(getFreshAccessToken());
-        }
+        return retry(accessToken -> retrieveMembersFromSalesForce(accessToken));
     }
 
     @Override
     public Consortium retrieveConsortium(String consortiumId) {
-        try {
-            return retrieveConsortiumFromSalesForce(getAccessToken(), consortiumId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve consortium, trying again.", e);
-            return retrieveConsortiumFromSalesForce(getFreshAccessToken(), consortiumId);
-        }
+        return retry(accessToken -> retrieveConsortiumFromSalesForce(accessToken, consortiumId));
     }
 
     @Override
@@ -118,62 +105,32 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         if (consortiumLeadId != null) {
             validateSalesForceId(consortiumLeadId);
         }
-        try {
-            return retrieveDetailsFromSalesForce(getAccessToken(), memberId, consortiumLeadId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve details, trying again.", e);
-            return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId, consortiumLeadId);
-        }
+        return retry(accessToken -> retrieveDetailsFromSalesForce(accessToken, memberId, consortiumLeadId));
     }
 
     @Override
     public List<Contact> retrieveAllContactsByAccountId(String accountId) {
-        try {
-            return retrieveAllContactsFromSalesForceByAccountId(getAccessToken(), accountId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve all contacts, trying again.", e);
-            return retrieveAllContactsFromSalesForceByAccountId(getFreshAccessToken(), accountId);
-        }
+        return retry(accessToken -> retrieveAllContactsFromSalesForceByAccountId(accessToken, accountId));
     }
 
     @Override
     public List<Contact> retrieveContactsWithRolesByAccountId(String accountId) {
-        try {
-            return retrieveContactsWithRolesFromSalesForceByAccountId(getAccessToken(), accountId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve contacts with roles, trying again.", e);
-            return retrieveContactsWithRolesFromSalesForceByAccountId(getFreshAccessToken(), accountId);
-        }
+        return retry(accessToken -> retrieveContactsWithRolesFromSalesForceByAccountId(accessToken, accountId));
     }
 
     @Override
     public List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId) {
-        try {
-            return retrieveContactRolesFromSalesForceByContactIdAndAccountId(getAccessToken(), contactId, accountId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
-            return retrieveContactRolesFromSalesForceByContactIdAndAccountId(getFreshAccessToken(), contactId, accountId);
-        }
+        return retry(accessToken -> retrieveContactRolesFromSalesForceByContactIdAndAccountId(accessToken, contactId, accountId));
     }
 
     @Override
     public String retrievePremiumConsortiumMemberTypeId() {
-        try {
-            return retrievePremiumConsortiumMemberTypeIdFromSalesForce(getAccessToken());
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve premium consortium member type ID, trying again.", e);
-            return retrievePremiumConsortiumMemberTypeIdFromSalesForce(getFreshAccessToken());
-        }
+        return retry(accessToken -> retrievePremiumConsortiumMemberTypeIdFromSalesForce(accessToken));
     }
 
     @Override
     public String retrieveConsortiumMemberRecordTypeId() {
-        try {
-            return retrieveConsortiumMemberRecordTypeIdFromSalesForce(getAccessToken());
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve consortium member record type ID, trying again.", e);
-            return retrieveConsortiumMemberRecordTypeIdFromSalesForce(getFreshAccessToken());
-        }
+        return retry(accessToken -> retrieveConsortiumMemberRecordTypeIdFromSalesForce(accessToken));
     }
 
     @Override
@@ -187,13 +144,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public String createContact(Contact contact) {
-        try {
-            return createContactInSalesForce(getAccessToken(), contact);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to create contact, trying again.", e);
-            return createContactInSalesForce(getFreshAccessToken(), contact);
-        }
-
+        return retry(accessToken -> createContactInSalesForce(accessToken, contact));
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {
@@ -210,13 +161,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public String createContactRole(ContactRole contact) {
-        try {
-            return createContactRoleInSalesForce(getAccessToken(), contact);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to create contact role, trying again.", e);
-            return createContactRoleInSalesForce(getFreshAccessToken(), contact);
-        }
-
+        return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
     }
 
     private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
@@ -233,12 +178,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public void removeContactRole(String contactRoleId) {
-        try {
-            removeContactRoleInSalesForce(getAccessToken(), contactRoleId);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to remove contact role, trying again.", e);
-            removeContactRoleInSalesForce(getFreshAccessToken(), contactRoleId);
-        }
+        retryConsumer(accessToken -> removeContactRoleInSalesForce(accessToken, contactRoleId));
     }
 
     private void removeContactRoleInSalesForce(String accessToken, String contactRoleId) {
@@ -252,13 +192,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public String createMember(Member member) {
-        try {
-            return createMemberInSalesForce(getAccessToken(), member);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to create member, trying again.", e);
-            return createMemberInSalesForce(getFreshAccessToken(), member);
-        }
-
+        return retry(accessToken -> createMemberInSalesForce(accessToken, member));
     }
 
     private String createMemberInSalesForce(String accessToken, Member member) {
@@ -273,13 +207,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public void updateMember(Member member) {
-        try {
-            updateMemberInSalesForce(getAccessToken(), member);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to update member, trying again.", e);
-            updateMemberInSalesForce(getFreshAccessToken(), member);
-        }
-
+        retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
     }
 
     private void updateMemberInSalesForce(String accessToken, Member member) {
@@ -298,13 +226,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public String createOpportunity(Opportunity opportunity) {
-        try {
-            return createOpportunityInSalesForce(getAccessToken(), opportunity);
-        } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to create opportunity, trying again.", e);
-            return createOpportunityInSalesForce(getFreshAccessToken(), opportunity);
-        }
-
+        return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
     }
 
     private String createOpportunityInSalesForce(String accessToken, Opportunity member) {
@@ -617,6 +539,24 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return resource;
     }
 
+    private <T> T retry(Function<String, T> function) {
+        try {
+            return function.apply(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to access SalesForce, trying function again.", e);
+            return function.apply(getFreshAccessToken());
+        }
+    }
+
+    private void retryConsumer(Consumer<String> consumer) {
+        try {
+            consumer.accept(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to access SalesForce, trying consumer again.", e);
+            consumer.accept(getFreshAccessToken());
+        }
+    }
+
     @Override
     public String getAccessToken() {
         if (accessToken == null) {
@@ -650,12 +590,12 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private ClientResponse doGetRequest(WebResource resource, String accessToken) {
         return resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
     }
-    
+
     private ClientResponse doPostRequest(WebResource resource, JSONObject bodyJson, String accessToken) {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, bodyJson);
         return response;
     }
-    
+
     private ClientResponse doDeleteRequest(WebResource resource, String accessToken) {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).type(MediaType.APPLICATION_JSON_TYPE).delete(ClientResponse.class);
         return response;
@@ -667,13 +607,16 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
                     + response.getStatusInfo().getReasonPhrase() + ", body= " + response.getEntity(String.class));
         }
     }
-    
-    private JSONObject checkResponse(ClientResponse nextResponse, int requiredStatus, String errorMessage) {
-        if (nextResponse.getStatus() != 200) {
-            throw new RuntimeException(errorMessage + ", status code =  " + nextResponse.getStatus() + ", reason = " + nextResponse.getStatusInfo().getReasonPhrase()
-                    + ", body = " + nextResponse.getEntity(String.class));
+
+    private JSONObject checkResponse(ClientResponse response, int requiredStatus, String errorMessage) {
+        if (response.getStatus() != requiredStatus) {
+            throw new RuntimeException(errorMessage + ", status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase()
+                    + ", body = " + response.getEntity(String.class));
         }
-        return nextResponse.getEntity(JSONObject.class);
+        if (requiredStatus == 204) {
+            return null;
+        }
+        return response.getEntity(JSONObject.class);
     }
 
     @Override
