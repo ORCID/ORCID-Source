@@ -6505,6 +6505,11 @@ a:hover .mozilla-badge {
     margin-bottom: 15px;
 }
 
+.reset-password p{
+        line-height: 18px;
+        margin-top: 10px;
+    }
+
 /* Social Login */
 
 .login .social-login {
@@ -7585,6 +7590,7 @@ ul.comma li:last-child:after {
     #password-reset-form #userEmailAddress {
         width: 95%;
     }
+
     /* oAuth */
     .oauth-login #loginForm #userId,
     .oauth-login #loginForm #password {
