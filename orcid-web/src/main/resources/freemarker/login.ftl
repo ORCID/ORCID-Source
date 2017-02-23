@@ -99,13 +99,13 @@
 						        			<div class="control-group">
 						            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label><span class="required">*</span>				           
 						               			<div class="controls"> 
-						               				<input id="email" class="form-control" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
+						               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
 						               			</div>
 						               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
 						        			</div>
 							        	</form>
 						        	</div>
-								 <div>    
+								 <div>   
 							</#if>
 				            <!-- SOCIAL LOGIN -->					            
 			                <div class="social-login">

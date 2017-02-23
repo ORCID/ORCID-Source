@@ -2802,12 +2802,17 @@ header overrides
     margin-left: 96px;
 }
 
+.oauth-login .reset-password .control-group .controls,
 .oauth-login .control-group .controls.checky {
     margin-left: 0;
 }
 
 .oauth-login .control-group .controls input {
     width: 330px;
+}
+
+.oauth-login .reset-password .control-group .controls input{
+    width: 100%;
 }
 
 .oauth-login .page-header {
