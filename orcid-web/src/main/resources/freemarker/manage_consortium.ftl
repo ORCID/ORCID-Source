@@ -76,9 +76,9 @@
                             <label><@orcid.msg 'manage_consortium.community'/></label>
                              <select id="communities" name="communities"
 								    	class="input-xlarge"
-								     	ng-model="consortium.community">
+								     	ng-model="consortium.community.value">
 										<#list communityTypes?keys as key>
-											<option value="${key}" ng-selected="contact.community === '${key}'">${communityTypes[key]}</option>
+											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
 										</#list>
 								    </select>            
                             <span class="orcid-error" ng-show="consortium.community.errors.length > 0">
