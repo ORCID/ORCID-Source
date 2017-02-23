@@ -444,7 +444,14 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
         return getClientResponseWithToken(bioSearchpath, VND_ORCID_JSON, accessToken);
     }
 
-    
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON })
+    @Path(FUNDING_PATH)
+    public ClientResponse viewFundingDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
+        URI fundingPathWithOrcid = UriBuilder.fromPath(FUNDING_PATH).build(orcid);
+        return getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_JSON, accessToken);
+    }
     
     @Override
     @GET
@@ -462,6 +469,15 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
     public ClientResponse viewAffiliationDetailsXml(@PathParam("orcid") String orcid, String accessToken) {
         URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
         return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
+    }
+    
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse viewAffiliationDetailsJson(@PathParam("orcid") String orcid, String accessToken) {
+        URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
+        return getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_JSON, accessToken);
     }
     
     @Override
