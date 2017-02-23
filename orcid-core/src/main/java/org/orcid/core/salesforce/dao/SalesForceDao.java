@@ -37,7 +37,7 @@ public interface SalesForceDao {
     static final String TECH_LEAD_ROLE = "Tech Lead";
 
     List<Member> retrieveMembers();
-    
+
     List<Member> retrieveMembersByWebsite(String websiteUrl);
 
     List<Member> retrieveConsortia();
@@ -45,15 +45,15 @@ public interface SalesForceDao {
     Consortium retrieveConsortium(String consortiumId);
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
-    
+
     List<Contact> retrieveAllContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
-    
+
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
-    
+
     String retrievePremiumConsortiumMemberTypeId();
-    
+
     String retrieveConsortiumMemberRecordTypeId();
 
     /**
@@ -63,7 +63,7 @@ public interface SalesForceDao {
      *             could contain something malicious.
      */
     String validateSalesForceId(String memberId);
-    
+
     /**
      * 
      * @return the accountId of the member
@@ -71,25 +71,27 @@ public interface SalesForceDao {
     String createMember(Member member);
 
     void updateMember(Member member);
-    
+
     /**
      * 
      * @return the opportunity id
      */
     String createOpportunity(Opportunity member);
-    
+
+    void updateOpportunity(Opportunity opportunity);
+
     /**
      * 
      * @return the contact id
      */
     String createContact(Contact contact);
-    
+
     /**
      * 
      * @return the contact role id
      */
     String createContactRole(ContactRole contact);
-    
+
     void removeContactRole(String contactRoleId);
 
     String getAccessToken();

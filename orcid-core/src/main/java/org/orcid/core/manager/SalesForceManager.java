@@ -62,6 +62,8 @@ public interface SalesForceManager {
      * @return the id of the opportunity
      */
     String createOpportunity(Opportunity opportunity);
+    
+    void flagOpportunityAsClosed(String opportunityId);
 
     void createContact(Contact contact);
 

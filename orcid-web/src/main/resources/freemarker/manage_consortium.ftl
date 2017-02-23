@@ -189,6 +189,17 @@
                 <hr></hr>
             	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
 					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
+					<span class="tooltip-container">
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
+	                        class="glyphicon glyphicon-trash grey">
+	                        <div class="popover popover-tooltip top">
+	                            <div class="arrow"></div>
+	                            <div class="popover-content">
+	                                <span><@spring.message "manage_consortium.remove_consortium_member"/></span>
+	                            </div>
+	                        </div>
+	                    </a>
+                    </span>
 					<hr></hr>
             	</div>
                 <div ng-hide="consortium.subMembers.length"> 
@@ -269,6 +280,20 @@
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
+	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+	        </form>
+	        <div ng-show="errors.length === 0">
+	            <br></br>
+	        </div>
+	    </div>
+    </script>
+    
+    <script type="text/ng-template" id="remove-sub-member-modal">
+	    <div class="lightbox-container">
+	        <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
+	        <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+	        <form ng-submit="removeSubMember(subMemberToRemove)">
+	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
 	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">

@@ -57,9 +57,11 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  */
 public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements SalesForceManager {
 
+    private static final String OPPORTUNITY_CLOSED_LOST = "Closed Lost";
+
     private static final String OPPORTUNITY_TYPE = "New";
 
-    private static final String OPPORTUNITY_STAGE_NAME = "Invoice Paid";
+    private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Invoice Paid";
 
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 
@@ -191,7 +193,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         opportunity.setConsortiumLeadId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
-        opportunity.setStageName(OPPORTUNITY_STAGE_NAME);
+        opportunity.setStageName(OPPORTUNITY_INITIAL_STAGE_NAME);
         opportunity.setCloseDate(calculateCloseDate());
         opportunity.setMembershipStartDate(calculateMembershipStartDate());
         opportunity.setMembershipEndDate(calculateMembershipEndDate());
@@ -243,6 +245,21 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String accountId = salesForceDao.createOpportunity(opportunity);
         salesForceMembersListCache.removeAll();
         return accountId;
+    }
+
+    @Override
+    public void flagOpportunityAsClosed(String opportunityId) {
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        MemberDetails memberDetails = retrieveDetails(accountId);
+        boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
+        if (authorized) {
+            Opportunity opportunity = new Opportunity();
+            opportunity.setId(opportunityId);
+            opportunity.setStageName(OPPORTUNITY_CLOSED_LOST);
+            salesForceDao.updateOpportunity(opportunity);
+        }
+        // Need to make more granular!
+        evictAll();
     }
 
     @Override

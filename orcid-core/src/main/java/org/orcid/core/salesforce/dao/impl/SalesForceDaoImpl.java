@@ -169,6 +169,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public void updateOpportunity(Opportunity opportunity) {
+        retryConsumer(accessToken -> updateOpportunityInSalesForce(accessToken, opportunity));
+    }
+
+    @Override
     public String getAccessToken() {
         if (accessToken == null) {
             accessToken = getFreshAccessToken();
@@ -249,14 +254,25 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return;
     }
 
-    private String createOpportunityInSalesForce(String accessToken, Opportunity member) {
+    private String createOpportunityInSalesForce(String accessToken, Opportunity opportunity) {
         LOGGER.info("About to create opportunity in SalesForce");
         WebResource resource = createObjectsResource("/Opportunity/");
-        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromOpportunity(member);
-        ClientResponse response = doPostRequest(resource, memberJson, accessToken);
+        JSONObject opportunityJson = salesForceAdapter.createSaleForceRecordFromOpportunity(opportunity);
+        ClientResponse response = doPostRequest(resource, opportunityJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating opportunity in SalesForce");
         return result.optString("id");
+    }
+
+    private void updateOpportunityInSalesForce(String accessToken, Opportunity opportunity) {
+        LOGGER.info("About to flag opportunity as closed in SalesForce");
+        WebResource resource = createObjectsResource("/Opportunity/", opportunity.getId()).queryParam("_HttpMethod", "PATCH");
+        JSONObject memberJson = salesForceAdapter.createSaleForceRecordFromOpportunity(opportunity);
+        // SalesForce doesn't allow the Id in the body
+        memberJson.remove("Id");
+        ClientResponse response = doPostRequest(resource, memberJson, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error updating opportunity in SalesForce");
     }
 
     private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {
