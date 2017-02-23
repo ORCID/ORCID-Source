@@ -511,6 +511,32 @@
 	</div>
 </div>
 <!-- .container -->
+<footer>
+	<div>
+		<p>
+			<a href="https://orcid.org" alt="ORCiD logo">
+				<img src="" alt="">
+			</a>
+		</p>
+		<nav>
+			<ul>
+				<li><a href="https://www.facebook.com/orcid.org" target="_blank"><img src="" alt="ORCiD facebook"></a></li>
+				<li><a href="https://twitter.com/orcid_org" target="_blank"><img src="" alt="ORCiD twitter"></a></li>
+				<li><a href="http://orcid.org/blog/feed" target="_blank"><img src="" alt="ORCiD RSS"></a></li>
+				<li><a href="https://github.com/ORCID" target="_blank"><img src="" alt="ORCiD Github"></a></li>
+			</ul>
+		</nav>
+	</div>
+	<div>
+		<p class="bold">&copy; 2017 ORCID, Inc</p>
+		<p>Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
+		<li><a href="https://orcid.org/privacy-policy">Privacy policy</a></li>
+		<li><a href="https://orcid.org/legal">Terms of use</a></li>
+		<li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
+		<li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
+		<li><a href="https://orcid.org/help/contact-us">Contact us</a></li>
+	</div>
+</footer>
 <div class="footer">
 	<div class="container">
 		<div class="row">
