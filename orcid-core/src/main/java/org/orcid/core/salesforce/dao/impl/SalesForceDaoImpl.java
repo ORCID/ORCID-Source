@@ -80,7 +80,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Resource
     private SalesForceAdapter salesForceAdapter;
 
-    private Client client = Client.create();
+    private Client client;
 
     private String accessToken;
 
@@ -591,6 +591,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        client = Client.create();
         if (clientLoggingEnabled) {
             client.addFilter(new LoggingFilter());
         }
