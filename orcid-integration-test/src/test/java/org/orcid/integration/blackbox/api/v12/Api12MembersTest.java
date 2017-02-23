@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -370,6 +371,19 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
 
         String accessToken = getAccessToken(userId, password, Arrays.asList("/person/update", "/orcid-bio/read-limited"), clientId, clientSecret, clientRedirectUri,
                 true);
+        
+        // Check the current record and get the num of existing ext ids
+        ClientResponse response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        OrcidMessage orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithExtIds);
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio());
+        int initialNumberOfExtIds = 0;
+        if(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers() != null && orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier() != null) {
+            initialNumberOfExtIds = orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size();
+        } 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
         OrcidProfile orcidProfile = new OrcidProfile();
@@ -387,10 +401,10 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
         orcidMessage.setOrcidProfile(orcidProfile);
         ClientResponse clientResponse = t2OAuthClient_1_2.addExternalIdentifiersXml(userId, orcidMessage, accessToken);
         assertEquals(200, clientResponse.getStatus());
-        ClientResponse response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
         assertNotNull(response);
         assertEquals(200, response.getStatus());
-        OrcidMessage orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessageWithExtIds);
         assertNotNull(orcidMessageWithExtIds.getOrcidProfile());
         assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio());
@@ -403,8 +417,95 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
             }
         }
         assertTrue(found);
+                        
+        // Try to add a duplicate
+        long initialSize = orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size();
+        ExternalIdentifier dupExtId = new ExternalIdentifier();
+        dupExtId.setExternalIdCommonName(new ExternalIdCommonName(commonName));
+        dupExtId.setExternalIdReference(new ExternalIdReference(idReference));
+        orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().add(dupExtId);
+        assertEquals(initialSize + 1, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         
-        //TODO: how to delete this guy?
+        clientResponse = t2OAuthClient_1_2.addExternalIdentifiersXml(userId, orcidMessageWithExtIds, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithExtIds);
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
+        assertEquals(initialSize, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        found = false;
+        for(ExternalIdentifier newExtId : orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) {
+            if(commonName.equals(newExtId.getExternalIdCommonName().getContent())) {
+                assertEquals(idReference, newExtId.getExternalIdReference().getContent());
+                found = true;
+            }
+        }
+        assertTrue(found);
+        
+        // Add a new one and the duplicate again, verify only the new one was added  
+        String newExtIdValue = "new-ext-id-" + System.currentTimeMillis();
+        ExternalIdentifier newExtId = new ExternalIdentifier();
+        newExtId.setExternalIdCommonName(new ExternalIdCommonName(newExtIdValue));
+        newExtId.setExternalIdReference(new ExternalIdReference(newExtIdValue));
+        
+        orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().add(dupExtId);
+        orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().add(newExtId);
+        
+        assertEquals(initialSize + 2, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        
+        clientResponse = t2OAuthClient_1_2.addExternalIdentifiersXml(userId, orcidMessageWithExtIds, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithExtIds);
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio());
+        assertNotNull(orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers());
+        assertEquals(initialSize + 1, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        boolean foundOld = false;
+        boolean foundNew = false;
+        for(ExternalIdentifier element : orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) {
+            if(commonName.equals(element.getExternalIdCommonName().getContent())) {
+                assertEquals(idReference, element.getExternalIdReference().getContent());
+                foundOld = true;
+            } else if(newExtIdValue.equals(element.getExternalIdCommonName().getContent())) {
+                assertEquals(newExtIdValue, element.getExternalIdReference().getContent());
+                foundNew = true;
+            }
+        }
+        assertTrue(foundOld);
+        assertTrue(foundNew);
+        
+        // Delete both ext ids
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        orcidMessageWithExtIds = response.getEntity(OrcidMessage.class);
+        Iterator<ExternalIdentifier> it = orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator();
+        
+        while(it.hasNext()) {
+            ExternalIdentifier element = it.next();
+            if(commonName.equals(element.getExternalIdCommonName().getContent()) || newExtIdValue.equals(element.getExternalIdCommonName().getContent())) {
+                it.remove();
+            } 
+        }
+        
+        clientResponse = t2OAuthClient_1_2.addExternalIdentifiersXml(userId, orcidMessageWithExtIds, accessToken);
+        assertEquals(200, clientResponse.getStatus());
+        
+        response = t2OAuthClient_1_2.viewBioDetailsXml(userId, accessToken);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());
+        // It should have the same number of ext ids as before the test
+        assertEquals(initialNumberOfExtIds, orcidMessageWithExtIds.getOrcidProfile().getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
     }
 
     @Test
