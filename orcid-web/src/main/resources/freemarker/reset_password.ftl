@@ -17,7 +17,7 @@
 
 -->
 <@public classes=['home'] nav="register">
-    <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="row">
+    <div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getResetPasswordForm()" class="row">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h2>${springMacroRequestContext.getMessage("reset_password.h2ForgottenPassword")}</h2>
             <p><small>${springMacroRequestContext.getMessage("reset_password.labelenteremailaddress")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
