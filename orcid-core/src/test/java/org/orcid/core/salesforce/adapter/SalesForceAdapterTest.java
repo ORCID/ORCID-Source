@@ -33,6 +33,7 @@ import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -119,6 +120,23 @@ public class SalesForceAdapterTest {
         assertEquals(
                 "{\"Name\":\"Org 1 Consortium Lead New Name\",\"Public_Display_Name__c\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}",
                 record.toString());
+    }
+
+    @Test
+    public void testCreateOpportunityFromSalesForceRecord() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_opportunities_list.json"));
+        JSONArray inputArray = new JSONArray(inputString);
+        Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(1));
+        assertEquals("[ORG2 ACCOUNT ID]", opportunity.getTargetAccountId());
+        assertEquals("Invoice Paid", opportunity.getStageName());
+        assertEquals("2016-12-21", opportunity.getCloseDate());
+        assertEquals("New", opportunity.getType());
+        assertEquals("[PREMIUM CONSORTIUM MEMBER ID]", opportunity.getMemberType());
+        assertEquals("2017-01-01", opportunity.getMembershipStartDate());
+        assertEquals("2017-12-31", opportunity.getMembershipEndDate());
+        assertEquals("[ORG1 ACCOUNT ID]", opportunity.getConsortiumLeadId());
+        assertEquals("2017 Membership-Org 2 Consortium Member", opportunity.getName());
+        assertEquals("[CONSORTIUM MEMBER RECORD TYPE ID]", opportunity.getRecordTypeId());
     }
 
     @Test

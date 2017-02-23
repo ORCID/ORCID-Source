@@ -1,0 +1,47 @@
+[{
+    "AccountId": "[ORG1 ACCOUNT ID]",
+    "Owner": "",
+    "Name": "2017 Membership-Org 1 Consortium Lead",
+    "StageName": "Agreement Signed",
+    "CloseDate": "2015-12-21",
+    "Type": "National Consortium",
+    "member_type__c": "[PREMIUM CONSORTIUM ID]",
+    "Membership_Start_Date__c": "2017-01-01",
+    "Membership_End_Date__c": "2017-12-31",
+    "ORCID_Classification__c": "Consortium",
+    "RecordTypeId": "[MEMBERSHIP RECORD TYPE ID]",
+    "Membership_Discount__c": "[NONE MEMBERSHIP DISCOUNT ID]"
+}, {
+    "AccountId": "[ORG2 ACCOUNT ID]",
+    "Name": "2017 Membership-Org 2 Consortium Member",
+    "StageName": "Invoice Paid",
+    "CloseDate": "2016-12-21",
+    "Type": "New",
+    "member_type__c": "[PREMIUM CONSORTIUM MEMBER ID]",
+    "Membership_Start_Date__c": "2017-01-01",
+    "Membership_End_Date__c": "2017-12-31",
+    "RecordTypeId": "[CONSORTIUM MEMBER RECORD TYPE ID]",
+    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]"
+}, {
+    "AccountId": "[ORG3 ACCOUNT ID]",
+    "Name": "2017 Membership-Org 3 Consortium Member",
+    "StageName": "Invoice Paid",
+    "CloseDate": "2017-01-01",
+    "Type": "Conversion",
+    "member_type__c": "a006C000000q5lhQAA",
+    "Membership_Start_Date__c": "2017-01-01",
+    "Membership_End_Date__c": "2017-12-31",
+    "RecordTypeId": "[CONSORTIUM MEMBER RECORD TYPE ID]",
+    "Consortia_Lead__c": "[ORG1 ACCOUNT ID]"
+}, {
+    "AccountId": "[ORG4 ACCOUNT ID]",
+    "Name": "2017 Membership-Org 4 NotAConsortium Member",
+    "StageName": "Invoice Paid",
+    "CloseDate": "2017-01-01",
+    "Type": "Renewal",
+    "member_type__c": "[BASIC MEMBER TYPE ID]",
+    "Membership_Start_Date__c": "2017-01-01",
+    "Membership_End_Date__c": "2017-12-31",
+    "RecordTypeId": "[MEMBERSHIP RECORD TYPE ID]",
+    "Membership_Discount__c": "[NONE MEMBERSHIP DISCOUNT ID]"
+}]

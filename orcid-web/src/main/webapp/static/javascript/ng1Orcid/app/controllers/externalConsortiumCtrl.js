@@ -1,7 +1,8 @@
 /**
 * External consortium controller
 */
-angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', function manageConsortiumCtrl($scope, $compile, utilsService) {     
+angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+    $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
     $scope.results = new Array();
     $scope.numFound = 0;
@@ -12,7 +13,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.showLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
-
     $scope.toggleFindConsortiumModal = function() {
          $scope.showFindModal = !$scope.showFindModal;
     };
@@ -339,6 +339,61 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             console.log("$ContactCtrl.update() error");
         });
     }
+    
+    $scope.addSubMember = function() {
+        $.ajax({
+            url: getBaseUri() + '/manage-consortium/add-sub-member.json',
+            type: 'POST',
+            data: angular.toJson($scope.newSubMember),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getConsortium();
+                    $scope.$apply();
+                    $scope.closeModal();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            console.log("Error adding submember.");
+        });
+    };
+    
+    $scope.confirmRemoveSubMember = function(subMember) {
+        $scope.subMemberToRemove = subMember;
+        $.colorbox({
+            html : $compile($('#remove-sub-member-modal').html())($scope),
+            transition: 'fade',
+            close: '',
+            onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            onComplete: function() {$.colorbox.resize();},
+            scrolling: true
+
+        });
+        $.colorbox.resize();
+    };
+    
+    $scope.removeSubMember = function () {
+        $.ajax({
+            url: getBaseUri() + '/manage-consortium/remove-sub-member.json',
+            type: 'POST',
+            data:  angular.toJson($scope.subMemberToRemove),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                $scope.getConsortium();
+                $scope.$apply();
+                $scope.closeModal();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("Problem removing sub member");
+        });
+    };
     
     $scope.buildOrcidUri = function(orcid){
         return orcidVar.baseUri + '/' + orcid;
