@@ -7097,9 +7097,10 @@ angular.module('orcidApp').controller('LoginLayoutController',['$scope', functio
     $scope.counter = 0; //To hide the spinner when the second script has been loaded, not the first one.
     $scope.showDeactivatedError = false;
     $scope.showReactivationSent = false;
-    
+
+
     $scope.showPersonalLogin = function () {        
-        $scope.personalLogin = true;        
+        $scope.personalLogin = true;    
     };
     
     $scope.showInstitutionLogin = function () {
@@ -7148,6 +7149,10 @@ angular.module('orcidApp').controller('LoginLayoutController',['$scope', functio
            console.log("error sending reactivation email");
        });
    };
+
+   $scope.loginUserIdInputChanged = function() {
+      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+    };
     
 }]);
 
