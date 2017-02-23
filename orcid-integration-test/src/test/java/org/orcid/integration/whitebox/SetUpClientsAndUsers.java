@@ -466,7 +466,7 @@ public class SetUpClientsAndUsers {
         OrcidHistory history = new OrcidHistory();
         history.setClaimed(new Claimed(true));
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        history.setCreationMethod(CreationMethod.INTEGRATION_TEST);
+        history.setCreationMethod(CreationMethod.DIRECT);
 
         orcidProfile.setOrcidHistory(history);
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
