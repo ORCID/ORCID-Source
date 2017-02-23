@@ -93,7 +93,7 @@
     </#if>
     <#if locale??>
         <script type="text/javascript">
-          var rightToLeftLang = ["ru"];
+          var rightToLeftLang = ["rl"];
           var currentLanguage = "${locale}";
 
           window.onload = function() {

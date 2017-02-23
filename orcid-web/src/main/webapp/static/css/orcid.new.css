@@ -8547,13 +8547,14 @@ ul.comma li:last-child:after {
     text-align: right;
 }
 
+/*
 .lang-rl .flexbox-container {
     display: flex;
     justify-content: flex-start;
     flex-direction: row-reverse;
     flex-wrap: wrap-reverse;
 } 
-
+*/
 .lang-rl .header .navigation > .menu {
     display: flex;
     flex-direction: column-reverse; 
@@ -8561,7 +8562,6 @@ ul.comma li:last-child:after {
     flex-direction: row-reverse;
     flex-wrap: wrap-reverse;
 }
-
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
     display: flex;
     justify-content: flex-start;
