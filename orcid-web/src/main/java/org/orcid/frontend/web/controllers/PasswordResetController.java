@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -37,12 +38,12 @@ import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
-import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
@@ -55,7 +56,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,43 +102,47 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
     public ModelAndView resetPassword() {
         ModelAndView mav = new ModelAndView("reset_password");
-        EmailAddressForm resetPasswordForm = new EmailAddressForm();
-        mav.addObject(resetPasswordForm);
         return mav;
     }
 
-    @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
-    public ModelAndView issuePasswordResetRequest(HttpServletRequest request, @ModelAttribute @Valid EmailAddressForm resetPasswordForm, BindingResult bindingResult) {
-        String submittedEmail = resetPasswordForm.getUserEmailAddress();
+    @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
+    public @ResponseBody EmailRequest getPasswordResetRequest() {
+        return new EmailRequest();
+    }
 
-        ModelAndView mav = new ModelAndView("reset_password");
+    @RequestMapping(value = "/validate-reset-password.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest validateResetPasswordRequest(@RequestBody EmailRequest passwordResetRequest) {
+        List<String> errors = new ArrayList<>();
+        passwordResetRequest.setErrors(errors);
+        if (!validateEmailAddress(passwordResetRequest.getEmail())) {
+            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+        }
+        return passwordResetRequest;
+    }
 
-        // if the email doesn't exist, or any other form errors.. don't bother
-        // hitting db
-        if (bindingResult.hasErrors()) {
-            mav.addAllObjects(bindingResult.getModel());
-            return mav;
+    @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest issuePasswordResetRequest(@RequestBody EmailRequest passwordResetRequest) {
+        List<String> errors = new ArrayList<>();
+        passwordResetRequest.setErrors(errors);
+        if (!validateEmailAddress(passwordResetRequest.getEmail())) {
+            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+            return passwordResetRequest;
         }
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(submittedEmail, LoadOptions.BIO_ONLY);
-        // if the email can't be found on the system, then add to errors
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetRequest.getEmail(), LoadOptions.BIO_ONLY);
         if (profile == null) {
-
-            String[] codes = { "orcid.frontend.reset.password.email_not_found" };
-            String[] args = { submittedEmail };
-            bindingResult.addError(new FieldError("userEmailAddress", "userEmailAddress", submittedEmail, false, codes, args, "Email not found"));
-            mav.addAllObjects(bindingResult.getModel());
-            return mav;
-        } else {
-            if (profile.isDeactivated()) {
-                mav.addObject("disabledAccount", true);
-                return mav;
-            } else {
-                registrationManager.resetUserPassword(submittedEmail, profile);
-                mav.addObject("passwordResetSuccessful", true);
-                return mav;
-            }
+            errors.add(getMessage("orcid.frontend.reset.password.email_not_found", passwordResetRequest.getEmail()));
+            return passwordResetRequest;
         }
+
+        if (profile.isDeactivated()) {
+            errors.add(getMessage("orcid.frontend.reset.password.disabled_account", passwordResetRequest.getEmail()));
+            return passwordResetRequest;
+        }
+
+        registrationManager.resetUserPassword(passwordResetRequest.getEmail(), profile);
+        passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset"));
+        return passwordResetRequest;
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
