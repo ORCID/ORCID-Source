@@ -9,7 +9,8 @@ node {
             string(defaultValue: 'master', description: 'Branch to checkout and build', name: 'branch_to_build'),
             string(defaultValue: 'file:///opt/tomcat/orcid-ci2.properties', description: 'Persistence properties file for Settting up clients and users', name: 'setup_properties_file'),
             string(defaultValue: 'classpath:test-client.properties,classpath:test-web.properties', description: 'Persistence properties file', name: 'test_properties_file')
-        ]), 
+        ]),
+        disableConcurrentBuilds(),
         pipelineTriggers([
             cron('0 H/4 * * *')
         ])
@@ -19,7 +20,7 @@ node {
     
     def tomcat_home = '/opt/tomcat/apache-tomcat-8.0.21'
     
-    def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-scheduler-web','orcid-solr-web']
+    def modules_to_build = ['orcid-web','orcid-api-web','orcid-pub-web','orcid-internal-api','orcid-solr-web']
    
     def firefox_home = '/usr/bin/firefox'
     
@@ -27,7 +28,7 @@ node {
     
     stage('Build and Pack'){
         echo "Packaging..."
-        do_maven("clean install -Dmaven.test.skip=true")
+        do_maven("clean install -U -Dmaven.test.skip=true")
     }
     
     stage('Copy Apps and Start Tomcat') {
@@ -55,7 +56,7 @@ node {
             timeout(time:30,unit:'SECONDS'){
                 setup_users = input message: 'Would you like to STOP setup clients and users ?', 
                                          ok: 'Skip',
-                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'skip')]
+                                 parameters: [booleanParam(defaultValue: false, description: '', name: 'Skip ?')]
             }
         } catch(err){
             echo err.toString()
@@ -85,9 +86,12 @@ node {
                 parameters: [
                     string(name: 'tomcat_task', value: 'shutdown')
                 ],
-                wait: true
+                wait: false
             ])
         }
+    }
+    stage('Clean up test data'){
+        sh "psql -U jenkins -d orcid -f ~/clean_all_tables.sql"
     }
 }
 def do_maven(mvn_task){
