@@ -13264,20 +13264,13 @@
 	        }
 	    });
 
-	    //in case we want to change text - leaving until text is finalized
-	    /*$scope.resetPasswordUpdateToggleText = function () {
-	        if ($scope.showResetPassword) $scope.resetPasswordToggleText = om.get("manage.editTable.hide");
-	        else $scope.resetPasswordToggleText = om.get("login.forgotten_password");
-	    };*/
 
 	    $scope.toggleResetPassword = function() {
 	        $scope.showResetPassword = !$scope.showResetPassword;
-	        //$scope.resetPasswordUpdateToggleText();
 	    };
 
 	    // init reset password toggle text
 	    $scope.showResetPassword = (window.location.hash === "#resetPassword");
-	    //$scope.resetPasswordUpdateToggleText();
 	    $scope.resetPasswordToggleText = om.get("login.forgotten_password");
 
 	    $scope.getRequestResetPassword = function() {
