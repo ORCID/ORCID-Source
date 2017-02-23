@@ -128,6 +128,7 @@
                         <li><a href="<@orcid.rootPath "/contact-us" />">Contact us</a></li>
                         <li><a href="<@orcid.rootPath "/help" />">Help</a></li>
                     </ul>
+                </div>
                 
             <#else>
                 <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
@@ -154,40 +155,40 @@
                             <a href="${aboutUri}/about/what-is-orcid/mission" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
                             'public-layout.for_researchers'/></a>
                             <ul class="menu lang-fixes">
-                            <!-- Mobile view Only -->
-                            <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+                                <!-- Mobile view Only -->
+                                <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                             
-                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">                              
-                                <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-                                <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
-                            </@security.authorize>
-                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">                              
-                                <li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
+                                <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">                              
+                                    <li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                                    <li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
+                                </@security.authorize>
+                                <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">                              
+                                    <li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
                                     <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
-                                </a></li>
-                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                            <li ng-controller="NotificationsCountCtrl">
-                                <a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
-                            </li>
-                            </@security.authorize>
-                            
-                            <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
-                            
-                            <#if !inDelegationMode || isDelegatedByAdmin>
-                                <@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
-                                    <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                    </a></li>
+                                <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+                                    <li ng-controller="NotificationsCountCtrl">
+                                    <a ${(nav=="notifications")?string('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span ng-cloak ng-hide="getUnreadCount() === 0">({{getUnreadCount()}})</span></a>
+                                    </li>
                                 </@security.authorize>
-                                <@security.authorize ifAnyGranted="ROLE_USER">
-                                    <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-                                </@security.authorize>
-                            </#if>
+                                
+                                <li><a ${(nav=="settings")?string('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
                             
-                            <@security.authorize ifAnyGranted="ROLE_ADMIN">
-                                <li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
-                                <li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
-                            </@security.authorize>
+                                <#if !inDelegationMode || isDelegatedByAdmin>
+                                    <@security.authorize ifAnyGranted="ROLE_GROUP, ROLE_BASIC, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM, ROLE_PREMIUM_INSTITUTION">
+                                        <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                    </@security.authorize>
+                                    <@security.authorize ifAnyGranted="ROLE_USER">
+                                        <li><a ${(nav=="developer-tools")?string('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                                    </@security.authorize>
+                                </#if>
+                            
+                                <@security.authorize ifAnyGranted="ROLE_ADMIN">
+                                    <li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
+                                    <li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+                                </@security.authorize>
                                                                     
-                            </@security.authorize>
+                                </@security.authorize>
                                 <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                             </ul>
                         </li>
@@ -466,22 +467,21 @@
                         </li>
                         
                         <!-- SIGN IN/OUT -->
-                        <li class="last leaf"><@security.authorize
-                            ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM,
-                            ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+                        <li class="last leaf">
+                            <@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
                             <a href="<@orcid.rootPath "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
-                        </@security.authorize>
+                            </@security.authorize>
                          
-                        <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-                            <a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
-                        </@security.authorize>
+                            <@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
+                                <a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
+                            </@security.authorize>
                         
-                    </li>
+                        </li>
     
                     </ul>
                     <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->
-                </#if>
-            </div>
+                </div>
+            </#if>
             <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
                 <h1>
                     <a href="${aboutUri}"><img
@@ -502,26 +502,28 @@
              -->    
         </div><!-- .row -->
     </div><!-- .header -->
-    <div id="main" role="main" class="main"><#include
-        '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
+    <div id="main" role="main" class="main">
+        <#include '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
     </div>
 </div>
 <!-- .container -->
 <footer>
-    <div>
-        <p>
-            <a href="https://orcid.org" alt="ORCiD logo">
-                <img src="" alt="">
-            </a>
-        </p>
-        <nav>
-            <ul>
-                <li><a href="https://www.facebook.com/orcid.org" target="_blank"><img src="" alt="ORCiD facebook"></a></li>
-                <li><a href="https://twitter.com/orcid_org" target="_blank"><img src="" alt="ORCiD twitter"></a></li>
-                <li><a href="http://orcid.org/blog/feed" target="_blank"><img src="" alt="ORCiD RSS"></a></li>
-                <li><a href="https://github.com/ORCID" target="_blank"><img src="" alt="ORCiD Github"></a></li>
-            </ul>
-        </nav>
+    <div class="container">
+        <div class="row">
+            <p>
+                <a href="https://orcid.org" alt="ORCiD logo">
+                    <img src="" alt="">
+                </a>
+            </p>
+            <nav>
+                <ul>
+                    <li><a href="https://www.facebook.com/orcid.org" target="_blank"><img src="" alt="ORCiD facebook"></a></li>
+                    <li><a href="https://twitter.com/orcid_org" target="_blank"><img src="" alt="ORCiD twitter"></a></li>
+                    <li><a href="http://orcid.org/blog/feed" target="_blank"><img src="" alt="ORCiD RSS"></a></li>
+                    <li><a href="https://github.com/ORCID" target="_blank"><img src="" alt="ORCiD Github"></a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
     <div>
         <p class="bold">&copy; 2017 ORCID, Inc</p>
