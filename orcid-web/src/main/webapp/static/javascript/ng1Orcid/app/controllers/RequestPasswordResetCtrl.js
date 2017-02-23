@@ -1,5 +1,6 @@
 angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
 
+    //prefill reset form if email entered in login form
     $scope.$on("loginUserIdInputChanged", function(event, options) {
         var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(reEmailMatch.test(options.newValue)) {
@@ -13,17 +14,18 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$c
         }
     });
 
-    $scope.resetPasswordUpdateToggleText = function () {
+    //in case we want to change text - leaving until text is finalized
+    /*$scope.resetPasswordUpdateToggleText = function () {
         if ($scope.showResetPassword) $scope.resetPasswordToggleText = om.get("manage.editTable.hide");
         else $scope.resetPasswordToggleText = om.get("login.forgotten_password");
-    };
+    };*/
 
     $scope.toggleResetPassword = function() {
         $scope.showResetPassword = !$scope.showResetPassword;
         //$scope.resetPasswordUpdateToggleText();
     };
 
-    // init reset password
+    // init reset password toggle text
     $scope.showResetPassword = (window.location.hash === "#resetPassword");
     //$scope.resetPasswordUpdateToggleText();
     $scope.resetPasswordToggleText = om.get("login.forgotten_password");

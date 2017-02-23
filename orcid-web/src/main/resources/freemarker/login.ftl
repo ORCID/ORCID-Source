@@ -82,8 +82,8 @@
                                     </div>
 					            </form>
 							</div>
+							<!-- RESET PASSWORD -->
 							<#if RequestParameters['ResetPassword']??>
-								<!-- RESET PASSWORD -->
 				            	<div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="reset-password">
 				                	<a name="resetPassword"></a>
 				                	<a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
