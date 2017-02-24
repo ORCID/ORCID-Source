@@ -517,7 +517,7 @@
                     </a>
                 </p>
                 <nav>
-                    <ul>
+                    <ul class="inline-list">
                         <li><a href="https://www.facebook.com/orcid.org" target="_blank"><img src="" alt="ORCiD facebook"></a></li>
                         <li><a href="https://twitter.com/orcid_org" target="_blank"><img src="" alt="ORCiD twitter"></a></li>
                         <li><a href="http://orcid.org/blog/feed" target="_blank"><img src="" alt="ORCiD RSS"></a></li>
@@ -529,7 +529,7 @@
                 <p class="bold">&copy; 2017 ORCID, Inc</p>
                 <p>Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
                 <nav>
-                    <ul>
+                    <ul class="inline-list">
                         <li><a href="https://orcid.org/privacy-policy">Privacy policy</a></li>
                         <li><a href="https://orcid.org/legal">Terms of use</a></li>
                         <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>

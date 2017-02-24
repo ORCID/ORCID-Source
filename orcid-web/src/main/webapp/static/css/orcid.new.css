@@ -7241,6 +7241,13 @@ ul.comma li:last-child:after {
     width: 25%;
 }
 
+.bold {
+    font-weight: bold;
+}
+
+.inline-list li {
+    display: inline;
+}
 
 /* Media Queries */
 
