@@ -231,16 +231,20 @@
                             <div class="form-group">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
+                                	<!--
                                     <select id="worksIdType{{$index}}" name="" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)">
                                         <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
                                         <#list idTypes?keys as key>
                                             <option value="${idTypes[key]}">${key}</option>
                                         </#list>
-                                    </select>
+                                    </select> -->
+                                    
+                                    <input id="worksIdType{{$index}}" class="form-control" name="" type="text" ng-model="workExternalIdentifier.workExternalIdentifierType.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)" ng-model-onblur />
+                                    <span ng-show="bindTypeaheadForExternalIDs({{$index}},this)"></span><!-- this forces load of typeahead within ng-repeat-->
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
                                     </span>
-                                </div>  
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>

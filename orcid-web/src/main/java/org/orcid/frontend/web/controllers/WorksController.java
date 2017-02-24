@@ -600,6 +600,10 @@ public class WorksController extends BaseWorkspaceController {
                     && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
                 setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
+            //TODO: check the type is a valid code...
+            if (wId.getWorkExternalIdentifierType().getValue() != null 
+                    && !(wId.getWorkExternalIdentifierType().getValue().equals("doi") || wId.getWorkExternalIdentifierType().getValue().equals("pmc")))
+                    setError(wId.getWorkExternalIdentifierId(), "manualWork.length_less_2084");
         }
 
         return work;
