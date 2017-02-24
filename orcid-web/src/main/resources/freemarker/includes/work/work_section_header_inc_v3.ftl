@@ -37,14 +37,14 @@
                             <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
                     </li>
-                    <#if RequestParameters['bibtexExport']??>
-	                    <li ng-show="worksSrvc.groups.length > 0" ng-cloak>
-	                    	<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
-	                            <span class="glyphicon glyphicon-save"></span>
-	                            <@orcid.msg 'groups.common.export_works'/>
-	                        </a>
-	                    </li>
-                    </#if>
+
+                    <li ng-show="worksSrvc.groups.length > 0" ng-cloak>
+                    	<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
+                            <span class="glyphicon glyphicon-save"></span>
+                            <@orcid.msg 'groups.common.export_works'/>
+                        </a>
+                    </li>
+
                     <li class="hidden-xs"><!-- Workaround for mobile view -->
                         <div class="menu-container" id="add-work-container">
                             <ul class="toggle-menu">
