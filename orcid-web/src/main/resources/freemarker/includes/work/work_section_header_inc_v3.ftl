@@ -19,7 +19,7 @@
 <div class="workspace-accordion-header">
     <div class="row">
         <div class="col-md-3 col-sm-2 col-xs-12">
-        	<a name='workspace-works' />
+            <a name='workspace-works' />
             <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -37,14 +37,14 @@
                             <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
                     </li>
-                    <#if RequestParameters['bibtexExport']??>
-	                    <li ng-show="worksSrvc.groups.length > 0" ng-cloak>
-	                    	<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
-	                            <span class="glyphicon glyphicon-save"></span>
-	                            <@orcid.msg 'groups.common.export_works'/>
-	                        </a>
-	                    </li>
-                    </#if>
+
+                    <li ng-show="worksSrvc.groups.length > 0" ng-cloak>
+                        <a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
+                            <span class="glyphicon glyphicon-save"></span>
+                            <@orcid.msg 'groups.common.export_works'/>
+                        </a>
+                    </li>
+
                     <li class="hidden-xs"><!-- Workaround for mobile view -->
                         <div class="menu-container" id="add-work-container">
                             <ul class="toggle-menu">
@@ -52,7 +52,7 @@
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <@orcid.msg 'groups.common.add_works'/>
                                     <ul class="menu-options works">
-                                    	<!-- Search & Link -->
+                                        <!-- Search & Link -->
                                         <li ng-show="noLinkFlag">
                                             <a ng-show="noLinkFlag" class="action-option manage-button" ng-click="showWorkImportWizard()">
                                                 <span class="glyphicon glyphicon-cloud-upload"></span>
@@ -61,12 +61,12 @@
                                         </li>
                                         <!-- Bibtex -->
                                         <![if gt IE 9]>
-	                                        <li>
-	                                            <a class="action-option manage-button" ng-click="openBibTextWizard()">
-	                                                <span class="glyphicons file_import bibtex-wizard"></span>
-	                                                <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
-	                                            </a>
-	                                        </li>              
+                                            <li>
+                                                <a class="action-option manage-button" ng-click="openBibTextWizard()">
+                                                    <span class="glyphicons file_import bibtex-wizard"></span>
+                                                    <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
+                                                </a>
+                                            </li>              
                                         <![endif]>            
                                         <!-- Add Manually -->
                                         <li>
