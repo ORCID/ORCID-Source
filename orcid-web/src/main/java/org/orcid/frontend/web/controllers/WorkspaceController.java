@@ -280,22 +280,24 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
     
     /**
-     * Search DB for disambiguated affiliations to suggest to user
+     * Search DB for id types to suggest to user
+     * if list empty, suggest the top ten.
      */
     @RequestMapping(value = "/idTypes/{query}", method = RequestMethod.GET)
     public @ResponseBody
-    List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
+    List<Map<String, String>> searchExternalIDTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        Map<String, String> datum1 = new HashMap<String,String>();
-        datum1.put("value", "doi");
-        datum1.put("name", "doi");
-        datum1.put("description", "digital object id "+limit);
-        datums.add(datum1);
-        Map<String, String> datum2 = new HashMap<String,String>();
-        datum2.put("value", "pmc");
-        datum2.put("name", "pmc");
-        datum2.put("description", "pubmedcentral "+query);
-        datums.add(datum2);
+        Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
+        for (String type : types.keySet()) {
+            IdentifierType t = types.get(type);
+            if (t.getDescription().contains(query) || t.getName().contains(query)){
+                Map<String, String> datum1 = new HashMap<String,String>();
+                datum1.put("value", t.getName());
+                datum1.put("name", t.getName());
+                datum1.put("description", t.getDescription());
+                datums.add(datum1);
+            }
+        }
         return datums;
     }
 
