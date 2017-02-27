@@ -53,7 +53,7 @@ import com.sun.jersey.api.client.ClientResponse;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-notifications-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class NotificationsTest {
 
     @Value("${org.orcid.web.testClient1.clientId}")

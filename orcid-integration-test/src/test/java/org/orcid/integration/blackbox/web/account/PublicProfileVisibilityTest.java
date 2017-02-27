@@ -56,7 +56,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Shobhit Tyagi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @BeforeClass
     public static void before() {

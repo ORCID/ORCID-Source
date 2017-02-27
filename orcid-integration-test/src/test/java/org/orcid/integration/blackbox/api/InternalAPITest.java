@@ -47,7 +47,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-internal-api-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class InternalAPITest {
 
     @Value("${org.orcid.web.testClient1.redirectUri}")
