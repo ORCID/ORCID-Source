@@ -76,9 +76,9 @@
                             <label><@orcid.msg 'manage_consortium.community'/></label>
                              <select id="communities" name="communities"
 								    	class="input-xlarge"
-								     	ng-model="consortium.community">
+								     	ng-model="consortium.community.value">
 										<#list communityTypes?keys as key>
-											<option value="${key}" ng-selected="contact.community === '${key}'">${communityTypes[key]}</option>
+											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
 										</#list>
 								    </select>            
                             <span class="orcid-error" ng-show="consortium.community.errors.length > 0">
@@ -184,6 +184,40 @@
                     </div>
                 </div> 
             </div>
+            <div>
+                <h3>Consortium Members</h3>
+                <hr></hr>
+            	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
+					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
+					<span class="tooltip-container">
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
+	                        class="glyphicon glyphicon-trash grey">
+	                        <div class="popover popover-tooltip top">
+	                            <div class="arrow"></div>
+	                            <div class="popover-content">
+	                                <span><@spring.message "manage_consortium.remove_consortium_member"/></span>
+	                            </div>
+	                        </div>
+	                    </a>
+                    </span>
+					<hr></hr>
+            	</div>
+                <div ng-hide="consortium.subMembers.length"> 
+					<p>This consortium does not have any members yet.</p>
+					<hr></hr>
+                </div>
+                <h3>New consortium member</h3>
+                <form>
+                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
+                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+	                        <span id="bottom-confirm-update-consortium" ng-click="addSubMember()" class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></span>
+	                    </div>
+	                </div> 
+                </form>
+		    </div>
         </div>
     </div>
     <script type="text/ng-template" id="confirm-modal-consortium">
@@ -246,6 +280,20 @@
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
+	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+	        </form>
+	        <div ng-show="errors.length === 0">
+	            <br></br>
+	        </div>
+	    </div>
+    </script>
+    
+    <script type="text/ng-template" id="remove-sub-member-modal">
+	    <div class="lightbox-container">
+	        <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
+	        <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+	        <form ng-submit="removeSubMember(subMemberToRemove)">
+	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
 	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
