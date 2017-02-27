@@ -665,7 +665,7 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
     }
     
     @Test
-    public void testViewRecord() throws Exception {
+    public void testViewFullDetails() throws Exception {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         OrcidMessage record = (OrcidMessage) unmarshaller.unmarshal(Api12MembersTest.class.getResourceAsStream("/samples/orcid_profile.xml"));        

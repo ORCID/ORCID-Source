@@ -18,33 +18,30 @@ package org.orcid.integration.api.t1;
 
 import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
+import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_POST_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.orcid.api.common.OAuthOrcidApiService;
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.ClientResponse;
 
-public interface T1OAuthAPIService<T> extends OAuthOrcidApiService<T> {
+public interface T1OAuthAPIService<T> {
 
     @POST
     @Path(T2OrcidApiService.OAUTH_TOKEN)
@@ -59,28 +56,16 @@ public interface T1OAuthAPIService<T> extends OAuthOrcidApiService<T> {
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);
     
     /**
-     * POST an XML representation of the entire ORCID profile
+     * GETs the HTML representation of the ORCID record
      * 
-     * @return the XML representation of the ORCID record including the added
-     *         work(s)
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
      */
-    @POST
-    @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(OrcidApiConstants.PROFILE_POST_PATH)
-    T createProfileXML(OrcidMessage orcidMessage, String token);
-
-    /**
-     * POST an JSON representation of the entire ORCID profile
-     * 
-     * @return the JSON representation of the ORCID record including the added
-     *         work(s)
-     */
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(PROFILE_POST_PATH)
-    T createProfileJson(OrcidMessage orcidMessage, String token);
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(BIO_PATH)
+    T viewBioDetailsHtml(@PathParam("orcid") String orcid);
 
     /**
      * GETs the XML representation of the ORCID record containing only the
@@ -90,262 +75,188 @@ public interface T1OAuthAPIService<T> extends OAuthOrcidApiService<T> {
      *            the ORCID that corresponds to the user's record
      * @return the XML representation of the ORCID record
      */
-    @PUT
+    @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(BIO_PATH)
-    T updateBioDetailsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    T viewBioDetailsXml(@PathParam("orcid") String orcid);
 
     /**
-     * POST a JSON representation of the ORCID record containing only the
+     * GETs the JSON representation of the ORCID record containing only the
      * Biography details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
      * @return the JSON representation of the ORCID record
      */
-    @PUT
+    @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIO_PATH)
-    T updateBioDetailsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    T viewBioDetailsJson(@PathParam("orcid") String orcid);
 
     /**
-     * POST an XML representation of the ORCID record containing only works
+     * GETs the HTML representation of the ORCID external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(EXTERNAL_IDENTIFIER_PATH)
+    T viewExternalIdentifiersHtml(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the XML representation of the ORCID record containing only the
+     * external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(EXTERNAL_IDENTIFIER_PATH)
+    T viewExternalIdentifiersXml(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only the
+     * external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(EXTERNAL_IDENTIFIER_PATH)
+    T viewExternalIdentifiersJson(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the HTML representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
+    @Path(PROFILE_GET_PATH)
+    T viewFullDetailsHtml(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the XML representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(PROFILE_GET_PATH)
+    T viewFullDetailsXml(@PathParam("orcid") String orcid);
+
+    T viewFullDetailsXml(String orcid, String messageVersion);
+
+    /**
+     * GETs the JSON representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(PROFILE_GET_PATH)
+    T viewFullDetailsJson(@PathParam("orcid") String orcid);
+
+    /**
+     * GETs the HTML representation of the ORCID record containing only work
      * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         work(s)
+     * @return the HTML representation of the ORCID record
      */
-    @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @GET
+    @Produces(value = { MediaType.TEXT_HTML })
     @Path(WORKS_PATH)
-    T addWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    T viewWorksDetailsHtml(@PathParam("orcid") String orcid);
 
     /**
-     * POST a JSON representation of the ORCID record containing only works
+     * GETs the XML representation of the ORCID record containing only work
      * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         work(s)
+     * @return the XML representation of the ORCID record
      */
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORKS_PATH)
-    T addWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    T viewWorksDetailsXml(@PathParam("orcid") String orcid);
 
     /**
-     * PUT an XML representation of the ORCID record containing only works
+     * GETs the JSON representation of the ORCID record containing only work
      * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         work(s)
+     * @return the JSON representation of the ORCID record
      */
-    @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS_PATH)
-    T updateWorksXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    T viewWorksDetailsJson(@PathParam("orcid") String orcid);
 
     /**
-     * PUT a JSON representation of the ORCID record containing only works
+     * GETs the XML representation of the ORCID record containing only funding
      * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         work(s)
+     * @return the XML representation of the ORCID record
      */
-    @PUT
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS_PATH)
-    T updateWorksJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * POST an XML representation of the ORCID record containing only
-     * affiliations details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         affiliation(s)
-     */
-    @POST
+    @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(AFFILIATIONS_PATH)
-    T addAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * POST a JSON representation of the ORCID record containing only
-     * affiliations details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         affiliation(s)
-     */
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(AFFILIATIONS_PATH)
-    T addAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * PUT an XML representation of the ORCID record containing only
-     * affiliations details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         affiliation(s)
-     */
-    @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(AFFILIATIONS_PATH)
-    T updateAffiliationsXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * PUT a JSON representation of the ORCID record containing only
-     * affiliations details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         affiliation(s)
-     */
-    @PUT
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(AFFILIATIONS_PATH)
-    T updateAffiliationsJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * POST an XML representation of the ORCID record containing only
-     * funding details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         funding(s)
-     */
-    @POST
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
     @Path(FUNDING_PATH)
-    T addFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * POST a JSON representation of the ORCID record containing only
-     * funding details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         funding(s)
-     */
-    @POST
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(FUNDING_PATH)
-    T addFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * PUT an XML representation of the ORCID record containing only
-     * funding details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         funding(s)
-     */
-    @PUT
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(FUNDING_PATH)
-    T updateFundingXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
-    /**
-     * PUT a JSON representation of the ORCID record containing only
-     * funding details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         funding(s)
-     */
-    @PUT
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(FUNDING_PATH)
-    T updateFundingJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
+    T viewFundingDetailsXml(@PathParam("orcid") String orcid);
+    
     
     /**
-     * POST an XML representation of the ORCID external identifiers containing
-     * only the URLs details
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
      * 
      * @param orcid
      *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record including the added
-     *         external identifiers(s)
+     * @return the XML representation of the ORCID record
      */
-    @POST
+    @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
-    @Path(EXTERNAL_IDENTIFIER_PATH)
-    T addExternalIdentifiersXml(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
-
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationDetailsXml(@PathParam("orcid") String orcid);
+    
     /**
-     * POST a JSON representation of the ORCID external identifiers containing
-     * only the URLs details
+     * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
+     * the given query
      * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record including the added
-     *         external identifiers(s)
+     * @param query
+     * @return
      */
-    @POST
+    @GET
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(EXTERNAL_IDENTIFIER_PATH)
-    T addExternalIdentifiersJson(@PathParam("orcid") String orcid, OrcidMessage orcidMessage, String token);
+    @Path(BIO_SEARCH_PATH)
+    public T searchByQueryJSON(String query);
 
     /**
-     * PUT a webhook callback url to an ORCID record
+     * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
+     * the given query
      * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @param the
-     *            url encoded webhook url
-     * @return the response code
+     * @param query
+     * @return
      */
-    @PUT
-    @Consumes(value = { MediaType.WILDCARD })
-    @Path(WEBHOOKS_PATH)
-    T registerWebhook(@PathParam("orcid") String orcid, @PathParam("webhook_uri") String webhookUri, String token);
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
+    @Path(BIO_SEARCH_PATH)
+    public T searchByQueryXML(String query);
 
-    /**
-     * DELETE a webhook callback url to an ORCID record
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @param the
-     *            url encoded webhook url
-     * @return the response code
-     */
-    @PUT
-    @Consumes(value = { MediaType.WILDCARD })
-    @Path(WEBHOOKS_PATH)
-    T unregisterWebhook(String orcid, String webhookUri, String token);
 }
