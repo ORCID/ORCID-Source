@@ -147,6 +147,7 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
         assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        int initialSize = orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size();
         boolean found = false;
         for(OrcidWork work : orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {
             if(title.equals(work.getWorkTitle().getTitle().getContent())) {                
@@ -161,15 +162,21 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
         String newTitle = "Updated - " + title;
         WorkType newType = WorkType.BOOK;
         String newExtId = String.valueOf(System.currentTimeMillis());
-        for(OrcidWork work : orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {
-            if(title.equals(work.getWorkTitle().getTitle().getContent())) {                
-                assertNotNull(work.getPutCode());
-                //Update title
-                work.getWorkTitle().getTitle().setContent(newTitle);
-                //Update ext ids
-                work.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().setContent(newExtId);
-                //Update type
-                work.setWorkType(newType);
+        Iterator<OrcidWork> it = orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().iterator();
+        while(it.hasNext()) {
+            OrcidWork work = it.next();
+            if(clientId.equals(work.getSource().retrieveSourcePath())) {
+                if(title.equals(work.getWorkTitle().getTitle().getContent())) {                
+                    assertNotNull(work.getPutCode());
+                    //Update title
+                    work.getWorkTitle().getTitle().setContent(newTitle);
+                    //Update ext ids
+                    work.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().setContent(newExtId);
+                    //Update type
+                    work.setWorkType(newType);
+                }
+            } else {
+                it.remove();
             }
         }
         
@@ -187,6 +194,8 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
         assertNotNull(orcidMessageWithUpdatedWork.getOrcidProfile().getOrcidActivities());
         assertNotNull(orcidMessageWithUpdatedWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
         assertNotNull(orcidMessageWithUpdatedWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        int size = orcidMessageWithUpdatedWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().size();
+        assertEquals(initialSize, size);
         found = false;
         for(OrcidWork work : orcidMessageWithUpdatedWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {                            
             assertNotNull(work.getPutCode());
