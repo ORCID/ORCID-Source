@@ -33,11 +33,11 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-public class WebOAuthOrcidApiClientImpl implements WebOAuthAPIService<ClientResponse> {
+public class InternalOAuthOrcidApiClientImpl implements OAuthInternalAPIService<ClientResponse> {
 
     private OrcidClientHelper orcidClientHelper;
 
-    public WebOAuthOrcidApiClientImpl(URI baseUri, Client c) throws URISyntaxException {
+    public InternalOAuthOrcidApiClientImpl(URI baseUri, Client c) throws URISyntaxException {
         orcidClientHelper = new OrcidClientHelper(baseUri, c);
     }
 

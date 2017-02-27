@@ -27,7 +27,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.blackbox.api.v12.T1OAuthAPIService;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v12.WebOAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.OAuthInternalAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -38,20 +38,20 @@ public class OauthHelper {
 
     private WebDriverHelper webDriverHelper;
     
-    private WebOAuthAPIService<ClientResponse> oauthWebClient;
+    private OAuthInternalAPIService<ClientResponse> oauthInternalApiClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     private T1OAuthAPIService<ClientResponse> oauthT1Client;            
     
     public void setWebDriverHelper(WebDriverHelper webDriverHelper) {
         this.webDriverHelper = webDriverHelper;
-    }    
-    
-    public WebOAuthAPIService<ClientResponse> getOauthWebClient() {
-        return oauthWebClient;
+    }            
+
+    public OAuthInternalAPIService<ClientResponse> getOauthInternalApiClient() {
+        return oauthInternalApiClient;
     }
 
-    public void setOauthWebClient(WebOAuthAPIService<ClientResponse> oauthWebClient) {
-        this.oauthWebClient = oauthWebClient;
+    public void setOauthInternalApiClient(OAuthInternalAPIService<ClientResponse> oauthInternalApiClient) {
+        this.oauthInternalApiClient = oauthInternalApiClient;
     }
 
     public T2OAuthAPIService<ClientResponse> getOauthT2Client() {
@@ -134,7 +134,7 @@ public class OauthHelper {
         ClientResponse clientResponse = null;
         switch(apiRequerstType) {
         case INTERNAL:
-            clientResponse = oauthWebClient.obtainOauth2TokenPost("client_credentials", params);
+            clientResponse = oauthInternalApiClient.obtainOauth2TokenPost("client_credentials", params);
             break;
         case MEMBER:
             clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);

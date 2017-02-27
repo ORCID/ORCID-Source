@@ -69,7 +69,7 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <!-- MEMBER -->
+    <!-- MEMBER API -->
     <bean id="memberV2ApiClient_rc1" class="org.orcid.integration.blackbox.api.v2.rc1.MemberV2ApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
@@ -95,7 +95,7 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
-    <!-- PUBLIC -->
+    <!-- PUBLIC API -->
     <bean id="publicV1ApiClient" class="org.orcid.integration.api.pub.PublicV1ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
         <constructor-arg ref="jerseyClient"/>
@@ -126,6 +126,12 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>        
     
+    <!-- INTERNAL API -->
+    <bean id="internalOAuthClient" class="org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.internal.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>   
+    
     <!-- Notifications -->
     <bean id="notificationsClient_v2" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0"/>
@@ -151,17 +157,16 @@
         <constructor-arg value="${org.orcid.api.baseUri}/v2.0_rc1"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
-    
-    <!-- UI -->
-    <bean id="oauthWebClient" class="org.orcid.integration.blackbox.api.v12.WebOAuthOrcidApiClientImpl">
-        <constructor-arg value="${org.orcid.api.baseUri}"/>
+        
+    <bean id="oauthInternalApiClient" class="org.orcid.integration.blackbox.api.v12.InternalOAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.internal.baseUri}"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
         <property name="oauthT2Client" ref="t2OAuthClient" />
         <property name="oauthT1Client" ref="t1OAuthClient" />
-        <property name="oauthWebClient" ref="oauthWebClient" />         
+        <property name="oauthInternalApiClient" ref="oauthInternalApiClient" />         
     </bean>
 
 </beans>

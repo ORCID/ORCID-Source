@@ -27,7 +27,7 @@ import org.orcid.api.common.T2OrcidApiService;
 
 import com.sun.jersey.api.client.ClientResponse;
 
-public interface WebOAuthAPIService<T> {
+public interface OAuthInternalAPIService<T> {
 
     @POST
     @Path(T2OrcidApiService.OAUTH_TOKEN)
