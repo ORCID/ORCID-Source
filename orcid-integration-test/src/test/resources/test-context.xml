@@ -163,10 +163,16 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="oauthWebClient" class="org.orcid.integration.blackbox.api.v12.InternalOAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.web.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
         <property name="oauthT2Client" ref="t2OAuthClient" />
         <property name="oauthT1Client" ref="t1OAuthClient" />
-        <property name="oauthInternalApiClient" ref="oauthInternalApiClient" />         
+        <property name="oauthInternalApiClient" ref="oauthInternalApiClient" />
+        <property name="oauthWebClient" ref="oauthWebClient" />           
     </bean>
 
 </beans>

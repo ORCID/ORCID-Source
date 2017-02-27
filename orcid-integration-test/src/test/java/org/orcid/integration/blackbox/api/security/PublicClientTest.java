@@ -47,7 +47,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-context" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PublicClientTest extends BlackBoxBaseV2Release {
 
     @Resource(name = "t2OAuthClient")

@@ -39,12 +39,17 @@ public class OauthHelper {
     private WebDriverHelper webDriverHelper;
     
     private OAuthInternalAPIService<ClientResponse> oauthInternalApiClient;
+    private OAuthInternalAPIService<ClientResponse> oauthWebClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     private T1OAuthAPIService<ClientResponse> oauthT1Client;            
     
     public void setWebDriverHelper(WebDriverHelper webDriverHelper) {
         this.webDriverHelper = webDriverHelper;
-    }            
+    }                
+    
+    public WebDriverHelper getWebDriverHelper() {
+        return webDriverHelper;
+    }
 
     public OAuthInternalAPIService<ClientResponse> getOauthInternalApiClient() {
         return oauthInternalApiClient;
@@ -68,6 +73,14 @@ public class OauthHelper {
 
     public void setOauthT1Client(T1OAuthAPIService<ClientResponse> oauthT1Client) {
         this.oauthT1Client = oauthT1Client;
+    }    
+    
+    public OAuthInternalAPIService<ClientResponse> getOauthWebClient() {
+        return oauthWebClient;
+    }
+
+    public void setOauthWebClient(OAuthInternalAPIService<ClientResponse> oauthWebClient) {
+        this.oauthWebClient = oauthWebClient;
     }
 
     public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
@@ -141,6 +154,9 @@ public class OauthHelper {
             break;
         case PUBLIC:
             clientResponse = oauthT1Client.obtainOauth2TokenPost("client_credentials", params);
+            break;
+        case WEB:
+            clientResponse = oauthWebClient.obtainOauth2TokenPost("client_credentials", params);
             break;
         }
         return clientResponse;

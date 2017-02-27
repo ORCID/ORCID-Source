@@ -78,7 +78,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseV2Release {
     public void rootTokenTest() throws Exception {
         signout();
         String code = getAuthorizationCode();
-        ClientResponse tokenResponse = oauthHelper.getResponse(getParamMap(code), APIRequestType.INTERNAL);
+        ClientResponse tokenResponse = oauthHelper.getResponse(getParamMap(code), APIRequestType.WEB);
 
         assertEquals(200, tokenResponse.getStatus());
         JSONObject jsonObject = new JSONObject(tokenResponse.getEntity(String.class));

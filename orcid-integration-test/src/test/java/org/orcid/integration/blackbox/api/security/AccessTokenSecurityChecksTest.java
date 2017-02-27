@@ -34,14 +34,11 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -78,17 +75,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
     
     @Resource(name = "t2OAuthClient_1_2")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient_1_2; 
-	
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
+	    
     @SuppressWarnings("unchecked")
     @Test
     public void testInvalidTokenResponse() throws IOException {
