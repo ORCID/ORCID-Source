@@ -231,16 +231,9 @@
                             <div class="form-group">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
-                                	<!--
-                                    <select id="worksIdType{{$index}}" name="" class="form-control" ng-model="workExternalIdentifier.workExternalIdentifierType.value" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)">
-                                        <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty' /></option>
-                                        <#list idTypes?keys as key>
-                                            <option value="${idTypes[key]}">${key}</option>
-                                        </#list>
-                                    </select> -->
                                     
-                                    <input id="worksIdType{{$index}}" class="form-control" name="" type="text" ng-model="workExternalIdentifier.workExternalIdentifierType.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_name'/>" ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)" ng-model-onblur />
-                                    <span ng-show="bindTypeaheadForExternalIDs({{$index}},this)"></span><!-- this forces load of typeahead within ng-repeat-->
+                                    <input id="worksIdType{{$index}}" class="form-control" type="text" ng-model="workExternalIdentifier.workExternalIdentifierType.value" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" typeahead="eid.value as eid.description for eid in getExternalIDTypes($viewValue)" typeahead-loading="loading" typeahead-min-length="0" typeahead-wait-ms="300" typeahead-editable="false" typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)"/>
+                                    
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>
                                     </span>

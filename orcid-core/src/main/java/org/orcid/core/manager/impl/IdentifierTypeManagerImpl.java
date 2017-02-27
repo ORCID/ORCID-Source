@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +40,8 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+
+import com.google.common.collect.Lists;
 
 /**
  * Manages the map of external identifier types.
@@ -139,6 +143,40 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         }catch(Exception e){
             return type.replace('_', ' ');
         }
+    }
+
+    
+    /** Seems pointless to base on live data - based on 2016 datadump
+     *  DOI,414627,9.49E+06,8.56E+06
+        EID,176888,5.52E+06,5.42E+06
+        PMID,65623,1.17E+06,1.16E+06
+        ISSN,64859,944926,493274
+        WOSUID,45497,1.37E+06,1.35E+06
+        PMC,41232,272073,270988
+        ISBN,39629,217805,172146
+        OTHER_ID,15486,203683,200963
+        SOURCE_WORK_ID,14091,279023,277629
+        ARXIV,5199,134103,130695
+        HANDLE,1535,26142,26069
+        BIBCODE,1347,83041,82412
+     */
+    
+    private static List<String> topTypes = Lists.newArrayList("doi","eid","pmid","issn","wosuid","pmc","isbn","other-id","arxiv","handle","bibcode");
+    
+    /**
+     * Returns an immutable map of the top X API Type Name->identifierType objects.
+     * Null locale will result in Locale.ENGLISH
+     * 
+     */
+    @Override
+    /*@Cacheable("identifier-types-map-top")*/
+    public Map<String, IdentifierType> fetchMostPopularIdentifierTypesByAPITypeName(Locale loc) {
+        Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
+        Map<String, IdentifierType> topX = new HashMap<String,IdentifierType>();
+        for (String s: topTypes)
+            if (all.containsKey(s))
+                topX.put(s, all.get(s));  
+        return topX;
     }
 
 

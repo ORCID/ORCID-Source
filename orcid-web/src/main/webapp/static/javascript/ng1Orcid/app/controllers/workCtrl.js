@@ -633,6 +633,8 @@ angular.module('orcidApp').controller(
 
             //TODO: make use DB, not js.
             $scope.fillUrl = function(extId) {
+                console.log("fillURL");
+                console.log(extId);
                 var url;
                 if(extId != null) {
                     url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
@@ -643,50 +645,10 @@ angular.module('orcidApp').controller(
                 }
             };
             
-            $scope.bindTypeaheadForExternalIDs = function(index,elem){
-                if (elem.hasTA){
-                    return;
-                }                    
-                else 
-                    elem.hasTA = true;
-                var numOfResults = 100;
-                var id = 'worksIdType'+index;
-                $("#"+id).typeahead({
-                    //name: id,
-                    limit: numOfResults,
-                    minLength: 0, 
-                    display: "name",
-                    remote: {
-                        replace: function () {
-                            var q = getBaseUri()+'/idTypes/';
-                            if ($("#"+id).val()) {
-                                q += encodeURIComponent($("#"+id).val());
-                            }
-                            q += '?limit=' + numOfResults;
-                            return q;
-                        }
-                    },
-                    template: function (datum) {
-                        var forDisplay =
-                            '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.name+ '</span>'
-                            +'<span style=\'font-size: 80%;\'>'
-                            + ' <br />' + datum.description;
-                        if(datum.region){
-                            forDisplay += ", " + datum.region;
-                        }
-                        if (datum.orgType != null && datum.orgType.trim() != ''){
-                            forDisplay += ", " + datum.orgType;
-                        }
-                        forDisplay += '</span><hr />';
-                        return forDisplay;
-                    }
-                }); 
-                
-                $("#"+id).bind("typeahead:selected", function(obj, datum) {
-                    $scope.editWork.workExternalIdentifiers[index].workExternalIdentifierType.value = datum.value;
-                    $scope.$apply();
-                });
-            }
+            $scope.getExternalIDTypes = function(query){
+                console.log("fetching for "+query);
+                return $.get(getBaseUri()+'/works/idTypes.json?query='+query);
+            };
     
             //init
             $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);

@@ -278,28 +278,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             return FunctionsOverCollections.sortMapsByValues(map);
     }
-    
-    /**
-     * Search DB for id types to suggest to user
-     * if list empty, suggest the top ten.
-     */
-    @RequestMapping(value = "/idTypes/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Map<String, String>> searchExternalIDTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        List<Map<String, String>> datums = new ArrayList<>();
-        Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-        for (String type : types.keySet()) {
-            IdentifierType t = types.get(type);
-            if (t.getDescription().contains(query) || t.getName().contains(query)){
-                Map<String, String> datum1 = new HashMap<String,String>();
-                datum1.put("value", t.getName());
-                datum1.put("name", t.getName());
-                datum1.put("description", t.getDescription());
-                datums.add(datum1);
-            }
-        }
-        return datums;
-    }
 
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
