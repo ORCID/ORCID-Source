@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -80,6 +81,8 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class Api12MembersTest extends BlackBoxBaseV2Release {
 
+    private static org.orcid.jaxb.model.common_v2.Visibility currentDefaultVisibility = null;
+    
     @Resource(name = "t2OAuthClient_1_2")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient_1_2;                       
     
@@ -510,6 +513,8 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
 
     @Test
     public void activitiesReadLimitedTest() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
         String clientSecret = getClient1ClientSecret();
@@ -790,12 +795,292 @@ public class Api12MembersTest extends BlackBoxBaseV2Release {
         assertEquals(WorkType.BOOK, orcidMessage.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkType());
     }
     
-    protected void assertClientResponse401Details(ClientResponse clientResponse) throws Exception {
+    @Test
+    public void viewOwnPrivateWorksTest() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        String client1Id = getClient1ClientId();
+        String client1RedirectUri = getClient1RedirectUri();
+        String client1Secret = getClient1ClientSecret();
+        
+        String client2Id = getClient2ClientId();
+        String client2RedirectUri = getClient2RedirectUri();
+        String client2Secret = getClient2ClientSecret();
+                
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+
+        String client1AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client1Id, client1Secret, client1RedirectUri,
+                true);
+        
+        String client2AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client2Id, client2Secret, client2RedirectUri,
+                true);
+        
+        String title1 = "Client 1 - Work " + System.currentTimeMillis();
+        String title2 = "Client 2 - Work " + System.currentTimeMillis();
+        
+        Api12Helper.addWork(userId, client1AccessToken, title1, t2OAuthClient_1_2);
+        Api12Helper.addWork(userId, client2AccessToken, title2, t2OAuthClient_1_2);
+
+        Long putCode1 = 0L;
+        Long putCode2 = 0L;
+        
+        // Fetch with client 1 and verify it can only see his private work
+        ClientResponse client1Response = t2OAuthClient_1_2.viewWorksDetailsXml(userId, client1AccessToken);
+        assertNotNull(client1Response);
+        assertEquals(200, client1Response.getStatus());        
+        OrcidMessage orcidMessageWithNewWork = client1Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewWork);
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        
+        boolean found = false;
+        
+        for(OrcidWork work : orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+            if(title2.equals(work.getWorkTitle().getTitle().getContent())) {
+                fail("I found work for client # 2, which is wrong since it is private");
+            }
+            
+            if(title1.equals(work.getWorkTitle().getTitle().getContent())) {
+                assertEquals(Visibility.PRIVATE, work.getVisibility());
+                putCode1 = Long.valueOf(work.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Fetch with client 2 and verify it can only see his private work
+        ClientResponse client2Response = t2OAuthClient_1_2.viewWorksDetailsXml(userId, client2AccessToken);
+        assertNotNull(client2Response);
+        assertEquals(200, client2Response.getStatus());        
+        orcidMessageWithNewWork = client2Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewWork);
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks());
+        assertNotNull(orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork());
+        
+        found = false;
+        
+        for(OrcidWork work : orcidMessageWithNewWork.getOrcidProfile().getOrcidActivities().getOrcidWorks().getOrcidWork()) {
+            if(title1.equals(work.getWorkTitle().getTitle().getContent())) {
+                fail("I found work for client # 1, which is wrong since it is private");
+            }
+            
+            if(title2.equals(work.getWorkTitle().getTitle().getContent())) {
+                assertEquals(Visibility.PRIVATE, work.getVisibility());
+                putCode2 = Long.valueOf(work.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Delete both works before finishing
+        ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode1, client1AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode2, client2AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void viewOwnPrivateFundingTest() throws InterruptedException, JSONException {        
+        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+        String client1Id = getClient1ClientId();
+        String client1RedirectUri = getClient1RedirectUri();
+        String client1Secret = getClient1ClientSecret();
+        
+        String client2Id = getClient2ClientId();
+        String client2RedirectUri = getClient2RedirectUri();
+        String client2Secret = getClient2ClientSecret();
+                
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+
+        String client1AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client1Id, client1Secret, client1RedirectUri,
+                true);
+        
+        String client2AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client2Id, client2Secret, client2RedirectUri,
+                true);
+        
+        String title1 = "Client 1 - Funding " + System.currentTimeMillis();
+        String title2 = "Client 2 - Funding " + System.currentTimeMillis();
+        
+        Api12Helper.addFunding(userId, client1AccessToken, title1, t2OAuthClient_1_2);
+        Api12Helper.addFunding(userId, client2AccessToken, title2, t2OAuthClient_1_2);
+
+        Long putCode1 = 0L;
+        Long putCode2 = 0L;
+        
+        // Fetch with client 1 and verify it can only see his private funding
+        ClientResponse client1Response = t2OAuthClient_1_2.viewFundingDetailsXml(userId, client1AccessToken);
+        assertNotNull(client1Response);
+        assertEquals(200, client1Response.getStatus());        
+        OrcidMessage orcidMessageWithNewFunding = client1Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewFunding);
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        
+        boolean found = false;
+        
+        for(Funding funding : orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings()) {
+            if(title2.equals(funding.getTitle().getTitle().getContent())) {
+                fail("I found funding for client # 2, which is wrong since it is private");
+            }
+            
+            if(title1.equals(funding.getTitle().getTitle().getContent())) {
+                assertEquals(Visibility.PRIVATE, funding.getVisibility());
+                putCode1 = Long.valueOf(funding.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Fetch with client 2 and verify it can only see his private funding
+        ClientResponse client2Response = t2OAuthClient_1_2.viewFundingDetailsXml(userId, client2AccessToken);
+        assertNotNull(client2Response);
+        assertEquals(200, client2Response.getStatus());        
+        orcidMessageWithNewFunding = client2Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewFunding);
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings());
+        
+        found = false;
+        
+        for(Funding funding : orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getFundings().getFundings()) {
+            if(title1.equals(funding.getTitle().getTitle().getContent())) {
+                fail("I found funding for client # 1, which is wrong since it is private");
+            }
+            
+            if(title2.equals(funding.getTitle().getTitle().getContent())) {
+                assertEquals(Visibility.PRIVATE, funding.getVisibility());
+                putCode2 = Long.valueOf(funding.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Delete both funding before finishing
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), putCode1, client1AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), putCode2, client2AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    @Test
+    public void viewOwnPrivateAffiliationsTest() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
+                
+        String client1Id = getClient1ClientId();
+        String client1RedirectUri = getClient1RedirectUri();
+        String client1Secret = getClient1ClientSecret();
+        
+        String client2Id = getClient2ClientId();
+        String client2RedirectUri = getClient2RedirectUri();
+        String client2Secret = getClient2ClientSecret();
+                
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+
+        String client1AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client1Id, client1Secret, client1RedirectUri,
+                true);
+        
+        String client2AccessToken = getAccessToken(userId, password, Arrays.asList("/activities/read-limited", "/activities/update"), client2Id, client2Secret, client2RedirectUri,
+                true);
+        
+        String orgName1 = "Client 1 - Education " + System.currentTimeMillis();
+        String orgName2 = "Client 2 - Education " + System.currentTimeMillis();
+        
+        Api12Helper.addAffiliation(userId, client1AccessToken, orgName1, t2OAuthClient_1_2);
+        Api12Helper.addAffiliation(userId, client2AccessToken, orgName2, t2OAuthClient_1_2);
+
+        Long putCode1 = 0L;
+        Long putCode2 = 0L;
+                                                        
+        // Fetch with client 1 and verify it can only see his private affiliations
+        ClientResponse client1Response = t2OAuthClient_1_2.viewAffiliationDetailsXml(userId, client1AccessToken);
+        assertNotNull(client1Response);
+        assertEquals(200, client1Response.getStatus());        
+        OrcidMessage orcidMessageWithNewFunding = client1Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewFunding);
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        
+        boolean found = false;
+        
+        for(Affiliation affiliation : orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation()) {
+            if(orgName2.equals(affiliation.getOrganization().getName())) {
+                fail("I found affiliation for client # 2, which is wrong since it is private");
+            }
+            
+            if(orgName1.equals(affiliation.getOrganization().getName())) {
+                assertEquals(Visibility.PRIVATE, affiliation.getVisibility());
+                putCode1 = Long.valueOf(affiliation.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Fetch with client 2 and verify it can only see his private affiliations
+        ClientResponse client2Response = t2OAuthClient_1_2.viewAffiliationDetailsXml(userId, client2AccessToken);
+        assertNotNull(client2Response);
+        assertEquals(200, client2Response.getStatus());        
+        orcidMessageWithNewFunding = client2Response.getEntity(OrcidMessage.class);
+        assertNotNull(orcidMessageWithNewFunding);
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations());
+        assertNotNull(orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation());
+        
+        found = false;
+        
+        for(Affiliation affiliation : orcidMessageWithNewFunding.getOrcidProfile().getOrcidActivities().getAffiliations().getAffiliation()) {
+            if(orgName1.equals(affiliation.getOrganization().getName())) {
+                fail("I found funding for client # 1, which is wrong since it is private");
+            }
+            
+            if(orgName2.equals(affiliation.getOrganization().getName())) {
+                assertEquals(Visibility.PRIVATE, affiliation.getVisibility());
+                putCode2 = Long.valueOf(affiliation.getPutCode());
+                found = true;
+            }
+        }        
+        
+        assertTrue(found);
+        
+        // Delete both affiliations before finishing
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEducationXml(this.getUser1OrcidId(), putCode1, client1AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        deleteResponse = memberV2ApiClient.deleteEducationXml(this.getUser1OrcidId(), putCode2, client2AccessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+    
+    private void assertClientResponse401Details(ClientResponse clientResponse) throws Exception {
         // we've created client details but not tied them to an access token
         assertEquals(401, clientResponse.getStatus());
         assertTrue(clientResponse.getHeaders().containsKey("WWW-Authenticate"));
         List<String> authHeaders = clientResponse.getHeaders().get("WWW-Authenticate");
         assertTrue(authHeaders.contains("Bearer realm=\"ORCID T2 API\", error=\"invalid_token\", error_description=\"Invalid access token: null\""));
-    }
+    }    
     
+    private void changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility v) {
+        if(!v.equals(currentDefaultVisibility)) {
+            changeDefaultUserVisibility(webDriver, v);
+            currentDefaultVisibility = v;
+        }
+    }
 }
