@@ -507,40 +507,42 @@
     </div>
 </div>
 <!-- .container -->
-<footer>
+<footer class="footer-main">
     <div class="container">
         <div class="row">
             <div class="col-md-4">
                 <p>
                     <a href="https://orcid.org" alt="ORCiD logo">
-                        <img src="" alt="">
+                        <img src="${staticCdn}/img/orcid-logo.png" alt="">
                     </a>
                 </p>
                 <nav>
                     <ul class="inline-list">
-                        <li><a href="https://www.facebook.com/orcid.org" target="_blank"><img src="" alt="ORCiD facebook"></a></li>
-                        <li><a href="https://twitter.com/orcid_org" target="_blank"><img src="" alt="ORCiD twitter"></a></li>
-                        <li><a href="http://orcid.org/blog/feed" target="_blank"><img src="" alt="ORCiD RSS"></a></li>
-                        <li><a href="https://github.com/ORCID" target="_blank"><img src="" alt="ORCiD Github"></a></li>
+                        <li><a class="btn-social btn-social-facebook" href="https://www.facebook.com/orcid.org" target="_blank"></a></li>
+                        <li><a class="btn-social btn-social-twitter" href="https://twitter.com/orcid_org" target="_blank"></a></li>
+                        <li><a class="btn-social btn-social-google" href="http://orcid.org/blog/feed" target="_blank"></a></li>
+                        <li><a class="btn-social btn-social-github" href="https://github.com/ORCID" target="_blank"></a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-md-8">
                 <p class="bold">&copy; 2017 ORCID, Inc</p>
-                <p>Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
+                <p class="font-size-small">Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
                 <nav>
-                    <ul class="inline-list">
-                        <li><a href="https://orcid.org/privacy-policy">Privacy policy</a></li>
-                        <li><a href="https://orcid.org/legal">Terms of use</a></li>
+                    <ul class="inline-list bold">
+                        <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
+                        <li><a href="${aboutUri}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
                         <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
+                        <li><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
                         <li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
-                        <li><a href="https://orcid.org/help/contact-us">Contact us</a></li>
+                        <!--<li><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>-->
                     </ul>
                 </nav>
             </div>
         </div>
     </div>
 </footer>
+<!--
 <div class="footer">
     <div class="container">
         <div class="row">
@@ -555,6 +557,7 @@
         </div>
     </div>
 </div>
+-->
 <form action="<@orcid.rootPath '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>

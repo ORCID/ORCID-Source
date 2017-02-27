@@ -6510,7 +6510,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login .btn-google {
@@ -6518,7 +6518,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login ul.social-icons {
@@ -7245,8 +7245,60 @@ ul.comma li:last-child:after {
     font-weight: bold;
 }
 
+.font-size-small {
+    font-size: 12px;
+}
+
+.footer-main {
+    border-top: 2px solid #C9C9CA;
+    font-size: 14px;
+    margin-top: 30px;
+    padding-bottom: 45px;
+    padding-top: 30px; 
+}
+
+.footer-main .btn-social {
+    margin-right: 15px;
+}
+
+.footer-main .btn-social:last-child {
+    margin-right: 0;
+}
+
+.footer-main .inline-list li {
+    margin-left: 0;
+    margin-right: 20px;
+}
+
+.footer-main .inline-list li:last-child {
+    margin-right: 0;
+}
+
 .inline-list li {
     display: inline;
+}
+
+.btn-social {
+    background-size: 40px 40px;
+    display: block;
+    height: 30px;
+    width: 30px;
+}
+
+.btn-social-facebook {
+    background: url('../img/svg/fb.svg') transparent no-repeat;
+}
+
+.btn-social-github {
+    background: url('../img/svg/github.svg') transparent no-repeat;
+}
+
+.btn-social-google {
+    background: url('../img/svg/google.svg') transparent no-repeat;
+}
+
+.btn-social-twitter {
+    background: url('../img/svg/twitter.svg') transparent no-repeat;
 }
 
 /* Media Queries */
