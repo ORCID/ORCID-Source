@@ -28,7 +28,7 @@
     
     <import resource="classpath*:orcid-api-client-context.xml" />
     
-    <bean id="internalOAuthClient" class="org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl">
+    <bean id="internalApiClient" class="org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl">
         <constructor-arg value="${org.orcid.internal.baseUri}"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>    	
@@ -50,7 +50,7 @@
     </bean>
     
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">        
-        <property name="internalClient" ref="internalOAuthClient" />
+        <property name="internalClient" ref="internalApiClient" />
         <property name="oauthT2Client" ref="t2OAuthClient" />
         <property name="oauthT1Client" ref="t1OAuthClient" />         
     </bean>

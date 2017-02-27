@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

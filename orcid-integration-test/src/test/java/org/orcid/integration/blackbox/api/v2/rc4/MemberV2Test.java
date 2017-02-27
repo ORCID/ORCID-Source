@@ -73,7 +73,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class MemberV2Test extends BlackBoxBaseRC4 {    
     static List<GroupIdRecord> groupRecords = null;           
     

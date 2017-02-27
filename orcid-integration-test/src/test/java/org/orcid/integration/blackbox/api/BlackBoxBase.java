@@ -40,7 +40,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
@@ -61,11 +60,9 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
     private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']//button[contains('Save changes',text())]";
     

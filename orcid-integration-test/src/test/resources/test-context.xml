@@ -20,22 +20,41 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">	
 
-    <context:property-placeholder file-encoding="UTF-8" location="classpath:test-client.properties" ignore-unresolvable="true"/>
-    <context:property-placeholder file-encoding="UTF-8" location="classpath:test-web.properties" ignore-unresolvable="true"/>
+	<context:property-placeholder file-encoding="UTF-8" location="classpath:test-client.properties, classpath:test-web.properties" />    
     <!--  Keep this fast! No DB, No Liquibase! Blackbox external testing only. -->
     
-    <import resource="classpath*:orcid-api-client-context.xml" />
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+    
+    <util:set id="providers">
+        <value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider</value>
+        <value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
+    </util:set>
         
-    <bean id="t2OAuthClient" class="org.orcid.integration.api.t2.T2OAuthOrcidApiClientImpl">
-        <constructor-arg value="${org.orcid.t2.client.base_url}"/>
+	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client" factory-method="create">
+        <constructor-arg ref="clientConfig"/>
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+    
+    <!-- Override for the jersey client to run OAuth client config and not certificates one -->
+    <bean id="clientConfig" class="org.orcid.integration.api.t2.OrcidJerseyT2ClientOAuthConfig">
+        <constructor-arg ref="providers" />
+        <property name="properties" ref="jerseyProperties" />
+    </bean>
+        
+    <bean id="t2OAuthClient" class="org.orcid.integration.blackbox.api.v12.T2OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
     <!-- t2OAuthClient is used to get access token, so, it should not use the version -->
-    <bean id="t2OAuthClient_1_2" class="org.orcid.integration.api.t2.T2OAuthOrcidApiClientImpl">
-        <constructor-arg value="${org.orcid.t2.client.base_url}/v1.2"/>
+    <bean id="t2OAuthClient_1_2" class="org.orcid.integration.blackbox.api.v12.T2OAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v1.2"/>
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
@@ -102,17 +121,17 @@
     <bean id="publicV2ApiClient" class="org.orcid.integration.api.pub.PublicV2ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v2.0"/>
         <constructor-arg ref="jerseyClient"/>
-    </bean>
+    </bean>        
     
-    <!-- Override for the jersey client to run OAuth client config and not certificates one -->
-    <bean id="clientConfig" class="org.orcid.integration.api.t2.OrcidJerseyT2ClientOAuthConfig">
-        <constructor-arg ref="providers" />
-        <property name="properties" ref="jerseyProperties" />
+    <bean id="oauthWebClient" class="org.orcid.integration.blackbox.api.v12.WebOAuthOrcidApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}"/>
+        <constructor-arg ref="jerseyClient"/>
     </bean>
     
     <bean id="oauthHelper" class="org.orcid.integration.api.helper.OauthHelper">
         <property name="oauthT2Client" ref="t2OAuthClient" />
-        <property name="oauthT1Client" ref="t1OAuthClient" />        
+        <property name="oauthT1Client" ref="t1OAuthClient" />
+        <property name="oauthWebClient" ref="oauthWebClient" />         
     </bean>
 
 </beans>

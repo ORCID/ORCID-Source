@@ -33,8 +33,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.jaxb.model.common_rc4.Url;
 import org.orcid.jaxb.model.groupid_rc4.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;

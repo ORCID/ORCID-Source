@@ -74,7 +74,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class) 
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PublicV2Test extends BlackBoxBaseRC1 {
     @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;

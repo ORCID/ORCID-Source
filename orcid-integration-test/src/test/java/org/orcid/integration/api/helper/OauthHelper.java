@@ -25,9 +25,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
-import org.orcid.integration.api.internal.InternalOAuthAPIService;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v12.T1OAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.WebOAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -38,36 +38,36 @@ public class OauthHelper {
 
     private WebDriverHelper webDriverHelper;
     
-    private InternalOAuthAPIService<ClientResponse> internalClient;
+    private WebOAuthAPIService<ClientResponse> oauthWebClient;
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
     private T1OAuthAPIService<ClientResponse> oauthT1Client;            
     
     public void setWebDriverHelper(WebDriverHelper webDriverHelper) {
         this.webDriverHelper = webDriverHelper;
+    }    
+    
+    public WebOAuthAPIService<ClientResponse> getOauthWebClient() {
+        return oauthWebClient;
+    }
+
+    public void setOauthWebClient(WebOAuthAPIService<ClientResponse> oauthWebClient) {
+        this.oauthWebClient = oauthWebClient;
     }
 
     public T2OAuthAPIService<ClientResponse> getOauthT2Client() {
         return oauthT2Client;
     }
-    
+
+    public void setOauthT2Client(T2OAuthAPIService<ClientResponse> oauthT2Client) {
+        this.oauthT2Client = oauthT2Client;
+    }
+
     public T1OAuthAPIService<ClientResponse> getOauthT1Client() {
         return oauthT1Client;
     }
 
     public void setOauthT1Client(T1OAuthAPIService<ClientResponse> oauthT1Client) {
         this.oauthT1Client = oauthT1Client;
-    }
-
-    public void setOauthT2Client(T2OAuthAPIService<ClientResponse> oauthT2Client) {
-        this.oauthT2Client = oauthT2Client;
-    }
-    
-    public InternalOAuthAPIService<ClientResponse> getInternalClient() {
-        return internalClient;
-    }
-
-    public void setInternalClient(InternalOAuthAPIService<ClientResponse> internalClient) {
-        this.internalClient = internalClient;
     }
 
     public String obtainAccessToken(String clientId, String clientSecret, String scopes, String email, String password, String redirectUri) throws JSONException, InterruptedException {
@@ -134,7 +134,7 @@ public class OauthHelper {
         ClientResponse clientResponse = null;
         switch(apiRequerstType) {
         case INTERNAL:
-            clientResponse = internalClient.obtainOauth2TokenPost("client_credentials", params);
+            clientResponse = oauthWebClient.obtainOauth2TokenPost("client_credentials", params);
             break;
         case MEMBER:
             clientResponse = oauthT2Client.obtainOauth2TokenPost("client_credentials", params);

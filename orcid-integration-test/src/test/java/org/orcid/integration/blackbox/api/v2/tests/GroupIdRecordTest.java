@@ -47,7 +47,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class GroupIdRecordTest extends BlackBoxBaseV2Release {
 
     private static final List<String> VALID_GROUP_IDS = Arrays.asList( 
