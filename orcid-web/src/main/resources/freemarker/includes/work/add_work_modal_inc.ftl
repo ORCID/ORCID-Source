@@ -232,7 +232,13 @@
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
                                     
-                                    <input id="worksIdType{{$index}}" class="form-control" type="text" ng-model="workExternalIdentifier.workExternalIdentifierType.value" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" typeahead="eid.value as eid.description for eid in getExternalIDTypes($viewValue)" typeahead-loading="loading" typeahead-min-length="0" typeahead-wait-ms="300" typeahead-editable="false" typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)"/>
+                                    <input id="worksIdType{{$index}}" class="form-control" type="text" 
+                                    ng-model="workExternalIdentifier.workExternalIdentifierType.value" 
+                                    placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" 
+                                    typeahead="eid.value as eid.description for eid in getExternalIDTypes($viewValue)" 
+                                    typeahead-loading="loading" typeahead-min-length="0" typeahead-wait-ms="300" 
+                                    typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier);$scope.$apply();"
+                                    />
                                     
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>

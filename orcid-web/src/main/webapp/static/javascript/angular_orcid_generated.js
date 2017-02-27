@@ -11541,20 +11541,18 @@
 
 	            //TODO: make use DB, not js.
 	            $scope.fillUrl = function(extId) {
-	                console.log("fillURL");
-	                console.log(extId);
 	                var url;
 	                if(extId != null) {
 	                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
 	                    if(extId.url == null) {
-	                        extId.url = {value:""};
+	                        extId.url = {value:url};
+	                    }else{
+	                        extId.url.value=url;                        
 	                    }
-	                    extId.url.value=url;
 	                }
 	            };
 	            
 	            $scope.getExternalIDTypes = function(query){
-	                console.log("fetching for "+query);
 	                return $.get(getBaseUri()+'/works/idTypes.json?query='+query);
 	            };
 	    

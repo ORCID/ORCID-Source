@@ -3331,6 +3331,16 @@ ul.personal-inf-display li:last-child {
     height: auto;
 }
 
+/* angular-ui typeahead */
+
+.dropdown-menu {
+    width: 100%;
+    height: 300px;
+    overflow-y: auto;
+}
+
+/* end angular-ui typeahead */
+
 .small-row {
     display: inline-block;
     float: left;
