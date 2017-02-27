@@ -495,14 +495,26 @@
 				</#if>
 			</div>
 			<div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
-				<div id="pi-banner" style="position: absolute;">
-					<!--<svg height="250" width="100">
-						<polygon points="0,0 0,200 50,250 100,200 100,0" style="fill:#338caf;" />
-						Sorry, your browser does not support inline SVG.
-					</svg>-->
-					<a href="${aboutUri}/news"><img
-						src="${staticCdn}/img/orcid-pi-day.png" alt="ORCID Pi day banner" /></a>
-				</div>
+			<!--Pi Day banner-->
+			<#if RequestParameters['piDay']??>
+				<a href="${aboutUri}/news">
+					<div id="pi-banner">
+						<![if gte IE 9]>
+						<svg height="250" width="100">
+							<polygon points="0,0 0,154 50,180 100,154 100,0" style="fill:#338caf;" />
+						</svg>
+						<div id="pi-text">
+							Time to party irrationally!
+							<img src="${staticCdn}/img/pi-day-icon.png" alt="ORCID Pi day icon" />
+							<span id="pi-number">3,141,593</span><br><small>ORCID iDs</small>
+						</div>
+						<![endif]-->
+						<!--[if lt IE 9]>
+            				<img src="${staticCdn}/img/pi-day-banner.png" alt="ORCID Pi day banner" />
+        				<![endif]-->
+					</div>
+				</a>
+			</#if>
 				<h1>
 					<a href="${aboutUri}"><img
 						src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
