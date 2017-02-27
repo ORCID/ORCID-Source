@@ -4205,7 +4205,7 @@ this.w3cLatexCharMap = {
             doneSomething = true;
         }
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
-                + offset(input) : null;
+                + offset(input) : baseUrl + '?q=';
     }
 
     exports.setBaseUrl = function(url) {

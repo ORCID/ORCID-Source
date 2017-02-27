@@ -22,9 +22,7 @@ import static org.orcid.core.utils.JsonUtils.extractString;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -92,29 +90,6 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting consortium record from SalesForce JSON", e);
         }
         return null;
-    }
-
-    public Map<String, List<Contact>> createContactsFromJsonLegacy(JSONObject results) {
-        Map<String, List<Contact>> map = new HashMap<>();
-        try {
-            JSONArray records = results.getJSONArray("records");
-            for (int i = 0; i < records.length(); i++) {
-                JSONObject record = records.getJSONObject(i);
-                String oppId = extractString(record, "Id");
-                List<Contact> contacts = new ArrayList<>();
-                JSONObject opportunityContactRoleObject = extractObject(record, "OpportunityContactRoles");
-                if (opportunityContactRoleObject != null) {
-                    JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
-                    for (int j = 0; j < contactRecords.length(); j++) {
-                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(j)));
-                    }
-                }
-                map.put(oppId, contacts);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
-        }
-        return map;
     }
 
     Contact createContactFromJson(JSONObject record) {
@@ -239,14 +214,13 @@ public class SalesForceAdapter {
         return integration;
     }
 
-    private Contact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
-        Contact contact = new Contact();
-        contact.setRole(extractString(contactRecord, "Role"));
-        JSONObject contactDetails = extractObject(contactRecord, "Contact");
-        contact.setFirstName(extractString(contactDetails, "FirstName"));
-        contact.setLastName(extractString(contactDetails, "LastName"));
-        contact.setEmail(extractString(contactDetails, "Email"));
-        return contact;
+    public Opportunity createOpportunityFromSalesForceRecord(JSONObject jsonObject) {
+        return mapperFacade.map(jsonObject, Opportunity.class);
+    }
+
+    public JSONObject createSaleForceRecordFromOpportunity(Opportunity opportunity) {
+        JSONObject jsonObject = mapperFacade.map(opportunity, JSONObject.class);
+        return jsonObject;
     }
 
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
@@ -281,6 +255,16 @@ public class SalesForceAdapter {
     private JSONObject extractFirstRecord(JSONObject object) throws JSONException {
         JSONArray records = object.getJSONArray("records");
         return records.getJSONObject(0);
+    }
+
+    public String extractIdFromFirstRecord(JSONObject object) {
+        JSONObject firstRecord;
+        try {
+            firstRecord = extractFirstRecord(object);
+            return firstRecord.optString("Id");
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting ID from first record", e);
+        }
     }
 
     public static String extractIdFromUrl(String url) {

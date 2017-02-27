@@ -18,8 +18,6 @@ package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * 
  * @author Will Simpson
@@ -34,7 +32,7 @@ public class Contact implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private String role = ContactRoleType.OTHER_CONTACT.value();
+    private ContactRole role;
     private String orcid;
 
     public String getId() {
@@ -81,33 +79,16 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
-    @JsonIgnore
-    public String getRole() {
+    public ContactRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ContactRole role) {
         this.role = role;
     }
 
     public boolean isMainContact() {
-        return ContactRoleType.MAIN_CONTACT.value().equals(role);
-    }
-
-    public void setMainContact(boolean isMainContact) {
-        if (isMainContact) {
-            setRole(ContactRoleType.MAIN_CONTACT.value());
-        }
-    }
-
-    public boolean isTechnicalContact() {
-        return ContactRoleType.TECHNICAL_CONTACT.value().equals(role);
-    }
-
-    public void setTechnicalContact(boolean isTechnicalContact) {
-        if (isTechnicalContact) {
-            setRole(ContactRoleType.TECHNICAL_CONTACT.value());
-        }
+        return ContactRoleType.MAIN_CONTACT.equals(role);
     }
 
     public String getOrcid() {

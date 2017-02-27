@@ -234,6 +234,7 @@ public class ManageMembersController extends BaseController {
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(id);
         salesForceManager.addOrcidsToContacts(contactsList);
         consortiumForm.setContactsList(contactsList);
+        consortiumForm.setRoleMap(generateSalesForceRoleMap());
         return consortiumForm;
     }
     

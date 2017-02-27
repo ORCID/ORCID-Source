@@ -16,21 +16,28 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,6 +61,24 @@ public class ManageConsortiumController extends BaseController {
     @Resource
     private EmailDao emailDao;
 
+    @ModelAttribute("contactRoleTypes")
+    public Map<String, String> retrieveContactRoleTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (ContactRoleType type : ContactRoleType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
+
+    @ModelAttribute("communityTypes")
+    public Map<String, String> retrieveCommunityTypesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (CommunityType type : CommunityType.values()) {
+            map.put(type.name(), type.value());
+        }
+        return map;
+    }
+
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
         ModelAndView mav = new ModelAndView("manage_consortium");
@@ -68,6 +93,7 @@ public class ManageConsortiumController extends BaseController {
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
         salesForceManager.addOrcidsToContacts(contactsList);
         consortiumForm.setContactsList(contactsList);
+        consortiumForm.setRoleMap(generateSalesForceRoleMap());
         return consortiumForm;
     }
 
@@ -107,7 +133,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/remove-contact.json", method = RequestMethod.POST)
     public @ResponseBody Contact removeContact(@RequestBody Contact contact) {
-        salesForceManager.removeContact(contact);
+        salesForceManager.removeContactRole(contact);
         return contact;
     }
 
@@ -115,6 +141,17 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);
         return contact;
+    }
+
+    @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
+        salesForceManager.createMember(subMember.toMember());
+        return subMember;
+    }
+
+    @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody void removeSubMember(@RequestBody SubMember subMember) {
+        salesForceManager.flagOpportunityAsClosed(subMember.getOpportunity().getId());
     }
 
 }

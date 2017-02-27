@@ -16,13 +16,16 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.MemberDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +68,11 @@ public class MembersListController extends BaseController {
         return salesForceManager.retrieveDetailsBySlug(memberSlug);
     }
 
+    @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> retrieveCommunityTypes() {
+        return generateCommunityTypeMap();
+    }
+
     @RequestMapping("/consortia")
     public ModelAndView consortiaList() {
         ModelAndView mav = new ModelAndView("consortia-list");
@@ -74,6 +82,14 @@ public class MembersListController extends BaseController {
     @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveConsortia() {
         return salesForceManager.retrieveConsortia();
+    }
+
+    protected Map<String, String> generateCommunityTypeMap() {
+        Map<String, String> map = new HashMap<>();
+        for (CommunityType communityType : CommunityType.values()) {
+            map.put(communityType.name(), getMessage(buildInternationalizationKey(CommunityType.class, communityType.name())));
+        }
+        return map;
     }
 
 }

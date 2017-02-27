@@ -22,6 +22,7 @@ import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -47,8 +48,22 @@ public interface SalesForceManager {
     void enableAccess(String accountId, List<Contact> contactsList);
 
     String retriveAccountIdByOrcid(String orcid);
+    
+    /**
+     * 
+     * @return the accountId of the member
+     */
+    String createMember(Member member);
 
     void updateMember(Member member);
+    
+    /**
+     * 
+     * @return the id of the opportunity
+     */
+    String createOpportunity(Opportunity opportunity);
+    
+    void flagOpportunityAsClosed(String opportunityId);
 
     void createContact(Contact contact);
 
@@ -59,6 +74,8 @@ public interface SalesForceManager {
     void updateContact(Contact contact);
 
     void removeContact(Contact contact);
+    
+    void removeContactRole(Contact contact);
 
     /**
      * Clear caches

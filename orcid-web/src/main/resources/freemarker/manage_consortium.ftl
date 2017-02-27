@@ -49,7 +49,43 @@
                                 <div ng-repeat='error in consortium.website.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
-                    </div>                     
+                    </div>
+                    <!-- Public display email -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.email'/></label>
+                            <input type="text" ng-model="consortium.email.value" class="full-width-input" />
+                            <span class="orcid-error" ng-show="consortium.email.errors.length > 0">
+                                <div ng-repeat='error in consortium.email.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Description -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.description'/></label>
+                            <textarea ng-model="consortium.description.value" class="full-width-input" ></textarea>
+                            <span class="orcid-error" ng-show="consortium.description.errors.length > 0">
+                                <div ng-repeat='error in consortium.description.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Community -->
+                    <div class="row">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <label><@orcid.msg 'manage_consortium.community'/></label>
+                             <select id="communities" name="communities"
+								    	class="input-xlarge"
+								     	ng-model="consortium.community.value">
+										<#list communityTypes?keys as key>
+											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
+										</#list>
+								    </select>            
+                            <span class="orcid-error" ng-show="consortium.community.errors.length > 0">
+                                <div ng-repeat='error in consortium.community.errors' ng-bind-html="error"></div>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <h3>
@@ -61,15 +97,24 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>Main contact</th><th>Technical contact</th>
+                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="contact in consortium.contactsList">
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
-                                <td><input type="checkbox" ng-model="contact.mainContact" ng-change="update(contact)"></input></td>
-                                <td><input type="checkbox" ng-model="contact.technicalContact" ng-change="update(contact)"></input></td>
+                                <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
+                                <td>
+								    <select id="contactRoles" name="contactRoles"
+								    	class="input-xlarge"
+								     	ng-model="contact.role.roleType"
+								     	ng-change="update(contact)">
+										<#list contactRoleTypes?keys as key>
+											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
+										</#list>
+								    </select>
+                                </td>
                                 <td class="tooltip-container">
                                     <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)"
                                         class="glyphicon glyphicon-trash grey">
@@ -139,6 +184,40 @@
                     </div>
                 </div> 
             </div>
+            <div>
+                <h3>Consortium Members</h3>
+                <hr></hr>
+            	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
+					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
+					<span class="tooltip-container">
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
+	                        class="glyphicon glyphicon-trash grey">
+	                        <div class="popover popover-tooltip top">
+	                            <div class="arrow"></div>
+	                            <div class="popover-content">
+	                                <span><@spring.message "manage_consortium.remove_consortium_member"/></span>
+	                            </div>
+	                        </div>
+	                    </a>
+                    </span>
+					<hr></hr>
+            	</div>
+                <div ng-hide="consortium.subMembers.length"> 
+					<p>This consortium does not have any members yet.</p>
+					<hr></hr>
+                </div>
+                <h3>New consortium member</h3>
+                <form>
+                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
+                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
+	                        <span id="bottom-confirm-update-consortium" ng-click="addSubMember()" class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></span>
+	                    </div>
+	                </div> 
+                </form>
+		    </div>
         </div>
     </div>
     <script type="text/ng-template" id="confirm-modal-consortium">
@@ -201,6 +280,20 @@
 	        <p> {{contactToRevoke.name}} ({{contactToRevoke.id}})</p>
 	        <form ng-submit="revoke(contactToRevoke)">
 	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_contact_confirm_btn'/></button>
+	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
+	        </form>
+	        <div ng-show="errors.length === 0">
+	            <br></br>
+	        </div>
+	    </div>
+    </script>
+    
+    <script type="text/ng-template" id="remove-sub-member-modal">
+	    <div class="lightbox-container">
+	        <h3><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_heading'/></h3>
+	        <p> {{subMemberToRemove.opportunity.accountName}} ({{subMemberToRemove.opportunity.id}})</p>
+	        <form ng-submit="removeSubMember(subMemberToRemove)">
+	            <button class="btn btn-danger"><@orcid.msg 'manage_consortium.remove_consortium_member_confirm_btn'/></button>
 	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
