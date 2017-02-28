@@ -4135,7 +4135,7 @@ this.w3cLatexCharMap = {
    };
 
    exports.getLink = function(id, type) {
-      if (id == null) return null;
+      if (id == null) id = "";//return null;
       id = id.trim();
       if (id.startsWith('http:') || id.startsWith('https:')) return id;
       if (type == null) return null;

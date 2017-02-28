@@ -18,18 +18,24 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.BibtexManager;
+import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
@@ -41,6 +47,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkCategory;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
@@ -75,6 +82,9 @@ public class WorksController extends BaseWorkspaceController {
     @Resource
     private WorkManager workManager;
 
+    @Resource
+    private IdentifierTypeManager identifierTypeManager;
+    
     @Resource
     private LocaleManager localeManager;
 
@@ -600,6 +610,11 @@ public class WorksController extends BaseWorkspaceController {
                     && (wId.getWorkExternalIdentifierId().getValue() == null || wId.getWorkExternalIdentifierId().getValue().trim().equals(""))) {
                 setError(wId.getWorkExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
+
+            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
+            if (wId.getWorkExternalIdentifierType().getValue() != null  && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
+                setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
+            }
         }
 
         return work;
@@ -742,6 +757,37 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/works.bib", method = RequestMethod.GET, produces = "text/plain; charset=utf-8")
     public @ResponseBody String fetchBibtex() {
         return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());
+    }
+    
+    /**
+     * Search DB for id types to suggest to user
+     * if list empty, suggest the top ten.
+     */
+    @RequestMapping(value = "/idTypes.json", method = RequestMethod.GET)
+    public @ResponseBody
+    List<Map<String, String>> searchExternalIDTypes(@RequestParam("query") String query) {
+        List<Map<String, String>> datums = new ArrayList<>();
+        
+        //fetch results
+        List<IdentifierType> types;             
+        if (query == null || query.trim().isEmpty()){
+            types = identifierTypeManager.fetchMostPopularIdentifierTypes(getLocale());
+        } else {
+            types = identifierTypeManager.queryByPrefix(query, getLocale());
+        }
+                
+        //format for output
+        for (IdentifierType t : types){
+            if (IdentifierType.PRIMARY_USE_WORK.equals(t.getPrimaryUse())){
+                Map<String, String> datum1 = new HashMap<String,String>();
+                datum1.put("name", t.getName());
+                datum1.put("description", t.getDescription());
+                datum1.put("resolutionPrefix", t.getResolutionPrefix());
+                datums.add(datum1);                                
+            }
+        }
+        
+        return datums;
     }
 
 }
