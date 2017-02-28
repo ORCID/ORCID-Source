@@ -539,7 +539,7 @@
 	</div>
 </div>
 <!-- .container -->
-<div class="footer">
+<div class="footer clear-fix">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-11 col-md-offset-1">

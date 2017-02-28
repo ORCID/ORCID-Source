@@ -59,6 +59,7 @@ a:focus {
     outline: thin dotted #333;
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
+    text-decoration: none;
 }
 
 a:hover,
@@ -2801,12 +2802,17 @@ header overrides
     margin-left: 96px;
 }
 
+.oauth-login .reset-password .control-group .controls,
 .oauth-login .control-group .controls.checky {
     margin-left: 0;
 }
 
 .oauth-login .control-group .controls input {
     width: 330px;
+}
+
+.oauth-login .reset-password .control-group .controls input{
+    width: 100%;
 }
 
 .oauth-login .page-header {
@@ -6512,18 +6518,28 @@ a:hover .mozilla-badge {
     text-align: center;
     font-size: 20px;
     color: #494A4C;
+    margin-bottom: 20px;
 }
 
 .login #login-reset {
     margin-top: 5px;
 }
 
+/* Reset password */
+.reset-password .controls{
+    margin-bottom: 15px;
+}
+
+.reset-password p{
+        line-height: 18px;
+        margin-top: 10px;
+    }
 
 /* Social Login */
 
 .login .social-login {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .login .social-login .title {
@@ -7632,6 +7648,7 @@ ul.comma li:last-child:after {
     #password-reset-form #userEmailAddress {
         width: 95%;
     }
+
     /* oAuth */
     .oauth-login #loginForm #userId,
     .oauth-login #loginForm #password {
