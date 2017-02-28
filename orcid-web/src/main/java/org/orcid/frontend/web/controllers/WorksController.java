@@ -18,14 +18,19 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
@@ -762,22 +767,24 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     List<Map<String, String>> searchExternalIDTypes(@RequestParam("query") String query) {
         List<Map<String, String>> datums = new ArrayList<>();
-        Map<String,IdentifierType> types;
         
-        if (query == null || query.trim().isEmpty())
+        //fetch results
+        Collection<IdentifierType> types;             
+        if (query == null || query.trim().isEmpty()){
             types = identifierTypeManager.fetchMostPopularIdentifierTypesByAPITypeName(getLocale());
-        else
-            types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-        
-        for (String type : types.keySet()) {
-            IdentifierType t = types.get(type);
-            if (t.getDescription().contains(query) || t.getName().contains(query)){
-                Map<String, String> datum1 = new HashMap<String,String>();
-                datum1.put("name", t.getName());
-                datum1.put("description", t.getDescription());
-                datums.add(datum1);
-            }
+        } else {
+            types = identifierTypeManager.queryByPrefix(query, getLocale());
         }
+                
+        //format for output
+        for (IdentifierType t : types){
+            Map<String, String> datum1 = new HashMap<String,String>();
+            datum1.put("name", t.getName());
+            datum1.put("description", t.getDescription());
+            datum1.put("resolutionPrefix", t.getResolutionPrefix());
+            datums.add(datum1);                
+        }
+        
         return datums;
     }
 

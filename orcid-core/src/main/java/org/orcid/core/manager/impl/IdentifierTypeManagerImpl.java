@@ -18,15 +18,21 @@ package org.orcid.core.manager.impl;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
 import org.orcid.core.locale.LocaleManager;
@@ -170,13 +176,43 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
      */
     @Override
     /*@Cacheable("identifier-types-map-top")*/
-    public Map<String, IdentifierType> fetchMostPopularIdentifierTypesByAPITypeName(Locale loc) {
+    public Collection<IdentifierType> fetchMostPopularIdentifierTypesByAPITypeName(Locale loc) {
         Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
-        Map<String, IdentifierType> topX = new HashMap<String,IdentifierType>();
+        Map<String, IdentifierType> topX = new TreeMap<String,IdentifierType>();
         for (String s: topTypes)
             if (all.containsKey(s))
-                topX.put(s, all.get(s));  
-        return topX;
+                topX.put(all.get(s).getDescription().toLowerCase(), all.get(s));  
+        return topX.values();
+    }
+
+    @Override
+    /*@Cacheable("identifier-types-map-prefix")*/
+    public Collection<IdentifierType> queryByPrefix(String query, Locale loc) {
+        SortedMap<String,IdentifierType> results = new TreeMap<String,IdentifierType>();
+        Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
+        
+        //stick them in a trie so we can do a deep prefix search
+        PatriciaTrie<Set<IdentifierType>> trie = new PatriciaTrie<Set<IdentifierType>>();
+        for (String type : types.keySet()) {
+            IdentifierType t = types.get(type);
+            if (!trie.containsKey(t.getName()))
+                trie.put(t.getName(), new HashSet<IdentifierType>());
+            trie.get(t.getName()).add(t);
+            for (String s: t.getDescription().split(" ")){
+                if (!trie.containsKey(s))
+                    trie.put(s, new HashSet<IdentifierType>());
+                trie.get(s).add(t);
+            }
+        }
+        
+        //dedupe and sort
+        SortedMap<String,Set<IdentifierType>> sorted = trie.prefixMap(query);
+        for (Set<IdentifierType> set : sorted.values()){
+            for (IdentifierType t : set){
+                results.put(t.getDescription().toLowerCase(),t);                
+            }
+        }
+        return results.values();
     }
 
 

@@ -632,11 +632,15 @@ angular.module('orcidApp').controller(
             };
 
             //populates the external id URL based on type and value.
-            //TODO: make use DB, not js.
             $scope.fillUrl = function(extId) {
                 var url;
                 if(extId != null) {
-                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                    //url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                    if (extId.workExternalIdentifierType.value){
+                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
+                        if (extId.workExternalIdentifierId.value)
+                            url += extId.workExternalIdentifierId.value;
+                    }
                     if(extId.url == null) {
                         extId.url = {value:url};
                     }else{
@@ -645,7 +649,7 @@ angular.module('orcidApp').controller(
                 }
             };
             
-            //Fetches an array of {name:"",description:""} containing query.
+            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
             $scope.getExternalIDTypes = function(query){  
                 var url = getBaseUri()+'/works/idTypes.json?query='+query;
                 return $.ajax({
@@ -654,7 +658,7 @@ angular.module('orcidApp').controller(
                     cache: true,
                   }).done(function(data) {
                       for (var key in data) {
-                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key].description;
+                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
                       }
                   });                
             };
@@ -662,7 +666,9 @@ angular.module('orcidApp').controller(
             //caches name->description lookup so we can display the description not the name after selection
             $scope.externalIDNamesToDescriptions = [];
             $scope.formatExternalIDType = function(model) {
-                return $scope.externalIDNamesToDescriptions[model];
+                if (!model)
+                    return "";
+                return $scope.externalIDNamesToDescriptions[model].description;
               }
     
             //init

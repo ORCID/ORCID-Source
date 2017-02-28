@@ -242,6 +242,7 @@
                                     typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier);$scope.$apply();"
                                     typeahead-input-formatter="formatExternalIDType($model)"
                                     typeahead-show-hint="true"
+                                    typeahead-highlight="false"
                                     typeahead-editable="false"
                                     />
                                     <!--  TODO: pushing enter does something weird!
