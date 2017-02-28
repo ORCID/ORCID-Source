@@ -245,10 +245,6 @@
                                     typeahead-highlight="false"
                                     typeahead-editable="false"
                                     />
-                                    <!--  TODO: pushing enter does something weird!
-	                                    Validation is wrong after pushing enter.
-                                    />
-                                    -->
                                     
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>

@@ -371,12 +371,17 @@
 		copyOnRead="true" copyOnWrite="true">
 		<persistence strategy="localTempSwap" />
 	</cache>
-	<cache name="identifier-types-map" maxElementsInMemory="1000" eternal="true"
+	<cache name="identifier-types-map" maxElementsInMemory="50" eternal="true"
 		copyOnRead="true" copyOnWrite="true">
 		<persistence strategy="localTempSwap" />
 	</cache>
-	<cache name="identifier-types-map-top" maxElementsInMemory="500" eternal="true"
+	<cache name="identifier-types-map-top" maxElementsInMemory="50" eternal="true"
 		copyOnRead="true" copyOnWrite="true">
 		<persistence strategy="localTempSwap" />
 	</cache>							
+		<cache name="identifier-types-map-prefix" maxElementsInMemory="1000" eternal="true"
+		copyOnRead="true" copyOnWrite="true">
+		<persistence strategy="localTempSwap" />
+	</cache>							
+	
 </ehcache>

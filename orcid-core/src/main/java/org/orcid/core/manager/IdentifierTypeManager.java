@@ -16,7 +16,7 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public interface IdentifierTypeManager {
 
 	Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc);
 	
-        Collection<IdentifierType> fetchMostPopularIdentifierTypesByAPITypeName(Locale loc);
-        
-        Collection<IdentifierType> queryByPrefix(String query, Locale loc);
+        List<IdentifierType> queryByPrefix(String query, Locale loc);
+
+        List<IdentifierType> fetchMostPopularIdentifierTypes(Locale loc);
 }

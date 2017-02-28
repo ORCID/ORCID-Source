@@ -638,7 +638,7 @@ angular.module('orcidApp').controller(
                     //url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
                     if (extId.workExternalIdentifierType.value){
                         url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
-                        if (extId.workExternalIdentifierId.value)
+                        if (url && extId.workExternalIdentifierId.value)
                             url += extId.workExternalIdentifierId.value;
                     }
                     if(extId.url == null) {

@@ -16,9 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
+import org.apache.jena.ext.com.google.common.collect.ImmutableList;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
 import org.orcid.core.locale.LocaleManager;
@@ -170,24 +169,30 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     private static List<String> topTypes = Lists.newArrayList("doi","eid","pmid","issn","wosuid","pmc","isbn","other-id","arxiv","handle","bibcode");
     
     /**
-     * Returns an immutable map of the top X API Type Name->identifierType objects.
+     * Returns an immutable list of the top X identifierType objects.
      * Null locale will result in Locale.ENGLISH
      * 
      */
     @Override
-    /*@Cacheable("identifier-types-map-top")*/
-    public Collection<IdentifierType> fetchMostPopularIdentifierTypesByAPITypeName(Locale loc) {
+    @Cacheable("identifier-types-map-top")
+    public List<IdentifierType> fetchMostPopularIdentifierTypes(Locale loc) {
         Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
         Map<String, IdentifierType> topX = new TreeMap<String,IdentifierType>();
         for (String s: topTypes)
             if (all.containsKey(s))
                 topX.put(all.get(s).getDescription().toLowerCase(), all.get(s));  
-        return topX.values();
+        return ImmutableList.copyOf(topX.values());
     }
 
+    /**
+     * Queries the identifier name and description fields for words that START WITH query.
+     * Returns an immutable list of matching types.
+     * Null locale will result in Locale.ENGLISH
+     * 
+     */
     @Override
-    /*@Cacheable("identifier-types-map-prefix")*/
-    public Collection<IdentifierType> queryByPrefix(String query, Locale loc) {
+    @Cacheable("identifier-types-map-prefix")
+    public List<IdentifierType> queryByPrefix(String query, Locale loc) {
         SortedMap<String,IdentifierType> results = new TreeMap<String,IdentifierType>();
         Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
         
@@ -212,7 +217,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
                 results.put(t.getDescription().toLowerCase(),t);                
             }
         }
-        return results.values();
+        return ImmutableList.copyOf(results.values());
     }
 
 

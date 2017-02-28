@@ -769,20 +769,22 @@ public class WorksController extends BaseWorkspaceController {
         List<Map<String, String>> datums = new ArrayList<>();
         
         //fetch results
-        Collection<IdentifierType> types;             
+        List<IdentifierType> types;             
         if (query == null || query.trim().isEmpty()){
-            types = identifierTypeManager.fetchMostPopularIdentifierTypesByAPITypeName(getLocale());
+            types = identifierTypeManager.fetchMostPopularIdentifierTypes(getLocale());
         } else {
             types = identifierTypeManager.queryByPrefix(query, getLocale());
         }
                 
         //format for output
         for (IdentifierType t : types){
-            Map<String, String> datum1 = new HashMap<String,String>();
-            datum1.put("name", t.getName());
-            datum1.put("description", t.getDescription());
-            datum1.put("resolutionPrefix", t.getResolutionPrefix());
-            datums.add(datum1);                
+            if (IdentifierType.PRIMARY_USE_WORK.equals(t.getPrimaryUse())){
+                Map<String, String> datum1 = new HashMap<String,String>();
+                datum1.put("name", t.getName());
+                datum1.put("description", t.getDescription());
+                datum1.put("resolutionPrefix", t.getResolutionPrefix());
+                datums.add(datum1);                                
+            }
         }
         
         return datums;
