@@ -631,6 +631,7 @@ angular.module('orcidApp').controller(
                 });
             };
 
+            //populates the external id URL based on type and value.
             //TODO: make use DB, not js.
             $scope.fillUrl = function(extId) {
                 var url;
@@ -644,9 +645,25 @@ angular.module('orcidApp').controller(
                 }
             };
             
-            $scope.getExternalIDTypes = function(query){
-                return $.get(getBaseUri()+'/works/idTypes.json?query='+query);
+            //Fetches an array of {name:"",description:""} containing query.
+            $scope.getExternalIDTypes = function(query){  
+                var url = getBaseUri()+'/works/idTypes.json?query='+query;
+                return $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                  }).done(function(data) {
+                      for (var key in data) {
+                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key].description;
+                      }
+                  });                
             };
+            
+            //caches name->description lookup so we can display the description not the name after selection
+            $scope.externalIDNamesToDescriptions = [];
+            $scope.formatExternalIDType = function(model) {
+                return $scope.externalIDNamesToDescriptions[model];
+              }
     
             //init
             $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);

@@ -235,10 +235,19 @@
                                     <input id="worksIdType{{$index}}" class="form-control" type="text" 
                                     ng-model="workExternalIdentifier.workExternalIdentifierType.value" 
                                     placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" 
-                                    typeahead="eid.value as eid.description for eid in getExternalIDTypes($viewValue)" 
-                                    typeahead-loading="loading" typeahead-min-length="0" typeahead-wait-ms="300" 
+                                    uib-typeahead="eid.name as eid.description for eid in getExternalIDTypes($viewValue)" 
+                                    typeahead-loading="loading" 
+                                    typeahead-min-length="0" 
+                                    typeahead-wait-ms="300" 
                                     typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier);$scope.$apply();"
+                                    typeahead-input-formatter="formatExternalIDType($model)"
+                                    typeahead-show-hint="true"
+                                    typeahead-editable="false"
                                     />
+                                    <!--  TODO: pushing enter does something weird!
+	                                    Validation is wrong after pushing enter.
+                                    />
+                                    -->
                                     
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierType.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierType.errors' ng-bind-html="error"></div>

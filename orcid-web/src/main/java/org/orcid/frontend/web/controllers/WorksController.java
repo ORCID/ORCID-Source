@@ -773,7 +773,6 @@ public class WorksController extends BaseWorkspaceController {
             IdentifierType t = types.get(type);
             if (t.getDescription().contains(query) || t.getName().contains(query)){
                 Map<String, String> datum1 = new HashMap<String,String>();
-                datum1.put("value", t.getName());
                 datum1.put("name", t.getName());
                 datum1.put("description", t.getDescription());
                 datums.add(datum1);
