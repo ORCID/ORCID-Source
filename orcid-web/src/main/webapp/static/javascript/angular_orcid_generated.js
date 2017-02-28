@@ -11695,6 +11695,8 @@
 	            };
 
 	            $scope.serverValidate = function (relativePath) {
+	                console.log("validating");
+	                console.log(angular.toJson($scope.editWork));
 	                $.ajax({
 	                    url: getBaseUri() + '/' + relativePath,
 	                    type: 'POST',
@@ -11702,6 +11704,8 @@
 	                    contentType: 'application/json;charset=UTF-8',
 	                    dataType: 'json',
 	                    success: function(data) {
+	                        console.log("validating results");
+	                        console.log(data);
 	                        commonSrvc.copyErrorsLeft($scope.editWork, data);
 	                        if ( relativePath == 'works/work/citationValidate.json') {
 	                            $scope.validateCitation();

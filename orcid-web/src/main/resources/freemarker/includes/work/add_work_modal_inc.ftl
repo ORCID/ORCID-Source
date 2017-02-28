@@ -239,7 +239,7 @@
                                     typeahead-loading="loading" 
                                     typeahead-min-length="0" 
                                     typeahead-wait-ms="300" 
-                                    typeahead-on-select="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier);$scope.$apply();"
+                                    typeahead-on-select="fillUrl(workExternalIdentifier);$scope.$apply();"
                                     typeahead-input-formatter="formatExternalIDType($model)"
                                     typeahead-show-hint="true"
                                     typeahead-highlight="false"
@@ -258,7 +258,7 @@
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labelID'/></label>
                                 <div class="relative">
-                                    <input id="worksIdValue{{$index}}" name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="serverValidate('works/work/workExternalIdentifiersValidate.json');fillUrl(workExternalIdentifier)" ng-model-onblur/>
+                                    <input id="worksIdValue{{$index}}" name="currentWorkExternalIds" type="text" class="form-control action-icon-inside"  ng-model="workExternalIdentifier.workExternalIdentifierId.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_ID'/>"  ng-change="fillUrl(workExternalIdentifier)" ng-model-onblur/>
                                     <span class="orcid-error" ng-show="workExternalIdentifier.workExternalIdentifierId.errors.length > 0">
                                         <div ng-repeat='error in workExternalIdentifier.workExternalIdentifierId.errors' ng-bind-html="error"></div>
                                     </span>
