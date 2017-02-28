@@ -11539,15 +11539,17 @@
 	                });
 	            };
 
-	            //populates the external id URL based on type and value using data from the DB.
+	            //populates the external id URL based on type and value.
 	            $scope.fillUrl = function(extId) {
 	                var url;
 	                if(extId != null) {
+	                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+	                    /*
 	                    if (extId.workExternalIdentifierType.value){
 	                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
 	                        if (url && extId.workExternalIdentifierId.value)
 	                            url += extId.workExternalIdentifierId.value;
-	                    }
+	                    }*/
 	                    if(extId.url == null) {
 	                        extId.url = {value:url};
 	                    }else{
