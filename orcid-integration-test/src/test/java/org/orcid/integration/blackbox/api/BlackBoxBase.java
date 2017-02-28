@@ -54,9 +54,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -174,10 +176,13 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.baseUri:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Resource
-    protected OauthHelper oauthHelper;
+    protected OauthHelper oauthHelper;    
+    @Resource(name = "memberV2ApiClient")
+    protected MemberV2ApiClientImpl memberV2ApiClient;
     
     private static Map<String, String> accessTokens = new HashMap<String, String>();
     private static Map<String, String> clientCredentialsAccessTokens = new HashMap<String, String>();
+    protected static List<GroupIdRecord> groupRecords = null;
     
     protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
@@ -1184,6 +1189,44 @@ public class BlackBoxBase {
         String publicPeerReviewXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicPeerReviewXpath)), webDriver);
         return true;
+    }
+    
+    
+    /**
+     * Create group ids
+     * */
+    public List<GroupIdRecord> createGroupIds() throws JSONException {
+        //Use the existing ones
+        if(groupRecords != null && !groupRecords.isEmpty()) 
+            return groupRecords;
+        
+        groupRecords = new ArrayList<GroupIdRecord>();
+        
+        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
+        g1.setName("Group # 1");
+        g1.setType("publisher");
+        
+        GroupIdRecord g2 = new GroupIdRecord();
+        g2.setDescription("Description");
+        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
+        g2.setName("Group # 2");
+        g2.setType("publisher");                
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token); 
+        
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+        g1.setPutCode(Long.valueOf(r1LocationPutCode));
+        groupRecords.add(g1);
+        
+        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+        g2.setPutCode(Long.valueOf(r2LocationPutCode));
+        groupRecords.add(g2);
+        
+        return groupRecords;
     }
     
     /**
