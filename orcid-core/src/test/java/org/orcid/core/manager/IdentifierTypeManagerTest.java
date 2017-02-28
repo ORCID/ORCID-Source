@@ -136,6 +136,24 @@ public class IdentifierTypeManagerTest extends BaseTest {
         assertTrue(last.getTime() < id.getLastModified().getTime()); 
     }
     
+    public void testPrefixSearch(){
+        List<IdentifierType> types = idTypeMan.queryByPrefix("do", null);
+        boolean foundDOI = false;
+        boolean foundASIN = false;
+        boolean foundScopus = false;
+        for (IdentifierType t: types){
+            if (t.getName().equals("doi"))
+                foundDOI = true;
+            if (t.getName().equals("asin-tld")) // has "domain" in the description
+                foundASIN = true;
+            if (t.getName().equals("eid"))
+                foundScopus = true;
+        }
+        assertTrue(foundDOI);
+        assertTrue(foundASIN);
+        assertFalse(foundScopus);
+    }
+    
     private IdentifierType createIdentifierType(int seed){
         IdentifierType id = new IdentifierType();        
         id.setName("test"+seed);
