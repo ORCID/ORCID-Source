@@ -636,7 +636,7 @@ angular.module('orcidApp').controller(
                 var url;
                 if(extId != null) {
                     url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
-                    /*
+                    /* Code to fetch from DB...
                     if (extId.workExternalIdentifierType.value){
                         url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
                         if (url && extId.workExternalIdentifierId.value)
