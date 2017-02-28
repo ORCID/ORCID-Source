@@ -11539,11 +11539,10 @@
 	                });
 	            };
 
-	            //populates the external id URL based on type and value.
+	            //populates the external id URL based on type and value using data from the DB.
 	            $scope.fillUrl = function(extId) {
 	                var url;
 	                if(extId != null) {
-	                    //url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
 	                    if (extId.workExternalIdentifierType.value){
 	                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
 	                        if (url && extId.workExternalIdentifierId.value)
@@ -11695,8 +11694,6 @@
 	            };
 
 	            $scope.serverValidate = function (relativePath) {
-	                console.log("validating");
-	                console.log(angular.toJson($scope.editWork));
 	                $.ajax({
 	                    url: getBaseUri() + '/' + relativePath,
 	                    type: 'POST',
@@ -11704,8 +11701,6 @@
 	                    contentType: 'application/json;charset=UTF-8',
 	                    dataType: 'json',
 	                    success: function(data) {
-	                        console.log("validating results");
-	                        console.log(data);
 	                        commonSrvc.copyErrorsLeft($scope.editWork, data);
 	                        if ( relativePath == 'works/work/citationValidate.json') {
 	                            $scope.validateCitation();
