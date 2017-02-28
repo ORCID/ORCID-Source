@@ -206,6 +206,18 @@ public interface OAuthOrcidApiService<T> {
     @Path(FUNDING_PATH)
     T viewFundingDetailsXml(@PathParam("orcid") String orcid, String accessToken);
     
+    /**
+     * GETs the Json representation of the ORCID record containing only funding
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(FUNDING_PATH)
+    T viewFundingDetailsJson(@PathParam("orcid") String orcid, String accessToken);
     
     /**
      * GETs the XML representation of the ORCID record containing only affiliation
@@ -219,6 +231,19 @@ public interface OAuthOrcidApiService<T> {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(AFFILIATIONS_PATH)
     T viewAffiliationDetailsXml(@PathParam("orcid") String orcid, String accessToken);
+    
+    /**
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(AFFILIATIONS_PATH)
+    T viewAffiliationDetailsJson(@PathParam("orcid") String orcid, String accessToken);
     
     /**
      * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
