@@ -425,8 +425,7 @@ public class BlackBoxBase {
         String scopesString = StringUtils.join(scopes, " ");
         WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);                        
-        String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);        
-        return token;
+        return oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);        
     }
     
     public String getClientCredentialsAccessToken(ScopePathType scope, String clientId, String clientSecret, APIRequestType requestType) throws JSONException {
