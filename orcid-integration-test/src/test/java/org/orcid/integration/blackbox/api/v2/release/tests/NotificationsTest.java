@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -53,7 +53,7 @@ import com.sun.jersey.api.client.ClientResponse;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-notifications-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class NotificationsTest {
 
     @Value("${org.orcid.web.testClient1.clientId}")
