@@ -924,12 +924,14 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(typeXpath)), webDriver);
         WebElement typeInput = findElement(By.xpath(typeXpath));
         Select input = new Select(typeInput);
-        input.selectByValue("award");
+        input.selectByValue("award");                
         
-        //Funding title
-        String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
-        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingTitle", webDriver);
+        //Country
+        String countryXpath = "//select[@ng-model='editFunding.country.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
+        WebElement countryInput = findElement(By.xpath(countryXpath));
+        input = new Select(countryInput);
+        input.selectByValue(Iso3166Country.US.value());
         
         //Institution name
         String institutionNameXpath = "//input[@ng-model='editFunding.fundingName.value']";
@@ -940,16 +942,15 @@ public class BlackBoxBase {
         String cityXpath = "//input[@ng-model='editFunding.city.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
         BBBUtil.ngAwareSendKeys("Test land", "city", webDriver);
+                      
+        //Funding title
+        String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
+        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingTitle", webDriver);
         
-        //Country
-        String countryXpath = "//select[@ng-model='editFunding.country.value']";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
-        WebElement countryInput = findElement(By.xpath(countryXpath));
-        input = new Select(countryInput);
-        input.selectByValue(Iso3166Country.US.value());
-        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-funding']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);           
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-funding').click();");
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
