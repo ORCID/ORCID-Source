@@ -28,6 +28,9 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 public class IdentifierType implements Serializable{
 
     private static final long serialVersionUID = 1L;
+    public static final String PRIMARY_USE_WORK = "work";
+    public static final String PRIMARY_USE_FUNDING = "funding";
+    
     
     private String name;
     private Long id;

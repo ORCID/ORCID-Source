@@ -4135,7 +4135,7 @@ this.w3cLatexCharMap = {
    };
 
    exports.getLink = function(id, type) {
-      if (id == null) return null;
+      if (id == null) id = "";//return null;
       id = id.trim();
       if (id.startsWith('http:') || id.startsWith('https:')) return id;
       if (type == null) return null;
@@ -4205,7 +4205,7 @@ this.w3cLatexCharMap = {
             doneSomething = true;
         }
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
-                + offset(input) : null;
+                + offset(input) : baseUrl + '?q=';
     }
 
     exports.setBaseUrl = function(url) {

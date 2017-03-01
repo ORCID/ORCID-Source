@@ -370,7 +370,7 @@
               </div>              
             </div>
           </div>
-          <#if RequestParameters['bibtexExport']??>
+
           <!-- BibTeX Export Layout -->         
           <div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
             <div class=box-border" ng-if="canReadFiles" ng-cloak>
@@ -404,7 +404,6 @@
               <strong><@orcid.msg 'workspace.bibtexExporter.error'/></strong>
             </div>
           </div>    
-          </#if>
 
           <!-- Bibtex Importer Wizard -->
           <div ng-if="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">

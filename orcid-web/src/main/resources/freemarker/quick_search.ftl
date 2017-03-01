@@ -22,6 +22,7 @@
 	<div class="col-md-12">
 		<#if noResultsFound??>
 			<!-- no results -->
+			<div id="no-results-alert" class="orcid-hide alert alert-error"><@spring.message "orcid.frontend.web.no_results"/></div>
 		<#else>
 			<#include "includes/search/search_results.ftl"/>
 		</#if>

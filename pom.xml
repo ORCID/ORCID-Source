@@ -230,6 +230,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/shibboleth-embedded-ds/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/angular-ui/**</exclude>
                         	<exclude>**/src/main/webapp/static/fonts/glyphicons*</exclude>
                         	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>

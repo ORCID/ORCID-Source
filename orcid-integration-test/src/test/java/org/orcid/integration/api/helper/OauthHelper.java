@@ -26,8 +26,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.internal.InternalOAuthAPIService;
-import org.orcid.integration.api.t1.T1OAuthAPIService;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.v12.T1OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 

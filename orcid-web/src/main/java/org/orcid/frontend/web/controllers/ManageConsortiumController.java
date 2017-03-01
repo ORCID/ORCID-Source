@@ -29,11 +29,13 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -139,6 +141,17 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);
         return contact;
+    }
+
+    @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody SubMemberForm addSubMember(@RequestBody SubMemberForm subMember) {
+        salesForceManager.createMember(subMember.toMember());
+        return subMember;
+    }
+
+    @RequestMapping(value = "/remove-sub-member.json", method = RequestMethod.POST)
+    public @ResponseBody void removeSubMember(@RequestBody SubMember subMember) {
+        salesForceManager.flagOpportunityAsClosed(subMember.getOpportunity().getId());
     }
 
 }
