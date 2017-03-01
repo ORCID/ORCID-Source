@@ -59,6 +59,8 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @return the updated profile as it new state dictates
      */
     OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile);
+    
+    OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions);    
 
     /**
      * Returns true if ORCID exist.
@@ -254,5 +256,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void processProfilesWithFailedFlagAndAddToMessageQueue();
 
-    void processProfilesWithPendingFlagAndAddToMessageQueue();    
+    void processProfilesWithPendingFlagAndAddToMessageQueue();
+
 }
