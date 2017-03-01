@@ -88,12 +88,12 @@
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <div class="col-md-6">
-                                                <a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+                                                <button class="oauth-deny btn" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
                                                 <@orcid.msg 'confirm-oauth-access.Deny' />
-                                                </a>
+                                                </button>
                                             </div>
                                             <div class="col-md-6">                                                                                    
-                                                <button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+                                                <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
                                                 <@orcid.msg 'confirm-oauth-access.Authorize' />
                                                 </button>
                                             </div>
@@ -354,18 +354,16 @@
                                     </div>
                                 </div>
                                 <!-- Buttons  -->
-                                <div class="row">
+                                <div class="row col-md-12">
                                     <div class="col-md-6">                                                                
-                                        <a id="register-form-deny" class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+                                        <button id="register-form-deny" class="oauth-deny btn" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
                                             <@orcid.msg 'confirm-oauth-access.Deny' />
-                                        </a>
+                                        </button>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button id="register-authorize-button" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
-                                                <@orcid.msg 'confirm-oauth-access.Authorize' />
-                                            </button>
-                                        </div>
+                                    <div class="col-md-6">
+                                        <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+                                            <@orcid.msg 'confirm-oauth-access.Authorize' />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
