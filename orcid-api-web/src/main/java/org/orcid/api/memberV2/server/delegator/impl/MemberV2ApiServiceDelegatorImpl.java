@@ -675,7 +675,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Optional<GroupIdRecord> record = groupIdRecordManager.findGroupIdRecordByName(name);
         if (record.isPresent())
             return Response.ok(record.get()).build();
-        throw new NotFoundException();
+        return Response.ok(new GroupIdRecord()).build();
     }
 
     /**
