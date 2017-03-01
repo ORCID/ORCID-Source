@@ -744,7 +744,8 @@ public class BlackBoxBase {
         BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
         BBBUtil.ngAwareSendKeys(workTitle, "work-title", webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-new-work']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-new-work').click();");
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -821,7 +822,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
@@ -878,7 +879,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
