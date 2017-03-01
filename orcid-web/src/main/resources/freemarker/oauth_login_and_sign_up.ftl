@@ -62,7 +62,7 @@
                                 <div class="row personal-login">
                                     <div class="form-group">
                                         <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>                     
-                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
+                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" ng-change="loginUserIdInputChanged()" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
                                     </div>
                                     <div class="form-group">
                                         <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
@@ -107,7 +107,7 @@
 				                	<a name="resetPassword"></a>
 				                	<a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
 				                	<div ng-show="showResetPassword" ng-cloak>
-							            <p><small>${springMacroRequestContext.getMessage("reset_password.labelenteremailaddress")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
+							            <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
 							        	<form id="password-reset-form" name="emailAddressForm">
 						        			<span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
 									            <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
@@ -116,15 +116,15 @@
 									        	<strong><span ng-bind="requestResetPassword.successMessage"></span></strong>
 									        </div>
 						        			<div class="control-group">
-						            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label><span class="required">*</span>				           
+						            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label><span class="required">*</span>				           
 						               			<div class="controls"> 
 						               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
 						               			</div>
-						               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
+						               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
 						        			</div>
 							        	</form>
 						        	</div>
-								</div>
+								 </div>   
 							</#if>
                             <!-- SOCIAL LOGIN -->                     
                             <div class="social-login">

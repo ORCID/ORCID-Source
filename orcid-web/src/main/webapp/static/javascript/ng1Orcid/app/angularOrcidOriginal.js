@@ -6718,6 +6718,10 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         });
     };
 
+    $scope.loginUserIdInputChanged = function() {
+      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
+    };
+
     $scope.loginAndAuthorize = function() {
         $scope.authorizationForm.approved = true;
         // Fire GA sign-in-submit
@@ -6730,6 +6734,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
         return false;
     };
+
 
     $scope.loginAndDeny = function() {
         $scope.authorizationForm.approved = false;
