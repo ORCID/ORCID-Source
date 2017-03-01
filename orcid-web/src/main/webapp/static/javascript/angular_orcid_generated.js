@@ -776,10 +776,12 @@
 	                    if (serv.emails.emails[i].verified == false) {
 	                        callback = function(){
 	                            serv.unverifiedSetPrimary = true;
+	                            $rootScope.$apply();
 	                        }
 	                    } else {
 	                        callback = function(){
 	                            serv.unverifiedSetPrimary = false;
+	                            $rootScope.$apply();
 	                        }
 
 	                    }
