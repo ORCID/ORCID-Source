@@ -32,11 +32,13 @@ import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
+import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {
@@ -220,6 +222,18 @@ public class ActivityUtils {
         }
     }
     
+    public static void cleanEmptyFields(WorkBulk workBulk) {
+        if (workBulk != null && workBulk.getBulk() != null) {
+            workBulk.getBulk().forEach(b -> cleanEmptyFields(b));
+        }
+    }
+    
+    public static void cleanEmptyFields(BulkElement bulk) {
+        if (bulk instanceof Work) {
+            cleanEmptyFields((Work) bulk);
+        }
+    }
+
     public static void cleanEmptyFields(Work work) {
         if(work != null) {
             if(work.getWorkCitation() != null) {
@@ -237,4 +251,5 @@ public class ActivityUtils {
             }
         }
     }
+
 }

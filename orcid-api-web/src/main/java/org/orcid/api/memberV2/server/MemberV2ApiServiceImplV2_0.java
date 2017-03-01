@@ -106,6 +106,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -210,6 +211,15 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
     public Response viewWorks(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewWorks(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(WORKS)
+    @ApiOperation(value = "Fetch specified works", response = Works.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+    public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @RequestParam("put-codes") String putCodes) {
+        return serviceDelegator.viewBulkWorks(orcid, putCodes);
     }
 
     @GET
