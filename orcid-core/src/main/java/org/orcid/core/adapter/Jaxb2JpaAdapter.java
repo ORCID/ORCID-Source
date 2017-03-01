@@ -16,6 +16,7 @@
  */
 package org.orcid.core.adapter;
 
+import org.orcid.core.manager.UpdateOptions;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -34,6 +35,8 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 public interface Jaxb2JpaAdapter {
 
     ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity);
+    
+    ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions);
 
     OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation updatedAffiliation, ProfileEntity profileEntity);
     
@@ -44,4 +47,5 @@ public interface Jaxb2JpaAdapter {
     ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding);
     
     WorkEntity getWorkEntity(OrcidWork orcidWork, WorkEntity workEntity);
+
 }
