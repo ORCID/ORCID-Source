@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.orcid.pojo.IdentifierType;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 
 /**
@@ -193,17 +195,17 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
     @Override
     @Cacheable("identifier-types-map-prefix")
     public List<IdentifierType> queryByPrefix(String query, Locale loc) {
-        SortedMap<String,IdentifierType> results = new TreeMap<String,IdentifierType>();
+        Map<String,IdentifierType> results = new HashMap<String,IdentifierType>();
         Map<String, IdentifierType>types = fetchIdentifierTypesByAPITypeName(loc);
         
         //stick them in a trie so we can do a deep prefix search
         PatriciaTrie<Set<IdentifierType>> trie = new PatriciaTrie<Set<IdentifierType>>();
         for (String type : types.keySet()) {
             IdentifierType t = types.get(type);
-            if (!trie.containsKey(t.getName()))
-                trie.put(t.getName(), new HashSet<IdentifierType>());
-            trie.get(t.getName()).add(t);
-            for (String s: t.getDescription().split(" ")){
+            if (!trie.containsKey(t.getName().toLowerCase()))
+                trie.put(t.getName().toLowerCase(), new HashSet<IdentifierType>());
+            trie.get(t.getName().toLowerCase()).add(t);
+            for (String s: t.getDescription().toLowerCase().split(" ")){
                 if (!trie.containsKey(s))
                     trie.put(s, new HashSet<IdentifierType>());
                 trie.get(s).add(t);
@@ -211,13 +213,28 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         }
         
         //dedupe and sort
-        SortedMap<String,Set<IdentifierType>> sorted = trie.prefixMap(query);
+        SortedMap<String,Set<IdentifierType>> sorted = trie.prefixMap(query.toLowerCase());
         for (Set<IdentifierType> set : sorted.values()){
             for (IdentifierType t : set){
-                results.put(t.getDescription().toLowerCase(),t);                
+                if (!results.containsKey(t.getDescription().toLowerCase()))
+                    results.put(t.getDescription().toLowerCase(),t);                
+            }
+        }        
+        
+        //put anything that starts with query at the top of the list.
+        Builder<IdentifierType> builder = new Builder<IdentifierType>();
+        for (IdentifierType t : results.values()){
+            if (t.getDescription().toLowerCase().startsWith(query.toLowerCase())){
+                builder.add(t);
             }
         }
-        return ImmutableList.copyOf(results.values());
+        for (IdentifierType t : results.values()){
+            if (!t.getDescription().toLowerCase().startsWith(query.toLowerCase())){
+                builder.add(t);
+            }
+        }
+        
+        return builder.build();
     }
 
 
