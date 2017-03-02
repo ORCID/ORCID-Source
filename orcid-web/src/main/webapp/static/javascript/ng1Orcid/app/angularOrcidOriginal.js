@@ -42,7 +42,7 @@ angular.element(function() {
 /*******************************************************************************
  * 3 - Angular Services
  ******************************************************************************/
-
+/*
 // Dependencie: removeBadContributors, dw object. Can't move yet
 angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
@@ -1110,10 +1110,10 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
     };
     return peerReviewSrvc;
 }]);
-
-/*
+*/
+/*******************************************************************************
  * CONTROLLERS
- */
+*******************************************************************************/
 
 angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
