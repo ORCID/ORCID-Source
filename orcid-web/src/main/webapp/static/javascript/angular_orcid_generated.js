@@ -11578,6 +11578,7 @@
 	                });
 	            };
 
+	            //--typeahead
 	            //populates the external id URL based on type and value.
 	            $scope.fillUrl = function(extId) {
 	                var url;
@@ -11597,18 +11598,26 @@
 	                }
 	            };
 	            
+	            //cache responses
+	            $scope.externalIDTypeCache = [];
+	            
 	            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
 	            $scope.getExternalIDTypes = function(query){  
 	                var url = getBaseUri()+'/works/idTypes.json?query='+query;
-	                return $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                  }).done(function(data) {
-	                      for (var key in data) {
-	                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-	                      }
-	                  });                
+	                var ajax = $scope.externalIDTypeCache[query];
+	                if (!ajax){
+	                    ajax = $.ajax({
+	                        url: url,
+	                        dataType: 'json',
+	                        cache: true,
+	                      }).done(function(data) {
+	                          for (var key in data) {
+	                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+	                          }
+	                      });   
+	                    $scope.externalIDTypeCache[query] = ajax;
+	                }
+	                return ajax;
 	            };
 	            
 	            //caches name->description lookup so we can display the description not the name after selection
@@ -11618,6 +11627,7 @@
 	                    return "";
 	                return $scope.externalIDNamesToDescriptions[model].description;
 	              }
+	            //--typeahead end
 	    
 	            //init
 	            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
@@ -12099,8 +12109,11 @@
 	        '$compile',
 	        '$rootScope',
 	        '$timeout',
+	        'initialConfigService',
 	        'emailSrvc',
-	        function( $compile, $rootScope, $timeout, emailSrvc ) {
+	        function( $compile, $rootScope, $timeout, initialConfigService, emailSrvc ) {
+
+	            var configuration = initialConfigService.getInitialConfiguration();
 
 	            var closeModal = function(){
 	                $.colorbox.remove();
@@ -12140,7 +12153,7 @@
 	                scope.$on(
 	                    'unverifiedSetPrimary',
 	                    function(event, data){
-	                        if (data.newValue == true ) {
+	                        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
 	                            scope.openModal( scope ); 
 	                        }
 	                        else {

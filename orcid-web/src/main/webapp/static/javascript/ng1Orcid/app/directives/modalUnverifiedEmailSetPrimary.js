@@ -10,8 +10,11 @@ angular.module('orcidApp').directive(
         '$compile',
         '$rootScope',
         '$timeout',
+        'initialConfigService',
         'emailSrvc',
-        function( $compile, $rootScope, $timeout, emailSrvc ) {
+        function( $compile, $rootScope, $timeout, initialConfigService, emailSrvc ) {
+
+            var configuration = initialConfigService.getInitialConfiguration();
 
             var closeModal = function(){
                 $.colorbox.remove();
@@ -51,7 +54,7 @@ angular.module('orcidApp').directive(
                 scope.$on(
                     'unverifiedSetPrimary',
                     function(event, data){
-                        if (data.newValue == true ) {
+                        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
                             scope.openModal( scope ); 
                         }
                         else {
