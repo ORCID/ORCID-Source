@@ -740,7 +740,14 @@ public class BlackBoxBase {
         BBBUtil.ngAwareSendKeys("conference","workCategory", webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
         BBBUtil.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
-        BBBUtil.ngAwareSendKeys("doi","worksIdType0", webDriver);
+        
+        //Pick the identifier type from the list 
+        WebElement input = findElement(By.id("worksIdType0"));
+        input.sendKeys("doi");
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath("//a[starts-with(@title,\"doi\")]")), webDriver);
+        WebElement typeAheadList = BBBUtil.findElement(By.xpath("//a[starts-with(@title,\"doi\")]"));
+        typeAheadList.click();
+        
         BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
         BBBUtil.ngAwareSendKeys(workTitle, "work-title", webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
