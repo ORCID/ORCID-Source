@@ -19,6 +19,7 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -31,11 +32,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
@@ -104,23 +104,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
-    }   
-    
-    public GroupIdRecord createGroupIdRecord() throws JSONException {
-        String clientCredentialsToken = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
-        long time = System.currentTimeMillis();
-        GroupIdRecord g1 = new GroupIdRecord();
-        g1.setDescription("Description");
-        g1.setGroupId("orcid-generated:01" + time);
-        g1.setName("Group # 1 - " + time);
-        g1.setType("publisher");
-        
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, clientCredentialsToken);         
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
-        g1.setPutCode(Long.valueOf(r1LocationPutCode));        
-        
-        return g1;
-    }                
+    }  
     
     /**
      * EXTERNAL IDENTIFIERS

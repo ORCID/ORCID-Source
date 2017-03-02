@@ -18,7 +18,6 @@ package org.orcid.integration.blackbox.api.v12;
 
 import static org.junit.Assert.assertEquals;
 
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;

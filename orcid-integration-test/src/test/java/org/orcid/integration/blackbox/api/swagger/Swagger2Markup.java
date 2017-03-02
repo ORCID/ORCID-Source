@@ -14,11 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.swagger;
+package org.orcid.integration.blackbox.api.swagger;
 
 import static org.junit.Assert.assertEquals;
-import io.github.robwin.markup.builder.MarkupLanguage;
-import io.github.robwin.swagger2markup.Swagger2MarkupConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +26,16 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import io.github.robwin.markup.builder.MarkupLanguage;
+import io.github.robwin.swagger2markup.Swagger2MarkupConverter;
+
 /** Generates markup from swagger docs during integration testing
  * Confirms valid swagger.json
  * @author tom
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class Swagger2Markup {
     
     @Test

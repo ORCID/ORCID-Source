@@ -18,9 +18,11 @@ package org.orcid.integration.blackbox.web.account;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -56,7 +58,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Shobhit Tyagi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     @BeforeClass
     public static void before() {
@@ -534,7 +536,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseV2Release {
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
         // Create peer review group               
         String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE));
-        GroupIdRecord g1 = super.createGroupIdRecord();
+        List<GroupIdRecord> groups = createGroupIds();
+        assertNotNull(groups);
+        assertTrue(groups.size() > 0);
+        GroupIdRecord g1 = groups.get(0);
 
         // Create peer review
         long time = System.currentTimeMillis();
