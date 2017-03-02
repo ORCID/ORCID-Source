@@ -713,7 +713,6 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                     }
 
                     callback = function(){
-                        //$rootScope.$apply();
                         $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
                     }
 

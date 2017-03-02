@@ -780,7 +780,6 @@
 	                    }
 
 	                    callback = function(){
-	                        //$rootScope.$apply();
 	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
 	                    }
 
