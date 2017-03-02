@@ -2780,10 +2780,6 @@ header overrides
     margin-bottom: 0;
 }
 
-.oauth-login .btn {
-    margin-bottom: 10px;
-}
-
 .oauth-login .control-group {
     margin-bottom: 10px;
 }
@@ -2806,13 +2802,13 @@ header overrides
     margin-left: 96px;
 }
 
-.oauth-login .login .login-box {
-    padding: 15px 30px 0 30px;
-}
-
 .oauth-login .reset-password .control-group .controls,
 .oauth-login .control-group .controls.checky {
     margin-left: 0;
+}
+
+.oauth-login .login .login-box {
+    padding: 15px 30px 0 30px;
 }
 
 .oauth-login .control-group .controls input {
@@ -2857,6 +2853,18 @@ header overrides
     color: #939498;
     line-height: 13px;
     font-weight: 100;
+}
+
+.oauth-login .oauth-buttons{
+    text-align: center;
+}
+
+.oauth-login #login-authorize-button {
+    margin-top: 10px;
+}
+
+.oauth-login #register-authorize-button {
+    margin: 10px 0 40px 0;
 }
 
 .manage-bio .control-label {
@@ -3590,16 +3598,8 @@ p.orcid-id-container {
     margin-bottom: 5px;
 }
 
-.oauth-deny.btn {
-    background-color: #fff;
-    border: 1px solid #C9C9CA;
-    color: #338caf;
-}
-
-.oauth-deny.btn:hover {
-    background-color: #C9C9CA;
-    border: 1px solid #C9C9CA;
-    color: #494A4C;
+.oauth_deny_link {
+    margin: 5px 17px 5px 0;
 }
 
 .type-preset {
@@ -6553,11 +6553,6 @@ a:hover .mozilla-badge {
 
 .oauth-login .reset-password{
     margin: 0 15px;
-    text-align: center;
-}
-
-.oauth-login .reset-password div{
-    text-align: left;
 }
 
 .oauth-login .reset-password label{

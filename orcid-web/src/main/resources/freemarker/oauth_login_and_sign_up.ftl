@@ -85,19 +85,13 @@
                                             ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                                         </span>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <div class="col-md-6">
-                                                <button class="oauth-deny btn" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
-                                                <@orcid.msg 'confirm-oauth-access.Deny' />
-                                                </button>
-                                            </div>
-                                            <div class="col-md-6">                                                                                    
-                                                <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
-                                                <@orcid.msg 'confirm-oauth-access.Authorize' />
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="form-group oauth-buttons">     
+                                        <a class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+                                        <@orcid.msg 'confirm-oauth-access.Deny' />
+                                        </a>                                                                                  
+                                        <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+                                        <@orcid.msg 'confirm-oauth-access.Authorize' />
+                                        </button>
                                     </div>                        
                                 </div>                  
                             </div>
@@ -354,17 +348,13 @@
                                     </div>
                                 </div>
                                 <!-- Buttons  -->
-                                <div class="row col-md-12">
-                                    <div class="col-md-6">                                                                
-                                        <button id="register-form-deny" class="oauth-deny btn" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+                                <div class="row col-md-12 oauth-buttons">                                                               
+                                        <a id="register-form-deny" class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
                                             <@orcid.msg 'confirm-oauth-access.Deny' />
-                                        </button>
-                                    </div>
-                                    <div class="col-md-6">
+                                        </a>
                                         <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
                                             <@orcid.msg 'confirm-oauth-access.Authorize' />
-                                        </button>
-                                    </div>
+                                        </button>   
                                 </div>
                             </div>
                         </div>
