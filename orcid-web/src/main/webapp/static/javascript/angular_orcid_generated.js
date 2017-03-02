@@ -7304,6 +7304,10 @@
 	            $scope.loadedFeed = true;
 	        }
 	    });
+
+	    $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+	    };
 	    
 	}]);
 

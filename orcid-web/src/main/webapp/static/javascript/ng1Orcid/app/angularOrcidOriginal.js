@@ -7237,6 +7237,10 @@ angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoS
             $scope.loadedFeed = true;
         }
     });
+
+    $scope.loginUserIdInputChanged = function() {
+      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+    };
     
 }]);
 
