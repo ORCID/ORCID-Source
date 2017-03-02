@@ -6908,6 +6908,10 @@ a:hover .mozilla-badge {
     margin-top: 5px;
 }
 
+.form-social-sign-in input {
+    width: 100%;
+}
+
 .edit-external-identifiers .aka p {
     margin-bottom: 0;
 }

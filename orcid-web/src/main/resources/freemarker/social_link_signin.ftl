@@ -60,7 +60,7 @@
                 
                 
                 <div class="row">
-                	<div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12">                			                		
+                	<div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                			                		
 						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
 						<hr />
                 	</div>                	
@@ -104,7 +104,9 @@
         	                <#if (RequestParameters['invalidClaimUrl'])??>
         	                    <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
         	                </#if>
-        	                <!-- RESET PASSWORD -->
+        	                
+        	            </div>
+        	            <!-- RESET PASSWORD -->
 							<#if RequestParameters['ResetPassword']??>
 				            	<div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="reset-password">
 				                	<a name="resetPassword"></a>
@@ -129,7 +131,6 @@
 						        	</div>
 								 </div>   
 							</#if>                
-        	            </div>
                     </div>              
                 </div>                
                 
