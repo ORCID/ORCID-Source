@@ -34,5 +34,5 @@ public interface IdentifierTypeManager {
 	
         List<IdentifierType> queryByPrefix(String query, Locale loc);
 
-        List<IdentifierType> fetchMostPopularIdentifierTypes(Locale loc);
+        List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc);
 }
