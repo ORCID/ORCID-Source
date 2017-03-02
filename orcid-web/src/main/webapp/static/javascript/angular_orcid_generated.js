@@ -6785,6 +6785,10 @@
 	        });
 	    };
 
+	    $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
+	    };
+
 	    $scope.loginAndAuthorize = function() {
 	        $scope.authorizationForm.approved = true;
 	        // Fire GA sign-in-submit
@@ -6797,6 +6801,7 @@
 	        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
 	        return false;
 	    };
+
 
 	    $scope.loginAndDeny = function() {
 	        $scope.authorizationForm.approved = false;
@@ -7299,6 +7304,10 @@
 	            $scope.loadedFeed = true;
 	        }
 	    });
+
+	    $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+	    };
 	    
 	}]);
 
