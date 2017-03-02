@@ -707,17 +707,16 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                     serv.emails.emails[i].primary = true;
                     serv.primaryEmail = email;
                     if (serv.emails.emails[i].verified == false) {
-                        callback = function(){
-                            serv.unverifiedSetPrimary = true;
-                            $rootScope.$apply();
-                        }
+                        serv.unverifiedSetPrimary = true;
                     } else {
-                        callback = function(){
-                            serv.unverifiedSetPrimary = false;
-                            $rootScope.$apply();
-                        }
-
+                        serv.unverifiedSetPrimary = false;
                     }
+
+                    callback = function(){
+                        //$rootScope.$apply();
+                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+                    }
+
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
