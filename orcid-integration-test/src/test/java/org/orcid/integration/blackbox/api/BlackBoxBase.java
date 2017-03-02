@@ -40,7 +40,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
@@ -55,17 +54,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
     private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']//button[contains('Save changes',text())]";
     
@@ -177,10 +176,13 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.baseUri:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Resource
-    protected OauthHelper oauthHelper;
+    protected OauthHelper oauthHelper;    
+    @Resource(name = "memberV2ApiClient")
+    protected MemberV2ApiClientImpl memberV2ApiClient;
     
     private static Map<String, String> accessTokens = new HashMap<String, String>();
     private static Map<String, String> clientCredentialsAccessTokens = new HashMap<String, String>();
+    protected static List<GroupIdRecord> groupRecords = null;
     
     protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
@@ -742,7 +744,8 @@ public class BlackBoxBase {
         BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
         BBBUtil.ngAwareSendKeys(workTitle, "work-title", webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-new-work']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-new-work').click();");
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -819,7 +822,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
@@ -876,7 +879,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-affiliation').click();");
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
@@ -922,12 +925,14 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(typeXpath)), webDriver);
         WebElement typeInput = findElement(By.xpath(typeXpath));
         Select input = new Select(typeInput);
-        input.selectByValue("award");
+        input.selectByValue("award");                
         
-        //Funding title
-        String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
-        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingTitle", webDriver);
+        //Country
+        String countryXpath = "//select[@ng-model='editFunding.country.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
+        WebElement countryInput = findElement(By.xpath(countryXpath));
+        input = new Select(countryInput);
+        input.selectByValue(Iso3166Country.US.value());
         
         //Institution name
         String institutionNameXpath = "//input[@ng-model='editFunding.fundingName.value']";
@@ -938,16 +943,15 @@ public class BlackBoxBase {
         String cityXpath = "//input[@ng-model='editFunding.city.value']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
         BBBUtil.ngAwareSendKeys("Test land", "city", webDriver);
+                      
+        //Funding title
+        String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
+        BBBUtil.ngAwareSendKeys(fundingTitle, "fundingTitle", webDriver);
         
-        //Country
-        String countryXpath = "//select[@ng-model='editFunding.country.value']";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
-        WebElement countryInput = findElement(By.xpath(countryXpath));
-        input = new Select(countryInput);
-        input.selectByValue(Iso3166Country.US.value());
-        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-funding']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);           
+        ((JavascriptExecutor)webDriver).executeScript("$('#save-funding').click();");
+        BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -1187,6 +1191,44 @@ public class BlackBoxBase {
         String publicPeerReviewXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicPeerReviewXpath)), webDriver);
         return true;
+    }
+    
+    
+    /**
+     * Create group ids
+     * */
+    public List<GroupIdRecord> createGroupIds() throws JSONException {
+        //Use the existing ones
+        if(groupRecords != null && !groupRecords.isEmpty()) 
+            return groupRecords;
+        
+        groupRecords = new ArrayList<GroupIdRecord>();
+        
+        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
+        GroupIdRecord g1 = new GroupIdRecord();
+        g1.setDescription("Description");
+        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
+        g1.setName("Group # 1");
+        g1.setType("publisher");
+        
+        GroupIdRecord g2 = new GroupIdRecord();
+        g2.setDescription("Description");
+        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
+        g2.setName("Group # 2");
+        g2.setType("publisher");                
+        
+        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token); 
+        
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+        g1.setPutCode(Long.valueOf(r1LocationPutCode));
+        groupRecords.add(g1);
+        
+        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
+        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+        g2.setPutCode(Long.valueOf(r2LocationPutCode));
+        groupRecords.add(g2);
+        
+        return groupRecords;
     }
     
     /**

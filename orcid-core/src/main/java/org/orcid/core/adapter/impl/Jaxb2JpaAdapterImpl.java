@@ -45,6 +45,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.Triplet;
@@ -164,7 +165,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     protected RecordNameManager recordNameManager;
     
     @Override
-    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
+    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
+        return toProfileEntity(profile, existingProfileEntity, UpdateOptions.ALL);
+    }
+
+    @Override
+    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions) { 
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
         
@@ -179,7 +185,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         profileEntity.setGroupType(profile.getGroupType());
         setBioDetails(profileEntity, profile.getOrcidBio());            
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
-        setActivityDetails(profileEntity, profile.getOrcidActivities());
+        setActivityDetails(profileEntity, profile.getOrcidActivities(), updateOptions);
         setInternalDetails(profileEntity, profile.getOrcidInternal());
         setPreferencesDetails(profileEntity, profile.getOrcidPreferences());
         profileEntity.setUserLastIp(profile.getUserLastIp());
@@ -192,7 +198,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return profileEntity;
     }
 
-    private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities) {
+    private void setActivityDetails(ProfileEntity profileEntity, OrcidActivities orcidActivities, UpdateOptions updateOptions) {
         Affiliations affiliations = null;
         FundingList orcidFundings = null;
         OrcidWorks orcidWorks = null;
@@ -201,9 +207,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             orcidFundings = orcidActivities.getFundings();
             orcidWorks = orcidActivities.getOrcidWorks();
         }
-        setOrgAffiliationRelations(profileEntity, affiliations);
-        setFundings(profileEntity, orcidFundings);
-        setWorks(profileEntity, orcidWorks);
+        if (updateOptions.isUpdateAffiliations()) {
+            setOrgAffiliationRelations(profileEntity, affiliations);
+        }
+        if (updateOptions.isUpdateFundings()) {
+            setFundings(profileEntity, orcidFundings);
+        }
+        if (updateOptions.isUpdateWorks()) {
+            setWorks(profileEntity, orcidWorks);
+        }
     }
 
     private void setWorks(ProfileEntity profileEntity, OrcidWorks orcidWorks) {

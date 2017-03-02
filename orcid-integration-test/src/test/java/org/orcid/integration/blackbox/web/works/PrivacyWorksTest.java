@@ -31,7 +31,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PrivacyWorksTest extends BlackBoxBase {
     @Value("${org.orcid.web.baseUri}")
     public String baseUri;

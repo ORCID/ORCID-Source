@@ -23,29 +23,36 @@ import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
+import org.orcid.integration.api.helper.APIRequestType;
+import org.orcid.integration.blackbox.api.v12.T1OAuthOrcidApiClientImpl;
+import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml", "classpath:orcid-api-client-context.xml" })
-public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
-    @Resource(name = "t2OrcidApiClient1_2")
-    private T2OrcidApiService<ClientResponse> t2Client1_2;
-    @Resource
-    private PublicV1ApiClientImpl publicV1ApiClient;
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
+public class LockUnlockRecordTest extends BlackBoxBaseV2Release {
+    @Resource(name = "t2OAuthClient_1_2")
+    protected T2OAuthAPIService<ClientResponse> t2OAuthClient_1_2; 
+    @Resource(name = "t1OAuthClient_1_2")
+    protected T1OAuthOrcidApiClientImpl t1OAuthClient;
+    
+    private String accessToken = null;
 
     @Test
-    public void lockUnlockTest() throws InterruptedException {
+    public void lockUnlockTest() throws InterruptedException, JSONException {
+        accessToken = getClientCredentialsAccessToken(ScopePathType.READ_PUBLIC, this.getClient1ClientId(), this.getClient1ClientSecret(), APIRequestType.MEMBER);
+        
         signout();
         adminUnlockAccount(getAdminUserName(), getAdminPassword(), getUser1OrcidId());
         // Init.. Should be unlocked.
@@ -80,7 +87,7 @@ public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
     }
 
     public boolean checkIfLockedApi() {
-        ClientResponse response = t2Client1_2.viewFullDetailsXml(getUser1OrcidId());
+        ClientResponse response = t2OAuthClient_1_2.viewFullDetailsXml(getUser1OrcidId(), accessToken);
         assertNotNull(response);
         OrcidMessage message = response.getEntity(OrcidMessage.class);
         if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {
@@ -91,7 +98,7 @@ public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
     }
 
     public boolean checkIfLockedPub() {
-        ClientResponse response = publicV1ApiClient.viewPublicProfile(getUser1OrcidId());
+        ClientResponse response = t1OAuthClient.viewFullDetailsXml(getUser1OrcidId());
         assertNotNull(response);
         OrcidMessage message = response.getEntity(OrcidMessage.class);
         if (message.getOrcidProfile() == null && message.getErrorDesc() != null) {

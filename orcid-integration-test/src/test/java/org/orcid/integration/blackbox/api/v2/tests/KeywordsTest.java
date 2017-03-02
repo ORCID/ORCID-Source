@@ -48,7 +48,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class KeywordsTest extends BlackBoxBaseV2Release {
 
     @Resource(name = "memberV2ApiClient_rc2")
