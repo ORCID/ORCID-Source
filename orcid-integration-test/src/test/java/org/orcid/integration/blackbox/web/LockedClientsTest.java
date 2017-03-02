@@ -45,7 +45,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class LockedClientsTest extends BlackBoxBaseV2Release {
     @Resource(name = "memberV2ApiClient")
     private MemberV2ApiClientImpl memberV2ApiClient;

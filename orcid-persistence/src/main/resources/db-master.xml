@@ -229,4 +229,5 @@
 	<include file="/db/updates/identifier-types/add-case-to-id-types.xml" />
 	<include file="/db/updates/identifier-types/update-kuid-url2.xml" />
 	<include file="/db/updates/create_invalid_record_data_changes_table.xml" />
+	<include file="/db/updates/grant-id-ro-permission.xml" />
 </databaseChangeLog>

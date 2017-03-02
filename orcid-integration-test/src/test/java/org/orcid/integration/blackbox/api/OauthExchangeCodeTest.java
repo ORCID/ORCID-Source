@@ -30,8 +30,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
+import org.orcid.integration.api.helper.APIRequestType;
+import org.orcid.integration.api.helper.OauthHelper;
+import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,23 +44,17 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * @author Shobhit Tyagi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
+public class OauthExchangeCodeTest extends BlackBoxBaseV2Release {
 
-    @Resource(name = "pubClient")
-    private T2OAuthAPIService<ClientResponse> clientPub;
-
-    @Resource(name = "apiClient")
-    private T2OAuthAPIService<ClientResponse> clientApi;
-
-    @Resource(name = "rootClient")
-    private T2OAuthAPIService<ClientResponse> clientRoot;
+    @Resource
+    private OauthHelper oauthHelper;
 
     @Test
     public void pubTokenTest() throws Exception {
         signout();
         String code = getAuthorizationCode();
-        ClientResponse tokenResponse = clientPub.obtainOauth2TokenPost("client_credentials", getParamMap(code));
+        ClientResponse tokenResponse = oauthHelper.getResponse(getParamMap(code), APIRequestType.PUBLIC);
 
         assertEquals(200, tokenResponse.getStatus());
         JSONObject jsonObject = new JSONObject(tokenResponse.getEntity(String.class));
@@ -71,7 +66,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
     public void apiTokenTest() throws Exception {
         signout();
         String code = getAuthorizationCode();
-        ClientResponse tokenResponse = clientApi.obtainOauth2TokenPost("client_credentials", getParamMap(code));
+        ClientResponse tokenResponse = oauthHelper.getResponse(getParamMap(code), APIRequestType.MEMBER);
 
         assertEquals(200, tokenResponse.getStatus());
         JSONObject jsonObject = new JSONObject(tokenResponse.getEntity(String.class));
@@ -83,7 +78,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
     public void rootTokenTest() throws Exception {
         signout();
         String code = getAuthorizationCode();
-        ClientResponse tokenResponse = clientRoot.obtainOauth2TokenPost("client_credentials", getParamMap(code));
+        ClientResponse tokenResponse = oauthHelper.getResponse(getParamMap(code), APIRequestType.WEB);
 
         assertEquals(200, tokenResponse.getStatus());
         JSONObject jsonObject = new JSONObject(tokenResponse.getEntity(String.class));

@@ -20,6 +20,7 @@ import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.UpdateOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
@@ -59,12 +60,17 @@ public class JpaJaxbEntityAdapterImpl implements JpaJaxbEntityAdapter {
     public ProfileEntity toProfileEntity(OrcidProfile profile) {
         return jaxb2JpaAdapter.toProfileEntity(profile, null);
     }
-
+    
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
         return jaxb2JpaAdapter.toProfileEntity(profile, existingProfileEntity);
     }
     
+    @Override
+    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions) {
+        return jaxb2JpaAdapter.toProfileEntity(profile, existingProfileEntity, updateOptions);
+    }
+
     @Override
     public OrcidClient toOrcidClient(ClientDetailsEntity clientDetailsEntity){
         return jpa2JaxbAdapter.toOrcidClient(clientDetailsEntity);

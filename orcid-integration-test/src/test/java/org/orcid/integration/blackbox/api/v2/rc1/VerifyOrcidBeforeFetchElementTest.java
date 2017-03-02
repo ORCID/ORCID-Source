@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -31,11 +29,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -59,7 +55,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {    
     @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
@@ -67,11 +63,9 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
     @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    static List<GroupIdRecord> groupRecords = null;
-    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
-        groupRecords = createGroupIds();
+        createGroupIds();
     }        
 
     @Test
@@ -296,38 +290,5 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
     public String getAccessToken() throws InterruptedException,
             JSONException {
         return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE));
-    }
-    
-    public List<GroupIdRecord> createGroupIds() throws JSONException {
-        //Use the existing ones
-        if(groupRecords != null && !groupRecords.isEmpty()) 
-            return groupRecords;
-        
-        List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
-        GroupIdRecord g1 = new GroupIdRecord();
-        g1.setDescription("Description");
-        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
-        g1.setName("Group # 1");
-        g1.setType("publisher");
-        
-        GroupIdRecord g2 = new GroupIdRecord();
-        g2.setDescription("Description");
-        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
-        g2.setName("Group # 2");
-        g2.setType("publisher");                
-        
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
-        
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g1.setPutCode(Long.valueOf(r1LocationPutCode));
-        groups.add(g1);
-        
-        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g2.setPutCode(Long.valueOf(r2LocationPutCode));
-        groups.add(g2);
-        
-        return groups;
     }
 }

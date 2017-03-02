@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2;
+package org.orcid.integration.blackbox.api.v12;
 
 import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
