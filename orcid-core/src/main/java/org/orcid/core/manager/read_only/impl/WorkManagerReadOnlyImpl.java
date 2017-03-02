@@ -192,7 +192,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 Long id = Long.valueOf(putCode);
                 WorkEntity workEntity = workEntityCacheManager.retrieveFullWork(orcid, id, profileLastModified);
                 works.add(jpaJaxbWorkAdapter.toWork(workEntity));
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 works.add(orcidCoreExceptionMapper.getOrcidError(new PutCodeFormatException("'" + putCode + "' is not a valid put code")));
             }
         }
