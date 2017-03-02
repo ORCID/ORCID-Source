@@ -1468,30 +1468,23 @@ ul.privacyHelp li.private {
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 5000;
-    display: block;
-    float: left;
-    min-width: 160px;
-    padding: 5px;
-    margin: 0;
-    list-style: none;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    *border-right-width: 2px;
-    *border-bottom-width: 2px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 0;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding;
     background-clip: padding-box;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    float: left;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    min-width: 160px;
+    padding: 5px 0;
+    position: absolute;
+    top: 100%;
+    z-index: 5000;
 }
 
 .dropdown-menu.pull-right {
@@ -1518,6 +1511,13 @@ ul.privacyHelp li.private {
     color: #333333;
     white-space: nowrap;
     margin-left: 2px;
+}
+
+.dropdown-menu .uib-typeahead-match a {
+    padding-right: 10px;
+    text-indent: -10px;
+    white-space: initial;
+    word-wrap: break-word;
 }
 
 .dropdown-menu .disabled>a,
@@ -7343,6 +7343,8 @@ ul.comma li:last-child:after {
     font-weight: normal;
     text-transform: none;
 }
+
+
 
 /* Media Queries */
 
