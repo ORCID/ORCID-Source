@@ -6559,6 +6559,11 @@ a:hover .mozilla-badge {
     width: inherit;
 }
 
+.reset-password.link-account{
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /* Social Login */
 
 .login .social-login {
