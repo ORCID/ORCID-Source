@@ -16,20 +16,26 @@
  */
 package org.orcid.api.publicV2.server.security.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.jaxb.model.common_v2.Filterable;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Group;
 import org.orcid.jaxb.model.record_v2.GroupableActivity;
@@ -42,10 +48,15 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV2 {
-    
+
+    @Resource
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
+
     @Override
     public void checkIsPublic(VisibilityType visibilityType) {
         if (visibilityType != null && !org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(visibilityType.getVisibility())) {
@@ -58,7 +69,7 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (biography == null) {
             throw new OrcidNoBioException();
         }
-        
+
         if (PojoUtil.isEmpty(biography.getContent()) && biography.getVisibility() == null) {
             return;
         }
@@ -67,27 +78,27 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
             throw new OrcidNonPublicElementException();
         }
     }
-    
+
     @Override
     public void filter(ActivitiesSummary activitiesSummary) {
         if (activitiesSummary == null) {
             return;
         }
         if (activitiesSummary.getEmployments() != null) {
-            filter(activitiesSummary.getEmployments());            
+            filter(activitiesSummary.getEmployments());
         }
         if (activitiesSummary.getEducations() != null) {
-            filter(activitiesSummary.getEducations());            
+            filter(activitiesSummary.getEducations());
         }
 
         if (activitiesSummary.getFundings() != null) {
-            filter(activitiesSummary.getFundings());            
+            filter(activitiesSummary.getFundings());
         }
         if (activitiesSummary.getWorks() != null) {
-            filter(activitiesSummary.getWorks());            
+            filter(activitiesSummary.getWorks());
         }
         if (activitiesSummary.getPeerReviews() != null) {
-            filter(activitiesSummary.getPeerReviews());            
+            filter(activitiesSummary.getPeerReviews());
         }
     }
 
@@ -160,10 +171,10 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
                 try {
                     checkIsPublic(e);
                     return false;
-                } catch (OrcidNonPublicElementException ex) {   
+                } catch (OrcidNonPublicElementException ex) {
                     return true;
                 }
-            });            
+            });
         }
     }
 
@@ -206,6 +217,27 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         }
         filter(extIds.getExternalIdentifiers());
 
+    }
+
+    @Override
+    public void filter(WorkBulk workBulk) {
+        if (workBulk != null && workBulk.getBulk() != null) {
+            List<BulkElement> filtered = new ArrayList<>();
+            for (int i = 0; i < workBulk.getBulk().size(); i++) {
+                BulkElement bulkElement = workBulk.getBulk().get(i);
+                if (bulkElement instanceof OrcidError) {
+                    filtered.add(bulkElement);
+                } else {
+                    try {
+                        checkIsPublic((Work) bulkElement);
+                        filtered.add(bulkElement);
+                    } catch (OrcidNonPublicElementException e) {
+                        filtered.add(orcidCoreExceptionMapper.getOrcidError(e));
+                    }
+                }
+            }
+            workBulk.setBulk(filtered);
+        }
     }
 
     @Override
@@ -256,11 +288,11 @@ public class PublicAPISecurityManagerV2Impl implements PublicAPISecurityManagerV
         if (person.getOtherNames() != null) {
             filter(person.getOtherNames());
         }
-        
+
         if (person.getResearcherUrls() != null) {
             filter(person.getResearcherUrls());
         }
-        
+
         Name name = person.getName();
         if (name != null) {
             try {

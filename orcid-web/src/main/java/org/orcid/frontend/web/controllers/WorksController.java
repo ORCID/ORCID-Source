@@ -771,7 +771,7 @@ public class WorksController extends BaseWorkspaceController {
         //fetch results
         List<IdentifierType> types;             
         if (query == null || query.trim().isEmpty()){
-            types = identifierTypeManager.fetchMostPopularIdentifierTypes(getLocale());
+            types = identifierTypeManager.fetchDefaultIdentifierTypes(getLocale());
         } else {
             types = identifierTypeManager.queryByPrefix(query, getLocale());
         }

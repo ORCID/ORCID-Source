@@ -46,10 +46,14 @@ import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorI
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoBioException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.ProfileDao;
@@ -810,6 +814,25 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         Client client = (Client) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
+    }
+    
+    @Test
+    public void testViewBulkWorks() {
+        Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,16");
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof OrcidError);
+        assertTrue(workBulk.getBulk().get(2) instanceof OrcidError);
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError);
+    }
+    
+    @Test(expected = OrcidNoResultException.class)
+    public void testViewBulkWorksNonExistentUser() {
+        serviceDelegator.viewBulkWorks(nonExistingUser, "11,12,13,16");
+        fail();
     }
     
     private void updateProfileSubmissionDate(String orcid, int increment) {

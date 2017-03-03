@@ -166,24 +166,23 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         ARXIV,5199,134103,130695
         HANDLE,1535,26142,26069
         BIBCODE,1347,83041,82412
-     */
-    
-    private static List<String> topTypes = Lists.newArrayList("doi","eid","pmid","issn","wosuid","pmc","isbn","other-id","arxiv","handle","bibcode");
+     */    
+    //private static List<String> topTypes = Lists.newArrayList("doi","eid","pmid","issn","wosuid","pmc","isbn","other-id","arxiv","handle","bibcode");
     
     /**
-     * Returns an immutable list of the top X identifierType objects.
+     * Returns an immutable list of the default identifierType objects to show.
+     * Sorted by description
      * Null locale will result in Locale.ENGLISH
      * 
      */
     @Override
     @Cacheable("identifier-types-map-top")
-    public List<IdentifierType> fetchMostPopularIdentifierTypes(Locale loc) {
+    public List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc) {
         Map<String, IdentifierType> all = this.fetchIdentifierTypesByAPITypeName(loc);
-        Map<String, IdentifierType> topX = new TreeMap<String,IdentifierType>();
-        for (String s: topTypes)
-            if (all.containsKey(s))
-                topX.put(all.get(s).getDescription().toLowerCase(), all.get(s));  
-        return ImmutableList.copyOf(topX.values());
+        SortedMap<String,IdentifierType> sorted = new TreeMap<String,IdentifierType>();
+        for (String s: all.keySet())
+            sorted.put(all.get(s).getDescription().toLowerCase(), all.get(s));
+        return ImmutableList.copyOf(sorted.values());
     }
 
     /**

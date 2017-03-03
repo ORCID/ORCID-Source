@@ -37,11 +37,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.Subtitle;
@@ -49,6 +52,7 @@ import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.TranslatedTitle;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -614,5 +618,55 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         serviceDelegator.deleteWork("4444-4444-4444-4446", 8L);
         fail();
+    }
+    
+    @Test
+    public void testViewBulkWorks() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,16");
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work but matching source
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // private work not matching source
+    }
+    
+    @Test
+    public void testViewBulkWorksWithBadPutCode() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13,bad");
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // bad put code
+    }
+    
+    @Test(expected = OrcidNoResultException.class)
+    public void testViewBulkWorksWithBadOrcid() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        serviceDelegator.viewBulkWorks("non-existent", "11,12,13");
+    }
+    
+    @Test(expected = ExceedMaxNumberOfPutCodesException.class)
+    public void testViewBulkWorksWithTooManyPutCodes() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        StringBuilder tooManyPutCodes = new StringBuilder("0");
+        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+            tooManyPutCodes.append(",").append(i);
+        }
+        serviceDelegator.viewBulkWorks(ORCID, tooManyPutCodes.toString());
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewBulkWrongToken() {
+        SecurityContextTestUtils.setUpSecurityContext("something-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
     }
 }

@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 
 public interface PublicAPISecurityManagerV2 {
     void checkIsPublic(VisibilityType visibilityType);
@@ -59,4 +60,6 @@ public interface PublicAPISecurityManagerV2 {
     void filter(Person person);
 
     void filter(Record record);
+
+    void filter(WorkBulk workBulk);
 }

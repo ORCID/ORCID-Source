@@ -2807,6 +2807,10 @@ header overrides
     margin-left: 0;
 }
 
+.oauth-login .login .login-box {
+    padding: 15px 30px 0 30px;
+}
+
 .oauth-login .control-group .controls input {
     width: 330px;
 }
@@ -2849,6 +2853,18 @@ header overrides
     color: #939498;
     line-height: 13px;
     font-weight: 100;
+}
+
+.oauth-login .oauth-buttons{
+    text-align: center;
+}
+
+.oauth-login #login-authorize-button {
+    margin-top: 10px;
+}
+
+.oauth-login #register-authorize-button {
+    margin: 10px 0 40px 0;
 }
 
 .manage-bio .control-label {
@@ -6535,6 +6551,14 @@ a:hover .mozilla-badge {
         margin-top: 10px;
     }
 
+.oauth-login .reset-password{
+    margin: 0 15px;
+}
+
+.oauth-login .reset-password label{
+    width: inherit;
+}
+
 /* Social Login */
 
 .login .social-login {
@@ -6882,6 +6906,10 @@ a:hover .mozilla-badge {
 
 .form-social-sign-in hr {
     margin-top: 5px;
+}
+
+.form-social-sign-in input {
+    width: 100%;
 }
 
 .edit-external-identifiers .aka p {

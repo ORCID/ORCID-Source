@@ -514,6 +514,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return memberV2ApiServiceDelegator.searchByQuery(solrParams);
     }
     
+    @Override
+    public Response viewBulkWorks(String orcid, String putCodes) {
+        return memberV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes);
+    }
+    
     public Response viewClient(String clientId) {
        return memberV2ApiServiceDelegator.viewClient(clientId);
     }
