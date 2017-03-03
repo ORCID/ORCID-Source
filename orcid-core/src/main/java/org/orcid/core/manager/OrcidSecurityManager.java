@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
@@ -61,6 +62,8 @@ public interface OrcidSecurityManager {
     void checkAndFilter(String orcid, Email email, ScopePathType requiredScope);
             
     void checkAndFilter(String orcid, Collection<? extends VisibilityType> elements, ScopePathType requiredScope);    
+    
+    void checkAndFilter(String orcid, WorkBulk workBulk, ScopePathType requiredScope);    
     
     void checkAndFilter(String orcid, ActivitiesSummary activities);
 

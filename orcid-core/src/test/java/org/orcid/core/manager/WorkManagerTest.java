@@ -16,14 +16,14 @@
  */
 package org.orcid.core.manager;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +38,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
+import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -642,8 +644,8 @@ public class WorkManagerTest extends BaseTest {
     public void testGetAll() {
         List<Work> elements = workManager.findWorks("0000-0000-0000-0003", System.currentTimeMillis());
         assertNotNull(elements);
-        assertEquals(5, elements.size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        assertEquals(6, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
         for(Work element : elements) {
             if(11 == element.getPutCode()) {
                 found1 = true;
@@ -655,6 +657,8 @@ public class WorkManagerTest extends BaseTest {
                 found4 = true;
             } else if(15 == element.getPutCode()) {
                 found5 = true;
+            } else if(16 == element.getPutCode()) {
+                found6 = true;
             } else {
                 fail("Invalid element found: " + element.getPutCode());
             }
@@ -670,8 +674,8 @@ public class WorkManagerTest extends BaseTest {
     public void testGetAllSummaries() {
         List<WorkSummary> elements = workManager.getWorksSummaryList("0000-0000-0000-0003", System.currentTimeMillis());
         assertNotNull(elements);
-        assertEquals(5, elements.size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        assertEquals(6, elements.size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
         for(WorkSummary element : elements) {
             if(11 == element.getPutCode()) {
                 found1 = true;
@@ -683,6 +687,8 @@ public class WorkManagerTest extends BaseTest {
                 found4 = true;
             } else if(15 == element.getPutCode()) {
                 found5 = true;
+            } else if(16 == element.getPutCode()) {
+                found6 = true;
             } else {
                 fail("Invalid element found: " + element.getPutCode());
             }
@@ -700,6 +706,42 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(elements);
         assertEquals(1, elements.size());
         assertEquals(Long.valueOf(11), elements.get(0).getPutCode());
+    }
+    
+    @Test
+    public void testFindWorkBulk() {
+        String putCodes = "11,12,13";
+        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes, System.currentTimeMillis());
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(3, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work);
+    }
+    
+    @Test
+    public void testFindWorkBulkInvalidPutCodes() {
+        String putCodes = "11,12,13,invalid";
+        WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes, System.currentTimeMillis());
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work);
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError);
+    }
+    
+    @Test(expected = ExceedMaxNumberOfPutCodesException.class)
+    public void testFindWorkBulkTooManyPutCodes() {
+        StringBuilder tooManyPutCodes = new StringBuilder("0");
+        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+            tooManyPutCodes.append(",").append(i);
+        }
+        
+        workManager.findWorkBulk("0000-0000-0000-0003", tooManyPutCodes.toString(), System.currentTimeMillis());
+        fail();
     }
 
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {

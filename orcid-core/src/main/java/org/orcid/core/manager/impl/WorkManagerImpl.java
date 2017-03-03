@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
@@ -79,9 +78,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource 
     private ActivityValidator activityValidator;
     
-    @Resource
-    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;        
-
     @Resource
     private MessageSource messageSource;
     
