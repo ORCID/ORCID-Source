@@ -36,7 +36,7 @@ angular.element(function() {
         ['orcidApp']
     );
 });
-// angular.bootstrap(document.body, ['orcidApp'], {});
+
 
 
 /*******************************************************************************
@@ -1122,9 +1122,9 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
     return peerReviewSrvc;
 }]);
 
-/*
+/*******************************************************************************
  * CONTROLLERS
- */
+*******************************************************************************/
 
 angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 

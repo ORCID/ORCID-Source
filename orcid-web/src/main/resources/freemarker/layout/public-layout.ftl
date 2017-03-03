@@ -112,7 +112,7 @@
 
 		</div>
 		<!-- .row -->
-		<div class="row">			
+		<div class="row flexbox-container">			
 			<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated) && (!(RequestParameters['publicRecordMenu']??) | RequestParameters['publicRecordMenu'] != 'false')>	
 				<div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">
 					

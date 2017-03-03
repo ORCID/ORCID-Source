@@ -103,7 +103,7 @@
 	        ['orcidApp']
 	    );
 	});
-	// angular.bootstrap(document.body, ['orcidApp'], {});
+
 
 
 	/*******************************************************************************
@@ -1189,9 +1189,9 @@
 	    return peerReviewSrvc;
 	}]);
 
-	/*
+	/*******************************************************************************
 	 * CONTROLLERS
-	 */
+	*******************************************************************************/
 
 	angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
@@ -10502,46 +10502,57 @@
 	        [
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "lr",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "lr",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "lr",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "lr",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "lr",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10549,62 +10560,77 @@
 	        [
 	            {
 	                "value": "ar",
+	                "direction": "rl",
 	                "label": "العربية"
 	            },
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "rl",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "rl",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "rl",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'lr',
+	                "direction": "lr",
 	                "label": 'lr'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'rl',
+	                "direction": "rl",
 	                "label": 'rl'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "rl",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'xx',
+	                "direction": "lr",
 	                "label": 'X'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "rl",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10620,6 +10646,7 @@
 
 	    //Load Language that is set in the cookie or set default language to english
 	    $scope.getCurrentLanguage = function(){
+
 	        $scope.language = $scope.languages[0]; //Default
 	        typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
 	        angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
@@ -13224,30 +13251,77 @@
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
+	        communityTypes: {},
+	        consortiaList: null,
+	        currentMemberDetails: null,
 	        membersList: null,
 	        memberDetails: {},
-	        currentMemberDetails: null,
-	        consortiaList: null,
-	        communityTypes: {},
-	        getMembersList: function() {
+
+	        getCommunityTypes: function() {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/communityTypes.json';
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        for(var i in data){
+	                            serv.communityTypes[i] = data[i];
+	                        }
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with community types");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
+	        getConsortiaList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/members/members.json',
+	                url: getBaseUri() + '/consortia/consortia.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.membersList = data;
+	                    serv.consortiaList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with members list");
+	                console.log("error with consortia list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
 	        },
+
+	        getCurrentMemberDetailsBySlug: function(memberSlug) {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.currentMemberDetails = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details by slug");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
 	        getDetails: function(memberId, consortiumLeadId) {
+	            var url = "";
 	            if(serv.memberDetails[memberId] == null){
-	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
+	                url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
 	                if(consortiumLeadId != null){
 	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
 	                }
@@ -13267,65 +13341,28 @@
 	                });
 	            }
 	        },
-	        getCurrentMemberDetailsBySlug: function(memberSlug) {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.currentMemberDetails = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details by slug");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
+
+	        getMemberPageUrl: function(slug) {
+	            return orcidVar.baseUri + '/members/' + slug;
 	        },
-	        getCommunityTypes: function() {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/communityTypes.json';
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        for(var i in data){
-	                            serv.communityTypes[i] = data[i];
-	                        }
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with community types");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getConsortiaList: function() {
+
+	        getMembersList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/consortia/consortia.json',
+	                url: getBaseUri() + '/members/members.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.consortiaList = data;
+	                    serv.membersList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with consortia list");
+	                console.log("error with members list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
-	        },
-	        getMemberPageUrl: function(slug) {
-	            return orcidVar.baseUri + '/members/' + slug;
 	        }
+	        
 	    };
 	    serv.getCommunityTypes();
 	    return serv; 
