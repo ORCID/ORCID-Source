@@ -59,7 +59,7 @@
 	requireAll(__webpack_require__(31));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
 	requireAll(__webpack_require__(33));
-	requireAll(__webpack_require__(53));
+	requireAll(__webpack_require__(46));
 
 /***/ },
 /* 1 */
@@ -12577,15 +12577,15 @@
 		"./actBulkSrvc.js": 34,
 		"./affiliationsSrvc.js": 35,
 		"./bioBulkSrvc.js": 36,
-		"./commonSrvc.js": 38,
-		"./fundingSrvc.js": 41,
-		"./groupedActivitiesService.js": 42,
-		"./groupedActivitiesUtil.js": 43,
-		"./initialConfigService.js": 44,
-		"./membersListSrvc.js": 45,
-		"./notificationsSrvc.js": 46,
-		"./utilsService.js": 49,
-		"./workspaceSrvc.js": 52
+		"./commonSrvc.js": 37,
+		"./fundingSrvc.js": 38,
+		"./groupedActivitiesService.js": 39,
+		"./groupedActivitiesUtil.js": 40,
+		"./initialConfigService.js": 41,
+		"./membersListSrvc.js": 42,
+		"./notificationsSrvc.js": 43,
+		"./utilsService.js": 44,
+		"./workspaceSrvc.js": 45
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12770,8 +12770,7 @@
 	}]);
 
 /***/ },
-/* 37 */,
-/* 38 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12836,9 +12835,7 @@
 	}]);
 
 /***/ },
-/* 39 */,
-/* 40 */,
-/* 41 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -13049,7 +13046,7 @@
 	}]);
 
 /***/ },
-/* 42 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13167,7 +13164,7 @@
 
 
 /***/ },
-/* 43 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/*
@@ -13222,7 +13219,7 @@
 	*/
 
 /***/ },
-/* 44 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -13249,7 +13246,7 @@
 	}]);
 
 /***/ },
-/* 45 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -13373,7 +13370,7 @@
 
 
 /***/ },
-/* 46 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13616,9 +13613,7 @@
 	}]);
 
 /***/ },
-/* 47 */,
-/* 48 */,
-/* 49 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13737,9 +13732,7 @@
 	);
 
 /***/ },
-/* 50 */,
-/* 51 */,
-/* 52 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13794,7 +13787,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 46 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13803,7 +13796,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 53;
+	webpackContext.id = 46;
 
 
 /***/ }
