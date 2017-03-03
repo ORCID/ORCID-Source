@@ -165,15 +165,7 @@
 	<bean id="groupIdRecordDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
-	
-
-
-	
-
-
-
-
-	
+		
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
     </bean>
@@ -226,6 +218,10 @@
     </bean>    
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
+    
+    <bean id="InvalidRecordDataChangesDao" class="org.orcid.persistence.dao.impl.InvalidRecordDataChangesDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>
      
     <!-- Statistics Generation DAO -->
 	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
