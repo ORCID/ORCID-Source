@@ -18,6 +18,22 @@
 /*
  * 1 - Utility functions 
  */
+
+var enableRightToLeft = function(){
+    var rightToLeftLang = ["rl"];
+    var currentLanguage = locale_v3;
+
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+
+    if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
+        document.body.className += " lang-rl"; //Add class that display right to left for selected languages
+    }
+}
+
+window.onload = function() {
+    enableRightToLeft();
+};
+
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {

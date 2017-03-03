@@ -91,20 +91,6 @@
         <!-- Load Bootstrap RTL theme from RawGit -->
         <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
     </#if>
-    <#if locale??>
-        <script type="text/javascript">
-          var rightToLeftLang = ["rl"];
-          var currentLanguage = "${locale}";
-
-          window.onload = function() {
-            document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage);
-            
-            if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
-              document.body.className += " lang-rl";
-            }
-          };
-        </script>
-    </#if>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
 
