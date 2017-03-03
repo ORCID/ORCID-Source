@@ -55,11 +55,11 @@
 	requireAll(__webpack_require__(2));
 	requireAll(__webpack_require__(22));
 	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(29));
 	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(31));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(32));
-	requireAll(__webpack_require__(52));
+	requireAll(__webpack_require__(33));
+	requireAll(__webpack_require__(53));
 
 /***/ },
 /* 1 */
@@ -676,6 +676,7 @@
 	        inputEmail: null,
 	        popUp: false,
 	        primaryEmail: null,
+	        unverifiedSetPrimary: false,
 	        
 	        addEmail: function() {              
 	            $.ajax({
@@ -767,16 +768,26 @@
 	            });
 	        },
 
-	        setPrimary: function(email) {
+	        setPrimary: function(email, callback) {
 	            for (i in serv.emails.emails) {
 	                if (serv.emails.emails[i] == email) {
 	                    serv.emails.emails[i].primary = true;
 	                    serv.primaryEmail = email;
+	                    if (serv.emails.emails[i].verified == false) {
+	                        serv.unverifiedSetPrimary = true;
+	                    } else {
+	                        serv.unverifiedSetPrimary = false;
+	                    }
+
+	                    callback = function(){
+	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+	                    }
+
 	                } else {
 	                    serv.emails.emails[i].primary = false;
 	                }
 	            }
-	            serv.saveEmail();
+	            serv.saveEmail(callback);
 	        },
 	        
 	        setPrivacy: function(email, priv) {
@@ -11603,6 +11614,7 @@
 	                });
 	            };
 
+	            //--typeahead
 	            //populates the external id URL based on type and value.
 	            $scope.fillUrl = function(extId) {
 	                var url;
@@ -11622,18 +11634,26 @@
 	                }
 	            };
 	            
+	            //cache responses
+	            $scope.externalIDTypeCache = [];
+	            
 	            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
 	            $scope.getExternalIDTypes = function(query){  
 	                var url = getBaseUri()+'/works/idTypes.json?query='+query;
-	                return $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                  }).done(function(data) {
-	                      for (var key in data) {
-	                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
-	                      }
-	                  });                
+	                var ajax = $scope.externalIDTypeCache[query];
+	                if (!ajax){
+	                    ajax = $.ajax({
+	                        url: url,
+	                        dataType: 'json',
+	                        cache: true,
+	                      }).done(function(data) {
+	                          for (var key in data) {
+	                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+	                          }
+	                      });   
+	                    $scope.externalIDTypeCache[query] = ajax;
+	                }
+	                return ajax;
 	            };
 	            
 	            //caches name->description lookup so we can display the description not the name after selection
@@ -11643,6 +11663,7 @@
 	                    return "";
 	                return $scope.externalIDNamesToDescriptions[model].description;
 	              }
+	            //--typeahead end
 	    
 	            //init
 	            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
@@ -11923,8 +11944,9 @@
 		"./fnForm.js": 24,
 		"./focusMe.js": 25,
 		"./modalEmailUnVerified.js": 26,
-		"./ngEnter.js": 27,
-		"./ngEnterSubmit.js": 28
+		"./modalUnverifiedEmailSetPrimary.js": 27,
+		"./ngEnter.js": 28,
+		"./ngEnterSubmit.js": 29
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12112,6 +12134,87 @@
 /***/ function(module, exports) {
 
 	/*
+	 * For modal dispalyed if primary email is changed to an unverified email
+	 */
+
+
+
+	angular.module('orcidApp').directive(
+	    'modalUnverifiedEmailSetPrimary', 
+	    [
+	        '$compile',
+	        '$rootScope',
+	        '$timeout',
+	        'initialConfigService',
+	        'emailSrvc',
+	        function( $compile, $rootScope, $timeout, initialConfigService, emailSrvc ) {
+
+	            var configuration = initialConfigService.getInitialConfiguration();
+
+	            var closeModal = function(){
+	                $.colorbox.remove();
+	                $('modal-unverified-email-set-primary').html('<div id="modal-unverified-email-set-primary-container"></div>');
+	            };
+
+	            var openModal = function( scope ){
+	                scope.emailPrimary = emailSrvc.getEmailPrimary().value;
+
+	                $.colorbox(
+	                    {
+	                        html : $compile($('#modal-unverified-email-set-primary-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.youve_changed") + '</p><p>' + om.get("orcid.frontend.workspace.some_editing_features") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") +  '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><a class="nner-row" ng-click="closeColorBox()">' + om.get("manage.email.close") + '</a></div></div></div></div>'))(scope),
+	                        escKey: true,
+	                        overlayClose: true,
+	                        transition: 'fade',
+	                        close: '',
+	                        scrolling: false
+	                    }
+	                );
+	                $.colorbox.resize({width:"500px"});
+	            };
+
+	            function link( scope, element, attrs ) {
+
+	                scope.verifyEmail = function() {
+	                    verifyEmail( scope );
+	                };
+
+	                scope.closeColorBox = function() {
+	                    closeModal();
+	                };
+
+	                scope.openModal = function( scope ){
+	                    openModal( scope );
+	                }
+
+	                scope.$on(
+	                    'unverifiedSetPrimary',
+	                    function(event, data){
+	                        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
+	                            scope.openModal( scope ); 
+	                        }
+	                        else {
+	                            scope.closeColorBox(); 
+	                        }
+	                    }
+
+	                );
+	            }
+
+	            return {
+	                link: link,
+	                template: '<div id="modal-unverified-email-set-primary-container"></div>',
+	                transclude: true
+	            };
+
+	        }
+	    ]
+	);
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	/*
 	 * Scope: element
 	 */
 	angular.module('orcidApp').directive('ngEnter', function() {
@@ -12130,7 +12233,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -12152,7 +12255,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -12161,15 +12264,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 29;
+	webpackContext.id = 30;
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 31
+		"./ui.multiselect.js": 32
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12182,11 +12285,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -12467,29 +12570,29 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 33,
-		"./affiliationsSrvc.js": 34,
-		"./bioBulkSrvc.js": 35,
-		"./clearMemberListFilterSrvc.js": 36,
-		"./commonSrvc.js": 37,
-		"./discoSrvc.js": 38,
-		"./emailSrvc.js": 39,
-		"./fundingSrvc.js": 40,
-		"./groupedActivitiesService.js": 41,
-		"./groupedActivitiesUtil.js": 42,
-		"./initialConfigService.js": 43,
-		"./membersListSrvc.js": 44,
-		"./notificationsSrvc.js": 45,
-		"./peerReviewSrvc.js": 46,
-		"./prefsSrvc.js": 47,
-		"./utilsService.js": 48,
-		"./widgetSrvc.js": 49,
-		"./worksSrvc.js": 50,
-		"./workspaceSrvc.js": 51
+		"./actBulkSrvc.js": 34,
+		"./affiliationsSrvc.js": 35,
+		"./bioBulkSrvc.js": 36,
+		"./clearMemberListFilterSrvc.js": 37,
+		"./commonSrvc.js": 38,
+		"./discoSrvc.js": 39,
+		"./emailSrvc.js": 40,
+		"./fundingSrvc.js": 41,
+		"./groupedActivitiesService.js": 42,
+		"./groupedActivitiesUtil.js": 43,
+		"./initialConfigService.js": 44,
+		"./membersListSrvc.js": 45,
+		"./notificationsSrvc.js": 46,
+		"./peerReviewSrvc.js": 47,
+		"./prefsSrvc.js": 48,
+		"./utilsService.js": 49,
+		"./widgetSrvc.js": 50,
+		"./worksSrvc.js": 51,
+		"./workspaceSrvc.js": 52
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12502,11 +12605,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 33;
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12525,7 +12628,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12654,7 +12757,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12674,7 +12777,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
@@ -12688,7 +12791,7 @@
 	 }]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12753,7 +12856,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
@@ -12808,7 +12911,7 @@
 	}]);
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
@@ -12950,7 +13053,7 @@
 	});
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -13161,7 +13264,7 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13279,7 +13382,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/*
@@ -13334,7 +13437,7 @@
 	*/
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -13361,7 +13464,7 @@
 	}]);
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -13485,7 +13588,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13728,7 +13831,7 @@
 	}]);
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
@@ -13989,7 +14092,7 @@
 	}]);
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
@@ -14038,7 +14141,7 @@
 	});
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -14157,7 +14260,7 @@
 	);
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
@@ -14171,7 +14274,7 @@
 	}]);
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
@@ -14732,7 +14835,7 @@
 	}]);
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -14787,7 +14890,7 @@
 	}]);
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -14796,7 +14899,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 52;
+	webpackContext.id = 53;
 
 
 /***/ }
