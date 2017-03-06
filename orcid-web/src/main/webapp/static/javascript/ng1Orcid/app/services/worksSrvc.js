@@ -1,4 +1,3 @@
-
 angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
@@ -281,9 +280,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                         }
                     }
                 }).fail(function(e) {
-                    //$rootScope.$apply(function() {
+                    // $rootScope.$apply(function() {
                         worksSrvc.loading = false;
-                    //});
+                    // });
                     console.log("Error fetching works: " + workIds);
                     logAjaxError(e);
                 });

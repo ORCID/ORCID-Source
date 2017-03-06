@@ -7,7 +7,8 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
             quickRef: {},            
             loadingDetails: false,
             blankPeerReview: null,
-            details: new Object(), // we should think about putting details in the
+            details: new Object(), // we should think about putting details in
+                                    // the
             peerReviewsToAddIds: null,
             peerReviewGroupDetailsRequested: new Array(),
             getBlankPeerReview: function(callback) {
@@ -101,9 +102,9 @@ angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($r
                             }
                         }
                     }).fail(function(e) {
-                        //$rootScope.$apply(function() {
+                        // $rootScope.$apply(function() {
                             peerReviewSrvc.loading = false;
-                        //});
+                        // });
                         console.log("Error fetching Peer Review: " + peerReviewIds);
                         logAjaxError(e);
                     });

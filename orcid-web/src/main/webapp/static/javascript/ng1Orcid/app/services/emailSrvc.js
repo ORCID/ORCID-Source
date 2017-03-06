@@ -6,6 +6,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
         inputEmail: null,
         popUp: false,
         primaryEmail: null,
+        unverifiedSetPrimary: false,
         
         addEmail: function() {              
             $.ajax({
@@ -97,16 +98,26 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
 
-        setPrimary: function(email) {
+        setPrimary: function(email, callback) {
             for (i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
                     serv.primaryEmail = email;
+                    if (serv.emails.emails[i].verified == false) {
+                        serv.unverifiedSetPrimary = true;
+                    } else {
+                        serv.unverifiedSetPrimary = false;
+                    }
+
+                    callback = function(){
+                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+                    }
+
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
             }
-            serv.saveEmail();
+            serv.saveEmail(callback);
         },
         
         setPrivacy: function(email, priv) {
