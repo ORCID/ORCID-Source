@@ -168,7 +168,8 @@ The swagger interfaces to the API available at:
 | Add an activity    | POST          | /activities/update       | https://[HOST]/[ORCID]/[SECTION]            |
 | Update an activity | PUT           | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Delete an activity | DELETE        | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
-| Add multiple works| POST           | /activities/update       | https://[HOST]/v2.0/[ORCID]/works		             |
+| Add multiple works| POST           | /read-limited or /read-public | https://[HOST]/v2.0/[ORCID]/works		             |
+| Read multiple works| POST           | /activities/update       | https://[HOST]/v2.0/[ORCID]/work/[PUT-CODE1],[PUT-CODE2]  |
 | Search records     | GET         | /read-public      	      | https://[HOST]/v2.0/search?q=[SOLR-QUERY]*          	 |
 
 [HOST] is the ORCID environment you are using
@@ -198,7 +199,8 @@ The swagger interfaces to the API available at:
 
 **Notes:** 
 - biography, email, person and personal-details sections are read only
-- When searching default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. For help with SOLR searching see [https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser)
+- when reading multiple works a maximum of 50 works can be accessed with a single call, when posting multiple works a maximum of 100 works can be posted with a single call.
+- When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. For help with SOLR searching see [https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser)
 
 ## Examples
 
@@ -237,6 +239,10 @@ The swagger interfaces to the API available at:
 | Peer review        | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/peer-review/1374'```|
 | Researcher URL     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/researcher-urls/41387'```|
 | Work               | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/work/733536'```|
+| Multiple Works     | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/works/733535,733536'```|
+
+When reading multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work.
+
 
 ### Add Record Items
 |Item    |Scope       | Example cURL Statement  |
@@ -251,9 +257,9 @@ The swagger interfaces to the API available at:
 | Peer review  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/peer-review'```|
 | Researcher URL  |/person/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/researcher-urls'```|
 | Work  |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/work'```|
-| Bulk works |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/works'```|
+| Multiple works |/activities/update|```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/0000-0002-9227-8514/works'```|
 
-When posting bulk works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/bulk-work-error.xml).
+When posting multiple works the contents of each work is returned or an error code is returned if there is an issue with a single work, see [bulk work error sample](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/bulk-work-error.xml).
 
 ### Update Record Items
 |Item  |Scope  | Example cURL Statement  |
