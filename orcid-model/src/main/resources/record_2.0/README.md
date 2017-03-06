@@ -169,7 +169,7 @@ The swagger interfaces to the API available at:
 | Update an activity | PUT           | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Delete an activity | DELETE        | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Add multiple works| POST           | /read-limited or /read-public | https://[HOST]/v2.0/[ORCID]/works		             |
-| Read multiple works| POST           | /activities/update       | https://[HOST]/v2.0/[ORCID]/works/[PUT-CODE1],[PUT-CODE2]  |
+| Read multiple works| GET          | /activities/update       | https://[HOST]/v2.0/[ORCID]/works/[PUT-CODE1],[PUT-CODE2]  |
 | Search records     | GET         | /read-public      	      | https://[HOST]/v2.0/search?q=[SOLR-QUERY]*          	 |
 
 [HOST] is the ORCID environment you are using
