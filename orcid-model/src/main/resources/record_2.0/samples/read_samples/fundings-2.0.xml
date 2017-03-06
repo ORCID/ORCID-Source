@@ -17,6 +17,42 @@
 	<common:last-modified-date>2017-01-18T15:10:27.247-06:00</common:last-modified-date>
 	<activities:group>
 		<common:last-modified-date>2017-01-18T15:09:59.455-06:00</common:last-modified-date>
+		<common:external-ids />			
+		<funding:summary put-code="2020"
+			path="/8888-8888-8888-8888/funding/2020" visibility="public"
+			display-index="1">
+			<common:created-date>2017-01-18T13:32:28.446-06:00</common:created-date>
+			<common:last-modified-date>2017-01-18T15:09:59.455-06:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8888</common:uri>
+					<common:path>8888-8888-8888-8888</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name>User One Credit name</common:source-name>
+			</common:source>
+			<funding:title>
+				<common:title>Funding # 1</common:title>
+			</funding:title>
+			<common:external-ids>
+				<common:external-id>
+					<common:external-id-type>grant_number</common:external-id-type>
+					<common:external-id-value>1234</common:external-id-value>
+					<common:external-id-relationship>part-of</common:external-id-relationship>
+				</common:external-id>
+			</common:external-ids>
+			<funding:type>award</funding:type>
+			<funding:organization>
+				<common:name>a</common:name>
+				<common:address>
+					<common:city>a</common:city>
+					<common:country>DZ</common:country>
+				</common:address>
+			</funding:organization>
+		</funding:summary>
+	</activities:group>
+	<activities:group>
+		<common:last-modified-date>2017-01-18T15:09:59.455-06:00</common:last-modified-date>
 		<common:external-ids>
 			<common:external-id>
 				<common:external-id-type>grant_number</common:external-id-type>

@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
+import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.BulkElement;
@@ -744,6 +745,58 @@ public class WorkManagerTest extends BaseTest {
         fail();
     }
 
+    @Test
+    public void nonGroupableIdsGenerateEmptyIdsListTest() {
+        WorkSummary s1 = getWorkSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
+        WorkSummary s2 = getWorkSummary("Element 2", "ext-id-2", Visibility.LIMITED);
+        WorkSummary s3 = getWorkSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
+        
+        // s1 will be a part of identifier, so, it will go in its own group
+        s1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.PART_OF);
+        
+        List<WorkSummary> workList = Arrays.asList(s1, s2, s3);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Element 1
+         * Group 2: Element 2
+         * Group 3: Element 3
+         * */
+        Works works = workManager.groupWorks(workList, false);
+        assertNotNull(works);
+        assertEquals(3, works.getWorkGroup().size());
+        boolean foundEmptyGroup = false;
+        boolean found2 = false;
+        boolean found3 = false;
+        for(WorkGroup group : works.getWorkGroup()) {
+            assertEquals(1, group.getWorkSummary().size());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            if(group.getIdentifiers().getExternalIdentifier().isEmpty()) {
+                assertEquals("Element 1", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
+                assertEquals("ext-id-1", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                foundEmptyGroup = true;
+            } else {
+                assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+                assertThat(group.getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-2"), is("ext-id-3")));
+                if(group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("ext-id-2")) {
+                    assertEquals("Element 2", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
+                    assertEquals("ext-id-2", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                    found2 = true;
+                } else if(group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("ext-id-3")) {
+                    assertEquals("Element 3", group.getWorkSummary().get(0).getTitle().getTitle().getContent());
+                    assertEquals("ext-id-3", group.getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                    found3 = true;
+                } else {
+                    fail("Invalid ext id found " + group.getIdentifiers().getExternalIdentifier().get(0).getValue());
+                }
+            }
+        }
+        assertTrue(foundEmptyGroup);
+        assertTrue(found2);
+        assertTrue(found3);
+    }
+    
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
         return getWorkSummary(titleValue, extIdValue, visibility, "0");
     }
