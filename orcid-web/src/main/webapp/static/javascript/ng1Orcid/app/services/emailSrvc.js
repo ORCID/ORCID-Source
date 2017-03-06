@@ -38,8 +38,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 dataType: 'json',
                 success: function(data) {
                     serv.getEmails();
-                    if (callback)
-                           callback();
+                    if (callback) {
+                        callback();
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -47,6 +48,10 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
         
+        getEmailPrimary: function() {
+            return serv.primaryEmail;
+        },
+
         getEmails: function(callback) {
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
@@ -70,10 +75,6 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 logAjaxError(e);
             });
         },
-        
-        getEmailPrimary: function() {
-            return serv.primaryEmail;
-        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -89,8 +90,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 success: function(data) {
                     serv.data;
                     $rootScope.$apply();
-                    if (callback)
+                    if (callback) {
                         callback(data);
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -99,7 +101,7 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
         },
 
         setPrimary: function(email, callback) {
-            for (i in serv.emails.emails) {
+            for (var i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
                     serv.primaryEmail = email;
@@ -133,8 +135,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (callback)
+                    if (callback) {
                         callback(data);
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!

@@ -12837,8 +12837,9 @@
 	                dataType: 'json',
 	                success: function(data) {
 	                    serv.getEmails();
-	                    if (callback)
-	                           callback();
+	                    if (callback) {
+	                        callback();
+	                    }
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
@@ -12846,6 +12847,10 @@
 	            });
 	        },
 	        
+	        getEmailPrimary: function() {
+	            return serv.primaryEmail;
+	        },
+
 	        getEmails: function(callback) {
 	            $.ajax({
 	                url: getBaseUri() + '/account/emails.json',
@@ -12869,10 +12874,6 @@
 	                logAjaxError(e);
 	            });
 	        },
-	        
-	        getEmailPrimary: function() {
-	            return serv.primaryEmail;
-	        },
 
 	        initInputEmail: function() {
 	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -12888,8 +12889,9 @@
 	                success: function(data) {
 	                    serv.data;
 	                    $rootScope.$apply();
-	                    if (callback)
+	                    if (callback) {
 	                        callback(data);
+	                    }
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
@@ -12898,7 +12900,7 @@
 	        },
 
 	        setPrimary: function(email, callback) {
-	            for (i in serv.emails.emails) {
+	            for (var i in serv.emails.emails) {
 	                if (serv.emails.emails[i] == email) {
 	                    serv.emails.emails[i].primary = true;
 	                    serv.primaryEmail = email;
@@ -12932,8 +12934,9 @@
 	                contentType: 'application/json;charset=UTF-8',
 	                dataType: 'json',
 	                success: function(data) {
-	                    if (callback)
+	                    if (callback) {
 	                        callback(data);
+	                    }
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
