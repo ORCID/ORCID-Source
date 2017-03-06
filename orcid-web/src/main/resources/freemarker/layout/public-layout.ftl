@@ -496,7 +496,6 @@
 			</div>
 			<div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
 			<!--Pi Day banner-->
-			<#if RequestParameters['piDay']??>
 				<a href="${aboutUri}/blog/2017/02/21/orcid-pi-day-coming">
 					<div id="pi-banner">
 						<![if gte IE 9]>
@@ -514,7 +513,6 @@
         				<![endif]-->
 					</div>
 				</a>
-			</#if>
 				<h1>
 					<a href="${aboutUri}"><img
 						src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
