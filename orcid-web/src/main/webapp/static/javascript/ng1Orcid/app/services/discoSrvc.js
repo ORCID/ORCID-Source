@@ -19,16 +19,17 @@ angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', fun
             });
         },
         getIdPName: function(entityId) {
-            var displayName = "";
-            var idp = null;
-            var locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en";
-            var name = "";
-            
+            var 
+                displayName = "",
+                idp = "",
+                locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en",
+                name = ""
+            ;
             for(var i in serv.feed) {
                 idp = serv.feed[i];
                 if(entityId === idp.entityID) {
                     name = idp.DisplayNames[0].value;
-                    for(var j in idp.DisplayNames){
+                    for(j in idp.DisplayNames){
                         displayName = idp.DisplayNames[j];
                         if(locale === displayName.lang){
                             name = displayName.value;

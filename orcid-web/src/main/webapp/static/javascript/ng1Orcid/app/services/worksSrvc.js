@@ -1,4 +1,3 @@
-
 angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
         bibtexJson: {},
@@ -223,45 +222,28 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
         quickRef: {},
         worksToAddIds: null,
 
-        getLabelMapping: function(workCategory, workType){
-            var result = this.labelsMapping.default.types[0];
-            var tempI = null;
-
-            if( this.labelsMapping[workCategory] != undefined ){
-                tempI = this.labelsMapping[workCategory].types;
-                for( var i = 0; i < tempI.length; i++) {
-                    if( tempI[i].type == workType ) {
-                        result = tempI[i];
-                    }
-                }
-            }
-            return result;
-        },   
-        addBibtexJson: function(dw) {
-            if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-                try {
-                    worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-                } catch (err) {
-                    worksSrvc.bibtexJson[dw.putCode.value] = null;
-                    console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-                };
-            };
-        },
         addAbbrWorksToScope: function(type) {
-            if (type == worksSrvc.constants.access_type.USER)
-                var url = getBaseUri() + '/works/works.json?workIds=';
-            else // use the anonymous url
-                var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+            var url = getBaseUri();
+            var workIds = "";
+            if (type == worksSrvc.constants.access_type.USER) {
+                url += '/works/works.json?workIds=';
+            }
+            else {
+                url += '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+            } // use the anonymous url
+
             if(worksSrvc.worksToAddIds.length != 0 ) {
                 worksSrvc.loading = true;
-                var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
+                workIds = worksSrvc.worksToAddIds.splice(0,20).join();
+                
                 $.ajax({
                     'url': url + workIds,
                     'dataType': 'json',
                     'success': function(data) {
                         $rootScope.$apply(function(){
-                            for (i in data) {
-                                var dw = data[i];
+                            var dw = null;
+                            for (var i in data) {
+                                dw = data[i];
                                 removeBadContributors(dw);
                                 removeBadExternalIdentifiers(dw);
                                 worksSrvc.addBibtexJson(dw);
@@ -281,9 +263,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                         }
                     }
                 }).fail(function(e) {
-                    //$rootScope.$apply(function() {
-                        worksSrvc.loading = false;
-                    //});
+                    worksSrvc.loading = false;
                     console.log("Error fetching works: " + workIds);
                     logAjaxError(e);
                 });
@@ -291,6 +271,29 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                 worksSrvc.loading = false;
             };
         },
+
+        addBibtexJson: function(dw) {
+            if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+                try {
+                    worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+                } catch (err) {
+                    worksSrvc.bibtexJson[dw.putCode.value] = null;
+                    console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+                };
+            };
+        },
+
+        copyEIs: function(from, to) {
+            // add all identiifers
+            if (to.workExternalIdentifiers == undefined) {
+                to.workExternalIdentifiers = new Array();
+            }
+            for (var idx in from.workExternalIdentifiers){
+                to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
+            }
+            return to;
+        },
+
         createNew: function(work) {
             var cloneW = JSON.parse(JSON.stringify(work));
             cloneW.source = null;
@@ -298,108 +301,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
             cloneW.contributors = [];
             return cloneW;
         },
-        copyEIs: function(from, to) {
-            // add all identiifers
-            if (to.workExternalIdentifiers == undefined)
-                to.workExternalIdentifiers = new Array();
-            for (var idx in from.workExternalIdentifiers)
-                to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
-            return to;
-        },
-        getBlankWork: function(callback) {
-            // if cached return clone of blank
-            if (worksSrvc.blankWork != null)
-                callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
-            $.ajax({
-                url: getBaseUri() + '/works/work.json',
-                dataType: 'json',
-                success: function(data) {
-                    blankWork =  data;
-                    callback(data);
-                }
-            }).fail(function() {
-                console.log("Error fetching blank work");
-            });
-        },
-        getDetails: function(putCode, type, callback) {
-            if (type == worksSrvc.constants.access_type.USER)
-                var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
-            else // use the anonymous url
-                var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-            if(worksSrvc.details[putCode] == undefined) {
-                $.ajax({
-                    url: url + putCode,
-                    dataType: 'json',
-                    success: function(data) {
-                        $rootScope.$apply(function () {
-                            removeBadContributors(data);
-                            removeBadExternalIdentifiers(data);
-                            worksSrvc.addBibtexJson(data);
-                            worksSrvc.details[putCode] = data;
-                            if (callback != undefined) callback(worksSrvc.details[putCode]);
-                        });
-                    }
-                }).fail(function(e){
-                    // something bad is happening!
-                    console.log("error fetching works");
-                    logAjaxError(e);
-                });
-            } else {
-                if (callback != undefined) callback(worksSrvc.details[putCode]);
-            };
-        },
-        getEditable: function(putCode, callback) {
-            // first check if they are the current source
-            var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-                if (data.source == orcidVar.orcidId)
-                    callback(data);
-                else
-                    worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
-                        // in this case we want to open their version
-                        // if they don't have a version yet then copy
-                        // the current one
-                        var bestMatch = null;
-                        for (var idx in worksSrvc.details)
-                            if (worksSrvc.details[idx].source == orcidVar.orcidId) {
-                                bestMatch = worksSrvc.details[idx];
-                                break;
-                            }
-                        if (bestMatch == null) {
-                            bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
-                        }
-                        callback(bestMatch);
-                    });
-            });
-        },
-        getGroup: function(putCode) {
-            for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCode))
-                        return worksSrvc.groups[idx];
-            }
-            return null;
-        },
-        getGroupDetails: function(putCode, type, callback) {
-            var group = worksSrvc.getGroup(putCode);
-            var needsLoading =  new Array();
-            for (var idx in group.activities) {
-                needsLoading.push(group.activities[idx].putCode.value)
-            }
 
-            var popFunct = function () {
-                if (needsLoading.length > 0)
-                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
-                else if (callback != undefined)
-                    callback();
-            };
-            popFunct();
-        },
-        getWork: function(putCode) {
-            for (var idx in worksSrvc.groups) {
-                    if (worksSrvc.groups[idx].hasPut(putCode))
-                        return worksSrvc.groups[idx].getByPut(putCode);
-            }
-            return null;
-        },
         deleteGroupWorks: function(putCodes) {
             var rmWorks = [];
             var rmGroups = [];
@@ -418,24 +320,168 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
             }
             worksSrvc.removeWorks(rmWorks);
         },
+
         deleteWork: function(putCode) {
             worksSrvc.removeWorks([putCode], function() {
                 groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
                 $rootScope.$apply();
             });
         },
-        makeDefault: function(group, putCode) {
-            group.makeDefault(putCode);
+
+        getBlankWork: function(callback) {
+            // if cached return clone of blank
+            if (worksSrvc.blankWork != null){
+                callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
+            }
             $.ajax({
-                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+                url: getBaseUri() + '/works/work.json',
                 dataType: 'json',
                 success: function(data) {
+                    blankWork =  data;
+                    callback(data);
                 }
-            }).fail(function(){
-                // something bad is happening!
-                console.log("some bad is hppending");
+            }).fail(function() {
+                console.log("Error fetching blank work");
             });
         },
+
+        getDetails: function(putCode, type, callback) {
+            var url = getBaseUri();
+            if (type == worksSrvc.constants.access_type.USER){
+                url += '/works/getWorkInfo.json?workId=';
+            }
+            else {// use the anonymous url
+                url += '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
+            }
+            if(worksSrvc.details[putCode] == undefined) {
+                $.ajax({
+                    url: url + putCode,
+                    dataType: 'json',
+                    success: function(data) {
+                        $rootScope.$apply(function () {
+                            removeBadContributors(data);
+                            removeBadExternalIdentifiers(data);
+                            worksSrvc.addBibtexJson(data);
+                            worksSrvc.details[putCode] = data;
+                            if (callback != undefined) {
+                                callback(worksSrvc.details[putCode]);
+                            } 
+                        });
+                    }
+                }).fail(function(e){
+                    // something bad is happening!
+                    console.log("error fetching works");
+                    logAjaxError(e);
+                });
+            } else {
+                if (callback != undefined){
+                    callback(worksSrvc.details[putCode]);
+                }
+            };
+        },
+        getEditable: function(putCode, callback) {
+            // first check if they are the current source
+            var work = worksSrvc.getDetails(
+                putCode, worksSrvc.constants.access_type.USER, 
+                function(data) {
+                    if (data.source == orcidVar.orcidId){
+                        callback(data);
+                    }
+                    else{
+                        worksSrvc.getGroupDetails(
+                            putCode, 
+                            worksSrvc.constants.access_type.USER, 
+                            function () {
+                                // in this case we want to open their version
+                                // if they don't have a version yet then copy
+                                // the current one
+                                var bestMatch = null;
+                                for (var idx in worksSrvc.details) {    
+                                    if (worksSrvc.details[idx].source == orcidVar.orcidId) {
+                                        bestMatch = worksSrvc.details[idx];
+                                        break;
+                                    }
+                                }
+                                if (bestMatch == null) {
+                                    bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
+                                }
+                                callback(bestMatch);
+                            }
+                        );
+                    }
+                }
+            );
+        },
+
+        getGroup: function(putCode) {
+            for (var idx in worksSrvc.groups) {
+                if (worksSrvc.groups[idx].hasPut(putCode)){
+                    return worksSrvc.groups[idx];
+                }
+            }
+            return null;
+        },
+
+        getGroupDetails: function(putCode, type, callback) {
+            var group = worksSrvc.getGroup(putCode);
+            var needsLoading =  new Array();
+            
+            var popFunct = function () {
+                if (needsLoading.length > 0) {
+                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
+                }
+                else if (callback != undefined) {
+                    callback();
+                }
+            };
+
+            for (var idx in group.activities) {
+                needsLoading.push(group.activities[idx].putCode.value)
+            }
+
+            popFunct();
+        },
+
+        getLabelMapping: function(workCategory, workType){
+            var result = this.labelsMapping.default.types[0];
+            var tempI = null;
+
+            if( this.labelsMapping[workCategory] != undefined ){
+                tempI = this.labelsMapping[workCategory].types;
+                for( var i = 0; i < tempI.length; i++) {
+                    if( tempI[i].type == workType ) {
+                        result = tempI[i];
+                    }
+                }
+            }
+            return result;
+        },  
+       
+        getUniqueDois : function(putCode){
+            var dois = [];              
+            var group = worksSrvc.getGroup(putCode);
+            for (var idx in group.activities) {                 
+                for (var i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+                        }
+                    }
+                }
+            }
+            
+            return dois;
+        },
+
+        getWork: function(putCode) {
+            for (var idx in worksSrvc.groups) {
+                if (worksSrvc.groups[idx].hasPut(putCode)) {
+                    return worksSrvc.groups[idx].getByPut(putCode);
+                }
+            }
+            return null;
+        },
+
         loadAbbrWorks: function(access_type) {
             if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
                 worksSrvc.worksToAddIds = orcidVar.workIds;
@@ -460,6 +506,20 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                 });
             };
         },
+
+        makeDefault: function(group, putCode) {
+            group.makeDefault(putCode);
+            $.ajax({
+                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+                dataType: 'json',
+                success: function(data) {
+                }
+            }).fail(function(){
+                // something bad is happening!
+                console.log("some bad is hppending");
+            });
+        },
+
         putWork: function(work,sucessFunc, failFunc) {
             $.ajax({
                 url: getBaseUri() + '/works/work.json',
@@ -474,6 +534,7 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                 failFunc();
             });
         },
+
         removeWorks: function(putCodes,callback) {
             $.ajax({
                 url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
@@ -481,15 +542,18 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (putCodes.length > 0) 
+                    if (putCodes.length > 0) {
                         worksSrvc.removeWorks(putCodes,callback);
-                    else if (callback)
+                    }
+                    else if (callback) {
                         callback(data);
+                    }
                 }
             }).fail(function() {
                 console.log("Error deleting works.");
             });
         },
+
         setGroupPrivacy: function(putCode, priv) {
             var group = worksSrvc.getGroup(putCode);
             var putCodes = new Array();
@@ -499,9 +563,11 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
             }
             worksSrvc.updateVisibility(putCodes, priv);
         },
+
         setPrivacy: function(putCode, priv) {
             worksSrvc.updateVisibility([putCode], priv);
         },
+
         updateVisibility: function(putCodes, priv) {
             $.ajax({
                 url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
@@ -509,8 +575,9 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (putCodes.length > 0)
+                    if (putCodes.length > 0) {
                         worksSrvc.updateVisibility(putCodes, priv);
+                    }
                 }
             }).fail(function() {
                 console.log("Error updating profile work.");
@@ -536,21 +603,6 @@ angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootSc
             }).fail(function(){
                 failFunc();
             });
-        },
-        getUniqueDois : function(putCode){
-            var dois = [];              
-            var group = worksSrvc.getGroup(putCode);
-            for (var idx in group.activities) {                 
-                for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
-                        }
-                    }
-                }
-            }
-            
-            return dois;
         }
     };
     return worksSrvc;
