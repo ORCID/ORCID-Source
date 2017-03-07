@@ -30,7 +30,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.InvalidRecordDataChangesEntity;
+import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,10 +42,10 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
+public class InvalidRecordDataChangeDaoTest extends DBUnitTest {
 
     @Resource
-    private InvalidRecordDataChangesDao dao;
+    private InvalidRecordDataChangeDao dao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -59,7 +59,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
 
     @Test
     public void fetchAllDescendantTest() {
-        List<InvalidRecordDataChangesEntity> onePage = dao.getByDateCreated(null, 16L, true);
+        List<InvalidRecordDataChangeEntity> onePage = dao.getByDateCreated(null, 16L, true);
         assertNotNull(onePage);
         assertEquals(16, onePage.size());
         // Assert the first one
@@ -67,12 +67,12 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
         // Assert the last one
         assertEquals(Long.valueOf(1000), onePage.get(15).getId());
 
-        Iterator<InvalidRecordDataChangesEntity> it = onePage.iterator();
+        Iterator<InvalidRecordDataChangeEntity> it = onePage.iterator();
         Long initial = null;
         Long next = null;
         // Verify they respect the descendant ordered
         do {
-            InvalidRecordDataChangesEntity current = it.next();
+            InvalidRecordDataChangeEntity current = it.next();
             if (initial == null) {
                 initial = current.getId();
                 continue;
@@ -86,7 +86,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
 
     @Test
     public void fetchAllAscendantTest() {
-        List<InvalidRecordDataChangesEntity> onePage = dao.getByDateCreated(null, 16L, false);
+        List<InvalidRecordDataChangeEntity> onePage = dao.getByDateCreated(null, 16L, false);
         assertNotNull(onePage);
         assertEquals(16, onePage.size());
         // Assert the first one
@@ -94,12 +94,12 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
         // Assert the last one
         assertEquals(Long.valueOf(1015), onePage.get(15).getId());
 
-        Iterator<InvalidRecordDataChangesEntity> it = onePage.iterator();
+        Iterator<InvalidRecordDataChangeEntity> it = onePage.iterator();
         Long initial = null;
         Long next = null;
         // Verify they respect the descendant ordered
         do {
-            InvalidRecordDataChangesEntity current = it.next();
+            InvalidRecordDataChangeEntity current = it.next();
             if (initial == null) {
                 initial = current.getId();
                 continue;
@@ -328,7 +328,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
         int firstElementIdOnDB = 1015;
         int lastElementIdOnDB = 1000;
         Long lastSequence = null;
-        List<InvalidRecordDataChangesEntity> page = dao.getByDateCreated(lastSequence, Long.valueOf(pageSize), true);
+        List<InvalidRecordDataChangeEntity> page = dao.getByDateCreated(lastSequence, Long.valueOf(pageSize), true);
 
         Long firstElementId = Long.valueOf(firstElementIdOnDB);
         Long lastElementId = Long.valueOf(firstElementIdOnDB - (pageSize - 1));
@@ -342,7 +342,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
             // Check the first element is the one we expect
             assertEquals(Long.valueOf(firstElementId), page.get(0).getId());
             // Iterate over each element and verify the id is decreasing
-            for (InvalidRecordDataChangesEntity element : page) {
+            for (InvalidRecordDataChangeEntity element : page) {
                 if (lastSequence == null) {
                     assertEquals(Long.valueOf(firstElementIdOnDB), element.getId());
                     lastSequence = element.getId();
@@ -374,7 +374,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
         int firstElementIdOnDB = 1000;
         int lastElementIdOnDB = 1015;
         Long lastSequence = null;
-        List<InvalidRecordDataChangesEntity> page = dao.getByDateCreated(lastSequence, Long.valueOf(pageSize), false);
+        List<InvalidRecordDataChangeEntity> page = dao.getByDateCreated(lastSequence, Long.valueOf(pageSize), false);
 
         Long firstElementId = Long.valueOf(firstElementIdOnDB);
         Long lastElementId = Long.valueOf(firstElementIdOnDB + (pageSize - 1));
@@ -388,7 +388,7 @@ public class InvalidRecordDataChangesDaoTest extends DBUnitTest {
             // Check the first element is the one we expect
             assertEquals(Long.valueOf(firstElementId), page.get(0).getId());
             // Iterate over each element and verify the id is decreasing
-            for (InvalidRecordDataChangesEntity element : page) {
+            for (InvalidRecordDataChangeEntity element : page) {
                 if (lastSequence == null) {
                     assertEquals(Long.valueOf(firstElementIdOnDB), element.getId());
                     lastSequence = element.getId();

@@ -18,13 +18,13 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.jpa.entities.InvalidRecordDataChangesEntity;
+import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public interface InvalidRecordDataChangesDao {
-    List<InvalidRecordDataChangesEntity> getByDateCreated(Long lastSequence, Long pageSize, boolean descendantOrder);
+public interface InvalidRecordDataChangeDao {
+    List<InvalidRecordDataChangeEntity> getByDateCreated(Long lastSequence, Long pageSize, boolean descendantOrder);
 }

@@ -66,6 +66,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
+import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -75,6 +76,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
+import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
@@ -689,6 +691,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         nameClassMap.field("path", "profile.id");
         nameClassMap.byDefault();
         nameClassMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
+    public MapperFacade getInvalidRecordDataChangeMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<InvalidRecordDataChange, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(InvalidRecordDataChange.class, InvalidRecordDataChangeEntity.class);        
+        classMap.fieldBToA("id", "sequence");
+        classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
+        classMap.fieldBToA("description", "description");
+        classMap.fieldBToA("numChanged", "numChanged");
+        classMap.fieldBToA("type", "type");
+        classMap.byDefault();
+        classMap.register();        
         return mapperFactory.getMapperFacade();
     }
     

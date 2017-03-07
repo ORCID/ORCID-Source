@@ -16,9 +16,14 @@
  */
 package org.orcid.model.invalid_record_data_change;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class InvalidRecordDataChange {
+public class InvalidRecordDataChange implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9039056729488807986L;
     private Long sequence;
     private String sqlUsedToUpdate;
     private String description;

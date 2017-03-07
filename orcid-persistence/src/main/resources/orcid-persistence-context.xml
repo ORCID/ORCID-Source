@@ -219,7 +219,7 @@
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
     
-    <bean id="InvalidRecordDataChangesDao" class="org.orcid.persistence.dao.impl.InvalidRecordDataChangesDaoImpl">
+    <bean id="invalidRecordDataChangeDao" class="org.orcid.persistence.dao.impl.InvalidRecordDataChangeDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
      

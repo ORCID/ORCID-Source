@@ -22,10 +22,10 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.orcid.persistence.dao.InvalidRecordDataChangesDao;
-import org.orcid.persistence.jpa.entities.InvalidRecordDataChangesEntity;
+import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
+import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
-public class InvalidRecordDataChangesDaoImpl implements InvalidRecordDataChangesDao {
+public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDao {
 
     @Resource(name="entityManager")
     protected EntityManager entityManager;
@@ -36,7 +36,7 @@ public class InvalidRecordDataChangesDaoImpl implements InvalidRecordDataChanges
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<InvalidRecordDataChangesEntity> getByDateCreated(Long lastId, Long pageSize, boolean descendantOrder) {
+    public List<InvalidRecordDataChangeEntity> getByDateCreated(Long lastId, Long pageSize, boolean descendantOrder) {
         String queryStr = "SELECT * FROM invalid_record_data_changes WHERE id {GTorLT} {LAST_SEQUENCE} ORDER BY id {ORDER} LIMIT :pageSize";
         
         String GTorLT = descendantOrder ? "<" : ">";
@@ -49,9 +49,9 @@ public class InvalidRecordDataChangesDaoImpl implements InvalidRecordDataChanges
         queryStr = queryStr.replace("{LAST_SEQUENCE}", lastIdStr);
         queryStr = queryStr.replace("{ORDER}", descendantOrder ? "DESC" : "ASC");
         
-        Query query = entityManager.createNativeQuery(queryStr, InvalidRecordDataChangesEntity.class);        
+        Query query = entityManager.createNativeQuery(queryStr, InvalidRecordDataChangeEntity.class);        
         query.setParameter("pageSize", pageSize);
-        return (List<InvalidRecordDataChangesEntity>) query.getResultList();
+        return (List<InvalidRecordDataChangeEntity>) query.getResultList();
     }
 
 }

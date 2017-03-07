@@ -26,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "invalid_record_data_changes")
-public class InvalidRecordDataChangesEntity extends BaseEntity<Long>{
+public class InvalidRecordDataChangeEntity extends BaseEntity<Long>{
     private static final long serialVersionUID = -4409462299700027159L;
     private Long id;
     private String sqlUsedToUpdate;

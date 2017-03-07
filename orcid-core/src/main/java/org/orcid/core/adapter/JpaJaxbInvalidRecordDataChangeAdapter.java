@@ -14,13 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.read_only;
+package org.orcid.core.adapter;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
+import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
-public interface InvalidRecordDataChangesManagerReadOnly {
-    List<InvalidRecordDataChange> getInvalidRecordDataChangesDescending(Long lastElement, Long pageSize);
-    List<InvalidRecordDataChange> getInvalidRecordDataChangesAscending(Long lastElement, Long pageSize);
+public interface JpaJaxbInvalidRecordDataChangeAdapter {
+
+    InvalidRecordDataChange toInvalidRecordDataChange(InvalidRecordDataChangeEntity entity);
+
+    List<InvalidRecordDataChange> toInvalidRecordDataChanges(Collection<InvalidRecordDataChangeEntity> entities);
 }
