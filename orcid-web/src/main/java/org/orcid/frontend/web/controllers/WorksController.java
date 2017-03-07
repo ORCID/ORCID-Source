@@ -612,7 +612,9 @@ public class WorksController extends BaseWorkspaceController {
             }
 
             Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-            if (wId.getWorkExternalIdentifierType().getValue() != null  && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
+            if (wId.getWorkExternalIdentifierType().getValue() != null  
+                    && !wId.getWorkExternalIdentifierType().getValue().trim().isEmpty() 
+                    && !types.keySet().contains(wId.getWorkExternalIdentifierType().getValue())){
                 setError(wId.getWorkExternalIdentifierType(), "manualWork.id_invalid");
             }
         }
