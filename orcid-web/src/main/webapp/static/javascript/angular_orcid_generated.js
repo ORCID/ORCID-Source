@@ -55,11 +55,11 @@
 	requireAll(__webpack_require__(2));
 	requireAll(__webpack_require__(22));
 	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(29));
 	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(31));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(32));
-	requireAll(__webpack_require__(45));
+	requireAll(__webpack_require__(33));
+	requireAll(__webpack_require__(46));
 
 /***/ },
 /* 1 */
@@ -103,7 +103,7 @@
 	        ['orcidApp']
 	    );
 	});
-	// angular.bootstrap(document.body, ['orcidApp'], {});
+
 
 
 	/*******************************************************************************
@@ -676,6 +676,7 @@
 	        inputEmail: null,
 	        popUp: false,
 	        primaryEmail: null,
+	        unverifiedSetPrimary: false,
 	        
 	        addEmail: function() {              
 	            $.ajax({
@@ -767,16 +768,26 @@
 	            });
 	        },
 
-	        setPrimary: function(email) {
+	        setPrimary: function(email, callback) {
 	            for (i in serv.emails.emails) {
 	                if (serv.emails.emails[i] == email) {
 	                    serv.emails.emails[i].primary = true;
 	                    serv.primaryEmail = email;
+	                    if (serv.emails.emails[i].verified == false) {
+	                        serv.unverifiedSetPrimary = true;
+	                    } else {
+	                        serv.unverifiedSetPrimary = false;
+	                    }
+
+	                    callback = function(){
+	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+	                    }
+
 	                } else {
 	                    serv.emails.emails[i].primary = false;
 	                }
 	            }
-	            serv.saveEmail();
+	            serv.saveEmail(callback);
 	        },
 	        
 	        setPrivacy: function(email, priv) {
@@ -1178,9 +1189,9 @@
 	    return peerReviewSrvc;
 	}]);
 
-	/*
+	/*******************************************************************************
 	 * CONTROLLERS
-	 */
+	*******************************************************************************/
 
 	angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
@@ -10491,46 +10502,57 @@
 	        [
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "lr",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "lr",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "lr",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "lr",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "lr",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10538,62 +10560,77 @@
 	        [
 	            {
 	                "value": "ar",
+	                "direction": "rl",
 	                "label": "العربية"
 	            },
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "rl",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "rl",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "rl",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'lr',
+	                "direction": "lr",
 	                "label": 'lr'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'rl',
+	                "direction": "rl",
 	                "label": 'rl'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "rl",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'xx',
+	                "direction": "lr",
 	                "label": 'X'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "rl",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10609,6 +10646,7 @@
 
 	    //Load Language that is set in the cookie or set default language to english
 	    $scope.getCurrentLanguage = function(){
+
 	        $scope.language = $scope.languages[0]; //Default
 	        typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
 	        angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
@@ -11906,8 +11944,9 @@
 		"./fnForm.js": 24,
 		"./focusMe.js": 25,
 		"./modalEmailUnVerified.js": 26,
-		"./ngEnter.js": 27,
-		"./ngEnterSubmit.js": 28
+		"./modalUnverifiedEmailSetPrimary.js": 27,
+		"./ngEnter.js": 28,
+		"./ngEnterSubmit.js": 29
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12095,6 +12134,87 @@
 /***/ function(module, exports) {
 
 	/*
+	 * For modal dispalyed if primary email is changed to an unverified email
+	 */
+
+
+
+	angular.module('orcidApp').directive(
+	    'modalUnverifiedEmailSetPrimary', 
+	    [
+	        '$compile',
+	        '$rootScope',
+	        '$timeout',
+	        'initialConfigService',
+	        'emailSrvc',
+	        function( $compile, $rootScope, $timeout, initialConfigService, emailSrvc ) {
+
+	            var configuration = initialConfigService.getInitialConfiguration();
+
+	            var closeModal = function(){
+	                $.colorbox.remove();
+	                $('modal-unverified-email-set-primary').html('<div id="modal-unverified-email-set-primary-container"></div>');
+	            };
+
+	            var openModal = function( scope ){
+	                scope.emailPrimary = emailSrvc.getEmailPrimary().value;
+
+	                $.colorbox(
+	                    {
+	                        html : $compile($('#modal-unverified-email-set-primary-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.youve_changed") + '</p><p>' + om.get("orcid.frontend.workspace.some_editing_features") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") +  '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><a class="nner-row" ng-click="closeColorBox()">' + om.get("manage.email.close") + '</a></div></div></div></div>'))(scope),
+	                        escKey: true,
+	                        overlayClose: true,
+	                        transition: 'fade',
+	                        close: '',
+	                        scrolling: false
+	                    }
+	                );
+	                $.colorbox.resize({width:"500px"});
+	            };
+
+	            function link( scope, element, attrs ) {
+
+	                scope.verifyEmail = function() {
+	                    verifyEmail( scope );
+	                };
+
+	                scope.closeColorBox = function() {
+	                    closeModal();
+	                };
+
+	                scope.openModal = function( scope ){
+	                    openModal( scope );
+	                }
+
+	                scope.$on(
+	                    'unverifiedSetPrimary',
+	                    function(event, data){
+	                        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
+	                            scope.openModal( scope ); 
+	                        }
+	                        else {
+	                            scope.closeColorBox(); 
+	                        }
+	                    }
+
+	                );
+	            }
+
+	            return {
+	                link: link,
+	                template: '<div id="modal-unverified-email-set-primary-container"></div>',
+	                transclude: true
+	            };
+
+	        }
+	    ]
+	);
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	/*
 	 * Scope: element
 	 */
 	angular.module('orcidApp').directive('ngEnter', function() {
@@ -12113,7 +12233,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -12135,7 +12255,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -12144,15 +12264,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 29;
+	webpackContext.id = 30;
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 31
+		"./ui.multiselect.js": 32
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12165,11 +12285,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -12450,22 +12570,22 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 33,
-		"./affiliationsSrvc.js": 34,
-		"./bioBulkSrvc.js": 35,
-		"./commonSrvc.js": 36,
-		"./fundingSrvc.js": 37,
-		"./groupedActivitiesService.js": 38,
-		"./groupedActivitiesUtil.js": 39,
-		"./initialConfigService.js": 40,
-		"./membersListSrvc.js": 41,
-		"./notificationsSrvc.js": 42,
-		"./utilsService.js": 43,
-		"./workspaceSrvc.js": 44
+		"./actBulkSrvc.js": 34,
+		"./affiliationsSrvc.js": 35,
+		"./bioBulkSrvc.js": 36,
+		"./commonSrvc.js": 37,
+		"./fundingSrvc.js": 38,
+		"./groupedActivitiesService.js": 39,
+		"./groupedActivitiesUtil.js": 40,
+		"./initialConfigService.js": 41,
+		"./membersListSrvc.js": 42,
+		"./notificationsSrvc.js": 43,
+		"./utilsService.js": 44,
+		"./workspaceSrvc.js": 45
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12478,11 +12598,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 33;
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12501,7 +12621,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12630,7 +12750,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12650,7 +12770,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12715,7 +12835,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -12926,7 +13046,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13044,7 +13164,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/*
@@ -13099,7 +13219,7 @@
 	*/
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -13126,35 +13246,82 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
+	        communityTypes: {},
+	        consortiaList: null,
+	        currentMemberDetails: null,
 	        membersList: null,
 	        memberDetails: {},
-	        currentMemberDetails: null,
-	        consortiaList: null,
-	        communityTypes: {},
-	        getMembersList: function() {
+
+	        getCommunityTypes: function() {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/communityTypes.json';
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        for(var i in data){
+	                            serv.communityTypes[i] = data[i];
+	                        }
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with community types");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
+	        getConsortiaList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/members/members.json',
+	                url: getBaseUri() + '/consortia/consortia.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.membersList = data;
+	                    serv.consortiaList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with members list");
+	                console.log("error with consortia list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
 	        },
+
+	        getCurrentMemberDetailsBySlug: function(memberSlug) {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.currentMemberDetails = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details by slug");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
 	        getDetails: function(memberId, consortiumLeadId) {
+	            var url = "";
 	            if(serv.memberDetails[memberId] == null){
-	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
+	                url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
 	                if(consortiumLeadId != null){
 	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
 	                }
@@ -13174,65 +13341,28 @@
 	                });
 	            }
 	        },
-	        getCurrentMemberDetailsBySlug: function(memberSlug) {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.currentMemberDetails = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details by slug");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
+
+	        getMemberPageUrl: function(slug) {
+	            return orcidVar.baseUri + '/members/' + slug;
 	        },
-	        getCommunityTypes: function() {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/communityTypes.json';
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        for(var i in data){
-	                            serv.communityTypes[i] = data[i];
-	                        }
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with community types");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getConsortiaList: function() {
+
+	        getMembersList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/consortia/consortia.json',
+	                url: getBaseUri() + '/members/members.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.consortiaList = data;
+	                    serv.membersList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with consortia list");
+	                console.log("error with members list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
-	        },
-	        getMemberPageUrl: function(slug) {
-	            return orcidVar.baseUri + '/members/' + slug;
 	        }
+	        
 	    };
 	    serv.getCommunityTypes();
 	    return serv; 
@@ -13240,7 +13370,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13483,7 +13613,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13602,7 +13732,7 @@
 	);
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13657,7 +13787,7 @@
 	}]);
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13666,7 +13796,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 45;
+	webpackContext.id = 46;
 
 
 /***/ }

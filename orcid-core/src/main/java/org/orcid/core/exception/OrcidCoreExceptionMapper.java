@@ -70,7 +70,8 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(GroupIdRecordNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9026));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OtherNameNotFoundException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9033));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeFormatException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9034));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTypeValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9037));        
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ActivityTypeValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9037));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ExceedMaxNumberOfPutCodesException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9042));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));

@@ -32,6 +32,7 @@ import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -91,6 +92,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -585,6 +587,19 @@ public class PublicV2ApiServiceDelegatorImpl
         return Response.ok(search).build();
     }
 
+    @Override
+    public Response viewBulkWorks(String orcid, String putCodes) {
+        ProfileEntity profileEntity = profileEntityManagerReadOnly.findByOrcid(orcid);
+        if (profileEntity == null) {
+            throw new OrcidNoResultException("No such profile: " + orcid);
+        }
+        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
+        publicAPISecurityManagerV2.filter(workBulk);
+        ActivityUtils.cleanEmptyFields(workBulk);
+        sourceUtils.setSourceName(workBulk);
+        return Response.ok(workBulk).build();
+    }
+    
     private void validateSearchParams(Map<String, List<String>> queryMap) {
         List<String> rowsList = queryMap.get("rows");
         if (rowsList != null && !rowsList.isEmpty()) {

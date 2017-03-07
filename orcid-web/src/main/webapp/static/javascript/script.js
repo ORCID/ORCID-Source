@@ -18,6 +18,22 @@
 /*
  * 1 - Utility functions 
  */
+
+var enableRightToLeft = function(){
+    var rightToLeftLang = ["rl"];
+    var currentLanguage = locale_v3;
+
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+
+    if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
+        document.body.className += " lang-rl"; //Add class that display right to left for selected languages
+    }
+}
+
+window.onload = function() {
+    enableRightToLeft();
+};
+
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {
@@ -347,10 +363,10 @@ var om = new OrcidMessage();
  * will redir them to the signin page.
  */
 function logAjaxError(e){
-    console.log("status: " + e.status);
-    console.log("statusText: " + e.statusText);
-    console.log("readyState: " + e.readyState);
-    console.log("responseText: " + e.responseText);
+    //console.log("status: " + e.status);
+    //console.log("statusText: " + e.statusText);
+    //console.log("readyState: " + e.readyState);
+    //console.log("responseText: " + e.responseText);
 }
 
 function getBaseUri() {
