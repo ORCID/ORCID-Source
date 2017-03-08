@@ -59,7 +59,7 @@
 	requireAll(__webpack_require__(31));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
 	requireAll(__webpack_require__(33));
-	requireAll(__webpack_require__(46));
+	requireAll(__webpack_require__(53));
 
 /***/ },
 /* 1 */
@@ -9096,6 +9096,11 @@
 	    $scope.closeModal = function() {
 	         $.colorbox.close();
 	    };
+
+	    $scope.closeModalReload = function() {
+	         $.colorbox.close();
+	         window.location.reload();
+	    };
 	    
 	    $scope.search = function(){
 	        $scope.results = new Array();
@@ -11511,22 +11516,22 @@
 		"./actBulkSrvc.js": 34,
 		"./affiliationsSrvc.js": 35,
 		"./bioBulkSrvc.js": 36,
-		"./clearMemberListFilterSrvc.js": 47,
-		"./commonSrvc.js": 37,
-		"./discoSrvc.js": 48,
-		"./emailSrvc.js": 49,
-		"./fundingSrvc.js": 38,
-		"./groupedActivitiesService.js": 39,
-		"./groupedActivitiesUtil.js": 40,
-		"./initialConfigService.js": 41,
-		"./membersListSrvc.js": 42,
-		"./notificationsSrvc.js": 43,
-		"./peerReviewSrvc.js": 50,
-		"./prefsSrvc.js": 51,
-		"./utilsService.js": 44,
-		"./widgetSrvc.js": 52,
-		"./worksSrvc.js": 53,
-		"./workspaceSrvc.js": 45
+		"./clearMemberListFilterSrvc.js": 37,
+		"./commonSrvc.js": 38,
+		"./discoSrvc.js": 39,
+		"./emailSrvc.js": 40,
+		"./fundingSrvc.js": 41,
+		"./groupedActivitiesService.js": 42,
+		"./groupedActivitiesUtil.js": 43,
+		"./initialConfigService.js": 44,
+		"./membersListSrvc.js": 45,
+		"./notificationsSrvc.js": 46,
+		"./peerReviewSrvc.js": 47,
+		"./prefsSrvc.js": 48,
+		"./utilsService.js": 49,
+		"./widgetSrvc.js": 50,
+		"./worksSrvc.js": 51,
+		"./workspaceSrvc.js": 52
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11714,6 +11719,20 @@
 /* 37 */
 /***/ function(module, exports) {
 
+	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
+	    return {
+	          clearFilters : function ($scope){
+	              $scope.by_country = undefined;
+	              $scope.by_researchCommunity = undefined;
+	              $scope.activeLetter = '';
+	         }
+	     };
+	 }]);
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
 	    var commonSrvc = {
 	        copyErrorsLeft: function (data1, data2) {
@@ -11776,7 +11795,219 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+	    var serv = {
+	        feed: null,
+	        getDiscoFeed: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.feed = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function(e) {
+	                // something bad is happening!
+	                console.log("error with disco feed");
+	                logAjaxError(e);
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getIdPName: function(entityId) {
+	            var 
+	                displayName = "",
+	                idp = "",
+	                locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en",
+	                name = ""
+	            ;
+	            for(var i in serv.feed) {
+	                idp = serv.feed[i];
+	                if(entityId === idp.entityID) {
+	                    name = idp.DisplayNames[0].value;
+	                    for(j in idp.DisplayNames){
+	                        displayName = idp.DisplayNames[j];
+	                        if(locale === displayName.lang){
+	                            name = displayName.value;
+	                        }
+	                    }
+	                    return name;
+	                }
+	            }
+	            if(entityId === "facebook" || entityId === "google"){
+	                return entityId.charAt(0).toUpperCase() + entityId.slice(1);
+	            }
+	            return entityId;
+	        }
+	    };
+
+	    // populate the disco feed
+	    serv.getDiscoFeed();
+	    return serv; 
+	}]);
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
+	    var serv = {
+	        delEmail: null,
+	        displayModalWarningFlag: false,
+	        emails: null,            
+	        inputEmail: null,
+	        popUp: false,
+	        primaryEmail: null,
+	        unverifiedSetPrimary: false,
+	        
+	        addEmail: function() {              
+	            $.ajax({
+	                url: getBaseUri() + '/account/addEmail.json',
+	                data:  angular.toJson(serv.inputEmail),
+	                contentType: 'application/json;charset=UTF-8',
+	                type: 'POST',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.inputEmail = data;
+	                    if (serv.inputEmail.errors.length == 0) {
+	                        serv.initInputEmail();
+	                        serv.getEmails();
+	                    }
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        },
+	        
+	        deleteEmail: function (callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/deleteEmail.json',
+	                type: 'DELETE',
+	                data:  angular.toJson(serv.delEmail),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.getEmails();
+	                    if (callback) {
+	                        callback();
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("emailSrvc.deleteEmail() error");
+	            });
+	        },
+	        
+	        getEmailPrimary: function() {
+	            return serv.primaryEmail;
+	        },
+
+	        getEmails: function(callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/emails.json',
+	                type: 'GET',
+	                dataType: 'json',
+	                success: function(data) { 
+	                    serv.emails = data;
+	                    for (var i in data.emails){
+	                        if (data.emails[i].primary){
+	                            serv.primaryEmail = data.emails[i];
+	                        }
+	                    }                                                
+	                    $rootScope.$apply();
+	                    if (callback) {
+	                       callback(data);
+	                    }
+	                }
+	            }).fail(function(e) {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	                logAjaxError(e);
+	            });
+	        },
+
+	        initInputEmail: function() {
+	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
+	        },
+
+	        saveEmail: function(callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/emails.json',
+	                type: 'POST',
+	                data: angular.toJson(serv.emails),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.data;
+	                    $rootScope.$apply();
+	                    if (callback) {
+	                        callback(data);
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        },
+
+	        setPrimary: function(email, callback) {
+	            for (var i in serv.emails.emails) {
+	                if (serv.emails.emails[i] == email) {
+	                    serv.emails.emails[i].primary = true;
+	                    serv.primaryEmail = email;
+	                    if (serv.emails.emails[i].verified == false) {
+	                        serv.unverifiedSetPrimary = true;
+	                    } else {
+	                        serv.unverifiedSetPrimary = false;
+	                    }
+
+	                    callback = function(){
+	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+	                    }
+
+	                } else {
+	                    serv.emails.emails[i].primary = false;
+	                }
+	            }
+	            serv.saveEmail(callback);
+	        },
+	        
+	        setPrivacy: function(email, priv) {
+	            email.visibility = priv;
+	            serv.saveEmail();
+	        },
+	        
+	        verifyEmail: function(email, callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/verifyEmail.json',
+	                type: 'get',
+	                data:  { "email": email.value },
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    if (callback) {
+	                        callback(data);
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        }
+
+	    };
+
+	    return serv;
+	});
+
+/***/ },
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -11987,7 +12218,7 @@
 	}]);
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12105,7 +12336,7 @@
 
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/*
@@ -12160,7 +12391,7 @@
 	*/
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12187,7 +12418,7 @@
 	}]);
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -12311,7 +12542,7 @@
 
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12554,420 +12785,7 @@
 	}]);
 
 /***/ },
-/* 44 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory(
-	    'utilsService', 
-	    function() {
-	        var utilsService = {
-	            addComma: function(str) {
-	                if (str.length > 0){
-	                    return str + ', ';
-	                } 
-	                return str;
-	            },
-	            contains: function(arr, obj) {
-	                var index = arr.length;
-	                while (index--) {
-	                    if (arr[index] === obj) {
-	                       return true;
-	                    }
-	                }
-	                return false;
-	            },
-	            emptyTextField: function(field) {
-	                if (field != null
-	                    && field.value != null
-	                    && field.value.trim() != '') {
-	                    return false;
-	                }
-	                return true;
-	            },
-
-	            fixZindexIE7: function(target, zindex){
-	                if(isIE() == 7){
-	                    $(target).each(
-	                        function(){
-	                            $(this).css('z-index', zindex);
-	                            --zindex;
-	                        }
-	                    );
-	                }
-	            },
-
-	            formatDate: function(oldDate) {
-	                var date = new Date(oldDate);
-	                var day = date.getDate();
-	                var month = date.getMonth() + 1;
-	                var year = date.getFullYear();
-	                if(month < 10) {
-	                    month = '0' + month;
-	                }
-	                if(day < 10) {
-	                    day = '0' + day;
-	                }
-	                return (year + '-' + month + '-' + day);
-	            },
-	            formColorBoxResize: function() {
-	                if (isMobile()) {
-	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-	                }
-	                else {
-	                    // IE8 and below doesn't take auto height
-	                    // however the default div height
-	                    // is auto anyway
-	                    $.colorbox.resize({width:'800px'});
-	                    
-	                }
-	            },
-
-	            formColorBoxWidth: function() {
-	                return isMobile()? '100%': '800px';
-	            },
-
-	            getParameterByName: function( name ) {
-	                var _name = name,
-	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
-	                    results = regex.exec(location.search)
-	                ;
-	                
-	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-	                
-	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	            },
-
-	            getScripts: function(scripts, callback) {
-	                var progress = 0;
-	                var internalCallback = function () {        
-	                    if (++progress == scripts.length - 1) {
-	                        callback();
-	                    }
-	                };    
-	                scripts.forEach(
-	                    function(script) {        
-	                        $.getScript(script, internalCallback);        
-	                    }
-	                );
-	            },
-
-	            isEmail: function(email) {
-	                var re = /\S+@\S+\.\S+/;
-	                return re.test(email);
-	            },
-
-	            openImportWizardUrl: function(url) {
-	                var win = window.open(url, "_target");
-	                setTimeout( function() {
-	                    if(!win || win.outerHeight === 0) {
-	                        //First Checking Condition Works For IE & Firefox
-	                        //Second Checking Condition Works For Chrome
-	                        window.location.href = url;
-	                    }
-	                }, 250);
-	                $.colorbox.close();
-	            }
-	        };
-	        return utilsService;
-	    }
-	);
-
-/***/ },
-/* 45 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
-	    var serv = {
-	        displayEducation: true,
-	        displayEmployment: true,
-	        displayFunding: true,
-	        displayPersonalInfo: true,
-	        displayWorks: true,
-	        displayPeerReview: true,
-	        toggleEducation: function() {
-	            serv.displayEducation = !serv.displayEducation;
-	        },
-	        toggleEmployment: function() {
-	            serv.displayEmployment = !serv.displayEmployment;
-	        },
-	        toggleFunding: function() {
-	            serv.displayFunding = !serv.displayFunding;
-	        },
-	        togglePersonalInfo: function() {
-	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
-	        },
-	        toggleWorks: function() {
-	            serv.displayWorks = !serv.displayWorks;
-	        },
-	        togglePeerReview: function() {              
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        },
-	        openEducation: function() {
-	            serv.displayEducation = true;
-	        },
-	        openFunding: function() {
-	            serv.displayFunding = true;
-	        },
-	        openEmployment: function() {
-	            serv.displayEmployment = true;
-	        },
-	        openPersonalInfo: function() {
-	            serv.displayPersonalInfo = true;
-	        },
-	        openWorks: function() {
-	            serv.displayWorks = true;
-	        },
-	        openPeerReview: function() {
-	            serv.displayPeerReview = true;
-	        },
-	        togglePeerReviews : function() {
-	            serv.displayPeerReview = !serv.displayPeerReview;
-	        }   
-	    };
-	    return serv;
-	}]);
-
-/***/ },
-/* 46 */
-/***/ function(module, exports) {
-
-	function webpackContext(req) {
-		throw new Error("Cannot find module '" + req + "'.");
-	}
-	webpackContext.keys = function() { return []; };
-	webpackContext.resolve = webpackContext;
-	module.exports = webpackContext;
-	webpackContext.id = 46;
-
-
-/***/ },
 /* 47 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
-	    return {
-	          clearFilters : function ($scope){
-	              $scope.by_country = undefined;
-	              $scope.by_researchCommunity = undefined;
-	              $scope.activeLetter = '';
-	         }
-	     };
-	 }]);
-
-/***/ },
-/* 48 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
-	    var serv = {
-	        feed: null,
-	        getDiscoFeed: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.feed = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function(e) {
-	                // something bad is happening!
-	                console.log("error with disco feed");
-	                logAjaxError(e);
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getIdPName: function(entityId) {
-	            var 
-	                displayName = "",
-	                idp = "",
-	                locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en",
-	                name = ""
-	            ;
-	            for(var i in serv.feed) {
-	                idp = serv.feed[i];
-	                if(entityId === idp.entityID) {
-	                    name = idp.DisplayNames[0].value;
-	                    for(j in idp.DisplayNames){
-	                        displayName = idp.DisplayNames[j];
-	                        if(locale === displayName.lang){
-	                            name = displayName.value;
-	                        }
-	                    }
-	                    return name;
-	                }
-	            }
-	            if(entityId === "facebook" || entityId === "google"){
-	                return entityId.charAt(0).toUpperCase() + entityId.slice(1);
-	            }
-	            return entityId;
-	        }
-	    };
-
-	    // populate the disco feed
-	    serv.getDiscoFeed();
-	    return serv; 
-	}]);
-
-/***/ },
-/* 49 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
-	    var serv = {
-	        delEmail: null,
-	        displayModalWarningFlag: false,
-	        emails: null,            
-	        inputEmail: null,
-	        popUp: false,
-	        primaryEmail: null,
-	        unverifiedSetPrimary: false,
-	        
-	        addEmail: function() {              
-	            $.ajax({
-	                url: getBaseUri() + '/account/addEmail.json',
-	                data:  angular.toJson(serv.inputEmail),
-	                contentType: 'application/json;charset=UTF-8',
-	                type: 'POST',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.inputEmail = data;
-	                    if (serv.inputEmail.errors.length == 0) {
-	                        serv.initInputEmail();
-	                        serv.getEmails();
-	                    }
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        },
-	        
-	        deleteEmail: function (callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/deleteEmail.json',
-	                type: 'DELETE',
-	                data:  angular.toJson(serv.delEmail),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.getEmails();
-	                    if (callback) {
-	                        callback();
-	                    }
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("emailSrvc.deleteEmail() error");
-	            });
-	        },
-	        
-	        getEmailPrimary: function() {
-	            return serv.primaryEmail;
-	        },
-
-	        getEmails: function(callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/emails.json',
-	                type: 'GET',
-	                dataType: 'json',
-	                success: function(data) { 
-	                    serv.emails = data;
-	                    for (var i in data.emails){
-	                        if (data.emails[i].primary){
-	                            serv.primaryEmail = data.emails[i];
-	                        }
-	                    }                                                
-	                    $rootScope.$apply();
-	                    if (callback) {
-	                       callback(data);
-	                    }
-	                }
-	            }).fail(function(e) {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	                logAjaxError(e);
-	            });
-	        },
-
-	        initInputEmail: function() {
-	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
-	        },
-
-	        saveEmail: function(callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/emails.json',
-	                type: 'POST',
-	                data: angular.toJson(serv.emails),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.data;
-	                    $rootScope.$apply();
-	                    if (callback) {
-	                        callback(data);
-	                    }
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        },
-
-	        setPrimary: function(email, callback) {
-	            for (var i in serv.emails.emails) {
-	                if (serv.emails.emails[i] == email) {
-	                    serv.emails.emails[i].primary = true;
-	                    serv.primaryEmail = email;
-	                    if (serv.emails.emails[i].verified == false) {
-	                        serv.unverifiedSetPrimary = true;
-	                    } else {
-	                        serv.unverifiedSetPrimary = false;
-	                    }
-
-	                    callback = function(){
-	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
-	                    }
-
-	                } else {
-	                    serv.emails.emails[i].primary = false;
-	                }
-	            }
-	            serv.saveEmail(callback);
-	        },
-	        
-	        setPrivacy: function(email, priv) {
-	            email.visibility = priv;
-	            serv.saveEmail();
-	        },
-	        
-	        verifyEmail: function(email, callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/verifyEmail.json',
-	                type: 'get',
-	                data:  { "email": email.value },
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    if (callback) {
-	                        callback(data);
-	                    }
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        }
-
-	    };
-
-	    return serv;
-	});
-
-/***/ },
-/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
@@ -13263,7 +13081,7 @@
 	}]);
 
 /***/ },
-/* 51 */
+/* 48 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
@@ -13312,7 +13130,126 @@
 	});
 
 /***/ },
-/* 52 */
+/* 49 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory(
+	    'utilsService', 
+	    function() {
+	        var utilsService = {
+	            addComma: function(str) {
+	                if (str.length > 0){
+	                    return str + ', ';
+	                } 
+	                return str;
+	            },
+	            contains: function(arr, obj) {
+	                var index = arr.length;
+	                while (index--) {
+	                    if (arr[index] === obj) {
+	                       return true;
+	                    }
+	                }
+	                return false;
+	            },
+	            emptyTextField: function(field) {
+	                if (field != null
+	                    && field.value != null
+	                    && field.value.trim() != '') {
+	                    return false;
+	                }
+	                return true;
+	            },
+
+	            fixZindexIE7: function(target, zindex){
+	                if(isIE() == 7){
+	                    $(target).each(
+	                        function(){
+	                            $(this).css('z-index', zindex);
+	                            --zindex;
+	                        }
+	                    );
+	                }
+	            },
+
+	            formatDate: function(oldDate) {
+	                var date = new Date(oldDate);
+	                var day = date.getDate();
+	                var month = date.getMonth() + 1;
+	                var year = date.getFullYear();
+	                if(month < 10) {
+	                    month = '0' + month;
+	                }
+	                if(day < 10) {
+	                    day = '0' + day;
+	                }
+	                return (year + '-' + month + '-' + day);
+	            },
+	            formColorBoxResize: function() {
+	                if (isMobile()) {
+	                    $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+	                }
+	                else {
+	                    // IE8 and below doesn't take auto height
+	                    // however the default div height
+	                    // is auto anyway
+	                    $.colorbox.resize({width:'800px'});
+	                    
+	                }
+	            },
+
+	            formColorBoxWidth: function() {
+	                return isMobile()? '100%': '800px';
+	            },
+
+	            getParameterByName: function( name ) {
+	                var _name = name,
+	                    regex = new RegExp("[\\?&]" + _name + "=([^&#]*)"),
+	                    results = regex.exec(location.search)
+	                ;
+	                
+	                _name = _name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	                
+	                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	            },
+
+	            getScripts: function(scripts, callback) {
+	                var progress = 0;
+	                var internalCallback = function () {        
+	                    if (++progress == scripts.length - 1) {
+	                        callback();
+	                    }
+	                };    
+	                scripts.forEach(
+	                    function(script) {        
+	                        $.getScript(script, internalCallback);        
+	                    }
+	                );
+	            },
+
+	            isEmail: function(email) {
+	                var re = /\S+@\S+\.\S+/;
+	                return re.test(email);
+	            },
+
+	            openImportWizardUrl: function(url) {
+	                var win = window.open(url, "_target");
+	                setTimeout( function() {
+	                    if(!win || win.outerHeight === 0) {
+	                        //First Checking Condition Works For IE & Firefox
+	                        //Second Checking Condition Works For Chrome
+	                        window.location.href = url;
+	                    }
+	                }, 250);
+	                $.colorbox.close();
+	            }
+	        };
+	        return utilsService;
+	    }
+	);
+
+/***/ },
+/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
@@ -13326,7 +13263,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 51 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
@@ -13938,6 +13875,74 @@
 	    };
 	    return worksSrvc;
 	}]);
+
+/***/ },
+/* 52 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
+	    var serv = {
+	        displayEducation: true,
+	        displayEmployment: true,
+	        displayFunding: true,
+	        displayPersonalInfo: true,
+	        displayWorks: true,
+	        displayPeerReview: true,
+	        toggleEducation: function() {
+	            serv.displayEducation = !serv.displayEducation;
+	        },
+	        toggleEmployment: function() {
+	            serv.displayEmployment = !serv.displayEmployment;
+	        },
+	        toggleFunding: function() {
+	            serv.displayFunding = !serv.displayFunding;
+	        },
+	        togglePersonalInfo: function() {
+	            serv.displayPersonalInfo = !serv.displayPersonalInfo;
+	        },
+	        toggleWorks: function() {
+	            serv.displayWorks = !serv.displayWorks;
+	        },
+	        togglePeerReview: function() {              
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        },
+	        openEducation: function() {
+	            serv.displayEducation = true;
+	        },
+	        openFunding: function() {
+	            serv.displayFunding = true;
+	        },
+	        openEmployment: function() {
+	            serv.displayEmployment = true;
+	        },
+	        openPersonalInfo: function() {
+	            serv.displayPersonalInfo = true;
+	        },
+	        openWorks: function() {
+	            serv.displayWorks = true;
+	        },
+	        openPeerReview: function() {
+	            serv.displayPeerReview = true;
+	        },
+	        togglePeerReviews : function() {
+	            serv.displayPeerReview = !serv.displayPeerReview;
+	        }   
+	    };
+	    return serv;
+	}]);
+
+/***/ },
+/* 53 */
+/***/ function(module, exports) {
+
+	function webpackContext(req) {
+		throw new Error("Cannot find module '" + req + "'.");
+	}
+	webpackContext.keys = function() { return []; };
+	webpackContext.resolve = webpackContext;
+	module.exports = webpackContext;
+	webpackContext.id = 53;
+
 
 /***/ }
 /******/ ]);
