@@ -5627,9 +5627,10 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;                                
-                if($scope.authorizationForm.userName.value) {
+                if($scope.authorizationForm.userName.value) { 
                     $scope.isOrcidPresent = true;
-                    $scope.showRegisterForm = false;                    
+                    $scope.showRegisterForm = false;   
+                    $scope.$broadcast("loginHasUserId", { userName: $scope.authorizationForm.userName.value });                 
                 }
                 // #show_login - legacy fragment id, we should remove this
                 // sometime

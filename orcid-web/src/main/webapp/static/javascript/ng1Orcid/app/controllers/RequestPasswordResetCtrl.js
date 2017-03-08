@@ -1,6 +1,26 @@
 angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
 
     //prefill reset form if email entered in login form
+    $scope.$on("loginHasUserId", function(event, options) {
+        console.log(options.userName);
+        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(reEmailMatch.test(options.userName)) {
+            setTimeout(function(){ 
+                console.log(options.userName + " is an email");
+                $scope.$apply(function () {
+                    $scope.requestResetPassword = {
+                        email:  options.userName
+                    }
+                });
+            }, 2000);
+        } else {
+            $scope.requestResetPassword = {
+                email:  ""
+            }
+        }
+    });
+
+    //prefill reset form if email entered in login form
     $scope.$on("loginUserIdInputChanged", function(event, options) {
         var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(reEmailMatch.test(options.newValue)) {
