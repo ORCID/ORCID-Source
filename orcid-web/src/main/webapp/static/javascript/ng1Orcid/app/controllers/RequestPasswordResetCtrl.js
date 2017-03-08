@@ -1,9 +1,10 @@
 angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
 
+    var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
     //prefill reset form if email included in oauth url is an existing orcid user
     $scope.$on("loginHasUserId", function(event, options) {
         console.log(options.userName);
-        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if(reEmailMatch.test(options.userName)) {
                 console.log(options.userName + " is an email");
                 $scope.requestResetPassword = {
@@ -18,7 +19,6 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$c
 
     //prefill reset form if email entered in login form
     $scope.$on("loginUserIdInputChanged", function(event, options) {
-        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if(reEmailMatch.test(options.newValue)) {
             $scope.requestResetPassword = {
                 email:  options.newValue
