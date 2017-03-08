@@ -62,14 +62,17 @@
                                 <div class="row personal-login">
                                     <div class="form-group">
                                         <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>                     
-                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
+                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" ng-change="loginUserIdInputChanged()" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
                                     </div>
                                     <div class="form-group">
                                         <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
                                         <input type="password" id="password" ng-model="authorizationForm.password.value" name="password" placeholder="<@orcid.msg 'login.password'/>" class="form-control">
-                                        <div id="login-reset">
-                                            <a href="<@orcid.rootPath '/reset-password'/>"><@orcid.msg 'login.reset'/></a>
-                                        </div>
+                                        <#if !RequestParameters['ResetPassword']??>
+						                    <div id="login-reset">
+						                        <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>
+						                    </div>
+					                    </#if>
+					                   
                                     </div>    
                                     <div class="form-group">
                                         <span class="orcid-error" ng-show="authorizationForm.errors.length > 0 && !showDeactivatedError && !showReactivationSent">
@@ -82,22 +85,41 @@
                                             ${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.1")}<a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
                                         </span>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <div class="col-md-6">
-                                                <a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
-                                                <@orcid.msg 'confirm-oauth-access.Deny' />
-                                                </a>
-                                            </div>
-                                            <div class="col-md-6">                                                                                    
-                                                <button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
-                                                <@orcid.msg 'confirm-oauth-access.Authorize' />
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="form-group oauth-buttons">     
+                                        <a class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+                                        <@orcid.msg 'confirm-oauth-access.Deny' />
+                                        </a>                                                                                  
+                                        <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+                                        <@orcid.msg 'confirm-oauth-access.Authorize' />
+                                        </button>
                                     </div>                        
                                 </div>                  
                             </div>
+                            <!-- RESET PASSWORD -->
+							<#if RequestParameters['ResetPassword']??>
+				            	<div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="reset-password">
+				                	<a name="resetPassword"></a>
+				                	<a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
+				                	<div ng-show="showResetPassword" ng-cloak>
+							            <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
+							        	<form id="password-reset-form" name="emailAddressForm">
+						        			<span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
+									            <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
+									        </span>
+									        <div class="alert alert-success" ng-show="requestResetPassword.successMessage != null">
+									        	<strong><span ng-bind="requestResetPassword.successMessage"></span></strong>
+									        </div>
+						        			<div class="control-group">
+						            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label><span class="required">*</span>				           
+						               			<div class="controls"> 
+						               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
+						               			</div>
+						               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
+						        			</div>
+							        	</form>
+						        	</div>
+								 </div>   
+							</#if>
                             <!-- SOCIAL LOGIN -->                     
                             <div class="social-login">
                                 <div class="title">
@@ -326,19 +348,13 @@
                                     </div>
                                 </div>
                                 <!-- Buttons  -->
-                                <div class="row">
-                                    <div class="col-md-6">                                                                
-                                        <a id="register-form-deny" class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
+                                <div class="row col-md-12 oauth-buttons">                                                               
+                                        <a id="register-form-deny" class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
                                             <@orcid.msg 'confirm-oauth-access.Deny' />
                                         </a>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button id="register-authorize-button" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
-                                                <@orcid.msg 'confirm-oauth-access.Authorize' />
-                                            </button>
-                                        </div>
-                                    </div>
+                                        <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+                                            <@orcid.msg 'confirm-oauth-access.Authorize' />
+                                        </button>   
                                 </div>
                             </div>
                         </div>

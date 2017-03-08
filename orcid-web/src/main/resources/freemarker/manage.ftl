@@ -37,16 +37,15 @@
         <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
     </div>
 </#if>
-
 <div class="row">
-	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
+	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix lhs">
         <#include "admin_menu.ftl"/>
     </div>
     <!-- Right side -->
     <div class="col-md-9 col-sm-12 col-xs-12">
     	<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <#assign open = "" />
-
+		<modal-unverified-email-set-primary></modal-unverified-email-set-primary>
         <table class="table table-bordered settings-table account-settings"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>

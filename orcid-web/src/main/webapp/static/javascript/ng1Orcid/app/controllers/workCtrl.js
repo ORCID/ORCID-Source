@@ -631,16 +631,56 @@ angular.module('orcidApp').controller(
                 });
             };
 
+            //--typeahead
+            //populates the external id URL based on type and value.
             $scope.fillUrl = function(extId) {
                 var url;
                 if(extId != null) {
                     url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                    /* Code to fetch from DB...
+                    if (extId.workExternalIdentifierType.value){
+                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
+                        if (url && extId.workExternalIdentifierId.value)
+                            url += extId.workExternalIdentifierId.value;
+                    }*/
                     if(extId.url == null) {
-                        extId.url = {value:""};
+                        extId.url = {value:url};
+                    }else{
+                        extId.url.value=url;                        
                     }
-                    extId.url.value=url;
                 }
             };
+            
+            //cache responses
+            $scope.externalIDTypeCache = [];
+            
+            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
+            $scope.getExternalIDTypes = function(query){  
+                var url = getBaseUri()+'/works/idTypes.json?query='+query;
+                var ajax = $scope.externalIDTypeCache[query];
+                if (!ajax){
+                    ajax = $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        cache: true,
+                      }).done(function(data) {
+                          for (var key in data) {
+                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                          }
+                      });   
+                    $scope.externalIDTypeCache[query] = ajax;
+                }
+                return ajax;
+            };
+            
+            //caches name->description lookup so we can display the description not the name after selection
+            $scope.externalIDNamesToDescriptions = [];
+            $scope.formatExternalIDType = function(model) {
+                if (!model)
+                    return "";
+                return $scope.externalIDNamesToDescriptions[model].description;
+              }
+            //--typeahead end
     
             //init
             $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);

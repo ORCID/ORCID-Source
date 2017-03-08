@@ -44,7 +44,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.integration.api.t1.T1OAuthAPIService;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;

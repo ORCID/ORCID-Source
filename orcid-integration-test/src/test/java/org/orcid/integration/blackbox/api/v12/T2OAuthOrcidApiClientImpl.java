@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api.t2;
+package org.orcid.integration.blackbox.api.v12;
 
 import static org.orcid.core.api.OrcidApiConstants.*;
 
@@ -425,6 +425,15 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON })
+    @Path(FUNDING_PATH)
+    public ClientResponse viewFundingDetailsJson(String orcid, String accessToken) {
+        URI fundingPathWithOrcid = UriBuilder.fromPath(FUNDING_PATH).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(fundingPathWithOrcid, VND_ORCID_JSON, accessToken);
+    }
+    
+    @Override
+    @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML })
     @Path(FUNDING_PATH)
     public ClientResponse viewFundingDetailsXml(String orcid, String accessToken) {
@@ -441,6 +450,15 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
         return orcidClientHelper.getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_XML, accessToken);
     }
 
+    @Override
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON })
+    @Path(AFFILIATIONS_PATH)
+    public ClientResponse viewAffiliationDetailsJson(String orcid, String accessToken) {
+        URI affiliationPathWithOrcid = UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(affiliationPathWithOrcid, VND_ORCID_JSON, accessToken);
+    }
+    
     @Override
     public ClientResponse viewExternalIdentifiersHtml(String orcid, String accessToken) {
         // TODO Auto-generated method stub

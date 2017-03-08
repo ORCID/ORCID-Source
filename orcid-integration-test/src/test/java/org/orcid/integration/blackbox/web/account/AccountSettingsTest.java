@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class AccountSettingsTest extends BlackBoxBase {
     @Before
     public void before() {
@@ -79,20 +79,9 @@ public class AccountSettingsTest extends BlackBoxBase {
         openEditEmailsSectionOnAccountSettingsPage();
         assertTrue(allowedToAddEmails());
         
-        boolean haveDelegate = false;
-        try {
-            haveDelegate(getUser2OrcidId());
-            haveDelegate = true;
-        } catch(Exception e) {
-            
-        }
+        //ASSUMES USER 2 IS A DELEGATE OF USER 1
+        //TODO: Add a new BB test that CRUD delegates        
         
-        if(haveDelegate) {
-            removeDelegate(getUser2OrcidId());
-        }
-        
-        addDelegate(getUser2OrcidId());
-                
         // Now sign in as user 2
         signout();
         signin(getUser2UserName(), getUser2Password());

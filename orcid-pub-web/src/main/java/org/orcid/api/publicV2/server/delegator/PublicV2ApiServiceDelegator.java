@@ -103,4 +103,6 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response searchByQuery(Map<String, List<String>> solrParams);
 
     Response viewClient(String clientId);
+    
+    Response viewBulkWorks(String orcid, String putCodes);
 }

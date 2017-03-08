@@ -34,9 +34,9 @@ import org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -46,8 +46,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  * @author Angel Montenegro
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-internal-api-context.xml" })
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class InternalAPITest {
 
     @Value("${org.orcid.web.testClient1.redirectUri}")

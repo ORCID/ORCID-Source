@@ -18,6 +18,7 @@ package org.orcid.integration.blackbox.web.works;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class AddWorksTest extends BlackBoxBase {
     @Value("${org.orcid.web.baseUri}")
     public String baseUri;
@@ -102,7 +103,15 @@ public class AddWorksTest extends BlackBoxBase {
         BBBUtil.ngAwareSendKeys("conference","workCategory", webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
         BBBUtil.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
-        BBBUtil.ngAwareSendKeys("doi","worksIdType0", webDriver);
+        
+        //Pick the identifier type from the list 
+        WebElement input = findElement(By.id("worksIdType0"));
+        input.sendKeys("doi");
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath("//a[starts-with(@title,\"doi\")]")), webDriver);
+        WebElement typeAheadList = BBBUtil.findElement(By.xpath("//a[starts-with(@title,\"doi\")]"));
+        typeAheadList.click();
+        
+        //Set other identifier attributes
         BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
         BBBUtil.ngAwareSendKeys(workName,"work-title", webDriver);
         

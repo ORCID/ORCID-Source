@@ -55,11 +55,11 @@
 	requireAll(__webpack_require__(2));
 	requireAll(__webpack_require__(22));
 	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(29));
 	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(31));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(32));
-	requireAll(__webpack_require__(45));
+	requireAll(__webpack_require__(33));
+	requireAll(__webpack_require__(46));
 
 /***/ },
 /* 1 */
@@ -95,7 +95,7 @@
 	 *  
 	 */
 
-	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+	var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
 
 	angular.element(function() {
 	    angular.bootstrap(
@@ -103,1084 +103,12 @@
 	        ['orcidApp']
 	    );
 	});
-	// angular.bootstrap(document.body, ['orcidApp'], {});
+
 
 
 	/*******************************************************************************
-	 * 3 - Angular Services
-	 ******************************************************************************/
-
-	// Dependencie: removeBadContributors, dw object. Can't move yet
-	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
-	    var worksSrvc = {
-	        bibtexJson: {},
-	        blankWork: null,
-	        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-	        details: new Object(), // we should think about putting details in the
-	        groups: new Array(),
-	        labelsMapping: {
-	            "default": {
-	                types: [
-	                    {
-	                        type: "all",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-	                    }
-	                ]
-	            }, 
-	            "publication": {
-	                types: [
-	                    {
-	                        type: "book",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "book-chapter",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookPlaceholder")
-	                    },
-	                    {
-	                        type: "book-review",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "dictionary-entry",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "dissertation",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    },
-	                    {
-	                        type: "edited-book",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "encyclopedia-entry",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "journal-article",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
-	                    },
-	                    {
-	                        type: "journal-issue",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
-	                    },
-	                    {
-	                        type: "magazine-article",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticlePlaceholder")
-	                    },
-	                    {
-	                        type: "manual",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "newsletter-article",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletterPlaceholder")
-	                    },
-	                    {
-	                        type: "newspaper-article",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaperPlaceholder")
-	                    },
-	                    {
-	                        type: "online-resource",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "report",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    },
-	                    {
-	                        type: "research-tool",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    },
-	                    {
-	                        type: "supervised-student-publication",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    },
-	                    {
-	                        type: "test",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    },
-	                    {
-	                        type: "translation",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "website",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "working-paper",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
-	                    }
-	                ]
-	            },
-	            "conference": {
-	                types: [
-	                    {
-	                        type: "conference-abstract",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
-	                    },
-	                    {
-	                        type: "conference-paper",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
-	                    },
-	                    {
-	                        type: "conference-poster",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
-	                    }
-	                ]
-	            },
-	            "intellectual_property": {
-	                types: [
-	                    {
-	                        type: "disclosure",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "license",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "patent",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "registered-copyright",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    }
-	                ]
-	            },
-	            "other_output": {
-	                types: [
-	                    {
-	                        type: "artistic-performance",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "data-set",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "invention",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "lecture-speech",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "research-technique",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "spin-off-company",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "standards-and-policy",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "technical-standard",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    },
-	                    {
-	                        type: "other",
-	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
-	                    }
-	                ]
-	            }
-	        },
-	        loading: false,
-	        loadingDetails: false,
-	        quickRef: {},
-	        worksToAddIds: null,
-
-	        getLabelMapping: function(workCategory, workType){
-	            var result = this.labelsMapping.default.types[0];
-	            var tempI = null;
-
-	            if( this.labelsMapping[workCategory] != undefined ){
-	                tempI = this.labelsMapping[workCategory].types;
-	                for( var i = 0; i < tempI.length; i++) {
-	                    if( tempI[i].type == workType ) {
-	                        result = tempI[i];
-	                    }
-	                }
-	            }
-	            return result;
-	        },   
-	        addBibtexJson: function(dw) {
-	            if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-	                try {
-	                    worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-	                } catch (err) {
-	                    worksSrvc.bibtexJson[dw.putCode.value] = null;
-	                    console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-	                };
-	            };
-	        },
-	        addAbbrWorksToScope: function(type) {
-	            if (type == worksSrvc.constants.access_type.USER)
-	                var url = getBaseUri() + '/works/works.json?workIds=';
-	            else // use the anonymous url
-	                var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
-	            if(worksSrvc.worksToAddIds.length != 0 ) {
-	                worksSrvc.loading = true;
-	                var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
-	                $.ajax({
-	                    'url': url + workIds,
-	                    'dataType': 'json',
-	                    'success': function(data) {
-	                        $rootScope.$apply(function(){
-	                            for (i in data) {
-	                                var dw = data[i];
-	                                removeBadContributors(dw);
-	                                removeBadExternalIdentifiers(dw);
-	                                worksSrvc.addBibtexJson(dw);
-	                                groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
-	                            };
-	                        });
-	                        if(worksSrvc.worksToAddIds.length == 0 ) {
-	                            worksSrvc.loading = false;
-	                            $rootScope.$apply();
-	                            fixZindexIE7('.workspace-public workspace-body-list li',99999);
-	                            fixZindexIE7('.workspace-toolbar',9999);
-	                        } else {
-	                            $rootScope.$apply();
-	                            setTimeout(function(){
-	                                worksSrvc.addAbbrWorksToScope(type);
-	                            },50);
-	                        }
-	                    }
-	                }).fail(function(e) {
-	                    // $rootScope.$apply(function() {
-	                        worksSrvc.loading = false;
-	                    // });
-	                    console.log("Error fetching works: " + workIds);
-	                    logAjaxError(e);
-	                });
-	            } else {
-	                worksSrvc.loading = false;
-	            };
-	        },
-	        createNew: function(work) {
-	            var cloneW = JSON.parse(JSON.stringify(work));
-	            cloneW.source = null;
-	            cloneW.putCode = null;
-	            cloneW.contributors = [];
-	            return cloneW;
-	        },
-	        copyEIs: function(from, to) {
-	            // add all identiifers
-	            if (to.workExternalIdentifiers == undefined)
-	                to.workExternalIdentifiers = new Array();
-	            for (var idx in from.workExternalIdentifiers)
-	                to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
-	            return to;
-	        },
-	        getBlankWork: function(callback) {
-	            // if cached return clone of blank
-	            if (worksSrvc.blankWork != null)
-	                callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
-	            $.ajax({
-	                url: getBaseUri() + '/works/work.json',
-	                dataType: 'json',
-	                success: function(data) {
-	                    blankWork =  data;
-	                    callback(data);
-	                }
-	            }).fail(function() {
-	                console.log("Error fetching blank work");
-	            });
-	        },
-	        getDetails: function(putCode, type, callback) {
-	            if (type == worksSrvc.constants.access_type.USER)
-	                var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
-	            else // use the anonymous url
-	                var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-	            if(worksSrvc.details[putCode] == undefined) {
-	                $.ajax({
-	                    url: url + putCode,
-	                    dataType: 'json',
-	                    success: function(data) {
-	                        $rootScope.$apply(function () {
-	                            removeBadContributors(data);
-	                            removeBadExternalIdentifiers(data);
-	                            worksSrvc.addBibtexJson(data);
-	                            worksSrvc.details[putCode] = data;
-	                            if (callback != undefined) callback(worksSrvc.details[putCode]);
-	                        });
-	                    }
-	                }).fail(function(e){
-	                    // something bad is happening!
-	                    console.log("error fetching works");
-	                    logAjaxError(e);
-	                });
-	            } else {
-	                if (callback != undefined) callback(worksSrvc.details[putCode]);
-	            };
-	        },
-	        getEditable: function(putCode, callback) {
-	            // first check if they are the current source
-	            var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-	                if (data.source == orcidVar.orcidId)
-	                    callback(data);
-	                else
-	                    worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
-	                        // in this case we want to open their version
-	                        // if they don't have a version yet then copy
-	                        // the current one
-	                        var bestMatch = null;
-	                        for (var idx in worksSrvc.details)
-	                            if (worksSrvc.details[idx].source == orcidVar.orcidId) {
-	                                bestMatch = worksSrvc.details[idx];
-	                                break;
-	                            }
-	                        if (bestMatch == null) {
-	                            bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
-	                        }
-	                        callback(bestMatch);
-	                    });
-	            });
-	        },
-	        getGroup: function(putCode) {
-	            for (var idx in worksSrvc.groups) {
-	                    if (worksSrvc.groups[idx].hasPut(putCode))
-	                        return worksSrvc.groups[idx];
-	            }
-	            return null;
-	        },
-	        getGroupDetails: function(putCode, type, callback) {
-	            var group = worksSrvc.getGroup(putCode);
-	            var needsLoading =  new Array();
-	            for (var idx in group.activities) {
-	                needsLoading.push(group.activities[idx].putCode.value)
-	            }
-
-	            var popFunct = function () {
-	                if (needsLoading.length > 0)
-	                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
-	                else if (callback != undefined)
-	                    callback();
-	            };
-	            popFunct();
-	        },
-	        getWork: function(putCode) {
-	            for (var idx in worksSrvc.groups) {
-	                    if (worksSrvc.groups[idx].hasPut(putCode))
-	                        return worksSrvc.groups[idx].getByPut(putCode);
-	            }
-	            return null;
-	        },
-	        deleteGroupWorks: function(putCodes) {
-	            var rmWorks = [];
-	            var rmGroups = [];
-	            for (var i in putCodes) {
-	                for (var j in worksSrvc.groups) {
-	                    if (worksSrvc.groups[j].hasPut(putCodes[i])) {
-	                        rmGroups.push(j);
-	                        for (var k in worksSrvc.groups[j].activities){
-	                            rmWorks.push(worksSrvc.groups[j].activities[k].putCode.value);
-	                        }
-	                    };
-	                }
-	            }
-	            while (rmGroups.length > 0) {
-	                worksSrvc.groups.splice(rmGroups.pop(),1);
-	            }
-	            worksSrvc.removeWorks(rmWorks);
-	        },
-	        deleteWork: function(putCode) {
-	            worksSrvc.removeWorks([putCode], function() {
-	                groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
-	                $rootScope.$apply();
-	            });
-	        },
-	        makeDefault: function(group, putCode) {
-	            group.makeDefault(putCode);
-	            $.ajax({
-	                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
-	                dataType: 'json',
-	                success: function(data) {
-	                }
-	            }).fail(function(){
-	                // something bad is happening!
-	                console.log("some bad is hppending");
-	            });
-	        },
-	        loadAbbrWorks: function(access_type) {
-	            if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
-	                worksSrvc.worksToAddIds = orcidVar.workIds;
-	                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
-	            } else {
-	                worksSrvc.worksToAddIds = null;
-	                worksSrvc.loading = true;
-	                worksSrvc.groups = new Array();
-	                worksSrvc.details = new Object();
-	                $.ajax({
-	                    url: getBaseUri() + '/works/workIds.json',
-	                    dataType: 'json',
-	                    success: function(data) {
-	                        worksSrvc.worksToAddIds = data;
-	                        worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function(e){
-	                    // something bad is happening!
-	                    console.log("error fetching works");
-	                    logAjaxError(e);
-	                });
-	            };
-	        },
-	        putWork: function(work,sucessFunc, failFunc) {
-	            $.ajax({
-	                url: getBaseUri() + '/works/work.json',
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                type: 'POST',
-	                data: angular.toJson(work),
-	                success: function(data) {
-	                    sucessFunc(data);
-	                }
-	            }).fail(function(){
-	                failFunc();
-	            });
-	        },
-	        removeWorks: function(putCodes,callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
-	                type: 'DELETE',
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    if (putCodes.length > 0) 
-	                        worksSrvc.removeWorks(putCodes,callback);
-	                    else if (callback)
-	                        callback(data);
-	                }
-	            }).fail(function() {
-	                console.log("Error deleting works.");
-	            });
-	        },
-	        setGroupPrivacy: function(putCode, priv) {
-	            var group = worksSrvc.getGroup(putCode);
-	            var putCodes = new Array();
-	            for (var idx in group.activities) {
-	                putCodes.push(group.activities[idx].putCode.value);
-	                group.activities[idx].visibility = priv;
-	            }
-	            worksSrvc.updateVisibility(putCodes, priv);
-	        },
-	        setPrivacy: function(putCode, priv) {
-	            worksSrvc.updateVisibility([putCode], priv);
-	        },
-	        updateVisibility: function(putCodes, priv) {
-	            $.ajax({
-	                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
-	                type: 'GET',
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    if (putCodes.length > 0)
-	                        worksSrvc.updateVisibility(putCodes, priv);
-	                }
-	            }).fail(function() {
-	                console.log("Error updating profile work.");
-	            });
-	        },
-	        workCount: function() {
-	            var count = 0;
-	            for (var idx in worksSrvc.groups) {
-	                count += worksSrvc.groups[idx].activitiesCount;
-	            }
-	            return count;
-	        },
-	        worksValidate: function(works,sucessFunc, failFunc) {
-	            $.ajax({
-	                url: getBaseUri() + '/works/worksValidate.json',
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                type: 'POST',
-	                data: angular.toJson(works),
-	                success: function(data) {
-	                    sucessFunc(data);
-	                }
-	            }).fail(function(){
-	                failFunc();
-	            });
-	        },
-	        getUniqueDois : function(putCode){
-	            var dois = [];              
-	            var group = worksSrvc.getGroup(putCode);
-	            for (var idx in group.activities) {                 
-	                for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-	                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-	                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-	                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
-	                        }
-	                    }
-	                }
-	            }
-	            
-	            return dois;
-	        }
-	    };
-	    return worksSrvc;
-	}]);
-
-	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
-	    var serv = {
-	        emails: null,            
-	        delEmail: null,
-	        displayModalWarningFlag: false,
-	        inputEmail: null,
-	        popUp: false,
-	        primaryEmail: null,
-	        
-	        addEmail: function() {              
-	            $.ajax({
-	                url: getBaseUri() + '/account/addEmail.json',
-	                data:  angular.toJson(serv.inputEmail),
-	                contentType: 'application/json;charset=UTF-8',
-	                type: 'POST',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.inputEmail = data;
-	                    if (serv.inputEmail.errors.length == 0) {
-	                        serv.initInputEmail();
-	                        serv.getEmails();
-	                    }
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        },
-	        
-	        deleteEmail: function (callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/deleteEmail.json',
-	                type: 'DELETE',
-	                data:  angular.toJson(serv.delEmail),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.getEmails();
-	                    if (callback)
-	                           callback();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("emailSrvc.deleteEmail() error");
-	            });
-	        },
-	        
-	        getEmails: function(callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/emails.json',
-	                type: 'GET',
-	                dataType: 'json',
-	                success: function(data) { 
-	                    serv.emails = data;
-	                    for (var i in data.emails){
-	                        if (data.emails[i].primary){
-	                            serv.primaryEmail = data.emails[i];
-	                        }
-	                    }                                                
-	                    $rootScope.$apply();
-	                    if (callback) {
-	                       callback(data);
-	                    }
-	                }
-	            }).fail(function(e) {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	                logAjaxError(e);
-	            });
-	        },
-	        
-	        getEmailPrimary: function() {
-	            return serv.primaryEmail;
-	        },
-
-	        initInputEmail: function() {
-	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
-	        },
-
-	        saveEmail: function(callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/emails.json',
-	                type: 'POST',
-	                data: angular.toJson(serv.emails),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.data;
-	                    $rootScope.$apply();
-	                    if (callback)
-	                        callback(data);
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        },
-
-	        setPrimary: function(email) {
-	            for (i in serv.emails.emails) {
-	                if (serv.emails.emails[i] == email) {
-	                    serv.emails.emails[i].primary = true;
-	                    serv.primaryEmail = email;
-	                } else {
-	                    serv.emails.emails[i].primary = false;
-	                }
-	            }
-	            serv.saveEmail();
-	        },
-	        
-	        setPrivacy: function(email, priv) {
-	            email.visibility = priv;
-	            serv.saveEmail();
-	        },
-	        
-	        verifyEmail: function(email, callback) {
-	            $.ajax({
-	                url: getBaseUri() + '/account/verifyEmail.json',
-	                type: 'get',
-	                data:  { "email": email.value },
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    if (callback)
-	                        callback(data);
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with multi email");
-	            });
-	        }
-
-	    };
-
-	    return serv;
-	});
-
-	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
-	    var serv = {
-	        prefs: null,
-	        saved: false,
-	        getPrivacyPreferences: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/account/preferences.json',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.prefs = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with prefs");
-	            });
-	        },
-	        savePrivacyPreferences: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/account/preferences.json',
-	                type: 'POST',
-	                data: angular.toJson(serv.prefs),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.prefs = data;
-	                    serv.saved = true;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                // something bad is happening!
-	                console.log("error with prefs");
-	            });
-	        },
-	        clearMessage: function(){
-	            serv.saved = false;
-	        }
-	    };
-
-	    // populate the prefs
-	    serv.getPrivacyPreferences();
-
-	    return serv; 
-	});
-
-
-
-	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
-	    var widgetSrvc = {
-	        locale: 'en',
-	        setLocale: function (locale) {
-	            widgetSrvc.locale = locale;
-	        }
-	    };
-	    return widgetSrvc;
-	}]);
-
-	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
-	    var serv = {
-	        feed: null,
-	        getDiscoFeed: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
-	                dataType: 'json',
-	                cache: true,
-	                success: function(data) {
-	                    serv.feed = data;
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function(e) {
-	                // something bad is happening!
-	                console.log("error with disco feed");
-	                logAjaxError(e);
-	                serv.feed = [];
-	                $rootScope.$apply();
-	            });
-	        },
-	        getIdPName: function(entityId) {
-	            var locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en";
-	            for(i in serv.feed) {
-	                var idp = serv.feed[i];
-	                if(entityId === idp.entityID) {
-	                    var name = idp.DisplayNames[0].value;
-	                    for(j in idp.DisplayNames){
-	                        var displayName = idp.DisplayNames[j];
-	                        if(locale === displayName.lang){
-	                            name = displayName.value;
-	                        }
-	                    }
-	                    return name;
-	                }
-	            }
-	            if(entityId === "facebook" || entityId === "google"){
-	                return entityId.charAt(0).toUpperCase() + entityId.slice(1);
-	            }
-	            return entityId;
-	        }
-	    };
-
-	    // populate the disco feed
-	    serv.getDiscoFeed();
-	    return serv; 
-	}]);
-
-	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
-	    return {
-	          clearFilters : function ($scope){
-	              $scope.by_country = undefined;
-	              $scope.by_researchCommunity = undefined;
-	              $scope.activeLetter = '';
-	         }
-	     };
-	 }]);
-
-	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
-	    var peerReviewSrvc = {
-	            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-	            groups: new Array(),            
-	            loading: false,
-	            loadingDetails: false,
-	            quickRef: {},            
-	            loadingDetails: false,
-	            blankPeerReview: null,
-	            details: new Object(), // we should think about putting details in
-	                                    // the
-	            peerReviewsToAddIds: null,
-	            peerReviewGroupDetailsRequested: new Array(),
-	            getBlankPeerReview: function(callback) {
-	                 // if cached return clone of blank
-	                if (peerReviewSrvc.blankPeerReview != null)
-	                    callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
-	                $.ajax({
-	                    url: getBaseUri() + '/peer-reviews/peer-review.json',
-	                    dataType: 'json',
-	                    success: function(data) {
-	                        callback(data);
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    console.log("Error fetching blank Peer Review");
-	                });                
-	            },
-	            postPeerReview: function(peer_review, successFunc, failFunc) {              
-	                $.ajax({
-	                    url: getBaseUri() + '/peer-reviews/peer-review.json',
-	                    contentType: 'application/json;charset=UTF-8',
-	                    dataType: 'json',
-	                    type: 'POST',
-	                    data: angular.toJson(peer_review),
-	                    success: function(data) {
-	                        successFunc(data);
-	                    }
-	                }).fail(function(){
-	                    failFunc();
-	                });
-	            },
-	            createNew: function(peerReview) {
-	                var cloneF = JSON.parse(JSON.stringify(peerReview));
-	                cloneF.source = null;
-	                cloneF.putCode = null;
-	                for (var idx in cloneF.externalIdentifiers)
-	                    cloneF.externalIdentifiers[idx].putCode = null;
-	                return cloneF;
-	            },                   
-	            loadPeerReviews: function(access_type) {
-	                if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {                    
-	                    peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
-	                    peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
-	                } else {
-	                    peerReviewSrvc.peerReviewsToAddIds = null;
-	                    peerReviewSrvc.loading = true;
-	                    peerReviewSrvc.groups = new Array();
-	                    peerReviewSrvc.details = new Object();
-	                    $.ajax({
-	                        url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
-	                        dataType: 'json',
-	                        success: function(data) {
-	                            peerReviewSrvc.peerReviewsToAddIds = data;                          
-	                            peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
-	                            $rootScope.$apply();
-	                        }
-	                    }).fail(function(e){
-	                        // something bad is happening!
-	                        console.log("error fetching Peer Review");
-	                        logAjaxError(e);
-	                    });
-	                };
-	            },          
-	            addPeerReviewsToScope: function(type) {
-	                if (type == peerReviewSrvc.constants.access_type.USER)
-	                    var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
-	                else // use the anonymous url
-	                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
-	                if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
-	                    peerReviewSrvc.loading = true;
-	                    var peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
-	                    $.ajax({
-	                        'url': url + peerReviewIds,
-	                        'dataType': 'json',
-	                        'success': function(data) {
-	                            $rootScope.$apply(function(){
-	                                for (i in data) {
-	                                    var dw = data[i];                                    
-	                                    removeBadExternalIdentifiers(dw);                                       
-	                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
-	                                };
-	                            });
-	                            if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
-	                                peerReviewSrvc.loading = false;
-	                                $rootScope.$apply();
-	                            } else {
-	                                $rootScope.$apply();
-	                                setTimeout(function(){
-	                                    peerReviewSrvc.addPeerReviewsToScope(type);
-	                                },50);
-	                            }
-	                        }
-	                    }).fail(function(e) {
-	                        // $rootScope.$apply(function() {
-	                            peerReviewSrvc.loading = false;
-	                        // });
-	                        console.log("Error fetching Peer Review: " + peerReviewIds);
-	                        logAjaxError(e);
-	                    });
-	                } else {
-	                    peerReviewSrvc.loading = false;
-	                };
-	            },
-	            getGroup: function(putCode) {
-	                for (var idx in peerReviewSrvc.groups) {
-	                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
-	                            return peerReviewSrvc.groups[idx];
-	                }
-	                return null;
-	            },
-	            getEditable: function(putCode, callback) {
-	                // first check if they are the current source
-	                var peerReview = peerReviewSrvc.getPeerReview(putCode);
-	                if (peerReview.source == orcidVar.orcidId)
-	                    callback(peerReview);
-	                else {
-	                    var bestMatch = null;
-	                    var group = peerReviewSrvc.getGroup(putCode);
-	                    for (var idx in group.activitiess) {
-	                        if (group[idx].source == orcidVar.orcidId) {
-	                            bestMatch = callback(group[idx]);
-	                            break;
-	                        }
-	                    }
-	                    if (bestMatch == null) 
-	                        bestMatch = peerReviewSrvc.createNew(peerReview);
-	                        callback(bestMatch);
-	                    };
-	            },
-	            getPeerReview: function(putCode) {
-	                for (var idx in peerReviewSrvc.groups) {
-	                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
-	                            return peerReviewSrvc.groups[idx].getByPut(putCode);
-	                }
-	                return null;
-	            },
-	            deleteGroupPeerReview: function(putCodes) {
-	                var rmPeerReview = new Array();
-	                var rmGroups = new Array();
-	                for (var idj in putCodes)
-	                    for (var idx in peerReviewSrvc.groups) {
-	                        if (peerReviewSrvc.groups[idx].hasPut(putCodes[idj])) {
-	                            rmGroups.push(idx);
-	                            for (var idj in peerReviewSrvc.groups[idx].activities)
-	                                rmPeerReview.push(peerReviewSrvc.groups[idx].activities[idj].putCode.value);
-	                        };
-	                    }
-	                while (rmGroups.length > 0) 
-	                    peerReviewSrvc.groups.splice(rmGroups.pop(),1);
-	                peerReviewSrvc.removePeerReview(rmPeerReview);
-	            },
-	            deletePeerReview: function(putCode) {
-	                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
-	            },
-	            makeDefault: function(group, putCode) {
-	                group.makeDefault(putCode);
-	                $.ajax({
-	                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
-	                    type: 'GET',
-	                    dataType: 'json',
-	                    success: function(data) {
-	                    }
-	                }).fail(function(){
-	                    // something bad is happening!
-	                    console.log("Error: peerReviewSrvc.makeDefault method");
-	                });
-	            },
-	            removePeerReview: function(putCodes,callback) {
-	                $.ajax({
-	                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),
-	                    type: 'DELETE',
-	                    contentType: 'application/json;charset=UTF-8',
-	                    dataType: 'json',
-	                    success: function(data) {
-	                        if (putCodes.length > 0) 
-	                            peerReviewSrvc.removePeerReview(putCodes,callback);
-	                        else if (callback)
-	                            callback(data);
-	                    }
-	                }).fail(function() {
-	                    console.log("Error deleting Peer Review.");
-	                });
-	            },
-	            setGroupPrivacy: function(putCode, priv) {
-	                var group = peerReviewSrvc.getGroup(putCode);
-	                var putCodes = new Array();
-	                for (var idx in group.activities) {
-	                    putCodes.push(group.activities[idx].putCode.value);
-	                    group.activities[idx].visibility = priv;
-	                }
-	                peerReviewSrvc.updateVisibility(putCodes, priv);
-	            },
-	            setPrivacy: function(putCode, priv) {
-	                peerReviewSrvc.updateVisibility([putCode], priv);
-	            },
-	            updateVisibility: function(putCodes, priv) {
-	                $.ajax({
-	                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join() + '/visibility/'+priv.toLowerCase(),
-	                    type: 'GET',
-	                    contentType: 'application/json;charset=UTF-8',
-	                    dataType: 'json',
-	                    success: function(data) {
-	                        if (putCodes.length > 0)
-	                            peerReviewSrvc.updateVisibility(putCodes, priv);
-	                    }
-	                }).fail(function() {
-	                    console.log("Error updating profile Peer Review.");
-	                });
-	            },
-	            peerReviewCount: function() {
-	                var count = 0;
-	                for (var idx in peerReviewSrvc.groups) {
-	                    count += peerReviewSrvc.groups[idx].activitiesCount;
-	                }
-	                return count;
-	            },
-	            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-	                if(groupIDPutCode != undefined) {
-	                    if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
-	                        peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
-	                        var group = peerReviewSrvc.getGroup(putCode);
-	                        $.ajax({
-	                            url: getBaseUri() + '/public/group/' + groupIDPutCode,
-	                            dataType: 'json',
-	                            contentType: 'application/json;charset=UTF-8',
-	                            type: 'GET',
-	                            success: function(data) {
-	                                $rootScope.$apply(function(){
-	                                    console.log(angular.toJson(data));
-	                                    group.groupName = data.name;
-	                                    group.groupDescription = data.description;
-	                                    group.groupType = data.type;
-	                                });
-	                            }
-	                        }).fail(function(xhr, status, error){
-	                            console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-	                        });
-	                        
-	                    }
-	                } else {
-	                    console.log("Error: undefined group id for peer review with put code: " + putCode);  
-	                }       
-	            }
-	    };
-	    return peerReviewSrvc;
-	}]);
-
-	/*
 	 * CONTROLLERS
-	 */
+	*******************************************************************************/
 
 	angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($scope) {
 
@@ -6785,6 +5713,10 @@
 	        });
 	    };
 
+	    $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
+	    };
+
 	    $scope.loginAndAuthorize = function() {
 	        $scope.authorizationForm.approved = true;
 	        // Fire GA sign-in-submit
@@ -6797,6 +5729,7 @@
 	        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
 	        return false;
 	    };
+
 
 	    $scope.loginAndDeny = function() {
 	        $scope.authorizationForm.approved = false;
@@ -7219,9 +6152,10 @@
 	                        // loaded, not the first one.
 	    $scope.showDeactivatedError = false;
 	    $scope.showReactivationSent = false;
-	    
+
+
 	    $scope.showPersonalLogin = function () {        
-	        $scope.personalLogin = true;        
+	        $scope.personalLogin = true;    
 	    };
 	    
 	    $scope.showInstitutionLogin = function () {
@@ -7271,6 +6205,10 @@
 	           console.log("error sending reactivation email");
 	       });
 	   };
+
+	   $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+	    };
 	    
 	}]);
 
@@ -7294,6 +6232,10 @@
 	            $scope.loadedFeed = true;
 	        }
 	    });
+
+	    $scope.loginUserIdInputChanged = function() {
+	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
+	    };
 	    
 	}]);
 
@@ -9917,7 +8859,30 @@
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
-	    
+
+	    //prefill reset form if email entered in login form
+	    $scope.$on("loginUserIdInputChanged", function(event, options) {
+	        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	        if(reEmailMatch.test(options.newValue)) {
+	            $scope.requestResetPassword = {
+	                email:  options.newValue
+	            }
+	        } else {
+	            $scope.requestResetPassword = {
+	                email:  ""
+	            }
+	        }
+	    });
+
+
+	    $scope.toggleResetPassword = function() {
+	        $scope.showResetPassword = !$scope.showResetPassword;
+	    };
+
+	    // init reset password toggle text
+	    $scope.showResetPassword = (window.location.hash === "#resetPassword");
+	    $scope.resetPasswordToggleText = om.get("login.forgotten_password");
+
 	    $scope.getRequestResetPassword = function() {
 	        $.ajax({
 	            url: getBaseUri() + '/reset-password.json',
@@ -10454,46 +9419,57 @@
 	        [
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "lr",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "lr",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "lr",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "lr",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "lr",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10501,62 +9477,77 @@
 	        [
 	            {
 	                "value": "ar",
+	                "direction": "rl",
 	                "label": "العربية"
 	            },
 	            {
 	                "value": "cs",
+	                "direction": "lr",
 	                "label": "čeština"
 	            },
 	            {
 	                "value": "en",
+	                "direction": "lr",
 	                "label": "English"
 	            },
 	            {
 	                "value": 'es',
+	                "direction": "rl",
 	                "label": 'Español'
 	            },
 	            {
 	                "value": 'fr',
+	                "direction": "lr",
 	                "label": 'Français'
 	            },
 	            {
 	                "value": 'it',
+	                "direction": "lr",
 	                "label": 'Italiano'
 	            },
 	            {
 	                "value": 'ja',
+	                "direction": "rl",
 	                "label": '日本語'
 	            },
 	            {
 	                "value": 'ko',
+	                "direction": "rl",
 	                "label": '한국어'
 	            },
 	            {
 	                "value": 'lr',
+	                "direction": "lr",
 	                "label": 'lr'
 	            },
 	            {
 	                "value": 'pt',
+	                "direction": "lr",
 	                "label": 'Português'
 	            },
 	            {
 	                "value": 'rl',
+	                "direction": "rl",
 	                "label": 'rl'
 	            },
 	            {
 	                "value": 'ru',
+	                "direction": "rl",
 	                "label": 'Русский'
 	            },
 	            {
 	                "value": 'xx',
+	                "direction": "lr",
 	                "label": 'X'
 	            },
 	            {
 	                "value": 'zh_CN',
+	                "direction": "lr",
 	                "label": '简体中文'
 	            },
 	            {
 	                "value": 'zh_TW',
+	                "direction": "rl",
 	                "label": '繁體中文'
 	            }
 	        ];
@@ -10572,6 +9563,7 @@
 
 	    //Load Language that is set in the cookie or set default language to english
 	    $scope.getCurrentLanguage = function(){
+
 	        $scope.language = $scope.languages[0]; //Default
 	        typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
 	        angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
@@ -11539,16 +10531,56 @@
 	                });
 	            };
 
+	            //--typeahead
+	            //populates the external id URL based on type and value.
 	            $scope.fillUrl = function(extId) {
 	                var url;
 	                if(extId != null) {
 	                    url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+	                    /* Code to fetch from DB...
+	                    if (extId.workExternalIdentifierType.value){
+	                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
+	                        if (url && extId.workExternalIdentifierId.value)
+	                            url += extId.workExternalIdentifierId.value;
+	                    }*/
 	                    if(extId.url == null) {
-	                        extId.url = {value:""};
+	                        extId.url = {value:url};
+	                    }else{
+	                        extId.url.value=url;                        
 	                    }
-	                    extId.url.value=url;
 	                }
 	            };
+	            
+	            //cache responses
+	            $scope.externalIDTypeCache = [];
+	            
+	            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
+	            $scope.getExternalIDTypes = function(query){  
+	                var url = getBaseUri()+'/works/idTypes.json?query='+query;
+	                var ajax = $scope.externalIDTypeCache[query];
+	                if (!ajax){
+	                    ajax = $.ajax({
+	                        url: url,
+	                        dataType: 'json',
+	                        cache: true,
+	                      }).done(function(data) {
+	                          for (var key in data) {
+	                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+	                          }
+	                      });   
+	                    $scope.externalIDTypeCache[query] = ajax;
+	                }
+	                return ajax;
+	            };
+	            
+	            //caches name->description lookup so we can display the description not the name after selection
+	            $scope.externalIDNamesToDescriptions = [];
+	            $scope.formatExternalIDType = function(model) {
+	                if (!model)
+	                    return "";
+	                return $scope.externalIDNamesToDescriptions[model].description;
+	              }
+	            //--typeahead end
 	    
 	            //init
 	            $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);
@@ -11829,8 +10861,9 @@
 		"./fnForm.js": 24,
 		"./focusMe.js": 25,
 		"./modalEmailUnVerified.js": 26,
-		"./ngEnter.js": 27,
-		"./ngEnterSubmit.js": 28
+		"./modalUnverifiedEmailSetPrimary.js": 27,
+		"./ngEnter.js": 28,
+		"./ngEnterSubmit.js": 29
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12018,6 +11051,87 @@
 /***/ function(module, exports) {
 
 	/*
+	 * For modal dispalyed if primary email is changed to an unverified email
+	 */
+
+
+
+	angular.module('orcidApp').directive(
+	    'modalUnverifiedEmailSetPrimary', 
+	    [
+	        '$compile',
+	        '$rootScope',
+	        '$timeout',
+	        'initialConfigService',
+	        'emailSrvc',
+	        function( $compile, $rootScope, $timeout, initialConfigService, emailSrvc ) {
+
+	            var configuration = initialConfigService.getInitialConfiguration();
+
+	            var closeModal = function(){
+	                $.colorbox.remove();
+	                $('modal-unverified-email-set-primary').html('<div id="modal-unverified-email-set-primary-container"></div>');
+	            };
+
+	            var openModal = function( scope ){
+	                scope.emailPrimary = emailSrvc.getEmailPrimary().value;
+
+	                $.colorbox(
+	                    {
+	                        html : $compile($('#modal-unverified-email-set-primary-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.youve_changed") + '</p><p>' + om.get("orcid.frontend.workspace.some_editing_features") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") +  '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><a class="nner-row" ng-click="closeColorBox()">' + om.get("manage.email.close") + '</a></div></div></div></div>'))(scope),
+	                        escKey: true,
+	                        overlayClose: true,
+	                        transition: 'fade',
+	                        close: '',
+	                        scrolling: false
+	                    }
+	                );
+	                $.colorbox.resize({width:"500px"});
+	            };
+
+	            function link( scope, element, attrs ) {
+
+	                scope.verifyEmail = function() {
+	                    verifyEmail( scope );
+	                };
+
+	                scope.closeColorBox = function() {
+	                    closeModal();
+	                };
+
+	                scope.openModal = function( scope ){
+	                    openModal( scope );
+	                }
+
+	                scope.$on(
+	                    'unverifiedSetPrimary',
+	                    function(event, data){
+	                        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
+	                            scope.openModal( scope ); 
+	                        }
+	                        else {
+	                            scope.closeColorBox(); 
+	                        }
+	                    }
+
+	                );
+	            }
+
+	            return {
+	                link: link,
+	                template: '<div id="modal-unverified-email-set-primary-container"></div>',
+	                transclude: true
+	            };
+
+	        }
+	    ]
+	);
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	/*
 	 * Scope: element
 	 */
 	angular.module('orcidApp').directive('ngEnter', function() {
@@ -12036,7 +11150,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -12058,7 +11172,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -12067,15 +11181,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 29;
+	webpackContext.id = 30;
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 31
+		"./ui.multiselect.js": 32
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12088,11 +11202,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -12373,22 +11487,29 @@
 	}]);
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 33,
-		"./affiliationsSrvc.js": 34,
-		"./bioBulkSrvc.js": 35,
-		"./commonSrvc.js": 36,
-		"./fundingSrvc.js": 37,
-		"./groupedActivitiesService.js": 38,
-		"./groupedActivitiesUtil.js": 39,
-		"./initialConfigService.js": 40,
-		"./membersListSrvc.js": 41,
-		"./notificationsSrvc.js": 42,
-		"./utilsService.js": 43,
-		"./workspaceSrvc.js": 44
+		"./actBulkSrvc.js": 34,
+		"./affiliationsSrvc.js": 35,
+		"./bioBulkSrvc.js": 36,
+		"./clearMemberListFilterSrvc.js": 47,
+		"./commonSrvc.js": 37,
+		"./discoSrvc.js": 48,
+		"./emailSrvc.js": 49,
+		"./fundingSrvc.js": 38,
+		"./groupedActivitiesService.js": 39,
+		"./groupedActivitiesUtil.js": 40,
+		"./initialConfigService.js": 41,
+		"./membersListSrvc.js": 42,
+		"./notificationsSrvc.js": 43,
+		"./peerReviewSrvc.js": 50,
+		"./prefsSrvc.js": 51,
+		"./utilsService.js": 44,
+		"./widgetSrvc.js": 52,
+		"./worksSrvc.js": 53,
+		"./workspaceSrvc.js": 45
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12401,11 +11522,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 33;
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12424,7 +11545,7 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -12553,7 +11674,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -12573,7 +11694,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -12638,7 +11759,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -12849,7 +11970,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12967,7 +12088,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/*
@@ -13022,7 +12143,7 @@
 	*/
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -13049,35 +12170,82 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
 	    var serv = {
+	        communityTypes: {},
+	        consortiaList: null,
+	        currentMemberDetails: null,
 	        membersList: null,
 	        memberDetails: {},
-	        currentMemberDetails: null,
-	        consortiaList: null,
-	        communityTypes: {},
-	        getMembersList: function() {
+
+	        getCommunityTypes: function() {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/communityTypes.json';
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        for(var i in data){
+	                            serv.communityTypes[i] = data[i];
+	                        }
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with community types");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
+	        getConsortiaList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/members/members.json',
+	                url: getBaseUri() + '/consortia/consortia.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.membersList = data;
+	                    serv.consortiaList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with members list");
+	                console.log("error with consortia list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
 	        },
+
+	        getCurrentMemberDetailsBySlug: function(memberSlug) {
+	            var url = "";
+	            if(serv.currentMemberDetails == null){
+	                url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    success: function(data) {
+	                        serv.currentMemberDetails = data;
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    // something bad is happening!
+	                    console.log("error with member details by slug");
+	                    serv.feed = [];
+	                    $rootScope.$apply();
+	                });
+	            }
+	        },
+
 	        getDetails: function(memberId, consortiumLeadId) {
+	            var url = "";
 	            if(serv.memberDetails[memberId] == null){
-	                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
+	                url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
 	                if(consortiumLeadId != null){
 	                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
 	                }
@@ -13097,65 +12265,28 @@
 	                });
 	            }
 	        },
-	        getCurrentMemberDetailsBySlug: function(memberSlug) {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        serv.currentMemberDetails = data;
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with member details by slug");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
+
+	        getMemberPageUrl: function(slug) {
+	            return orcidVar.baseUri + '/members/' + slug;
 	        },
-	        getCommunityTypes: function() {
-	            if(serv.currentMemberDetails == null){
-	                var url = getBaseUri() + '/members/communityTypes.json';
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: true,
-	                    success: function(data) {
-	                        for(var i in data){
-	                            serv.communityTypes[i] = data[i];
-	                        }
-	                        $rootScope.$apply();
-	                    }
-	                }).fail(function() {
-	                    // something bad is happening!
-	                    console.log("error with community types");
-	                    serv.feed = [];
-	                    $rootScope.$apply();
-	                });
-	            }
-	        },
-	        getConsortiaList: function() {
+
+	        getMembersList: function() {
 	            $.ajax({
-	                url: getBaseUri() + '/consortia/consortia.json',
+	                url: getBaseUri() + '/members/members.json',
 	                dataType: 'json',
 	                cache: true,
 	                success: function(data) {
-	                    serv.consortiaList = data;
+	                    serv.membersList = data;
 	                    $rootScope.$apply();
 	                }
 	            }).fail(function() {
 	                // something bad is happening!
-	                console.log("error with consortia list");
+	                console.log("error with members list");
 	                serv.feed = [];
 	                $rootScope.$apply();
 	            });
-	        },
-	        getMemberPageUrl: function(slug) {
-	            return orcidVar.baseUri + '/members/' + slug;
 	        }
+	        
 	    };
 	    serv.getCommunityTypes();
 	    return serv; 
@@ -13163,7 +12294,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -13406,7 +12537,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13525,7 +12656,7 @@
 	);
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13580,7 +12711,7 @@
 	}]);
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13589,8 +12720,1207 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 45;
+	webpackContext.id = 46;
 
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
+	    return {
+	          clearFilters : function ($scope){
+	              $scope.by_country = undefined;
+	              $scope.by_researchCommunity = undefined;
+	              $scope.activeLetter = '';
+	         }
+	     };
+	 }]);
+
+/***/ },
+/* 48 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+	    var serv = {
+	        feed: null,
+	        getDiscoFeed: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
+	                dataType: 'json',
+	                cache: true,
+	                success: function(data) {
+	                    serv.feed = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function(e) {
+	                // something bad is happening!
+	                console.log("error with disco feed");
+	                logAjaxError(e);
+	                serv.feed = [];
+	                $rootScope.$apply();
+	            });
+	        },
+	        getIdPName: function(entityId) {
+	            var 
+	                displayName = "",
+	                idp = "",
+	                locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en",
+	                name = ""
+	            ;
+	            for(var i in serv.feed) {
+	                idp = serv.feed[i];
+	                if(entityId === idp.entityID) {
+	                    name = idp.DisplayNames[0].value;
+	                    for(j in idp.DisplayNames){
+	                        displayName = idp.DisplayNames[j];
+	                        if(locale === displayName.lang){
+	                            name = displayName.value;
+	                        }
+	                    }
+	                    return name;
+	                }
+	            }
+	            if(entityId === "facebook" || entityId === "google"){
+	                return entityId.charAt(0).toUpperCase() + entityId.slice(1);
+	            }
+	            return entityId;
+	        }
+	    };
+
+	    // populate the disco feed
+	    serv.getDiscoFeed();
+	    return serv; 
+	}]);
+
+/***/ },
+/* 49 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
+	    var serv = {
+	        delEmail: null,
+	        displayModalWarningFlag: false,
+	        emails: null,            
+	        inputEmail: null,
+	        popUp: false,
+	        primaryEmail: null,
+	        unverifiedSetPrimary: false,
+	        
+	        addEmail: function() {              
+	            $.ajax({
+	                url: getBaseUri() + '/account/addEmail.json',
+	                data:  angular.toJson(serv.inputEmail),
+	                contentType: 'application/json;charset=UTF-8',
+	                type: 'POST',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.inputEmail = data;
+	                    if (serv.inputEmail.errors.length == 0) {
+	                        serv.initInputEmail();
+	                        serv.getEmails();
+	                    }
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        },
+	        
+	        deleteEmail: function (callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/deleteEmail.json',
+	                type: 'DELETE',
+	                data:  angular.toJson(serv.delEmail),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.getEmails();
+	                    if (callback) {
+	                        callback();
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("emailSrvc.deleteEmail() error");
+	            });
+	        },
+	        
+	        getEmailPrimary: function() {
+	            return serv.primaryEmail;
+	        },
+
+	        getEmails: function(callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/emails.json',
+	                type: 'GET',
+	                dataType: 'json',
+	                success: function(data) { 
+	                    serv.emails = data;
+	                    for (var i in data.emails){
+	                        if (data.emails[i].primary){
+	                            serv.primaryEmail = data.emails[i];
+	                        }
+	                    }                                                
+	                    $rootScope.$apply();
+	                    if (callback) {
+	                       callback(data);
+	                    }
+	                }
+	            }).fail(function(e) {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	                logAjaxError(e);
+	            });
+	        },
+
+	        initInputEmail: function() {
+	            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
+	        },
+
+	        saveEmail: function(callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/emails.json',
+	                type: 'POST',
+	                data: angular.toJson(serv.emails),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.data;
+	                    $rootScope.$apply();
+	                    if (callback) {
+	                        callback(data);
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        },
+
+	        setPrimary: function(email, callback) {
+	            for (var i in serv.emails.emails) {
+	                if (serv.emails.emails[i] == email) {
+	                    serv.emails.emails[i].primary = true;
+	                    serv.primaryEmail = email;
+	                    if (serv.emails.emails[i].verified == false) {
+	                        serv.unverifiedSetPrimary = true;
+	                    } else {
+	                        serv.unverifiedSetPrimary = false;
+	                    }
+
+	                    callback = function(){
+	                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+	                    }
+
+	                } else {
+	                    serv.emails.emails[i].primary = false;
+	                }
+	            }
+	            serv.saveEmail(callback);
+	        },
+	        
+	        setPrivacy: function(email, priv) {
+	            email.visibility = priv;
+	            serv.saveEmail();
+	        },
+	        
+	        verifyEmail: function(email, callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/account/verifyEmail.json',
+	                type: 'get',
+	                data:  { "email": email.value },
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    if (callback) {
+	                        callback(data);
+	                    }
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with multi email");
+	            });
+	        }
+
+	    };
+
+	    return serv;
+	});
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+	    var peerReviewSrvc = {
+	            blankPeerReview: null,
+	            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+	            details: new Object(),
+	            groups: new Array(),            
+	            loading: false,
+	            loadingDetails: false,
+	            peerReviewGroupDetailsRequested: new Array(),
+	            peerReviewsToAddIds: null,
+	            quickRef: {},            
+
+	            addPeerReviewsToScope: function(type) {
+	                var peerReviewIds = "";
+	                var url = getBaseUri();
+	                if (type == peerReviewSrvc.constants.access_type.USER) {
+	                    url += '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
+	                }
+	                else { // use the anonymous url 
+	                    url += '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
+	                }
+	                if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
+	                    peerReviewSrvc.loading = true;
+	                    peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
+	                    
+	                    $.ajax({
+	                        'url': url + peerReviewIds,
+	                        'dataType': 'json',
+	                        'success': function(data) {
+	                            $rootScope.$apply(function(){
+	                                var dw = null;
+	                                for (var i in data) {
+	                                    dw = data[i];                                    
+	                                    removeBadExternalIdentifiers(dw);                                       
+	                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
+	                                };
+	                            });
+	                            if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
+	                                peerReviewSrvc.loading = false;
+	                                $rootScope.$apply();
+	                            } else {
+	                                $rootScope.$apply();
+	                                setTimeout(function(){
+	                                    peerReviewSrvc.addPeerReviewsToScope(type);
+	                                },50);
+	                            }
+	                        }
+	                    }).fail(function(e) {
+	                        // $rootScope.$apply(function() {
+	                            peerReviewSrvc.loading = false;
+	                        // });
+	                        console.log("Error fetching Peer Review: " + peerReviewIds);
+	                        logAjaxError(e);
+	                    });
+	                } else {
+	                    peerReviewSrvc.loading = false;
+	                };
+	            },
+
+	            createNew: function(peerReview) {
+	                var cloneF = JSON.parse(JSON.stringify(peerReview));
+	                cloneF.source = null;
+	                cloneF.putCode = null;
+	                for (var idx in cloneF.externalIdentifiers) {
+	                    cloneF.externalIdentifiers[idx].putCode = null;
+	                }
+	                return cloneF;
+	            },
+
+	            deleteGroupPeerReview: function(putCodes) {
+	                var rmGroups = new Array();
+	                var rmPeerReview = new Array();
+	                for (var idj in putCodes) {    
+	                    for (var idx in peerReviewSrvc.groups) {
+	                        if (peerReviewSrvc.groups[idx].hasPut(putCodes[idj])) {
+	                            rmGroups.push(idx);
+	                            for (var idk in peerReviewSrvc.groups[idx].activities) { //Updated var name, was repeated as idj, also updated the reference in activities to use idk instead, in case of errors.
+	                                rmPeerReview.push(peerReviewSrvc.groups[idx].activities[idk].putCode.value);
+	                            }
+	                        };
+	                    }
+	                }
+	                while (rmGroups.length > 0) {
+	                    peerReviewSrvc.groups.splice(rmGroups.pop(),1);
+	                }
+	                peerReviewSrvc.removePeerReview(rmPeerReview);
+	            },
+
+	            deletePeerReview: function(putCode) {
+	                peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
+	            },
+
+	            getBlankPeerReview: function(callback) {
+	                 // if cached return clone of blank
+	                if (peerReviewSrvc.blankPeerReview != null) {
+	                    callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
+	                }
+	                $.ajax({
+	                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        callback(data);
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function() {
+	                    console.log("Error fetching blank Peer Review");
+	                });                
+	            },
+
+	            getEditable: function(putCode, callback) {
+	                // first check if they are the current source
+	                var bestMatch = null;
+	                var group = null;
+	                var peerReview = peerReviewSrvc.getPeerReview(putCode);
+	                if (peerReview.source == orcidVar.orcidId){
+	                    callback(peerReview);
+	                }
+	                else {
+	                    group = peerReviewSrvc.getGroup(putCode);
+	                    for (var idx in group.activitiess) {
+	                        if (group[idx].source == orcidVar.orcidId) {
+	                            bestMatch = callback(group[idx]);
+	                            break;
+	                        }
+	                    }
+	                    if (bestMatch == null) {
+	                        bestMatch = peerReviewSrvc.createNew(peerReview);
+	                    }
+	                    callback(bestMatch);
+	                };
+	            },
+
+	            getGroup: function(putCode) {
+	                for (var idx in peerReviewSrvc.groups) {
+	                    if (peerReviewSrvc.groups[idx].hasPut(putCode)) {
+	                        return peerReviewSrvc.groups[idx];
+	                    }
+	                }
+	                return null;
+	            },
+
+	            getPeerReview: function(putCode) {
+	                for (var idx in peerReviewSrvc.groups) {
+	                    if (peerReviewSrvc.groups[idx].hasPut(putCode)) {
+	                        return peerReviewSrvc.groups[idx].getByPut(putCode);
+	                    }
+	                }
+	                return null;
+	            },
+
+	            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
+	                var group = null;
+	                if(groupIDPutCode != undefined) {
+	                    if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){                    
+	                        peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);                    
+	                        group = peerReviewSrvc.getGroup(putCode);
+	                        $.ajax({
+	                            url: getBaseUri() + '/public/group/' + groupIDPutCode,
+	                            dataType: 'json',
+	                            contentType: 'application/json;charset=UTF-8',
+	                            type: 'GET',
+	                            success: function(data) {
+	                                $rootScope.$apply(function(){
+	                                    console.log(angular.toJson(data));
+	                                    group.groupName = data.name;
+	                                    group.groupDescription = data.description;
+	                                    group.groupType = data.type;
+	                                });
+	                            }
+	                        }).fail(function(xhr, status, error){
+	                            console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+	                        });
+	                        
+	                    }
+	                } else {
+	                    console.log("Error: undefined group id for peer review with put code: " + putCode);  
+	                }       
+	            },
+
+	            loadPeerReviews: function(access_type) {
+	                if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {                    
+	                    peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
+	                    peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
+	                } else {
+	                    peerReviewSrvc.peerReviewsToAddIds = null;
+	                    peerReviewSrvc.loading = true;
+	                    peerReviewSrvc.groups = new Array();
+	                    peerReviewSrvc.details = new Object();
+	                    $.ajax({
+	                        url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
+	                        dataType: 'json',
+	                        success: function(data) {
+	                            peerReviewSrvc.peerReviewsToAddIds = data;                          
+	                            peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
+	                            $rootScope.$apply();
+	                        }
+	                    }).fail(function(e){
+	                        // something bad is happening!
+	                        console.log("error fetching Peer Review");
+	                        logAjaxError(e);
+	                    });
+	                };
+	            },   
+
+	            makeDefault: function(group, putCode) {
+	                group.makeDefault(putCode);
+	                $.ajax({
+	                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
+	                    type: 'GET',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                    }
+	                }).fail(function(){
+	                    // something bad is happening!
+	                    console.log("Error: peerReviewSrvc.makeDefault method");
+	                });
+	            },
+
+	            peerReviewCount: function() {
+	                var count = 0;
+	                for (var idx in peerReviewSrvc.groups) {
+	                    count += peerReviewSrvc.groups[idx].activitiesCount;
+	                }
+	                return count;
+	            },
+
+	            postPeerReview: function(peer_review, successFunc, failFunc) {              
+	                $.ajax({
+	                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    dataType: 'json',
+	                    type: 'POST',
+	                    data: angular.toJson(peer_review),
+	                    success: function(data) {
+	                        successFunc(data);
+	                    }
+	                }).fail(function(){
+	                    failFunc();
+	                });
+	            },
+
+	            removePeerReview: function(putCodes,callback) {
+	                $.ajax({
+	                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),
+	                    type: 'DELETE',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        if (putCodes.length > 0) {
+	                            peerReviewSrvc.removePeerReview(putCodes,callback);
+	                        }
+	                        else if (callback){
+	                            callback(data);
+	                        }
+	                    }
+	                }).fail(function() {
+	                    console.log("Error deleting Peer Review.");
+	                });
+	            },
+
+	            setGroupPrivacy: function(putCode, priv) {
+	                var group = peerReviewSrvc.getGroup(putCode);
+	                var putCodes = new Array();
+	                for (var idx in group.activities) {
+	                    putCodes.push(group.activities[idx].putCode.value);
+	                    group.activities[idx].visibility = priv;
+	                }
+	                peerReviewSrvc.updateVisibility(putCodes, priv);
+	            },
+
+	            setPrivacy: function(putCode, priv) {
+	                peerReviewSrvc.updateVisibility([putCode], priv);
+	            },
+
+	            updateVisibility: function(putCodes, priv) {
+	                $.ajax({
+	                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join() + '/visibility/'+priv.toLowerCase(),
+	                    type: 'GET',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        if (putCodes.length > 0)
+	                            peerReviewSrvc.updateVisibility(putCodes, priv);
+	                    }
+	                }).fail(function() {
+	                    console.log("Error updating profile Peer Review.");
+	                });
+	            }
+	    };
+	    return peerReviewSrvc;
+	}]);
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
+	    var serv = {
+	        prefs: null,
+	        saved: false,
+	        getPrivacyPreferences: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/account/preferences.json',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.prefs = data;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        },
+	        savePrivacyPreferences: function() {
+	            $.ajax({
+	                url: getBaseUri() + '/account/preferences.json',
+	                type: 'POST',
+	                data: angular.toJson(serv.prefs),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.prefs = data;
+	                    serv.saved = true;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        },
+	        clearMessage: function(){
+	            serv.saved = false;
+	        }
+	    };
+
+	    // populate the prefs
+	    serv.getPrivacyPreferences();
+
+	    return serv; 
+	});
+
+/***/ },
+/* 52 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
+	    var widgetSrvc = {
+	        locale: 'en',
+	        setLocale: function (locale) {
+	            widgetSrvc.locale = locale;
+	        }
+	    };
+	    return widgetSrvc;
+	}]);
+
+/***/ },
+/* 53 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
+	    var worksSrvc = {
+	        bibtexJson: {},
+	        blankWork: null,
+	        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+	        details: new Object(), // we should think about putting details in the
+	        groups: new Array(),
+	        labelsMapping: {
+	            "default": {
+	                types: [
+	                    {
+	                        type: "all",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+	                    }
+	                ]
+	            }, 
+	            "publication": {
+	                types: [
+	                    {
+	                        type: "book",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "book-chapter",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleBook"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleBookPlaceholder")
+	                    },
+	                    {
+	                        type: "book-review",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "dictionary-entry",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "dissertation",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    },
+	                    {
+	                        type: "edited-book",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "encyclopedia-entry",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "journal-article",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+	                    },
+	                    {
+	                        type: "journal-issue",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.journalTitle"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.journalTitlePlaceholder")
+	                    },
+	                    {
+	                        type: "magazine-article",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticle"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleMagazineArticlePlaceholder")
+	                    },
+	                    {
+	                        type: "manual",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "newsletter-article",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletter"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewsletterPlaceholder")
+	                    },
+	                    {
+	                        type: "newspaper-article",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaper"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleNewspaperPlaceholder")
+	                    },
+	                    {
+	                        type: "online-resource",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "report",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    },
+	                    {
+	                        type: "research-tool",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    },
+	                    {
+	                        type: "supervised-student-publication",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    },
+	                    {
+	                        type: "test",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    },
+	                    {
+	                        type: "translation",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "website",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "working-paper",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitution"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleInstitutionPlaceholder")
+	                    }
+	                ]
+	            },
+	            "conference": {
+	                types: [
+	                    {
+	                        type: "conference-abstract",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+	                    },
+	                    {
+	                        type: "conference-paper",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+	                    },
+	                    {
+	                        type: "conference-poster",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleConference"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleConferencePlaceholder")
+	                    }
+	                ]
+	            },
+	            "intellectual_property": {
+	                types: [
+	                    {
+	                        type: "disclosure",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "license",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "patent",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "registered-copyright",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    }
+	                ]
+	            },
+	            "other_output": {
+	                types: [
+	                    {
+	                        type: "artistic-performance",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "data-set",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "invention",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "lecture-speech",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "research-technique",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "spin-off-company",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "standards-and-policy",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "technical-standard",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    },
+	                    {
+	                        type: "other",
+	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                    }
+	                ]
+	            }
+	        },
+	        loading: false,
+	        loadingDetails: false,
+	        quickRef: {},
+	        worksToAddIds: null,
+
+	        addAbbrWorksToScope: function(type) {
+	            var url = getBaseUri();
+	            var workIds = "";
+	            if (type == worksSrvc.constants.access_type.USER) {
+	                url += '/works/works.json?workIds=';
+	            }
+	            else {
+	                url += '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+	            } // use the anonymous url
+
+	            if(worksSrvc.worksToAddIds.length != 0 ) {
+	                worksSrvc.loading = true;
+	                workIds = worksSrvc.worksToAddIds.splice(0,20).join();
+	                
+	                $.ajax({
+	                    'url': url + workIds,
+	                    'dataType': 'json',
+	                    'success': function(data) {
+	                        $rootScope.$apply(function(){
+	                            var dw = null;
+	                            for (var i in data) {
+	                                dw = data[i];
+	                                removeBadContributors(dw);
+	                                removeBadExternalIdentifiers(dw);
+	                                worksSrvc.addBibtexJson(dw);
+	                                groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
+	                            };
+	                        });
+	                        if(worksSrvc.worksToAddIds.length == 0 ) {
+	                            worksSrvc.loading = false;
+	                            $rootScope.$apply();
+	                            fixZindexIE7('.workspace-public workspace-body-list li',99999);
+	                            fixZindexIE7('.workspace-toolbar',9999);
+	                        } else {
+	                            $rootScope.$apply();
+	                            setTimeout(function(){
+	                                worksSrvc.addAbbrWorksToScope(type);
+	                            },50);
+	                        }
+	                    }
+	                }).fail(function(e) {
+	                    worksSrvc.loading = false;
+	                    console.log("Error fetching works: " + workIds);
+	                    logAjaxError(e);
+	                });
+	            } else {
+	                worksSrvc.loading = false;
+	            };
+	        },
+
+	        addBibtexJson: function(dw) {
+	            if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+	                try {
+	                    worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+	                } catch (err) {
+	                    worksSrvc.bibtexJson[dw.putCode.value] = null;
+	                    console.log("couldn't parse bibtex: " + dw.citation.citation.value);
+	                };
+	            };
+	        },
+
+	        copyEIs: function(from, to) {
+	            // add all identiifers
+	            if (to.workExternalIdentifiers == undefined) {
+	                to.workExternalIdentifiers = new Array();
+	            }
+	            for (var idx in from.workExternalIdentifiers){
+	                to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
+	            }
+	            return to;
+	        },
+
+	        createNew: function(work) {
+	            var cloneW = JSON.parse(JSON.stringify(work));
+	            cloneW.source = null;
+	            cloneW.putCode = null;
+	            cloneW.contributors = [];
+	            return cloneW;
+	        },
+
+	        deleteGroupWorks: function(putCodes) {
+	            var rmWorks = [];
+	            var rmGroups = [];
+	            for (var i in putCodes) {
+	                for (var j in worksSrvc.groups) {
+	                    if (worksSrvc.groups[j].hasPut(putCodes[i])) {
+	                        rmGroups.push(j);
+	                        for (var k in worksSrvc.groups[j].activities){
+	                            rmWorks.push(worksSrvc.groups[j].activities[k].putCode.value);
+	                        }
+	                    };
+	                }
+	            }
+	            while (rmGroups.length > 0) {
+	                worksSrvc.groups.splice(rmGroups.pop(),1);
+	            }
+	            worksSrvc.removeWorks(rmWorks);
+	        },
+
+	        deleteWork: function(putCode) {
+	            worksSrvc.removeWorks([putCode], function() {
+	                groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
+	                $rootScope.$apply();
+	            });
+	        },
+
+	        getBlankWork: function(callback) {
+	            // if cached return clone of blank
+	            if (worksSrvc.blankWork != null){
+	                callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
+	            }
+	            $.ajax({
+	                url: getBaseUri() + '/works/work.json',
+	                dataType: 'json',
+	                success: function(data) {
+	                    blankWork =  data;
+	                    callback(data);
+	                }
+	            }).fail(function() {
+	                console.log("Error fetching blank work");
+	            });
+	        },
+
+	        getDetails: function(putCode, type, callback) {
+	            var url = getBaseUri();
+	            if (type == worksSrvc.constants.access_type.USER){
+	                url += '/works/getWorkInfo.json?workId=';
+	            }
+	            else {// use the anonymous url
+	                url += '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
+	            }
+	            if(worksSrvc.details[putCode] == undefined) {
+	                $.ajax({
+	                    url: url + putCode,
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        $rootScope.$apply(function () {
+	                            removeBadContributors(data);
+	                            removeBadExternalIdentifiers(data);
+	                            worksSrvc.addBibtexJson(data);
+	                            worksSrvc.details[putCode] = data;
+	                            if (callback != undefined) {
+	                                callback(worksSrvc.details[putCode]);
+	                            } 
+	                        });
+	                    }
+	                }).fail(function(e){
+	                    // something bad is happening!
+	                    console.log("error fetching works");
+	                    logAjaxError(e);
+	                });
+	            } else {
+	                if (callback != undefined){
+	                    callback(worksSrvc.details[putCode]);
+	                }
+	            };
+	        },
+	        getEditable: function(putCode, callback) {
+	            // first check if they are the current source
+	            var work = worksSrvc.getDetails(
+	                putCode, worksSrvc.constants.access_type.USER, 
+	                function(data) {
+	                    if (data.source == orcidVar.orcidId){
+	                        callback(data);
+	                    }
+	                    else{
+	                        worksSrvc.getGroupDetails(
+	                            putCode, 
+	                            worksSrvc.constants.access_type.USER, 
+	                            function () {
+	                                // in this case we want to open their version
+	                                // if they don't have a version yet then copy
+	                                // the current one
+	                                var bestMatch = null;
+	                                for (var idx in worksSrvc.details) {    
+	                                    if (worksSrvc.details[idx].source == orcidVar.orcidId) {
+	                                        bestMatch = worksSrvc.details[idx];
+	                                        break;
+	                                    }
+	                                }
+	                                if (bestMatch == null) {
+	                                    bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
+	                                }
+	                                callback(bestMatch);
+	                            }
+	                        );
+	                    }
+	                }
+	            );
+	        },
+
+	        getGroup: function(putCode) {
+	            for (var idx in worksSrvc.groups) {
+	                if (worksSrvc.groups[idx].hasPut(putCode)){
+	                    return worksSrvc.groups[idx];
+	                }
+	            }
+	            return null;
+	        },
+
+	        getGroupDetails: function(putCode, type, callback) {
+	            var group = worksSrvc.getGroup(putCode);
+	            var needsLoading =  new Array();
+	            
+	            var popFunct = function () {
+	                if (needsLoading.length > 0) {
+	                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
+	                }
+	                else if (callback != undefined) {
+	                    callback();
+	                }
+	            };
+
+	            for (var idx in group.activities) {
+	                needsLoading.push(group.activities[idx].putCode.value)
+	            }
+
+	            popFunct();
+	        },
+
+	        getLabelMapping: function(workCategory, workType){
+	            var result = this.labelsMapping.default.types[0];
+	            var tempI = null;
+
+	            if( this.labelsMapping[workCategory] != undefined ){
+	                tempI = this.labelsMapping[workCategory].types;
+	                for( var i = 0; i < tempI.length; i++) {
+	                    if( tempI[i].type == workType ) {
+	                        result = tempI[i];
+	                    }
+	                }
+	            }
+	            return result;
+	        },  
+	       
+	        getUniqueDois : function(putCode){
+	            var dois = [];              
+	            var group = worksSrvc.getGroup(putCode);
+	            for (var idx in group.activities) {                 
+	                for (var i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+	                    if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+	                        if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+	                            dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+	                        }
+	                    }
+	                }
+	            }
+	            
+	            return dois;
+	        },
+
+	        getWork: function(putCode) {
+	            for (var idx in worksSrvc.groups) {
+	                if (worksSrvc.groups[idx].hasPut(putCode)) {
+	                    return worksSrvc.groups[idx].getByPut(putCode);
+	                }
+	            }
+	            return null;
+	        },
+
+	        loadAbbrWorks: function(access_type) {
+	            if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
+	                worksSrvc.worksToAddIds = orcidVar.workIds;
+	                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
+	            } else {
+	                worksSrvc.worksToAddIds = null;
+	                worksSrvc.loading = true;
+	                worksSrvc.groups = new Array();
+	                worksSrvc.details = new Object();
+	                $.ajax({
+	                    url: getBaseUri() + '/works/workIds.json',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        worksSrvc.worksToAddIds = data;
+	                        worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
+	                        $rootScope.$apply();
+	                    }
+	                }).fail(function(e){
+	                    // something bad is happening!
+	                    console.log("error fetching works");
+	                    logAjaxError(e);
+	                });
+	            };
+	        },
+
+	        makeDefault: function(group, putCode) {
+	            group.makeDefault(putCode);
+	            $.ajax({
+	                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+	                dataType: 'json',
+	                success: function(data) {
+	                }
+	            }).fail(function(){
+	                // something bad is happening!
+	                console.log("some bad is hppending");
+	            });
+	        },
+
+	        putWork: function(work,sucessFunc, failFunc) {
+	            $.ajax({
+	                url: getBaseUri() + '/works/work.json',
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                type: 'POST',
+	                data: angular.toJson(work),
+	                success: function(data) {
+	                    sucessFunc(data);
+	                }
+	            }).fail(function(){
+	                failFunc();
+	            });
+	        },
+
+	        removeWorks: function(putCodes,callback) {
+	            $.ajax({
+	                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
+	                type: 'DELETE',
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    if (putCodes.length > 0) {
+	                        worksSrvc.removeWorks(putCodes,callback);
+	                    }
+	                    else if (callback) {
+	                        callback(data);
+	                    }
+	                }
+	            }).fail(function() {
+	                console.log("Error deleting works.");
+	            });
+	        },
+
+	        setGroupPrivacy: function(putCode, priv) {
+	            var group = worksSrvc.getGroup(putCode);
+	            var putCodes = new Array();
+	            for (var idx in group.activities) {
+	                putCodes.push(group.activities[idx].putCode.value);
+	                group.activities[idx].visibility = priv;
+	            }
+	            worksSrvc.updateVisibility(putCodes, priv);
+	        },
+
+	        setPrivacy: function(putCode, priv) {
+	            worksSrvc.updateVisibility([putCode], priv);
+	        },
+
+	        updateVisibility: function(putCodes, priv) {
+	            $.ajax({
+	                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
+	                type: 'GET',
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    if (putCodes.length > 0) {
+	                        worksSrvc.updateVisibility(putCodes, priv);
+	                    }
+	                }
+	            }).fail(function() {
+	                console.log("Error updating profile work.");
+	            });
+	        },
+	        workCount: function() {
+	            var count = 0;
+	            for (var idx in worksSrvc.groups) {
+	                count += worksSrvc.groups[idx].activitiesCount;
+	            }
+	            return count;
+	        },
+	        worksValidate: function(works,sucessFunc, failFunc) {
+	            $.ajax({
+	                url: getBaseUri() + '/works/worksValidate.json',
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                type: 'POST',
+	                data: angular.toJson(works),
+	                success: function(data) {
+	                    sucessFunc(data);
+	                }
+	            }).fail(function(){
+	                failFunc();
+	            });
+	        }
+	    };
+	    return worksSrvc;
+	}]);
 
 /***/ }
 /******/ ]);

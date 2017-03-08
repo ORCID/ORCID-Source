@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.common_v2.OrganizationAddress;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record_v2.ExternalID;
@@ -367,6 +368,52 @@ public class PeerReviewManagerTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5);
+    }
+    
+    @Test
+    public void nonGroupableIdsGenerateEmptyIdsListTest() {
+        PeerReviewSummary s1 = getPeerReviewSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
+        PeerReviewSummary s2 = getPeerReviewSummary("Element 2", "ext-id-2", Visibility.LIMITED);
+        PeerReviewSummary s3 = getPeerReviewSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
+        
+        // Remove the grouping id from s1
+        s1.setGroupId(null);
+        
+        List<PeerReviewSummary> peerReviewsList = Arrays.asList(s1, s2, s3);
+        
+        /**
+         * They should be grouped as
+         * 
+         * Group 1: Element 1
+         * Group 2: Element 2
+         * Group 3: Element 3
+         * */
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewsList, false);
+        assertNotNull(peerReviews);
+        assertEquals(3, peerReviews.getPeerReviewGroup().size());
+        boolean foundEmptyGroup = false;
+        boolean found2 = false;
+        boolean found3 = false;
+        for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            assertEquals(1, group.getPeerReviewSummary().size());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            if(group.getIdentifiers().getExternalIdentifier().get(0).getValue() == null) {
+                assertEquals("ext-id-1", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                foundEmptyGroup = true;
+            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 2")) {
+                assertEquals("ext-id-2", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                found2 = true;
+            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 3")) {
+                assertEquals("ext-id-3", group.getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                found3 = true;
+            } else {
+                fail("Invalid ext id found " + group.getIdentifiers().getExternalIdentifier().get(0).getValue());
+            }            
+        }
+        assertTrue(foundEmptyGroup);
+        assertTrue(found2);
+        assertTrue(found3);
     }
     
     private PeerReviewSummary getPeerReviewSummary(String titleValue, String extIdValue, Visibility visibility) {

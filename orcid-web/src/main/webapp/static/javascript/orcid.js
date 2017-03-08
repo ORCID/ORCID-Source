@@ -225,8 +225,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
             key += activityIdentifiers[idPath];
     } else if (activityIdentifiers[idTypePath]) {    
         // ISSN is misused too often to identify a work
-        if (activityIdentifiers[idTypePath].value != 'issn'
-                && (activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
+        if ((activityIdentifiers[relationship] == null || activityIdentifiers[relationship].value != 'part-of')
                 && activityIdentifiers[idPath] != null
                 && activityIdentifiers[idPath].value != null
                 && activityIdentifiers[idPath].value != '') {           

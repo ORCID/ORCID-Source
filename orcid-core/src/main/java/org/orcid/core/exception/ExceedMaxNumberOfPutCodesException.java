@@ -14,19 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.api;
+package org.orcid.core.exception;
 
-import org.junit.extensions.cpsuite.ClasspathSuite;
-import org.junit.extensions.cpsuite.ClasspathSuite.ClassnameFilters;
-import org.junit.runner.RunWith;
+public class ExceedMaxNumberOfPutCodesException extends ApplicationException {
 
-/**
- * 
- * @author Will Simpson
- *
- */
-@RunWith(ClasspathSuite.class)
-@ClassnameFilters({".*\\.integration\\..*", "!.*\\.blackbox\\..*"})
-public class IntegrationTestSuite {
-
+    private static final long serialVersionUID = 1L;
+    
+    public ExceedMaxNumberOfPutCodesException(Integer maxNumber) {
+        super("Too many put codes specified: maximum is " + maxNumber);
+    }
+    
 }

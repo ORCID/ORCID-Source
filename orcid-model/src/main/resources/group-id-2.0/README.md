@@ -37,34 +37,34 @@ Decription : 1000 chars
 
 Creates a new record
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/group-id-record'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/group-id-record'``
 
 **View Group-id-record**
 
 Returns a record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
 
 **Update Group-id-record**
 
 Updates and replaces the updated values for the record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
 
 **Delete Group-id-record**
 
 Deletes the record with put-code 1000
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X DELETE 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X DELETE 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
 
 **View Group-id-records-Paging**
 
 Returns a list of group-id-records which belong to the page number 1, when the given page-size is 5. Also returns other fields('total', 'page', 'page-size') along with the group-id-record list.  page-size defaults to 100, page defaults to 1.
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?page-size=5&page=1'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?page-size=5&page=1'``
 
 **View Group-id-records-by-name**
 
 Returns a list of group-id-records with name "my-name".
 
-``curl -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?name=my-name'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?name=my-name'``

@@ -169,4 +169,6 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewClient(String clientId);
 
     Response findGroupIdRecordByName(String name);
+
+    Response viewBulkWorks(String orcid, String putCodes);
 }

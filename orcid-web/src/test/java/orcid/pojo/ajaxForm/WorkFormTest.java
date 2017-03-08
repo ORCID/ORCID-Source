@@ -165,7 +165,7 @@ public class WorkFormTest extends XMLTestCase {
         wei.setRelationship(Relationship.SELF);
         wei.setUrl(new Url("http://test.com"));
         wei.setValue("ID");
-        wei.setType(WorkExternalIdentifierType.AGR.name());
+        wei.setType(WorkExternalIdentifierType.AGR.value());
         weis.getExternalIdentifier().add(wei);
         work.setWorkExternalIdentifiers(weis);        
         WorkTitle workTitle = new WorkTitle();
