@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbInvalidRecordDataChangeAdapter;
-import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
+import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,7 +43,7 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
     @Test
     public void fromEntityTest() {
         InvalidRecordDataChangeEntity entity = getEntity();
-        InvalidRecordDataChange element = adapter.toInvalidRecordDataChange(entity);
+        RecordCorrection element = adapter.toInvalidRecordDataChange(entity);
         assertNotNull(element);
         assertEquals(element.getSequence(), entity.getId());
         assertEquals(element.getDateCreated(), entity.getDateCreated());

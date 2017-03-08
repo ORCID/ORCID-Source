@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -417,17 +418,69 @@ public class InvalidRecordDataChangeDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void fetchThreePagesTest() {
-
+    public void haveNextTest() {
+        //Descendant order
+        assertTrue(dao.haveNext(1015L, true));
+        assertTrue(dao.haveNext(1008L, true));
+        assertTrue(dao.haveNext(1001L, true));
+        assertFalse(dao.haveNext(1000L, true));
+        assertFalse(dao.haveNext(0L, true));
+        
+        //Ascendant order
+        assertFalse(dao.haveNext(1015L, false));
+        assertFalse(dao.haveNext(1016L, false));
+        assertTrue(dao.haveNext(1000L, false));
+        assertTrue(dao.haveNext(1001L, false));
+        assertTrue(dao.haveNext(1008L, false));
+        assertTrue(dao.haveNext(1014L, false));
     }
 
     @Test
-    public void fetchFourPagesTest() {
-
+    public void havePreviousTest() {
+        //Descendant order
+        assertFalse(dao.havePrevious(1015L, true));
+        assertFalse(dao.havePrevious(1020L, true));
+        assertTrue(dao.havePrevious(1014L, true));
+        assertTrue(dao.havePrevious(1008L, true));
+        assertTrue(dao.havePrevious(1000L, true));
+        
+        //Ascendant order
+        assertFalse(dao.havePrevious(1000L, false));
+        assertFalse(dao.havePrevious(-1L, false));
+        assertFalse(dao.havePrevious(-10L, false));
+        assertTrue(dao.havePrevious(1001L, false));
+        assertTrue(dao.havePrevious(1008L, false));
+        assertTrue(dao.havePrevious(1014L, false));
+        assertTrue(dao.havePrevious(1015L, false));
     }
-
+    
     @Test
-    public void fetchFivePagesTest() {
-
+    public void invalidValueAscendingTest() {
+        List<InvalidRecordDataChangeEntity> elements = dao.getByDateCreated(1015L, 5L, false);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
+        
+        elements = dao.getByDateCreated(1016L, 5L, false);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
+        
+        elements = dao.getByDateCreated(2000L, 5L, false);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
+    }
+    
+    @Test
+    public void invalidValueDescendingTest() {
+        List<InvalidRecordDataChangeEntity> elements = dao.getByDateCreated(1000L, 5L, true);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
+        
+        elements = dao.getByDateCreated(900L, 5L, true);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
+        
+        elements = dao.getByDateCreated(0L, 5L, true);
+        assertNotNull(elements);
+        assertTrue(elements.isEmpty());
     }
 }

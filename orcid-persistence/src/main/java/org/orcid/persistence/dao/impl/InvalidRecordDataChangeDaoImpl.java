@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
@@ -54,4 +55,22 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
         return (List<InvalidRecordDataChangeEntity>) query.getResultList();
     }
 
+    @Override
+    public boolean haveNext(Long sequence, boolean descendantOrder) {
+        String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
+        TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? "<" : ">"), Long.class);
+        query.setParameter("sequence", sequence);
+        return (query.getSingleResult() == 0) ? false : true;
+    }
+
+    @Override
+    public boolean havePrevious(Long sequence, boolean descendantOrder) {
+        String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
+        TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? ">" : "<"), Long.class);
+        query.setParameter("sequence", sequence);
+        Long result = query.getSingleResult();
+        System.out.println("havePrevious: " + sequence + " -> " + descendantOrder + " result: " + result);
+        
+        return (result == 0) ? false : true;
+    }   
 }

@@ -66,8 +66,8 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
-import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -696,7 +696,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getInvalidRecordDataChangeMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<InvalidRecordDataChange, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(InvalidRecordDataChange.class, InvalidRecordDataChangeEntity.class);        
+        ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);        
         classMap.fieldBToA("id", "sequence");
         classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
         classMap.fieldBToA("description", "description");

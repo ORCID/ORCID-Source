@@ -14,12 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.model.invalid_record_data_change;
+package org.orcid.model.record_correction;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class InvalidRecordDataChange implements Serializable {
+public class RecordCorrection implements Serializable {
     /**
      * 
      */

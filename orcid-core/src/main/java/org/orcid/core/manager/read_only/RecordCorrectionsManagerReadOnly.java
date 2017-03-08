@@ -16,11 +16,10 @@
  */
 package org.orcid.core.manager.read_only;
 
-import java.util.List;
+import org.orcid.model.record_correction.RecordCorrectionsPage;
 
-import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
-
-public interface InvalidRecordDataChangesManagerReadOnly {
-    List<InvalidRecordDataChange> getInvalidRecordDataChangesDescending(Long lastElement, Long pageSize);
-    List<InvalidRecordDataChange> getInvalidRecordDataChangesAscending(Long lastElement, Long pageSize);
+public interface RecordCorrectionsManagerReadOnly {
+    RecordCorrectionsPage getInvalidRecordDataChangesDescending(Long lastElement, Long pageSize);
+    RecordCorrectionsPage getInvalidRecordDataChangesAscending(Long lastElement, Long pageSize);
+    void cacheEvict();
 }

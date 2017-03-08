@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbInvalidRecordDataChangeAdapter;
-import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
+import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
 import ma.glasnost.orika.MapperFacade;
@@ -34,19 +34,19 @@ public class JpaJaxbInvalidRecordDataChangeAdapterImpl implements JpaJaxbInvalid
     }
 
     @Override
-    public InvalidRecordDataChange toInvalidRecordDataChange(InvalidRecordDataChangeEntity entity) {
+    public RecordCorrection toInvalidRecordDataChange(InvalidRecordDataChangeEntity entity) {
         if (entity == null) {
             return null;
         }
-        return mapperFacade.map(entity, InvalidRecordDataChange.class);
+        return mapperFacade.map(entity, RecordCorrection.class);
     }
 
     @Override
-    public List<InvalidRecordDataChange> toInvalidRecordDataChanges(Collection<InvalidRecordDataChangeEntity> entities) {
+    public List<RecordCorrection> toInvalidRecordDataChanges(Collection<InvalidRecordDataChangeEntity> entities) {
         if (entities == null) {
             return null;
         }
-        return mapperFacade.mapAsList(entities, InvalidRecordDataChange.class);
+        return mapperFacade.mapAsList(entities, RecordCorrection.class);
     }
 
 }

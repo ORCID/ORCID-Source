@@ -19,12 +19,12 @@ package org.orcid.core.adapter;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.model.invalid_record_data_change.InvalidRecordDataChange;
+import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 
 public interface JpaJaxbInvalidRecordDataChangeAdapter {
 
-    InvalidRecordDataChange toInvalidRecordDataChange(InvalidRecordDataChangeEntity entity);
+    RecordCorrection toInvalidRecordDataChange(InvalidRecordDataChangeEntity entity);
 
-    List<InvalidRecordDataChange> toInvalidRecordDataChanges(Collection<InvalidRecordDataChangeEntity> entities);
+    List<RecordCorrection> toInvalidRecordDataChanges(Collection<InvalidRecordDataChangeEntity> entities);
 }
