@@ -7481,11 +7481,12 @@
 	    $scope.$on('unverifiedSetPrimary', function(event, data){
 	        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
 	            $scope.showUnverifiedEmailSetPrimaryBox = true;
+	            
 	        }
 	        else {
 	            $scope.showUnverifiedEmailSetPrimaryBox =false;
 	        }
-
+	        $scope.$apply(); 
 	    });
 
 	    //init
