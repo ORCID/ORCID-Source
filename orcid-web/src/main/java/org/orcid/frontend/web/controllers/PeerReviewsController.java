@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.util.LanguagesMap;
@@ -39,11 +40,8 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Role;
-import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -76,10 +74,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
     private PeerReviewManager peerReviewManager;
 
     @Resource
-    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
-
-    @Resource
-    private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;    
@@ -603,22 +598,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
     @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
-            Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
-            datums.add(datum);
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit,false)) {
+            datums.add(orgDisambiguated.toMap());
         }
         return datums;
-    }
-
-    private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
-        datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
-        datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
-        datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
-        datum.put("orgType", orgDisambiguatedDocument.getOrgDisambiguatedType());
-        datum.put("disambiguatedOrganizationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
-        return datum;
     }
 
     /**
@@ -626,16 +609,8 @@ public class PeerReviewsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());
-        datum.put("region", orgDisambiguatedEntity.getRegion());
-        if (orgDisambiguatedEntity.getCountry() != null)
-            datum.put("country", orgDisambiguatedEntity.getCountry().value());
-        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
-        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
-        return datum;
+        OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(id);
+        return orgDisambiguated.toMap();
     }
 
     public Locale getUserLocale() {
