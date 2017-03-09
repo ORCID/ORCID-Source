@@ -20,7 +20,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
 
-	<changeSet id="GRANT-PERMISSIONS" author="Angel Montenegro">		
+	<changeSet id="GRANT-PERMISSIONS" author="Angel Montenegro" dbms="postgresql">		
 		<sql>GRANT SELECT ON TABLE invalid_record_data_changes TO orcidro;</sql>
 	</changeSet>
 	
