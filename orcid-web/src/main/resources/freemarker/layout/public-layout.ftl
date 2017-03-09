@@ -200,7 +200,7 @@
 							</@security.authorize>
 										
 							<#if RequestParameters['record-corrections']??>
-								<li><a ${(nav=="corrections")?string('class="active" ', '')}href="<@orcid.rootPath "/record-corrections" />"><@orcid.msg 'record_corrections.workspace_link' /></a></li>
+								<li><a ${(nav=="corrections")?string('class="active" ', '')}href="<@orcid.rootPath "/about/trust/integrity/record-corrections" />"><@orcid.msg 'record_corrections.workspace_link' /></a></li>
 							</#if>										
 																	
 							</@security.authorize>

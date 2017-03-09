@@ -99,10 +99,5 @@ public class RecordCorrectionsControllerTest extends DBUnitTest {
         assertEquals(Long.valueOf(1015), page2.getLastElementId());
         assertNotNull(page2.getRecordCorrections());
         assertEquals(6, page2.getRecordCorrections().size());
-    }
-    
-    @Test
-    public void navigateTest() {
-        
-    }
+    }    
 }
