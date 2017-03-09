@@ -91,6 +91,9 @@
 		<!-- Orcid social -->
 		<class>org.orcid.persistence.jpa.entities.OrcidSocialEntity</class>
 		
+		<!-- Invalid record data changes -->
+		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>		
+		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 <!--         <properties> -->
