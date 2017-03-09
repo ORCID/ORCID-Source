@@ -48,7 +48,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -117,9 +116,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private NotificationManager notificationManager;
-
-    @Resource
-    private ProfileDao profileDao;
 
     @Resource
     private EmailDao emailDao;
@@ -487,7 +483,8 @@ public class RegistrationController extends BaseController {
             emailEntity.setVerified(true);
             emailEntity.setCurrent(true);
             emailDao.merge(emailEntity);
-            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+            
+            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");

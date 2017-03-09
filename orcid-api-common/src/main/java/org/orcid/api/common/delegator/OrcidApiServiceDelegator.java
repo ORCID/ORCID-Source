@@ -21,8 +21,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import org.orcid.persistence.dao.SolrDao;
-
 /**
  * <p/>
  * Interface that outlines the interactions between the API and core. However,

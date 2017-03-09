@@ -34,7 +34,6 @@ import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -76,9 +75,6 @@ public class ClaimController extends BaseController {
 
     @Resource
     private NotificationManager notificationManager;
-
-    @Resource
-    private ProfileDao profileDao;
 
     @Resource
     private AuthenticationManager authenticationManager;

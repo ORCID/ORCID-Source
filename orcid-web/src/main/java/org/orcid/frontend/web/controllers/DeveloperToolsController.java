@@ -36,7 +36,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -65,9 +64,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private ResearcherUrlDao researcherUrlDao;
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
