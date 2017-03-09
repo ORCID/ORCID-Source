@@ -5694,9 +5694,10 @@
 	            dataType: 'json',
 	            success: function(data) {
 	                $scope.authorizationForm = data;                                
-	                if($scope.authorizationForm.userName.value) {
+	                if($scope.authorizationForm.userName.value) { 
 	                    $scope.isOrcidPresent = true;
-	                    $scope.showRegisterForm = false;                    
+	                    $scope.showRegisterForm = false;   
+	                    $scope.$broadcast("loginHasUserId", { userName: $scope.authorizationForm.userName.value });                 
 	                }
 	                // #show_login - legacy fragment id, we should remove this
 	                // sometime
@@ -8924,25 +8925,27 @@
 /* 17 */
 /***/ function(module, exports) {
 
-	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
+	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', function RequestPasswordResetCtrl($scope, $timeout, $compile) {
 
-	    //prefill reset form if email entered in login form
-	    $scope.$on("loginUserIdInputChanged", function(event, options) {
-	        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	        if(reEmailMatch.test(options.newValue)) {
+	    var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+	    $scope.toggleResetPassword = function() {
+	        $scope.showResetPassword = !$scope.showResetPassword;
+
+	        // pre-populate with email from signin form 
+	        if(reEmailMatch.test($scope.userId)){
 	            $scope.requestResetPassword = {
-	                email:  options.newValue
-	            }
+	                email:  options.userName
+	            } 
+	        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
+	            $scope.requestResetPassword = {
+	                email:  $scope.authorizationForm.userName.value
+	            } 
 	        } else {
 	            $scope.requestResetPassword = {
 	                email:  ""
 	            }
 	        }
-	    });
-
-
-	    $scope.toggleResetPassword = function() {
-	        $scope.showResetPassword = !$scope.showResetPassword;
 	    };
 
 	    // init reset password toggle text
