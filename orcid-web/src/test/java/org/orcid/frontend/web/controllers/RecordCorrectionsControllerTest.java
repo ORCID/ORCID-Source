@@ -16,7 +16,12 @@
  */
 package org.orcid.frontend.web.controllers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -24,12 +29,17 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.model.record_correction.RecordCorrectionsPage;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -39,9 +49,20 @@ public class RecordCorrectionsControllerTest extends DBUnitTest {
     @Resource
     private RecordCorrectionsController controller;
     
+    @Mock
+    private OrcidSecurityManager securityMgr;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/InvalidRecordDataChanges.xml"));
+    }
+    
+    @Before
+    public void before() {
+        controller.evictCache();
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(controller, "securityMgr", securityMgr);
+        when(securityMgr.isAdmin()).thenReturn(true);
     }
 
     @AfterClass
@@ -69,16 +90,26 @@ public class RecordCorrectionsControllerTest extends DBUnitTest {
         assertEquals(6, page2.getRecordCorrections().size());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void previousOnFirstPageTest() {
-        controller.getPreviousDescending(Optional.of(1015L));
-        fail();
+        RecordCorrectionsPage page = controller.getPreviousDescending(Optional.of(1015L));
+        assertNotNull(page);
+        assertNull(page.getFirstElementId());
+        assertNull(page.getLastElementId());
+        assertFalse(page.getHaveNext());
+        assertFalse(page.getHavePrevious());
+        assertNull(page.getLastElementId());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nextOnLastPageTest() {
-        controller.getNextDescending(Optional.of(1000L));
-        fail();
+        RecordCorrectionsPage page = controller.getNextDescending(Optional.of(1000L));
+        assertNotNull(page);
+        assertNull(page.getFirstElementId());
+        assertNull(page.getLastElementId());
+        assertFalse(page.getHaveNext());
+        assertFalse(page.getHavePrevious());
+        assertNull(page.getLastElementId());
     }
     
     @Test
@@ -87,16 +118,16 @@ public class RecordCorrectionsControllerTest extends DBUnitTest {
         assertNotNull(page1);
         assertTrue(page1.getHavePrevious());
         assertFalse(page1.getHaveNext());
-        assertEquals(Long.valueOf(1000), page1.getFirstElementId());
-        assertEquals(Long.valueOf(1009), page1.getLastElementId());
+        assertEquals(Long.valueOf(1009), page1.getFirstElementId());
+        assertEquals(Long.valueOf(1000), page1.getLastElementId());
         assertNotNull(page1.getRecordCorrections());
         assertEquals(10, page1.getRecordCorrections().size());
-        RecordCorrectionsPage page2 = controller.getPreviousDescending(Optional.of(page1.getLastElementId()));
+        RecordCorrectionsPage page2 = controller.getPreviousDescending(Optional.of(page1.getFirstElementId()));
         assertNotNull(page2);
         assertFalse(page2.getHavePrevious());
         assertTrue(page2.getHaveNext());
-        assertEquals(Long.valueOf(1010), page2.getFirstElementId());
-        assertEquals(Long.valueOf(1015), page2.getLastElementId());
+        assertEquals(Long.valueOf(1015), page2.getFirstElementId());
+        assertEquals(Long.valueOf(1010), page2.getLastElementId());
         assertNotNull(page2.getRecordCorrections());
         assertEquals(6, page2.getRecordCorrections().size());
     }    

@@ -171,7 +171,7 @@
 							
 							<@security.authorize ifNotGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">								
 								<li class="leaf last"><a ${(nav=="signin")?string('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>									
-								<li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>
+								<li class="leaf last"><a ${(nav=="register")?string('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>																								
 							</@security.authorize>
 							<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">								
 								<li><a ${(nav=="record")?string('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
@@ -199,11 +199,10 @@
 								<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 							</@security.authorize>
 										
-							<#if RequestParameters['record-corrections']??>
-								<li><a ${(nav=="corrections")?string('class="active" ', '')}href="<@orcid.rootPath "/about/trust/integrity/record-corrections" />"><@orcid.msg 'record_corrections.workspace_link' /></a></li>
-							</#if>										
-																	
 							</@security.authorize>
+								<#if RequestParameters['record-corrections']??>
+									<li><a ${(nav=="corrections")?string('class="active" ', '')}href="<@orcid.rootPath "/about/trust/integrity/record-corrections" />"><@orcid.msg 'record_corrections.workspace_link' /></a></li>
+								</#if>
 								<li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
 							</ul>
 						</li>

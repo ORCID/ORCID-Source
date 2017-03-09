@@ -16,51 +16,6 @@
     =============================================================================
 
 -->
-<script type="text/ng-template" id="record-correction-more-info">	
-	<div class="lightbox-container" id="record-correction-more-info">
-		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<p class="italic"><@orcid.msg 'record_corrections.date'/>:</p>
-			</div>
-			<div class="col-md-9 col-sm-9 col-xs-9">
-				<span ng-bind="currentElement.dateCreated | date:'yyyy-MM-dd HH:mm:ss'"></span>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<p class="italic"><@orcid.msg 'record_corrections.description'/>:</p>
-			</div>
-			<div class="col-md-9 col-sm-9 col-xs-9">
-				<p><span ng-bind="currentElement.description"></span></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<p class="italic"><@orcid.msg 'record_corrections.num_modified'/>:</p>
-			</div>
-			<div class="col-md-9 col-sm-9 col-xs-9">
-				<p><span ng-bind="currentElement.numChanged"></span></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<p class="italic"><@orcid.msg 'record_corrections.sql'/>:</p>
-			</div>
-			<div class="col-md-9 col-sm-9 col-xs-9">
-				<p><span ng-bind="currentElement.sqlUsedToUpdate"></span></p>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3 col-sm-3 col-xs-3">
-				<p class="italic"><@orcid.msg 'record_corrections.type'/>:</p>
-			</div>
-			<div class="col-md-9 col-sm-9 col-xs-9">
-				<p><span ng-bind="currentElement.type"></span></p>
-			</div>
-		</div>						
-	</div>		
-</script>
-
 <@public>
 	<div class="row">	    
 	    <div class="col-md-9 col-md-offset-3">
@@ -73,24 +28,22 @@
 	    				<div class="col-md-3 col-sm-12 col-xs-12">
 		    				<p class="italic"><@orcid.msg 'record_corrections.date'/></p>    				
 		    			</div>
-		    			<div class="col-md-8 col-sm-12 col-xs-12">
+		    			<div class="col-md-7 col-sm-12 col-xs-12">
 		    				<p class="italic"><@orcid.msg 'record_corrections.description'/></p>
 		    			</div>
-		    			<div class="col-md-1 col-sm-12 col-xs-12">
-		    				<p class="italic"><@orcid.msg 'record_corrections.more_info'/></p>
+		    			<div class="col-md-2 col-sm-12 col-xs-12">
+		    				<p class="italic"><@orcid.msg 'record_corrections.num_modified'/></p>
 		    			</div>
 	    			</div>	    		
 		    		<div ng-repeat="element in currentPage.recordCorrections" class="row">
 		    			<div class="col-md-3 col-sm-12 col-xs-12">
 		    				<span ng-bind="element.dateCreated | date:'yyyy-MM-dd HH:mm:ss'"></span>	    				
 		    			</div>
-		    			<div class="col-md-8 col-sm-12 col-xs-12">
+		    			<div class="col-md-7 col-sm-12 col-xs-12">
 		    				<span ng-bind="element.description"></span>
 		    			</div>
-		    			<div class="col-md-1 col-sm-12 col-xs-12">
-		    				<a ng-click="moreInfo(element)">
-		    					<span class="glyphicon glyphicon-question-sign"></span>
-		    				</a>
+		    			<div class="col-md-2 col-sm-12 col-xs-12">
+		    				<span ng-bind="element.numChanged"></span>
 		    			</div>
 		    		</div>
 		    		<hr>

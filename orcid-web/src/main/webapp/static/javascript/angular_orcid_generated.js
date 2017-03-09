@@ -9982,30 +9982,7 @@
 	        });
 	    };    
 
-	    $scope.getNextPage();
-	    
-	    $scope.moreInfo = function(element) {
-	        $.colorbox({
-	            scrolling: true,
-	            html: $compile($('#record-correction-more-info').html())($scope),
-	            onLoad: function() {
-	            	$scope.currentElement = element;
-	                $('#cboxClose').remove();                
-	            },            
-	            onComplete: function() {
-	                    
-	            },
-	            onClosed: function() {
-	                $scope.closeMoreInfo();
-	            }            
-	        });
-	        $.colorbox.resize({width:"600px"});        
-	    }
-	    
-	    $scope.closeMoreInfo = function() {  
-	    	$scope.currentElement = null;
-	        $.colorbox.close();
-	    }        
+	    $scope.getNextPage();        
 	}]);
 
 /***/ },
