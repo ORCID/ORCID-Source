@@ -3015,7 +3015,7 @@ header overrides
     border-left: 0;
     border-right: 0;
     padding-left: 0;
-    padding-right: 5;
+    padding-right: 5px;
 }
 
 .account-settings {
@@ -8751,7 +8751,8 @@ ul.comma li:last-child:after {
     float: right!important;
 }
 
-.lang-rl .table th, .table td {
+.lang-rl .table th, 
+.lang-rl .table td {
     text-align: right;
 }
 
