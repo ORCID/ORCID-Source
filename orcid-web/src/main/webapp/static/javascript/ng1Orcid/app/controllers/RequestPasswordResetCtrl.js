@@ -1,8 +1,42 @@
-angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$rootScope', '$scope', '$timeout', '$compile', function RequestPasswordResetCtrl($rootScope, $scope, $timeout, $compile) {
+angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', function RequestPasswordResetCtrl($scope, $timeout, $compile) {
 
     var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     //prefill reset form if email included in oauth url is an existing orcid user
+    /*
+    This doesn't update the view
+    $scope.$on("loginHasUserId", function(event, options) {
+        console.log(options.userName);
+        if(reEmailMatch.test(options.userName)) {
+            console.log(options.userName + " is an email");
+                $scope.requestResetPassword = {
+                    email:  options.userName
+                } 
+                console.log("email to prefill form is now: " + $scope.requestResetPassword.email);    
+        } else {
+            $scope.requestResetPassword = {
+                email:  ""
+            }
+    }
+    });
+
+    This doesn't udpate the view either (neither does putting the expression inside $scope.apply)
+    $scope.$on("loginHasUserId", function(event, options) {
+        console.log(options.userName);//works fine
+        if(reEmailMatch.test(options.userName)) {
+            console.log(options.userName + " is an email");//works fine
+                $scope.requestResetPassword = {
+                    email:  options.userName
+                } 
+                console.log("email to prefill form is now: " + $scope.requestResetPassword.email);//works fine    
+        } else {
+            $scope.requestResetPassword = {
+                email:  ""
+            }
+        $scope.$apply();
+    }
+    });*/
+    //This updates the view, but timeout is not good
     $scope.$on("loginHasUserId", function(event, options) {
         console.log(options.userName);
         if(reEmailMatch.test(options.userName)) {
@@ -12,8 +46,7 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$rootScope',
                     email:  options.userName
                 } 
                 console.log("email to prefill form is now: " + $scope.requestResetPassword.email);
-            });
-                   
+            });     
         } else {
             $scope.requestResetPassword = {
                 email:  ""
