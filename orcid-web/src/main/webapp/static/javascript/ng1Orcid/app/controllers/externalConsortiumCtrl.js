@@ -74,6 +74,11 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.closeModal = function() {
          $.colorbox.close();
     };
+
+    $scope.closeModalReload = function() {
+         $.colorbox.close();
+         window.location.reload();
+    };
     
     $scope.search = function(){
         $scope.results = new Array();

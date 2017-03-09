@@ -352,6 +352,7 @@
 		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>
 	
+	<bean id="recordCorrectionsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.RecordCorrectionsManagerReadOnlyImpl" />
 	
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
@@ -1098,6 +1099,11 @@
 
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
+           
+    <bean id="invalidRecordDataChangeMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getInvalidRecordDataChangeMapperFacade"/>
+	<bean id="jpaJaxbInvalidRecordDataChangeAdapter" class="org.orcid.core.adapter.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl">
+        <property name="mapperFacade" ref="invalidRecordDataChangeMapperFacade" />
+    </bean>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
             
