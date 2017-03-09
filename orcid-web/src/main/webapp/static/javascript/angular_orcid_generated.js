@@ -8863,74 +8863,21 @@
 
 	    var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-	    //prefill reset form if email included in oauth url is an existing orcid user
-	    /*
-	    This doesn't update the view
-	    $scope.$on("loginHasUserId", function(event, options) {
-	        console.log(options.userName);
-	        if(reEmailMatch.test(options.userName)) {
-	            console.log(options.userName + " is an email");
-	                $scope.requestResetPassword = {
-	                    email:  options.userName
-	                } 
-	                console.log("email to prefill form is now: " + $scope.requestResetPassword.email);    
-	        } else {
+	    $scope.toggleResetPassword = function() {
+	        $scope.showResetPassword = !$scope.showResetPassword;
+	        if(reEmailMatch.test($scope.userId)){
 	            $scope.requestResetPassword = {
-	                email:  ""
-	            }
-	    }
-	    });
-
-	    This doesn't udpate the view either (neither does putting the expression inside $scope.apply)
-	    $scope.$on("loginHasUserId", function(event, options) {
-	        console.log(options.userName);//works fine
-	        if(reEmailMatch.test(options.userName)) {
-	            console.log(options.userName + " is an email");//works fine
-	                $scope.requestResetPassword = {
-	                    email:  options.userName
-	                } 
-	                console.log("email to prefill form is now: " + $scope.requestResetPassword.email);//works fine    
-	        } else {
+	                email:  options.userName
+	            } 
+	        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
 	            $scope.requestResetPassword = {
-	                email:  ""
-	            }
-	        $scope.$apply();
-	    }
-	    });*/
-	    //This updates the view, but timeout is not good
-	    $scope.$on("loginHasUserId", function(event, options) {
-	        console.log(options.userName);
-	        if(reEmailMatch.test(options.userName)) {
-	            $timeout(function(){
-	                console.log(options.userName + " is an email");
-	                $scope.requestResetPassword = {
-	                    email:  options.userName
-	                } 
-	                console.log("email to prefill form is now: " + $scope.requestResetPassword.email);
-	            });     
-	        } else {
-	            $scope.requestResetPassword = {
-	                email:  ""
-	            }
-	    }
-	    });
-
-	    //prefill reset form if email entered in login form
-	    $scope.$on("loginUserIdInputChanged", function(event, options) {
-	        if(reEmailMatch.test(options.newValue)) {
-	            $scope.requestResetPassword = {
-	                email:  options.newValue
-	            }
+	                email:  $scope.authorizationForm.userName.value
+	            } 
 	        } else {
 	            $scope.requestResetPassword = {
 	                email:  ""
 	            }
 	        }
-	    });
-
-
-	    $scope.toggleResetPassword = function() {
-	        $scope.showResetPassword = !$scope.showResetPassword;
 	    };
 
 	    // init reset password toggle text
