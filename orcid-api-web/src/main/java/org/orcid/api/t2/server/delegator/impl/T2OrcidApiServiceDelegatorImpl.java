@@ -47,6 +47,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.WebhookManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.utils.OrcidMessageUtil;
@@ -62,7 +63,6 @@ import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceName;
 import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
@@ -97,7 +97,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private WebhookDao webhookDao;
+    private WebhookManager webhookManager;
     
     @Resource
     private LocaleManager localeManager;
@@ -477,7 +477,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         }
         if (profile != null && clientDetails != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
-            WebhookEntity webhook = webhookDao.find(webhookPk);
+            WebhookEntity webhook = webhookManager.find(webhookPk);
             boolean isNew = webhook == null;
             if (isNew) {
                 webhook = new WebhookEntity();
@@ -487,9 +487,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 webhook.setUri(webhookUri);
                 webhook.setClientDetails(clientDetails);
             }
-            webhookDao.merge(webhook);
-            webhookDao.flush();
-
+            webhookManager.update(webhook);
             return isNew ? Response.created(uriInfo.getAbsolutePath()).build() : Response.noContent().build();
         } else if (profile == null) {
         	Map<String, String> params = new HashMap<String, String>();
@@ -518,7 +516,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
             WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
-            WebhookEntity webhook = webhookDao.find(webhookPk);
+            WebhookEntity webhook = webhookManager.find(webhookPk);
             if (webhook == null) {
             	Map<String, String> params = new HashMap<String, String>();
             	params.put("orcid", orcid);
@@ -533,8 +531,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
                 }
                 // Check if user can unregister this webhook
                 if (webhook.getClientDetails().getId().equals(clientId)) {
-                    webhookDao.remove(webhookPk);
-                    webhookDao.flush();
+                    webhookManager.delete(webhookPk);
                     return Response.noContent().build();
                 } else {
                     // Throw 403 exception: user is not allowed to unregister
