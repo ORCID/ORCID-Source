@@ -541,7 +541,7 @@
     </div>
 </div>
 <!-- .container -->
-
+<#if RequestParameters['newFooter']??>
 <footer class="footer-main">
     <div class="container">
         <div class="row">
@@ -577,7 +577,9 @@
         </div>
     </div>
 </footer>
-<!--
+</#if>
+
+<#if !RequestParameters['newFooter']??>
 <div class="footer clear-fix">
     <div class="container">
         <div class="row">
@@ -592,7 +594,8 @@
         </div>
     </div>
 </div>
--->
+</#if>
+
 <form action="<@orcid.rootPath '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>
