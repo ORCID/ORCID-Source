@@ -56,7 +56,7 @@
 		    			</div>
 		    		</div>	    		
 	    		</div>	    		
-	    		<div ng-show="currentPage.recordCorrections.length <= 0"> 
+	    		<div ng-show="currentPage == null || currentPage.recordCorrections == null || currentPage.recordCorrections.length <= 0"> 
 	    			<p class="italic"><@orcid.msg 'record_corrections.no_corrections'/></p>
 	    		</div>                               
 	    	</div>	    		    	
