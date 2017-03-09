@@ -67,10 +67,7 @@ public class InvalidRecordDataChangeDaoImpl implements InvalidRecordDataChangeDa
     public boolean havePrevious(Long sequence, boolean descendantOrder) {
         String queryStr = "SELECT COUNT(*) FROM InvalidRecordDataChangeEntity WHERE id {GTorLT} :sequence";        
         TypedQuery<Long> query = entityManager.createQuery(queryStr.replace("{GTorLT}", descendantOrder ? ">" : "<"), Long.class);
-        query.setParameter("sequence", sequence);
-        Long result = query.getSingleResult();
-        System.out.println("havePrevious: " + sequence + " -> " + descendantOrder + " result: " + result);
-        
-        return (result == 0) ? false : true;
+        query.setParameter("sequence", sequence);        
+        return (query.getSingleResult() == 0) ? false : true;
     }   
 }

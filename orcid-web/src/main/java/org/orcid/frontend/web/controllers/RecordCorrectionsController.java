@@ -24,13 +24,11 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordCorrectionsManagerReadOnly;
 import org.orcid.model.record_correction.RecordCorrectionsPage;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -73,6 +71,10 @@ public class RecordCorrectionsController extends BaseController {
             boolean newPrevious = page.getHaveNext();
             page.setHaveNext(newNext);
             page.setHavePrevious(newPrevious);
+            Long newFirstElement = page.getLastElementId();
+            Long newLastElement = page.getFirstElementId();
+            page.setFirstElementId(newFirstElement);
+            page.setLastElementId(newLastElement);            
             return page;
         } catch (IllegalArgumentException e) {
 

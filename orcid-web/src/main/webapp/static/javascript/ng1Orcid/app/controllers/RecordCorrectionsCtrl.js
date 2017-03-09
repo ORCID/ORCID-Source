@@ -2,17 +2,15 @@ angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$comp
     $scope.currentPage = null;
     $scope.currentElement = null;
     
-    $scope.getNextPage = function(){
+    $scope.getNextPage = function() {
     	var nextPageUrl = getBaseUri() + '/record-corrections/next';
     	if($scope.currentPage != null) {
     		nextPageUrl += '/' + $scope.currentPage.lastElementId
-    	}
-    	console.log(nextPageUrl);
+    	}    	
         $.ajax({
             url: nextPageUrl,
             dataType: 'json',
             success: function(data) {
-            	console.log(angular.toJson(data))
             	$scope.currentPage = data;
                 $scope.$apply();
             }
@@ -22,7 +20,7 @@ angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$comp
         });
     };
 
-    $scope.getPreviousPage = function(){
+    $scope.getPreviousPage = function() {
     	var previousPageUrl = getBaseUri() + '/record-corrections/previous';
     	if($scope.currentPage != null) {
     		previousPageUrl += '/' + $scope.currentPage.firstElementId
@@ -30,8 +28,7 @@ angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$comp
         $.ajax({
             url: previousPageUrl,            
             dataType: 'json',
-            success: function(data) {
-            	console.log(angular.toJson(data))
+            success: function(data) {            	
             	$scope.currentPage = data;
                 $scope.$apply();
             }
@@ -43,7 +40,7 @@ angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$comp
 
     $scope.getNextPage();
     
-    $scope.moreInfo = function(element){
+    $scope.moreInfo = function(element) {
         $.colorbox({
             scrolling: true,
             html: $compile($('#record-correction-more-info').html())($scope),
@@ -61,8 +58,8 @@ angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$comp
         $.colorbox.resize({width:"600px"});        
     }
     
-    $scope.closeMoreInfo = function(){  
+    $scope.closeMoreInfo = function() {  
     	$scope.currentElement = null;
         $.colorbox.close();
-    }
+    }        
 }]);

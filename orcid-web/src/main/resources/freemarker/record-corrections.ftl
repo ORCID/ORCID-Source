@@ -92,6 +92,15 @@
 		    					<span class="glyphicon glyphicon-question-sign"></span>
 		    				</a>
 		    			</div>
+		    		</div>
+		    		<hr>
+		    		<div class="row">
+		    			<div class="col-md-6 col-sm-6 col-xs-6">
+		    				<button id="previous" class="btn left" ng-click="getPreviousPage()" ng-show="currentPage.havePrevious"><@orcid.msg 'record_corrections.previous'/></button>
+		    			</div>
+		    			<div class="col-md-6 col-sm-6 col-xs-6">
+		    				<button id="next" class="btn right" ng-click="getNextPage()" ng-show="currentPage.haveNext"><@orcid.msg 'record_corrections.next'/></button>
+		    			</div>
 		    		</div>	    		
 	    		</div>	    		
 	    		<div ng-show="currentPage.recordCorrections.length <= 0"> 

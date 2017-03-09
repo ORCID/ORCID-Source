@@ -198,6 +198,10 @@
 								<li><a ${(nav=="members")?string('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
 								<li><a ${(nav=="admin")?string('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
 							</@security.authorize>
+										
+							<#if RequestParameters['record-corrections']??>
+								<li><a ${(nav=="corrections")?string('class="active" ', '')}href="<@orcid.rootPath "/record-corrections" />"><@orcid.msg 'record_corrections.workspace_link' /></a></li>
+							</#if>										
 																	
 							</@security.authorize>
 								<li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
