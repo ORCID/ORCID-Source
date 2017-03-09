@@ -4,6 +4,8 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$t
 
     $scope.toggleResetPassword = function() {
         $scope.showResetPassword = !$scope.showResetPassword;
+
+        // pre-populate with email from signin form 
         if(reEmailMatch.test($scope.userId)){
             $scope.requestResetPassword = {
                 email:  options.userName
