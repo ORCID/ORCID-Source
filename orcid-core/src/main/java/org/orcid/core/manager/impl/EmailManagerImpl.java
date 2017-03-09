@@ -26,6 +26,7 @@ import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -156,5 +157,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             clientSourceId = sourceEntity.getSourceClient().getId();
         }
         emailDao.addEmail(orcid, email.getEmail(), email.getVisibility(), sourceId, clientSourceId);
+    }
+
+    @Override
+    public void update(EmailEntity emailEntity) {
+        emailDao.merge(emailEntity);
     }
 }

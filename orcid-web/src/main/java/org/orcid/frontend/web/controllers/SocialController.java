@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -54,9 +53,6 @@ public class SocialController extends BaseController {
 
     @Autowired
     private SocialContext socialContext;
-
-    @Resource
-    private EmailDao emailDao;
 
     @Resource
     private AuthenticationManager authenticationManager;

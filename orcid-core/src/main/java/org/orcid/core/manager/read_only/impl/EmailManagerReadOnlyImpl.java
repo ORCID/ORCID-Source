@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -139,5 +140,15 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             }
         }
         return false;
-    }        
+    }     
+    
+    @Override
+    public EmailEntity findCaseInsensitive(String email) {
+        return emailDao.findCaseInsensitive(email);
+    }
+
+    @Override
+    public EmailEntity find(String email) {
+        return emailDao.find(email);
+    }
 }
