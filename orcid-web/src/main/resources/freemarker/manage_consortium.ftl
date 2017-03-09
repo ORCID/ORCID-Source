@@ -230,7 +230,7 @@
                     <div class="btn btn-danger" ng-click="updateConsortium()">
                         <@orcid.msg 'manage_member.edit_member.btn.update' />
                     </div>
-                    <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+                    <a href="" ng-click="closeModalReload()"><@orcid.msg 'freemarker.btncancel' /></a>
                 </div>
             </div>
         </div>

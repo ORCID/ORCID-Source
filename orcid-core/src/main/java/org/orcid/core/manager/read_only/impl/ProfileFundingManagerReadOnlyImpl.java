@@ -171,10 +171,15 @@ public class ProfileFundingManagerReadOnlyImpl implements ProfileFundingManagerR
             FundingGroup fundingGroup = new FundingGroup();
 
             // Fill the funding groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID fundingExtId = (ExternalID) extId;
-                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
-            }
+            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+                // Initialize the ids as an empty list
+                fundingGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble extId : externalIdentifiers) {
+                    ExternalID fundingExtId = (ExternalID) extId;
+                    fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
+                }
+            }            
 
             // Fill the funding group with the list of activities
             for (GroupableActivity activity : activities) {

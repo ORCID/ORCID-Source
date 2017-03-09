@@ -1035,55 +1035,75 @@ public class ValidateV2SamplesTest {
         assertNotNull(works);
         assertNotNull(works.getLastModifiedDate());
         assertNotNull(works.getLastModifiedDate().getValue());
-        assertEquals(2, works.getWorkGroup().size());
+        assertEquals(3, works.getWorkGroup().size());
+        boolean foundWorkWithNoExtIds = false;
         for(WorkGroup group : works.getWorkGroup()) {
             assertNotNull(group.getLastModifiedDate().getValue());
-            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
-            ExternalID extId = group.getIdentifiers().getExternalIdentifier().get(0);
-            if(extId.getType().equals("arxiv")) {                
-                assertEquals(Relationship.SELF, extId.getRelationship());
-                assertEquals("http://arxiv.org/abs/123456", extId.getUrl().getValue());
-                assertEquals("123456", extId.getValue());
-            } else if(extId.getType().equals("bibcode")) {                
-                assertEquals(Relationship.SELF, extId.getRelationship());
-                assertEquals("http://adsabs.harvard.edu/abs/4567", extId.getUrl().getValue());
-                assertEquals("4567", extId.getValue());
-            } else {
-                fail("Invalid ext id type " + extId.getType());
-            }
-            
-            assertEquals(1, group.getWorkSummary().size());
-            WorkSummary summary = group.getWorkSummary().get(0);
-            if(summary.getPutCode().equals(Long.valueOf(3357))) {
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());            
+            if(group.getIdentifiers().getExternalIdentifier().isEmpty()) {
+                WorkSummary summary = group.getWorkSummary().get(0);
                 assertEquals("1", summary.getDisplayIndex());
                 assertEquals(1, summary.getExternalIdentifiers().getExternalIdentifier().size());
-                assertEquals("arxiv", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-                assertEquals("http://arxiv.org/abs/123456", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+                assertEquals("doi", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("https://doi.org/123456", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
                 assertEquals("123456", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-                assertEquals("/8888-8888-8888-8880/work/3357", summary.getPath());
-                assertEquals("02", summary.getPublicationDate().getDay().getValue());
-                assertEquals("02", summary.getPublicationDate().getMonth().getValue());
-                assertEquals("2017", summary.getPublicationDate().getYear().getValue());
-                assertEquals("Work # 1", summary.getTitle().getTitle().getContent());
-                assertEquals(WorkType.CONFERENCE_PAPER, summary.getType());
-                assertEquals(Visibility.PUBLIC, summary.getVisibility());                                
-            } else if(summary.getPutCode().equals(Long.valueOf(3358))) {
-                assertEquals("1", summary.getDisplayIndex());
-                assertEquals(1, summary.getExternalIdentifiers().getExternalIdentifier().size());
-                assertEquals("bibcode", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-                assertEquals("http://adsabs.harvard.edu/abs/4567", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
-                assertEquals("4567", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-                assertEquals("/8888-8888-8888-8880/work/3358", summary.getPath());
+                assertEquals("/8888-8888-8888-8880/work/3356", summary.getPath());
                 assertEquals("03", summary.getPublicationDate().getDay().getValue());
                 assertEquals("03", summary.getPublicationDate().getMonth().getValue());
                 assertEquals("2017", summary.getPublicationDate().getYear().getValue());
-                assertEquals("Work # 2", summary.getTitle().getTitle().getContent());
-                assertEquals(WorkType.JOURNAL_ARTICLE, summary.getType());
+                assertEquals("Work # 0", summary.getTitle().getTitle().getContent());
+                assertEquals(WorkType.CONFERENCE_PAPER, summary.getType());
                 assertEquals(Visibility.PUBLIC, summary.getVisibility());
+                foundWorkWithNoExtIds = true;
             } else {
-                fail("Invalid put code " + summary.getPutCode());
-            }
-        }                
+                assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+                ExternalID extId = group.getIdentifiers().getExternalIdentifier().get(0);
+                if(extId.getType().equals("arxiv")) {                
+                    assertEquals(Relationship.SELF, extId.getRelationship());
+                    assertEquals("http://arxiv.org/abs/123456", extId.getUrl().getValue());
+                    assertEquals("123456", extId.getValue());
+                } else if(extId.getType().equals("bibcode")) {                
+                    assertEquals(Relationship.SELF, extId.getRelationship());
+                    assertEquals("http://adsabs.harvard.edu/abs/4567", extId.getUrl().getValue());
+                    assertEquals("4567", extId.getValue());
+                } else {
+                    fail("Invalid ext id type " + extId.getType());
+                }
+                
+                assertEquals(1, group.getWorkSummary().size());
+                WorkSummary summary = group.getWorkSummary().get(0);
+                if(summary.getPutCode().equals(Long.valueOf(3357))) {
+                    assertEquals("1", summary.getDisplayIndex());
+                    assertEquals(1, summary.getExternalIdentifiers().getExternalIdentifier().size());
+                    assertEquals("arxiv", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                    assertEquals("http://arxiv.org/abs/123456", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+                    assertEquals("123456", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                    assertEquals("/8888-8888-8888-8880/work/3357", summary.getPath());
+                    assertEquals("02", summary.getPublicationDate().getDay().getValue());
+                    assertEquals("02", summary.getPublicationDate().getMonth().getValue());
+                    assertEquals("2017", summary.getPublicationDate().getYear().getValue());
+                    assertEquals("Work # 1", summary.getTitle().getTitle().getContent());
+                    assertEquals(WorkType.CONFERENCE_PAPER, summary.getType());
+                    assertEquals(Visibility.PUBLIC, summary.getVisibility());                                
+                } else if(summary.getPutCode().equals(Long.valueOf(3358))) {
+                    assertEquals("1", summary.getDisplayIndex());
+                    assertEquals(1, summary.getExternalIdentifiers().getExternalIdentifier().size());
+                    assertEquals("bibcode", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                    assertEquals("http://adsabs.harvard.edu/abs/4567", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+                    assertEquals("4567", summary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                    assertEquals("/8888-8888-8888-8880/work/3358", summary.getPath());
+                    assertEquals("03", summary.getPublicationDate().getDay().getValue());
+                    assertEquals("03", summary.getPublicationDate().getMonth().getValue());
+                    assertEquals("2017", summary.getPublicationDate().getYear().getValue());
+                    assertEquals("Work # 2", summary.getTitle().getTitle().getContent());
+                    assertEquals(WorkType.JOURNAL_ARTICLE, summary.getType());
+                    assertEquals(Visibility.PUBLIC, summary.getVisibility());
+                } else {
+                    fail("Invalid put code " + summary.getPutCode());
+                }
+            }                        
+        }       
+        assertTrue(foundWorkWithNoExtIds);
     }
     
     private Object unmarshallFromPath(String path, Class<?> type) throws SAXException, URISyntaxException {
