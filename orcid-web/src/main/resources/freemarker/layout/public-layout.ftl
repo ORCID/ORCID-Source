@@ -38,12 +38,6 @@
     <div class="dev-watermark"></div>
 </#if>-->
 <div class="container">
-    <!--<div id="pi-banner" style="position: absolute;">
-        <svg height="250" width="100">
-            <polygon points="0,0 0,200 50,250 100,200 100,0" style="fill:#338caf;" />
-            Sorry, your browser does not support inline SVG.
-        </svg>
-    </div>-->
     <div class="header center" ng-controller="headerCtrl">
         
         <div class="row">
@@ -499,24 +493,6 @@
                 </div>
             </#if>
             <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
-            <!--Pi Day banner-->
-                <a href="${aboutUri}/blog/2017/02/21/orcid-pi-day-coming">
-                    <div id="pi-banner">
-                        <![if gte IE 9]>
-                        <svg height="250" width="100">
-                            <polygon points="0,0 0,154 50,180 100,154 100,0" style="fill:#338caf;" />
-                        </svg>
-                        <div id="pi-text">
-                            Time to party irrationally!
-                            <img src="${staticCdn}/img/pi-day-icon.png" alt="ORCID Pi day icon" />
-                            <span id="pi-number">3,141,593</span><br><small>ORCID iDs</small>
-                        </div>
-                        <![endif]-->
-                        <!--[if lt IE 9]>
-                            <img src="${staticCdn}/img/pi-day-banner.png" alt="ORCID Pi day banner" />
-                        <![endif]-->
-                    </div>
-                </a>
                 <h1>
                     <a href="${aboutUri}"><img
                         src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>

@@ -7375,41 +7375,6 @@ ul.comma li:last-child:after {
     background: url('../img/svg/twitter.svg') transparent no-repeat;
 }
 
-/*Pi day*/
-#pi-banner {
-    position: absolute;
-    top: -40px;
-    left: -8em;
-}
-
-#pi-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 12px 10px;
-    color: #fff;
-    text-transform: uppercase;
-    text-align: center;
-    font-size: 10px;
-    line-height: 1.3em;
-}
-
-#pi-text img{
-    margin: 6px 0 8px 0;
-}
-
-#pi-number {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-#pi-text small{
-    font-size: 95%;
-    font-weight: normal;
-    text-transform: none;
-}
-
-
 /* Media Queries */
 
 @media ( max-width: 767px) {
