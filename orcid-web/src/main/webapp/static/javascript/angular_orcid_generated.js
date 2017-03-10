@@ -10444,10 +10444,6 @@
 	                                }
 	                            }
 	                        }               
-	                        if( utilsService.getParameterByName('import_works_wizard') != 'true' ) {
-	                            $scope.selectedWorkType = 'All';
-	                            $scope.selectedGeoArea = 'All';
-	                        }
 	                        $scope.$apply();
 	                    }
 	                }).fail(function(e) {
