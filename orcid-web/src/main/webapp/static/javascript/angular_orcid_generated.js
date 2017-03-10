@@ -10650,9 +10650,25 @@
 	            //caches name->description lookup so we can display the description not the name after selection
 	            $scope.externalIDNamesToDescriptions = [];
 	            $scope.formatExternalIDType = function(model) {
+	                console.log(model);
 	                if (!model)
 	                    return "";
-	                return $scope.externalIDNamesToDescriptions[model].description;
+	                if ($scope.externalIDNamesToDescriptions[model])
+	                    return $scope.externalIDNamesToDescriptions[model].description;
+	                //not loaded any descriptions yet, fetch them
+	                var url = getBaseUri()+'/works/idTypes.json?query='+model;
+	                ajax = $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    async: false,
+	                  }).done(function(data) {
+	                      for (var key in data) {
+	                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+	                      }
+	                  });   
+	                $scope.externalIDTypeCache[model] = ajax;
+	                return $scope.externalIDNamesToDescriptions[model].description;   
 	              }
 	            //--typeahead end
 	    
