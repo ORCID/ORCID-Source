@@ -234,7 +234,7 @@
 	        <div ng-show="emailSearchResult.found">
 	            <p>{{input.text}}</p>
 	            <form ng-submit="addContactByEmail(input.text)">
-	                <button class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></button>
+	                <button class="btn btn-primary" type="submit" ng-disabled="addContactDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	            </form>
 	        </div>

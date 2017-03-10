@@ -2,6 +2,7 @@
 * External consortium controller
 */
 angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+    $scope.addContactDisabled = false;
     $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
     /**
@@ -232,6 +233,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };*/
 
     $scope.addContactByEmail = function(contactEmail) {
+        $scope.addContactDisabled = true;
         $scope.errors = [];
         var addContact = {};
         addContact.email = $scope.input.text;
@@ -242,6 +244,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 $scope.getConsortium();
+                $scope.addContactDisabled = false;
                 $scope.$apply();
                 $scope.closeModal();
             }
