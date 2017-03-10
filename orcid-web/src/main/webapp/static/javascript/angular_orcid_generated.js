@@ -10650,7 +10650,6 @@
 	            //caches name->description lookup so we can display the description not the name after selection
 	            $scope.externalIDNamesToDescriptions = [];
 	            $scope.formatExternalIDType = function(model) {
-	                console.log(model);
 	                if (!model)
 	                    return "";
 	                if ($scope.externalIDNamesToDescriptions[model])
