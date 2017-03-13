@@ -440,15 +440,46 @@
 
                   <div class="info-detail">
                     <span ng-if="work.publicationDate.year" ng-bind="work.publicationDate.year"></span><span ng-if="work.publicationDate.month">-{{work.publicationDate.month}}</span><span ng-if="work.publicationDate.day">-</span><span ng-if="work.publicationDate.day" ng-bind="work.publicationDate.day"></span><span ng-if="work.publicationDate.year"> | </span>
-
                     <!-- Work Category --> 
+                    <!--
                     <span class="capitalize" ng-if="work.workCategory.value.length > 0">{{work.workCategory.value}}</span>
                     <span class="bibtex-content-missing small-missing-info" ng-if="work.workCategory.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
+                    -->
 
                     <!-- Work Type -->
                     <span class="capitalize" ng-if="work.workType.value.length > 0">{{work.workType.value}}</span>
                     <span class="bibtex-content-missing small-missing-info" ng-if="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+
+                    <!-- Active Row Identifiers / URL / Validations / Versions -->
+                    
                   </div>
+                   <div class="row" ng-if="group.activePutCode == work.putCode.value">
+                       <div class="col-md-12 col-sm-12 bottomBuffer">
+                           <ul class="id-details">
+                               <li class="url-work">
+                                  <ul class="id-details">
+                                      <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                                          <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                                      </li>
+                                  </ul>                                   
+                               </li>
+
+                               <li ng-if="work.url.value" class="url-popover url-work">
+                                  <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                  <div class="popover-pos">                                   
+                                      <div class="popover-help-container">
+                                         <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+                                              <div class="arrow"></div>
+                                              <div class="popover-content">
+                                                  <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+                                              </div>                
+                                          </div>                              
+                                      </div>
+                                   </div>
+                               </li>
+                           </ul>
+                       </div>
+                   </div>
 
                 </div>                          
                 <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                            
