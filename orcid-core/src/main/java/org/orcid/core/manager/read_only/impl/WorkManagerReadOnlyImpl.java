@@ -163,11 +163,16 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Set<GroupableActivity> activities = group.getActivities();
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID workExtId = (ExternalID) extId;
-                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+                // Initialize the ids as an empty list
+                workGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble extId : externalIdentifiers) {
+                    ExternalID workExtId = (ExternalID) extId;
+                    workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+                }
             }
-
+            
             // Fill the work group with the list of activities
             for (GroupableActivity activity : activities) {
                 WorkSummary workSummary = (WorkSummary) activity;

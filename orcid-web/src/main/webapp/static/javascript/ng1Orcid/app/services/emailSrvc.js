@@ -1,11 +1,12 @@
 angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
     var serv = {
-        emails: null,            
         delEmail: null,
         displayModalWarningFlag: false,
+        emails: null,            
         inputEmail: null,
         popUp: false,
         primaryEmail: null,
+        unverifiedSetPrimary: false,
         
         addEmail: function() {              
             $.ajax({
@@ -37,8 +38,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 dataType: 'json',
                 success: function(data) {
                     serv.getEmails();
-                    if (callback)
-                           callback();
+                    if (callback) {
+                        callback();
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -46,6 +48,10 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
         
+        getEmailPrimary: function() {
+            return serv.primaryEmail;
+        },
+
         getEmails: function(callback) {
             $.ajax({
                 url: getBaseUri() + '/account/emails.json',
@@ -69,10 +75,6 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 logAjaxError(e);
             });
         },
-        
-        getEmailPrimary: function() {
-            return serv.primaryEmail;
-        },
 
         initInputEmail: function() {
             serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
@@ -88,8 +90,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 success: function(data) {
                     serv.data;
                     $rootScope.$apply();
-                    if (callback)
+                    if (callback) {
                         callback(data);
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -97,16 +100,26 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
             });
         },
 
-        setPrimary: function(email) {
-            for (i in serv.emails.emails) {
+        setPrimary: function(email, callback) {
+            for (var i in serv.emails.emails) {
                 if (serv.emails.emails[i] == email) {
                     serv.emails.emails[i].primary = true;
                     serv.primaryEmail = email;
+                    if (serv.emails.emails[i].verified == false) {
+                        serv.unverifiedSetPrimary = true;
+                    } else {
+                        serv.unverifiedSetPrimary = false;
+                    }
+
+                    callback = function(){
+                        $rootScope.$broadcast('unverifiedSetPrimary', { newValue: serv.unverifiedSetPrimary});
+                    }
+
                 } else {
                     serv.emails.emails[i].primary = false;
                 }
             }
-            serv.saveEmail();
+            serv.saveEmail(callback);
         },
         
         setPrivacy: function(email, priv) {
@@ -122,8 +135,9 @@ angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location,
                 contentType: 'application/json;charset=UTF-8',
                 dataType: 'json',
                 success: function(data) {
-                    if (callback)
+                    if (callback) {
                         callback(data);
+                    }
                 }
             }).fail(function() {
                 // something bad is happening!

@@ -3015,7 +3015,7 @@ header overrides
     border-left: 0;
     border-right: 0;
     padding-left: 0;
-    padding-right: 5;
+    padding-right: 5px;
 }
 
 .account-settings {
@@ -6580,7 +6580,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login .btn-google {
@@ -6588,7 +6588,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login ul.social-icons {
@@ -7315,41 +7315,65 @@ ul.comma li:last-child:after {
     width: 25%;
 }
 
-/*Pi day*/
-#pi-banner {
-    position: absolute;
-    top: -40px;
-    left: -8em;
-}
-
-#pi-text {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 12px 10px;
-    color: #fff;
-    text-transform: uppercase;
-    text-align: center;
-    font-size: 10px;
-    line-height: 1.3em;
-}
-
-#pi-text img{
-    margin: 6px 0 8px 0;
-}
-
-#pi-number {
-    font-size: 16px;
+.bold {
     font-weight: bold;
 }
 
-#pi-text small{
-    font-size: 95%;
-    font-weight: normal;
-    text-transform: none;
+.font-size-small {
+    font-size: 12px;
 }
 
+.footer-main {
+    border-top: 2px solid #C9C9CA;
+    font-size: 14px;
+    margin-top: 30px;
+    padding-bottom: 45px;
+    padding-top: 30px; 
+}
 
+.footer-main .btn-social {
+    margin-right: 15px;
+}
+
+.footer-main .btn-social:last-child {
+    margin-right: 0;
+}
+
+.footer-main .inline-list li {
+    margin-left: 0;
+    margin-right: 20px;
+}
+
+.footer-main .inline-list li:last-child {
+    margin-right: 0;
+}
+
+.inline-list li {
+    display: inline;
+}
+
+.btn-social {
+    background-size: 40px 40px;
+    display: block;
+    height: 30px;
+    width: 30px;
+}
+
+.btn-social-facebook {
+    background: url('../img/svg/fb.svg') transparent no-repeat;
+}
+
+.btn-social-github {
+    background: url('../img/svg/github.svg') transparent no-repeat;
+}
+
+.btn-social-google {
+    background: url('../img/svg/google.svg') transparent no-repeat;
+}
+
+.btn-social-twitter {
+    background: url('../img/svg/twitter.svg') transparent no-repeat;
+}
 
 /* Media Queries */
 
@@ -8692,7 +8716,8 @@ ul.comma li:last-child:after {
     float: right!important;
 }
 
-.lang-rl .table th, .table td {
+.lang-rl .table th, 
+.lang-rl .table td {
     text-align: right;
 }
 
