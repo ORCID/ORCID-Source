@@ -96,7 +96,7 @@
         </div>
       </div>
 
-       <!-- Country -->            
+      <!-- Country -->            
       <div ng-controller="CountryCtrl" class="workspace-section country">
         <div class="workspace-section-header">
           <div class="workspace-section-title">
@@ -187,7 +187,7 @@
         </div> 
         <div class="workspace-section-content">
           <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
-           <span ng-bind="email.value"></span>
+            <span ng-bind="email.value"></span>
           </div>
         </div>
       </div>
@@ -302,8 +302,6 @@
                   </div>
                 </div>
               </div>
-
-
             </div>            
           </div>
           <!-- Bulk Edit -->          
@@ -375,23 +373,23 @@
               <h4><@orcid.msg 'workspace.bibtexExporter.export_bibtex'/></h4><span ng-click="toggleBibtexExport()" class="hide-importer"><@orcid.msg 'workspace.bibtexExporter.hide'/></span>
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
-                <p>
-	                <@orcid.msg 'workspace.bibtexExporter.intro'/>
-                </p> 
+                  <p>
+                    <@orcid.msg 'workspace.bibtexExporter.intro'/>
+                  </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
-                <span class="bibtext-options">                                        
-                  <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
-                  <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
-                </span>                   
+                  <span class="bibtext-options">                                        
+                    <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.cancel'/></a>             
+                    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="fetchBibtexExport()"><@orcid.msg 'workspace.bibtexExporter.export'/></span>                   
+                  </span>                   
                 </div>
               </div>
             </div>
             <div class="bottomBuffer" ng-if="bibtexLoading && !bibtexExportError" ng-cloak>
-	          <span class="dotted-bar"></span>
+              <span class="dotted-bar"></span>
               <ul class="inline-list">
                 <li>
-	                <@orcid.msg 'workspace.bibtexExporter.generating'/>
+                  <@orcid.msg 'workspace.bibtexExporter.generating'/>
                 </li>
                 <li>
                   &nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>    
@@ -453,34 +451,33 @@
                     <!-- Active Row Identifiers / URL / Validations / Versions -->
                     
                   </div>
-                   <div class="row" ng-if="group.activePutCode == work.putCode.value">
-                       <div class="col-md-12 col-sm-12 bottomBuffer">
-                           <ul class="id-details">
-                               <li class="url-work">
-                                  <ul class="id-details">
-                                      <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
-                                          <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
-                                      </li>
-                                  </ul>                                   
-                               </li>
+                  <div class="row" ng-if="group.activePutCode == work.putCode.value">
+                    <div class="col-md-12 col-sm-12 bottomBuffer">
+                      <ul class="id-details">
+                        <li class="url-work">
+                          <ul class="id-details">
+                            <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
+                              <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                            </li>
+                          </ul>                                   
+                        </li>
 
-                               <li ng-if="work.url.value" class="url-popover url-work">
-                                  <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
-                                  <div class="popover-pos">                                   
-                                      <div class="popover-help-container">
-                                         <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
-                                              <div class="arrow"></div>
-                                              <div class="popover-content">
-                                                  <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
-                                              </div>                
-                                          </div>                              
-                                      </div>
-                                   </div>
-                               </li>
-                           </ul>
-                       </div>
+                        <li ng-if="work.url.value" class="url-popover url-work">
+                          <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                          <div class="popover-pos">                                   
+                            <div class="popover-help-container">
+                              <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                  <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+                                </div>                
+                              </div>                              
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
                    </div>
-
                 </div>                          
                 <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">                            
                   <ul>
@@ -520,8 +517,8 @@
         <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{emailsPojo.emails[0].value}}</strong></p>
         <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
         <div class="topBuffer">
-        	<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
-        	<a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
+          <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
+          <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
         </div>
       </div>
 
