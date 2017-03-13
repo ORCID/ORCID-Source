@@ -16,12 +16,16 @@
  */
 package org.orcid.core.manager;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,6 +60,8 @@ import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
@@ -68,6 +75,7 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -115,6 +123,9 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Mock
     private MailGunManager mockMailGunManager;
+    
+    @Mock
+    private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
     @Resource
     private ProfileDao profileDao;
@@ -153,11 +164,12 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Before
     public void initMocks() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
-        notificationManagerImpl.setEncryptionManager(encryptionManager);
-        notificationManagerImpl.setProfileEventDao(profileEventDao);
-        notificationManagerImpl.setSourceManager(sourceManager);
+        MockitoAnnotations.initMocks(this);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
+        when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);        
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
@@ -407,6 +419,39 @@ public class NotificationManagerTest extends DBUnitTest {
 
         assertEquals(notificationPermissions.size(), notifications.getNotifications().size());
     }    
+    
+    @Test
+    public void filterActionedNotificationAlertsTest() {
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
+        when(mockNotificationDao.findByOricdAndId(Matchers.anyString(), Matchers.anyLong())).thenReturn(null);
+        List<Notification> notifications = IntStream.range(0, 10).mapToObj(new IntFunction<Notification> () {
+            @Override
+            public Notification apply(int value) {
+                if(value % 3 == 0) {
+                    NotificationInstitutionalConnection n = new NotificationInstitutionalConnection();
+                    n.setSource(new Source("0000-0000-0000-0000"));
+                    n.setPutCode(Long.valueOf(value));
+                    return n;
+                } else {
+                    NotificationPermission n = new NotificationPermission();
+                    n.setPutCode(Long.valueOf(value));
+                    return n;
+                }
+            }            
+        }).collect(Collectors.toList());                
+        
+        assertEquals(10, notifications.size());
+        notifications = notificationManager.filterActionedNotificationAlerts(notifications, "some-orcid");
+        assertEquals(6, notifications.size());
+        for(Notification n : notifications) {
+            assertEquals(NotificationType.PERMISSION, n.getNotificationType());
+            assertNotNull(n.getPutCode());
+            assertThat(n.getPutCode(), not(anyOf(is(Long.valueOf(0)), is(Long.valueOf(3)), is(Long.valueOf(6)), is(Long.valueOf(9)))));
+        }
+        
+        // Rollback mocked
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
+    }
     
     private OrcidProfile getProfile(Locale locale) throws JAXBException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
