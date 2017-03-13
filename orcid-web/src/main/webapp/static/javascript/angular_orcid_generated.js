@@ -9076,13 +9076,20 @@
 	* External consortium controller
 	*/
 	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+	    $scope.addContactDisabled = false;
 	    $scope.membersListSrvc = membersListSrvc;
 	    $scope.consortium = null;
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.results = new Array();
 	    $scope.numFound = 0;
+	    */
 	    $scope.input = {};
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.input.start = 0;
 	    $scope.input.rows = 10;
+	    */
 	    $scope.showInitLoader = true;
 	    $scope.showLoader = false;
 	    $scope.effectiveUserOrcid = orcidVar.orcidId;
@@ -9155,17 +9162,12 @@
 	    };
 	    
 	    $scope.search = function(){
-	        $scope.results = new Array();
-	        $scope.showLoader = true;
-	        $('#no-results-alert').hide();
+	        $('#invalid-email-alert').hide();
 	        if(utilsService.isEmail($scope.input.text)){
-	            $scope.numFound = 0;
-	            $scope.start = 0;
-	            $scope.areMoreResults = 0;
 	            $scope.searchByEmail();
 	        }
 	        else{
-	            $scope.getResults();
+	            $('#invalid-email-alert').show();
 	        }
 	    };
 
@@ -9185,7 +9187,8 @@
 	        });
 
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.getResults = function(rows){
 	        $.ajax({
 	            url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -9268,7 +9271,7 @@
 	            }
 	        }
 	        return name;
-	    };
+	    };*/
 
 	    $scope.confirmAddContactByEmail = function(emailSearchResult){
 	        $scope.errors = [];
@@ -9284,7 +9287,8 @@
 	            scrolling: true
 	        });
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.confirmAddContact = function(contactName, contactId, contactIdx){
 	        $scope.errors = [];
 	        $scope.contactNameToAdd = contactName;
@@ -9300,9 +9304,10 @@
 	            onComplete: function() {$.colorbox.resize();},
 	            scrolling: true
 	        });
-	    };
+	    };*/
 
 	    $scope.addContactByEmail = function(contactEmail) {
+	        $scope.addContactDisabled = true;
 	        $scope.errors = [];
 	        var addContact = {};
 	        addContact.email = $scope.input.text;
@@ -9313,6 +9318,7 @@
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
 	                $scope.getConsortium();
+	                $scope.addContactDisabled = false;
 	                $scope.$apply();
 	                $scope.closeModal();
 	            }
@@ -9320,7 +9326,8 @@
 	            console.log("Error adding contact.");
 	        });
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email    
 	    $scope.addContact = function() {
 	        var addContact = {};
 	        addContact.orcid = $scope.contactToAdd;
@@ -9345,7 +9352,7 @@
 	        }).fail(function() {
 	            console.log("Error adding contact.");
 	        });
-	    };
+	    };*/
 
 	    $scope.confirmRevoke = function(contact) {
 	        $scope.contactToRevoke = contact;
