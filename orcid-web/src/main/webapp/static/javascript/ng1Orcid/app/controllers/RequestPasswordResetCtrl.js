@@ -6,11 +6,11 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$t
         $scope.showResetPassword = !$scope.showResetPassword;
 
         // pre-populate with email from signin form 
-        if(reEmailMatch.test($scope.userId)){
+        if(typeof $scope.userId != "undefined" && $scope.userId && reEmailMatch.test($scope.userId)){
             $scope.requestResetPassword = {
                 email:  $scope.userId
             } 
-        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
+        } else if (typeof $scope.authorizationForm != "undefined" && $scope.authorizationForm.userName.value && reEmailMatch.test($scope.authorizationForm.userName.value)) {
             $scope.requestResetPassword = {
                 email:  $scope.authorizationForm.userName.value
             } 
