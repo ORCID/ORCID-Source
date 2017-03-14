@@ -121,4 +121,6 @@ public interface NotificationManager {
 
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
+    boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
+
 }

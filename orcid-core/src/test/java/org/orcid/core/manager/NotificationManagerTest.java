@@ -180,7 +180,8 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
-        notificationManager.sendWelcomeEmail(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        notificationManager.sendWelcomeEmail(orcidProfile.getOrcidIdentifier().getPath(),
+                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test
@@ -197,8 +198,8 @@ public class NotificationManagerTest extends DBUnitTest {
             orcidProfile.setPassword("r$nd0m");
             EncryptionManager mockEncypter = mock(EncryptionManager.class);
             getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
-            when(mockEncypter.encryptForExternalUse(any(String.class))).thenReturn(
-                    "Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
+            when(mockEncypter.encryptForExternalUse(any(String.class)))
+                    .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
             notificationManager.sendPasswordResetEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         }
     }
@@ -283,6 +284,14 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Test
+    public void testSendVerifiedRequiredAnnouncement2017() throws JAXBException, IOException, URISyntaxException {
+        for (Locale locale : Locale.values()) {
+            OrcidProfile orcidProfile = getProfile(locale);
+            notificationManager.sendVerifiedRequiredAnnouncement2017(orcidProfile);
+        }
+    }
+
+    @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
@@ -301,20 +310,20 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testChangeEmailAddress() throws Exception {
         for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);            
+            OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendEmailAddressChangedNotification(orcidProfile, "original@email.com");
         }
     }
 
     @Test
     public void testSendReactivationEmail() throws Exception {
-    	String email = "original@email.com";
-    	for (Locale locale : Locale.values()) {
+        String email = "original@email.com";
+        for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendReactivationEmail(email, orcidProfile);
         }
     }
-    
+
     @Test
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
@@ -360,7 +369,7 @@ public class NotificationManagerTest extends DBUnitTest {
 
     /**
      * 0000-0000-0000-0003 Must have notifications enabled
-     * */
+     */
     @Test
     public void sendAcknowledgeMessageToAccountWithNotificationsEnabledTest() throws Exception {
         String clientId = "APP-5555555555555555";
@@ -380,7 +389,7 @@ public class NotificationManagerTest extends DBUnitTest {
 
     /**
      * 0000-0000-0000-0002 Must have notifications disabled
-     * */
+     */
     @Test
     public void sendAcknowledgeMessageToAccountWithNotificationsDisabledTest() throws Exception {
         String clientId = "APP-5555555555555555";
@@ -415,7 +424,8 @@ public class NotificationManagerTest extends DBUnitTest {
         ReflectionTestUtils.setField(notificationManager, "notificationAdapter", adapter);
         ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
 
-        NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient("some-orcid", "some-client", 0, OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE);
+        NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient("some-orcid", "some-client", 0,
+                OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE);
 
         assertEquals(notificationPermissions.size(), notifications.getNotifications().size());
     }    
