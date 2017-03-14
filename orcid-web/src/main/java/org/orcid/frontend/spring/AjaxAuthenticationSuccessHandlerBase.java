@@ -28,7 +28,6 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -48,9 +47,6 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
-
-    @Resource
-    protected UserConnectionDao userConnectionDao;
 
     @Resource
     protected LocaleContextResolver localeContextResolver;

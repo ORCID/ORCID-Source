@@ -78,6 +78,7 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
@@ -1206,6 +1207,21 @@ public class NotificationManagerImpl implements NotificationManager {
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         createNotification(primaryOrcid, notification);
+    }
+
+    @Override
+    public int getUnreadCount(String orcid) {
+        return notificationDao.getUnreadCount(orcid);
+    }
+
+    @Override
+    public void flagAsRead(String orcid, Long id) {
+        notificationDao.flagAsRead(orcid, id);
+    }
+
+    @Override
+    public ActionableNotificationEntity findActionableNotificationEntity(Long id) {
+        return (ActionableNotificationEntity) notificationDao.find(id);
     }
 
 }
