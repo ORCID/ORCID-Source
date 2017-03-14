@@ -38,6 +38,7 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.GivenPermissionToManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -69,7 +70,6 @@ import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -133,7 +133,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private GivenPermissionToDao givenPermissionToDao;
+    private GivenPermissionToManager givenPermissionToManager;
 
     @Resource
     private EmailManager emailManager;
@@ -174,8 +174,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         this.notificationManager = notificationManager;
     }
 
-    public void setGivenPermissionToDao(GivenPermissionToDao givenPermissionToDao) {
-        this.givenPermissionToDao = givenPermissionToDao;
+    public void setGivenPermissionToManager(GivenPermissionToManager givenPermissionToDao) {
+        this.givenPermissionToManager = givenPermissionToManager;
     }
 
     public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
@@ -248,7 +248,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         String currentUserOrcid = getCurrentUserOrcid();
         String delegateOrcid = addDelegate.getDelegateToManage();
-        GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
+        GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
@@ -260,7 +260,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             receiver.setLastModified(delegateLastModified);
             permission.setReceiver(receiver);
             permission.setApprovalDate(new Date());
-            givenPermissionToDao.merge(permission);
+            givenPermissionToManager.merge(permission);
             OrcidProfile currentUser = getEffectiveProfile();
             ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(delegateOrcid);
             DelegationDetails details = new DelegationDetails();
@@ -1085,7 +1085,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);
                     // Check if the delegation doesnt exists
-                    GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
+                    GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
                     if (existing == null) {
                         // Clear the delegate's profile from the cache so that
                         // the granting
@@ -1098,7 +1098,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         receiver.setLastModified(delegateLastModified);
                         permission.setReceiver(receiver);
                         permission.setApprovalDate(new Date());
-                        givenPermissionToDao.merge(permission);
+                        givenPermissionToManager.merge(permission);
                         OrcidProfile currentUser = getEffectiveProfile();
                         ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(trustedOrcid);
                         DelegationDetails details = new DelegationDetails();

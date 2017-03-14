@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -40,6 +41,9 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
 
     @Resource
     private SocialContext socialContext;
+    
+    @Resource
+    private UserConnectionManager userConnectionManager;
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         linkSocialAccount(request, response);
@@ -53,14 +57,14 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
             String providerId = connectionType.value();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (!userConnectionEntity.isLinked()) {
                     OrcidProfile profile = getRealProfile();
                     userConnectionEntity.setLinked(true);
                     userConnectionEntity.setEmail(userMap.get("email"));
                     userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-                    userConnectionDao.merge(userConnectionEntity);
+                    userConnectionManager.update(userConnectionEntity);
                 }
             } else {
                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
