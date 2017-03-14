@@ -521,7 +521,7 @@
 <footer class="footer-main">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3 no-padding-left">
                 <p>
                     <a href="https://orcid.org" alt="ORCiD logo">
                         <img src="${staticCdn}/img/orcid-logo.png" alt="">
@@ -536,9 +536,9 @@
                     </ul>
                 </nav>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <p class="bold">&copy; 2017 ORCID, Inc</p>
-                <p class="font-size-small">Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
+                <p>Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
                 <nav>
                     <ul class="inline-list bold">
                         <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>

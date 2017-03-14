@@ -7323,12 +7323,15 @@ ul.comma li:last-child:after {
     font-size: 12px;
 }
 
+.no-padding-left {
+    padding-left: 0px;
+}
+
 .footer-main {
-    border-top: 2px solid #C9C9CA;
-    font-size: 14px;
-    margin-top: 30px;
+    border-top: 1px solid #c9c9c9;
+    font-size: 12px;
     padding-bottom: 45px;
-    padding-top: 30px; 
+    padding-top: 30px;
 }
 
 .footer-main .btn-social {
@@ -7363,16 +7366,40 @@ ul.comma li:last-child:after {
     background: url('../img/svg/fb.svg') transparent no-repeat;
 }
 
+.btn-social-facebook:hover {
+    background: url('../img/svg/fb-hover.svg') transparent no-repeat;
+}
+
 .btn-social-github {
     background: url('../img/svg/github.svg') transparent no-repeat;
+}
+
+.btn-social-github:hover {
+    background: url('../img/svg/github-hover.svg') transparent no-repeat;
 }
 
 .btn-social-google {
     background: url('../img/svg/google.svg') transparent no-repeat;
 }
 
+.btn-social-google:hover {
+    background: url('../img/svg/google-hover.svg') transparent no-repeat;
+}
+
+.btn-social-rss {
+    background: url('../img/svg/rss.svg') transparent no-repeat;
+}
+
+.btn-social-rss:hover {
+    background: url('../img/svg/rss-hover.svg') transparent no-repeat;
+}
+
 .btn-social-twitter {
     background: url('../img/svg/twitter.svg') transparent no-repeat;
+}
+
+.btn-social-twitter:hover {
+    background: url('../img/svg/twitter-hover.svg') transparent no-repeat;
 }
 
 /* Media Queries */
