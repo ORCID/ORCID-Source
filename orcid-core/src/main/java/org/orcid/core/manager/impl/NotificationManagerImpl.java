@@ -1018,11 +1018,15 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid) {
         return notifications.stream().filter(n -> {
-            boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
-            if (alreadyConnected) {
-                flagAsArchived(userOrcid, n.getPutCode(), false);
+            //Filter only INSTITUTIONAL_CONNECTION notifications
+            if(NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
+                boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
+                if (alreadyConnected) {
+                    flagAsArchived(userOrcid, n.getPutCode(), false);
+                }
+                return !alreadyConnected;
             }
-            return !alreadyConnected;
+            return true;
         }).collect(Collectors.toList());
     }
 
