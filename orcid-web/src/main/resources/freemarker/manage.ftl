@@ -279,51 +279,49 @@
                 </tr>
                 <!-- / Deactivate Account -->
                 <!-- Deprecate duplicate account -->
-                <#if RequestParameters['UserDeprecation']??>
-	                <tr>
-	                    <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>
-	                    <td><a href="" ng-click="toggleDeprecateEdit()"
-	                        ng-bind="deprecateToggleText"></a></td>
-	                </tr>
-	                <tr ng-controller="DeprecateAccountCtrl"
-	                    ng-show="showEditDeprecate" ng-cloak>
-	                    <td colspan="2">
-	                        <div class="editTablePadCell35 close-account-container">
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}</p>
-	                            
-	                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
-	                                <a
-	                                    href="${knowledgeBaseUri}/articles/580410"
-	                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
-	                            </p>
-	                            <div>
-	                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
-	                                <div class="relative">
-	                                    <input id="emailOrId" type="text" name="emailOrId" ng-enter="deprecateORCID()" 
-	                                        ng-model="deprecateProfilePojo.deprecatingOrcidOrEmail" class="input-xlarge" />
-	                                    <span class="required">*</span>
-	                                </div>
-	                            </div>
-	                            <div>
-	                                <label for="password" class="">${springMacroRequestContext.getMessage("deprecate_orcid.password")}</label>
-	                                <div class="relative">
-	                                    <input id="password" type="password"
-	                                        name="password"
-	                                        ng-model="deprecateProfilePojo.deprecatingPassword" ng-enter="deprecateORCID()" 
-	                                        class="input-xlarge" /> <span class="required">*</span>
-	                                </div>
-	                            </div>
-	                           <span class="orcid-error"
-	                                ng-show="deprecateProfilePojo.errors.length > 0">
-	                                <div ng-repeat='error in deprecateProfilePojo.errors'
-	                                    ng-bind-html="error"></div>
-	                            </span>
-	                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
-	                        </div>
-	                    </td>
-	                </tr>
-                </#if>
+                <tr>
+                    <th><a name="editDeprecate"></a>${springMacroRequestContext.getMessage("manage.removeDuplicate")}</th>
+                    <td><a href="" ng-click="toggleDeprecateEdit()"
+                        ng-bind="deprecateToggleText"></a></td>
+                </tr>
+                <tr ng-controller="DeprecateAccountCtrl"
+                    ng-show="showEditDeprecate" ng-cloak>
+                    <td colspan="2">
+                        <div class="editTablePadCell35 close-account-container">
+                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have")}</p>
+                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.information_in")}</p>
+                            
+                            <p>${springMacroRequestContext.getMessage("deprecate_orcid.if_you_have_more")}<br />
+                                <a
+                                    href="${knowledgeBaseUri}/articles/580410"
+                                    target="_blank">${springMacroRequestContext.getMessage("deprecate_orcid.learn_more_link")}</a>
+                            </p>
+                            <div>
+                                <label for="emailOrId" class="">${springMacroRequestContext.getMessage("deprecate_orcid.email_or_id")}</label>
+                                <div class="relative">
+                                    <input id="emailOrId" type="text" name="emailOrId" ng-enter="deprecateORCID()" 
+                                        ng-model="deprecateProfilePojo.deprecatingOrcidOrEmail" class="input-xlarge" />
+                                    <span class="required">*</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="password" class="">${springMacroRequestContext.getMessage("deprecate_orcid.password")}</label>
+                                <div class="relative">
+                                    <input id="password" type="password"
+                                        name="password"
+                                        ng-model="deprecateProfilePojo.deprecatingPassword" ng-enter="deprecateORCID()" 
+                                        class="input-xlarge" /> <span class="required">*</span>
+                                </div>
+                            </div>
+                           <span class="orcid-error"
+                                ng-show="deprecateProfilePojo.errors.length > 0">
+                                <div ng-repeat='error in deprecateProfilePojo.errors'
+                                    ng-bind-html="error"></div>
+                            </span>
+                            <button ng-click="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
+                        </div>
+                    </td>
+                </tr>
                 <#if RequestParameters['OrcidSocial']??>
                     <tr>
                         <th><a name="editSocialNetworks"></a>${springMacroRequestContext.getMessage("manage.social_networks")}</th>
