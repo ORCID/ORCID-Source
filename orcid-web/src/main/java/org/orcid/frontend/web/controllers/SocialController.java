@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +57,11 @@ public class SocialController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
 
+    //@Resource
+    //private UserConnectionDao userConnectionDao;
+
     @Resource
-    private UserConnectionDao userConnectionDao;
+    private UserConnectionManager userConnectionManager;
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
@@ -69,11 +72,11 @@ public class SocialController extends BaseController {
 
             String providerId = connectionType.value();
             String userId = socialContext.getUserId();
-            UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
+            UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
                     UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
-                    userConnectionDao.updateLoginInformation(pk);
+                    userConnectionManager.updateLoginInformation(pk);
                     String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
                     PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
                     token.setDetails(new WebAuthenticationDetails(request));

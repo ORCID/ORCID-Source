@@ -30,11 +30,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.IdentityProviderDao;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.HeaderCheckResult;
@@ -70,7 +70,7 @@ public class ShibbolethController extends BaseController {
     private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
 
     @Resource
-    private UserConnectionDao userConnectionDao;
+    private UserConnectionManager userConnectionManager;
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -104,7 +104,7 @@ public class ShibbolethController extends BaseController {
 
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
+        UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
@@ -129,7 +129,7 @@ public class ShibbolethController extends BaseController {
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 userConnectionEntity.setLastLogin(new Date());
-                userConnectionDao.merge(userConnectionEntity);
+                userConnectionManager.update(userConnectionEntity);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
