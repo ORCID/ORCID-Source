@@ -268,7 +268,6 @@
                   </p>                
                 </div>
               </div>
-              <#if RequestParameters['import_works_wizard']??>
               <div class="row">
                 <div id="workFilters">
                   <form class="form-inline">
@@ -287,8 +286,7 @@
                   </form>
                   <hr />
                 </div>
-              </div>
-              </#if>          
+              </div>         
               <div class="row wizards">               
                 <div class="col-md-12 col-sm-12 col-xs-12">
                   <div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'displayName' | filterImportWizards : selectedWorkType : selectedGeoArea">

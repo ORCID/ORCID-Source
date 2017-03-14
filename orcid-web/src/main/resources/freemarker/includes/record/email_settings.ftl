@@ -33,10 +33,10 @@
 			<div ng-show="emailSrvc.popUp && showUnverifiedEmailSetPrimaryBox" class="grey-box">
 				<h4><@orcid.msg 'workspace.your_primary_email_new' /></h4>
 				<p><@orcid.msg 'workspace.youve_changed' /></p>
-				<p><@orcid.msg 'workspace.some_editing_features' /></p>
+				<p><@orcid.msg 'workspace.you_need_to_verify' /></p>
 				<p><@orcid.msg 'workspace.ensure_future_access2' /><br />
 				<p><strong>{{emailSrvc.getEmailPrimary().value}}</strong></p>
-				<p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="_blank" href="${knowledgeBaseUri}"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
+				<p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="_blank" href="${knowledgeBaseUri}/articles/149457"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
 					<div class="topBuffer">
 						<a ng-click="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
 					</div>

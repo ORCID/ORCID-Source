@@ -470,10 +470,6 @@ angular.module('orcidApp').controller(
                                 }
                             }
                         }               
-                        if( utilsService.getParameterByName('import_works_wizard') != 'true' ) {
-                            $scope.selectedWorkType = 'All';
-                            $scope.selectedGeoArea = 'All';
-                        }
                         $scope.$apply();
                     }
                 }).fail(function(e) {
@@ -678,7 +674,22 @@ angular.module('orcidApp').controller(
             $scope.formatExternalIDType = function(model) {
                 if (!model)
                     return "";
-                return $scope.externalIDNamesToDescriptions[model].description;
+                if ($scope.externalIDNamesToDescriptions[model])
+                    return $scope.externalIDNamesToDescriptions[model].description;
+                //not loaded any descriptions yet, fetch them
+                var url = getBaseUri()+'/works/idTypes.json?query='+model;
+                ajax = $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    async: false,
+                  }).done(function(data) {
+                      for (var key in data) {
+                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                      }
+                  });   
+                $scope.externalIDTypeCache[model] = ajax;
+                return $scope.externalIDNamesToDescriptions[model].description;   
               }
             //--typeahead end
     

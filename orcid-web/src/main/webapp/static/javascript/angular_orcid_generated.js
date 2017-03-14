@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(22));
 	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(30));
+	requireAll(__webpack_require__(24));
 	requireAll(__webpack_require__(31));
+	requireAll(__webpack_require__(32));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(33));
-	requireAll(__webpack_require__(53));
+	requireAll(__webpack_require__(34));
+	requireAll(__webpack_require__(54));
 
 /***/ },
 /* 1 */
@@ -5694,9 +5694,10 @@
 	            dataType: 'json',
 	            success: function(data) {
 	                $scope.authorizationForm = data;                                
-	                if($scope.authorizationForm.userName.value) {
+	                if($scope.authorizationForm.userName.value) { 
 	                    $scope.isOrcidPresent = true;
-	                    $scope.showRegisterForm = false;                    
+	                    $scope.showRegisterForm = false;   
+	                    $scope.$broadcast("loginHasUserId", { userName: $scope.authorizationForm.userName.value });                 
 	                }
 	                // #show_login - legacy fragment id, we should remove this
 	                // sometime
@@ -7004,12 +7005,13 @@
 		"./NotificationsCountCtrl.js": 13,
 		"./NotificationsCtrl.js": 14,
 		"./OtherNamesCtrl.js": 15,
-		"./RequestPasswordResetCtrl.js": 16,
-		"./RequestResendClaimCtrl.js": 17,
-		"./externalConsortiumCtrl.js": 18,
-		"./languageCtrl.js": 19,
-		"./websitesCtrl.js": 20,
-		"./workCtrl.js": 21
+		"./RecordCorrectionsCtrl.js": 16,
+		"./RequestPasswordResetCtrl.js": 17,
+		"./RequestResendClaimCtrl.js": 18,
+		"./externalConsortiumCtrl.js": 19,
+		"./languageCtrl.js": 20,
+		"./websitesCtrl.js": 21,
+		"./workCtrl.js": 22
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -7481,11 +7483,12 @@
 	    $scope.$on('unverifiedSetPrimary', function(event, data){
 	        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
 	            $scope.showUnverifiedEmailSetPrimaryBox = true;
+	            
 	        }
 	        else {
 	            $scope.showUnverifiedEmailSetPrimaryBox =false;
 	        }
-
+	        $scope.$apply(); 
 	    });
 
 	    //init
@@ -8875,25 +8878,74 @@
 /* 16 */
 /***/ function(module, exports) {
 
-	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$compile', function RequestPasswordResetCtrl($scope, $compile) {
-
-	    //prefill reset form if email entered in login form
-	    $scope.$on("loginUserIdInputChanged", function(event, options) {
-	        var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	        if(reEmailMatch.test(options.newValue)) {
-	            $scope.requestResetPassword = {
-	                email:  options.newValue
+	angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$compile', 'utilsService', function RecordCorrectionsCtrl($scope, $compile, utilsService) {
+	    $scope.currentPage = null;
+	    $scope.currentElement = null;
+	    
+	    $scope.getNextPage = function() {
+	    	var nextPageUrl = getBaseUri() + '/record-corrections/next';
+	    	if($scope.currentPage != null) {
+	    		nextPageUrl += '/' + $scope.currentPage.lastElementId
+	    	}    	
+	        $.ajax({
+	            url: nextPageUrl,
+	            dataType: 'json',
+	            success: function(data) {
+	            	$scope.currentPage = data;
+	                $scope.$apply();
 	            }
+	        }).fail(function(){
+	            // something bad is happening!
+	            console.log("error fetching next page");
+	        });
+	    };
+
+	    $scope.getPreviousPage = function() {
+	    	var previousPageUrl = getBaseUri() + '/record-corrections/previous';
+	    	if($scope.currentPage != null) {
+	    		previousPageUrl += '/' + $scope.currentPage.firstElementId
+	    	}
+	        $.ajax({
+	            url: previousPageUrl,            
+	            dataType: 'json',
+	            success: function(data) {            	
+	            	$scope.currentPage = data;
+	                $scope.$apply();
+	            }
+	        }).fail(function() {
+	            // something bad is happening!
+	        	console.log("error fetching previous page");
+	        });
+	    };    
+
+	    $scope.getNextPage();        
+	}]);
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', function RequestPasswordResetCtrl($scope, $timeout, $compile) {
+
+	    var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+	    $scope.toggleResetPassword = function() {
+	        $scope.showResetPassword = !$scope.showResetPassword;
+
+	        // pre-populate with email from signin form 
+	        if(reEmailMatch.test($scope.userId)){
+	            $scope.requestResetPassword = {
+	                email:  options.userName
+	            } 
+	        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
+	            $scope.requestResetPassword = {
+	                email:  $scope.authorizationForm.userName.value
+	            } 
 	        } else {
 	            $scope.requestResetPassword = {
 	                email:  ""
 	            }
 	        }
-	    });
-
-
-	    $scope.toggleResetPassword = function() {
-	        $scope.showResetPassword = !$scope.showResetPassword;
 	    };
 
 	    // init reset password toggle text
@@ -8950,7 +9002,7 @@
 	}]);
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestResendClaimCtrl', ['$scope', '$compile', function RequestResendClaimCtrl($scope, $compile) {
@@ -9017,20 +9069,27 @@
 	}]);
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/**
 	* External consortium controller
 	*/
 	angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+	    $scope.addContactDisabled = false;
 	    $scope.membersListSrvc = membersListSrvc;
 	    $scope.consortium = null;
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.results = new Array();
 	    $scope.numFound = 0;
+	    */
 	    $scope.input = {};
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.input.start = 0;
 	    $scope.input.rows = 10;
+	    */
 	    $scope.showInitLoader = true;
 	    $scope.showLoader = false;
 	    $scope.effectiveUserOrcid = orcidVar.orcidId;
@@ -9103,17 +9162,12 @@
 	    };
 	    
 	    $scope.search = function(){
-	        $scope.results = new Array();
-	        $scope.showLoader = true;
-	        $('#no-results-alert').hide();
+	        $('#invalid-email-alert').hide();
 	        if(utilsService.isEmail($scope.input.text)){
-	            $scope.numFound = 0;
-	            $scope.start = 0;
-	            $scope.areMoreResults = 0;
 	            $scope.searchByEmail();
 	        }
 	        else{
-	            $scope.getResults();
+	            $('#invalid-email-alert').show();
 	        }
 	    };
 
@@ -9133,7 +9187,8 @@
 	        });
 
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.getResults = function(rows){
 	        $.ajax({
 	            url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -9216,7 +9271,7 @@
 	            }
 	        }
 	        return name;
-	    };
+	    };*/
 
 	    $scope.confirmAddContactByEmail = function(emailSearchResult){
 	        $scope.errors = [];
@@ -9232,7 +9287,8 @@
 	            scrolling: true
 	        });
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email
 	    $scope.confirmAddContact = function(contactName, contactId, contactIdx){
 	        $scope.errors = [];
 	        $scope.contactNameToAdd = contactName;
@@ -9248,9 +9304,10 @@
 	            onComplete: function() {$.colorbox.resize();},
 	            scrolling: true
 	        });
-	    };
+	    };*/
 
 	    $scope.addContactByEmail = function(contactEmail) {
+	        $scope.addContactDisabled = true;
 	        $scope.errors = [];
 	        var addContact = {};
 	        addContact.email = $scope.input.text;
@@ -9261,6 +9318,7 @@
 	            contentType: 'application/json;charset=UTF-8',
 	            success: function(data) {
 	                $scope.getConsortium();
+	                $scope.addContactDisabled = false;
 	                $scope.$apply();
 	                $scope.closeModal();
 	            }
@@ -9268,7 +9326,8 @@
 	            console.log("Error adding contact.");
 	        });
 	    };
-
+	    /**
+	    * Not needed if contacts only added by email    
 	    $scope.addContact = function() {
 	        var addContact = {};
 	        addContact.orcid = $scope.contactToAdd;
@@ -9293,7 +9352,7 @@
 	        }).fail(function() {
 	            console.log("Error adding contact.");
 	        });
-	    };
+	    };*/
 
 	    $scope.confirmRevoke = function(contact) {
 	        $scope.contactToRevoke = contact;
@@ -9433,7 +9492,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -9642,7 +9701,7 @@
 	}]);
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -9917,7 +9976,7 @@
 	}]);
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -10392,10 +10451,6 @@
 	                                }
 	                            }
 	                        }               
-	                        if( utilsService.getParameterByName('import_works_wizard') != 'true' ) {
-	                            $scope.selectedWorkType = 'All';
-	                            $scope.selectedGeoArea = 'All';
-	                        }
 	                        $scope.$apply();
 	                    }
 	                }).fail(function(e) {
@@ -10600,7 +10655,22 @@
 	            $scope.formatExternalIDType = function(model) {
 	                if (!model)
 	                    return "";
-	                return $scope.externalIDNamesToDescriptions[model].description;
+	                if ($scope.externalIDNamesToDescriptions[model])
+	                    return $scope.externalIDNamesToDescriptions[model].description;
+	                //not loaded any descriptions yet, fetch them
+	                var url = getBaseUri()+'/works/idTypes.json?query='+model;
+	                ajax = $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: true,
+	                    async: false,
+	                  }).done(function(data) {
+	                      for (var key in data) {
+	                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+	                      }
+	                  });   
+	                $scope.externalIDTypeCache[model] = ajax;
+	                return $scope.externalIDNamesToDescriptions[model].description;   
 	              }
 	            //--typeahead end
 	    
@@ -10863,7 +10933,7 @@
 	);
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -10872,20 +10942,20 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 22;
+	webpackContext.id = 23;
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 24,
-		"./focusMe.js": 25,
-		"./modalEmailUnVerified.js": 26,
-		"./modalUnverifiedEmailSetPrimary.js": 27,
-		"./ngEnter.js": 28,
-		"./ngEnterSubmit.js": 29
+		"./fnForm.js": 25,
+		"./focusMe.js": 26,
+		"./modalEmailUnVerified.js": 27,
+		"./modalUnverifiedEmailSetPrimary.js": 28,
+		"./ngEnter.js": 29,
+		"./ngEnterSubmit.js": 30
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -10898,11 +10968,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 24;
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/*
@@ -10938,7 +11008,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -10962,7 +11032,7 @@
 	);
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/*
@@ -11069,7 +11139,7 @@
 	);
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	/*
@@ -11100,7 +11170,7 @@
 
 	                $.colorbox(
 	                    {
-	                        html : $compile($('#modal-unverified-email-set-primary-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.youve_changed") + '</p><p>' + om.get("orcid.frontend.workspace.some_editing_features") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") +  '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><a class="nner-row" ng-click="closeColorBox()">' + om.get("manage.email.close") + '</a></div></div></div></div>'))(scope),
+	                        html : $compile($('#modal-unverified-email-set-primary-container').html('<div class="lightbox-container" id="modal-email-unverified"><div class="row"><div class="col-md-12 col-xs-12 col-sm-12"><h4>' + om.get("orcid.frontend.workspace.your_primary_email") + '</h4><p>' + om.get("orcid.frontend.workspace.youve_changed") + '</p><p>' + om.get("orcid.frontend.workspace.you_need_to_verify") + '</p><p>' + om.get("orcid.frontend.workspace.ensure_future_access2") +  '<br /><strong>' + scope.emailPrimary + '</strong></p><p>' + om.get("orcid.frontend.workspace.ensure_future_access3") + ' <a target="_blank" href="' + om.get("orcid.frontend.link.url.knowledgebase") + '">' + om.get("orcid.frontend.workspace.ensure_future_access4") + '</a> ' + om.get("orcid.frontend.workspace.ensure_future_access5") + ' <a target="_blank" href="mailto:' + om.get("orcid.frontend.link.email.support") + '">' + om.get("orcid.frontend.link.email.support") + '</a>.</p><div class="topBuffer"><a class="nner-row" ng-click="closeColorBox()">' + om.get("manage.email.close") + '</a></div></div></div></div>'))(scope),
 	                        escKey: true,
 	                        overlayClose: true,
 	                        transition: 'fade',
@@ -11150,7 +11220,7 @@
 	);
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -11172,7 +11242,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/*
@@ -11194,7 +11264,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11203,15 +11273,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 30;
+	webpackContext.id = 31;
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 32
+		"./ui.multiselect.js": 33
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11224,11 +11294,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 31;
+	webpackContext.id = 32;
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11509,29 +11579,29 @@
 	}]);
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 34,
-		"./affiliationsSrvc.js": 35,
-		"./bioBulkSrvc.js": 36,
-		"./clearMemberListFilterSrvc.js": 37,
-		"./commonSrvc.js": 38,
-		"./discoSrvc.js": 39,
-		"./emailSrvc.js": 40,
-		"./fundingSrvc.js": 41,
-		"./groupedActivitiesService.js": 42,
-		"./groupedActivitiesUtil.js": 43,
-		"./initialConfigService.js": 44,
-		"./membersListSrvc.js": 45,
-		"./notificationsSrvc.js": 46,
-		"./peerReviewSrvc.js": 47,
-		"./prefsSrvc.js": 48,
-		"./utilsService.js": 49,
-		"./widgetSrvc.js": 50,
-		"./worksSrvc.js": 51,
-		"./workspaceSrvc.js": 52
+		"./actBulkSrvc.js": 35,
+		"./affiliationsSrvc.js": 36,
+		"./bioBulkSrvc.js": 37,
+		"./clearMemberListFilterSrvc.js": 38,
+		"./commonSrvc.js": 39,
+		"./discoSrvc.js": 40,
+		"./emailSrvc.js": 41,
+		"./fundingSrvc.js": 42,
+		"./groupedActivitiesService.js": 43,
+		"./groupedActivitiesUtil.js": 44,
+		"./initialConfigService.js": 45,
+		"./membersListSrvc.js": 46,
+		"./notificationsSrvc.js": 47,
+		"./peerReviewSrvc.js": 48,
+		"./prefsSrvc.js": 49,
+		"./utilsService.js": 50,
+		"./widgetSrvc.js": 51,
+		"./worksSrvc.js": 52,
+		"./workspaceSrvc.js": 53
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11544,11 +11614,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 33;
+	webpackContext.id = 34;
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11567,7 +11637,7 @@
 	}]);
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -11696,7 +11766,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11716,7 +11786,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
@@ -11730,7 +11800,7 @@
 	 }]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -11795,7 +11865,7 @@
 	}]);
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
@@ -11851,7 +11921,7 @@
 	}]);
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
@@ -12007,7 +12077,7 @@
 	});
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	/**
@@ -12218,7 +12288,7 @@
 	}]);
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12336,7 +12406,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/*
@@ -12391,7 +12461,7 @@
 	*/
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
@@ -12418,7 +12488,7 @@
 	}]);
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -12542,7 +12612,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12785,7 +12855,7 @@
 	}]);
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
@@ -13081,7 +13151,7 @@
 	}]);
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
@@ -13130,7 +13200,7 @@
 	});
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13249,7 +13319,7 @@
 	);
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
@@ -13263,7 +13333,7 @@
 	}]);
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
@@ -13877,7 +13947,7 @@
 	}]);
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13932,7 +14002,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13941,7 +14011,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 53;
+	webpackContext.id = 54;
 
 
 /***/ }

@@ -1,0 +1,75 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+
+	<changeSet id="ADD-ID" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="invalid_record_data_changes" columnName="id"/>
+			</not>
+		</preConditions>
+		<sql>ALTER TABLE invalid_record_data_changes ADD COLUMN id bigint;</sql>
+	</changeSet>
+
+	<changeSet id="CREATE-ID-SEQUENCE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="invalid_record_change_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="invalid_record_change_seq" startValue="1000" />        
+    </changeSet>                 
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="invalid_record_data_changes" columnName="id" columnDataType="bigint"/>        
+    </changeSet>
+    
+    <changeSet id="SET-ID-TO-EXISTING-CHANGES" author="Angel Montenegro">
+    	<sql>UPDATE invalid_record_data_changes SET id=nextval('invalid_record_change_seq');</sql>
+    </changeSet>
+
+	<changeSet id="SET-DEFAULT-VALUE-TO-ID" author="Angel Montenegro" dbms="postgresql">
+    	<sql>ALTER TABLE invalid_record_data_changes ALTER COLUMN id SET DEFAULT nextval('invalid_record_change_seq');</sql>    	
+    </changeSet>
+
+	<changeSet id="SET-ID-NOT-NULL-RESTRICTION" author="Angel Montenegro">
+		<sql>ALTER TABLE invalid_record_data_changes ADD PRIMARY KEY (id);</sql>
+    </changeSet>
+
+	<changeSet id="CREATE-ID-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="invalid_record_data_changes_seq_index" tableName="invalid_record_data_changes" />
+			</not>
+		</preConditions>
+		<sql>create index invalid_record_data_changes_seq_index on invalid_record_data_changes(id);</sql>
+	</changeSet>
+
+	<changeSet id="DATE-CREATED-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="invalid_record_data_changes_date_created_index" tableName="invalid_record_data_changes" />
+			</not>
+		</preConditions>
+		<sql>create index invalid_record_data_changes_date_created_index on invalid_record_data_changes(date_created);</sql>
+	</changeSet>
+
+</databaseChangeLog>
