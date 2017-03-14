@@ -5714,10 +5714,6 @@
 	        });
 	    };
 
-	    $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
-	    };
-
 	    $scope.loginAndAuthorize = function() {
 	        $scope.authorizationForm.approved = true;
 	        // Fire GA sign-in-submit
@@ -6206,10 +6202,6 @@
 	           console.log("error sending reactivation email");
 	       });
 	   };
-
-	   $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-	    };
 	    
 	}]);
 
@@ -6233,10 +6225,6 @@
 	            $scope.loadedFeed = true;
 	        }
 	    });
-
-	    $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-	    };
 	    
 	}]);
 
@@ -8938,11 +8926,11 @@
 	        $scope.showResetPassword = !$scope.showResetPassword;
 
 	        // pre-populate with email from signin form 
-	        if(reEmailMatch.test($scope.userId)){
+	        if(typeof $scope.userId != "undefined" && $scope.userId && reEmailMatch.test($scope.userId)){
 	            $scope.requestResetPassword = {
-	                email:  options.userName
+	                email:  $scope.userId
 	            } 
-	        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
+	        } else if (typeof $scope.authorizationForm != "undefined" && $scope.authorizationForm.userName.value && reEmailMatch.test($scope.authorizationForm.userName.value)) {
 	            $scope.requestResetPassword = {
 	                email:  $scope.authorizationForm.userName.value
 	            } 

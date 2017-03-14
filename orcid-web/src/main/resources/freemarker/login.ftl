@@ -49,7 +49,7 @@
 					                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					                <div class="form-group">
 					                    <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>				                                   
-					                    <input type="text" id="userId" name="userId" ng-model="userId" ng-change="loginUserIdInputChanged()" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">				                    
+					                    <input type="text" id="userId" name="userId" ng-model="userId" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">				                    
 					                </div>
 					                
 					                <div class="form-group">

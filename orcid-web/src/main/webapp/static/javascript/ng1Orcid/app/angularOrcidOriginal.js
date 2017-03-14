@@ -5647,10 +5647,6 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         });
     };
 
-    $scope.loginUserIdInputChanged = function() {
-      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
-    };
-
     $scope.loginAndAuthorize = function() {
         $scope.authorizationForm.approved = true;
         // Fire GA sign-in-submit
@@ -6139,10 +6135,6 @@ angular.module('orcidApp').controller('LoginLayoutController',['$scope', functio
            console.log("error sending reactivation email");
        });
    };
-
-   $scope.loginUserIdInputChanged = function() {
-      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-    };
     
 }]);
 
@@ -6166,10 +6158,6 @@ angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoS
             $scope.loadedFeed = true;
         }
     });
-
-    $scope.loginUserIdInputChanged = function() {
-      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-    };
     
 }]);
 
