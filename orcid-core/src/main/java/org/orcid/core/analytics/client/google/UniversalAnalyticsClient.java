@@ -59,7 +59,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     
     protected static final String API_VERSION_PARAM = "cd1";
     
-    protected static final String CONTENT_TYPE_PARAM = "cd1";
+    protected static final String CONTENT_TYPE_PARAM = "cd2";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
     private String analyticsTrackingCode;
