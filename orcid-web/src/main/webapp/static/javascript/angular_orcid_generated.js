@@ -6590,7 +6590,10 @@
 	            link = $filter('urlProtocol')(link);            
 	            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
 	        } else {
-	            output = output + id.escapeHtml();        
+	            if( id ){
+	                output += id.escapeHtml();        
+	                
+	            }
 	        }
 	        
 	        if( link != null ) {
@@ -6728,7 +6731,9 @@
 	            link = $filter('urlProtocol')(link);
 	            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
 	        }else{
-	            output += id.escapeHtml();        
+	            if( id ) {
+	                output += id.escapeHtml();        
+	            }
 	        }
 	        
 	        if (length > 1 && !last) output = output + ',';
