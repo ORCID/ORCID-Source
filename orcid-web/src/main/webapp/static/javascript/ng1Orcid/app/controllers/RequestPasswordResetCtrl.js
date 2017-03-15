@@ -64,7 +64,6 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$t
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 $scope.requestResetPassword = data;
-                $scope.requestResetPassword.email = "";
                 $scope.$apply();
             }
         }).fail(function(){
