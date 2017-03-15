@@ -1227,6 +1227,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public ActionableNotificationEntity findActionableNotificationEntity(Long id) {
         return (ActionableNotificationEntity) notificationDao.find(id);
+    }
 
     public boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile) {
         String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
