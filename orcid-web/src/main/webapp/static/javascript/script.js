@@ -20,7 +20,7 @@
  */
 
 var enableRightToLeft = function(){
-    var rightToLeftLang = ["rl"];
+    var rightToLeftLang = ["rl", "ar"];
     var currentLanguage = locale_v3;
 
     document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.

@@ -62,7 +62,7 @@
                                 <div class="row personal-login">
                                     <div class="form-group">
                                         <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>                     
-                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" ng-change="loginUserIdInputChanged()" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
+                                        <input type="text" name="userId" id="userId" ng-model="authorizationForm.userName.value" placeholder="<@orcid.msg 'login.username'/>" class="form-control" >
                                     </div>
                                     <div class="form-group">
                                         <label for="password" class="control-label"><@orcid.msg 'oauth_sign_in.labelpassword'/></label>
