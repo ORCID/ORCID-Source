@@ -5714,10 +5714,6 @@
 	        });
 	    };
 
-	    $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.authorizationForm.userName.value });
-	    };
-
 	    $scope.loginAndAuthorize = function() {
 	        $scope.authorizationForm.approved = true;
 	        // Fire GA sign-in-submit
@@ -6206,10 +6202,6 @@
 	           console.log("error sending reactivation email");
 	       });
 	   };
-
-	   $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-	    };
 	    
 	}]);
 
@@ -6233,10 +6225,6 @@
 	            $scope.loadedFeed = true;
 	        }
 	    });
-
-	    $scope.loginUserIdInputChanged = function() {
-	      $scope.$broadcast("loginUserIdInputChanged", { newValue: $scope.userId });
-	    };
 	    
 	}]);
 
@@ -6590,7 +6578,10 @@
 	            link = $filter('urlProtocol')(link);            
 	            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
 	        } else {
-	            output = output + id.escapeHtml();        
+	            if( id ){
+	                output += id.escapeHtml();        
+	                
+	            }
 	        }
 	        
 	        if( link != null ) {
@@ -6728,7 +6719,9 @@
 	            link = $filter('urlProtocol')(link);
 	            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
 	        }else{
-	            output += id.escapeHtml();        
+	            if( id ) {
+	                output += id.escapeHtml();        
+	            }
 	        }
 	        
 	        if (length > 1 && !last) output = output + ',';
@@ -8933,11 +8926,11 @@
 	        $scope.showResetPassword = !$scope.showResetPassword;
 
 	        // pre-populate with email from signin form 
-	        if(reEmailMatch.test($scope.userId)){
+	        if(typeof $scope.userId != "undefined" && $scope.userId && reEmailMatch.test($scope.userId)){
 	            $scope.requestResetPassword = {
-	                email:  options.userName
+	                email:  $scope.userId
 	            } 
-	        } else if (reEmailMatch.test($scope.authorizationForm.userName.value)) {
+	        } else if (typeof $scope.authorizationForm != "undefined" && $scope.authorizationForm.userName.value && reEmailMatch.test($scope.authorizationForm.userName.value)) {
 	            $scope.requestResetPassword = {
 	                email:  $scope.authorizationForm.userName.value
 	            } 

@@ -127,4 +127,7 @@ public interface NotificationManager {
     void flagAsRead(String orcid, Long id);
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
+    
+    boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
+
 }
