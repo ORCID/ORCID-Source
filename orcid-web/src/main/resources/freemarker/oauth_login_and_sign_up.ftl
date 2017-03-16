@@ -112,7 +112,7 @@
 						        			<div class="control-group">
 						            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label><span class="required">*</span>				           
 						               			<div class="controls"> 
-						               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
+						               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" />
 						               			</div>
 						               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
 						        			</div>
