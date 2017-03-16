@@ -38,23 +38,6 @@ angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$t
         });  
     };
     
-    $scope.validateRequestPasswordReset = function() {
-        $.ajax({
-            url: getBaseUri() + '/validate-reset-password.json',
-            dataType: 'json',
-            type: 'POST',
-            data:  angular.toJson($scope.requestResetPassword),
-            contentType: 'application/json;charset=UTF-8',
-            success: function(data) {
-                $scope.requestResetPassword = data;
-                $scope.requestResetPassword.successMessage = null;
-                $scope.$apply();
-            }
-        }).fail(function() {
-            console.log("error validating validate-reset-password.json");
-        });  
-    };
-    
     $scope.postPasswordResetRequest = function() {
         $.ajax({
             url: getBaseUri() + '/reset-password.json',
