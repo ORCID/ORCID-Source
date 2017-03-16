@@ -240,6 +240,11 @@ public class ClaimController extends BaseController {
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);
+        
+        if (!validateEmailAddress(email)) {
+            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+            return resendClaimRequest;
+        }
 
         if (!emailManager.emailExists(email)) {
             errors.add(getMessage("orcid.frontend.reset.password.email_not_found", email));
