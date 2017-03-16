@@ -2772,10 +2772,6 @@ header overrides
     color: #494A4C;
 }
 
-.oauth-login .alert {
-    width: 330px;
-}
-
 .oauth-login .alert p {
     margin-bottom: 0;
 }

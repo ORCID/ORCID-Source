@@ -135,7 +135,7 @@ public class PasswordResetController extends BaseController {
         }
 
         registrationManager.resetUserPassword(passwordResetRequest.getEmail(), profile);
-        passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset"));
+        passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
         return passwordResetRequest;
     }
 
