@@ -5694,7 +5694,7 @@ multiselect .dropdown-menu .dropdown-menu-list>li>a i.empty {
 }
 
 multiselect .dropdown-menu .dropdown-menu-list {
-    height: 135px;
+    min-height: 135px;
     min-width: 315px;
     overflow-y: scroll;
 }
