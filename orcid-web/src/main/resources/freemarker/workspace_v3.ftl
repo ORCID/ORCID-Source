@@ -457,7 +457,8 @@
                         <li class="url-work">
                           <ul class="id-details">
                             <li ng-repeat='ie in work.workExternalIdentifiers | orderBy:["-relationship.value", "workExternalIdentifierType.value"]' class="url-popover">
-                              <span bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
+                         
+                              <span ng-if="work.workExternalIdentifiers[0].workExternalIdentifierId.value.length > 0" bind-html-compile='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:moreInfo[group.groupId]'></span>
                             </li>
                           </ul>                                   
                         </li>
