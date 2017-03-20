@@ -35,7 +35,7 @@ public class UniversalAnalyticsClientTest {
         assertNotNull(payload);
         
         String[] params = UriEncoder.decode(payload).split("&");
-        assertEquals(11, params.length);
+        assertEquals(12, params.length);
         assertEquals(UniversalAnalyticsClient.PROTOCOL_VERSION_PARAM + "=1", params[0]);
         assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=null", params[1]);
         assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientDetailsString(), params[2]);
@@ -47,6 +47,7 @@ public class UniversalAnalyticsClientTest {
         assertEquals(UniversalAnalyticsClient.EVENT_LABEL_PARAM + "=" + data.getClientDetailsString(), params[8]);
         assertEquals(UniversalAnalyticsClient.API_VERSION_PARAM + "=" + data.getApiVersion(), params[9]);
         assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[10]);
+        assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[11]);
     }
     
     private AnalyticsData getData() {
