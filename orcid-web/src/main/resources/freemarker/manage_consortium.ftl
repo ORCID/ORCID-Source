@@ -28,8 +28,9 @@
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="consortium != null" ng-cloak>
-                <div>
+                <div class="topBuffer">
                 	<h2 id="manage-consortium-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
+                    <h3 class="topBuffer"><@spring.message "manage_consortium.public_display"/></h3>
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
@@ -86,7 +87,14 @@
                             </span>
                         </div>
                     </div>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls topBuffer bottomBuffer col-md-12 col-sm-12 col-xs-12">
+	                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'manage_consortium.save_public_info'/></span>
+	                    </div>
+	                </div> 
                 </div>
+                <!-- Contacts -->
                 <div>
                     <h3>
                         <@spring.message "manage_consortium.contacts_heading"/>
@@ -106,8 +114,7 @@
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
                                 <td>
-								    <select id="contactRoles" name="contactRoles"
-								    	class="input-xlarge"
+								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
 								     	ng-change="update(contact)">
 										<#list contactRoleTypes?keys as key>
@@ -130,7 +137,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div>
+                    <div class="bottomBuffer">
                     	<h3>
                         	<@spring.message "manage_consortium.add_contacts_heading"/>
                     	</h3>
@@ -138,21 +145,15 @@
                     		<@spring.message "manage_consortium.add_contacts_search_for"/>
                     	</p>
                         <form ng-submit="search()">
-                            <input type="text" placeholder="Email address" class="input-xlarge inline-input" ng-model="input.text"></input>
+                            <input type="text" placeholder="Email address" class="inline-input input-xlarge" ng-model="input.text"></input>
                             <input type="submit" class="btn btn-primary" value="Search"></input>
                         </form>
                     </div>
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
-                <!-- Buttons -->
-                <div class="row">
-                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'freemarker.btnsaveallchanges'/></span>
-                    </div>
-                </div> 
             </div>
-            <div>
-                <h3>Consortium Members</h3>
+            <div class="topBuffer">
+                <h2>Consortium Members</h2>
                 <hr></hr>
             	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
 					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
