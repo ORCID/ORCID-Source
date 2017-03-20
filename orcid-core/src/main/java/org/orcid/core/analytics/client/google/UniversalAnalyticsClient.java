@@ -60,6 +60,8 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     protected static final String API_VERSION_PARAM = "cd1";
     
     protected static final String CONTENT_TYPE_PARAM = "cd2";
+    
+    protected static final String RESPONSE_CODE_PARAM = "cd3";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
     private String analyticsTrackingCode;
@@ -111,6 +113,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
         payload.append("&").append(EVENT_LABEL_PARAM).append("=").append(data.getClientDetailsString());
         payload.append("&").append(API_VERSION_PARAM).append("=").append(data.getApiVersion());
         payload.append("&").append(CONTENT_TYPE_PARAM).append("=").append(data.getContentType());
+        payload.append("&").append(RESPONSE_CODE_PARAM).append("=").append(data.getResponseCode());
         return UriEncoder.encode(payload.toString());
     }
 }
