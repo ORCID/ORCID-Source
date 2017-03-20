@@ -2772,10 +2772,6 @@ header overrides
     color: #494A4C;
 }
 
-.oauth-login .alert {
-    width: 330px;
-}
-
 .oauth-login .alert p {
     margin-bottom: 0;
 }
@@ -5694,7 +5690,7 @@ multiselect .dropdown-menu .dropdown-menu-list>li>a i.empty {
 }
 
 multiselect .dropdown-menu .dropdown-menu-list {
-    height: 135px;
+    min-height: 135px;
     min-width: 315px;
     overflow-y: scroll;
 }
