@@ -25,23 +25,21 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,10 +58,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     private static final String AFFILIATIONS_MAP = "AFFILIATIONS_MAP";
 
     @Resource
-    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
-
-    @Resource
-    private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -324,23 +319,10 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody
     List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit)) {
-            Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
-            datums.add(datum);
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit,false)) {
+            datums.add(orgDisambiguated.toMap());
         }
         return datums;
-    }
-
-    private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
-        datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
-        datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
-        datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
-        datum.put("orgType", orgDisambiguatedDocument.getOrgDisambiguatedType());
-        datum.put("disambiguatedAffiliationIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
-        datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedDocument.getOrgDisambiguatedCountry())));
-        return datum;
     }
 
     /**
@@ -349,17 +331,8 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());
-        datum.put("region", orgDisambiguatedEntity.getRegion());
-        datum.put("country", orgDisambiguatedEntity.getCountry().value());
-        datum.put("orgType", orgDisambiguatedEntity.getOrgType());
-        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
-        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
-        datum.put("countryForDisplay", getMessage(buildInternationalizationKey(CountryIsoEntity.class, orgDisambiguatedEntity.getCountry().name())));
-        return datum;
+        OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(id);
+        return orgDisambiguated.toMap();
     }
 
     @RequestMapping(value = "/affiliation/affiliationNameValidate.json", method = RequestMethod.POST)

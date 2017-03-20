@@ -47,8 +47,6 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
-import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -117,12 +115,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private NotificationManager notificationManager;
-
-    @Resource
-    private ProfileDao profileDao;
-
-    @Resource
-    private EmailDao emailDao;
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
@@ -479,15 +471,16 @@ public class RegistrationController extends BaseController {
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         try {
             String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-            EmailEntity emailEntity = emailDao.find(decryptedEmail);
+            EmailEntity emailEntity = emailManager.find(decryptedEmail);
             String emailOrcid = emailEntity.getProfile().getId();
             if (!getCurrentUserOrcid().equals(emailOrcid)) {
                 return new ModelAndView("wrong_user");
             }
             emailEntity.setVerified(true);
             emailEntity.setCurrent(true);
-            emailDao.merge(emailEntity);
-            profileDao.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
+            emailManager.update(emailEntity);
+            
+            profileEntityManager.updateLocale(emailOrcid, org.orcid.jaxb.model.common_v2.Locale.fromValue(RequestContextUtils.getLocale(request).toString()));
             redirectAttributes.addFlashAttribute("emailVerified", true);
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");

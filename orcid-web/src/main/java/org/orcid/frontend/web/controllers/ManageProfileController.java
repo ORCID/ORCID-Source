@@ -36,7 +36,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.GivenPermissionToManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -68,8 +70,6 @@ import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.dao.EmailDao;
-import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -133,10 +133,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    private GivenPermissionToDao givenPermissionToDao;
+    private GivenPermissionToManager givenPermissionToManager;
 
     @Resource
-    private EmailDao emailDao;
+    private EmailManager emailManager;
 
     @Resource
     private UserConnectionManager userConnectionManager;
@@ -174,8 +174,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         this.notificationManager = notificationManager;
     }
 
-    public void setGivenPermissionToDao(GivenPermissionToDao givenPermissionToDao) {
-        this.givenPermissionToDao = givenPermissionToDao;
+    public void setGivenPermissionToManager(GivenPermissionToManager givenPermissionToDao) {
+        this.givenPermissionToManager = givenPermissionToManager;
     }
 
     public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
@@ -211,7 +211,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
         Map<String, Boolean> map = new HashMap<>();
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(email);
+        EmailEntity emailEntity = emailManager.findCaseInsensitive(email);
         if (emailEntity == null) {
             map.put(FOUND, Boolean.FALSE);
             return map;
@@ -248,7 +248,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         String currentUserOrcid = getCurrentUserOrcid();
         String delegateOrcid = addDelegate.getDelegateToManage();
-        GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
+        GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
@@ -260,7 +260,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             receiver.setLastModified(delegateLastModified);
             permission.setReceiver(receiver);
             permission.setApprovalDate(new Date());
-            givenPermissionToDao.merge(permission);
+            givenPermissionToManager.merge(permission);
             OrcidProfile currentUser = getEffectiveProfile();
             ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(delegateOrcid);
             DelegationDetails details = new DelegationDetails();
@@ -285,7 +285,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/addDelegateByEmail.json")
     public @ResponseBody ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(addDelegate.getDelegateEmail());
+        EmailEntity emailEntity = emailManager.findCaseInsensitive(addDelegate.getDelegateEmail());
         addDelegate.setDelegateToManage(emailEntity.getProfile().getId());
         return addDelegate(addDelegate);
     }
@@ -595,9 +595,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deprecateProfile;
         }
 
-        List<EmailEntity> deprecatingEmails = emailDao.findByOrcid(deprecatingEntity.getId());
-        List<EmailEntity> primaryEmails = emailDao.findByOrcid(primaryEntity.getId());
-        
+        Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId(), 0l);
+        Emails primaryEmails = emailManager.getEmails(primaryEntity.getId(), 0l);
+                
         String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
         String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
@@ -606,10 +606,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         deprecateProfile.setDeprecatingOrcid(deprecatingEntity.getId());
 
         if (deprecatingEmails != null) {
-            deprecateProfile.setDeprecatingEmails(deprecatingEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+            deprecateProfile.setDeprecatingEmails(
+                    deprecatingEmails.getEmails().stream().map(e -> e.getEmail()).collect(Collectors.toList()));
         }
         if (primaryEmails != null) {
-            deprecateProfile.setPrimaryEmails(primaryEmails.stream().map(e -> e.getId()).collect(Collectors.toList()));
+            deprecateProfile.setPrimaryEmails(
+                    primaryEmails.getEmails().stream().map(e -> e.getEmail()).collect(Collectors.toList()));
         }
         return deprecateProfile;
     }
@@ -673,7 +675,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private ProfileEntity getDeprecatingEntity(DeprecateProfile deprecateProfile) {
         if (deprecateProfile.getDeprecatingOrcidOrEmail().contains("@")) {
-            EmailEntity emailEntity = emailDao.findCaseInsensitive(deprecateProfile.getDeprecatingOrcidOrEmail());
+            EmailEntity emailEntity = emailManager.findCaseInsensitive(deprecateProfile.getDeprecatingOrcidOrEmail());
             if (emailEntity != null) {
                 return emailEntity.getProfile();
             }
@@ -1083,7 +1085,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);
                     // Check if the delegation doesnt exists
-                    GivenPermissionToEntity existing = givenPermissionToDao.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
+                    GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
                     if (existing == null) {
                         // Clear the delegate's profile from the cache so that
                         // the granting
@@ -1096,7 +1098,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         receiver.setLastModified(delegateLastModified);
                         permission.setReceiver(receiver);
                         permission.setApprovalDate(new Date());
-                        givenPermissionToDao.merge(permission);
+                        givenPermissionToManager.merge(permission);
                         OrcidProfile currentUser = getEffectiveProfile();
                         ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(trustedOrcid);
                         DelegationDetails details = new DelegationDetails();

@@ -1132,5 +1132,9 @@
 	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />
 	
 	<bean id="doiManager" class="org.orcid.core.manager.impl.DOIManagerImpl" />
-	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />	
+	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />
+	
+	
+	<bean id="givenPermissionToManager" class="org.orcid.core.manager.impl.GivenPermissionToManagerImpl"/>
+		
 </beans>

@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -121,6 +122,12 @@ public interface NotificationManager {
 
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
+    int getUnreadCount(String orcid);
+    
+    void flagAsRead(String orcid, Long id);
+
+    ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
+    
     boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile);
 
 }

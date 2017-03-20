@@ -16,6 +16,11 @@
  */
 package org.orcid.core.manager;
 
+import java.util.List;
+import java.util.Locale;
+
+import org.orcid.pojo.OrgDisambiguated;
+
 /**
  * 
  * @author Will Simpson
@@ -26,5 +31,9 @@ public interface OrgDisambiguatedManager {
     void processOrgsForIndexing();
 
     void processOrgsWithIncorrectPopularity();
+    
+    public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly);
+    
+    public OrgDisambiguated findInDB(Long id);
 
 }

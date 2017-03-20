@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
@@ -43,11 +44,9 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.record_v2.FundingType;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Relationship;
-import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
-import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
@@ -58,7 +57,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -85,10 +83,7 @@ public class FundingsController extends BaseWorkspaceController {
     private ProfileFundingManager profileFundingManager;
 
     @Resource
-    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
-
-    @Resource
-    private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -782,22 +777,10 @@ public class FundingsController extends BaseWorkspaceController {
     List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit,
             @RequestParam(value = "funders-only") boolean fundersOnly) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguatedSolrDocument orgDisambiguatedDocument : orgDisambiguatedSolrDao.getOrgs(query, 0, limit, fundersOnly)) {
-            Map<String, String> datum = createDatumFromOrgDisambiguated(orgDisambiguatedDocument);
-            datums.add(datum);
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit,true)) {
+            datums.add(orgDisambiguated.toMap());
         }
         return datums;
-    }
-
-    private Map<String, String> createDatumFromOrgDisambiguated(OrgDisambiguatedSolrDocument orgDisambiguatedDocument) {
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedDocument.getOrgDisambiguatedName());
-        datum.put("city", orgDisambiguatedDocument.getOrgDisambiguatedCity());
-        datum.put("region", orgDisambiguatedDocument.getOrgDisambiguatedRegion());
-        datum.put("country", orgDisambiguatedDocument.getOrgDisambiguatedCountry());
-        datum.put("orgType", orgDisambiguatedDocument.getOrgDisambiguatedType());
-        datum.put("disambiguatedFundingIdentifier", Long.toString(orgDisambiguatedDocument.getOrgDisambiguatedId()));
-        return datum;
     }
 
     /**
@@ -806,16 +789,8 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/disambiguated/id/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
-        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
-        Map<String, String> datum = new HashMap<>();
-        datum.put("value", orgDisambiguatedEntity.getName());
-        datum.put("city", orgDisambiguatedEntity.getCity());
-        datum.put("region", orgDisambiguatedEntity.getRegion());
-        if (orgDisambiguatedEntity.getCountry() != null)
-            datum.put("country", orgDisambiguatedEntity.getCountry().value());
-        datum.put("sourceId", orgDisambiguatedEntity.getSourceId());
-        datum.put("sourceType", orgDisambiguatedEntity.getSourceType());
-        return datum;
+        OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(id);        
+        return orgDisambiguated.toMap();
     }
 
     /**

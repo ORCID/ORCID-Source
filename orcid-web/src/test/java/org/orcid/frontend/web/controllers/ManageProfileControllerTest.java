@@ -43,6 +43,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.GivenPermissionToManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -117,7 +118,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     private ProfileKeywordManager profileKeywordManager;
 
     @Mock
-    private GivenPermissionToDao givenPermissionToDao;
+    private GivenPermissionToManager givenPermissionToManager;
 
     @Mock
     private ProfileEntityManager profileEntityManager;
@@ -142,7 +143,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         orcidProfileManagerImpl.setOrcidIndexManager(mockOrcidIndexManager);
         orcidProfileManagerImpl.setNotificationManager(mockNotificationManager);
         controller.setOrcidProfileManager(orcidProfileManager);
-        controller.setGivenPermissionToDao(givenPermissionToDao);
+        controller.setGivenPermissionToManager(givenPermissionToManager);
         controller.setNotificationManager(mockNotificationManager);
         controller.setProfileEntityManager(profileEntityManager);
     }

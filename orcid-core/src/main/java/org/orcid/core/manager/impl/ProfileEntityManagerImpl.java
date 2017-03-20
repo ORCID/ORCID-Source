@@ -691,4 +691,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
         profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
     }
+
+    @Override
+    public boolean isProfileDeprecated(String orcid) {
+        return profileDao.isProfileDeprecated(orcid);
+    }
+
+    @Override
+    public void updateIpAddress(String orcid, String ipAddress) {
+        profileDao.updateIpAddress(orcid, ipAddress);
+    }
+
+    @Override
+    public Locale retrieveLocale(String orcid) {
+        return profileDao.retrieveLocale(orcid);
+    }
 }

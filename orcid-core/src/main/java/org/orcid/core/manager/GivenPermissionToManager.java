@@ -16,22 +16,14 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.persistence.jpa.entities.WebhookEntity;
-import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 
-/**
- * @author Will Simpson
- */
-public interface WebhookManager {
+public interface GivenPermissionToManager {
 
-    void processWebhooks();
+    GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid);
 
-    void processWebhook(WebhookEntity webhook);
-    
-    WebhookEntity find(WebhookEntityPk webhookPk);
-    
-    void update(WebhookEntity webhook);
-    
-    void delete(WebhookEntityPk webhook);
+    void remove(String giverOrcid, String receiverOrcid);
+
+    void merge(GivenPermissionToEntity permission);
 
 }

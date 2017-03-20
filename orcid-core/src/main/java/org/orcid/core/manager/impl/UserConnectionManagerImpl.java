@@ -60,4 +60,24 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
         userConnectionDao.remove(userConnectionPK);
     }
 
+    @Override
+    public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {        
+        return userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+    }
+
+    @Override
+    public void updateLoginInformation(UserconnectionPK pk) {
+        userConnectionDao.updateLoginInformation(pk);
+    }
+
+    @Override
+    public UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String userId, String shibIdentityProvider, String idType) {
+        return userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(userId, shibIdentityProvider, idType);
+    }
+
+    @Override
+    public void update(UserconnectionEntity userConnectionEntity) {
+        userConnectionDao.merge( userConnectionEntity);
+    }
+
 }

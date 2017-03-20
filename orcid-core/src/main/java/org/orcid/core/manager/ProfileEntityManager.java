@@ -41,6 +41,8 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
 
     boolean deprecateProfile(String deprecated, String primary);
+    
+    boolean isProfileDeprecated(String orcid);
 
     boolean enableDeveloperTools(OrcidProfile profile);
 
@@ -79,5 +81,9 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     public void updatePassword(String orcid, String encryptedPassword);
     
     public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer);
+    
+    public void updateIpAddress(String orcid, String ipAddress);
+    
+    public Locale retrieveLocale(String orcid);
     
 }
