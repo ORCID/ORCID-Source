@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
@@ -102,9 +101,6 @@ public class AdminController extends BaseController {
 
     @Resource
     private GroupAdministratorController groupAdministratorController;
-
-    @Resource
-    private GivenPermissionToDao givenPermissionToDao;
 
     @Resource
     private AdminManager adminManager;

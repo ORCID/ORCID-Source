@@ -34,10 +34,10 @@
         			<div class="control-group">
             			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
                			<div class="controls">                    	
-               				<input id="email" ng-model="requestResetPassword.email" ng-change="validateRequestPasswordReset()" />
+               				<input id="email" type="text" ng-model="requestResetPassword.email" />
                				<span class="required">*</span>
                			</div>
-               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
+               			<button class="btn btn-primary topBuffer" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
         			</div>
         		</fieldset>
         	</form>

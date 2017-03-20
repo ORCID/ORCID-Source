@@ -30,6 +30,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ValidationBehaviour;
 import org.orcid.core.manager.ValidationManager;
@@ -39,7 +40,6 @@ import org.orcid.core.version.OrcidMessageVersionConverterChain;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -67,7 +67,7 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
     private boolean supportsAffiliations = true;
 
     @Resource
-    private EmailDao emailDao;
+    private EmailManager emailManager;
     
     @Resource
     private LocaleManager localeManager;
@@ -445,7 +445,8 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
             List<Email> emailList = orcidMessage.getOrcidProfile().getOrcidBio().getContactDetails().getEmail();
             for(Email email : emailList) {
                 if(!PojoUtil.isEmpty(email.getValue())) {
-                    EmailEntity emailEntity = emailDao.findCaseInsensitive(email.getValue());
+
+                    EmailEntity emailEntity = emailManager.findCaseInsensitive(email.getValue());
                     if(emailEntity != null) {
                         String emailOrcid = emailEntity.getProfile().getId();
                         if(!targetOrcid.equals(emailOrcid)) {

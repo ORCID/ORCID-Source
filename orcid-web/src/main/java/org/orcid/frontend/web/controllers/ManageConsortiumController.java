@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
@@ -31,7 +32,6 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
@@ -59,7 +59,7 @@ public class ManageConsortiumController extends BaseController {
     private SalesForceManager salesForceManager;
 
     @Resource
-    private EmailDao emailDao;
+    private EmailManager emailManager;
 
     @ModelAttribute("contactRoleTypes")
     public Map<String, String> retrieveContactRoleTypesAsMap() {
@@ -111,7 +111,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/add-contact-by-email.json")
     public @ResponseBody Contact addContactByEmail(@RequestBody Contact contact) {
-        EmailEntity emailEntity = emailDao.findCaseInsensitive(contact.getEmail());
+        EmailEntity emailEntity = emailManager.findCaseInsensitive(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
         RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
         if (Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {

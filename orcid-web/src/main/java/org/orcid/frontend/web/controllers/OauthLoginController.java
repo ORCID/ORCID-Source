@@ -32,6 +32,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -51,17 +52,21 @@ import org.springframework.web.servlet.view.RedirectView;
 public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
 
+    @Value("${org.orcid.frontend.outhSignin.showLogin.default:false}")
+    private boolean showLoginDefault;
+
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
-        boolean showLogin = false; // default to Reg
+        boolean showLogin = showLoginDefault; // default to Reg
         // Get and save the request information form
         RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
 
-        if (url.toLowerCase().contains("show_login=true")) {
+        if (url.toLowerCase().contains("show_login=true"))
             showLogin = true;
-        }   
+        else if (url.toLowerCase().contains("show_login=false"))
+            showLogin = false;
         
         //Check if userId is set so we should show the login screen
         if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {

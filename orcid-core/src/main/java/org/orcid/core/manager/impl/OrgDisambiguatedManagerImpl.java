@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -32,6 +33,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +158,37 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 orgDisambiguatedDao.updatePopularity(pair.getLeft(), pair.getRight());
             }
         } while (!pairs.isEmpty());
+    }
+
+    @Override
+    public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
+        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
+        List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
+        for (OrgDisambiguatedSolrDocument doc: docs){
+            OrgDisambiguated org = new OrgDisambiguated();
+            org.setValue(doc.getOrgDisambiguatedName());
+            org.setCity(doc.getOrgDisambiguatedCity());
+            org.setRegion(doc.getOrgDisambiguatedRegion());
+            org.setCountry(doc.getOrgDisambiguatedCountry());
+            org.setOrgType(doc.getOrgDisambiguatedType());
+            org.setDisambiguatedAffiliationIdentifier(Long.toString(doc.getOrgDisambiguatedId()));
+            ret.add(org);            
+        }
+        return ret;
+    }
+
+    @Override
+    public OrgDisambiguated findInDB(Long id) {
+        OrgDisambiguatedEntity orgDisambiguatedEntity = orgDisambiguatedDao.find(id);
+        OrgDisambiguated org = new OrgDisambiguated();
+        org.setValue(orgDisambiguatedEntity.getName());
+        org.setCity(orgDisambiguatedEntity.getCity());
+        org.setRegion(orgDisambiguatedEntity.getRegion());        
+        org.setCountry(orgDisambiguatedEntity.getCountry().value());
+        org.setOrgType(orgDisambiguatedEntity.getOrgType());
+        org.setSourceId(orgDisambiguatedEntity.getSourceId());
+        org.setSourceType(orgDisambiguatedEntity.getSourceType());        
+        return org;
     }
 
 }

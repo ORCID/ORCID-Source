@@ -14,24 +14,11 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.analytics.client;
 
-import org.orcid.persistence.jpa.entities.WebhookEntity;
-import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
+import org.orcid.core.analytics.AnalyticsData;
 
-/**
- * @author Will Simpson
- */
-public interface WebhookManager {
+public interface AnalyticsClient {
 
-    void processWebhooks();
-
-    void processWebhook(WebhookEntity webhook);
-    
-    WebhookEntity find(WebhookEntityPk webhookPk);
-    
-    void update(WebhookEntity webhook);
-    
-    void delete(WebhookEntityPk webhook);
-
+    void sendAnalyticsData(AnalyticsData data);
 }

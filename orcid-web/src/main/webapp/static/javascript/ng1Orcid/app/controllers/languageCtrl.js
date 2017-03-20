@@ -3,57 +3,46 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
         [
             {
                 "value": "cs",
-                "direction": "lr",
                 "label": "čeština"
             },
             {
                 "value": "en",
-                "direction": "lr",
                 "label": "English"
             },
             {
                 "value": 'es',
-                "direction": "lr",
                 "label": 'Español'
             },
             {
                 "value": 'fr',
-                "direction": "lr",
                 "label": 'Français'
             },
             {
                 "value": 'it',
-                "direction": "lr",
                 "label": 'Italiano'
             },
             {
                 "value": 'ja',
-                "direction": "lr",
                 "label": '日本語'
             },
             {
                 "value": 'ko',
-                "direction": "lr",
                 "label": '한국어'
             },
             {
                 "value": 'pt',
-                "direction": "lr",
                 "label": 'Português'
             },
             {
                 "value": 'ru',
-                "direction": "lr",
                 "label": 'Русский'
             },
             {
                 "value": 'zh_CN',
-                "direction": "lr",
                 "label": '简体中文'
             },
             {
                 "value": 'zh_TW',
-                "direction": "lr",
                 "label": '繁體中文'
             }
         ];
@@ -61,77 +50,62 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
         [
             {
                 "value": "ar",
-                "direction": "rl",
                 "label": "العربية"
             },
             {
                 "value": "cs",
-                "direction": "lr",
                 "label": "čeština"
             },
             {
                 "value": "en",
-                "direction": "lr",
                 "label": "English"
             },
             {
                 "value": 'es',
-                "direction": "rl",
                 "label": 'Español'
             },
             {
                 "value": 'fr',
-                "direction": "lr",
                 "label": 'Français'
             },
             {
                 "value": 'it',
-                "direction": "lr",
                 "label": 'Italiano'
             },
             {
                 "value": 'ja',
-                "direction": "rl",
                 "label": '日本語'
             },
             {
                 "value": 'ko',
-                "direction": "rl",
                 "label": '한국어'
             },
             {
                 "value": 'lr',
-                "direction": "lr",
                 "label": 'lr'
             },
             {
                 "value": 'pt',
-                "direction": "lr",
                 "label": 'Português'
             },
             {
                 "value": 'rl',
-                "direction": "rl",
                 "label": 'rl'
             },
             {
                 "value": 'ru',
-                "direction": "rl",
                 "label": 'Русский'
             },
             {
                 "value": 'xx',
-                "direction": "lr",
                 "label": 'X'
             },
             {
                 "value": 'zh_CN',
-                "direction": "lr",
                 "label": '简体中文'
             },
             {
                 "value": 'zh_TW',
-                "direction": "rl",
                 "label": '繁體中文'
             }
         ];
