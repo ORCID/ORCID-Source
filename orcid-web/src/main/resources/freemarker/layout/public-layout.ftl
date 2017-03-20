@@ -529,10 +529,10 @@
                 </p>
                 <nav>
                     <ul class="inline-list">
-                        <li><a class="btn-social btn-social-facebook" href="https://www.facebook.com/orcid.org" target="_blank"></a></li>
-                        <li><a class="btn-social btn-social-twitter" href="https://twitter.com/orcid_org" target="_blank"></a></li>
-                        <li><a class="btn-social btn-social-google" href="http://orcid.org/blog/feed" target="_blank"></a></li>
-                        <li><a class="btn-social btn-social-github" href="https://github.com/ORCID" target="_blank"></a></li>
+                        <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="_blank"><span class="social social-facebook"></span></a></li>
+                        <li><a class="social-button" href="https://twitter.com/orcid_org" target="_blank"><span class="social social-twitter"></span></a></li>
+                        <li><a class="social-button" href="http://orcid.org/blog/feed" target="_blank"><span class="social social-rss"></span></a></li>
+                        <li><a class="social-button" href="https://github.com/ORCID" target="_blank"><span class="social social-github"></span></a></li>
                     </ul>
                 </nav>
             </div>
