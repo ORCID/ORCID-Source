@@ -81,9 +81,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 			try {
 				OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
 				// Update API 1.2
-				if (profile != null) {
-					s3Updater.updateS3(orcid, profile);
-					recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+				if (profile != null && org.orcid.jaxb.model.message.OrcidType.USER.equals(profile.getOrcidProfile().getType())) {				        
+				    s3Updater.updateS3(orcid, profile);
+                                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);				    					
 				}
 			} catch (LockedRecordException | DeprecatedRecordException e) {
 				try {

@@ -37,7 +37,7 @@
 	<tx:annotation-driven />
 	
     <context:property-placeholder location="${org.orcid.message-listener.properties}" />
-	<context:component-scan base-package="org.orcid.listener" />
+	<context:component-scan base-package="org.orcid" />
 	<context:annotation-config />
 
 	<!--SOLR -->

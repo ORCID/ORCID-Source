@@ -1,0 +1,60 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.listener;
+
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
+import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.solr.SolrMessageProcessor;
+import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.MessageConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Component;
+import com.amazonaws.AmazonClientException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+@Component
+public class RetryListener {
+
+    Logger LOG = LoggerFactory.getLogger(RetryListener.class);
+    
+    @Resource
+    private S3MessageProcessor s3Processor;
+
+    @Resource
+    private SolrMessageProcessor solrProcessor;
+
+    /**
+     * Processes messages on receipt.
+     * 
+     * @param map
+     * @throws JsonProcessingException 
+     * @throws JAXBException 
+     * @throws AmazonClientException 
+     */
+    @JmsListener(destination = MessageConstants.Queues.RETRY)
+    public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {        
+        LastModifiedMessage message = new LastModifiedMessage(map);
+        String orcid = message.getOrcid();
+        LOG.info("Recieved " + MessageConstants.Queues.RETRY + " message for orcid " + orcid + " " + message.getLastUpdated());
+        s3Processor.accept(message);               
+        solrProcessor.accept(message);               
+    }         
+}

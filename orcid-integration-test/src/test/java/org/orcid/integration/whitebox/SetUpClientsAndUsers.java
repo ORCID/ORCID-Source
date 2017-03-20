@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
+import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.EmailDao;
@@ -98,6 +99,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -286,69 +288,22 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ClientDetailsDao clientDetailsDao;
     
+    private void createWork(String title) {
+        WorkEntity w = new WorkEntity();
+        w.setTitle(title);
+        w.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        w.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        w.setExternalIdentifiersJson("{ \"workExternalIdentifier\": [{ \"relationship\": \"SELF\", \"url\": null, \"workExternalIdentifierType\": \"SOURCE_WORK_ID\", \"workExternalIdentifierId\": { \"content\": \"" + title + "\" } }, { \"relationship\": \"SELF\", \"url\": null, \"workExternalIdentifierType\": \"EID\", \"workExternalIdentifierId\": { \"content\": \"" + title + "-2" + "\" } }] }");        
+        w.setContributorsJson("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":{\"content\":\"Bo Sun\",\"visibility\":null},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"FIRST\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":{\"uri\":\"http://orcid.org/0000-0001-9581-8910\",\"path\":\"0000-0001-9581-8910\",\"host\":null,\"valueAsString\":null,\"value\":null},\"creditName\":{\"content\":\"Ionut Trintis\",\"visibility\":null},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"ADDITIONAL\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":{\"uri\":\"http://orcid.org/0000-0001-9653-5437\",\"path\":\"0000-0001-9653-5437\",\"host\":null,\"valueAsString\":null,\"value\":null},\"creditName\":{\"content\":\"Stig Munk-Nielsen\",\"visibility\":null},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"ADDITIONAL\",\"contributorRole\":\"AUTHOR\"}},{\"contributorOrcid\":{\"uri\":\"http://orcid.org/0000-0001-5236-4592\",\"path\":\"0000-0001-5236-4592\",\"host\":null,\"valueAsString\":null,\"value\":null},\"creditName\":{\"content\":\"Josep M. Guerrero\",\"visibility\":null},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"ADDITIONAL\",\"contributorRole\":\"AUTHOR\"}}]}");
+        w.setDescription("consectetur sodales maximus vel, scelerisque a nisl. Nullam justo metus, suscipit sed fringilla sit amet, tincidunt in ante. Nunc elementum, purus vel fermentum porttitor, est ante malesuada dui, non iaculis ex neque a orci.  Phasellus nibh purus, efficitur ac sollicitudin non, placerat et leo. Sed fringilla fermentum dolor, sed faucibus quam venenatis ac. Praesent libero augue, volutpat quis eros eget, consequat venenatis sem. Vivamus non tempor risus. Etiam porta, sapien in vestibulum condimentum, lorem dolor semper diam, et dignissim elit leo in erat. In lectus dui, dignissim ut maximus ac, condimentum quis mauris. Integer suscipit, neque vitae tempor molestie, felis justo varius nibh, at fringilla eros risus vitae tortor. Fusce metus quam, dictum vitae iaculis eu, vehicula non justo. Donec non tincidunt ante. Sed at suscipit enim.  Nulla ornare, lacus quis lobortis rutrum, felis eros ornare nunc, vitae consectetur magna nisl eget mauris. Curabitur interdum maximus sem, non elementum urna rhoncus sed. Pellentesque consequat purus maximus dui ullamcorper semper ac vel tortor. Morbi ut justo efficitur, pharetra mi ut, semper elit. Nam vel orci ullamcorper, ullamcorper quam at, pretium elit. Phasellus at pharetra sapien, vehicula accumsan orci. Pellentesque eget orci at turpis lobortis vestibulum. Cras rutrum urna eu massa aliquet placerat. Sed porta diam et elementum aliquam. Maecenas feugiat vulputate purus, et dapibus erat interdum quis. Donec non pellentesque neque. Maecenas hendrerit ligula non dui tempus, id tincidunt purus ultricies. Interdum et malesuada fames ac ante ipsum primis in faucibus.  Proin placerat, enim sit amet gravida elementum, mauris diam pharetra nulla, eget laoreet elit justo nec dui. Sed quam purus, dictum ut posuere eget, placerat et mi. Morbi orci leo, molestie ut aliquam non, vehicula sit amet odio. Curabitur in purus id dui molestie congue. Vestibulum ipsum felis, pretium at efficitur eget, maximus eu mi. Curabitur tincidunt, urna sit amet pulvinar porttitor, lorem libero lobortis lectus, eu hendrerit tellus nunc a turpis. Nam laoreet facilisis neque id cursus. Maecenas nibh magna, vehicula ut dui quis, interdum placerat lectus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque consectetur libero in vestibulum tincidunt. Morbi pretium nisl eget sem tincidunt, a venenatis elit efficitur. Etiam iaculis eleifend eros, a fermentum arcu rutrum ut. Praesent interdum ultricies neque, id imperdiet ligula condimentum non. In vehicula dignissim lorem sed semper. Duis aliquam ullamcorper leo a tempor.  Mauris vel eros sagittis, elementum est et, tristique neque. Vivamus et sem ut velit imperdiet viverra et et purus. Etiam hendrerit nibh quam, quis vulputate nulla pulvinar non. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec ultrices lacus id euismod sagittis. Nam tempor tristique metus at sodales. Sed scelerisque ac sapien ut semper. Vivamus luctus urna eu porta euismod. Sed tempus fermentum lacus nec pretium. Suspendisse porttitor elit commodo lorem tempor, ut laoreet ex pretium. Maecenas porta molestie maximus. Pellentesque ut mattis diam. Fusce aliquam velit quis odio sagittis mollis in vel est. Aenean lobortis vel nulla quis viverra. Suspendisse risus sapien, dictum id congue vel, porttitor a nulla. Duis luctus congue mattis.  Duis nec nulla diam. Morbi volutpat urna ac commodo ullamcorper. Nulla condimentum justo non nibh pharetra, dapibus aliquet elit tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae tellus nec arcu consequat accumsan. Sed pretium quam mi, ut convallis augue tempus eu. Praesent at tortor quis enim porta eleifend. Vivamus vehicula arcu eget dui ullamcorper, vel rhoncus nulla congue. Donec in mollis orci. Etiam faucibus molestie rhoncus. Donec bibendum, purus ac ultricies rhoncus, massa mi commodo libero, eget tempus ligula ipsum id risus. Aenean commodo, sapien in ultrices laoreet, nisl nisl imperdiet risus, sit amet feugiat magna dui a lacus.  Pellentesque placerat nulla et nibh aliquet fermentum eu et libero. Donec quis sagittis orci. Ut euismod risus quis ligula luctus, in accumsan tortor ultricies. Vivamus sodales ac dui eget euismod. Morbi in nisi non lectus imperdiet ultrices. Vestibulum aliquet vitae est et eleifend. Phasellus convallis elementum metus non laoreet. Sed tristique, augue sed aliquam venenatis, enim dui porttitor dolor, dapibus gravida nunc mi a erat. Quisque condimentum quis erat auctor condimentum. Quisque blandit dictum arcu vel placerat.  Fusce eget tristique metus. Phasellus laoreet tincidunt sagittis. Cras eros lorem, cursus nec mauris rutrum, pellentesque venenatis leo. Duis iaculis aliquet sodales. Cras urna ante, iaculis eu diam eu, tempor sagittis erat. Maecenas non viverra enim. Praesent non ex pretium, aliquet nulla nec, commodo dolor. Morbi semper pretium felis sed placerat.");
+        workDao.persist(w);
+    }
+    
     @Before
     public void before() throws Exception {
-        // Create admin user
-        Map<String, String> adminParams = getParams(adminOrcidId);
-        OrcidProfile adminProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
-        if (adminProfile == null) {
-            createUser(adminParams);
-        } else {
-            clearRegistry(adminProfile, adminParams);
+        for(int i = 0; i < 6000; i++) {
+            createWork("Work #" + i);
         }
-
-        // Create user 1
-        Map<String, String> user1Params = getParams(user1OrcidId);
-        OrcidProfile user1Profile = orcidProfileManager.retrieveOrcidProfile(user1OrcidId);
-        if (user1Profile == null) {
-            createUser(user1Params);
-        } else {
-            clearRegistry(user1Profile, user1Params);
-        }        
-        
-        // Create user 2
-        Map<String, String> user2Params = getParams(user2OrcidId);
-        OrcidProfile user2Profile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
-        if (user2Profile == null) {
-            createUser(user2Params);
-        } else {
-            clearRegistry(user2Profile, user2Params);
-        }
-
-        // Create member 1
-        Map<String, String> member1Params = getParams(member1Orcid);
-        OrcidProfile member1Profile = orcidProfileManager.retrieveOrcidProfile(member1Orcid);
-        if (member1Profile == null) {
-            createUser(member1Params);
-        } else {
-            clearRegistry(member1Profile, member1Params);
-        }        
-
-        // Create public client
-        Map<String, String> publicClientParams = getParams(publicClientId);
-        ClientDetailsEntity publicClient = clientDetailsManager.findByClientId(publicClientId);
-        if (publicClient == null) {
-            createClient(publicClientParams);
-        } 
-
-        // Create client 1
-        Map<String, String> client1Params = getParams(client1ClientId);
-        ClientDetailsEntity client1 = clientDetailsManager.findByClientId(client1ClientId);
-        if (client1 == null) {
-            createClient(client1Params);
-        } 
-
-        // Create client 2
-        Map<String, String> client2Params = getParams(client2ClientId);
-        ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
-        if (client2 == null) {
-            createClient(client2Params);            
-        } 
-        
-        //Ensure persistent tokens is disabled for client # 2
-        clientDetailsDao.changePersistenceTokensProperty(client2ClientId, false);  
-        
-        setUpDelegates(user1OrcidId, user2OrcidId);
     }
 
     private Map<String, String> getParams(String userId) {
