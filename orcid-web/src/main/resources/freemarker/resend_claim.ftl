@@ -34,10 +34,10 @@
         			<div class="control-group">
             			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
                				<div class="controls">                    	
-               				<input id="email" ng-model="requestResendClaim.email" ng-change="validateRequestResendClaim()" />
+               				<input id="email" type="text" ng-model="requestResendClaim.email" />
                				<span class="required">*</span>
                			</div>
-               			<button class="btn btn-primary" ng-click="postResendClaimRequest()"><@spring.message "resend_claim.resend_claim_button_text"/></button>
+               			<button class="btn btn-primary topBuffer" ng-click="postResendClaimRequest()"><@spring.message "resend_claim.resend_claim_button_text"/></button>
         			</div>
         		</fieldset>
         	</form>
