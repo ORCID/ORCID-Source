@@ -639,6 +639,8 @@
 	<bean id="userConnectionManager" class="org.orcid.core.manager.impl.UserConnectionManagerImpl" />
     
     <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
+    
+    <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
