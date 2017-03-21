@@ -86,14 +86,16 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             connection.setRequestMethod(HttpMethod.POST);
             connection.setDoOutput(true);
             
-            LOGGER.info("Sending analytics data...");
             OutputStreamWriter outputStream = new OutputStreamWriter(connection.getOutputStream());
             outputStream.write(payload);
             outputStream.flush();
             outputStream.close();
             int response = connection.getResponseCode();
             
-            LOGGER.info("Analytics sent: received response code " + response);
+            if (response != 200) {
+                LOGGER.warn("Analytics: received response code " + response);
+                LOGGER.warn("Payload was: " + payload);
+            }
             connection.disconnect();
         } catch (IOException e) {
             LOGGER.warn("Error sending analytics data", e);
