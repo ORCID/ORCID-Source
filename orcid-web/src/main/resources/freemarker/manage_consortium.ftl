@@ -180,8 +180,9 @@
                     <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
                     <!-- Buttons -->
 	                <div class="row">
-	                    <div class="controls save-btns col-md-12 col-sm-12 col-xs-12">
-	                        <span id="bottom-confirm-update-consortium" ng-click="addSubMember()" class="btn btn-primary"><@orcid.msg 'manage.spanadd'/></span>
+	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <span class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></span>
 	                    </div>
 	                </div> 
                 </form>

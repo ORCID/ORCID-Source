@@ -7287,7 +7287,7 @@ ul.comma li:last-child:after {
 
 /*Consortia self service*/
 .manage-consortium #ajax-loader i{
-    margin-top: 10px;
+    margin: 10px 0 10px 0;
 }
 
 .manage-consortium .alert{
@@ -7303,6 +7303,7 @@ ul.comma li:last-child:after {
 
 .manage-consortium h3 {
     font-size: 20px;
+    margin-top: 1em;
 }
 
 .manage-consortium h2 {

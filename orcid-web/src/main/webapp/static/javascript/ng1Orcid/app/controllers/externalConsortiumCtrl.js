@@ -3,6 +3,7 @@
 */
 angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
     $scope.addContactDisabled = false;
+    $scope.addSubMemberDisabled = false;
     $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
     /**
@@ -353,6 +354,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     }
     
     $scope.addSubMember = function() {
+        $scope.addSubMemberDisabled = true;
+        $scope.showLoader = true;
         $.ajax({
             url: getBaseUri() + '/manage-consortium/add-sub-member.json',
             type: 'POST',
@@ -361,8 +364,11 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 if(data.errors.length === 0){
                     $scope.getConsortium();
+                    $scope.showLoader = false;
+                    $scope.addSubMemberDisabled = false;
+                    $scope.newSubMember.name = "";
+                    $scope.newSubMember.website = "";
                     $scope.$apply();
-                    $scope.closeModal();
                 }
                 else{
                     $scope.errors = data.errors;
