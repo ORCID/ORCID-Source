@@ -93,8 +93,8 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             int response = connection.getResponseCode();
             
             if (response != 200) {
-                LOGGER.info("Analytics: received response code " + response);
-                LOGGER.info("Payload was: " + payload);
+                LOGGER.warn("Analytics: received response code " + response);
+                LOGGER.warn("Payload was: " + payload);
             }
             connection.disconnect();
         } catch (IOException e) {
