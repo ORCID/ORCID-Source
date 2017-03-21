@@ -9106,6 +9106,7 @@
 	    };
 	    
 	    $scope.updateConsortium = function() {
+	        $scope.showLoader = true;
 	         $.ajax({
 	              url: getBaseUri()+'/manage-consortium/update-consortium.json',
 	              contentType: 'application/json;charset=UTF-8',
@@ -9113,6 +9114,7 @@
 	              dataType: 'json',
 	              data: angular.toJson($scope.consortium),
 	              success: function(data){
+	                    $scope.showLoader = false;
 	                    $scope.$apply(function(){
 	                         if(data.errors.length == 0){
 	                              $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
@@ -9296,7 +9298,7 @@
 	                $scope.getConsortium();
 	                $scope.addContactDisabled = false;
 	                $scope.$apply();
-	                $scope.closeModal();
+	                $scope.closeModalReload();
 	            }
 	        }).fail(function() {
 	            console.log("Error adding contact.");
@@ -9355,7 +9357,7 @@
 	            success: function(data) {
 	                $scope.getConsortium();
 	                $scope.$apply();
-	                $scope.closeModal();
+	                $scope.closeModalReload();
 	            }
 	        }).fail(function() {
 	            // something bad is happening!
@@ -9418,6 +9420,7 @@
 	                    $scope.newSubMember.name = "";
 	                    $scope.newSubMember.website = "";
 	                    $scope.$apply();
+	                    window.location.reload();
 	                }
 	                else{
 	                    $scope.errors = data.errors;
@@ -9454,7 +9457,7 @@
 	            success: function(data) {
 	                $scope.getConsortium();
 	                $scope.$apply();
-	                $scope.closeModal();
+	                $scope.closeModalReload();
 	            }
 	        }).fail(function() {
 	            // something bad is happening!

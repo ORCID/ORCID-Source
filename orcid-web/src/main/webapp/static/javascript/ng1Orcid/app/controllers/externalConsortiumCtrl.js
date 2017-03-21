@@ -57,6 +57,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
     
     $scope.updateConsortium = function() {
+        $scope.showLoader = true;
          $.ajax({
               url: getBaseUri()+'/manage-consortium/update-consortium.json',
               contentType: 'application/json;charset=UTF-8',
@@ -64,6 +65,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
               dataType: 'json',
               data: angular.toJson($scope.consortium),
               success: function(data){
+                    $scope.showLoader = false;
                     $scope.$apply(function(){
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
@@ -247,7 +249,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                 $scope.getConsortium();
                 $scope.addContactDisabled = false;
                 $scope.$apply();
-                $scope.closeModal();
+                $scope.closeModalReload();
             }
         }).fail(function() {
             console.log("Error adding contact.");
@@ -306,7 +308,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 $scope.getConsortium();
                 $scope.$apply();
-                $scope.closeModal();
+                $scope.closeModalReload();
             }
         }).fail(function() {
             // something bad is happening!
@@ -369,6 +371,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                     $scope.newSubMember.name = "";
                     $scope.newSubMember.website = "";
                     $scope.$apply();
+                    window.location.reload();
                 }
                 else{
                     $scope.errors = data.errors;
@@ -405,7 +408,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 $scope.getConsortium();
                 $scope.$apply();
-                $scope.closeModal();
+                $scope.closeModalReload();
             }
         }).fail(function() {
             // something bad is happening!
