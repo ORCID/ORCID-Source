@@ -27,16 +27,18 @@ import com.google.common.collect.ImmutableMap;
  *
  */
 public class RetryMessage extends BaseMessage {
+    
+    public static final String BROKER_NAME = "bn";
+    
     /**
      * Create a map from the component parts
      * 
      * @param orcid
      * @param date
      */
-    public RetryMessage(String orcid) {        
-        super(ImmutableMap.of(
-                MessageConstants.TYPE.value, MessageConstants.TYPE_RETRY.value, 
-                MessageConstants.ORCID.value, orcid));
+    public RetryMessage(String orcid, String brokerName) {
+        super(ImmutableMap.of(MessageConstants.TYPE.value, MessageConstants.TYPE_RETRY.value, 
+                MessageConstants.ORCID.value, orcid, BROKER_NAME, brokerName));
     }
 
     /**
@@ -46,7 +48,5 @@ public class RetryMessage extends BaseMessage {
      */
     public RetryMessage(Map<String, String> m) {
         super(ImmutableMap.copyOf(m));
-        if (!m.containsKey(MessageConstants.TYPE.value) || !MessageConstants.TYPE_RETRY.value.equals(m.get(MessageConstants.TYPE.value)))
-            throw new IllegalArgumentException("Wrong map type");        
-    }    
+    }
 }
