@@ -88,6 +88,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseController {
+    
+    private static final Locale defaultLocale = Locale.US;
 
     String[] urlValschemes = { "http", "https", "ftp" }; // DEFAULT schemes =
                                                          // "http", "https",
@@ -439,16 +441,29 @@ public class BaseController {
 
     @ModelAttribute("jsMessagesJson")
     public String getJavascriptMessages(HttpServletRequest request) {
-        ObjectMapper mapper = new ObjectMapper();
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
-
+        
+        ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", defaultLocale, new UTF8Control());
+        Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
+        
         ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
-        lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
+        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
+        
+        if (!defaultLocale.equals(locale)) {
+            for (String propertyKey : definitivePropertyMap.keySet()) {
+                String property = localPropertyMap.get(propertyKey);
+                if (StringUtils.isBlank(property)) {
+                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
+                }
+            }
+        }
+
+        lPojo.setMessages(localPropertyMap);
         String messages = "";
         try {
-            messages = StringEscapeUtils.escapeEcmaScript(mapper.writeValueAsString(lPojo));
+            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
         } catch (IOException e) {
             LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
         }
