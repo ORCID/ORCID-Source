@@ -7326,6 +7326,10 @@ ul.comma li:last-child:after {
     width: 25%;
 }
 
+.manage-consortium #communities{
+    margin: 0;
+}
+
 .bold {
     font-weight: bold;
 }

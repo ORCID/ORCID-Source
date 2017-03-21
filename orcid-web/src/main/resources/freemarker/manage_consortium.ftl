@@ -89,8 +89,10 @@
                     </div>
                     <!-- Buttons -->
 	                <div class="row">
-	                    <div class="controls topBuffer bottomBuffer col-md-12 col-sm-12 col-xs-12">
-	                        <span id="bottom-confirm-update-consortium" ng-click="confirmUpdateConsortium()" class="btn btn-primary"><@orcid.msg 'manage_consortium.save_public_info'/></span>
+	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button type="submit" id="bottom-confirm-update-consortium" ng-click="updateConsortium()" class="btn btn-primary"><@orcid.msg 'manage_consortium.save_public_info'/></button>
+	                        <a href="" class="cancel-right" ng-click="closeModalReload()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div> 
                 </div>
@@ -146,7 +148,7 @@
                     	</p>
                         <form ng-submit="search()">
                             <input type="text" placeholder="Email address" class="inline-input input-xlarge" ng-model="input.text"></input>
-                            <input type="submit" class="btn btn-primary" value="Search"></input>
+                            <button class="btn btn-primary" value="Search"><@orcid.msg 'search_for_delegates.btnSearch'/></button>
                         </form>
                     </div>
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
@@ -182,7 +184,7 @@
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <span class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></span>
+	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
 	                </div> 
                 </form>
