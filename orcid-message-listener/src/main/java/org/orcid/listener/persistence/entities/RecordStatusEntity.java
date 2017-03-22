@@ -29,9 +29,9 @@ public class RecordStatusEntity {
 	private Date dateCreated;
 	private Date lastModified;
 	private String orcid;
-	private Integer dumpStatus12Api;
-	private Integer dumpStatus20Api;
-	private Integer solrStatus20Api;
+	private Integer dumpStatus12Api = 0;
+	private Integer dumpStatus20Api = 0;
+	private Integer solrStatus20Api = 0;
 
 	@Id
 	@Column(name = "orcid", length = 19)

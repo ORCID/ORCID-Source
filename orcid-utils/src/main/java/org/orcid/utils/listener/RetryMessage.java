@@ -16,10 +16,7 @@
  */
 package org.orcid.utils.listener;
 
-import java.util.Date;
 import java.util.Map;
-
-import org.orcid.utils.listener.MessageConstants;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -29,18 +26,19 @@ import com.google.common.collect.ImmutableMap;
  * @author tom
  *
  */
-public class LastModifiedMessage extends BaseMessage {
-
+public class RetryMessage extends BaseMessage {
+    
+    public static final String BROKER_NAME = "bn";
+    
     /**
      * Create a map from the component parts
      * 
      * @param orcid
      * @param date
      */
-    public LastModifiedMessage(String orcid, Date date) {
-        super(ImmutableMap.of(MessageConstants.TYPE.value, MessageConstants.TYPE_LAST_UPDATED.value, 
-                MessageConstants.ORCID.value, orcid, MessageConstants.DATE.value,
-                (date == null) ? "" : String.valueOf(date.getTime())));
+    public RetryMessage(String orcid, String brokerName) {
+        super(ImmutableMap.of(MessageConstants.TYPE.value, MessageConstants.TYPE_RETRY.value, 
+                MessageConstants.ORCID.value, orcid, BROKER_NAME, brokerName));
     }
 
     /**
@@ -48,14 +46,7 @@ public class LastModifiedMessage extends BaseMessage {
      * 
      * @param m
      */
-    public LastModifiedMessage(Map<String, String> m) {
+    public RetryMessage(Map<String, String> m) {
         super(ImmutableMap.copyOf(m));
-    }
-
-    public Date getLastUpdated() {
-        String time = map.get(MessageConstants.DATE.value);
-        if (time == null)
-            return null;
-        return new Date(Long.valueOf(time));
     }
 }
