@@ -90,8 +90,8 @@
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
-	                    	<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button type="submit" id="bottom-confirm-update-consortium" ng-click="updateConsortium()" class="btn btn-primary"><@orcid.msg 'manage_consortium.save_public_info'/></button>
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateConsortiumShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="updateConsortium()" ng-disabled="updateConsortiumDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
 	                        <a href="" class="cancel-right" ng-click="closeModalReload()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div> 
@@ -183,7 +183,7 @@
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
-	                    	<span id="ajax-loader" class="ng-cloak" ng-show="showLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
 	                    </div>
 	                </div> 

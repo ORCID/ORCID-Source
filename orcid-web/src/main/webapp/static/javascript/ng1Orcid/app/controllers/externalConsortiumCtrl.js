@@ -4,6 +4,7 @@
 angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
     $scope.addContactDisabled = false;
     $scope.addSubMemberDisabled = false;
+    $scope.addSubMemberShowLoader = false;
     $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
     /**
@@ -18,7 +19,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.input.rows = 10;
     */
     $scope.showInitLoader = true;
-    $scope.showLoader = false;
+    $scope.updateConsortiumDisabled = false;
+    $scope.updateConsortiumShowLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
     $scope.toggleFindConsortiumModal = function() {
@@ -57,7 +59,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
     
     $scope.updateConsortium = function() {
-        $scope.showLoader = true;
+        $scope.updateConsortiumShowLoader = true;
+        $scope.updateConsortiumDisabled = true;
          $.ajax({
               url: getBaseUri()+'/manage-consortium/update-consortium.json',
               contentType: 'application/json;charset=UTF-8',
@@ -65,7 +68,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
               dataType: 'json',
               data: angular.toJson($scope.consortium),
               success: function(data){
-                    $scope.showLoader = false;
+                    $scope.updateConsortiumShowLoader = false;
+                    $scope.updateConsortiumDisabled = false;
                     $scope.$apply(function(){
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
@@ -73,7 +77,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                               $scope.consortium = data;
                          }
                     });
-                    $scope.closeModal();
+                    //$scope.closeModal();
               }
          }).fail(function(error) {
               // something bad is happening!
@@ -107,7 +111,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             headers: { Accept: 'application/json'},
             success: function(data) {
                 $scope.confirmAddContactByEmail(data);
-                $scope.showLoader = false;
                 $scope.$apply();
             }
         }).fail(function(){
@@ -357,7 +360,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     
     $scope.addSubMember = function() {
         $scope.addSubMemberDisabled = true;
-        $scope.showLoader = true;
+        $scope.addSubMemberShowLoader = true;
         $.ajax({
             url: getBaseUri() + '/manage-consortium/add-sub-member.json',
             type: 'POST',
@@ -366,7 +369,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 if(data.errors.length === 0){
                     $scope.getConsortium();
-                    $scope.showLoader = false;
+                    $scope.addSubMemberShowLoader = false;
                     $scope.addSubMemberDisabled = false;
                     $scope.newSubMember.name = "";
                     $scope.newSubMember.website = "";
