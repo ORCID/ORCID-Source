@@ -147,7 +147,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     public String getClientIdFromAPIRequest() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+        if (authentication != null && OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             OAuth2Request request = oAuth2Authentication.getOAuth2Request();
             return request.getClientId();
