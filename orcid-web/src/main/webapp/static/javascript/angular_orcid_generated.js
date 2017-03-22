@@ -9286,8 +9286,9 @@
 	            success: function(data) {
 	                $scope.getConsortium();
 	                $scope.addContactDisabled = false;
+	                $scope.input.text = "";
 	                $scope.$apply();
-	                $scope.closeModalReload();
+	                $scope.closeModal();
 	            }
 	        }).fail(function() {
 	            console.log("Error adding contact.");
@@ -9346,7 +9347,7 @@
 	            success: function(data) {
 	                $scope.getConsortium();
 	                $scope.$apply();
-	                $scope.closeModalReload();
+	                $scope.closeModal();
 	            }
 	        }).fail(function() {
 	            // something bad is happening!
@@ -9409,7 +9410,6 @@
 	                    $scope.newSubMember.name = "";
 	                    $scope.newSubMember.website = "";
 	                    $scope.$apply();
-	                    window.location.reload();
 	                }
 	                else{
 	                    $scope.errors = data.errors;
@@ -9446,7 +9446,7 @@
 	            success: function(data) {
 	                $scope.getConsortium();
 	                $scope.$apply();
-	                $scope.closeModalReload();
+	                $scope.closeModal();
 	            }
 	        }).fail(function() {
 	            // something bad is happening!

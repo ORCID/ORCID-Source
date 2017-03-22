@@ -207,7 +207,7 @@
 	          </form>
 	       </div>
 	       <div ng-show="errors.length === 0">
-	           <br></br>
+	           <br>
 	       </div>
 	    </div>
 	</script>
@@ -239,7 +239,7 @@
 	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
-	            <br></br>
+	            <br>
 	        </div>
 	    </div>
     </script>
@@ -253,7 +253,7 @@
 	            <a href="" ng-click="closeModal()" class="cancel-option"><@orcid.msg 'freemarker.btncancel'/></a>
 	        </form>
 	        <div ng-show="errors.length === 0">
-	            <br></br>
+	            <br>
 	        </div>
 	    </div>
     </script>

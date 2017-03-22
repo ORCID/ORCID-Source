@@ -237,8 +237,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 $scope.getConsortium();
                 $scope.addContactDisabled = false;
+                $scope.input.text = "";
                 $scope.$apply();
-                $scope.closeModalReload();
+                $scope.closeModal();
             }
         }).fail(function() {
             console.log("Error adding contact.");
@@ -297,7 +298,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 $scope.getConsortium();
                 $scope.$apply();
-                $scope.closeModalReload();
+                $scope.closeModal();
             }
         }).fail(function() {
             // something bad is happening!
@@ -360,7 +361,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                     $scope.newSubMember.name = "";
                     $scope.newSubMember.website = "";
                     $scope.$apply();
-                    window.location.reload();
                 }
                 else{
                     $scope.errors = data.errors;
@@ -397,7 +397,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             success: function(data) {
                 $scope.getConsortium();
                 $scope.$apply();
-                $scope.closeModalReload();
+                $scope.closeModal();
             }
         }).fail(function() {
             // something bad is happening!
