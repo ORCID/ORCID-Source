@@ -50,9 +50,9 @@ public class HandleFailedMessages {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleFailedMessages.class);
     private static final int BATCH_SIZE = 1000;
 
-    private Client client = Client.create();
+    private Client client;
 
-    static ObjectMapper mapper = new ObjectMapper(); // thread safe!
+    static ObjectMapper mapper;
 
     @Value("${org.orcid.message-listener.retry:5}")
     private Integer maxFailuresBeforeNotify;
@@ -66,7 +66,12 @@ public class HandleFailedMessages {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Scheduled(fixedDelay = 30000)
+    public HandleFailedMessages() {
+        client = Client.create();
+        mapper = new ObjectMapper();
+    }
+    
+    @Scheduled(cron = "${org.orcid.cron.reindex-failed}")
     public void resendFailedElements() {
         List<RecordStatusEntity> failedElements = manager.getFailedElements(BATCH_SIZE);
         List<RecordStatusEntity> elementsToNotify = new ArrayList<RecordStatusEntity>();
@@ -74,25 +79,25 @@ public class HandleFailedMessages {
         for (RecordStatusEntity element : failedElements) {
             try {
                 // Send RetryMessage for 1.2 dump
-                if (element.getDumpStatus12Api() != null && element.getDumpStatus12Api() > 0) {
+                if (element.getDumpStatus12Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_1_2_API.value());
                     jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
                 }
                 // Send RetryMessage for 2.0 dump
-                if (element.getDumpStatus20Api() != null && element.getDumpStatus20Api() > 0) {
+                if (element.getDumpStatus20Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.DUMP_STATUS_2_0_API.value());
                     jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
                 }
                 // Send RetryMessage for solr indexing
-                if (element.getSolrStatus20Api() != null && element.getSolrStatus20Api() > 0) {
+                if (element.getSolrStatus20Api() > 0) {
                     RetryMessage message = new RetryMessage(element.getId(), AvailableBroker.SOLR.value());
                     jmsTemplate.convertAndSend(MessageConstants.Queues.RETRY, message.getMap());
                 }
 
                 // Should we notify about this element?
-                if ((element.getDumpStatus12Api() != null && element.getDumpStatus12Api() > maxFailuresBeforeNotify)
-                        || (element.getDumpStatus20Api() != null && element.getDumpStatus20Api() > maxFailuresBeforeNotify)
-                        || (element.getSolrStatus20Api() != null && element.getSolrStatus20Api() > maxFailuresBeforeNotify)) {
+                if ((element.getDumpStatus12Api() > maxFailuresBeforeNotify)
+                        || (element.getDumpStatus20Api() > maxFailuresBeforeNotify)
+                        || (element.getSolrStatus20Api() > maxFailuresBeforeNotify)) {
                     elementsToNotify.add(element);
                 }
             } catch (JmsException e) {
@@ -113,19 +118,19 @@ public class HandleFailedMessages {
 
         for (RecordStatusEntity element : elements) {
             sb.append("*ORCID: '").append(element.getId()).append("':* ");
-            if (element.getDumpStatus12Api() != null && element.getDumpStatus12Api() > maxFailuresBeforeNotify) {
+            if (element.getDumpStatus12Api() > maxFailuresBeforeNotify) {
                 sb.append(" (1.2 API Dump: ");
                 sb.append(element.getDumpStatus12Api());
                 sb.append(" failures)");
             }
 
-            if (element.getDumpStatus20Api() != null && element.getDumpStatus20Api() > maxFailuresBeforeNotify) {
+            if (element.getDumpStatus20Api() > maxFailuresBeforeNotify) {
                 sb.append(" (2.0 API Dump: ");
                 sb.append(element.getDumpStatus20Api());
                 sb.append(" failures)");
             }
 
-            if (element.getSolrStatus20Api() != null && element.getSolrStatus20Api() > maxFailuresBeforeNotify) {
+            if (element.getSolrStatus20Api() > maxFailuresBeforeNotify) {
                 sb.append(" (2.0 Solr indexing: ");
                 sb.append(element.getSolrStatus20Api());
                 sb.append(" failures)");

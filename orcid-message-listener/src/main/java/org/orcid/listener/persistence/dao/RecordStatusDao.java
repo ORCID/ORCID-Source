@@ -81,7 +81,7 @@ public class RecordStatusDao {
     }
     
     public List<RecordStatusEntity> getFailedElements(int batchSize) {
-        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus12Api > 0 OR dumpStatus20Api > 0 OR solrStatus20Api > 0", RecordStatusEntity.class);
+        TypedQuery<RecordStatusEntity> query = entityManager.createQuery("FROM RecordStatusEntity WHERE dumpStatus12Api > 0 OR dumpStatus20Api > 0 OR solrStatus20Api > 0 ORDER BY id", RecordStatusEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
     }
