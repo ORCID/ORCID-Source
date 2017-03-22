@@ -106,7 +106,7 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     private String getEventPayload(AnalyticsData data) {
         StringBuilder payload = new StringBuilder(PROTOCOL_VERSION_PARAM).append("=").append(PROTOCOL_VERSION_VALUE);
         payload.append("&").append(TRACKING_ID_PARAM).append("=").append(analyticsTrackingCode);
-        payload.append("&").append(CLIENT_ID_PARAM).append("=").append(data.getClientDetailsString());
+        payload.append("&").append(CLIENT_ID_PARAM).append("=").append(data.getClientId());
         payload.append("&").append(IP_ADDRESS_PARAM).append("=").append(data.getIpAddress());
         payload.append("&").append(USER_AGENT_PARAM).append("=").append(data.getUserAgent());
         payload.append("&").append(HIT_TYPE_PARAM).append("=").append(HIT_TYPE_VALUE_EVENT);

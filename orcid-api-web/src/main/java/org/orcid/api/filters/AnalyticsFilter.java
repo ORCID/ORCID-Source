@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.web.filters;
+package org.orcid.api.filters;
 
 import javax.ws.rs.ext.Provider;
 
@@ -22,7 +22,6 @@ import org.orcid.core.analytics.AnalyticsProcess;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -48,23 +47,14 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     }
     
     private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
-        ClientDetailsEntity client = getClientDetailsEntity();
         AnalyticsProcess process = new AnalyticsProcess();
         process.setRequest(request);
         process.setResponse(response);
         process.setAnalyticsClient(analyticsClient);
-        process.setClientDetailsId(client != null ? client.getId() : null);
-        process.setClientDetailsString(client != null ? client.getClientName() + " - " + client.getId() : null);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setClientDetailsId(orcidSecurityManager.getClientIdFromAPIRequest());
+        process.setPublicApi(false);
         return process;
-    }
-
-    private ClientDetailsEntity getClientDetailsEntity() {
-        String clientDetailsId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientDetailsId != null) {
-            return clientDetailsEntityCacheManager.retrieve(clientDetailsId);
-        } else {
-            return null;
-        }
     }
 
 }
