@@ -37,9 +37,9 @@ public class AnalyticsProcess implements Runnable {
     
     private static final String PUBLIC_API_USER = "Public API user";
     
-    private static final String PUBLIC_API = "Public";
+    private static final String PUBLIC_API = "Public API";
     
-    private static final String MEMBER_API = "Member";
+    private static final String MEMBER_API = "Member API";
 
     private static final String RECORD_CATEGORY = "record";
 
