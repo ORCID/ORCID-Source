@@ -79,7 +79,7 @@ public class AnalyticsProcessTest {
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
         assertEquals("works", data.getCategory());
-        assertEquals("Public v2.0", data.getApiVersion());
+        assertEquals("Public API v2.0", data.getApiVersion());
         assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.83", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
@@ -115,7 +115,7 @@ public class AnalyticsProcessTest {
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
         assertEquals("works", data.getCategory());
-        assertEquals("Member v2.0", data.getApiVersion());
+        assertEquals("Member API v2.0", data.getApiVersion());
         assertEquals(ClientType.CREATOR.value() + " | a member client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.83", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
@@ -147,7 +147,7 @@ public class AnalyticsProcessTest {
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
         assertEquals("works", data.getCategory());
-        assertEquals("Public v2.0", data.getApiVersion());
+        assertEquals("Public API v2.0", data.getApiVersion());
         assertEquals("Public API user", data.getClientDetailsString());
         assertEquals("37.14.150.83", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
