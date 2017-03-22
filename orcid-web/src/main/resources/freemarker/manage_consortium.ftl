@@ -191,21 +191,6 @@
 		    </div>
         </div>
     </div>
-    <script type="text/ng-template" id="confirm-modal-consortium">
-        <div class="lightbox-container">
-            <div class="row">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <h3><@orcid.msg 'manage_member.edit_member.confirm_update.title' /></h3>    
-                    <p><@orcid.msg 'manage_member.edit_memeber.confirm_update.text' /></p>          
-                    <p><strong>{{member.groupName.value}}</strong></p>                      
-                    <div class="btn btn-danger" ng-click="updateConsortium()">
-                        <@orcid.msg 'manage_member.edit_member.btn.update' />
-                    </div>
-                    <a href="" ng-click="closeModalReload()"><@orcid.msg 'freemarker.btncancel' /></a>
-                </div>
-            </div>
-        </div>
-    </script>
     <script type="text/ng-template" id="confirm-add-contact-modal">
 	    <div class="lightbox-container">
 	       <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>

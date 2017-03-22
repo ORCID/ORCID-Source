@@ -45,19 +45,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          });
     };
     
-    $scope.confirmUpdateConsortium = function() {
-         $.colorbox({
-              html : $compile($('#confirm-modal-consortium').html())($scope),
-                    scrolling: true,
-                    onLoad: function() {
-                    $('#cboxClose').remove();
-              },
-              scrolling: true
-         });
-
-         $.colorbox.resize({width:"450px" , height:"175px"});
-    };
-    
     $scope.updateConsortium = function() {
         $scope.updateConsortiumShowLoader = true;
         $scope.updateConsortiumDisabled = true;
@@ -77,7 +64,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                               $scope.consortium = data;
                          }
                     });
-                    //$scope.closeModal();
               }
          }).fail(function(error) {
               // something bad is happening!
