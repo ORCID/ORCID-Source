@@ -37,26 +37,6 @@ import io.github.robwin.swagger2markup.Swagger2MarkupConverter;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class Swagger2Markup {
-    
-    @Test
-    public void convertMemberSwaggerToAsciiDoc() throws IOException {
-        Swagger2MarkupConverter.from("http://localhost:8080/orcid-api-web/resources/swagger.json").build()
-            .intoFolder("src/docs/member/generated/asciidoc");
-
-        // Then validate that three AsciiDoc files have been created
-        String[] files = new File("src/docs/member/generated/asciidoc").list();
-        assertEquals(files.length,3);
-    }
-
-    @Test
-    public void convertPublicSwaggerToAsciiDoc() throws IOException {
-        Swagger2MarkupConverter.from("http://localhost:8080/orcid-pub-web/resources/swagger.json").build()
-            .intoFolder("src/docs/public/generated/asciidoc");
-
-        // Then validate that three AsciiDoc files have been created
-        String[] files = new File("src/docs/public/generated/asciidoc").list();
-        assertEquals(files.length,3);
-    }
 
     @Test
     public void convertMemberSwaggerToMarkdown() throws IOException {
