@@ -2082,6 +2082,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #a6ce39
 }
 
+.normal{
+    font-weight: normal;
+}
+
 .red {
     color: #ee0000;
 }
@@ -7283,7 +7287,7 @@ ul.comma li:last-child:after {
 
 /*Consortia self service*/
 .manage-consortium #ajax-loader i{
-    margin-top: 10px;
+    margin: 10px 0 10px 0;
 }
 
 .manage-consortium .alert{
@@ -7291,12 +7295,23 @@ ul.comma li:last-child:after {
 }
 
 .manage-consortium label,
-.manage-consortium h3
-{
+.manage-consortium h3 {
     display: block;
-    font-size: 14px;
     font-weight: bold;
-    margin: .7em 0 .5em 0;
+    margin: .2em 0 .2em 0;
+}
+
+.manage-consortium h3 {
+    font-size: 20px;
+    margin-top: 1em;
+}
+
+.manage-consortium h2 {
+    font-size: 27px;
+}
+
+.manage-consortium .input-md  {
+    width: 160px;
 }
 
 .manage-consortium table{
@@ -7309,6 +7324,10 @@ ul.comma li:last-child:after {
     vertical-align: top;
     font-size: 12px;
     width: 25%;
+}
+
+.manage-consortium #communities{
+    margin: 0;
 }
 
 .bold {
