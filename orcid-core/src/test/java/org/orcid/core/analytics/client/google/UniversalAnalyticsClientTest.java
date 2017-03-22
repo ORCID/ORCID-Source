@@ -38,7 +38,7 @@ public class UniversalAnalyticsClientTest {
         assertEquals(12, params.length);
         assertEquals(UniversalAnalyticsClient.PROTOCOL_VERSION_PARAM + "=1", params[0]);
         assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=null", params[1]);
-        assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientDetailsString(), params[2]);
+        assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientId(), params[2]);
         assertEquals(UniversalAnalyticsClient.IP_ADDRESS_PARAM + "=" + data.getIpAddress(), params[3]);
         assertEquals(UniversalAnalyticsClient.USER_AGENT_PARAM + "=" + data.getUserAgent(), params[4]);
         assertEquals(UniversalAnalyticsClient.HIT_TYPE_PARAM + "=event", params[5]);
@@ -55,6 +55,7 @@ public class UniversalAnalyticsClientTest {
         data.setApiVersion("v2.0");
         data.setCategory("works");
         data.setUrl("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works");
+        data.setClientId("client id");
         data.setClientDetailsString("Client name - client id");
         data.setContentType("application/xml");
         data.setUserAgent("blah");

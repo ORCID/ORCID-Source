@@ -22,6 +22,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.PathSegment;
 
 import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.util.StringUtils;
 
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -34,6 +36,10 @@ public class AnalyticsProcess implements Runnable {
     private static final String ORCID_PROFILE_CREATE_CATEGORY = "orcid-profile";
     
     private static final String PUBLIC_API_USER = "Public API user";
+    
+    private static final String PUBLIC_API = "Public API";
+    
+    private static final String MEMBER_API = "Member API";
 
     private static final String RECORD_CATEGORY = "record";
 
@@ -43,9 +49,11 @@ public class AnalyticsProcess implements Runnable {
 
     private AnalyticsClient analyticsClient;
 
-    private String clientDetailsString;
-    
     private String clientDetailsId;
+    
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    public boolean publicApi;
 
     @Override
     public void run() {
@@ -65,12 +73,16 @@ public class AnalyticsProcess implements Runnable {
         this.analyticsClient = analyticsClient;
     }
 
-    public void setClientDetailsString(String clientDetailsString) {
-        this.clientDetailsString = clientDetailsString;
+    public void setClientDetailsEntityCacheManager(ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        this.clientDetailsEntityCacheManager = clientDetailsEntityCacheManager;
     }
 
     public void setClientDetailsId(String clientDetailsId) {
         this.clientDetailsId = clientDetailsId;
+    }
+    
+    public void setPublicApi(boolean publicApi) {
+        this.publicApi = publicApi;
     }
 
     private AnalyticsData getAnalyticsData() {
@@ -78,7 +90,7 @@ public class AnalyticsProcess implements Runnable {
                 
         AnalyticsData analyticsData = new AnalyticsData();
         analyticsData.setUrl(request.getAbsolutePath().toString());
-        analyticsData.setClientDetailsString(clientDetailsString != null ? clientDetailsString : PUBLIC_API_USER);
+        analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip); 
         analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
         analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
@@ -90,9 +102,23 @@ public class AnalyticsProcess implements Runnable {
         return analyticsData;
     }
 
+    private String getClientDetailsString() {
+        if (clientDetailsId != null) {
+            ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientDetailsId);
+            StringBuilder clientDetails = new StringBuilder(client.getClientType().value());
+            clientDetails.append(" | ");
+            clientDetails.append(client.getClientName());
+            clientDetails.append(" - ");
+            clientDetails.append(clientDetailsId);
+            return clientDetails.toString();
+        } else {
+            return PUBLIC_API_USER;
+        }
+    }
+
     private String getApiVersion(ContainerRequest request) {
         List<PathSegment> path = request.getPathSegments(true);
-        return path.get(0).toString();
+        return (publicApi ? PUBLIC_API : MEMBER_API) + " " + path.get(0).toString();
     }
 
     private String getCategory(ContainerRequest request) {
