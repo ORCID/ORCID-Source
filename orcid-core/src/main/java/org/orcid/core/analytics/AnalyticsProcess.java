@@ -16,15 +16,11 @@
  */
 package org.orcid.core.analytics;
 
-import java.util.List;
-
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.PathSegment;
 
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.util.StringUtils;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
@@ -33,15 +29,11 @@ public class AnalyticsProcess implements Runnable {
 
     private static final String REMOTE_IP_HEADER_NAME = "X-FORWARDED-FOR";
     
-    private static final String ORCID_PROFILE_CREATE_CATEGORY = "orcid-profile";
-    
     private static final String PUBLIC_API_USER = "Public API user";
     
     private static final String PUBLIC_API = "Public API";
     
     private static final String MEMBER_API = "Member API";
-
-    private static final String RECORD_CATEGORY = "record";
 
     private ContainerRequest request;
 
@@ -87,6 +79,7 @@ public class AnalyticsProcess implements Runnable {
 
     private AnalyticsData getAnalyticsData() {
         String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
+        APIEndpointParser parser = new APIEndpointParser(request);
                 
         AnalyticsData analyticsData = new AnalyticsData();
         analyticsData.setUrl(request.getAbsolutePath().toString());
@@ -96,10 +89,17 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
         analyticsData.setIpAddress(ip);
-        analyticsData.setCategory(getCategory(request));
-        analyticsData.setApiVersion(getApiVersion(request));
+        analyticsData.setCategory(parser.getCategory());
+        analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
         analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String getApiString(String apiVersion) {
+        if (publicApi) {
+            return PUBLIC_API + " " + apiVersion;
+        }
+        return MEMBER_API + " " + apiVersion;
     }
 
     private String getClientDetailsString() {
@@ -115,24 +115,4 @@ public class AnalyticsProcess implements Runnable {
             return PUBLIC_API_USER;
         }
     }
-
-    private String getApiVersion(ContainerRequest request) {
-        List<PathSegment> path = request.getPathSegments(true);
-        return (publicApi ? PUBLIC_API : MEMBER_API) + " " + path.get(0).toString();
-    }
-
-    private String getCategory(ContainerRequest request) {
-        if (request.getAbsolutePath().toString().contains(ORCID_PROFILE_CREATE_CATEGORY)) {
-            // url inconsistent with others containing ORCID iDs
-            return ORCID_PROFILE_CREATE_CATEGORY;
-        }
-
-        List<PathSegment> path = request.getPathSegments(true);
-        
-        if (path.size() < 3 || StringUtils.isEmpty(path.get(2).toString())) {
-            return RECORD_CATEGORY;
-        }
-        return path.get(2).toString();
-    }
-
 }
