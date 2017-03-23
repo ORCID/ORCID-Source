@@ -261,7 +261,11 @@
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
 	
-	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />		
+	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
+	
+	<bean id="notificationDaoReadOnly" class="org.orcid.persistence.dao.impl.NotificationDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />		
+	</bean>
 	
 	<bean id="shibbolethAccountDao" class="org.orcid.persistence.dao.impl.ShibbolethAccountDaoImpl" />
 

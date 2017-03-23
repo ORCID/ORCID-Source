@@ -169,8 +169,11 @@ public class NotificationManagerImpl implements NotificationManager {
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
-    private NotificationDao notificationDao;
-
+    private NotificationDao notificationDao;    
+    
+    @Resource
+    private NotificationDao notificationDaoReadOnly;    
+    
     @Resource
     private SourceManager sourceManager;
 
@@ -989,7 +992,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public List<Notification> findUnsentByOrcid(String orcid) {
-        return notificationAdapter.toNotification(notificationDao.findUnsentByOrcid(orcid));
+        return notificationAdapter.toNotification(notificationDaoReadOnly.findUnsentByOrcid(orcid));
     }
 
     @Override
