@@ -219,6 +219,10 @@
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
     
+    <bean id="webhookDaoReadOnly" class="org.orcid.persistence.dao.impl.WebhookDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+    
     <bean id="invalidRecordDataChangeDao" class="org.orcid.persistence.dao.impl.InvalidRecordDataChangeDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
@@ -233,7 +237,11 @@
  
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
-    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />                 
+    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
+    	                     
+    <bean id="orgDisambiguatedDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
     
 	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
@@ -245,7 +253,11 @@
 	
 	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
 	
-	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />          
+	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />
+	
+	<bean id="fundingSubTypeToIndexDaoReadOnly" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>          
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
 	
