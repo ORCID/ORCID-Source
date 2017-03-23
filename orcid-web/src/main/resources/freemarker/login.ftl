@@ -90,7 +90,7 @@
 								        	<strong><span ng-bind="requestResetPassword.successMessage"></span></strong>
 								        </div>
 					        			<div class="control-group">
-					            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label><span class="required">*</span>				           
+					            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>			           
 					               			<div class="controls"> 
 					               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" />
 					               			</div>
