@@ -18,9 +18,11 @@ package org.orcid.core.analytics.client.google;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.orcid.core.analytics.AnalyticsData;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.util.UriEncoder;
 
@@ -29,6 +31,7 @@ public class UniversalAnalyticsClientTest {
     @Test
     public void testSendAnalyticsData() {
         UniversalAnalyticsClient client = new UniversalAnalyticsClientStub();
+        ReflectionTestUtils.setField(client, "analyticsTrackingCode", "some-tracking-code");
         AnalyticsData data = getData();
         client.sendAnalyticsData(data);
         String payload = ((UniversalAnalyticsClientStub) client).getPayload();
@@ -37,7 +40,7 @@ public class UniversalAnalyticsClientTest {
         String[] params = UriEncoder.decode(payload).split("&");
         assertEquals(12, params.length);
         assertEquals(UniversalAnalyticsClient.PROTOCOL_VERSION_PARAM + "=1", params[0]);
-        assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=null", params[1]);
+        assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=some-tracking-code", params[1]);
         assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientId(), params[2]);
         assertEquals(UniversalAnalyticsClient.IP_ADDRESS_PARAM + "=" + data.getIpAddress(), params[3]);
         assertEquals(UniversalAnalyticsClient.USER_AGENT_PARAM + "=" + data.getUserAgent(), params[4]);
@@ -48,6 +51,15 @@ public class UniversalAnalyticsClientTest {
         assertEquals(UniversalAnalyticsClient.API_VERSION_PARAM + "=" + data.getApiVersion(), params[9]);
         assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[10]);
         assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[11]);
+    }
+    
+    @Test
+    public void testSendAnalyticsDataNoTrackingCode() {
+        UniversalAnalyticsClient client = new UniversalAnalyticsClientStub();
+        AnalyticsData data = getData();
+        client.sendAnalyticsData(data);
+        String payload = ((UniversalAnalyticsClientStub) client).getPayload();
+        assertNull(payload); // didn't get sent
     }
     
     private AnalyticsData getData() {

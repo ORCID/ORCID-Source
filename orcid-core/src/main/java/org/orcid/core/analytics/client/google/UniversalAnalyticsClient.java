@@ -23,6 +23,7 @@ import java.net.URL;
 
 import javax.ws.rs.HttpMethod;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.analytics.AnalyticsData;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.slf4j.Logger;
@@ -54,13 +55,13 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
     protected static final String EVENT_CATEGORY_PARAM = "ec";
 
     protected static final String EVENT_ACTION_PARAM = "ea";
-    
+
     protected static final String EVENT_LABEL_PARAM = "el";
-    
+
     protected static final String API_VERSION_PARAM = "cd1";
-    
+
     protected static final String CONTENT_TYPE_PARAM = "cd2";
-    
+
     protected static final String RESPONSE_CODE_PARAM = "cd3";
 
     @Value("${org.orcid.core.api.analytics.trackingCode:}")
@@ -71,7 +72,9 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
 
     @Override
     public void sendAnalyticsData(AnalyticsData data) {
-        recordEvent(data);
+        if (!StringUtils.isBlank(analyticsTrackingCode)) {
+            recordEvent(data);
+        }
     }
 
     private void recordEvent(AnalyticsData data) {
@@ -85,13 +88,13 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(HttpMethod.POST);
             connection.setDoOutput(true);
-            
+
             OutputStreamWriter outputStream = new OutputStreamWriter(connection.getOutputStream());
             outputStream.write(payload);
             outputStream.flush();
             outputStream.close();
             int response = connection.getResponseCode();
-            
+
             if (response != 200) {
                 LOGGER.warn("Analytics: received response code " + response);
                 LOGGER.warn("Payload was: " + payload);
