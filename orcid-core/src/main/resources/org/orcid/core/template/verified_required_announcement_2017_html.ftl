@@ -39,7 +39,7 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.service_announcement.2017.body_3" />
 		    </p>
-		    <ol>
+		    <ol style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 		    	<li><@emailMacros.msg "email.service_announcement.2017.body_3_option_1" />&nbsp;<a href="${verificationUrl}">${verificationUrl}</a></li>
 		    	<li><@emailMacros.msg "email.service_announcement.2017.body_3_option_2" /></li>
 		   		<li><@emailMacros.msg "email.service_announcement.2017.body_3_option_3" /></li>
