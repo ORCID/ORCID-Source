@@ -1051,19 +1051,21 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     @Transactional
-    public Notification flagAsArchived(String orcid, Long id, boolean checkSource) throws OrcidNotificationAlreadyReadException {
+    public Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
             return null;
         }
         String sourceId = sourceManager.retrieveSourceOrcid();
-        if (checkSource && sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("activity", "notification");
-            throw new WrongSourceException(params);
-        }
-        if (notificationEntity.getReadDate() != null) {
-            throw new OrcidNotificationAlreadyReadException();
+        if (validateForApi) {
+            if (sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("activity", "notification");
+                throw new WrongSourceException(params);
+            }
+            if (notificationEntity.getReadDate() != null) {
+                throw new OrcidNotificationAlreadyReadException();
+            }
         }
         if (notificationEntity.getArchivedDate() == null) {
             notificationEntity.setArchivedDate(new Date());
