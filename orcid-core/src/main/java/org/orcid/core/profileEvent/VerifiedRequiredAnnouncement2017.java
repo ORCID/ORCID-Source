@@ -73,7 +73,8 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
             return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SKIPPED_2017);
         }
 
-        if (orcidProfile.isLocked() || orcidProfile.isDeactivated() || orcidProfile.getOrcidDeprecated() != null) {
+        if (orcidProfile.isLocked() || orcidProfile.isDeactivated() || orcidProfile.getOrcidDeprecated() != null
+                || !orcidProfile.getOrcidHistory().getClaimed().isValue()) {
             return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SKIPPED_2017);
         }
 
