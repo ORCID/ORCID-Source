@@ -7344,9 +7344,10 @@ ul.comma li:last-child:after {
 
 .footer-main {
     border-top: 1px solid #c9c9c9;
-    font-size: 12px;
-    padding-bottom: 45px;
-    padding-top: 30px;
+    font-size: 11px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    line-height: normal;
 }
 
 .footer-main .btn-social {
@@ -7358,12 +7359,19 @@ ul.comma li:last-child:after {
 }
 
 .footer-main .inline-list li {
-    margin-left: 0;
-    margin-right: 20px;
+    margin: 2px 0 0 0;
+}
+
+.footer-main .col-md-10 .inline-list li {
+    margin: 12px 20px 0 0;
 }
 
 .footer-main .inline-list li:last-child {
     margin-right: 0;
+}
+
+.footer-main p{
+    margin: 0 0 6px 0;
 }
 
 .inline-list li {
@@ -7373,12 +7381,12 @@ ul.comma li:last-child:after {
 
 .social-button .social {
     display: block;
-    height: 30px;
+    height: 20px;
 }
 
 .social-button .social:before {
-    color: #939598;
-    font-size: 30px;
+    color: #a6a8ab;
+    font-size: 20px;
 }
 
 .social-button .social:hover:before {
