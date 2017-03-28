@@ -1,14 +1,18 @@
 node {
 
-    properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '1', artifactNumToKeepStr: '1', daysToKeepStr: '1', numToKeepStr: '1')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'master', description: 'build specific branch by name', name: 'branch_to_build')]), pipelineTriggers([])])
-    
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
     
-    stage('Fetch Code') {
-        echo "triggered by modification on ${branch_to_build} ---------------------------------------------------------------------------"
-    }
+    properties([
+        buildDiscarder(
+            logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '3', numToKeepStr: '3')
+        ), 
+        disableConcurrentBuilds(), 
+        [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+        pipelineTriggers([])
+    ])
     
-    stage('Build Dependencies') {
+    stage('Fetch Code and Build') {
+        echo "triggered by modification on ${branch_to_build} ---------------------------------------------------------------------------"
         echo "Lets build the core"
         try {
             do_maven("clean install -Dmaven.test.skip=true")
@@ -17,7 +21,7 @@ node {
             throw err
         }
     }
-    stage('Build & Test') {
+    stage('Execute Tests') {
         try {
             do_maven("test")
             junit '**/target/surefire-reports/*.xml'
@@ -26,10 +30,8 @@ node {
             orcid_notify("Build ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
             throw err
         }
-    }
-    stage('Notify Completed'){
         orcid_notify("Pipeline ${branch_to_build}#$BUILD_NUMBER workflow completed [${JOB_URL}]", 'SUCCESS')
-        deleteDir()
+        deleteDir()        
     }
 }
 
@@ -37,7 +39,7 @@ def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
     try{
         sh "export MAVEN_OPTS='-XX:MaxPermSize=2048m -Xms128m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError'"
-        sh "$MAVEN/bin/mvn -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dcom.mailgun.testmode=yes $mvn_task"
+        sh "$MAVEN/bin/mvn $mvn_task"
     } catch(Exception err) {
         throw err
     }
