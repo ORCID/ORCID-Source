@@ -57,8 +57,7 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Override
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
-        //TODO!!!!!! FALSE!!!!
-        boolean run = true;
+        boolean run = false;
         StatisticKeyEntity lastStatisticsKey = statisticsManagerReadOnly.getLatestKey();
 
         if (lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null) {
@@ -78,10 +77,9 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
         }
 
         if (run) {
-            LOG.info("Last time the statistics cron job ran: {}", new Date());
             Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
-            statisticsManager.saveStatistics(statistics);
-            LOG.info("----------------------------------> DONE");
+            statisticsManager.saveStatistics(statistics);           
+            LOG.info("Last time the statistics cron job ran: {}", new Date());            
         }
     }
 
