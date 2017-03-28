@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="unqualified"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
 	targetNamespace="http://www.orcid.org/ns/bulk" 
 	xmlns:bulk="http://www.orcid.org/ns/bulk" 
 	xmlns:work="http://www.orcid.org/ns/work"
-	xmlns:common="http://www.orcid.org/ns/common" xmlns:error="http://www.orcid.org/ns/error">
+	xmlns:error="http://www.orcid.org/ns/error">
 	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
@@ -31,25 +31,25 @@
 		</xs:documentation>
 		<xs:appinfo>
 			<sch:title>Schematron validation</sch:title>
-			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+			<sch:ns prefix="bulk" uri="http://www.orcid.org/ns/bulk" />
 		</xs:appinfo>
 	</xs:annotation>
+	
+	<xs:import namespace="http://www.orcid.org/ns/error"
+		schemaLocation="error-2.0.xsd" />
+		
+	<xs:import namespace="http://www.orcid.org/ns/work"
+		schemaLocation="work-2.0.xsd" />
 	
 	<xs:element name="bulk">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>A work published by the researcher or contributor.
-					* The visibility attribute (private, limited or public) can be set
-					at record creation, and indicates who can see this section of
-					information.
-					* The put-code attribute is used only when reading this
-					element. When updating the item, the put-code attribute must be
-					included to indicate the specific record to be updated.
-				</xs:documentation>
+				<xs:documentation>Utilitary schema that allow the creation of multiple works in a single request</xs:documentation>
 			</xs:annotation>
 			<xs:sequence maxOccurs="unbounded">
 				<xs:choice>
-					<xs:any minOccurs="1" processContents="lax"/>					
+					<xs:element minOccurs="0" ref="work:work" />
+					<xs:element minOccurs="0" ref="error:error" />										
 				</xs:choice>
 			</xs:sequence>
 		</xs:complexType>

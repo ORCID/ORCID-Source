@@ -112,13 +112,18 @@ public class PeerReviewManagerReadOnlyImpl implements PeerReviewManagerReadOnly 
             Set<GroupableActivity> activities = group.getActivities();
             PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
             // Fill the peer review groups with the external identifiers
-            for (GroupAble groupKey : groupKeys) {
-                PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
-                ExternalID id = new ExternalID();
-                id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
-                id.setValue(key.getGroupId());
-                peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
-            }
+            if(groupKeys == null || groupKeys.isEmpty()) {
+                // Initialize the ids as an empty list
+                peerReviewGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble groupKey : groupKeys) {
+                    PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
+                    ExternalID id = new ExternalID();
+                    id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
+                    id.setValue(key.getGroupId());
+                    peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
+                }
+            }            
 
             // Fill the peer review group with the list of activities
             for (GroupableActivity activity : activities) {

@@ -260,6 +260,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return publicV2ApiServiceDelegator.searchByQuery(solrParams);
     }
     
+    @Override
+    public Response viewBulkWorks(String orcid, String putCodes) {
+        return publicV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes);
+    }
+    
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
         V2Convertible result = null;

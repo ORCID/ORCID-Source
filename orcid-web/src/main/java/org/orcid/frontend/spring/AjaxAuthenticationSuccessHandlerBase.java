@@ -23,12 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -41,9 +40,6 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     private OrcidUrlManager orcidUrlManager;
 
     @Resource
-    protected ProfileDao profileDao;
-
-    @Resource
     protected InternalSSOManager internalSSOManager;
 
     @Resource
@@ -53,10 +49,10 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     protected OrcidProfileManager orcidProfileManager;
 
     @Resource
-    protected UserConnectionDao userConnectionDao;
-
-    @Resource
     protected LocaleContextResolver localeContextResolver;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     protected String getTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
@@ -66,7 +62,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             if (internalSSOManager.enableCookie()) {
                 internalSSOManager.writeCookie(orcidId, request, response);
             }
-            profileDao.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
+            profileEntityManager.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
@@ -86,7 +82,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
     // new method - persist which ever local they logged in with
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
-        Locale lastKnownLocale = profileDao.retrieveLocale(orcidId);
+        Locale lastKnownLocale = profileEntityManager.retrieveLocale(orcidId);
         if (lastKnownLocale != null) {
             localeContextResolver.setLocale(request, response, LocaleUtils.toLocale(lastKnownLocale.value()));
         } else {
@@ -96,11 +92,11 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             // must match <property name="cookieName" value="locale_v3"
             // />
             clr.setCookieName("locale_v3");
-            Locale cookieLocale = org.orcid.jaxb.model.message.Locale.fromValue(clr.resolveLocale(request).toString());
+            Locale cookieLocale = org.orcid.jaxb.model.common_v2.Locale.fromValue(clr.resolveLocale(request).toString());
 
             // update the users preferences, so that
             // send out emails in their last chosen language
-            profileDao.updateLocale(orcidId, cookieLocale);
+            profileEntityManager.updateLocale(orcidId, cookieLocale);
         }
     }
 

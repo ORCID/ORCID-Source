@@ -18,12 +18,49 @@
 	<activities:group>
 		<common:last-modified-date>2017-01-18T15:03:56.856-06:00
 		</common:last-modified-date>
+		<common:external-ids />				
+		<work:work-summary put-code="3356"
+			path="/8888-8888-8888-8880/work/3356" visibility="public"
+			display-index="1">
+			<common:created-date>2017-01-18T15:03:56.680-06:00
+			</common:created-date>
+			<common:last-modified-date>2017-01-18T15:03:56.856-06:00
+			</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name>User One Credit name</common:source-name>
+			</common:source>
+			<work:title>
+				<common:title>Work # 0</common:title>
+			</work:title>			
+			<common:external-ids>
+				<common:external-id>
+					<common:external-id-type>doi</common:external-id-type>
+					<common:external-id-value>123456</common:external-id-value>
+					<common:external-id-url>https://doi.org/123456</common:external-id-url>
+					<common:external-id-relationship>part-of</common:external-id-relationship>
+				</common:external-id>
+			</common:external-ids>
+			<work:type>conference-paper</work:type>
+			<common:publication-date>
+				<common:year>2017</common:year>
+				<common:month>03</common:month>
+				<common:day>03</common:day>
+			</common:publication-date>
+		</work:work-summary>
+	</activities:group>
+	<activities:group>
+		<common:last-modified-date>2017-01-18T15:03:56.856-06:00
+		</common:last-modified-date>
 		<common:external-ids>
 			<common:external-id>
 				<common:external-id-type>arxiv</common:external-id-type>
 				<common:external-id-value>123456</common:external-id-value>
-				<common:external-id-url>http://arxiv.org/abs/123456
-				</common:external-id-url>
+				<common:external-id-url>http://arxiv.org/abs/123456</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
@@ -44,17 +81,21 @@
 			</common:source>
 			<work:title>
 				<common:title>Work # 1</common:title>
-			</work:title>
+			</work:title>			
 			<common:external-ids>
 				<common:external-id>
 					<common:external-id-type>arxiv</common:external-id-type>
 					<common:external-id-value>123456</common:external-id-value>
-					<common:external-id-url>http://arxiv.org/abs/123456
-					</common:external-id-url>
+					<common:external-id-url>http://arxiv.org/abs/123456</common:external-id-url>
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
 			<work:type>conference-paper</work:type>
+			<common:publication-date>
+				<common:year>2017</common:year>
+				<common:month>02</common:month>
+				<common:day>02</common:day>
+			</common:publication-date>
 		</work:work-summary>
 	</activities:group>
 	<activities:group>
@@ -64,8 +105,7 @@
 			<common:external-id>
 				<common:external-id-type>bibcode</common:external-id-type>
 				<common:external-id-value>4567</common:external-id-value>
-				<common:external-id-url>http://adsabs.harvard.edu/abs/4567
-				</common:external-id-url>
+				<common:external-id-url>http://adsabs.harvard.edu/abs/4567</common:external-id-url>
 				<common:external-id-relationship>self</common:external-id-relationship>
 			</common:external-id>
 		</common:external-ids>
@@ -91,12 +131,16 @@
 				<common:external-id>
 					<common:external-id-type>bibcode</common:external-id-type>
 					<common:external-id-value>4567</common:external-id-value>
-					<common:external-id-url>http://adsabs.harvard.edu/abs/4567
-					</common:external-id-url>
+					<common:external-id-url>http://adsabs.harvard.edu/abs/4567</common:external-id-url>
 					<common:external-id-relationship>self</common:external-id-relationship>
 				</common:external-id>
 			</common:external-ids>
 			<work:type>journal-article</work:type>
+			<common:publication-date>
+				<common:year>2017</common:year>
+				<common:month>03</common:month>
+				<common:day>03</common:day>
+			</common:publication-date>
 		</work:work-summary>
 	</activities:group>
 </activities:works>

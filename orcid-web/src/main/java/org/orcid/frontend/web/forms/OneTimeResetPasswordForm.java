@@ -16,69 +16,85 @@
  */
 package org.orcid.frontend.web.forms;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
-import org.orcid.frontend.web.forms.validate.FieldMatch;
-import org.orcid.frontend.web.forms.validate.IntegerStringCrossField;
-import org.orcid.frontend.web.forms.validate.TextPattern;
-import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-@IntegerStringCrossField(indexToIgnoreValidation = 0, theFieldToIgnoreValidation = "securityQuestionAnswer", theFieldToIndex = "securityQuestionId", message = "password_one_time_reset_optional_security_questions.answer_not_null")
-@FieldMatch.List( { @FieldMatch(first = "password", second = "retypedPassword", message = "password_one_time_reset.password_doesnt_match") })
-public class OneTimeResetPasswordForm {
+public class OneTimeResetPasswordForm implements ErrorsInterface {
 
-    private PasswordTypeAndConfirmForm passwordTypeAndConfirmForm;
-    private ChangeSecurityQuestionForm changeSecurityQuestionForm;
+    private String password;
 
-    public ChangeSecurityQuestionForm getChangeSecurityQuestionForm() {
-        return changeSecurityQuestionForm;
-    }
- 
-    public OneTimeResetPasswordForm() {
-        passwordTypeAndConfirmForm = new PasswordTypeAndConfirmForm();
-        changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
-    }
+    private String retypedPassword;
 
-    public PasswordTypeAndConfirmForm getForm() {
-        return passwordTypeAndConfirmForm;
+    private Integer securityQuestionId;
+
+    private String securityQuestionAnswer;
+    
+    private String encryptedEmail;
+    
+    private String successRedirectLocation;
+    
+    private List<String> errors;
+
+    public String getPassword() {
+        return password;
     }
 
-    @TextPattern(regexp = OrcidPasswordConstants.ORCID_PASSWORD_REGEX, message = "password_one_time_reset.password_regex_error")
-    public Text getPassword() {
-        return passwordTypeAndConfirmForm.getPassword();
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setPassword(Text password) {
-        passwordTypeAndConfirmForm.setPassword(password);
+    public String getRetypedPassword() {
+        return retypedPassword;
     }
 
-    public Text getRetypedPassword() {
-        return passwordTypeAndConfirmForm.getRetypedPassword();
+    public void setRetypedPassword(String retypedPassword) {
+        this.retypedPassword = retypedPassword;
     }
 
-    public void setRetypedPassword(Text retypedPassword) {
-        passwordTypeAndConfirmForm.setRetypedPassword(retypedPassword);
+    public Integer getSecurityQuestionId() {
+        return securityQuestionId;
     }
 
-    public int getSecurityQuestionId() {
-        return changeSecurityQuestionForm.getSecurityQuestionId();
-    }
-
-    public void setSecurityQuestionId(int securityQuestionId) {
-        this.changeSecurityQuestionForm.setSecurityQuestionId(securityQuestionId);
+    public void setSecurityQuestionId(Integer securityQuestionId) {
+        this.securityQuestionId = securityQuestionId;
     }
 
     public String getSecurityQuestionAnswer() {
-        return changeSecurityQuestionForm.getSecurityQuestionAnswer();
+        return securityQuestionAnswer;
     }
 
-    public void setSecurityQuestionAnswer(String securityAnswer) {
-        this.changeSecurityQuestionForm.setSecurityQuestionAnswer(securityAnswer);
+    public void setSecurityQuestionAnswer(String securityQuestionAnswer) {
+        this.securityQuestionAnswer = securityQuestionAnswer;
+    }
+    
+    public List<String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<String> errors) {
+        this.errors = errors;
+    }
+    
+    public String getEncryptedEmail() {
+        return encryptedEmail;
+    }
+
+    public void setEncryptedEmail(String encryptedEmail) {
+        this.encryptedEmail = encryptedEmail;
+    }
+
+    public String getSuccessRedirectLocation() {
+        return successRedirectLocation;
+    }
+
+    public void setSuccessRedirectLocation(String successRedirectLocation) {
+        this.successRedirectLocation = successRedirectLocation;
     }
 
     public boolean isSecurityDetailsPopulated() {
-        return changeSecurityQuestionForm.getSecurityQuestionId() != null && changeSecurityQuestionForm.getSecurityQuestionId() != 0
-                && StringUtils.isNotBlank(changeSecurityQuestionForm.getSecurityQuestionAnswer());
+        return securityQuestionId != null && securityQuestionId != 0 && StringUtils.isNotBlank(securityQuestionAnswer);
     }
 
 }

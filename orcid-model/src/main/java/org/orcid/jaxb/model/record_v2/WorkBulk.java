@@ -31,7 +31,7 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "bulk" })
-@XmlRootElement(name = "bulk", namespace = "http://www.orcid.org/ns/bulk")
+@XmlRootElement(name = "bulk", namespace=  "http://www.orcid.org/ns/bulk")
 public class WorkBulk implements Serializable {    
     private static final long serialVersionUID = 1338769097760031210L;
     

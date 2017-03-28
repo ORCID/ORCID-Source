@@ -16,8 +16,11 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Locale;
+
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.pojo.ajaxForm.Registration;
 
 /**
  * 
@@ -30,7 +33,9 @@ public interface RegistrationManager {
 
     void resetUserPassword(String toEmail, OrcidProfile orcidProfile);
 
-    OrcidProfile createMinimalRegistration(OrcidProfile orcidProfile, boolean usedCaptcha);
+    String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip);
+    
+    boolean passwordIsCommon(String password);
 
     Long getCount();
 }

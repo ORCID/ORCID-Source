@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+	<message-version>1.2</message-version>
+	<orcid-profile type="user">
+		<orcid-preferences>
+			<locale>en</locale>
+		</orcid-preferences>
+		<orcid-bio>
+			<personal-details>
+				<given-names>given names</given-names>
+				<family-name>family name</family-name>
+				<credit-name>credit name</credit-name>
+				<other-names>
+					<other-name>Other 1</other-name>
+					<other-name>Other 2</other-name>
+				</other-names>
+			</personal-details>
+			<biography>Lets test some crazy stuff! How about a 1000 chars in japanese 難フドょ三点93隊は比埼回へ美宝投トしレ手採シ領馬公ノネ氏細ケロウヌ係入ヲハヌヱ厚院ひゃお川的ばぴイぎ言提オサ所熱サ自通をぶちス後筆本在親も。仕退ニレト由界フぱし庫越トメキホ来転を半別どば鈴内ト全41秀かゅや果物心マオル討赤モナマフ参月スどこや座念コソ言社ぐ食理ラセ対演ぎの変理かラ広暮クスネテ上進傑ゆくス。16要べ南聖ウチサ認府ネ長悪たやふ能住とぜべ王是にど新断切年セテ不紀つドょ歳県オスニ質38碁れ容57雑スネモ老泉シヘヒ関裕よはラク更記兆ムタワラ投困ゅんぜ治木ぞほ細通ウヤ年覧ト運現ざイたね冊7績よゆ暮誉ソサト投46軽ロ終時イ必迫の触勇囲速ぐイす。特なイりド通結ま鳥寄育ぼべく拶奈拳ナコ回書マク道月スどばせ社的ケ探尽タエホ枝力トル害地べっ治電は際材ヨ別断ツカウ文国ラヒ応治ぴぶ戦75収否禁辞4帝おだあへ平悪由ごと禁者ヒワコタ長強ふて見際まをづ質相抽綱もえ。卓側68点宇どのゆ式長実52染な憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコv憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ憶オ調浄もゆ高京セハヘミ世曄タニ合東らね約環リ理聞話学ほ心褒ぼどばこ補禁球かを運人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだて野重探がそょ会上ミヘ社69点ルラコ人ねの判言ネツユタ級投とそらぜ辺罪サ放唱セ請月試セツヲリ票監笑怠殊ぼスお。断きだ</biography>
+			<researcher-urls>
+				<researcher-url>
+					<url>http://www.wjrs.co.uk</url>
+				</researcher-url>
+				<researcher-url>
+					<url>http://www.vvs.com</url>
+				</researcher-url>
+			</researcher-urls>
+			<contact-details>
+				<email primary="true">user1@test.orcid.org</email>
+				<address>
+                    <country>US</country>
+                </address> 
+			</contact-details>
+			<keywords>
+				<keyword>Pavement Studies</keyword>
+				<keyword>Advanced Tea Making</keyword>
+			</keywords>
+			<external-identifiers>
+				<external-identifier>
+					<external-id-common-name>extId#1</external-id-common-name>
+					<external-id-reference>extId#1</external-id-reference>
+					<external-id-url>http://orcid.org/extId#1</external-id-url>
+				</external-identifier>
+				<external-identifier>
+					<external-id-common-name>extId#2</external-id-common-name>
+					<external-id-reference>extId#2</external-id-reference>
+					<external-id-url>http://orcid.org/extId#2</external-id-url>
+				</external-identifier>
+			</external-identifiers>
+		</orcid-bio>
+		<orcid-activities>
+			<affiliations>
+				<affiliation visibility="public">
+					<type>education</type>
+					<department-name>department-name</department-name>
+					<role-title>role-title</role-title>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</affiliation>
+				<affiliation visibility="public">
+					<type>employment</type>
+					<department-name>department-name</department-name>
+					<role-title>role-title</role-title>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</affiliation>
+			</affiliations>
+			<orcid-works>
+				<orcid-work visibility="public">
+					<work-title>
+						<title>title</title>
+						<subtitle>subtitle</subtitle>
+					</work-title>
+					<journal-title>journal title</journal-title>
+					<short-description>description</short-description>
+					<work-citation>
+						<work-citation-type>formatted-unspecified</work-citation-type>
+						<citation>citation</citation>
+					</work-citation>
+					<work-type>book</work-type>
+					<publication-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</publication-date>
+					<work-external-identifiers>
+						<work-external-identifier>
+							<work-external-identifier-type>doi</work-external-identifier-type>
+							<work-external-identifier-id>10.5555/12345ABCDE</work-external-identifier-id>
+						</work-external-identifier>
+					</work-external-identifiers>
+					<url>http://orcid.org</url>
+					<work-contributors>
+						<contributor>							
+							<credit-name>credit-name</credit-name>
+							<contributor-email>contributor@test.orcid.org</contributor-email>
+							<contributor-attributes>
+								<contributor-sequence>first</contributor-sequence>
+								<contributor-role>author</contributor-role>
+							</contributor-attributes>
+						</contributor>
+					</work-contributors>
+					<language-code>en</language-code>
+					<country>US</country>
+				</orcid-work>
+			</orcid-works>
+			<funding-list>
+				<funding>
+					<funding-type>grant</funding-type>
+					<organization-defined-type>organization-defined-type</organization-defined-type>
+					<funding-title>
+						<title>title</title>
+					</funding-title>
+					<short-description>short-description</short-description>
+					<amount currency-code="USD">1000</amount>
+					<url>http://orcid.org</url>
+					<start-date>
+						<year>2017</year>
+						<month>01</month>
+						<day>01</day>
+					</start-date>
+					<end-date>
+						<year>2018</year>
+						<month>01</month>
+						<day>01</day>
+					</end-date>
+					<funding-external-identifiers>
+						<funding-external-identifier>
+							<funding-external-identifier-type>grant_number</funding-external-identifier-type>
+							<funding-external-identifier-value>funding-external-identifier-value</funding-external-identifier-value>
+							<funding-external-identifier-url>http://orcid.org</funding-external-identifier-url>
+						</funding-external-identifier>
+					</funding-external-identifiers>
+					<funding-contributors>
+						<funding-contributor>
+							<credit-name visibility="public">credit-name</credit-name>
+							<contributor-email>test@test.orcid.org</contributor-email>
+							<funding-contributor-attributes>
+								<funding-contributor-role>lead</funding-contributor-role>
+							</funding-contributor-attributes>
+						</funding-contributor>
+					</funding-contributors>
+					<organization>
+						<name>name</name>
+						<address>
+							<city>city</city>
+							<region>region</region>
+							<country>US</country>
+						</address>
+					</organization>
+				</funding>
+			</funding-list>
+		</orcid-activities>
+	</orcid-profile>
+</orcid-message>

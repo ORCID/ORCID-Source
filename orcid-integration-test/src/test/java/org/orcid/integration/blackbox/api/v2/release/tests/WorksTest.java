@@ -63,7 +63,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class WorksTest extends BlackBoxBaseV2Release {
     @Resource(name = "memberV2ApiClient")
     private MemberV2ApiClientImpl memberV2ApiClient;        
@@ -73,8 +73,9 @@ public class WorksTest extends BlackBoxBaseV2Release {
         showMyOrcidPage();
     	changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         workToCreate.setPutCode(null);
+        workToCreate.setSource(null);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         
         ExternalID wExtId = new ExternalID();
@@ -95,7 +96,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
         Work gotWork = getResponse.getEntity(Work.class);
         
         assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
-        assertEquals("work:citation-value", gotWork.getWorkCitation().getCitation());
+        assertEquals("work:citation", gotWork.getWorkCitation().getCitation());
         assertEquals(CitationType.FORMATTED_UNSPECIFIED, gotWork.getWorkCitation().getWorkCitationType());
         
         gotWork.getWorkTitle().getTitle().setContent("updated title");
@@ -121,7 +122,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
         Work gotAfterUpdateWork = getAfterUpdateResponse.getEntity(Work.class);
         
         assertEquals("updated title", gotAfterUpdateWork.getWorkTitle().getTitle().getContent());
-        assertEquals("work:citation-value", gotAfterUpdateWork.getWorkCitation().getCitation());
+        assertEquals("work:citation", gotAfterUpdateWork.getWorkCitation().getCitation());
         assertEquals(CitationType.FORMATTED_UNSPECIFIED, gotAfterUpdateWork.getWorkCitation().getWorkCitationType());
         
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), gotWork.getPutCode(), accessToken);
@@ -134,8 +135,9 @@ public class WorksTest extends BlackBoxBaseV2Release {
         String accessTokenForClient1 = getAccessToken();
         String accessTokenForClient2 = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         
-        Work work1 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work1 = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         work1.setPutCode(null);
+        work1.setSource(null);
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         org.orcid.jaxb.model.record_v2.WorkTitle title1 = new org.orcid.jaxb.model.record_v2.WorkTitle();
@@ -149,8 +151,9 @@ public class WorksTest extends BlackBoxBaseV2Release {
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
         work1.getExternalIdentifiers().getExternalIdentifier().add(wExtId1);
 
-        Work work2 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work2 = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         work2.setPutCode(null);
+        work2.setSource(null);
         work2.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record_v2.WorkTitle title2 = new org.orcid.jaxb.model.record_v2.WorkTitle();
         title2.setTitle(new Title("Work # 2" + time));
@@ -164,8 +167,9 @@ public class WorksTest extends BlackBoxBaseV2Release {
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         work2.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
         
-        Work work3 = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work work3 = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         work3.setPutCode(null);
+        work3.setSource(null);
         work3.setVisibility(Visibility.PUBLIC);
         org.orcid.jaxb.model.record_v2.WorkTitle title3 = new org.orcid.jaxb.model.record_v2.WorkTitle();
         title3.setTitle(new Title("Work # 3" + time));
@@ -245,7 +249,7 @@ public class WorksTest extends BlackBoxBaseV2Release {
         //Check that work # 2 is not in the same group than group # 1
         assertThat(work2Group, not(work1Group));
         
-      //Remove all created works
+        //Remove all created works
         ClientResponse deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode1, accessTokenForClient1);
         assertNotNull(deleteResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
@@ -262,8 +266,9 @@ public class WorksTest extends BlackBoxBaseV2Release {
     @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/work-2.0.xml", Work.class);
+        Work workToCreate = (Work) unmarshallFromPath("/record_2.0/samples/read_samples/work-2.0.xml", Work.class);
         workToCreate.setPutCode(null);
+        workToCreate.setSource(null);
         workToCreate.setVisibility(Visibility.PUBLIC);
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID wExtId = new ExternalID();

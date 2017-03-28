@@ -139,5 +139,15 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             }
         }
         return false;
-    }        
+    }     
+    
+    @Override
+    public EmailEntity findCaseInsensitive(String email) {
+        return emailDao.findCaseInsensitive(email);
+    }
+
+    @Override
+    public EmailEntity find(String email) {
+        return emailDao.find(email);
+    }
 }

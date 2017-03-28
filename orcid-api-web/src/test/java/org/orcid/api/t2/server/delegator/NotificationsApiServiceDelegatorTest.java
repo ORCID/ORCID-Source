@@ -68,7 +68,7 @@ public class NotificationsApiServiceDelegatorTest {
     private ProfileDao profileDao;
 
     @InjectMocks
-    private NotificationsApiServiceDelegatorImpl notificationsApiServiceDelegator = new NotificationsApiServiceDelegatorImpl();
+    private NotificationsApiServiceDelegatorImpl notificationsApiServiceDelegator;
 
     @Before
     public void setup() {

@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,8 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -43,6 +46,9 @@ public class EmailManagerTest extends BaseTest {
 
     @Resource
     private EmailManager emailManager;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -147,10 +153,19 @@ public class EmailManagerTest extends BaseTest {
         String from = "4444-4444-4444-4441";        
         String to = "4444-4444-4444-4499";
         
+        ProfileEntity destinationBefore = profileDao.find(to);
+        Date beforeLastModified = destinationBefore.getLastModified();
+        
         Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
         assertEquals(from, map.get(email));
         emailManager.moveEmailToOtherAccount(email, from, to);
+        
+        ProfileEntity destinationAfter = profileDao.find(to);
+        Date afterLastModified = destinationAfter.getLastModified();
+        
+        assertFalse(beforeLastModified.equals(afterLastModified));
+        assertTrue(afterLastModified.getTime() > beforeLastModified.getTime());
         
         //Assert the email was moved
         map = emailManager.findOricdIdsByCommaSeparatedEmails(email);

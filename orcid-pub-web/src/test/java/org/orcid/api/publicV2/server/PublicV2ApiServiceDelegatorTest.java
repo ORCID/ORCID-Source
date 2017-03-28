@@ -52,11 +52,12 @@ import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
@@ -69,7 +70,6 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -86,11 +86,13 @@ import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
@@ -171,6 +173,19 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getType());
         assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testViewBulkWorks() {
+        Response response = serviceDelegator.viewBulkWorks(ORCID, "11,12,13");
+        assertNotNull(response);
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(3, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof OrcidError);
+        assertTrue(workBulk.getBulk().get(2) instanceof OrcidError);
     }
     
     @Test

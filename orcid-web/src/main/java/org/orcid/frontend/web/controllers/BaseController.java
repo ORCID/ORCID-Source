@@ -47,22 +47,24 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
+import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SiteConstants;
+import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -86,6 +88,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseController {
+    
+    private static final Locale defaultLocale = Locale.US;
 
     String[] urlValschemes = { "http", "https", "ftp" }; // DEFAULT schemes =
                                                          // "http", "https",
@@ -133,9 +137,6 @@ public class BaseController {
     protected EmailManager emailManager;
     
     @Resource
-    protected NotificationManager notificationManager;
-
-    @Resource
     private StatisticsCacheManager statisticsCacheManager;
 
     @Resource
@@ -148,17 +149,17 @@ public class BaseController {
     protected OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Resource
     private InternalSSOManager internalSSOManager;
 
     @Resource
     protected CsrfTokenRepository csrfTokenRepository;
     
     @Resource
-    protected RecordNameManager recordNameManager;
-
+    private RegistrationManager registrationManager;
+    
+    @Resource
+    private SecurityQuestionManager securityQuestionManager;
+    
     protected static final String EMPTY = "empty";
 
     @Value("${org.orcid.recaptcha.web_site_key:}")
@@ -440,16 +441,29 @@ public class BaseController {
 
     @ModelAttribute("jsMessagesJson")
     public String getJavascriptMessages(HttpServletRequest request) {
-        ObjectMapper mapper = new ObjectMapper();
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
-
+        
+        ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", defaultLocale, new UTF8Control());
+        Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
+        
         ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
-        lPojo.setMessages(OrcidStringUtils.resourceBundleToMap(resources));
+        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
+        
+        if (!defaultLocale.equals(locale)) {
+            for (String propertyKey : definitivePropertyMap.keySet()) {
+                String property = localPropertyMap.get(propertyKey);
+                if (StringUtils.isBlank(property)) {
+                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
+                }
+            }
+        }
+
+        lPojo.setMessages(localPropertyMap);
         String messages = "";
         try {
-            messages = StringEscapeUtils.escapeEcmaScript(mapper.writeValueAsString(lPojo));
+            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
         } catch (IOException e) {
             LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
         }
@@ -777,4 +791,56 @@ public class BaseController {
         return targetUrl != null ? targetUrl : getBaseUri() + "/my-orcid";
     }
 
+    protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
+        passwordConfirm.setErrors(new ArrayList<String>());
+        // validate passwords match
+        if (passwordConfirm.getValue() == null || !passwordConfirm.getValue().equals(password.getValue())) {
+            setError(passwordConfirm, "FieldMatch.registrationForm");
+        }
+    }
+
+    protected void passwordValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
+        }
+        
+        if (registrationManager.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
+
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
+        }
+        
+    }
+    
+    protected void termsOfUserValidate(Checkbox termsOfUser) {
+        termsOfUser.setErrors(new ArrayList<String>());
+        if (termsOfUser.getValue() != true) {
+            setError(termsOfUser, "validations.acceptTermsAndConditions");
+        }
+    }
+    
+    @ModelAttribute("securityQuestions")
+    public Map<String, String> retrieveSecurityQuestionsAsMap() {
+        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
+        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
+
+        for (String key : securityQuestions.keySet()) {
+            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
+        }
+
+        return securityQuestionsWithMessages;
+    }
+
+    protected Map<String, String> generateSalesForceRoleMap() {
+        Map<String, String> roleMap = new HashMap<>();
+        for(ContactRoleType roleType : ContactRoleType.values()){
+            roleMap.put(roleType.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, roleType.name())));
+        }
+        return roleMap;
+    }
+    
 }

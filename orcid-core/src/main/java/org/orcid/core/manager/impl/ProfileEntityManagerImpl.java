@@ -56,9 +56,9 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -87,6 +87,7 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -387,8 +388,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
                         Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
                         String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {                            
-                            scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                        for (ScopePathType tempScope : scopesGrantedToClient) {        
+                            try {
+                                scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                            } catch (NoSuchMessageException e) {
+                                LOGGER.warn("No message to display for scope " + tempScope.toString());
+                            }
                         }
                         //If there is at least one scope in this token, fill the application summary element
                         if(!scopePathMap.isEmpty()) {
@@ -516,7 +521,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
-        profile.setLocale(locale);
+        if(locale != null) {
+            profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
+        }
         if(claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
@@ -673,5 +680,30 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         recordNameEntity.setGivenNames(givenNames);
         recordNameEntity.setFamilyName(familyName);
         profileDao.merge(profileEntity);
+    }
+
+    @Override
+    public void updatePassword(String orcid, String encryptedPassword) {
+        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+    }
+
+    @Override
+    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
+    }
+
+    @Override
+    public boolean isProfileDeprecated(String orcid) {
+        return profileDao.isProfileDeprecated(orcid);
+    }
+
+    @Override
+    public void updateIpAddress(String orcid, String ipAddress) {
+        profileDao.updateIpAddress(orcid, ipAddress);
+    }
+
+    @Override
+    public Locale retrieveLocale(String orcid) {
+        return profileDao.retrieveLocale(orcid);
     }
 }

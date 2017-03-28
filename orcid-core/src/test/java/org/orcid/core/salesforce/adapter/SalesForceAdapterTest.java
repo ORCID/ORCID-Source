@@ -29,8 +29,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -59,7 +62,7 @@ public class SalesForceAdapterTest {
         assertEquals("Org 2 Consortium Member", member.getName());
         assertEquals("001J000001pZwWXIA0-org-2-consortium-member", member.getSlug());
         assertEquals("http://org2.edu", member.getWebsiteUrl().toString());
-        assertEquals("Research Institute", member.getResearchCommunity());
+        assertEquals(CommunityType.RESEARCH_INSTITUTE, member.getResearchCommunity());
         assertEquals("New Zealand", member.getCountry());
         assertEquals("This is the public display description for Org 2 Consortium Member", member.getDescription());
         assertEquals("https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png", member.getLogoUrl().toString());
@@ -79,7 +82,7 @@ public class SalesForceAdapterTest {
         assertEquals("001J000001pZwWYIA0", member.getId());
         assertNull(member.getName());
         assertEquals("http://org3.edu", member.getWebsiteUrl().toString());
-        assertEquals("Research Institute", member.getResearchCommunity());
+        assertEquals(CommunityType.RESEARCH_INSTITUTE, member.getResearchCommunity());
         assertEquals("New Zealand", member.getCountry());
         assertEquals("This is the public display description for Org 3 Consortium Member", member.getDescription());
         assertEquals("https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png", member.getLogoUrl().toString());
@@ -99,7 +102,7 @@ public class SalesForceAdapterTest {
         assertEquals("Org 2 Consortium Member", member.getName());
         assertEquals("001J000001pZwWXIA0-org-2-consortium-member", member.getSlug());
         assertEquals("http://org2.edu", member.getWebsiteUrl().toString());
-        assertEquals("Research Institute", member.getResearchCommunity());
+        assertEquals(CommunityType.RESEARCH_INSTITUTE, member.getResearchCommunity());
         assertEquals("New Zealand", member.getCountry());
         assertEquals("This is the public display description for Org 2 Consortium Member", member.getDescription());
         assertEquals("https://dl.dropboxusercontent.com/s/yk2tgl9ze7z7y2g/test_logo.png", member.getLogoUrl().toString());
@@ -120,6 +123,23 @@ public class SalesForceAdapterTest {
     }
 
     @Test
+    public void testCreateOpportunityFromSalesForceRecord() throws IOException, JSONException {
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_opportunities_list.json"));
+        JSONArray inputArray = new JSONArray(inputString);
+        Opportunity opportunity = salesForceAdapter.createOpportunityFromSalesForceRecord(inputArray.getJSONObject(1));
+        assertEquals("[ORG2 ACCOUNT ID]", opportunity.getTargetAccountId());
+        assertEquals("Invoice Paid", opportunity.getStageName());
+        assertEquals("2016-12-21", opportunity.getCloseDate());
+        assertEquals("New", opportunity.getType());
+        assertEquals("[PREMIUM CONSORTIUM MEMBER ID]", opportunity.getMemberType());
+        assertEquals("2017-01-01", opportunity.getMembershipStartDate());
+        assertEquals("2017-12-31", opportunity.getMembershipEndDate());
+        assertEquals("[ORG1 ACCOUNT ID]", opportunity.getConsortiumLeadId());
+        assertEquals("2017 Membership-Org 2 Consortium Member", opportunity.getName());
+        assertEquals("[CONSORTIUM MEMBER RECORD TYPE ID]", opportunity.getRecordTypeId());
+    }
+
+    @Test
     public void testCreateContactFromJson() throws IOException, JSONException {
         String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_contacts_list.json"));
         JSONObject inputObject = new JSONObject(inputString);
@@ -131,7 +151,7 @@ public class SalesForceAdapterTest {
         Contact contact = salesForceAdapter.createContactFromJson(contactRole);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
     }
 
     @Test
@@ -143,7 +163,7 @@ public class SalesForceAdapterTest {
         Contact contact = contactsList.get(0);
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
-        assertEquals("Main relationship contact (OFFICIAL)", contact.getRole());
+        assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
     }
 
     @Test

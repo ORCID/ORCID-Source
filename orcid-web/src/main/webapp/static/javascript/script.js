@@ -18,6 +18,22 @@
 /*
  * 1 - Utility functions 
  */
+
+var enableRightToLeft = function(){
+    var rightToLeftLang = ["rl", "ar"];
+    var currentLanguage = locale_v3;
+
+    document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
+
+    if( rightToLeftLang.indexOf( currentLanguage ) >= 0 ){
+        document.body.className += " lang-rl"; //Add class that display right to left for selected languages
+    }
+}
+
+window.onload = function() {
+    enableRightToLeft();
+};
+
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {
@@ -347,10 +363,10 @@ var om = new OrcidMessage();
  * will redir them to the signin page.
  */
 function logAjaxError(e){
-    console.log("status: " + e.status);
-    console.log("statusText: " + e.statusText);
-    console.log("readyState: " + e.readyState);
-    console.log("responseText: " + e.responseText);
+    //console.log("status: " + e.status);
+    //console.log("statusText: " + e.statusText);
+    //console.log("readyState: " + e.readyState);
+    //console.log("responseText: " + e.responseText);
 }
 
 function getBaseUri() {
@@ -4135,7 +4151,7 @@ this.w3cLatexCharMap = {
    };
 
    exports.getLink = function(id, type) {
-      if (id == null) return null;
+      if (id == null) id = "";//return null;
       id = id.trim();
       if (id.startsWith('http:') || id.startsWith('https:')) return id;
       if (type == null) return null;
@@ -4205,7 +4221,7 @@ this.w3cLatexCharMap = {
             doneSomething = true;
         }
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
-                + offset(input) : null;
+                + offset(input) : baseUrl + '?q=';
     }
 
     exports.setBaseUrl = function(url) {

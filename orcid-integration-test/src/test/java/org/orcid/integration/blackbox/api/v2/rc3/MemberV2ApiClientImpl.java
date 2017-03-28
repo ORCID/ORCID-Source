@@ -205,6 +205,10 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
     }
     
+    public ClientResponse getGroupIdRecord(Long putCode, String accessToken) {
+        URI uri = UriBuilder.fromPath(GROUP_ID_RECORD + PUTCODE).build(putCode);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);
+    }
 
     public ClientResponse getGroupIdRecords(int pageSize, int page, String accessToken) {
         URI uri = UriBuilder.fromPath(GROUP_ID_RECORD).queryParam("page-size", pageSize).queryParam("page", page).build();

@@ -59,6 +59,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     private ClientDetailsDao clientDetailsDao;
 
     @Resource
+    private ClientDetailsDao clientDetailsDaoReadOnly;
+    
+    @Resource
     private ClientSecretDao clientSecretDao;
 
     @Resource
@@ -284,6 +287,11 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         LOGGER.info("Cron done");
     }
 
+    @Override
+    public List<ClientDetailsEntity> getAll() {
+        return clientDetailsDaoReadOnly.getAll();
+    }
+    
     @Override
     public boolean exists(String clientId) {
         return clientDetailsDao.exists(clientId);

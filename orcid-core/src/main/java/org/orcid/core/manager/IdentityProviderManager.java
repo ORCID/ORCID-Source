@@ -45,4 +45,6 @@ public interface IdentityProviderManager {
 
     IdentityProviderEntity createEntityFromXml(Element idpElement);
 
+    void incrementFailedCount(String shibIdentityProvider);
+
 }

@@ -47,7 +47,7 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
     @Resource
     protected EncryptionManager encryptionManager;    
     
-    protected ClientDetailsDao clientDetailsDao;
+    private ClientDetailsDao clientDetailsDao;
     
     protected ClientSecretDao clientSecretDao;
     

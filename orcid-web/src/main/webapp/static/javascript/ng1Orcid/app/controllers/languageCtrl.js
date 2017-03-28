@@ -121,6 +121,7 @@ angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'wid
 
     //Load Language that is set in the cookie or set default language to english
     $scope.getCurrentLanguage = function(){
+
         $scope.language = $scope.languages[0]; //Default
         typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        
         angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break

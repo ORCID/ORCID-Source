@@ -42,13 +42,18 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl;
 import org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceVersionedDelegatorImpl;
+import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
@@ -1530,6 +1535,50 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         Client client = (Client) response.getEntity();
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
+    }
+    
+    @Test
+    public void testViewBulkWorks() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,16");
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work but matching source
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // private work not matching source
+    }
+    
+    @Test
+    public void testViewBulkWorksWithBadPutCode() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13,bad");
+        WorkBulk workBulk = (WorkBulk) response.getEntity();
+        assertNotNull(workBulk);
+        assertNotNull(workBulk.getBulk());
+        assertEquals(4, workBulk.getBulk().size());
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
+        assertTrue(workBulk.getBulk().get(1) instanceof Work);
+        assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work
+        assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // bad put code
+    }
+    
+    @Test(expected = ExceedMaxNumberOfPutCodesException.class)
+    public void testViewBulkWorksWithTooManyPutCodes() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
+        StringBuilder tooManyPutCodes = new StringBuilder("0");
+        for (int i = 1; i <= WorkManagerReadOnlyImpl.MAX_BULK_PUT_CODES; i++) {
+            tooManyPutCodes.append(",").append(i);
+        }
+        serviceDelegator.viewBulkWorks("0000-0000-0000-0003", tooManyPutCodes.toString());
+    }
+    
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewBulkWrongToken() {
+        SecurityContextTestUtils.setUpSecurityContext("something-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13");
     }
 
     private void updateProfileSubmissionDate(String orcid, int increment) {

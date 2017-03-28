@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidRequestUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthRegisterController")
@@ -157,7 +160,11 @@ public class OauthRegistrationController extends OauthControllerBase {
             if (form.getErrors().isEmpty()) {
                 // Register user
                 try {
-                    registrationController.createMinimalRegistration(request, RegistrationController.toProfile(form, request), usedCaptcha);
+                    // Locale
+                    Locale locale = RequestContextUtils.getLocale(request);            
+                    // Ip
+                    String ip = OrcidRequestUtil.getIpAddress(request);  
+                    registrationController.createMinimalRegistration(request, form, usedCaptcha, locale, ip);
                 } catch(Exception e) {
                     requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
                     return requestInfoForm;
