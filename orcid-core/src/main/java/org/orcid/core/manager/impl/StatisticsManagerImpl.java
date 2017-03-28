@@ -21,9 +21,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsManager;
-import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;

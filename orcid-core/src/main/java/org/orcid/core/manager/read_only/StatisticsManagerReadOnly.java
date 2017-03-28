@@ -21,8 +21,8 @@ import java.util.Locale;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsManagerReadOnly {
     

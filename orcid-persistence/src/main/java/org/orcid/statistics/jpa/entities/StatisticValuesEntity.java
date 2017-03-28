@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.jpa.entities;
+package org.orcid.statistics.jpa.entities;
 
 import java.io.Serializable;
 
@@ -34,7 +34,6 @@ import javax.persistence.Table;
 @Table(name = "statistic_values")
 public class StatisticValuesEntity implements Serializable {
 
-    //TODO
     private static final long serialVersionUID = -3187757614988914339L;
     
     private Long id;

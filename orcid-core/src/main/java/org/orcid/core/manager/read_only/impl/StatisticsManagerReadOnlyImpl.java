@@ -30,9 +30,9 @@ import org.orcid.core.manager.read_only.StatisticsManagerReadOnly;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 
 public class StatisticsManagerReadOnlyImpl implements StatisticsManagerReadOnly {
 

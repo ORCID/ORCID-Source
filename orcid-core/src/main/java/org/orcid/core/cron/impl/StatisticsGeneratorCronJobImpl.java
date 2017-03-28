@@ -26,7 +26,7 @@ import org.orcid.core.cron.StatisticsGeneratorCronJob;
 import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.manager.read_only.StatisticsManagerReadOnly;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

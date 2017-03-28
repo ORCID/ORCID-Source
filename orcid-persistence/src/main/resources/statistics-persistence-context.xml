@@ -28,7 +28,8 @@
 
     <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
     <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
-        ignore-unresolvable="true" />	
+        ignore-unresolvable="true" />
+	<context:component-scan base-package="org.orcid.statistics" />
 
 	<bean id="statisticsJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="\${org.orcid.persistence.db.dialect}" />
@@ -129,11 +130,11 @@
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
     </bean>
 
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
+	<bean id="statisticsDao" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
 		<property name="statisticsEntityManager" ref="statisticsEntityManager" />
 	</bean>
 	
-	<bean id="statisticsDaoReadOnly" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
+	<bean id="statisticsDaoReadOnly" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
 		<property name="statisticsEntityManager" ref="statisticsEntityManagerReadOnly" />
-	</bean>       		    		      
+	</bean>       					    		     
 </beans>

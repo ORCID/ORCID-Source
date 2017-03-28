@@ -27,12 +27,11 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -42,22 +41,19 @@ public class StatisticsDaoTest {
     @Resource
     StatisticsDao statisticsDao;
 
-    @Resource
-    StatisticsGeneratorDao statisticsGeneratorDao;
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Test    
+    @Transactional
     public void testStatistics() {
-        StatisticKeyEntity key = statisticsDao.createKey();
+        StatisticKeyEntity key = statisticsDao.createKey();        
+        StatisticKeyEntity latestKey = statisticsDao.createKey();
         
-        StatisticValuesEntity os1 = new StatisticValuesEntity(key, "s1", 11);
-        StatisticValuesEntity os2 = new StatisticValuesEntity(key, "s2", 3);
-        StatisticValuesEntity os3 = new StatisticValuesEntity(key, "s3", 12);
-        StatisticValuesEntity os4 = new StatisticValuesEntity(key, "s4", 7);
-        StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", 0);
+        StatisticValuesEntity os1 = new StatisticValuesEntity(latestKey, "s1", 11);
+        StatisticValuesEntity os2 = new StatisticValuesEntity(latestKey, "s2", 3);
+        StatisticValuesEntity os3 = new StatisticValuesEntity(latestKey, "s3", 12);
+        StatisticValuesEntity os4 = new StatisticValuesEntity(latestKey, "s4", 7);
+        StatisticValuesEntity os5 = new StatisticValuesEntity(latestKey, "s5", 0);
         StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", 0);
-        StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", 0);        
+        StatisticValuesEntity os7 = new StatisticValuesEntity(key, "s7", 0);        
 
         statisticsDao.persist(os1);
         statisticsDao.persist(os2);
@@ -67,11 +63,11 @@ public class StatisticsDaoTest {
         statisticsDao.persist(os6);
         statisticsDao.persist(os7);
 
-        StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
+        StatisticKeyEntity latestKeyFromDB = statisticsDao.getLatestKey();
 
-        assertEquals(key, latestKey);
+        assertEquals(latestKey, latestKeyFromDB);
 
-        List<StatisticValuesEntity> statistics = statisticsDao.getStatistic(latestKey.getId());
+        List<StatisticValuesEntity> statistics = statisticsDao.getStatistic(latestKeyFromDB.getId());
 
         assertNotNull(statistics);
         assertEquals(statistics.size(), 5);

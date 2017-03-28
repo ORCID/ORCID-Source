@@ -14,12 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.statistics.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsDao {
     /**

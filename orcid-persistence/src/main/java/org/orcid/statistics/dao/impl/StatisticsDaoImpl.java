@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao.impl;
+package org.orcid.statistics.dao.impl;
 
 import java.util.Date;
 import java.util.List;
@@ -23,9 +23,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
