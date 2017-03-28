@@ -1,16 +1,14 @@
-angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', function RequestPasswordResetCtrl($scope, $timeout, $compile) {
-
-    var reEmailMatch = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', 'utilsService', function RequestPasswordResetCtrl($scope, $timeout, $compile, utilsService) {
 
     $scope.toggleResetPassword = function() {
         $scope.showResetPassword = !$scope.showResetPassword;
 
         // pre-populate with email from signin form 
-        if(typeof $scope.userId != "undefined" && $scope.userId && reEmailMatch.test($scope.userId)){
+        if(typeof $scope.userId != "undefined" && $scope.userId && utilsService.isEmail($scope.userId)){
             $scope.requestResetPassword = {
                 email:  $scope.userId
             } 
-        } else if (typeof $scope.authorizationForm != "undefined" && $scope.authorizationForm.userName.value && reEmailMatch.test($scope.authorizationForm.userName.value)) {
+        } else if (typeof $scope.authorizationForm != "undefined" && $scope.authorizationForm.userName.value && utilsService.isEmail($scope.authorizationForm.userName.value)) {
             $scope.requestResetPassword = {
                 email:  $scope.authorizationForm.userName.value
             } 

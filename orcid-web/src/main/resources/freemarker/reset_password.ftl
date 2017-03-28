@@ -35,7 +35,6 @@
             			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.emailaddress")} </label>
                			<div class="controls">                    	
                				<input id="email" type="text" ng-model="requestResetPassword.email" />
-               				<span class="required">*</span>
                			</div>
                			<button class="btn btn-primary topBuffer" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.labelSendInstructions")}</button>
         			</div>
