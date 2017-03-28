@@ -416,8 +416,6 @@
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
-	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>	
-
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
@@ -585,16 +583,7 @@
     <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
     <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
 
-    <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
-
-	<!-- Statistics Generator Manager -->
-	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
-	
-	<!-- Statistics Manager -->
-	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
-	
-	<!-- Statistics Cron Job -->
-	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />										
+    <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />	
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
 
@@ -757,19 +746,7 @@
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-	</bean>
-	
-	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
-		<property name="cacheName" value="statistics-entity" />
-		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:7200}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:7200}" />
-		<property name="maxElementsOnDisk" value="1000" />
-        <property name="strategy" value="LOCALTEMPSWAP" />
-        <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
-	</bean>
+	</bean>		
 	
 	<bean id="sourceNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
 		<property name="cacheName" value="source-name" />
