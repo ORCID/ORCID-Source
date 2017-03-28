@@ -37,7 +37,7 @@
 
 	<!-- 3rd party Loggers -->
 	<logger name="org.springframework">
-		<level value="INFO" />
+		<level value="WARN" />
 	</logger>
     
     <logger name="org.springframework.security">
@@ -54,7 +54,7 @@
 
 	<!-- Root Logger -->
 	<root>
-		<level value="IFNO" />
+		<level value="WARN" />
 		<appender-ref ref="CONSOLE" />
 	</root>
 
