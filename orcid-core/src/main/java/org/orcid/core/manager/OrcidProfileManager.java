@@ -73,18 +73,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     OrcidProfile retrievePublicOrcidProfile(String orcid);
 
     /**
-     * Retrieves the orcid profile given an identifier, without any personal
-     * internal data.
-     * <p/>
-     * Specifically, this is for use by tier 1
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the full orcid profile
-     */
-    OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid);
-
-    /**
      * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
      * institution and joint affiliation (not past institutions).
      * 
@@ -204,12 +192,8 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      */
     OrcidProfile addExternalIdentifiers(OrcidProfile orcidProfile);
 
-    OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);
-
-    void processProfilesPendingIndexing();
+    OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);    
     
-    void processProfilesThatMissedIndexing();
-
     void processUnclaimedProfilesToFlagForIndexing();
     
     void processUnclaimedProfilesForReminder();

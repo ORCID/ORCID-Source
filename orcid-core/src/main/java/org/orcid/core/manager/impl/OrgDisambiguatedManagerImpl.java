@@ -19,7 +19,6 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -57,6 +56,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
     @Resource
+    private OrgDisambiguatedDao orgDisambiguatedDaoReadOnly;
+    
+    @Resource
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
 
     @Resource
@@ -67,7 +69,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         LOGGER.info("About to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
         do {
-            entities = orgDisambiguatedDao.findOrgsByIndexingStatus(IndexingStatus.PENDING, 0, INDEXING_CHUNK_SIZE);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsByIndexingStatus(IndexingStatus.PENDING, 0, INDEXING_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
@@ -80,7 +82,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                processDisambiguatedOrg(orgDisambiguatedDao.find(entity.getId()));
+                processDisambiguatedOrg(orgDisambiguatedDaoReadOnly.find(entity.getId()));
             }
         });
     }
@@ -151,7 +153,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         LOGGER.info("About to process disambiguated orgs with incorrect popularity");
         List<Pair<Long, Integer>> pairs = null;
         do {
-            pairs = orgDisambiguatedDao.findDisambuguatedOrgsWithIncorrectPopularity(INCORRECT_POPULARITY_CHUNK_SIZE);
+            pairs = orgDisambiguatedDaoReadOnly.findDisambuguatedOrgsWithIncorrectPopularity(INCORRECT_POPULARITY_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs with incorrect popularity", pairs.size());
             for (Pair<Long, Integer> pair : pairs) {
                 LOGGER.info("About to update popularity of disambiguated org: {}", pair);

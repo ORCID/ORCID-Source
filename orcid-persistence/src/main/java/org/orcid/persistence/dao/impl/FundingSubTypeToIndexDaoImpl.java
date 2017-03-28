@@ -19,8 +19,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
@@ -37,8 +37,12 @@ public class FundingSubTypeToIndexDaoImpl implements FundingSubTypeToIndexDao {
     
     private static final Logger LOG = LoggerFactory.getLogger(FundingSubTypeToIndexDaoImpl.class);
     
-    @PersistenceContext(unitName = "orcid")
+    @Resource(name="entityManager")
     protected EntityManager entityManager;
+    
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
     
     @Transactional
     public void addSubTypes(String subtype, String orcid) {

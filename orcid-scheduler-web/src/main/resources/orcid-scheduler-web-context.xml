@@ -27,22 +27,9 @@
     <import resource="classpath*:orcid-scheduler-beans-context.xml"/>
 
     <task:scheduled-tasks scheduler="scheduler">   
-	    
-	    <!-- These two are the 'classic' SOLR scheduling tasks - enable for classic behaviour --> 
-     	<!-- Use in conjunction with the org.orcid.persistence.messaging.enabled=false -->
-     	 
-     	 <!-- 
-     	<task:scheduled ref="orcidProfileManager" method="processProfilesPendingIndexing" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
-	    <task:scheduled ref="orcidProfileManager" method="processProfilesThatMissedIndexing" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/> 
-	      -->
-	      
-	    <!-- New message driven indexing tasks, disabled until we get move our solr indexing to the message listener  --> 
-	    <!-- Use in conjunction with org.orcid.persistence.messaging.enabled=true -->     	     	  
-     	  
-     	<task:scheduled ref="orcidProfileManager" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:5}000"/>
+	    <task:scheduled ref="orcidProfileManager" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:5}000"/>
      	<task:scheduled ref="orcidProfileManager" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:61}000"/>
-        <task:scheduled ref="orcidProfileManager" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>
-     	  
+        <task:scheduled ref="orcidProfileManager" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 	    <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
         <task:scheduled ref="orcidProfileManager" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 10 * * * *}"/>
         <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>

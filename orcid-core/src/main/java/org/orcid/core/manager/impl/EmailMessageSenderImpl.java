@@ -68,6 +68,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private NotificationDao notificationDao;
+    
+    @Resource
+    private NotificationDao notificationDaoReadOnly;
 
     @Resource
     private NotificationManager notificationManager;
@@ -179,7 +182,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        List<String> orcidsWithMessagesToSend = notificationDao.findOrcidsWithNotificationsToSend();
+        List<String> orcidsWithMessagesToSend = notificationDaoReadOnly.findOrcidsWithNotificationsToSend();
         for (final String orcid : orcidsWithMessagesToSend) {
             try {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {

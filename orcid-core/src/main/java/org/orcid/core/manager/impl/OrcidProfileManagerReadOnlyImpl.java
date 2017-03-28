@@ -64,7 +64,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     @Resource
     private ProfileEntityManager profileEntityManager;
     @Resource
-    protected ProfileDao profileDao;
+    private ProfileDao profileDao;
     @Resource
     protected SourceManager sourceManager;
     @Resource
@@ -79,7 +79,8 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     @Resource
     protected JpaJaxbEntityAdapter adapter;
     protected TransactionTemplate transactionTemplate;
-    protected static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerImpl.class);
+    
+    protected static final Logger LOG = LoggerFactory.getLogger(OrcidProfileManagerReadOnlyImpl.class);
 
     public void setProfileDao(ProfileDao profileDao) {
         this.profileDao = profileDao;
