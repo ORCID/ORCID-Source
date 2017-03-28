@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsGeneratorManager;
-import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.persistence.dao.StatisticsGeneratorDao;
 
@@ -31,9 +30,6 @@ public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManage
     @Resource
     private StatisticsGeneratorDao statisticsGeneratorDao;
 
-    @Resource
-    private StatisticsManager statisticsManager;
-    
     @Override
     public Map<String, Long> generateStatistics() {        
         Map<String, Long> statistics = new HashMap<String, Long>();        

@@ -36,7 +36,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class AbstractConstraintValidator<T> {
 
     @Resource

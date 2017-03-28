@@ -81,7 +81,7 @@ import com.google.common.collect.Sets;
  * @author Declan Newman (declan) Date: 23/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class ManageProfileControllerTest extends BaseControllerTest {
 
     @Resource(name = "manageProfileController")

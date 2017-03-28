@@ -14,12 +14,12 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.statistics.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 
 public interface StatisticsDao {
     /**
@@ -53,7 +53,7 @@ public interface StatisticsDao {
      *            the statistic value
      * @return the statistic value object
      * */
-    public List<StatisticValuesEntity> saveStatistics(List<StatisticValuesEntity> statistics);
+    public StatisticValuesEntity persist(StatisticValuesEntity element);
 
     /**
      * Get an statistics object from database

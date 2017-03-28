@@ -16,84 +16,58 @@
  */
 package org.orcid.persistence.dao;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
-import org.orcid.test.DBUnitTest;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-public class StatisticsDaoTest extends DBUnitTest {
+@ContextConfiguration(locations = { "classpath:statistics-persistence-context.xml" })
+public class StatisticsDaoTest {
 
     @Resource
     StatisticsDao statisticsDao;
 
-    @Resource
-    StatisticsGeneratorDao statisticsGeneratorDao;
-
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/WorksEntityData.xml"));
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
-    }
-
-    @Before
-    public void beforeRunning() {
-        assertNotNull(statisticsDao);
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Test    
+    @Transactional
     public void testStatistics() {
-        StatisticKeyEntity key = statisticsDao.createKey();
-        List<StatisticValuesEntity> entities = new ArrayList<StatisticValuesEntity>();
-
-        StatisticValuesEntity os1 = new StatisticValuesEntity(key, "s1", 11);
-        StatisticValuesEntity os2 = new StatisticValuesEntity(key, "s2", 3);
-        StatisticValuesEntity os3 = new StatisticValuesEntity(key, "s3", 12);
-        StatisticValuesEntity os4 = new StatisticValuesEntity(key, "s4", 7);
-        StatisticValuesEntity os5 = new StatisticValuesEntity(key, "s5", 0);
+        StatisticKeyEntity key = statisticsDao.createKey();        
+        StatisticKeyEntity latestKey = statisticsDao.createKey();
+        
+        StatisticValuesEntity os1 = new StatisticValuesEntity(latestKey, "s1", 11);
+        StatisticValuesEntity os2 = new StatisticValuesEntity(latestKey, "s2", 3);
+        StatisticValuesEntity os3 = new StatisticValuesEntity(latestKey, "s3", 12);
+        StatisticValuesEntity os4 = new StatisticValuesEntity(latestKey, "s4", 7);
+        StatisticValuesEntity os5 = new StatisticValuesEntity(latestKey, "s5", 0);
         StatisticValuesEntity os6 = new StatisticValuesEntity(key, "s6", 0);
-        StatisticValuesEntity os7 = new StatisticValuesEntity(null, "s7", 0);
-        entities.add(os1);
-        entities.add(os2);
-        entities.add(os3);
-        entities.add(os4);
-        entities.add(os5);
+        StatisticValuesEntity os7 = new StatisticValuesEntity(key, "s7", 0);        
 
-        statisticsDao.saveStatistics(entities);
+        statisticsDao.persist(os1);
+        statisticsDao.persist(os2);
+        statisticsDao.persist(os3);
+        statisticsDao.persist(os4);
+        statisticsDao.persist(os5);
+        statisticsDao.persist(os6);
+        statisticsDao.persist(os7);
 
-        StatisticKeyEntity latestKey = statisticsDao.getLatestKey();
+        StatisticKeyEntity latestKeyFromDB = statisticsDao.getLatestKey();
 
-        assertEquals(key, latestKey);
+        assertEquals(latestKey, latestKeyFromDB);
 
-        List<StatisticValuesEntity> statistics = statisticsDao.getStatistic(latestKey.getId());
+        List<StatisticValuesEntity> statistics = statisticsDao.getStatistic(latestKeyFromDB.getId());
 
         assertNotNull(statistics);
         assertEquals(statistics.size(), 5);

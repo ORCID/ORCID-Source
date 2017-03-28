@@ -14,44 +14,44 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao.impl;
+package org.orcid.statistics.dao.impl;
 
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-@PersistenceUnit(name = "statisticManagerFactory")
 public class StatisticsDaoImpl implements StatisticsDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsDaoImpl.class);
+    
+    protected EntityManager statisticsEntityManager;
 
-    @PersistenceContext(unitName = "statistics")
-    protected EntityManager entityManager;
-
+    public void setStatisticsEntityManager(EntityManager statisticsEntityManager) {
+        this.statisticsEntityManager = statisticsEntityManager;
+    }
+    
     /**
      * Creates a new statistics key
      * 
      * @return the statistic key object
      */
     @Override
-    @Transactional("statisticsTransactionManager")
+    @Transactional
     public StatisticKeyEntity createKey() {
         StatisticKeyEntity key = new StatisticKeyEntity();
         key.setGenerationDate(new Date());
-        entityManager.persist(key);
+        statisticsEntityManager.persist(key);
         return key;
     }
 
@@ -60,11 +60,10 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * 
      * @return the latest statistics key
      */
-    @Override
-    @Transactional("statisticsTransactionManager")
+    @Override    
     public StatisticKeyEntity getLatestKey() {
         try {
-            return (StatisticKeyEntity) entityManager
+            return (StatisticKeyEntity) statisticsEntityManager
                     .createNativeQuery("SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
                             StatisticKeyEntity.class)
                     .getSingleResult();
@@ -82,7 +81,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Cacheable(value = "statistics-key", key = "#id")
     public StatisticKeyEntity getKey(Long id) {
         try {
-            return (StatisticKeyEntity) entityManager
+            return (StatisticKeyEntity) statisticsEntityManager
                     .createNativeQuery("SELECT * FROM statistic_key WHERE id=:id",
                             StatisticKeyEntity.class).setParameter("id", id)
                     .getSingleResult();
@@ -103,11 +102,10 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * @return the statistic value object
      */
     @Override
-    @Transactional("statisticsTransactionManager")
-    public List<StatisticValuesEntity> saveStatistics(List<StatisticValuesEntity> statistics) {
-        for (StatisticValuesEntity statistic : statistics)
-            entityManager.persist(statistic);
-        return statistics;
+    @Transactional
+    public StatisticValuesEntity persist(StatisticValuesEntity statistic) {
+        statisticsEntityManager.persist(statistic);
+        return statistic;
     }
 
     /**
@@ -117,9 +115,8 @@ public class StatisticsDaoImpl implements StatisticsDao {
      * @return the Statistic value object associated with the id
      */
     @Override
-    @Transactional
     public List<StatisticValuesEntity> getStatistic(long id) {
-        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
         query.setParameter("id", id);
         List<StatisticValuesEntity> results = null;
         try {
@@ -140,9 +137,8 @@ public class StatisticsDaoImpl implements StatisticsDao {
      *         parameters
      */
     @Override
-    @Transactional
     public StatisticValuesEntity getStatistic(long id, String name) {
-        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND statisticName = :name",
+        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND statisticName = :name",
                 StatisticValuesEntity.class);
         query.setParameter("id", id);
         query.setParameter("name", name);
@@ -159,9 +155,8 @@ public class StatisticsDaoImpl implements StatisticsDao {
      *         parameters
      */
     @Override
-    @Transactional
     public List<StatisticValuesEntity> getStatistic(String name) {
-        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE statisticName = :name", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE statisticName = :name", StatisticValuesEntity.class);
         query.setParameter("name", name);
         List<StatisticValuesEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;

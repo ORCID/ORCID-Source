@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.manager.read_only.StatisticsManagerReadOnly;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
@@ -41,7 +41,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsCacheManagerImpl.class);
 
     @Resource
-    StatisticsManager statisticsManager;
+    StatisticsManagerReadOnly statisticsManagerReadOnly;
 
     LockerObjectsManager lockers = new LockerObjectsManager();
 
@@ -114,7 +114,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     public void setLatestStatisticsSummary() {
         LOG.info("Getting the latest statistics summary");
 
-        StatisticsSummary summary = statisticsManager.getLatestStatisticsModel();
+        StatisticsSummary summary = statisticsManagerReadOnly.getLatestStatisticsModel();
 
         if (statisticsCache.get(CACHE_STATISTICS_KEY) == null) {
             statisticsCache.put(new Element(CACHE_STATISTICS_KEY, summary));
@@ -129,7 +129,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
 
         Map<StatisticsEnum, StatisticsTimeline> latestStatisticsTimelineMap = new HashMap<StatisticsEnum, StatisticsTimeline>();
         for (StatisticsEnum type : StatisticsEnum.values()) {
-            StatisticsTimeline statisticsTimeline = statisticsManager.getStatisticsTimelineModel(type);
+            StatisticsTimeline statisticsTimeline = statisticsManagerReadOnly.getStatisticsTimelineModel(type);
             latestStatisticsTimelineMap.put(type, statisticsTimeline);
         }
         if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {

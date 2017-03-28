@@ -55,6 +55,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             classpath*:/orcid-core-context.xml
+            classpath*:/statistics-core-context.xml
             classpath*:/orcid-frontend-security.xml
         </param-value>
     </context-param>

@@ -32,13 +32,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
-import org.orcid.core.manager.StatisticsManager;
+import org.orcid.core.manager.read_only.StatisticsManagerReadOnly;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
+import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -57,8 +57,8 @@ public class StatsApiServiceBaseImplTest {
     StatsApiServiceDelegator serviceDelegator;
 
     // the class that contains the thing we're mocking
-    @Resource(name = "statisticsManager")
-    StatisticsManager statsManager;
+    @Resource
+    StatisticsManagerReadOnly statsManagerReadOnly;
 
     StatisticsDao statisticsDao = mock(StatisticsDao.class);
 
@@ -114,8 +114,7 @@ public class StatsApiServiceBaseImplTest {
         when(statisticsDao.getKey(200L)).thenReturn(key200);
         when(statisticsDao.getKey(201L)).thenReturn(key201);
         
-        //statsManager.setStatisticsDao(statisticsDao);
-        TargetProxyHelper.injectIntoProxy(statsManager, "statisticsDao", statisticsDao);
+        TargetProxyHelper.injectIntoProxy(statsManagerReadOnly, "statisticsDaoReadOnly", statisticsDao);
         
         // setup security context
         ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
@@ -126,7 +125,7 @@ public class StatsApiServiceBaseImplTest {
 
     @Test
     public void testViewStatsSummary() {
-        assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
+        assertEquals(200, serviceDelegator.getStatsSummary().getStatus());
         StatisticsSummary s = (StatisticsSummary) serviceDelegator.getStatsSummary().getEntity();
         assertEquals(s.getDate(), new Date(2000, 1, 1));
         assertEquals(s.getStatistics().size(), 2);
@@ -137,7 +136,7 @@ public class StatsApiServiceBaseImplTest {
     @Test
     public void testViewStatsTimeline() {                        
         assertNotNull(serviceDelegator.getStatsSummary());        
-        assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
+        assertEquals(200, serviceDelegator.getStatsSummary().getStatus());
         serviceDelegator.updateToLatestStatisticsTimeline();
         Response r = serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS);
         assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());  

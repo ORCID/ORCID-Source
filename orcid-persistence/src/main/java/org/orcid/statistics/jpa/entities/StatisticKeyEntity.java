@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.jpa.entities;
+package org.orcid.statistics.jpa.entities;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -33,7 +33,6 @@ import javax.persistence.Table;
 public class StatisticKeyEntity implements Serializable {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z");
-    //TODO
     private static final long serialVersionUID = -3187757614938904329L;
     private Long id;
     private Date generationDate;
