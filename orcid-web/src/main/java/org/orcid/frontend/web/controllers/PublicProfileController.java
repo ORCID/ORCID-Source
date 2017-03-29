@@ -547,14 +547,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<AffiliationForm> getAffiliationsJson(HttpServletRequest request, @PathVariable("orcid") String orcid,
             @RequestParam(value = "affiliationIds") String workIdsStr) {
         List<AffiliationForm> affs = new ArrayList<AffiliationForm>();
-        Map<Long, Affiliation> affMap = affiliationMap(orcid, getLastModifiedTime(orcid));
+        Map<Long, Affiliation> affMap = affiliationMap(orcid, profileEntManager.getLastModified(orcid));
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
-            if(!Visibility.PUBLIC.equals(aff.getVisibility())) {
-                throw new IllegalArgumentException("Invalid request");
-            }
-                        
+            validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
             affs.add(form);            
@@ -572,9 +569,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
-            if(!Visibility.PUBLIC.equals(funding.getVisibility())) {
-                throw new IllegalArgumentException("Invalid request");
-            }
+            validateVisibility(funding.getVisibility());
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
@@ -612,24 +607,23 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         for (String workId : workIds) {
             if (minimizedWorksMap.containsKey(Long.valueOf(workId))) {
-                WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));
-                if (Visibility.PUBLIC.equals(work.getVisibility())) {
-                    if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                        Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
-                        work.setCountryName(countryName);
-                    }
-                    // Set language name
-                    if (!PojoUtil.isEmpty(work.getLanguageCode())) {
-                        Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
-                        work.setLanguageName(languageName);
-                    }
-                    // Set translated title language name
-                    if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
-                        String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
-                        work.getTranslatedTitle().setLanguageName(languageName);
-                    }
-                    works.add(work);
+                WorkForm work = minimizedWorksMap.get(Long.valueOf(workId));                
+                validateVisibility(work.getVisibility());                
+                if (!PojoUtil.isEmpty(work.getCountryCode())) {
+                    Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                    work.setCountryName(countryName);
                 }
+                // Set language name
+                if (!PojoUtil.isEmpty(work.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(work.getLanguageCode().getValue()));
+                    work.setLanguageName(languageName);
+                }
+                // Set translated title language name
+                if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
+                    work.getTranslatedTitle().setLanguageName(languageName);
+                }
+                works.add(work);                
             }
         }
 
@@ -649,13 +643,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManager.getWork(orcid, workId, getLastModifiedTime(orcid));                
-
-        if (workObj != null) {
-            if(!Visibility.PUBLIC.equals(workObj.getVisibility())) {
-                throw new IllegalArgumentException("Invalid request");
-            }
-            
+        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid));       
+        if (workObj != null) {            
+            validateVisibility(workObj.getVisibility());            
             sourceUtils.setSourceName(workObj);
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -689,7 +679,6 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             return work;
         }
-
         return null;
     }
 
@@ -701,10 +690,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid, getLastModifiedTime(orcid));
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
-            PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));
-            if(!Visibility.PUBLIC.equals(peerReview.getVisibility())) {
-                throw new IllegalArgumentException("Invalid request");
-            }
+            PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));            
+            validateVisibility(peerReview.getVisibility());            
             sourceUtils.setSourceName(peerReview);
             PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
             // Set language name
@@ -861,6 +848,12 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
+    }
+    
+    private void validateVisibility(Visibility v) {
+        if(!Visibility.PUBLIC.equals(v)) {
+            throw new IllegalArgumentException("Invalid request");
+        }
     }
 }
 
