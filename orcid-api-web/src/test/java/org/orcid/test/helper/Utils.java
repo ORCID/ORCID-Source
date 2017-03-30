@@ -305,7 +305,7 @@ public class Utils {
 
     public static GroupIdRecord getGroupIdRecord() {
         GroupIdRecord newRecord = new GroupIdRecord();
-        newRecord.setGroupId("issn:0000005");
+        newRecord.setGroupId("issn:0000006");
         newRecord.setName("TestGroup5");
         newRecord.setDescription("TestDescription5");
         newRecord.setType("publisher");

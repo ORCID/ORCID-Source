@@ -141,7 +141,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param orcidClientGroup
      *            The client group with the list of clients associated with this
      *            group
-     * */
+     */
     private void modifyClientTypesForAPIRequest(OrcidClientGroup orcidClientGroup) {
         for (OrcidClient client : orcidClientGroup.getOrcidClient()) {
             if (client.getType().equals(ClientType.PREMIUM_CREATOR))
@@ -189,7 +189,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param orcidClientGroup
      *            the group to be created
      * @return the group updated with his orcid id.
-     * */
+     */
     public OrcidClientGroup createGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
         if (PojoUtil.isEmpty(groupOrcid)) {
@@ -208,7 +208,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param orcidClientGroup
      *            The group to be updated
-     * */
+     */
     @Transactional
     public void updateGroup(OrcidClientGroup orcidClientGroup) {
         String groupOrcid = orcidClientGroup.getGroupOrcid();
@@ -232,14 +232,14 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 primaryEmailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
                 groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
-            if(groupProfileEntity.getRecordNameEntity() == null) {
+            if (groupProfileEntity.getRecordNameEntity() == null) {
                 groupProfileEntity.setRecordNameEntity(new RecordNameEntity());
                 groupProfileEntity.getRecordNameEntity().setProfile(groupProfileEntity);
             }
-            //Set the record name entity table
+            // Set the record name entity table
             groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-            
+
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed
             if (!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {
@@ -263,7 +263,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param groupProfileEntity
      *            the group profile
-     * */
+     */
     @Transactional
     private void updateClientTypeDueGroupTypeUpdate(ProfileEntity groupProfileEntity) {
         Set<ClientDetailsEntity> clients = groupProfileEntity.getClients();
@@ -309,7 +309,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            Group type
      * @throws OrcidClientGroupManagementException
      *             if the client type cant be added by this group
-     * */
+     */
     private void checkAndSetClientType(OrcidClient client, MemberType groupType) {
         ClientType clientType = client.getType();
         if (clientType != null) {
@@ -338,7 +338,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param client
      *            The new client
      * @return the new OrcidClient
-     * */
+     */
     public OrcidClient createAndPersistClientProfile(String groupOrcid, OrcidClient client) throws OrcidClientGroupManagementException {
         if (!isAllowedToAddNewClient(groupOrcid))
             throw new OrcidClientGroupManagementException("Your contract allows you to have only 1 client.");
@@ -363,7 +363,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param groupOrcid
      * @return true if the group matches the rules described above
-     * */
+     */
     private boolean isAllowedToAddNewClient(String groupOrcid) {
         OrcidClientGroup group = retrieveOrcidClientGroup(groupOrcid);
 
@@ -382,7 +382,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param groupType
      * @return the client type associated with the given group type
-     * */
+     */
     private ClientType getClientType(MemberType groupType) {
         ClientType clientType = null;
         switch (groupType) {
@@ -414,7 +414,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param client
      *            The updated client
      * @return the updated OrcidClient
-     * */
+     */
     public OrcidClient updateClient(String groupOrcid, OrcidClient client) {
         ClientDetailsEntity clientDetailsEntity = null;
         if (client.getClientId() != null) {
@@ -449,7 +449,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * @param client
      *            The updated client
      * @return the updated OrcidClient
-     * */
+     */
     public OrcidClient updateClient(OrcidClient client) {
         ClientDetailsEntity clientDetailsEntity = null;
         if (client.getClientId() != null) {
@@ -483,7 +483,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            The client that is being evaluated
      * @param clientType
      *            The type of client
-     * */
+     */
     private void processClient(String groupOrcid, SortedSet<ClientDetailsEntity> clientDetailsEntities, OrcidClient client, ClientType clientType) {
         if (client.getClientId() == null) {
             // If the client ID in the incoming client is null, then create
@@ -527,7 +527,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            The client profile entity that will be updated
      * @param isUpdate
      *            Indicates if this will be an update or is a new client
-     * */
+     */
     private void updateClientDetailsEntityFromClient(OrcidClient client, ClientDetailsEntity clientDetailsEntity, boolean isUpdate) {
         clientDetailsEntity.setClientType(client.getType());
         clientDetailsEntity.setClientName(client.getDisplayName());
@@ -635,7 +635,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String website = orcidClient.getWebsite();
         String idp = orcidClient.getIdp();
         Boolean allowAutoDeprecate = orcidClient.getAllowAutoDeprecate();
-        
+
         ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, createScopes(clientType),
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities, allowAutoDeprecate);
         return clientDetails;
@@ -681,8 +681,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED,
                 ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE,
                 ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE,
-                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.READ_LIMITED,
-                ScopePathType.PERSON_READ_LIMITED));
+                ScopePathType.READ_PUBLIC, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.PERSON_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED,
+                ScopePathType.READ_LIMITED, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE,
+                ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE));
     }
 
     private void addPremiumOnlyScopes(Set<String> scopes) {
@@ -695,7 +696,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      * 
      * @param groupOrcid
      *            The orcid of the group that wants to be deleted
-     * */
+     */
     @Override
     public void removeOrcidClientGroup(String groupOrcid) {
         this.orcidProfileManager.deleteProfile(groupOrcid);
@@ -707,7 +708,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
     /**
      * Sets the client type based on the group type
-     * */
+     */
     private void setClientType(MemberType groupType, OrcidClient client) {
         switch (groupType) {
         case BASIC:
@@ -736,7 +737,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
      *            Orcid client populated from database
      * @return true if the orcidClient original is "equals" to the populated
      *         orcidClient
-     * */
+     */
     private boolean compareClients(OrcidClient original, OrcidClient withPopulatedKeys) {
         if (original == null)
             return false;
