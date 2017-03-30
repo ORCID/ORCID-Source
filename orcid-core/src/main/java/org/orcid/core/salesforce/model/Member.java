@@ -35,7 +35,7 @@ public class Member implements Serializable {
     private String name;
     private String publicDisplayName;
     private URL websiteUrl;
-    private String researchCommunity;
+    private CommunityType researchCommunity;
     private String country;
     private String description;
     private URL logoUrl;
@@ -79,11 +79,11 @@ public class Member implements Serializable {
         this.websiteUrl = websiteUrl;
     }
 
-    public String getResearchCommunity() {
+    public CommunityType getResearchCommunity() {
         return researchCommunity;
     }
 
-    public void setResearchCommunity(String researchCommunity) {
+    public void setResearchCommunity(CommunityType researchCommunity) {
         this.researchCommunity = researchCommunity;
     }
 

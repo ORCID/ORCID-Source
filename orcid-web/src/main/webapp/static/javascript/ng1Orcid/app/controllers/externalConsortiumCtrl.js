@@ -1,18 +1,28 @@
 /**
 * External consortium controller
 */
-angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', function manageConsortiumCtrl($scope, $compile, utilsService) {     
+angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$compile', 'utilsService', 'membersListSrvc', function manageConsortiumCtrl($scope, $compile, utilsService, membersListSrvc) { 
+    $scope.addContactDisabled = false;
+    $scope.addSubMemberDisabled = false;
+    $scope.addSubMemberShowLoader = false;
+    $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
+    /**
+    * Not needed if contacts only added by email
     $scope.results = new Array();
     $scope.numFound = 0;
+    */
     $scope.input = {};
+    /**
+    * Not needed if contacts only added by email
     $scope.input.start = 0;
     $scope.input.rows = 10;
+    */
     $scope.showInitLoader = true;
-    $scope.showLoader = false;
+    $scope.updateConsortiumDisabled = false;
+    $scope.updateConsortiumShowLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
-
     $scope.toggleFindConsortiumModal = function() {
          $scope.showFindModal = !$scope.showFindModal;
     };
@@ -35,20 +45,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          });
     };
     
-    $scope.confirmUpdateConsortium = function() {
-         $.colorbox({
-              html : $compile($('#confirm-modal-consortium').html())($scope),
-                    scrolling: true,
-                    onLoad: function() {
-                    $('#cboxClose').remove();
-              },
-              scrolling: true
-         });
-
-         $.colorbox.resize({width:"450px" , height:"175px"});
-    };
-    
     $scope.updateConsortium = function() {
+        $scope.updateConsortiumShowLoader = true;
+        $scope.updateConsortiumDisabled = true;
          $.ajax({
               url: getBaseUri()+'/manage-consortium/update-consortium.json',
               contentType: 'application/json;charset=UTF-8',
@@ -56,6 +55,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
               dataType: 'json',
               data: angular.toJson($scope.consortium),
               success: function(data){
+                    $scope.updateConsortiumShowLoader = false;
+                    $scope.updateConsortiumDisabled = false;
                     $scope.$apply(function(){
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
@@ -63,7 +64,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                               $scope.consortium = data;
                          }
                     });
-                    $scope.closeModal();
               }
          }).fail(function(error) {
               // something bad is happening!
@@ -74,19 +74,19 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.closeModal = function() {
          $.colorbox.close();
     };
+
+    $scope.closeModalReload = function() {
+         $.colorbox.close();
+         window.location.reload();
+    };
     
     $scope.search = function(){
-        $scope.results = new Array();
-        $scope.showLoader = true;
-        $('#no-results-alert').hide();
+        $('#invalid-email-alert').hide();
         if(utilsService.isEmail($scope.input.text)){
-            $scope.numFound = 0;
-            $scope.start = 0;
-            $scope.areMoreResults = 0;
             $scope.searchByEmail();
         }
         else{
-            $scope.getResults();
+            $('#invalid-email-alert').show();
         }
     };
 
@@ -97,7 +97,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             headers: { Accept: 'application/json'},
             success: function(data) {
                 $scope.confirmAddContactByEmail(data);
-                $scope.showLoader = false;
                 $scope.$apply();
             }
         }).fail(function(){
@@ -106,7 +105,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
         });
 
     };
-
+    /**
+    * Not needed if contacts only added by email
     $scope.getResults = function(rows){
         $.ajax({
             url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
@@ -189,7 +189,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             }
         }
         return name;
-    };
+    };*/
 
     $scope.confirmAddContactByEmail = function(emailSearchResult){
         $scope.errors = [];
@@ -205,7 +205,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             scrolling: true
         });
     };
-
+    /**
+    * Not needed if contacts only added by email
     $scope.confirmAddContact = function(contactName, contactId, contactIdx){
         $scope.errors = [];
         $scope.contactNameToAdd = contactName;
@@ -221,9 +222,10 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             onComplete: function() {$.colorbox.resize();},
             scrolling: true
         });
-    };
+    };*/
 
     $scope.addContactByEmail = function(contactEmail) {
+        $scope.addContactDisabled = true;
         $scope.errors = [];
         var addContact = {};
         addContact.email = $scope.input.text;
@@ -233,13 +235,18 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data: angular.toJson(addContact),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
+                $scope.getConsortium();
+                $scope.addContactDisabled = false;
+                $scope.input.text = "";
                 $scope.$apply();
+                $scope.closeModal();
             }
         }).fail(function() {
             console.log("Error adding contact.");
         });
     };
-
+    /**
+    * Not needed if contacts only added by email    
     $scope.addContact = function() {
         var addContact = {};
         addContact.orcid = $scope.contactToAdd;
@@ -264,7 +271,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
         }).fail(function() {
             console.log("Error adding contact.");
         });
-    };
+    };*/
 
     $scope.confirmRevoke = function(contact) {
         $scope.contactToRevoke = contact;
@@ -326,6 +333,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data:  angular.toJson(contact),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
+                contact.role.id = data.role.id;
                 $scope.$apply();
                 if(nextFunction){
                     nextFunction();
@@ -335,6 +343,70 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             // something bad is happening!
             console.log("$ContactCtrl.update() error");
         });
+    }
+    
+    $scope.addSubMember = function() {
+        $scope.addSubMemberDisabled = true;
+        $scope.addSubMemberShowLoader = true;
+        $.ajax({
+            url: getBaseUri() + '/manage-consortium/add-sub-member.json',
+            type: 'POST',
+            data: angular.toJson($scope.newSubMember),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                if(data.errors.length === 0){
+                    $scope.getConsortium();
+                    $scope.addSubMemberShowLoader = false;
+                    $scope.addSubMemberDisabled = false;
+                    $scope.newSubMember.name = "";
+                    $scope.newSubMember.website = "";
+                    $scope.$apply();
+                }
+                else{
+                    $scope.errors = data.errors;
+                    $scope.$apply();
+                }
+            }
+        }).fail(function() {
+            console.log("Error adding submember.");
+        });
+    };
+    
+    $scope.confirmRemoveSubMember = function(subMember) {
+        $scope.subMemberToRemove = subMember;
+        $.colorbox({
+            html : $compile($('#remove-sub-member-modal').html())($scope),
+            transition: 'fade',
+            close: '',
+            onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            onComplete: function() {$.colorbox.resize();},
+            scrolling: true
+
+        });
+        $.colorbox.resize();
+    };
+    
+    $scope.removeSubMember = function () {
+        $.ajax({
+            url: getBaseUri() + '/manage-consortium/remove-sub-member.json',
+            type: 'POST',
+            data:  angular.toJson($scope.subMemberToRemove),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+                $scope.getConsortium();
+                $scope.$apply();
+                $scope.closeModal();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("Problem removing sub member");
+        });
+    };
+    
+    $scope.buildOrcidUri = function(orcid){
+        return orcidVar.baseUri + '/' + orcid;
     }
     
     // Init

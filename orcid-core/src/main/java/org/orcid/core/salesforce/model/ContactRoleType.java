@@ -22,7 +22,8 @@ package org.orcid.core.salesforce.model;
  *
  */
 public enum ContactRoleType {
-    MAIN_CONTACT("Main relationship contact (OFFICIAL)"), TECHNICAL_CONTACT("Technical contact"), OTHER_CONTACT("Other contact");
+    MAIN_CONTACT("Main relationship contact (OFFICIAL)"), TECHNICAL_CONTACT("Technical contact"), INVOICE_CONTACT("Invoice contact"), COMMS_CONTACT(
+            "Comms contact"), OTHER_CONTACT("Other contact");
 
     private final String value;
 
@@ -40,7 +41,7 @@ public enum ContactRoleType {
                 return c;
             }
         }
-        throw new IllegalArgumentException(v);
+        return null;
     }
 
 }

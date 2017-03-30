@@ -44,7 +44,6 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
-import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.stereotype.Controller;
@@ -64,9 +63,6 @@ public class NotificationController extends BaseController {
 
     @Resource
     private NotificationManager notificationManager;
-
-    @Resource
-    private NotificationDao notificationDao;
 
     @Resource
     private TemplateManager templateManager;
@@ -158,7 +154,7 @@ public class NotificationController extends BaseController {
     @RequestMapping("/unreadCount.json")
     public @ResponseBody int getUnreadCountJson() {
         String currentOrcid = getCurrentUserOrcid();
-        return notificationDao.getUnreadCount(currentOrcid);
+        return notificationManager.getUnreadCount(currentOrcid);
     }
 
     @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
@@ -211,14 +207,14 @@ public class NotificationController extends BaseController {
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
-        notificationDao.flagAsRead(currentUserOrcid, Long.valueOf(id));
+        notificationManager.flagAsRead(currentUserOrcid, Long.valueOf(id));
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
     @RequestMapping(value = "{id}/archive.json")
     public @ResponseBody Notification flagAsArchived(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
-        notificationDao.flagAsArchived(currentUserOrcid, Long.valueOf(id));
+        notificationManager.flagAsArchived(currentUserOrcid, Long.valueOf(id), false);
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
@@ -237,7 +233,7 @@ public class NotificationController extends BaseController {
             throw new RuntimeException("Problem decoding " + encryptedId, e);
         }
         Long id = Long.valueOf(idString);
-        ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationDao.find(id);
+        ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationManager.findActionableNotificationEntity(id);
         String redirectUrl = notification.getAuthorizationUrl();
         String notificationOrcid = notification.getProfile().getId();
         OrcidProfileUserDetails user = getCurrentUser();

@@ -33,5 +33,6 @@
     <include file="/db/add_column_for_1_2_dump_status.xml"/>
     <include file="/db/add_column_for_2_0_dump_status.xml"/>
     <include file="/db/add_column_for_2_0_solr_status.xml"/>
+    <include file="/db/set_default_values.xml"/>
         
 </databaseChangeLog>

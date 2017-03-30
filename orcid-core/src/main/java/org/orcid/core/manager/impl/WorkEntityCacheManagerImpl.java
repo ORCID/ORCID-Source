@@ -132,6 +132,33 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         }
         return minimizedWorkEntity;
     }
+    
+    /**
+     * Retrieves a full WorkEntity
+     * @param workId
+     * @param workLastModified
+     * @return a WorkEntity
+     */
+    @Override
+    public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
+        Object key = new WorkCacheKey(workId, releaseName);
+        WorkEntity workEntity = (WorkEntity) toWorkBaseEntity(fullWorkEntityCache.get(key));
+        if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
+            try {
+                synchronized (lockerFullWork.obtainLock(Long.toString(workId))) {
+                    workEntity = (WorkEntity) toWorkBaseEntity(fullWorkEntityCache.get(key));
+                    if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
+                        workEntity = workDao.getWork(orcid, workId);
+                        workDao.detach(workEntity);                        
+                        fullWorkEntityCache.put(new Element(key, workEntity));
+                    }
+                }
+            } finally {
+                lockerMinimizedWork.releaseLock(Long.toString(workId));
+            }
+        }
+        return workEntity;
+    }
             
     /**
      * Fetches a list of minimised works - does this by checking cache and then
@@ -216,7 +243,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
         return retrieveWorkList(workIdsWithLastModified, fullWorkEntityCache, lockerFullWork, idList -> workDao.getWorkEntities(idList));
     }
-
+    
     private Map<Long, Date> retrieveWorkLastModifiedMap(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);
         // @formatter:off

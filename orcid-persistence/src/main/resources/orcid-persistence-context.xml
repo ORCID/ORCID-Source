@@ -165,15 +165,7 @@
 	<bean id="groupIdRecordDaoReadOnly" class="org.orcid.persistence.dao.impl.GroupIdRecordDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
-	
-
-
-	
-
-
-
-
-	
+		
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
     </bean>
@@ -226,18 +218,22 @@
     </bean>    
     
     <bean id="webhookDao" class="org.orcid.persistence.dao.impl.WebhookDaoImpl" />        
-     
-    <!-- Statistics Generation DAO -->
-	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+    
+    <bean id="webhookDaoReadOnly" class="org.orcid.persistence.dao.impl.WebhookDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+    
+    <bean id="invalidRecordDataChangeDao" class="org.orcid.persistence.dao.impl.InvalidRecordDataChangeDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
 	</bean>
-	
-	<!-- Statistics DAO -->
-	<bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl" />     		        
- 
+     
     <bean id="orgDao" class="org.orcid.persistence.dao.impl.OrgDaoImpl" />
     
-    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />                 
+    <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
+    	                     
+    <bean id="orgDisambiguatedDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl">
+    	<property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
     
 	<bean id="orgDisambiguatedExternalIdentifierEntityDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity" />
@@ -249,11 +245,19 @@
 	
 	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
 	
-	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />          
+	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />
+	
+	<bean id="fundingSubTypeToIndexDaoReadOnly" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>          
 	
 	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
 	
-	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />		
+	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
+	
+	<bean id="notificationDaoReadOnly" class="org.orcid.persistence.dao.impl.NotificationDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />		
+	</bean>
 	
 	<bean id="shibbolethAccountDao" class="org.orcid.persistence.dao.impl.ShibbolethAccountDaoImpl" />
 
@@ -306,29 +310,7 @@
         <property name="changeLog" value="classpath:db-master.xml" />
     </bean>
 
-	<!-- Statistics -->
-	<bean id="statisticManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="statisticsLiquibase">
-	    <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
-        <property name="persistenceUnitName" value="statistics" />
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.generate_statistics" value="\${org.orcid.persistence.statistics.db.hibernateStatistics:false}" />    
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
-		<property name="dataSource" ref="\${org.orcid.persistence.statistics.db.dataSource}" />
-		<property name="changeLog" value="classpath:statistics-db-master.xml" />
-	</bean>
-
-	<!-- Statistics -->
-	<bean name="statisticsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="statisticManagerFactory" />        
-    </bean>        
-
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="\${org.orcid.persistence.db.dialect}" />
@@ -354,23 +336,7 @@
         <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
     </bean>
 
-	<!-- Statistics -->
-	<bean id="statisticsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-		<property name="driverClass" value="\${org.orcid.persistence.statistics.db.class}" />
-        <property name="jdbcUrl" value="\${org.orcid.persistence.statistics.db.url}" />
-        <property name="user" value="\${org.orcid.persistence.statistics.db.username}" />
-        <property name="password" value="\${org.orcid.persistence.statistics.db.password}" />
-        <property name="initialPoolSize" value="\${org.orcid.persistence.statistics.db.initialPoolSize}" />
-        <property name="minPoolSize" value="\${org.orcid.persistence.statistics.db.minPoolSize}" />
-        <property name="maxPoolSize" value="\${org.orcid.persistence.statistics.db.maxPoolSize}" />
-        <property name="maxStatements" value="\${org.orcid.persistence.statistics.db.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.statistics.db.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.statistics.db.testConnectionOnCheckin}" />
-        <property name="preferredTestQuery" value="\${org.orcid.persistence.statistics.db.preferredTestQuery}" />
-        <property name="numHelperThreads" value="\${org.orcid.persistence.statistics.db.numHelperThreads:10}"/>
-	</bean>
-
-    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="user" value="\${org.orcid.persistence.db.username}" />
@@ -412,16 +378,8 @@
         <property name="url" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="username" value="\${org.orcid.persistence.db.readonly.username}" />
         <property name="password" value="\${org.orcid.persistence.db.readonly.password}" />
-    </bean>
-
-	<!-- Statistics tests-->
-	<bean id="statisticsSimpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="\${org.orcid.persistence.statistics.db.class}" />
-        <property name="url" value="\${org.orcid.persistence.statistics.db.url}" />
-        <property name="username" value="\${org.orcid.persistence.statistics.db.username}" />
-        <property name="password" value="\${org.orcid.persistence.statistics.db.password}" />
-    </bean>
-
+    </bean>	
+    
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
@@ -563,5 +521,9 @@
 	<bean id="jmsMessageSender" class="org.orcid.persistence.messaging.JmsMessageSender">
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
 	</bean>
+
+	<bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
+		<property name="entityManager" ref="entityManagerReadOnly" />
+	</bean>	
 
 </beans>

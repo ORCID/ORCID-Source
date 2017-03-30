@@ -24,13 +24,14 @@ import javax.xml.bind.JAXBException;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.listener.orcid.Orcid12APIClient;
-import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.orcid.Orcid12APIClient;
+import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,12 +69,22 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 	private RecordStatusManager recordStatusManager;
 
 	/**
-	 * Populates the Amazon S3 buckets and updates solr index
+	 * Populates the Amazon S3 buckets
 	 */
 	public void accept(LastModifiedMessage m) {
 		String orcid = m.getOrcid();
 		update_1_2_API(orcid);
 		update_2_0_API(orcid);
+	}
+	
+	public void accept(RetryMessage m) {
+	    String orcid = m.getOrcid();
+	    AvailableBroker destinationBroker = AvailableBroker.fromValue(m.getMap().get(RetryMessage.BROKER_NAME));
+	    if(AvailableBroker.DUMP_STATUS_1_2_API.equals(destinationBroker)) {
+	        update_1_2_API(orcid);    
+	    } else if(AvailableBroker.DUMP_STATUS_2_0_API.equals(destinationBroker)) {
+	        update_2_0_API(orcid);
+	    }
 	}
 
 	private void update_1_2_API(String orcid) {
@@ -81,9 +92,9 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 			try {
 				OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(orcid);
 				// Update API 1.2
-				if (profile != null) {
-					s3Updater.updateS3(orcid, profile);
-					recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
+				if (profile != null) {				        
+				    s3Updater.updateS3(orcid, profile);
+                                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_1_2_API);				    					
 				}
 			} catch (LockedRecordException | DeprecatedRecordException e) {
 				try {
@@ -106,6 +117,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 				// threw a
 				// runtime exception
 				LOG.error("Unable to fetch record " + orcid + " for 1.2 API");
+				LOG.error(e.getMessage(), e);
 				recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_1_2_API);
 			}
 		}
@@ -141,6 +153,7 @@ public class S3MessageProcessor implements Consumer<LastModifiedMessage> {
 				// threw a
 				// runtime exception
 				LOG.error("Unable to fetch record " + orcid + " for 2.0 API");
+				LOG.error(e.getMessage(), e);
 				recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
 			}
 		}

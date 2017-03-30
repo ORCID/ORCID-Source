@@ -26,13 +26,13 @@ import javax.xml.bind.JAXBException;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.listener.solr.SolrIndexUpdater;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid20APIClient;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
-import org.orcid.listener.persistence.util.AvailableBroker; 
+import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +70,10 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
     public void accept(LastModifiedMessage t) {
         updateSolrIndex(t.getOrcid());
     }
+    
+    public void accept(RetryMessage m) {
+        updateSolrIndex(m.getOrcid());
+    }
 
     private void updateSolrIndex(String orcid) {        
         LOG.info("Updating using Record " + orcid + " in SOLR index");
@@ -102,6 +106,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch (Exception e){
             LOG.error("Unable to fetch record " + orcid + " for SOLR");
+            LOG.error(e.getMessage(), e);
             recordStatusManager.markAsFailed(orcid, AvailableBroker.SOLR);
         }
     }

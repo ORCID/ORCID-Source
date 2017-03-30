@@ -23,8 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -40,7 +38,6 @@ import org.orcid.jaxb.model.common_rc1.Day;
 import org.orcid.jaxb.model.common_rc1.Month;
 import org.orcid.jaxb.model.common_rc1.Year;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.EducationSummary;
@@ -74,17 +71,15 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class) 
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class PublicV2Test extends BlackBoxBaseRC1 {
     @Resource(name = "publicV2ApiClient_rc1")
-    private PublicV2ApiClientImpl publicV2ApiClient;
-
-    static List<GroupIdRecord> groupRecords = null;
+    private PublicV2ApiClientImpl publicV2ApiClient;    
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
-        groupRecords = createGroupIds();
+        createGroupIds();
     }
 
     @After
@@ -513,7 +508,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -527,7 +522,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
     }
 
@@ -565,7 +560,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -579,7 +574,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
     }
 
@@ -612,7 +607,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
@@ -620,7 +615,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
 
@@ -659,7 +654,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -671,7 +666,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
     
@@ -710,7 +705,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         OrcidError result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
 
         response = null;
         if(readPublicToken != null) {
@@ -722,7 +717,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         result = response.getEntity(OrcidError.class);
         assertNotNull(result);
         assertEquals(new Integer(9039), result.getErrorCode());
-        assertEquals("Element is not public", result.getDeveloperMessage());
+        assertEquals("403 Forbidden: The item is not public and cannot be accessed with the Public API.", result.getDeveloperMessage());
         
     }
 
@@ -897,38 +892,5 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     
     private String getAccessToken() throws InterruptedException, JSONException {
         return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));        
-    }
-    
-    public List<GroupIdRecord> createGroupIds() throws JSONException {
-        //Use the existing ones
-        if(groupRecords != null && !groupRecords.isEmpty()) 
-            return groupRecords;
-        
-        List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = oauthHelper.getClientCredentialsAccessToken(getClient1ClientId(), getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
-        GroupIdRecord g1 = new GroupIdRecord();
-        g1.setDescription("Description");
-        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
-        g1.setName("Group # 1");
-        g1.setType("publisher");
-        
-        GroupIdRecord g2 = new GroupIdRecord();
-        g2.setDescription("Description");
-        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
-        g2.setName("Group # 2");
-        g2.setType("publisher");                
-        
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
-        
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g1.setPutCode(Long.valueOf(r1LocationPutCode));
-        groups.add(g1);
-        
-        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc1/group-id-record/", "");
-        g2.setPutCode(Long.valueOf(r2LocationPutCode));
-        groups.add(g2);
-        
-        return groups;
-    }
+    }    
 }

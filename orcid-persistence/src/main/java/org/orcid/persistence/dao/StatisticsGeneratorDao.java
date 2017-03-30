@@ -27,16 +27,16 @@ public interface StatisticsGeneratorDao {
     public long getNumberOfWorks();
 
     public long getNumberOfUniqueDOIs();
-    
-	long getNumberOfEmployment();
 
-	long getNumberOfEducation();
+    long getNumberOfEmployment();
 
-	long getNumberOfFunding();
+    long getNumberOfEducation();
 
-	long getNumberOfEmploymentUniqueOrg();
+    long getNumberOfFunding();
 
-	long getNumberOfEducationUniqueOrg();
+    long getNumberOfEmploymentUniqueOrg();
 
-	long getNumberOfFundingUniqueOrg();
+    long getNumberOfEducationUniqueOrg();
+
+    long getNumberOfFundingUniqueOrg();
 }

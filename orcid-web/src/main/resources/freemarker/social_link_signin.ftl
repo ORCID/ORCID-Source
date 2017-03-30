@@ -57,8 +57,6 @@
         	            </div>
                     </div>
                 </div>
-                
-                
                 <div class="row">
                 	<div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                			                		
 						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
@@ -68,31 +66,20 @@
                     <@spring.showErrors "<br/>" "error" />             
                     <#include "/common/browser-checks.ftl" />
                     
-                    <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+                    <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
         	            <div class="control-group">
         	                <label for="userId" class="control-label">${springMacroRequestContext.getMessage("social.link.email_or_orcid")}</label>
-        	                <div>                
-        	                    <input type="text" id="userId" name="userId" value="" placeholder="${springMacroRequestContext.getMessage("social.link.email_or_orcid")}">
-        	                </div>                    
+        	                <input type="text" id="userId" name="userId" ng-model="userId" value="" placeholder="${springMacroRequestContext.getMessage("social.link.email_or_orcid")}">                   
         	            </div>
                     </div>
                     
-                    <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+                    <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12">
         	            <div class="control-group password social-password-txt">
         	                <label for="password" class="control-label">${springMacroRequestContext.getMessage("login.password")}</label>
-        	                <div>
-        	                    <input type="password" id="password" name="password" value="" placeholder="${springMacroRequestContext.getMessage("login.password")}">
-        	                </div>
+        	                <input type="password" id="password" name="password" value="" placeholder="${springMacroRequestContext.getMessage("login.password")}">
         	            </div>
                     </div>
-                    
-                    <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 bottomBuffer">
-        	            <div class="control-group password social-password-lnk">
-        		            <a href="<@orcid.rootPath '/reset-password'/>">${springMacroRequestContext.getMessage("login.reset")}</a>
-        	            </div>
-                    </div>
-                    
-                    <div class=" col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">
+                    <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
         	            <div class="control-group">                    
         	                
         	                <ul class="inline-list">
@@ -107,12 +94,38 @@
         	                <#if (RequestParameters['invalidClaimUrl'])??>
         	                    <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
         	                </#if>
-        	                                
+        	                
         	            </div>
+        	                         
                     </div>              
                 </div>                
                 
             </form>
+            <!-- RESET PASSWORD -->
+        	<div ng-controller="RequestPasswordResetCtrl" id="RequestPasswordResetCtr" ng-init="getRequestResetPassword()" class="row">
+            	<div class="reset-password link-account col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
+                	<a name="resetPassword"></a>
+                	<a href="" id="reset-password-toggle-text" ng-click="toggleResetPassword()" ng-bind="resetPasswordToggleText"></a>
+                	<div ng-show="showResetPassword" ng-cloak>
+			            <p><small>${springMacroRequestContext.getMessage("reset_password.enterEmail")} <a href="mailto:support@orcid.org">${springMacroRequestContext.getMessage("resend_claim.labelorg")}</a>.</small></p>      		
+			        	<form id="password-reset-form" name="emailAddressForm">
+		        			<span class="orcid-error" ng-show="requestResetPassword.errors.length > 0">
+					            <div ng-repeat='error in requestResetPassword.errors' ng-bind-html="error"></div>
+					        </span>
+					        <div class="alert alert-success" ng-show="requestResetPassword.successMessage != null">
+					        	<strong><span ng-bind="requestResetPassword.successMessage"></span></strong>
+					        </div>
+		        			<div class="control-group">
+		            			<label for="email" class="control-label">${springMacroRequestContext.getMessage("manage_bio_settings.h3email")} </label>			           
+		               			<div class="controls"> 
+		               				<input id="email" type="text" class="form-control" ng-model="requestResetPassword.email" />
+		               			</div>
+		               			<button class="btn btn-primary" ng-click="postPasswordResetRequest()">${springMacroRequestContext.getMessage("reset_password.sendResetLink")}</button>
+		        			</div>
+			        	</form>
+		        	</div>
+	        	</div>
+				 </div>   
         </#if>
     </div>
 </@public>

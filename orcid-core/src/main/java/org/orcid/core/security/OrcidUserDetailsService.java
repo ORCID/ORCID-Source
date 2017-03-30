@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -99,7 +100,8 @@ public class OrcidUserDetailsService implements UserDetailsService {
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), profile.getOrcidType(), profile.getGroupType());
+            OrcidType orcidType = OrcidType.fromValue(profile.getOrcidType().value());
+            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), orcidType, profile.getGroupType());
         } else {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }

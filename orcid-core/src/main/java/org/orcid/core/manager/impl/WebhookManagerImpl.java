@@ -56,6 +56,9 @@ public class WebhookManagerImpl implements WebhookManager {
 
     @Resource
     private WebhookDao webhookDao;
+    
+    @Resource
+    private WebhookDao webhookDaoReadOnly;    
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -108,7 +111,7 @@ public class WebhookManagerImpl implements WebhookManager {
         // Log start time
         LOGGER.info("About to process webhooks");
         Date startTime = new Date();
-        long count = webhookDao.countWebhooksReadyToProcess(startTime, retryDelayMinutes);
+        long count = webhookDaoReadOnly.countWebhooksReadyToProcess(startTime, retryDelayMinutes);
         LOGGER.info("Total number of webhooks ready to process={}", count);
         // Create thread pool of size determined by runtime property
         ExecutorService executorService = createThreadPoolForWebhooks();
@@ -119,7 +122,7 @@ public class WebhookManagerImpl implements WebhookManager {
             mapOfpreviousBatch = WebhookEntity.mapById(webhooks);
             // Get chunk of webhooks to process for records that changed before
             // start time
-            webhooks = webhookDao.findWebhooksReadyToProcess(startTime, retryDelayMinutes, WEBHOOKS_BATCH_SIZE);
+            webhooks = webhookDaoReadOnly.findWebhooksReadyToProcess(startTime, retryDelayMinutes, WEBHOOKS_BATCH_SIZE);
             // Log the chunk size
             LOGGER.info("Found batch of {} webhooks to process", webhooks.size());
             int executedCountAtStartOfChunk = executedCount;
@@ -276,5 +279,22 @@ public class WebhookManagerImpl implements WebhookManager {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void update(WebhookEntity webhook) {
+        webhookDao.merge(webhook);
+        webhookDao.flush();
+    }
+
+    @Override
+    public void delete(WebhookEntityPk webhookPk) {
+        webhookDao.remove(webhookPk);
+        webhookDao.flush();
+    }
+
+    @Override
+    public WebhookEntity find(WebhookEntityPk webhookPk) {
+        return webhookDao.find(webhookPk);
     }
 }

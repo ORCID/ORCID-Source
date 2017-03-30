@@ -29,7 +29,6 @@ import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -47,9 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
-
-    @Resource
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
     protected LocaleManager localeManager;

@@ -76,6 +76,7 @@
 	<!-- 
 	<bean id="serviceAnnouncement_1_For_2015" class="org.orcid.core.profileEvent.ServiceAnnouncement_1_For_2015" scope="prototype" />	
 	 -->
+	<bean id="verifiedRequiredAnnouncement2017" class="org.orcid.core.profileEvent.VerifiedRequiredAnnouncement2017" scope="prototype" />	
 	 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
@@ -352,6 +353,7 @@
 		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>
 	
+	<bean id="recordCorrectionsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.RecordCorrectionsManagerReadOnlyImpl" />
 	
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
@@ -388,8 +390,7 @@
 
 	<bean id="securityQuestionManager" class="org.orcid.core.manager.impl.SecurityQuestionManagerImpl" />
 
-	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">
-		<property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />
+	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">		
 		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
 		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
 		<property name="profileDao" ref="profileDao" />
@@ -414,8 +415,6 @@
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
-	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>	
-
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
@@ -583,16 +582,7 @@
     <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
     <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
 
-    <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
-
-	<!-- Statistics Generator Manager -->
-	<bean id="statisticsGeneratorManager" class="org.orcid.core.manager.impl.StatisticsGeneratorManagerImpl" />
-	
-	<!-- Statistics Manager -->
-	<bean id="statisticsManager" class="org.orcid.core.manager.impl.StatisticsManagerImpl" />
-	
-	<!-- Statistics Cron Job -->
-	<bean id="statisticsCronJob" class="org.orcid.core.cron.impl.StatisticsGeneratorCronJobImpl" />										
+    <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />	
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
 
@@ -637,6 +627,8 @@
 	<bean id="userConnectionManager" class="org.orcid.core.manager.impl.UserConnectionManagerImpl" />
     
     <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
+    
+    <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -753,19 +745,7 @@
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
-	</bean>
-	
-	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
-		<property name="cacheName" value="statistics-entity" />
-		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:7200}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:7200}" />
-		<property name="maxElementsOnDisk" value="1000" />
-        <property name="strategy" value="LOCALTEMPSWAP" />
-        <property name="copyOnRead" value="false" />
-        <property name="copyOnWrite" value="false" />
-	</bean>
+	</bean>		
 	
 	<bean id="sourceNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
 		<property name="cacheName" value="source-name" />
@@ -1098,6 +1078,11 @@
 
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
+           
+    <bean id="invalidRecordDataChangeMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getInvalidRecordDataChangeMapperFacade"/>
+	<bean id="jpaJaxbInvalidRecordDataChangeAdapter" class="org.orcid.core.adapter.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl">
+        <property name="mapperFacade" ref="invalidRecordDataChangeMapperFacade" />
+    </bean>
              
     <bean id="v2VersionObjectFactory" class="org.orcid.core.version.impl.V2VersionObjectFactoryImpl" />
             
@@ -1125,5 +1110,9 @@
 	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />
 	
 	<bean id="doiManager" class="org.orcid.core.manager.impl.DOIManagerImpl" />
-	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />	
+	<bean id="bibtexManager" class="org.orcid.core.manager.impl.BibtexManagerImpl" />
+	
+	
+	<bean id="givenPermissionToManager" class="org.orcid.core.manager.impl.GivenPermissionToManagerImpl"/>
+		
 </beans>

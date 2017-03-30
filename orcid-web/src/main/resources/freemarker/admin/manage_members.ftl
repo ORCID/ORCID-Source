@@ -490,7 +490,7 @@
 	                        		<th>Name</th><th>Email</th><th>Role</th><th>ORCID iD</th>
 	                        	</tr>
 		                        <tr ng-repeat="contact in consortium.contactsList">
-		                            <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{contact.role}}</td><td>{{contact.orcid}}</td>
+		                            <td>{{contact.name}}</td><td>{{contact.email}}</td><td>{{consortium.roleMap[contact.role.roleType]}}</td><td>{{contact.orcid}}</td>
 		                        </tr>
 		                    </table>
 		                </div>

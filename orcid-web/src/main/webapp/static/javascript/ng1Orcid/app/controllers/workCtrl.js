@@ -78,13 +78,9 @@ angular.module('orcidApp').controller(
             $scope.emailSrvc.getEmails(
                 function(data) {
                     emails = data.emails;
-                    data.emails.forEach(
-                        function(element){
-                            if(element.verified == true) {
-                                emailVerified = true;
-                            }
-                        }
-                    );
+                    if( $scope.emailSrvc.getEmailPrimary().verified == true ) {
+                        emailVerified = true;
+                    }
                 }
             );
             /////////////////////// End of verified email logic for work
@@ -474,10 +470,6 @@ angular.module('orcidApp').controller(
                                 }
                             }
                         }               
-                        if( utilsService.getParameterByName('import_works_wizard') != 'true' ) {
-                            $scope.selectedWorkType = 'All';
-                            $scope.selectedGeoArea = 'All';
-                        }
                         $scope.$apply();
                     }
                 }).fail(function(e) {
@@ -635,16 +627,71 @@ angular.module('orcidApp').controller(
                 });
             };
 
+            //--typeahead
+            //populates the external id URL based on type and value.
             $scope.fillUrl = function(extId) {
                 var url;
                 if(extId != null) {
                     url = workIdLinkJs.getLink(extId.workExternalIdentifierId.value, extId.workExternalIdentifierType.value);
+                    /* Code to fetch from DB...
+                    if (extId.workExternalIdentifierType.value){
+                        url = $scope.externalIDNamesToDescriptions[extId.workExternalIdentifierType.value].resolutionPrefix;
+                        if (url && extId.workExternalIdentifierId.value)
+                            url += extId.workExternalIdentifierId.value;
+                    }*/
                     if(extId.url == null) {
-                        extId.url = {value:""};
+                        extId.url = {value:url};
+                    }else{
+                        extId.url.value=url;                        
                     }
-                    extId.url.value=url;
                 }
             };
+            
+            //cache responses
+            $scope.externalIDTypeCache = [];
+            
+            //Fetches an array of {name:"",description:"",resolutionPrefix:""} containing query.
+            $scope.getExternalIDTypes = function(query){  
+                var url = getBaseUri()+'/works/idTypes.json?query='+query;
+                var ajax = $scope.externalIDTypeCache[query];
+                if (!ajax){
+                    ajax = $.ajax({
+                        url: url,
+                        dataType: 'json',
+                        cache: true,
+                      }).done(function(data) {
+                          for (var key in data) {
+                              $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                          }
+                      });   
+                    $scope.externalIDTypeCache[query] = ajax;
+                }
+                return ajax;
+            };
+            
+            //caches name->description lookup so we can display the description not the name after selection
+            $scope.externalIDNamesToDescriptions = [];
+            $scope.formatExternalIDType = function(model) {
+                if (!model)
+                    return "";
+                if ($scope.externalIDNamesToDescriptions[model])
+                    return $scope.externalIDNamesToDescriptions[model].description;
+                //not loaded any descriptions yet, fetch them
+                var url = getBaseUri()+'/works/idTypes.json?query='+model;
+                ajax = $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    async: false,
+                  }).done(function(data) {
+                      for (var key in data) {
+                          $scope.externalIDNamesToDescriptions[data[key].name] = data[key];
+                      }
+                  });   
+                $scope.externalIDTypeCache[model] = ajax;
+                return $scope.externalIDNamesToDescriptions[model].description;   
+              }
+            //--typeahead end
     
             //init
             $scope.worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);

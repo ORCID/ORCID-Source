@@ -67,6 +67,7 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -133,8 +134,8 @@ public class OrcidSecurityManagerTestBase {
         client1.setClientType(ClientType.CREATOR);
         
         ClientDetailsEntity client2 = new ClientDetailsEntity();
-        client1.setId(CLIENT_2);
-        client1.setClientType(ClientType.UPDATER);
+        client2.setId(CLIENT_2);
+        client2.setClientType(ClientType.UPDATER);
         
         ClientDetailsEntity publicClient = new ClientDetailsEntity();
         publicClient.setId(PUBLIC_CLIENT);
@@ -302,14 +303,14 @@ public class OrcidSecurityManagerTestBase {
     protected PeerReviews createPeerReviews(PeerReviewSummary... elements) {
         return peerReviewManagerReadOnly.groupPeerReviews(new ArrayList<PeerReviewSummary>(Arrays.asList(elements)), false);
     }
-
+    
     protected EducationSummary createEducationSummary(Visibility v, String sourceId) {
         EducationSummary e = new EducationSummary();
         e.setVisibility(v);
         setSource(e, sourceId);
         return e;
     }
-
+    
     protected Educations createEducations(EducationSummary... elements) {
         Educations e = new Educations();
         for (EducationSummary s : elements) {

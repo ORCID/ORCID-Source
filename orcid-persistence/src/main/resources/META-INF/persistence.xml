@@ -91,6 +91,9 @@
 		<!-- Orcid social -->
 		<class>org.orcid.persistence.jpa.entities.OrcidSocialEntity</class>
 		
+		<!-- Invalid record data changes -->
+		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>		
+		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 <!--         <properties> -->
@@ -104,8 +107,8 @@
 	
 	<persistence-unit name="statistics" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>org.orcid.persistence.jpa.entities.StatisticValuesEntity</class>
-		<class>org.orcid.persistence.jpa.entities.StatisticKeyEntity</class>		
+		<class>org.orcid.statistics.jpa.entities.StatisticValuesEntity</class>
+		<class>org.orcid.statistics.jpa.entities.StatisticKeyEntity</class>		
 	</persistence-unit>
 
 </persistence>

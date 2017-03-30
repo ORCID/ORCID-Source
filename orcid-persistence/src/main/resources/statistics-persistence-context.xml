@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+    <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
+        ignore-unresolvable="true" />
+	<context:component-scan base-package="org.orcid.statistics" />
+
+	<bean id="statisticsJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="\${org.orcid.persistence.db.dialect}" />
+        <property name="showSql" value="\${org.orcid.persistence.db.showSql}" />
+        <property name="generateDdl" value="\${org.orcid.persistence.db.generateDdl}" />
+    </bean>
+
+	<!-- Statistics -->
+	<bean id="statisticsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${org.orcid.persistence.statistics.db.class}" />
+        <property name="jdbcUrl" value="${org.orcid.persistence.statistics.db.url}" />
+        <property name="user" value="${org.orcid.persistence.statistics.db.username}" />
+        <property name="password" value="${org.orcid.persistence.statistics.db.password}" />
+        <property name="initialPoolSize" value="${org.orcid.persistence.statistics.db.initialPoolSize}" />
+        <property name="minPoolSize" value="${org.orcid.persistence.statistics.db.minPoolSize}" />
+        <property name="maxPoolSize" value="${org.orcid.persistence.statistics.db.maxPoolSize}" />
+        <property name="maxStatements" value="${org.orcid.persistence.statistics.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.statistics.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.statistics.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.persistence.statistics.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.persistence.statistics.db.numHelperThreads:10}"/>
+	</bean>
+	
+	<bean id="statisticsDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${org.orcid.persistence.statistics.db.readonly.class}" />
+        <property name="jdbcUrl" value="${org.orcid.persistence.statistics.db.readonly.url}" />
+        <property name="user" value="${org.orcid.persistence.statistics.db.readonly.username}" />
+        <property name="password" value="${org.orcid.persistence.statistics.db.readonly.password}" />
+        <property name="initialPoolSize" value="${org.orcid.persistence.statistics.db.readonly.initialPoolSize}" />
+        <property name="minPoolSize" value="${org.orcid.persistence.statistics.db.readonly.minPoolSize}" />
+        <property name="maxPoolSize" value="${org.orcid.persistence.statistics.db.readonly.maxPoolSize}" />
+        <property name="maxStatements" value="${org.orcid.persistence.statistics.db.readonly.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.statistics.db.readonly.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.statistics.db.readonly.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="${org.orcid.persistence.statistics.db.readonly.preferredTestQuery}" />
+        <property name="numHelperThreads" value="${org.orcid.persistence.statistics.db.readonly.numHelperThreads:10}"/>
+	</bean>
+	
+	<bean id="statisticsSimpleDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${org.orcid.persistence.statistics.db.class}" />
+        <property name="url" value="${org.orcid.persistence.statistics.db.url}" />
+        <property name="username" value="${org.orcid.persistence.statistics.db.username}" />
+        <property name="password" value="${org.orcid.persistence.statistics.db.password}" />
+    </bean>
+    
+    <bean id="statisticsSimpleDataSourceReadOnly" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${org.orcid.persistence.statistics.db.readonly.class}" />
+        <property name="url" value="${org.orcid.persistence.statistics.db.readonly.url}" />
+        <property name="username" value="${org.orcid.persistence.statistics.db.readonly.username}" />
+        <property name="password" value="${org.orcid.persistence.statistics.db.readonly.password}" />
+    </bean>
+	
+	<bean id="statisticsLiquibase" class="liquibase.integration.spring.SpringLiquibase">
+		<property name="dataSource" ref="${org.orcid.persistence.statistics.db.dataSource}" />
+		<property name="changeLog" value="classpath:statistics-db-master.xml" />
+	</bean>
+	
+	<bean id="statisticEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="statisticsLiquibase">
+	    <property name="jpaVendorAdapter" ref="statisticsJpaVendorAdapter" />
+        <property name="dataSource" ref="${org.orcid.persistence.statistics.db.dataSource}" />
+        <property name="persistenceUnitName" value="statistics" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.statistics.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="statisticEntityManagerFactoryReadOnly" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="statisticsLiquibase">
+	    <property name="jpaVendorAdapter" ref="statisticsJpaVendorAdapter" />
+        <property name="dataSource" ref="${org.orcid.persistence.statistics.db.readonly.dataSource}" />
+        <property name="persistenceUnitName" value="statistics" />
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.generate_statistics" value="${org.orcid.persistence.statistics.db.hibernateStatistics:false}" />    
+            </map>
+        </property>
+    </bean>        
+
+	<bean id="statisticsEntityManagerFactory" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
+        <property name="entityManagerFactory" ref="statisticEntityManagerFactory" />
+    </bean>
+    
+    <bean id="statisticsEntityManagerFactoryReadOnly" class="org.orcid.persistence.spring.OrcidEntityManagerFactory">
+        <property name="entityManagerFactory" ref="statisticEntityManagerFactoryReadOnly" />
+    </bean>
+
+    <bean id="statisticsEntityManager" factory-bean="&amp;statisticsEntityManagerFactory" factory-method="getObject" />
+    
+    <bean id="statisticsEntityManagerReadOnly" factory-bean="&amp;statisticsEntityManagerFactoryReadOnly" factory-method="getObject" />	
+
+	<bean name="statisticsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="statisticEntityManagerFactory" />        
+    </bean>
+
+	<bean name="statisticsTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg ref="statisticsTransactionManager" />
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED" />
+    </bean>
+
+	<bean id="statisticsDao" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
+		<property name="statisticsEntityManager" ref="statisticsEntityManager" />
+	</bean>
+	
+	<bean id="statisticsDaoReadOnly" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
+		<property name="statisticsEntityManager" ref="statisticsEntityManagerReadOnly" />
+	</bean>       					    		     
+</beans>

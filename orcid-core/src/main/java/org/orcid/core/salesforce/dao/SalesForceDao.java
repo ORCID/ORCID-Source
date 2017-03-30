@@ -23,6 +23,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Opportunity;
 
 /**
  * 
@@ -37,17 +38,23 @@ public interface SalesForceDao {
 
     List<Member> retrieveMembers();
 
+    List<Member> retrieveMembersByWebsite(String websiteUrl);
+
     List<Member> retrieveConsortia();
 
     Consortium retrieveConsortium(String consortiumId);
 
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
-    
+
     List<Contact> retrieveAllContactsByAccountId(String accountId);
 
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId);
-    
+
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
+
+    String retrievePremiumConsortiumMemberTypeId();
+
+    String retrieveConsortiumMemberRecordTypeId();
 
     /**
      * @return The sales force object id, if valid.
@@ -57,19 +64,36 @@ public interface SalesForceDao {
      */
     String validateSalesForceId(String memberId);
 
+    /**
+     * 
+     * @return the accountId of the member
+     */
+    String createMember(Member member);
+
     void updateMember(Member member);
-    
+
+    /**
+     * 
+     * @return the opportunity id
+     */
+    String createOpportunity(Opportunity member);
+
+    void updateOpportunity(Opportunity opportunity);
+
     /**
      * 
      * @return the contact id
      */
     String createContact(Contact contact);
-    
-    void createContactRole(ContactRole contact);
-    
+
+    /**
+     * 
+     * @return the contact role id
+     */
+    String createContactRole(ContactRole contact);
+
     void removeContactRole(String contactRoleId);
 
     String getAccessToken();
-
 
 }

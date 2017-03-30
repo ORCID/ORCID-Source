@@ -37,7 +37,6 @@ import org.orcid.core.salesforce.model.ContactRole;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
-import org.orcid.test.LambdaMatcher;
 import org.orcid.test.TargetProxyHelper;
 
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
@@ -115,7 +114,7 @@ public class SalesForceManagerImplTest {
     private ContactRole createContactRole(String roleId, ContactRoleType roleType) {
         ContactRole contactRole = new ContactRole();
         contactRole.setId(roleId);
-        contactRole.setRole(roleType);
+        contactRole.setRoleType(roleType);
         return contactRole;
     }
 
@@ -125,11 +124,13 @@ public class SalesForceManagerImplTest {
         Contact contact = new Contact();
         contact.setId("contact2Id");
         contact.setAccountId("account1");
-        contact.setRole(ContactRoleType.TECHNICAL_CONTACT.value());
+        ContactRole role = new ContactRole(ContactRoleType.TECHNICAL_CONTACT);
+        role.setId("contact2Idrole1Id");
+        contact.setRole(role);
         salesForceManager.updateContact(contact);
-        verify(salesForceDao, times(1)).createContactRole(argThat(new LambdaMatcher<ContactRole>(r -> {
-            return "contact2Id".equals(r.getContactId()) && "account1Id".equals(r.getAccountId()) && ContactRoleType.TECHNICAL_CONTACT.equals(r.getRole());
-        })));
+        verify(salesForceDao, times(1)).createContactRole(argThat(r -> {
+            return "contact2Id".equals(r.getContactId()) && "account1Id".equals(r.getAccountId()) && ContactRoleType.TECHNICAL_CONTACT.equals(r.getRoleType());
+        }));
         verify(salesForceDao, times(1)).removeContactRole(eq("contact2Idrole1Id"));
     }
 

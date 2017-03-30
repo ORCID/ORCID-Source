@@ -37,6 +37,7 @@ import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoBioException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
@@ -109,6 +110,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.NotFoundException;
@@ -126,7 +128,7 @@ import com.sun.jersey.api.NotFoundException;
 public class MemberV2ApiServiceDelegatorImpl implements
         MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
 
-    //Managers that goes to the primary database
+    // Managers that goes to the primary database
     @Resource
     private WorkManager workManager;
 
@@ -168,14 +170,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private SourceUtils sourceUtils;
-    
+
     @Resource
     private ContributorUtils contributorUtils;
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
 
-    //Managers that goes to the replication database
+    // Managers that goes to the replication database
     // Activities managers
     @Resource
     private WorkManagerReadOnly workManagerReadOnly;
@@ -227,10 +229,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
     // Other managers
     @Resource
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
-    
+
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
+
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
     }
@@ -358,7 +360,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         contributorUtils.filterContributorPrivateData(f);
         return Response.ok(f).build();
     }
-    
+
     @Override
     public Response viewFundings(String orcid) {
         List<FundingSummary> fundingSummaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
@@ -675,7 +677,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Optional<GroupIdRecord> record = groupIdRecordManager.findGroupIdRecordByName(name);
         if (record.isPresent())
             return Response.ok(record.get()).build();
-        throw new NotFoundException();
+        return Response.ok(new GroupIdRecord()).build();
     }
 
     /**
@@ -1022,7 +1024,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewBiography(String orcid) {
         Biography bio = biographyManagerReadOnly.getBiography(orcid, getLastModifiedTime(orcid));
-        if(bio == null) {
+        if (bio == null) {
             throw new OrcidNoBioException();
         }
         orcidSecurityManager.checkAndFilter(orcid, bio, ScopePathType.ORCID_BIO_READ_LIMITED);
@@ -1058,6 +1060,20 @@ public class MemberV2ApiServiceDelegatorImpl implements
         return Response.ok(search).build();
     }
 
+    @Override
+    public Response viewBulkWorks(String orcid, String putCodes) {
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        if (profileEntity == null) {
+            throw new OrcidNoResultException("No such profile: " + orcid);
+        }
+        
+        WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
+        orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        ActivityUtils.cleanEmptyFields(workBulk);
+        sourceUtils.setSourceName(workBulk);
+        return Response.ok(workBulk).build();
+    }
+
     private void validateSearchParams(Map<String, List<String>> queryMap) {
         List<String> rowsList = queryMap.get("rows");
         if (rowsList != null && !rowsList.isEmpty()) {
@@ -1065,13 +1081,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
                 String rowsString = rowsList.get(0);
                 int rows = Integer.valueOf(rowsString);
                 if (rows < 0 || rows > OrcidSearchManager.MAX_SEARCH_ROWS) {
-                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
+                    throw new OrcidBadRequestException(
+                            localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
                 }
             } catch (NumberFormatException e) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
             }
         } else {
-            //Set the default number of results 
+            // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
         }
     }
@@ -1081,5 +1098,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         Client client = clientDetailsManagerReadOnly.getClient(clientId);
         return Response.ok(client).build();
-    }    
+    }
+
 }

@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -49,6 +51,8 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
@@ -69,6 +73,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Resource
     EmailManager emailManager;
     
+    @Resource
+    OrcidProfileManager orcidProfileManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
@@ -82,32 +89,28 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Test
     public void testCreateMinimalRegistration() {
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-        OrcidProfile orcidProfile = createBasicProfile(email, true);        
-        orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        assertTrue(OrcidStringUtils.isValidOrcid(orcid));
+        Registration form = createRegistrationForm(email, true);        
+        String userOrcid = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+        assertNotNull(userOrcid);
+        assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
         Map<String, String> map = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map);
-        assertEquals(orcid, map.get(email));        
+        assertEquals(userOrcid, map.get(email));
     }
 
     @Test
     public void testCreateMinimalRegistrationWithExistingClaimedEmail() {
         //Create the user
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-        OrcidProfile orcidProfile = createBasicProfile(email, true);        
-        orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
-        assertNotNull(orcidProfile);
-        assertNotNull(orcidProfile.getOrcidIdentifier());
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        assertTrue(OrcidStringUtils.isValidOrcid(orcid));
+        Registration form = createRegistrationForm(email, true);        
+        String userOrcid = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+        assertNotNull(userOrcid);
+        assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
         
         //Then try to create it again
-        orcidProfile = createBasicProfile(email, true);
+        form = createRegistrationForm(email, true);  
         try {
-            orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
+            registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
         } catch(InvalidRequestException e) {
             assertEquals("Unable to register user due: Email " + email + " already exists and is claimed, so, it can't be used again", e.getMessage());
@@ -120,20 +123,17 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void testCreateMinimalRegistrationWithExistingUnclaimedEmailNotAutoDeprecatable() {
         //Create the user, but set it as unclaimed
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-        OrcidProfile orcidProfile = createBasicProfile(email, false);  
-        //Set the source to a client that doesn't have allow_auto_deprecate enabled
-        orcidProfile.getOrcidHistory().setSource(new Source(CLIENT_ID_AUTODEPRECATE_DISABLED));
-        //Create it
-        orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
+                
+        //Create a record by a member
+        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_DISABLED);
+        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
         assertNotNull(orcidProfile);
         assertNotNull(orcidProfile.getOrcidIdentifier());
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        assertTrue(OrcidStringUtils.isValidOrcid(orcid));
+        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
         
-        //Then try to create it again
-        orcidProfile = createBasicProfile(email, true);
         try {
-            orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
+            Registration form = createRegistrationForm(email, true);
+            registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
             fail();
         } catch(InvalidRequestException e) {
             assertEquals("Unable to register user due: Autodeprecate is not enabled for " + email, e.getMessage());
@@ -146,24 +146,22 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void testCreateMinimalRegistrationWithExistingEmailThatCanBeAutoDeprecated() {
         //Create the user, but set it as unclaimed
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-        OrcidProfile orcidProfile = createBasicProfile(email, false);  
-        //Set the source to a client that doesn't have allow_auto_deprecate enabled
-        orcidProfile.getOrcidHistory().setSource(new Source(CLIENT_ID_AUTODEPRECATE_ENABLED));
-        //Create it
-        orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
+        
+        //Create a record by a member
+        OrcidProfile orcidProfile = createBasicProfile(email, false, CLIENT_ID_AUTODEPRECATE_ENABLED);
+        orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, true, true);
         assertNotNull(orcidProfile);
         assertNotNull(orcidProfile.getOrcidIdentifier());
+        assertNotNull(orcidProfile.getOrcidIdentifier().getPath());
         String orcidBefore = orcidProfile.getOrcidIdentifier().getPath();
-        assertTrue(OrcidStringUtils.isValidOrcid(orcidBefore));
         
         Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
         assertEquals(orcidBefore, map1.get(email));  
         
         //Then try to create it again, this time claimed and without source
-        orcidProfile = createBasicProfile(email, true);
-        orcidProfile = registrationManager.createMinimalRegistration(orcidProfile, true);
-        String orcidAfter = orcidProfile.getOrcidIdentifier().getPath();
+        Registration form = createRegistrationForm(email, true);
+        String orcidAfter = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
         assertTrue(OrcidStringUtils.isValidOrcid(orcidAfter));
         
         assertThat(orcidAfter, is(not(equalTo(orcidBefore))));
@@ -173,7 +171,31 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         assertEquals(orcidAfter, map2.get(email));  
     }
     
-    protected OrcidProfile createBasicProfile(String email, boolean claimed) {
+    @Test
+    public void testPasswordIsCommon() {
+        assertTrue(registrationManager.passwordIsCommon("baseball"));
+        assertTrue(registrationManager.passwordIsCommon("dragon"));
+        assertTrue(registrationManager.passwordIsCommon("football"));
+        assertTrue(registrationManager.passwordIsCommon("monkey"));
+        assertTrue(registrationManager.passwordIsCommon("shadow"));
+        assertTrue(registrationManager.passwordIsCommon("password"));
+        
+        assertFalse(registrationManager.passwordIsCommon("132871384164578961349"));
+        assertFalse(registrationManager.passwordIsCommon("advkuwAFdaAdf387922"));
+        assertFalse(registrationManager.passwordIsCommon("%@@$£&£$%^!@SSDFgwjhsad"));
+    }
+    
+    private Registration createRegistrationForm(String email, boolean claimed) {
+        Registration registration = new Registration();
+        registration.setPassword(Text.valueOf("password"));
+        registration.setEmail(Text.valueOf(email));
+        registration.setFamilyNames(Text.valueOf("User"));
+        registration.setGivenNames(Text.valueOf("New"));
+        registration.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));                       
+        return registration;
+    }
+        
+    private OrcidProfile createBasicProfile(String email, boolean claimed, String sourceId) {
         OrcidProfile profile = new OrcidProfile();
         profile.setPassword("password");
         profile.setVerificationCode("1234");
@@ -186,13 +208,18 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         PersonalDetails personalDetails = new PersonalDetails();
         bio.setPersonalDetails(personalDetails);
         personalDetails.setGivenNames(new GivenNames("New"));
-        personalDetails.setFamilyName(new FamilyName("User"));    
-        
+        personalDetails.setFamilyName(new FamilyName("User"));
+
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(claimed));
         orcidHistory.setCreationMethod(CreationMethod.DIRECT);
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));       
-        profile.setOrcidHistory(orcidHistory);                
+        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        profile.setOrcidHistory(orcidHistory);
+        
+        //Set the source
+        profile.getOrcidHistory().setSource(new Source(sourceId));
+        
         return profile;
     }
+    
 }

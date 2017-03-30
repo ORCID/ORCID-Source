@@ -60,8 +60,7 @@
 	
 		appInIframe.controller('iframeController', function($scope, $parentScope) {
 	      
-		  var str = "${notification.putCode!}";
-		  $scope.putCode = parseInt(str.replace(",", ""));
+		  $scope.putCode = ${notification.putCode?c};
 		  $scope.archivedDate = "${notification.archivedDate!}"		  
 		  
 		  $scope.archive = function(id) {			

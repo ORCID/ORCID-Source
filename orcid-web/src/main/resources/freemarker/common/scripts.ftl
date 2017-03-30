@@ -75,6 +75,8 @@ if (typeof angular == 'undefined') {
 </script>
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
+<script type="text/javascript" src="${staticCdn}/javascript/angular-ui/typeahead/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
+
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
     var script = document.createElement("script");

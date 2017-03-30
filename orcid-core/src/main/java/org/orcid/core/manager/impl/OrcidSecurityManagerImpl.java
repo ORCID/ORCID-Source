@@ -17,9 +17,11 @@
 package org.orcid.core.manager.impl;
 
 import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -29,6 +31,7 @@ import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -41,15 +44,18 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
+import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
+import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -58,7 +64,8 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -97,6 +104,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
 
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
@@ -137,7 +147,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     public String getClientIdFromAPIRequest() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+        if (authentication != null && OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
             OAuth2Request request = oAuth2Authentication.getOAuth2Request();
             return request.getClientId();
@@ -437,6 +447,34 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (record.getPerson() != null) {
             checkAndFilter(orcid, record.getPerson());
         }
+    }
+    
+    @Override
+    public void checkAndFilter(String orcid, WorkBulk workBulk, ScopePathType scopePathType) {
+        isMyToken(orcid);
+        
+        List<BulkElement> bulkElements = workBulk.getBulk();
+        List<BulkElement> filteredElements = new ArrayList<>();
+        
+        for (int i = 0; i < bulkElements.size(); i++) {
+            BulkElement element = bulkElements.get(i);
+            if (element instanceof OrcidError) {
+                filteredElements.add(element);
+                continue;
+            }
+            
+            try {
+                checkAndFilter(orcid, (Work) element, scopePathType, true);
+                filteredElements.add(element);
+            } catch (Exception e) {
+                if (e instanceof OrcidUnauthorizedException) {
+                    throw e;
+                }
+                OrcidError error = orcidCoreExceptionMapper.getOrcidError(e);
+                filteredElements.add(error);
+            }
+        }
+        workBulk.setBulk(filteredElements);
     }
 
     @Override

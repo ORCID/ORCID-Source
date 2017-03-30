@@ -21,21 +21,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.orcid.integration.blackbox.api.BBBUtil.noSpinners;
-import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.jaxb.model.common_rc3.Day;
 import org.orcid.jaxb.model.common_rc3.FuzzyDate;
 import org.orcid.jaxb.model.common_rc3.Month;
@@ -44,7 +42,6 @@ import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.common_rc3.Year;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
-import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
@@ -75,27 +72,24 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class MemberV2Test extends BlackBoxBaseRC3 {    
-    static List<GroupIdRecord> groupRecords = null;           
+    private static boolean allSet = false;        
+    
+    @BeforeClass
+    public static void beforeClass() {
+        signin();
+    }
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();  
-        groupRecords = createGroupIds();
-        
-        // Remove remaining works using UI, because clients aren't allowed to
-        // delete works that they are not the source of.
-        signin();
-        noSpinners();
-        waitForAngular();
-        removeAllWorks();
+        if(allSet) {
+            return;
+        }
+        showMyOrcidPage();
+        createGroupIds();
+        allSet = true;
     }
-
-    @After
-    public void after() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();
-    }            
 
     @Test
     public void createViewUpdateAndDeleteEducation() throws JSONException, InterruptedException, URISyntaxException {
@@ -639,11 +633,13 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         assertFalse(activities.getEducations().getSummaries().isEmpty());
         
         boolean found = false;
+        Long educationPutCode = null;
         for(EducationSummary summary : activities.getEducations().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("education:role-title")) {                
                 assertEquals("education:department-name", summary.getDepartmentName());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                educationPutCode = summary.getPutCode();
                 found = true;
                 break;
             }
@@ -653,11 +649,14 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
                 
         assertFalse(activities.getEmployments().getSummaries().isEmpty());        
         found = false;
+        Long employmentPutCode = null;
+        List<Long> fundingPutCodes = new ArrayList<Long>();
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
             if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("employment:role-title")) {
                 assertEquals("employment:department-name", summary.getDepartmentName());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
+                employmentPutCode = summary.getPutCode();
                 found = true;
                 break;
             }
@@ -671,10 +670,13 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
             for(FundingSummary summary : group.getFundingSummary()) {
                 if(summary.getTitle().getTitle().getContent().equals("common:title")) {
                     found1 = true;
+                    fundingPutCodes.add(summary.getPutCode());
                 } else if(summary.getTitle().getTitle().getContent().equals("Funding # 2")) {
                     found2 = true;
+                    fundingPutCodes.add(summary.getPutCode());
                 } else if(summary.getTitle().getTitle().getContent().equals("Funding # 3")) {
                     found3 = true;
+                    fundingPutCodes.add(summary.getPutCode());
                 } 
             }
         }
@@ -683,14 +685,18 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         
         assertNotNull(activities.getWorks());        
         found1 = found2 = found3 = false;
+        List<Long> worksPutCodes = new ArrayList<Long>(); 
         for (WorkGroup group : activities.getWorks().getWorkGroup()) {
             for(WorkSummary summary : group.getWorkSummary()) {
                 if(summary.getTitle().getTitle().getContent().equals("common:title")) {
                     found1 = true;
+                    worksPutCodes.add(summary.getPutCode());
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 2")) {
                     found2 = true;
+                    worksPutCodes.add(summary.getPutCode());
                 } else if(summary.getTitle().getTitle().getContent().equals("Work # 3")) {
                     found3 = true;
+                    worksPutCodes.add(summary.getPutCode());
                 } else {
                     fail("Couldnt find work with title: " + summary.getTitle().getTitle().getContent());
                 }
@@ -701,23 +707,70 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         
         assertNotNull(activities.getPeerReviews());        
         found1 = found2 = found3 = found4 = false;
+        List<Long> peerReviewPutCodes = new ArrayList<Long>();
         for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
             for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
                 if(summary.getCompletionDate() != null && summary.getCompletionDate().getYear() != null) {
                     if(summary.getCompletionDate().getYear().getValue().equals("1848")) {
                         found1 = true;
+                        peerReviewPutCodes.add(summary.getPutCode());
                     } else if(summary.getCompletionDate().getYear().getValue().equals("2016")) {
                         found2 = true;
+                        peerReviewPutCodes.add(summary.getPutCode());
                     } else if(summary.getCompletionDate().getYear().getValue().equals("2017")) {
                         found3 = true;
+                        peerReviewPutCodes.add(summary.getPutCode());
                     } else if(summary.getCompletionDate().getYear().getValue().equals("2018")) {
                         found4 = true;
+                        peerReviewPutCodes.add(summary.getPutCode());
                     }
                 }                               
             }
         }
         
-        assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);        
+        assertTrue("One of the peer reviews was not found: 1(" + found1 + ") 2(" + found2 + ") 3(" + found3 + ") 4(" + found4 + ")", found1 == found2 == found3 == found4 == true);
+      
+        //Delete all created elements
+        ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(this.getUser1OrcidId(), employmentPutCode, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+                        
+        deleteResponse = memberV2ApiClient.deleteEducationXml(this.getUser1OrcidId(), educationPutCode, accessTokenForClient1);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        
+        for(Long putCode : fundingPutCodes) {
+            deleteResponse = memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), putCode, accessTokenForClient1);
+            assertNotNull(deleteResponse);
+            if(Response.Status.NO_CONTENT.getStatusCode() != deleteResponse.getStatus()) {
+                //It belongs to client2, so, delete it with client2 token
+                deleteResponse = memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), putCode, accessTokenForClient2);
+                assertNotNull(deleteResponse);
+                assertEquals("Unable to delete funding " + putCode, Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+            }             
+        }
+        
+        for(Long putCode : worksPutCodes) {
+            deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode, accessTokenForClient1);
+            assertNotNull(deleteResponse);
+            if(Response.Status.NO_CONTENT.getStatusCode() != deleteResponse.getStatus()) {
+                //It belongs to client2, so, delete it with client2 token
+                deleteResponse = memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), putCode, accessTokenForClient2);
+                assertNotNull(deleteResponse);
+                assertEquals("Unable to delete work " + putCode, Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+            }             
+        }
+        
+        for(Long putCode : peerReviewPutCodes) {
+            deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), putCode, accessTokenForClient1);
+            assertNotNull(deleteResponse);
+            if(Response.Status.NO_CONTENT.getStatusCode() != deleteResponse.getStatus()) {
+                //It belongs to client2, so, delete it with client2 token
+                deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), putCode, accessTokenForClient2);
+                assertNotNull(deleteResponse);
+                assertEquals("Unable to delete peer review " + putCode, Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+            }             
+        }        
     }
     
     @Test
@@ -734,12 +787,11 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
     }    
     
-    
-    
+    @SuppressWarnings({"deprecation", "rawtypes"}) 
     @Test
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE);
+        List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_UPDATE);
         String accessToken =  getAccessToken(scopes);
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
         work1.setPutCode(null);
@@ -775,6 +827,18 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         postResponse = memberV2ApiClient.createFundingXml(this.getUser1OrcidId(), funding, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        
+        // Delete funding        
+        Map map = postResponse.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));        
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+        
+        ClientResponse deleteResponse = memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
@@ -813,83 +877,6 @@ public class MemberV2Test extends BlackBoxBaseRC3 {
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());        
     }        
-    
-    private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
-        String token = getAccessToken();
-        // Remove all activities        
-        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token);
-        assertNotNull(activitiesResponse);
-        ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
-        assertNotNull(summary);
-        if (summary.getEducations() != null && !summary.getEducations().getSummaries().isEmpty()) {
-            for (EducationSummary education : summary.getEducations().getSummaries()) {
-                memberV2ApiClient.deleteEducationXml(this.getUser1OrcidId(), education.getPutCode(), token);
-            }
-        }
-
-        if (summary.getEmployments() != null && !summary.getEmployments().getSummaries().isEmpty()) {
-            for (EmploymentSummary employment : summary.getEmployments().getSummaries()) {
-                memberV2ApiClient.deleteEmploymentXml(this.getUser1OrcidId(), employment.getPutCode(), token);
-            }
-        }
-
-        if (summary.getFundings() != null && !summary.getFundings().getFundingGroup().isEmpty()) {
-            for (FundingGroup group : summary.getFundings().getFundingGroup()) {
-                for (FundingSummary funding : group.getFundingSummary()) {
-                    memberV2ApiClient.deleteFundingXml(this.getUser1OrcidId(), funding.getPutCode(), token);
-                }
-            }
-        }
-
-        if (summary.getWorks() != null && !summary.getWorks().getWorkGroup().isEmpty()) {
-            for (WorkGroup group : summary.getWorks().getWorkGroup()) {
-                for (WorkSummary work : group.getWorkSummary()) {
-                    memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), work.getPutCode(), token);
-                }
-            }
-        }
-        
-        if(summary.getPeerReviews() != null && !summary.getPeerReviews().getPeerReviewGroup().isEmpty()) {
-            for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
-                for(PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
-                    memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), token);
-                }
-            }
-        }
-    }    
-    
-    public List<GroupIdRecord> createGroupIds() throws JSONException {
-        //Use the existing ones
-        if(groupRecords != null && !groupRecords.isEmpty()) 
-            return groupRecords;
-        
-        List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
-        GroupIdRecord g1 = new GroupIdRecord();
-        g1.setDescription("Description");
-        g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
-        g1.setName("Group # 1");
-        g1.setType("publisher");
-        
-        GroupIdRecord g2 = new GroupIdRecord();
-        g2.setDescription("Description");
-        g2.setGroupId("orcid-generated:02" + System.currentTimeMillis());
-        g2.setName("Group # 2");
-        g2.setType("publisher");                
-        
-        ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token); 
-        
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc3/group-id-record/", "");
-        g1.setPutCode(Long.valueOf(r1LocationPutCode));
-        groups.add(g1);
-        
-        ClientResponse r2 = memberV2ApiClient.createGroupIdRecord(g2, token);
-        String r2LocationPutCode = r2.getLocation().getPath().replace("/orcid-api-web/v2.0_rc3/group-id-record/", "");
-        g2.setPutCode(Long.valueOf(r2LocationPutCode));
-        groups.add(g2);
-        
-        return groups;
-    }
     
     private String getAccessToken() throws InterruptedException, JSONException {                
         return getAccessToken(getScopes());

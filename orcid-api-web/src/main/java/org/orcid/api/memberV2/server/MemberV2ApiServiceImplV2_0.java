@@ -19,6 +19,7 @@ package org.orcid.api.memberV2.server;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
+import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
@@ -210,6 +211,15 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
     public Response viewWorks(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewWorks(orcid);
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(BULK_WORKS)
+    @ApiOperation(value = "Fetch specified works", response = WorkBulk.class, authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_READ_LIMITED, description = "you need this") }) })
+    public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
+        return serviceDelegator.viewBulkWorks(orcid, putCodes);
     }
 
     @GET
@@ -571,7 +581,11 @@ public class MemberV2ApiServiceImplV2_0 extends MemberV2ApiServiceImplHelper {
     @Path(GROUP_ID_RECORD)
     @ApiOperation(value = "Fetch Groups", response = GroupIdRecords.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.GROUP_ID_RECORD_READ, description = "you need this") }) })
-    public Response viewGroupIdRecords(@QueryParam("page-size") String pageSize, @QueryParam("page") String page) {
+    public Response viewGroupIdRecords(@QueryParam("page-size") @DefaultValue("100") String pageSize, @QueryParam("page") @DefaultValue("1") String page,
+            @QueryParam("name") String name) {
+        if (name != null) {
+            return serviceDelegator.findGroupIdRecordByName(name);
+        }
         return serviceDelegator.viewGroupIdRecords(pageSize, page);
     }
 

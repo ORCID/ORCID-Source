@@ -59,6 +59,7 @@ a:focus {
     outline: thin dotted #333;
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px;
+    text-decoration: none;
 }
 
 a:hover,
@@ -1467,30 +1468,23 @@ ul.privacyHelp li.private {
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 5000;
-    display: block;
-    float: left;
-    min-width: 160px;
-    padding: 5px;
-    margin: 0;
-    list-style: none;
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    *border-right-width: 2px;
-    *border-bottom-width: 2px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 0;
-    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding;
     background-clip: padding-box;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    float: left;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    min-width: 160px;
+    padding: 5px 0;
+    position: absolute;
+    top: 100%;
+    z-index: 5000;
 }
 
 .dropdown-menu.pull-right {
@@ -1517,6 +1511,13 @@ ul.privacyHelp li.private {
     color: #333333;
     white-space: nowrap;
     margin-left: 2px;
+}
+
+.dropdown-menu .uib-typeahead-match a {
+    padding-right: 10px;
+    text-indent: -10px;
+    white-space: initial;
+    word-wrap: break-word;
 }
 
 .dropdown-menu .disabled>a,
@@ -2081,6 +2082,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #a6ce39
 }
 
+.normal{
+    font-weight: normal;
+}
+
 .red {
     color: #ee0000;
 }
@@ -2179,7 +2184,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     color: #333;
     border-radius: 0;
     min-height: 50px;
-    heigth: auto;
+    height: auto;
 }
 
 .alert-icon-large {
@@ -2530,6 +2535,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .popover-help-container ul {
     list-style-type: disc;
+    padding-left: 16px;
+}
+
+.popover-help-container ul ul{
+    list-style-type: circle;
 }
 
 .no-touch .popover-help-container:hover .popover {
@@ -2575,6 +2585,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .lightbox-container {
     padding: 5px 15px 30px;
+}
+
+.lightbox-container .cancel-option{
+    margin: 0 10px;
 }
 
 .no-icon {
@@ -2762,10 +2776,6 @@ header overrides
     color: #494A4C;
 }
 
-.oauth-login .alert {
-    width: 330px;
-}
-
 .oauth-login .alert p {
     margin-bottom: 0;
 }
@@ -2792,12 +2802,21 @@ header overrides
     margin-left: 96px;
 }
 
+.oauth-login .reset-password .control-group .controls,
 .oauth-login .control-group .controls.checky {
     margin-left: 0;
 }
 
+.oauth-login .login .login-box {
+    padding: 15px 30px 0 30px;
+}
+
 .oauth-login .control-group .controls input {
     width: 330px;
+}
+
+.oauth-login .reset-password .control-group .controls input{
+    width: 100%;
 }
 
 .oauth-login .page-header {
@@ -2834,6 +2853,18 @@ header overrides
     color: #939498;
     line-height: 13px;
     font-weight: 100;
+}
+
+.oauth-login .oauth-buttons{
+    text-align: center;
+}
+
+.oauth-login #login-authorize-button {
+    margin-top: 10px;
+}
+
+.oauth-login #register-authorize-button {
+    margin: 10px 0 40px 0;
 }
 
 .manage-bio .control-label {
@@ -2984,7 +3015,7 @@ header overrides
     border-left: 0;
     border-right: 0;
     padding-left: 0;
-    padding-right: 5;
+    padding-right: 5px;
 }
 
 .account-settings {
@@ -3272,6 +3303,21 @@ ul.personal-inf-display li:last-child {
     background-clip: padding-box;
 }
 
+/*0.11.1 support */
+.tt-suggestion:hover{
+	color: #fff;
+    background-color: #0081c2;
+    background-image: -moz-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0077b3));
+    background-image: -webkit-linear-gradient(top, #0088cc, #0077b3);
+    background-image: -o-linear-gradient(top, #0088cc, #0077b3);
+    background-image: linear-gradient(to bottom, #0088cc, #0077b3);
+    background-repeat: repeat-x;
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
+}
+
+/* 0.9.3 support */
 .tt-suggestion.tt-is-under-cursor {
     color: #fff;
     background-color: #0081c2;
@@ -3306,6 +3352,16 @@ ul.personal-inf-display li:last-child {
 #delegatorsSearchForm .tt-dropdown-menu {
     height: auto;
 }
+
+/* angular-ui typeahead */
+
+.dropdown-menu {
+    width: 100%;
+    height: 300px;
+    overflow-y: auto;
+}
+
+/* end angular-ui typeahead */
 
 .small-row {
     display: inline-block;
@@ -5638,7 +5694,7 @@ multiselect .dropdown-menu .dropdown-menu-list>li>a i.empty {
 }
 
 multiselect .dropdown-menu .dropdown-menu-list {
-    height: 135px;
+    min-height: 135px;
     min-width: 315px;
     overflow-y: scroll;
 }
@@ -6478,18 +6534,41 @@ a:hover .mozilla-badge {
     text-align: center;
     font-size: 20px;
     color: #494A4C;
+    margin-bottom: 20px;
 }
 
 .login #login-reset {
     margin-top: 5px;
 }
 
+/* Reset password */
+.reset-password .controls{
+    margin-bottom: 15px;
+}
+
+.reset-password p{
+        line-height: 18px;
+        margin-top: 10px;
+    }
+
+.oauth-login .reset-password{
+    margin: 0 15px;
+}
+
+.oauth-login .reset-password label{
+    width: inherit;
+}
+
+.reset-password.link-account{
+    padding-left: 0;
+    padding-right: 0;
+}
 
 /* Social Login */
 
 .login .social-login {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .login .social-login .title {
@@ -6501,7 +6580,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login .btn-google {
@@ -6509,7 +6588,7 @@ a:hover .mozilla-badge {
     background-size: 40px 40px;
     width: 40px;
     height: 40px;
-    displat: block;
+    display: block;
 }
 
 .login .social-login ul.social-icons {
@@ -6834,6 +6913,10 @@ a:hover .mozilla-badge {
     margin-top: 5px;
 }
 
+.form-social-sign-in input {
+    width: 100%;
+}
+
 .edit-external-identifiers .aka p {
     margin-bottom: 0;
 }
@@ -6883,6 +6966,7 @@ a:hover .mozilla-badge {
 .member-list h2 a:visited {
     color: #a6ce39;
     text-decoration: none;
+    white-space: normal;
 }
 
 .member-list h1 a:hover,
@@ -7202,11 +7286,111 @@ ul.comma li:last-child:after {
 }
 
 /*Consortia self service*/
-.manage-consortium label{
+.manage-consortium #ajax-loader i{
+    margin: 10px 0 10px 0;
+}
+
+.manage-consortium .alert{
+    margin: 10px 0;
+}
+
+.manage-consortium label,
+.manage-consortium h3 {
     display: block;
-    font-size: 14px;
     font-weight: bold;
-    margin: .7em 0 .5em 0;
+    margin: .2em 0 .2em 0;
+}
+
+.manage-consortium h3 {
+    font-size: 20px;
+    margin-top: 1em;
+}
+
+.manage-consortium h2 {
+    font-size: 27px;
+}
+
+.manage-consortium .input-md  {
+    width: 160px;
+}
+
+.manage-consortium table{
+    margin-bottom: 20px;
+}
+
+.manage-consortium td,
+.manage-consortium th {
+    padding: 3px 4px;
+    vertical-align: top;
+    font-size: 12px;
+    width: 25%;
+}
+
+.manage-consortium #communities{
+    margin: 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.font-size-small {
+    font-size: 12px;
+}
+
+.no-padding-left {
+    padding-left: 0px;
+}
+
+.footer-main {
+    border-top: 1px solid #c9c9c9;
+    font-size: 11px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    line-height: normal;
+}
+
+.footer-main .btn-social {
+    margin-right: 15px;
+}
+
+.footer-main .btn-social:last-child {
+    margin-right: 0;
+}
+
+.footer-main .inline-list li {
+    margin: 2px 0 0 0;
+}
+
+.footer-main .col-md-10 .inline-list li {
+    margin: 12px 20px 0 0;
+}
+
+.footer-main .inline-list li:last-child {
+    margin-right: 0;
+}
+
+.footer-main p{
+    margin: 0 0 6px 0;
+}
+
+.inline-list li {
+    display: inline;
+}
+
+
+.social-button .social {
+    display: block;
+    height: 20px;
+}
+
+.social-button .social:before {
+    color: #a6a8ab;
+    font-size: 20px;
+}
+
+.social-button .social:hover:before {
+    color: #338caf;
 }
 
 /* Media Queries */
@@ -7541,6 +7725,7 @@ ul.comma li:last-child:after {
     #password-reset-form #userEmailAddress {
         width: 95%;
     }
+
     /* oAuth */
     .oauth-login #loginForm #userId,
     .oauth-login #loginForm #password {
@@ -8506,4 +8691,58 @@ ul.comma li:last-child:after {
     .container {
         max-width: 960px;
     }
+}
+
+
+/*************************** Right to left styles*/
+.lang-rl *{
+    text-align: right;
+}
+
+/*
+.lang-rl .flexbox-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
+} 
+*/
+.lang-rl .header .navigation > .menu {
+    display: flex;
+    flex-direction: column-reverse; 
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
+}
+.lang-rl .header .navigation>.menu>li.active-trail>.menu {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
+}
+
+.lang-rl .lhs {
+    float: right;
+    padding-left: 20px!important;
+}
+
+.lang-rl .full-name {
+    float: right;
+}
+
+.lang-rl .pull-left {
+    float: right!important;
+}
+
+.lang-rl .table th, 
+.lang-rl .table td {
+    text-align: right;
+}
+
+.lang-rl .workspace-profile .workspace-section .workspace-section-header .workspace-section-title {
+    float: right;
+}
+
+.lang-rl .workspace-section-content {
+    float: right;
 }

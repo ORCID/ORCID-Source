@@ -230,6 +230,7 @@ the software.
                         	<exclude>**/src/main/webapp/static/javascript/typeahead/**</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/respond.*.js</exclude>
                         	<exclude>**/src/main/webapp/static/javascript/shibboleth-embedded-ds/**</exclude>
+                        	<exclude>**/src/main/webapp/static/javascript/angular-ui/**</exclude>
                         	<exclude>**/src/main/webapp/static/fonts/glyphicons*</exclude>
                         	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
@@ -259,6 +260,7 @@ the software.
                             <exclude>docs/**</exclude>
                         	<exclude>**/src/main/resources/**/*countries.txt</exclude>
                         	<exclude>**/src/main/resources/**/*words_to_filter.txt</exclude>
+                        	<exclude>**/src/main/resources/**/*common_passwords.txt</exclude>
                         	<exclude>**/.gitignore</exclude>
                         	<exclude>**/.gitattributes</exclude>
                         	<exclude>**/rebel.xml</exclude>
@@ -791,7 +793,7 @@ the software.
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.3-1101-jdbc41</version>
+                <version>42.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -1000,7 +1002,7 @@ the software.
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>1.8.5</version>
+                <version>2.7.5</version>
                 <scope>test</scope>
                 <exclusions> 
 					<exclusion>

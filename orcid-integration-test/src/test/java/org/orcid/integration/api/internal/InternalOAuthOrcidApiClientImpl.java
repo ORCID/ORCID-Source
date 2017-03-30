@@ -39,7 +39,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<ClientResponse> {
+public class InternalOAuthOrcidApiClientImpl {
 
     private OrcidClientHelper orcidClientHelper;
 
@@ -47,7 +47,6 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
         orcidClientHelper = new OrcidClientHelper(baseUri, c);
     }
     
-    @Override
     @GET
     @Produces("text/plain")
     @Path("/status")
@@ -56,7 +55,6 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
         return orcidClientHelper.getClientResponseWithToken(statusPath, MediaType.TEXT_HTML, accessToken);
     }
 
-    @Override
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path("/{orcid}/authenticate")
@@ -74,7 +72,6 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
      *            client type is.
      * @return
      */
-    @Override
     @POST
     @Path(T2OrcidApiService.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
@@ -85,7 +82,6 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
         return resource.entity(formParams).post(ClientResponse.class);
     }
     
-    @Override
     @GET
     @Path(OrcidApiConstants.MEMBER_INFO)
     @Produces(value = { MediaType.APPLICATION_JSON })

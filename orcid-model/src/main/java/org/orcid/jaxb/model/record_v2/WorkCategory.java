@@ -29,7 +29,7 @@ public enum WorkCategory {
             WorkType.NEWSPAPER_ARTICLE, WorkType.ONLINE_RESOURCE, WorkType.REPORT, WorkType.RESEARCH_TOOL, WorkType.SUPERVISED_STUDENT_PUBLICATION, WorkType.TEST,
             WorkType.TRANSLATION, WorkType.WEBSITE, WorkType.WORKING_PAPER), @XmlEnumValue("conference")
     CONFERENCE("conference", WorkType.CONFERENCE_ABSTRACT, WorkType.CONFERENCE_PAPER, WorkType.CONFERENCE_POSTER), @XmlEnumValue("intellectual_property")
-    INTELLECTUAL_PROPERTY("intellectual_property", WorkType.DISCLOSURE, WorkType.LICENSE, WorkType.PATENT, WorkType.REGISTERED_COPYRIGHT), @XmlEnumValue("other_output")
+    INTELLECTUAL_PROPERTY("intellectual_property", WorkType.DISCLOSURE, WorkType.LICENSE, WorkType.PATENT, WorkType.REGISTERED_COPYRIGHT, WorkType.TRADEMARK), @XmlEnumValue("other_output")
     OTHER_OUTPUT("other_output", WorkType.ARTISTIC_PERFORMANCE, WorkType.DATA_SET, WorkType.INVENTION, WorkType.LECTURE_SPEECH, WorkType.OTHER,
             WorkType.RESEARCH_TECHNIQUE, WorkType.SPIN_OFF_COMPANY, WorkType.STANDARDS_AND_POLICY, WorkType.TECHNICAL_STANDARD, WorkType.UNDEFINED);
 

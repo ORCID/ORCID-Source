@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 
 
 /**
@@ -58,4 +59,6 @@ public interface EmailManager extends EmailManagerReadOnly {
      *         client source of the record allows auto deprecating records
      */
     boolean isAutoDeprecateEnableForEmail(String email);
+
+    void update(EmailEntity emailEntity);
 }

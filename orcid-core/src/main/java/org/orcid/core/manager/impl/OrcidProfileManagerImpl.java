@@ -32,16 +32,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 
@@ -60,6 +53,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.UpdateOptions;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesContainer;
@@ -88,7 +82,6 @@ import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -164,12 +157,17 @@ import net.sf.ehcache.Element;
 @Deprecated
 public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl implements OrcidProfileManager {
 
+    private static final int INDEXING_BATCH_SIZE = 100;
+    
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
 
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    private ProfileDao profileDaoReadOnly;
+    
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
@@ -242,16 +240,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         this.notificationManager = notificationManager;
     }
 
-    private int numberOfIndexingThreads;
-
-    private static final int INDEXING_BATCH_SIZE = 100;
-
     public void setOrcidIndexManager(OrcidIndexManager orcidIndexManager) {
         this.orcidIndexManager = orcidIndexManager;
-    }
-
-    public void setNumberOfIndexingThreads(int numberOfIndexingThreads) {
-        this.numberOfIndexingThreads = numberOfIndexingThreads;
     }
 
     public void setClaimReminderAfterDays(int claimReminderAfterDays) {
@@ -375,10 +365,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
-
+    
     @Override
     @Transactional
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
+        return updateOrcidProfile(orcidProfile, UpdateOptions.ALL);
+    }
+
+    @Override
+    @Transactional
+    public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
@@ -403,7 +399,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
         addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility, claimed);
         
-        ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
+        ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity, updateOptions);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         profileDao.flush();
@@ -594,6 +590,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     }
 
+    @Deprecated
     public boolean exists(String orcid) {
         return profileDao.exists(orcid);
     }
@@ -667,28 +664,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             return null;
         }
     }
-
-    /**
-     * Retrieves the orcid profile given an identifier, without any personal
-     * internal data.
-     * <p/>
-     * Specifically, this is for use by tier 1
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the full orcid profile
-     */
-    @Override
-    @Transactional
-    public OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid) {
-        ProfileEntity profileEntity = profileDao.find(orcid);
-        if (profileEntity != null) {
-            return adapter.toOrcidProfile(profileEntity);
-        } else {
-            return null;
-        }
-    }
-
+    
     /**
      * Updates the ORCID works only
      * 
@@ -813,7 +789,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
         // preserve the visibility settings
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, UpdateOptions.NO_ACTIVITIES);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.BIO);
         return profileToReturn;
     }
@@ -845,7 +821,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, UpdateOptions.AFFILIATIONS_ONLY);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.AFFILIATION);
         return profileToReturn;
     }
@@ -878,7 +854,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         orcidJaxbCopyManager.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, UpdateOptions.FUNDINGS_ONLY);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.FUNDING);
         return profileToReturn;
     }
@@ -1836,11 +1812,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         indexingStatuses.add(status);
         boolean connectionIssue = false;
         do{
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
+            orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
             LOG.info("processing batch of "+orcidsForIndexing.size());
             for (Pair<String, IndexingStatus> p : orcidsForIndexing){
                 String orcid = p.getLeft();
-                Date last = profileDao.retrieveLastModifiedDate(orcid);
+                Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
                 if (messaging.send(mess,destination))
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
@@ -1875,98 +1851,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     public void processProfilesWithFailedFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
     }
-    
-    
-    @Override
-    @Deprecated
-    public void processProfilesPendingIndexing() {
-        // XXX There are some concurrency related edge cases to fix here.
-        LOG.info("About to process profiles pending indexing");
-        if (executorService == null || executorService.isShutdown()) {
-            synchronized (executorServiceLock) {
-                if (executorService == null || executorService.isShutdown()) {
-                    executorService = createThreadPoolForIndexing();
-                } else {
-                    // already running
-                    return;
-                }
-            }
-        } else {
-            // already running
-            return;
-        }
-
-        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
-        List<String> orcidFailures = new ArrayList<>();
-        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
-        indexingStatuses.add(IndexingStatus.PENDING);
-        indexingStatuses.add(IndexingStatus.REINDEX);
-        do {
-            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
-            LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
-            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
-                String orcid = p.getLeft();
-                IndexingStatus status = p.getRight();
-                FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid, status));
-                executorService.execute(task);
-                futureHM.put(orcid, task);
-            }
-            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
-                String orcid = p.getLeft();
-                try {                    
-                    futureHM.remove(orcid).get(240, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    orcidFailures.add(orcid);
-                    LOG.error(orcid + " InterruptedException ", e);
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
-                } catch (ExecutionException e) {
-                    orcidFailures.add(orcid);
-                    LOG.error(orcid + " ExecutionException ", e);
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
-                } catch (TimeoutException e) {
-                    orcidFailures.add(orcid);
-                    LOG.error(orcid + " TimeoutException ", e);
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.FAILED);
-                }
-            }
-        } while (!orcidsForIndexing.isEmpty());
-        if (!executorService.isShutdown()) {
-            synchronized (executorServiceLock) {
-                if (!executorService.isShutdown()) {
-                    executorService.shutdown();
-                    try {
-                        executorService.awaitTermination(120, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        LOG.warn("Received an interupt exception whilst waiting for the indexing to complete", e);
-                    }
-                    LOG.info("Finished processing profiles pending indexing");
-                }
-            }
-        }
-    }
-
-    class GetPendingOrcid implements Callable<String> {
-        String orcid = null;
-        IndexingStatus status = null;
-
-        public GetPendingOrcid(String orcid, IndexingStatus status) {
-            this.orcid = orcid;
-            this.status = status;
-        }
-
-        @Override
-        public String call() throws Exception {
-            processProfilePendingIndexingInTransaction(orcid, status);
-            return "was successful " + orcid;
-        }
-
-    }
-
-    private ExecutorService createThreadPoolForIndexing() {
-        return new ThreadPoolExecutor(numberOfIndexingThreads, numberOfIndexingThreads, 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
-    }
-
+        
     public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -2000,29 +1885,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         });
-    }
-
-    @Override
-    public void processProfilesThatMissedIndexing() {
-        LOG.info("About to process profiles that missed indexing");
-        List<ProfileEntity> profileEntities = Collections.emptyList();
-        do {
-            profileEntities = profileDao.findProfilesThatMissedIndexing(INDEXING_BATCH_SIZE);
-            for (ProfileEntity profileEntity : profileEntities) {
-                LOG.info("Profile missed indexing: orcid={}, lastModified={}, lastIndexed={}, indexingStatus={}",
-                        new Object[] { profileEntity.getId(), profileEntity.getLastModified(), profileEntity.getLastIndexedDate(), profileEntity.getIndexingStatus() });
-                profileDao.updateIndexingStatus(profileEntity.getId(), IndexingStatus.PENDING);
-            }
-        } while (!profileEntities.isEmpty());
-        LOG.info("Finished processing profiles that missed indexing");
-    }
+    }    
 
     @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
         LOG.info("About to process unclaimed profiles to flag for indexing");
         List<String> orcidsToFlag = Collections.<String> emptyList();
         do {
-            orcidsToFlag = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
+            orcidsToFlag = profileDaoReadOnly.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
             LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
             for (String orcid : orcidsToFlag) {
                 LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
@@ -2036,7 +1906,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         LOG.info("About to process unclaimed profiles for reminder");
         List<String> orcidsToRemind = Collections.<String> emptyList();
         do {
-            orcidsToRemind = profileDao.findUnclaimedNeedingReminder(claimReminderAfterDays, INDEXING_BATCH_SIZE, orcidsToRemind);
+            orcidsToRemind = profileDaoReadOnly.findUnclaimedNeedingReminder(claimReminderAfterDays, INDEXING_BATCH_SIZE, orcidsToRemind);
             LOG.info("Got batch of {} unclaimed profiles for reminder", orcidsToRemind.size());
             for (final String orcid : orcidsToRemind) {
                 processUnclaimedProfileForReminderInTransaction(orcid);
@@ -2049,7 +1919,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         LOG.info("About to process unclaimed profiles for reminder");
         List<String> emails = Collections.<String> emptyList();
         do {
-            emails = profileDao.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            emails = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, INDEXING_BATCH_SIZE, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
             LOG.info("Got batch of {} unclaimed profiles for reminder", emails.size());
             for (String email : emails) {
                 processUnverifiedEmails7DaysInTransaction(email);
@@ -2088,12 +1958,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private Set<OrcidGrantedAuthority> getGrantedAuthorities(ProfileEntity profileEntity) {
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(profileEntity);
-
-        if (profileEntity.getOrcidType() == null || profileEntity.getOrcidType().equals(OrcidType.USER))
+        OrcidType userType = (profileEntity.getOrcidType() == null) ? OrcidType.USER : OrcidType.fromValue(profileEntity.getOrcidType().value());
+        if (userType.equals(OrcidType.USER))
             authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.ADMIN))
+        else if (userType.equals(OrcidType.ADMIN))
             authority.setAuthority(OrcidWebRole.ROLE_ADMIN.getAuthority());
-        else if (profileEntity.getOrcidType().equals(OrcidType.GROUP)) {
+        else if (userType.equals(OrcidType.GROUP)) {
             switch (profileEntity.getGroupType()) {
             case BASIC:
                 authority.setAuthority(OrcidWebRole.ROLE_BASIC.getAuthority());
@@ -2140,6 +2010,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
+    @Deprecated
     public void updateLastModifiedDate(String orcid) {
         profileEntityManager.updateLastModifed(orcid);
     }
@@ -2151,12 +2022,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     public void clearOrcidProfileCache() {
         orcidProfileCacheManager.removeAll();
-    }
-
-    public void addLocale(OrcidProfile orcidProfile, Locale locale) {
-        if (orcidProfile.getOrcidPreferences() == null)
-            orcidProfile.setOrcidPreferences(new OrcidPreferences());
-        orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
     /**

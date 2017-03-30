@@ -304,4 +304,9 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         return mailtoPattern.matcher(email).replaceAll("").trim();
     }
 
+    @Override
+    public void incrementFailedCount(String shibIdentityProvider) {
+        identityProviderDao.incrementFailedCount(shibIdentityProvider);
+    }
+
 }

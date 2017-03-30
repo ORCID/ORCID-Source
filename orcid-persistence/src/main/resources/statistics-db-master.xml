@@ -34,5 +34,6 @@
 
     <include file="/db/statistics/install.xml"/>
     <include file="/db/statistics/add_statistic_values_key_id_index.xml"/>
+    <include file="/db/statistics/grant_read_permissions_to_orcidro.xml" />
         
 </databaseChangeLog>

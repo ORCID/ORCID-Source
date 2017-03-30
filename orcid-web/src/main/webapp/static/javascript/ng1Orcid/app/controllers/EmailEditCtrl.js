@@ -1,4 +1,4 @@
-angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
+angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', 'initialConfigService', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, initialConfigService, $timeout, $cookies, commonSrvc) {
     bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
@@ -9,6 +9,7 @@ angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'e
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;
     $scope.showEmailVerifBox = false;
+    $scope.showUnverifiedEmailSetPrimaryBox = false;
     $scope.commonSrvc = commonSrvc;
     $scope.scrollTop = 0;    
 
@@ -22,12 +23,29 @@ angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'e
             if(isIE() == 7) $scope.fixZindexesIE7();
         });
     };
+    
+    $scope.$on('rebuildEmails', function(event, data) {
+        emailSrvc.emails = data;
+    });
+
+    $scope.$on('unverifiedSetPrimary', function(event, data){
+        if (data.newValue == true && configuration.showModalManualEditVerificationEnabled == true) {
+            $scope.showUnverifiedEmailSetPrimaryBox = true;
+            
+        }
+        else {
+            $scope.showUnverifiedEmailSetPrimaryBox =false;
+        }
+        $scope.$apply(); 
+    });
 
     //init
     $scope.password = null;
     $scope.curPrivToggle = null;
     emailSrvc.getEmails();
     emailSrvc.initInputEmail();
+    //check if verify to edit manually is enabled
+    var configuration = initialConfigService.getInitialConfiguration();
 
     $scope.fixZindexesIE7 =  function(){
         fixZindexIE7('.popover',2000);
@@ -83,6 +101,10 @@ angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'e
     
     $scope.closeVerificationBox = function(){
         $scope.showEmailVerifBox = false;
+    };
+
+    $scope.closeUnverifiedEmailSetPrimaryBox = function(){
+        $scope.showUnverifiedEmailSetPrimaryBox = false;
     };
 
     $scope.submitModal = function (obj, $event) {
@@ -184,6 +206,6 @@ angular.module('orcidApp').controller('EmailEditCtrl', ['$scope', '$compile', 'e
          };
     };
     
-    $scope.asianEmailTableStyleFix();
+    $scope.asianEmailTableStyleFix(); 
     
 }]);

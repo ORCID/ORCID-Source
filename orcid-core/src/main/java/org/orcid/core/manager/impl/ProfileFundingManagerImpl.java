@@ -55,6 +55,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Resource 
     private FundingSubTypeToIndexDao fundingSubTypeToIndexDao;
     
+    @Resource 
+    private FundingSubTypeToIndexDao fundingSubTypeToIndexDaoReadOnly;
+    
     @Resource
     private OrgManager orgManager;
     
@@ -117,7 +120,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      * */
     public void indexFundingSubTypes() {
         LOGGER.info("Indexing funding subtypes");
-        List<String> subtypes = fundingSubTypeToIndexDao.getSubTypes();
+        List<String> subtypes = fundingSubTypeToIndexDaoReadOnly.getSubTypes();
         List<String> wordsToFilter = new ArrayList<String>();
         try {
             wordsToFilter = IOUtils.readLines(getClass().getResourceAsStream("words_to_filter.txt"));

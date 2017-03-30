@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.ArgumentMatchers.isNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -73,7 +75,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:statistics-core-context.xml", "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class AdminControllerTest extends BaseControllerTest {
 
@@ -389,7 +391,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, results.get("reviewedList").size());
         assertTrue(results.get("reviewedList").contains("reviewed"));
 
-        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(orcidProfileManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.util.List;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.jaxb.model.record_v2.WorkBulk;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase{           
     
@@ -73,4 +74,14 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase{
      * @return Works element with the WorkSummary elements grouped                  
      * */
     Works groupWorks(List<WorkSummary> works, boolean justPublic);
+
+    /**
+     * Returns a WorkBulk object containing a list of specified works.
+     * 
+     * @param orcid
+     * @param ids of required works
+     * @return WorkBulk element containing the specified works
+     */
+    WorkBulk findWorkBulk(String orcid, String putCodesAsString, long profileLastModified);
+
 }

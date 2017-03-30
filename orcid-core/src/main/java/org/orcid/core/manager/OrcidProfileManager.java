@@ -17,7 +17,6 @@
 package org.orcid.core.manager;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
@@ -60,6 +59,8 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @return the updated profile as it new state dictates
      */
     OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile);
+    
+    OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, UpdateOptions updateOptions);    
 
     /**
      * Returns true if ORCID exist.
@@ -70,18 +71,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     public boolean exists(String orcid);
 
     OrcidProfile retrievePublicOrcidProfile(String orcid);
-
-    /**
-     * Retrieves the orcid profile given an identifier, without any personal
-     * internal data.
-     * <p/>
-     * Specifically, this is for use by tier 1
-     * 
-     * @param orcid
-     *            the identifier
-     * @return the full orcid profile
-     */
-    OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid);
 
     /**
      * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
@@ -203,12 +192,8 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      */
     OrcidProfile addExternalIdentifiers(OrcidProfile orcidProfile);
 
-    OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);
-
-    void processProfilesPendingIndexing();
+    OrcidProfile revokeDelegate(String giverOrcid, String receiverOrcid);    
     
-    void processProfilesThatMissedIndexing();
-
     void processUnclaimedProfilesToFlagForIndexing();
     
     void processUnclaimedProfilesForReminder();
@@ -243,9 +228,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void updateLastModifiedDate(String orcid);
 
-    void clearOrcidProfileCache();
-
-    public void addLocale(OrcidProfile orcidProfile, Locale locale);
+    void clearOrcidProfileCache();    
 
     public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus);
     
@@ -257,5 +240,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     void processProfilesWithFailedFlagAndAddToMessageQueue();
 
-    void processProfilesWithPendingFlagAndAddToMessageQueue();    
+    void processProfilesWithPendingFlagAndAddToMessageQueue();
+
 }

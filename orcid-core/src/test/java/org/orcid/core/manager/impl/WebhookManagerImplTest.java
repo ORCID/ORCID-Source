@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
@@ -69,9 +70,9 @@ public class WebhookManagerImplTest extends BaseTest {
 
         WebhookManagerImpl webhookManagerImpl = getTargetObject(webhookManager, WebhookManagerImpl.class);
         webhookManagerImpl.setHttpClient(mockHttpClient);
-        when(mockHttpClient.execute(Matchers.<HttpUriRequest> any())).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not found"));
-        when(mockHttpClient.execute(Matchers.<HttpPost> argThat(new ArgumentMatcher<HttpPost>() {
-            public boolean matches(Object argument) {
+        when(mockHttpClient.execute(ArgumentMatchers.<HttpUriRequest> any())).thenReturn(new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "Not found"));
+        when(mockHttpClient.execute(ArgumentMatchers.<HttpPost> argThat(new ArgumentMatcher<HttpPost>() {
+            public boolean matches(HttpPost argument) {
                 if (argument == null || !(argument instanceof HttpPost)) {
                     return false;
                 }

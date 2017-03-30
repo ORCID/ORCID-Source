@@ -25,6 +25,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>**/orcid-persistence-context.xml</include>
+                    <include>**/statistics-persistence-context.xml</include>
                 </includes>
             </resource>
             <resource>
@@ -38,6 +39,7 @@
                 </includes>
                 <excludes>
                     <exclude>**/orcid-persistence-context.xml</exclude>
+                    <exclude>**/statistics-persistence-context.xml</exclude>
                 </excludes>
             </resource>
         </resources>

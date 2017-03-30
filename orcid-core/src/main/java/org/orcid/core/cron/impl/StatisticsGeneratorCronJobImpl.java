@@ -16,10 +16,8 @@
  */
 package org.orcid.core.cron.impl;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -27,8 +25,8 @@ import javax.annotation.Resource;
 import org.orcid.core.cron.StatisticsGeneratorCronJob;
 import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.manager.StatisticsManager;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
+import org.orcid.core.manager.read_only.StatisticsManagerReadOnly;
+import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +40,9 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     @Resource
     private StatisticsManager statisticsManager;
 
+    @Resource
+    private StatisticsManagerReadOnly statisticsManagerReadOnly;
+    
     private long halfHourInMillis = 30 * 60 * 1000;
 
     private long hourInMillis = halfHourInMillis * 2;
@@ -57,7 +58,7 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
     public void generateStatistics() {
         LOG.debug("About to run statistics generator thread");
         boolean run = false;
-        StatisticKeyEntity lastStatisticsKey = statisticsManager.getLatestKey();
+        StatisticKeyEntity lastStatisticsKey = statisticsManagerReadOnly.getLatestKey();
 
         if (lastStatisticsKey != null && lastStatisticsKey.getGenerationDate() != null) {
             Date lastTimeJobRuns = lastStatisticsKey.getGenerationDate();
@@ -76,17 +77,9 @@ public class StatisticsGeneratorCronJobImpl implements StatisticsGeneratorCronJo
         }
 
         if (run) {
-            LOG.info("Last time the statistics cron job ran: {}", new Date());
             Map<String, Long> statistics = statisticsGeneratorManager.generateStatistics();
-            StatisticKeyEntity statisticKey = statisticsManager.createKey();
-            List<StatisticValuesEntity> entities = new ArrayList<StatisticValuesEntity>();
-
-            // Store statistics on database
-            for (Map.Entry<String, Long> entry : statistics.entrySet()) {
-                entities.add(new StatisticValuesEntity(statisticKey, entry.getKey(), entry.getValue()));
-
-            }
-            statisticsManager.saveStatistics(entities);
+            statisticsManager.saveStatistics(statistics);           
+            LOG.info("Last time the statistics cron job ran: {}", new Date());            
         }
     }
 

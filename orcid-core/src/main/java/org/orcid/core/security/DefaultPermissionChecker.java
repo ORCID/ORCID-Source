@@ -310,13 +310,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
         if (userOrcid.equals(orcid)) {
             return;
         } else {
-            // Have they been granted permission?
-            if (profileEntityManager.hasBeenGivenPermissionTo(orcid, userOrcid)) {
-                // TODO: We will need to parse both incoming and existing to
-                // make sure they're not trying to
-                // update private information.
-                return;
-            } else if(profileDao.isProfileDeprecated(orcid)) {
+            if(profileDao.isProfileDeprecated(orcid)) {
                 ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
                 Map<String, String> params = new HashMap<String, String>();
                 StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
