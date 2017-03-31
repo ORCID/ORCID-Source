@@ -16,6 +16,7 @@
  */
 package org.orcid.core.web.filters;
 
+import java.security.AccessControlException;
 import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
@@ -43,12 +44,12 @@ public class TokenTargetFilter implements ContainerRequestFilter {
     public ContainerRequest filter(ContainerRequest request) {
         Matcher m = OrcidStringUtils.orcidPattern.matcher(request.getPath());
         if (m.find()) {
-            validateTargetRecord(m.group());
+            validateTargetRecord(m.group(), request);
         }
         return request;
     }
 
-    private void validateTargetRecord(String targetOrcid) {
+    private void validateTargetRecord(String targetOrcid, ContainerRequest request) {
         // Verify if it is the owner of the token
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
@@ -61,11 +62,20 @@ public class TokenTargetFilter implements ContainerRequestFilter {
                     if (principal instanceof ProfileEntity) {
                         ProfileEntity tokenOwner = (ProfileEntity) principal;
                         if (!targetOrcid.equals(tokenOwner.getId())) {
-                            throw new OrcidUnauthorizedException("Access token is for a different record");                            
+                            throwException(request);                            
                         }
                     }
                 }
             }
+        }
+    }
+    
+    private void throwException(ContainerRequest request) {        
+        String apiVersion = request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME);
+        if(apiVersion.equals("1.2")) {
+            throw new AccessControlException("You do not have the required permissions.");
+        } else {
+            throw new OrcidUnauthorizedException("Access token is for a different record");
         }
     }
 }

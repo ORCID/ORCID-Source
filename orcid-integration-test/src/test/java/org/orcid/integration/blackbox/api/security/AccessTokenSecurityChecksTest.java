@@ -287,11 +287,11 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
     
     private void evaluateResponseOn12API(ClientResponse response) {
         assertNotNull(response);
-        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
                 
         OrcidMessage orcidMessage = response.getEntity(OrcidMessage.class);
         assertNotNull(orcidMessage);        
         assertNotNull(orcidMessage.getErrorDesc());
-        assertEquals("Access token is for a different record", orcidMessage.getErrorDesc().getContent());
+        assertEquals("Security problem : You do not have the required permissions.", orcidMessage.getErrorDesc().getContent());
     }
 }
