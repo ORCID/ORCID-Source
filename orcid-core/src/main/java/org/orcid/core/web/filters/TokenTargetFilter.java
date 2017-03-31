@@ -16,7 +16,6 @@
  */
 package org.orcid.core.web.filters;
 
-import java.security.AccessControlException;
 import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
@@ -27,7 +26,6 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -45,40 +43,29 @@ public class TokenTargetFilter implements ContainerRequestFilter {
     public ContainerRequest filter(ContainerRequest request) {
         Matcher m = OrcidStringUtils.orcidPattern.matcher(request.getPath());
         if (m.find()) {
-            String orcid = m.group();
-            String tokenOwner = getProfileEntityFromAuthentication();
-            if (!orcid.equals(tokenOwner)) {
-                throw new OrcidUnauthorizedException("Access token is for a different record");
-            }
+            validateTargetRecord(m.group());
         }
         return request;
     }
 
-    private String getProfileEntityFromAuthentication() {
+    private void validateTargetRecord(String targetOrcid) {
+        // Verify if it is the owner of the token
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             Authentication authentication = context.getAuthentication();
             if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
                 OAuth2Authentication oauth2Auth = (OAuth2Authentication) authentication;
-                Object principal = oauth2Auth.getPrincipal();
-                if (principal instanceof ProfileEntity) {
-                    ProfileEntity p = (ProfileEntity) principal;
-                    return p.getId();
-                }
-            } else {
-                for (GrantedAuthority grantedAuth : authentication.getAuthorities()) {
-                    if ("ROLE_ANONYMOUS".equals(grantedAuth.getAuthority())) {
-                        // Assume that anonymous authority is like not having
-                        // authority at all
-                        return null;
+                Authentication userAuthentication = oauth2Auth.getUserAuthentication();
+                if (userAuthentication != null) {
+                    Object principal = userAuthentication.getPrincipal();
+                    if (principal instanceof ProfileEntity) {
+                        ProfileEntity tokenOwner = (ProfileEntity) principal;
+                        if (!targetOrcid.equals(tokenOwner.getId())) {
+                            throw new OrcidUnauthorizedException("Access token is for a different record");                            
+                        }
                     }
                 }
-
-                throw new AccessControlException(
-                        "Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
             }
         }
-
-        return null;
     }
 }
