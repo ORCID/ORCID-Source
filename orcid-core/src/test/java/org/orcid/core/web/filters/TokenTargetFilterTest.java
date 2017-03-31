@@ -21,6 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
+import java.security.AccessControlException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,11 +61,23 @@ public class TokenTargetFilterTest {
         filter.filter(request);
     }
     
+    @Test(expected = AccessControlException.class)
+    public void tokenUsedOnTheWrongUser12ApiTest() {
+        setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v1.2/" + ORCID2);
+        Mockito.when(request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME)).thenReturn("1.2");
+        TokenTargetFilter filter = new TokenTargetFilter();
+        filter.filter(request);
+        fail();
+    }
+    
     @Test(expected = OrcidUnauthorizedException.class)
-    public void tokenUsedOnTheWrongUserTest() {
+    public void tokenUsedOnTheWrongUser20ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
         ContainerRequest request = Mockito.mock(ContainerRequest.class);
         Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);
+        Mockito.when(request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME)).thenReturn("2.0");
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);
         fail();
