@@ -922,7 +922,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("link", link);
 
-        ProfileEntity managedEntity = profileDao.find(managedOrcid);
+        ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managedOrcid);
         ProfileEntity trustedEntity = profileEntityCacheManager.retrieve(trustedOrcid);
         
         String emailNameForDelegate = deriveEmailFriendlyName(managedEntity);
@@ -932,7 +932,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("trustedOrcidValue", trustedOrcid);
         templateParams.put("managedOrcidValue", managedOrcid);
 
-        String primaryEmail = managedEntity.getPrimaryEmail().getId();
+        String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getId();
         if (primaryEmail == null) {
             LOGGER.info("Cant send admin delegate email if primary email is null: {}", managedOrcid);
             return;

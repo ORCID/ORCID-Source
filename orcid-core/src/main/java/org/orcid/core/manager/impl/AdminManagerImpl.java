@@ -141,9 +141,7 @@ public class AdminManagerImpl implements AdminManager {
         // Send email to managed account
         notificationManager.sendDelegationRequestEmail(managed, trusted, link);
 
-        ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managed); 
-        
-        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", managedEntity.getPrimaryEmail().getId()));
+        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", emailManager.findPrimaryEmail(managed)));
         
         return request;
     }

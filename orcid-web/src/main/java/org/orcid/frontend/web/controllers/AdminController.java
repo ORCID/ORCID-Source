@@ -37,6 +37,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
@@ -191,7 +192,7 @@ public class AdminController extends BaseController {
                         profileDetails.setGivenNames(recordName.getCreditName());
                     }
                 }                                   
-                profileDetails.setEmail(profile.getPrimaryEmail().getId());                                    
+                profileDetails.setEmail(emailManager.findPrimaryEmail(orcid).getId());                                    
             }            
         } catch (IllegalArgumentException iae) {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
@@ -258,12 +259,11 @@ public class AdminController extends BaseController {
                     orcid = email.get(idEmail);
                 }
 
-                ProfileEntity profile = null;
                 try {
-                    profile = profileEntityCacheManager.retrieve(orcid);
-                    if (profile != null) {
-                        if (profile.getPrimaryEmail() != null) {
-                            builder.append(profile.getPrimaryEmail().getId());
+                    if (profileEntityManager.orcidExists(orcid)) {
+                        EmailEntity email = emailManager.findPrimaryEmail(orcid);
+                        if (email != null) {
+                            builder.append(email.getId());
                         } else {
                             builder.append(OUT_NOT_AVAILABLE);
                         }
