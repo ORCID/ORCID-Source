@@ -277,6 +277,7 @@ public class AdminController extends BaseController {
                     }
                 } catch(Exception e) {
                     //Invalid orcid in the params, so, we can just ignore it
+                    LOGGER.warn("Unable to get info for " + idEmail, e);
                 }
                 builder.append(OUT_NEW_LINE);
             }
@@ -517,9 +518,9 @@ public class AdminController extends BaseController {
             orcid = orcidOrEmail;
         }
 
-        if (PojoUtil.isEmpty(orcid))
+        if (PojoUtil.isEmpty(orcid) || !profileEntityManager.orcidExists(orcid))
             return false;
-
+        
         return profileEntityManager.isProfileClaimed(orcid);
     }
 
@@ -714,7 +715,7 @@ public class AdminController extends BaseController {
         for (String emailOrOrcid : emailOrOrcidList) {
             String orcidId = getOrcidFromParam(emailOrOrcid);
             if (orcidId == null) {
-                notFoundIds.add(orcidId);
+                notFoundIds.add(emailOrOrcid);
             } else {
                 if (!profileEntityManager.orcidExists(orcidId)) {
                     notFoundIds.add(orcidId);
