@@ -701,5 +701,33 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public Locale retrieveLocale(String orcid) {
         return profileDao.retrieveLocale(orcid);
-    }    
+    }
+
+    /**
+     * Set the locked status of an account to true
+     * 
+     * @param orcid
+     *            the id of the profile that should be locked
+     * @return true if the account was locked
+     */
+    @Override
+    public boolean lockProfile(String orcid, String lockReason, String description) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
+        if (wasLocked) {
+            notificationManager.sendOrcidLockedEmail(orcid);
+        }
+        return wasLocked;
+    }
+    
+    /**
+     * Set the locked status of an account to false
+     * 
+     * @param orcid
+     *            the id of the profile that should be unlocked
+     * @return true if the account was unlocked
+     */
+    @Override
+    public boolean unlockProfile(String orcid) {
+        return profileDao.unlockProfile(orcid);
+    }   
 }

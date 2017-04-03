@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -84,6 +85,9 @@ public class AdminController extends BaseController {
     @Resource
     OrcidSecurityManager orcidSecurityManager;
     
+    @Resource
+    protected EmailManager emailManager;
+        
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_NOT_AVAILABLE = "N/A";
@@ -558,17 +562,18 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcidId = getOrcidFromParam(tokenizer.nextToken());                
+                String nextToken = tokenizer.nextToken();
+                String orcidId = getOrcidFromParam(nextToken);                
                 if (!profileEntityManager.orcidExists(orcidId)) {
-                    notFoundIds.add(orcidId);
+                    notFoundIds.add(nextToken);
                 } else {
                     ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
                     if (!entity.isAccountNonLocked()) {
-                        lockedIds.add(orcidId);
+                        lockedIds.add(nextToken);
                     } else if (entity.isReviewed()) {
-                        reviewedIds.add(orcidId);
+                        reviewedIds.add(nextToken);
                     } else {
-                        orcidProfileManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
+                        profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
                         successIds.add(orcidId);
                     }
                 }
@@ -608,16 +613,17 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcidId = getOrcidFromParam(tokenizer.nextToken());                
+                String nextToken = tokenizer.nextToken();
+                String orcidId = getOrcidFromParam(nextToken);
                 if (!profileEntityManager.orcidExists(orcidId)) {
-                    notFoundIds.add(orcidId);
+                    notFoundIds.add(nextToken);
                 } else {
                     ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
                     if (entity.isAccountNonLocked()) {
-                        unlockedIds.add(orcidId);
+                        unlockedIds.add(nextToken);
                     } else {
-                        orcidProfileManager.unlockProfile(orcidId);
-                        successIds.add(orcidId);
+                        profileEntityManager.unlockProfile(orcidId);
+                        successIds.add(nextToken);
                     }
                 }
             }
@@ -638,16 +644,17 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcidId = getOrcidFromParam(tokenizer.nextToken());
+                String nextToken = tokenizer.nextToken();
+                String orcidId = getOrcidFromParam(nextToken);
                 if (!profileEntityManager.orcidExists(orcidId)) {
-                    notFoundIds.add(orcidId);
+                    notFoundIds.add(nextToken);
                 } else {
                     ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
                     if (!entity.isReviewed()) {
-                        unreviewedIds.add(orcidId);
+                        unreviewedIds.add(nextToken);
                     } else {
                         profileEntityManager.unreviewProfile(orcidId);
-                        successIds.add(orcidId);
+                        successIds.add(nextToken);
                     }
                 }
             }
@@ -668,16 +675,17 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcidId = getOrcidFromParam(tokenizer.nextToken());
+                String nextToken = tokenizer.nextToken();
+                String orcidId = getOrcidFromParam(nextToken);
                 if (!profileEntityManager.orcidExists(orcidId)) {
-                    notFoundIds.add(orcidId);
+                    notFoundIds.add(nextToken);
                 } else {
                     ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
                     if (entity.isReviewed()) {
-                        reviewedIds.add(orcidId);
+                        reviewedIds.add(nextToken);
                     } else {
                         profileEntityManager.reviewProfile(orcidId);
-                        successIds.add(orcidId);
+                        successIds.add(nextToken);
                     }
                 }
             }

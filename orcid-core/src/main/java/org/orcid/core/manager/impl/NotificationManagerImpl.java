@@ -318,21 +318,28 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendOrcidLockedEmail(OrcidProfile orcidToLock) {
-
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject("email.subject.locked", orcidToLock);
-        String email = orcidToLock.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
-        String emailFriendlyName = deriveEmailFriendlyName(orcidToLock);
+    public void sendOrcidLockedEmail(String orcidToLock) {
+        ProfileEntity profile = profileDao.find(orcidToLock);
+                
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        Locale userLocale = LocaleUtils.toLocale("en");
+        
+        if(locale != null) {
+            userLocale = LocaleUtils.toLocale(locale.value());
+        }   
+        
+        String subject = getSubject("email.subject.locked", userLocale);
+        String email = profile.getPrimaryEmail().getId();
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        
+        Map<String, Object> templateParams = new HashMap<String, Object>();                
         templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", orcidToLock.getOrcidIdentifier().getPath());
+        templateParams.put("orcid", orcidToLock);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, orcidToLock);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("locked_orcid_email.ftl", templateParams);

@@ -86,5 +86,9 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public void updateIpAddress(String orcid, String ipAddress);
     
-    public Locale retrieveLocale(String orcid);            
+    public Locale retrieveLocale(String orcid);      
+    
+    boolean lockProfile(String orcid, String lockReason, String description);
+
+    boolean unlockProfile(String orcid);
 }

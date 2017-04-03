@@ -62,7 +62,7 @@ public interface NotificationManager {
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 
-    void sendOrcidLockedEmail(OrcidProfile orcidToLock);
+    void sendOrcidLockedEmail(String orcidToLock);
 
     void sendApiRecordCreationEmail(String toEmail, String orcid);
     
