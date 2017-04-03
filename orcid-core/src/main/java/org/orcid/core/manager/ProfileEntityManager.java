@@ -71,6 +71,8 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
     
     boolean deactivateRecord(String orcid);
+    
+    boolean reactivateRecord(String orcid);
 
     void updateLastModifed(String orcid);
 
@@ -84,6 +86,5 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public void updateIpAddress(String orcid, String ipAddress);
     
-    public Locale retrieveLocale(String orcid);
-    
+    public Locale retrieveLocale(String orcid);            
 }

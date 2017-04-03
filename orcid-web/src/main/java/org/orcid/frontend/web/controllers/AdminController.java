@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,21 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidClientGroupManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.LockAccounts;
@@ -82,89 +73,25 @@ public class AdminController extends BaseController {
     ProfileEntityManager profileEntityManager;
 
     @Resource
-    ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource
     NotificationManager notificationManager;
-
-    @Resource
-    OrcidClientGroupManager orcidClientGroupManager;
-
-    @Resource
-    private EncryptionManager encryptionManager;
-
-    @Resource
-    private EmailManager emailManager;
-
-    @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
-    private GroupAdministratorController groupAdministratorController;
 
     @Resource
     private AdminManager adminManager;
 
+    @Resource(name = "profileEntityCacheManager")
+    ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    OrcidSecurityManager orcidSecurityManager;
+    
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_NOT_AVAILABLE = "N/A";
-    private static final String OUT_NEW_LINE = "\n";
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
-
-    public ProfileEntityManager getProfileEntityManager() {
-        return profileEntityManager;
-    }
-
-    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
-        this.profileEntityManager = profileEntityManager;
-    }
-
-    public NotificationManager getNotificationManager() {
-        return notificationManager;
-    }
-
-    public void setNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
-    }
-
-    public OrcidClientGroupManager getOrcidClientGroupManager() {
-        return orcidClientGroupManager;
-    }
-
-    public void setOrcidClientGroupManager(OrcidClientGroupManager orcidClientGroupManager) {
-        this.orcidClientGroupManager = orcidClientGroupManager;
-    }
-
-    public EmailManager getEmailManager() {
-        return emailManager;
-    }
-
-    public void setEmailManager(EmailManager emailManager) {
-        this.emailManager = emailManager;
-    }
-
-    @ModelAttribute("groupTypes")
-    public Map<String, String> retrieveGroupTypes() {
-        MemberType[] groupTypes = MemberType.values();
-        Map<String, String> groupTypesMap = new TreeMap<String, String>();
-
-        for (MemberType groupType : groupTypes) {
-            String key = groupType.value();
-            String value = key.replace('-', ' ');
-            groupTypesMap.put(key, value);
-        }
-
-        return groupTypesMap;
-    }
+    private static final String OUT_NEW_LINE = "\n";    
 
     @RequestMapping
     public ModelAndView getDeprecatedProfilesPage() {
-        ModelAndView mav = new ModelAndView("admin_actions");
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
-        mav.addObject("profile", profile);
-        return mav;
+        return new ModelAndView("admin_actions");        
     }
 
     @RequestMapping(value = { "/deprecate-profile/get-empty-deprecation-request.json" }, method = RequestMethod.GET)
@@ -184,9 +111,9 @@ public class AdminController extends BaseController {
     public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestParam("deprecated") String deprecatedOrcid, @RequestParam("primary") String primaryOrcid) {
         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
         // Check for errors
-        if (deprecatedOrcid == null || !OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
+        if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
-        } else if (primaryOrcid == null || !OrcidStringUtils.isValidOrcid(primaryOrcid)) {
+        } else if (!OrcidStringUtils.isValidOrcid(primaryOrcid)) {
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", primaryOrcid));
         } else if (deprecatedOrcid.equals(primaryOrcid)) {
             result.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
@@ -237,41 +164,31 @@ public class AdminController extends BaseController {
     public @ResponseBody ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
         ProfileDetails profileDetails = new ProfileDetails();
         try {
-            OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
-            if (profile != null) {
-                if (profile.getOrcidDeprecated() != null && profile.getOrcidDeprecated().getDate() != null) {
-                    profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
-                } else if (profile.isDeactivated()) {
-                    profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
-                } else {
-                    profileDetails.setOrcid(orcid);
-                    if (profile != null && profile.getOrcidBio().getPersonalDetails() != null) {
-                        boolean hasName = false;
-                        if (profile.getOrcidBio().getPersonalDetails().getFamilyName() != null) {
-                            profileDetails.setFamilyName(profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-                            hasName = true;
-                        }
-                        if (profile.getOrcidBio().getPersonalDetails().getGivenNames() != null) {
-                            profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-                            hasName = true;
-                        }
-
-                        if (!hasName) {
-                            profileDetails.setGivenNames(profile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-                        }
-                    }
-                    if (profile.getOrcidBio().getContactDetails() != null && profile.getOrcidBio().getContactDetails().getEmail() != null) {
-                        for (Email email : profile.getOrcidBio().getContactDetails().getEmail()) {
-                            if (email.isPrimary()) {
-                                profileDetails.setEmail(email.getValue());
-                                break;
-                            }
-                        }
-                    }
-                }
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);            
+            if (profile.getDeprecatedDate() != null || profile.getPrimaryRecord() != null) {
+                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.already_deprecated", orcid));
+            } else if (profile.getDeactivationDate() != null) {
+                profileDetails.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
             } else {
-                profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
-            }
+                profileDetails.setOrcid(orcid);
+                RecordNameEntity recordName = profile.getRecordNameEntity(); 
+                if (recordName != null) {
+                    boolean hasName = false;
+                    if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
+                        profileDetails.setFamilyName(recordName.getFamilyName());
+                        hasName = true;
+                    }
+                    if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
+                        profileDetails.setGivenNames(recordName.getGivenNames());
+                        hasName = true;
+                    }
+
+                    if (!hasName) {
+                        profileDetails.setGivenNames(recordName.getCreditName());
+                    }
+                }                                   
+                profileDetails.setEmail(profile.getPrimaryEmail().getId());                                    
+            }            
         } catch (IllegalArgumentException iae) {
             profileDetails.getErrors().add(getMessage("admin.profile_deprecation.errors.inexisting_orcid", orcid));
         }
@@ -280,18 +197,18 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
-    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid) {
-        OrcidProfile toReactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
+    public @ResponseBody ProfileDetails reactivateOrcidAccount(@RequestParam("orcid") String orcid) {        
+        ProfileEntity toReactivate = profileEntityCacheManager.retrieve(orcid);
         ProfileDetails result = new ProfileDetails();
         if (toReactivate == null)
             result.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
-        else if (!toReactivate.isDeactivated())
+        else if (toReactivate.getDeactivationDate() == null)
             result.getErrors().add(getMessage("admin.profile_reactivation.errors.already_active"));
-        else if (toReactivate.getOrcidDeprecated() != null)
+        else if (toReactivate.getDeprecatedDate() != null)
             result.getErrors().add(getMessage("admin.errors.deprecated_account"));
 
         if (result.getErrors() == null || result.getErrors().size() == 0)
-            orcidProfileManager.reactivateOrcidProfile(toReactivate);
+            profileEntityManager.reactivateRecord(orcid);
         return result;
     }
 
@@ -337,24 +254,25 @@ public class AdminController extends BaseController {
                     orcid = email.get(idEmail);
                 }
 
-                OrcidProfile profile = null;
-                if (orcid != null) {
-                    profile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                }
-                if (profile != null) {
-                    if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null
-                            && profile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
-                        builder.append(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+                ProfileEntity profile = null;
+                try {
+                    profile = profileEntityCacheManager.retrieve(orcid);
+                    if (profile != null) {
+                        if (profile.getPrimaryEmail() != null) {
+                            builder.append(profile.getPrimaryEmail().getId());
+                        } else {
+                            builder.append(OUT_NOT_AVAILABLE);
+                        }
+                        builder.append(OUT_STRING_SEPARATOR).append(orcid);
                     } else {
-                        builder.append(OUT_NOT_AVAILABLE);
+                        if (isOrcid) {
+                            builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
+                        } else {
+                            builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
+                        }
                     }
-                    builder.append(OUT_STRING_SEPARATOR).append(orcid);
-                } else {
-                    if (isOrcid) {
-                        builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
-                    } else {
-                        builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
-                    }
+                } catch(Exception e) {
+                    //Invalid orcid in the params, so, we can just ignore it
                 }
                 builder.append(OUT_NEW_LINE);
             }
@@ -372,11 +290,16 @@ public class AdminController extends BaseController {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
                 String orcid = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                ProfileEntity profile = null;
+                try {
+                    profile = profileEntityCacheManager.retrieve(orcid);
+                } catch(Exception e) {
+                    //Invalid orcid id provided
+                }
                 if (profile == null) {
                     notFoundIds.add(orcid);
                 } else {
-                    if (profile.isDeactivated()) {
+                    if (profile.getDeactivationDate() != null) {
                         deactivatedIds.add(orcid);
                     } else {
                         profileEntityManager.deactivateRecord(orcid);
@@ -413,11 +336,10 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form) {
         String orcidOrEmail = form.getOrcidOrEmail();
-        String password = form.getPassword();
-        String orcid = null;
+        String password = form.getPassword();        
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            OrcidProfile currentProfile = getEffectiveProfile();
-            if (OrcidType.ADMIN.equals(currentProfile.getType())) {
+            String orcid = null;
+            if (orcidSecurityManager.isAdmin()) {
                 if (StringUtils.isNotBlank(orcidOrEmail))
                     orcidOrEmail = orcidOrEmail.trim();
                 boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -430,10 +352,8 @@ public class AdminController extends BaseController {
                 }
 
                 if (StringUtils.isNotEmpty(orcid)) {
-                    OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                    if (orcidProfile != null) {
-                        orcidProfile.setPassword(password);
-                        orcidProfileManager.updatePasswordInformation(orcidProfile);
+                    if (profileEntityManager.orcidExists(orcid)) {
+                        profileEntityManager.updatePassword(orcid, password);
                     } else {
                         return getMessage("admin.errors.unexisting_orcid");
                     }
@@ -466,9 +386,8 @@ public class AdminController extends BaseController {
         }
 
         if (StringUtils.isNotEmpty(orcid)) {
-            OrcidProfile currentProfile = getEffectiveProfile();
             // Only allow and admin
-            if (OrcidType.ADMIN.equals(currentProfile.getType())) {
+            if (orcidSecurityManager.isAdmin()) {
                 String result = adminManager.removeSecurityQuestion(orcid);
                 // If the resulting string is not null, it means there was an
                 // error
@@ -525,8 +444,8 @@ public class AdminController extends BaseController {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             emailManager.verifyEmail(email);
-            Map<String, String> ids = emailManager.findOricdIdsByCommaSeparatedEmails(email);
-            orcidProfileManager.updateLastModifiedDate(ids.get(email));
+            String orcid = emailManager.findOrcidIdByEmail(email);
+            profileEntityManager.updateLastModifed(orcid);
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
@@ -639,21 +558,18 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String identifier = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
-                if (profile == null) {
-                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
-                }
-                if (profile == null) {
-                    notFoundIds.add(identifier);
+                String orcidId = getOrcidFromParam(tokenizer.nextToken());                
+                if (!profileEntityManager.orcidExists(orcidId)) {
+                    notFoundIds.add(orcidId);
                 } else {
-                    if (profile.isLocked()) {
-                        lockedIds.add(identifier);
-                    } else if (profile.isReviewed()) {
-                        reviewedIds.add(identifier);
+                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                    if (!entity.isAccountNonLocked()) {
+                        lockedIds.add(orcidId);
+                    } else if (entity.isReviewed()) {
+                        reviewedIds.add(orcidId);
                     } else {
-                        orcidProfileManager.lockProfile(profile.getOrcidIdentifier().getPath(), lockAccounts.getLockReason(), lockAccounts.getDescription());
-                        successIds.add(identifier);
+                        orcidProfileManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
+                        successIds.add(orcidId);
                     }
                 }
             }
@@ -692,19 +608,16 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String identifier = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
-                if (profile == null) {
-                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
-                }
-                if (profile == null) {
-                    notFoundIds.add(identifier);
+                String orcidId = getOrcidFromParam(tokenizer.nextToken());                
+                if (!profileEntityManager.orcidExists(orcidId)) {
+                    notFoundIds.add(orcidId);
                 } else {
-                    if (!profile.isLocked()) {
-                        unlockedIds.add(identifier);
+                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                    if (entity.isAccountNonLocked()) {
+                        unlockedIds.add(orcidId);
                     } else {
-                        orcidProfileManager.unlockProfile(profile.getOrcidIdentifier().getPath());
-                        successIds.add(identifier);
+                        orcidProfileManager.unlockProfile(orcidId);
+                        successIds.add(orcidId);
                     }
                 }
             }
@@ -725,19 +638,16 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String identifier = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
-                if (profile == null) {
-                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
-                }
-                if (profile == null) {
-                    notFoundIds.add(identifier);
+                String orcidId = getOrcidFromParam(tokenizer.nextToken());
+                if (!profileEntityManager.orcidExists(orcidId)) {
+                    notFoundIds.add(orcidId);
                 } else {
-                    if (!profile.isReviewed()) {
-                        unreviewedIds.add(identifier);
+                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                    if (!entity.isReviewed()) {
+                        unreviewedIds.add(orcidId);
                     } else {
-                        profileEntityManager.unreviewProfile(profile.getOrcidIdentifier().getPath());
-                        successIds.add(identifier);
+                        profileEntityManager.unreviewProfile(orcidId);
+                        successIds.add(orcidId);
                     }
                 }
             }
@@ -758,19 +668,16 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String identifier = tokenizer.nextToken();
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(identifier);
-                if (profile == null) {
-                    profile = orcidProfileManager.retrieveOrcidProfileByEmail(identifier);
-                }
-                if (profile == null) {
-                    notFoundIds.add(identifier);
+                String orcidId = getOrcidFromParam(tokenizer.nextToken());
+                if (!profileEntityManager.orcidExists(orcidId)) {
+                    notFoundIds.add(orcidId);
                 } else {
-                    if (profile.isReviewed()) {
-                        reviewedIds.add(identifier);
+                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                    if (entity.isReviewed()) {
+                        reviewedIds.add(orcidId);
                     } else {
-                        profileEntityManager.reviewProfile(profile.getOrcidIdentifier().getPath());
-                        successIds.add(identifier);
+                        profileEntityManager.reviewProfile(orcidId);
+                        successIds.add(orcidId);
                     }
                 }
             }
@@ -797,18 +704,18 @@ public class AdminController extends BaseController {
         List<String> successIds = new ArrayList<String>();
         List<String> notFoundIds = new ArrayList<String>();
         for (String emailOrOrcid : emailOrOrcidList) {
-            String orcid = getOrcidFromParam(emailOrOrcid);
-            if (orcid == null) {
-                notFoundIds.add(emailOrOrcid);
+            String orcidId = getOrcidFromParam(emailOrOrcid);
+            if (orcidId == null) {
+                notFoundIds.add(orcidId);
             } else {
-                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                if (profile == null) {
-                    notFoundIds.add(emailOrOrcid);
+                if (!profileEntityManager.orcidExists(orcidId)) {
+                    notFoundIds.add(orcidId);
                 } else {
-                    if (profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()) {
+                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                    if (entity.getClaimed()) {
                         claimedIds.add(emailOrOrcid);
                     } else {
-                        notificationManager.sendApiRecordCreationEmail(emailOrOrcid, profile);
+                        notificationManager.sendApiRecordCreationEmail(emailOrOrcid, orcidId);
                         successIds.add(emailOrOrcid);
                     }
                 }

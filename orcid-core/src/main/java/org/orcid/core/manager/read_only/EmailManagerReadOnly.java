@@ -19,7 +19,6 @@ package org.orcid.core.manager.read_only;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 
