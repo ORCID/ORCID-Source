@@ -130,4 +130,5 @@
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
     </bean>
+        
 </beans>

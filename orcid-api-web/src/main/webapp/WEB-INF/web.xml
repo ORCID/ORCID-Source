@@ -131,22 +131,26 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    <filter>
+	<filter>
         <filter-name>jersey</filter-name>
         <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
             <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common</param-value>
-        </init-param>
+        </init-param>                               
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
             <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter</param-value>
         </init-param>
         <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>org.orcid.core.web.filters.TokenTargetFilter</param-value>
+        </init-param>
+        <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
             <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
         </init-param>
-    </filter>
+    </filter>		
 
     <filter-mapping>
         <filter-name>jersey</filter-name>
