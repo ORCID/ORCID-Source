@@ -416,31 +416,31 @@
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedIndividual.url")}"
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
-        <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
+        <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
             <div class="ng-hide" ng-show="showInitLoader == true;">
                 <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
                 <!--[if lt IE 8]>    
                     <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
-            <table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
+            <table class="table table-bordered settings-table normal-width" ng-show="delegation" ng-cloak>
                 <thead>
                     <tr>
-                        <th width="40%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
-                        <th width="30%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
-                        <th width="20%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                        <th width="40%" ng-click="changeSorting('receiverName.value')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
+                        <th width="30%" ng-click="changeSorting('receiverOrcid.value')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
+                        <th width="20%" ng-click="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
                         <td width="10%"></td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="delegationDetails in delegation.givenPermissionTo.delegationDetails | orderBy:sort.column:sort.descending">
-                        <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
-                        <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
-                        <td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
+                    <tr ng-repeat="delegationDetails in delegation | orderBy:sort.column:sort.descending">
+                        <td width="40%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="_blank">{{delegationDetails.receiverName.value}}</a></td>
+                        <td width="30%"><a href="${baseUriHttp}/{{delegationDetails.receiverOrcid.value}}" target="_blank">{{delegationDetails.receiverOrcid.value}}</a></td>
+                        <td width="20%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
                         <td width="10%" class="tooltip-container">
                             <a
-                            ng-hide="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path || isPasswordConfirmationRequired"
-                            ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
+                            ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
+                            ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiver.value)"
                             class="glyphicon glyphicon-trash grey"">
                            		<div class="popover popover-tooltip top">
     								<div class="arrow"></div>
