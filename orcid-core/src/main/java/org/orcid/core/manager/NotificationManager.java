@@ -52,7 +52,7 @@ public interface NotificationManager {
 
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
-    void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
+    void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser);
 
     void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 

@@ -186,22 +186,6 @@ public class BaseController {
         this.shibbolethEnabled = shibbolethEnabled;
     }
 
-    public LocaleManager getLocaleManager() {
-        return localeManager;
-    }
-
-    public void setLocaleManager(LocaleManager localeManager) {
-        this.localeManager = localeManager;
-    }
-
-    public OrcidProfileManager getOrcidProfileManager() {
-        return orcidProfileManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
-    }
-
     @ModelAttribute("devSandboxUrl")
     public String getDevSandboxUrl() {
         return devSandboxUrl;

@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
 /**
@@ -149,5 +150,13 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     @Override
     public EmailEntity find(String email) {
         return emailDao.find(email);
+    }
+    
+    @Override
+    public EmailEntity findPrimaryEmail(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return null;
+        }
+        return emailDao.findPrimaryEmail(orcid);
     }
 }

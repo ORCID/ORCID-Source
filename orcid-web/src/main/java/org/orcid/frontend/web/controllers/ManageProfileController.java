@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,12 +51,7 @@ import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.message.ApprovalDate;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
@@ -70,7 +64,6 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
@@ -177,7 +170,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }    
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
-    public @ResponseBody List<DelegateForm>  getDelegatesJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody List<DelegateForm>  getDelegates() {
         String currentOrcid = getCurrentUserOrcid();
         ProfileEntity currentProfile = profileEntityCacheManager.retrieve(currentOrcid);
         List<DelegateForm> list = new ArrayList<DelegateForm>();
@@ -203,40 +196,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return addDelegate;
         }
-        String currentUserOrcid = getCurrentUserOrcid();
-        String delegateOrcid = addDelegate.getDelegateToManage();
-        GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(currentUserOrcid, delegateOrcid);
-        if (existing == null) {
-            // Clear the delegate's profile from the cache so that the granting
-            // user is visible to them immediately
-            profileEntityManager.updateLastModifed(delegateOrcid);
-            Date delegateLastModified = profileEntityManager.getLastModifiedDate(delegateOrcid);
-            GivenPermissionToEntity permission = new GivenPermissionToEntity();
-            permission.setGiver(currentUserOrcid);
-            ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
-            receiver.setLastModified(delegateLastModified);
-            permission.setReceiver(receiver);
-            permission.setApprovalDate(new Date());
-            givenPermissionToManager.merge(permission);
-            OrcidProfile currentUser = getEffectiveProfile();
-            ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(delegateOrcid);
-            DelegationDetails details = new DelegationDetails();
-            details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
-            DelegateSummary summary = new DelegateSummary();
-            details.setDelegateSummary(summary);
-            summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-            String creditName = null;
-            if (delegateProfile.getRecordNameEntity() != null) {
-                creditName = delegateProfile.getRecordNameEntity().getCreditName();
-            }
-
-            if (StringUtils.isNotBlank(creditName)) {
-                summary.setCreditName(new CreditName(creditName));
-            }
-            List<DelegationDetails> detailsList = new ArrayList<>(1);
-            detailsList.add(details);
-            notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
-        }
+        
+        givenPermissionToManager.create(getCurrentUserOrcid(), addDelegate.getDelegateToManage());
+                                    
         return addDelegate;
     }
 
@@ -1039,41 +1001,8 @@ public class ManageProfileController extends BaseWorkspaceController {
                 if (managedOrcid.equals(getEffectiveUserOrcid())) {
                     // Check if the managed user email is verified, if not,
                     // verify it
-                    verifyPrimaryEmailIfNeeded(managedOrcid);
-                    // Check if the delegation doesnt exists
-                    GivenPermissionToEntity existing = givenPermissionToManager.findByGiverAndReceiverOrcid(managedOrcid, trustedOrcid);
-                    if (existing == null) {
-                        // Clear the delegate's profile from the cache so that
-                        // the granting
-                        // user is visible to them immediately
-                        profileEntityManager.updateLastModifed(trustedOrcid);
-                        Date delegateLastModified = profileEntityManager.getLastModifiedDate(trustedOrcid);
-                        GivenPermissionToEntity permission = new GivenPermissionToEntity();
-                        permission.setGiver(managedOrcid);
-                        ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
-                        receiver.setLastModified(delegateLastModified);
-                        permission.setReceiver(receiver);
-                        permission.setApprovalDate(new Date());
-                        givenPermissionToManager.merge(permission);
-                        OrcidProfile currentUser = getEffectiveProfile();
-                        ProfileEntity delegateProfile = profileEntityCacheManager.retrieve(trustedOrcid);
-                        DelegationDetails details = new DelegationDetails();
-                        details.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(permission.getApprovalDate())));
-                        DelegateSummary summary = new DelegateSummary();
-                        details.setDelegateSummary(summary);
-                        summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
-                        String creditName = null;
-                        if (delegateProfile.getRecordNameEntity() != null) {
-                            creditName = delegateProfile.getRecordNameEntity().getCreditName();
-                        }
-                        if (StringUtils.isNotBlank(creditName)) {
-                            summary.setCreditName(new CreditName(creditName));
-                        }
-                        List<DelegationDetails> detailsList = new ArrayList<>(1);
-                        detailsList.add(details);
-                        // Send notifications
-                        notificationManager.sendNotificationToAddedDelegate(currentUser, detailsList);
-                    }
+                    verifyPrimaryEmailIfNeeded(managedOrcid);                    
+                    givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);                    
                     mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
                 } else {
                     // Exception, the email was not for you

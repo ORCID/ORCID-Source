@@ -82,6 +82,7 @@ import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -620,10 +621,20 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     @Transactional
-    public void sendNotificationToAddedDelegate(OrcidProfile orcidUserGrantingPermission, List<DelegationDetails> delegatesGrantedByUser) {
+    public void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser) {
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String subject = getSubject("email.subject.added_as_delegate", orcidUserGrantingPermission);
+        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
+        
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        Locale userLocale = LocaleUtils.toLocale("en");
+
+        if (locale != null) {
+            userLocale = LocaleUtils.toLocale(locale.value());
+        }
+        
+        String subject = getSubject("email.subject.added_as_delegate", userLocale);
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
             ProfileEntity delegateProfileEntity = profileDao.find(newDelegation.getDelegateSummary().getOrcidIdentifier().getPath());
@@ -634,19 +645,20 @@ public class NotificationManagerImpl implements NotificationManager {
                 return;
             }
 
-            String grantingOrcidEmail = orcidUserGrantingPermission.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+            EmailEntity primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);            
+            String grantingOrcidEmail = primaryEmail.getId();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
             String email = delegateProfileEntity.getPrimaryEmail().getId();
 
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
-            templateParams.put("grantingOrcidValue", orcidUserGrantingPermission.getOrcidIdentifier().getPath());
-            templateParams.put("grantingOrcidName", deriveEmailFriendlyName(orcidUserGrantingPermission));
+            templateParams.put("grantingOrcidValue", userGrantingPermission);
+            templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
             templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
             templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
             templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
             templateParams.put("subject", subject);
 
-            addMessageParams(templateParams, orcidUserGrantingPermission);
+            addMessageParams(templateParams, userLocale);
 
             // Generate body from template
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);

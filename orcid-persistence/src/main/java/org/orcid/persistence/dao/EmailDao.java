@@ -79,4 +79,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     boolean isAutoDeprecateEnableForEmail(String email);
     
     boolean isPrimaryEmail(String orcid, String email);
+    
+    EmailEntity findPrimaryEmail(String orcid);
 }
