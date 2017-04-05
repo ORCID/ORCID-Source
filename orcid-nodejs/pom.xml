@@ -9,11 +9,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.parent.basedir}</main.basedir>
+        <nodejs.workingDirectory>~/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/ng1Orcid/</nodejs.workingDirectory>
     </properties>
     <artifactId>orcid-nodejs</artifactId>
-    <!--packaging>tar</packaging-->
     <name>ORCID - NodeJS</name>
-    <description>NodeJS Environment Setup.</description>
+    <description>NodeJS Environment Setup and Webpack Conf</description>
     <dependencies>     
     </dependencies>
     <build>
@@ -42,28 +42,24 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <!--execution>
+                    <!-- keep commented to return terminal during mvn execution -->
+                    <execution>
                         <id>webpack build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>-p -config webpack.config.js</arguments>
+                            <arguments>-p -config webpack.config.js --progress --colors</arguments>
                         </configuration>
-                    </execution-->
+                    </execution>
                 </executions>
                 <configuration>
                     <nodeVersion>v6.9.5</nodeVersion>
                     <npmVersion>4.1.2</npmVersion>
                     <downloadRoot>https://nodejs.org/dist/</downloadRoot>
                     <npmDownloadRoot>https://registry.npmjs.org/npm/-/</npmDownloadRoot>
-                    <!-- path to folder containing package.json 
-                    <workingDirectory>/opt/apache-tomcat-8.0.21/webapps/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
-                    Windows
-                    <workingDirectory>C:/Documents and Settings/%USER%/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
-                    -->
-                    <workingDirectory>~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/ng1Orcid/</workingDirectory>
+                    <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
                     <installDirectory>target</installDirectory>
                     <environmentVariables>
                         <eirslett_ver>1.3</eirslett_ver>
