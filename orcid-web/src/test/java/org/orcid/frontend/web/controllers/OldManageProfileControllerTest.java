@@ -280,133 +280,19 @@ public class OldManageProfileControllerTest extends BaseControllerTest {
     }    
 
     
-    @Test
-    public void testGetDelegates() {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-00001"));
-        List<DelegateForm> list = controller.getDelegates();
-        assertNotNull(list);
-        assertEquals(2, list.size());
-        boolean found1 = false, found2 = false;
-        for(DelegateForm form : list) {
-            assertNotNull(form);
-            assertNotNull(form.getApprovalDate());
-            assertEquals("0000-0000-0000-0001", form.getGiverOrcid());
-            assertNotNull(form.getReceiverOrcid());
-            if(form.getReceiverOrcid().getValue().equals("0000-0000-0000-0002")) {
-                assertEquals("Credit Name", form.getReceiverName().getValue());
-                found1 = true;
-            } else {
-                assertEquals("0000-0000-0000-0003", form.getReceiverOrcid().getValue());
-                assertEquals("Family Name Given Names", form.getReceiverName().getValue());
-                found2 = true;
-            }
-        }
-        
-        assertTrue(found1);
-        assertTrue(found2);
-    }
     
-    @Test
-    public void testGetDeprecateProfile() {
-        DeprecateProfile deprecateProfile = controller.getDeprecateProfile();
-        assertNotNull(deprecateProfile);
-        assertNull(deprecateProfile.getPrimaryOrcid());
-        assertNull(deprecateProfile.getPrimaryAccountName());
-        assertNull(deprecateProfile.getPrimaryEmails());
-        assertNull(deprecateProfile.getDeprecatingAccountName());
-        assertNull(deprecateProfile.getDeprecatingEmails());
-        assertNull(deprecateProfile.getDeprecatingOrcid());
-        assertNull(deprecateProfile.getDeprecatingPassword());
-        assertTrue(deprecateProfile.getErrors().isEmpty());
-    }
+    
+    
 
-    @Test
-    public void testValidateDeprecateProfileWithValidDataUsingOrcid() {
-        DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
-        deprecateProfile.setDeprecatingPassword("password");
+    
 
-        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
-        assertNotNull(deprecateProfile.getDeprecatingAccountName());
-        assertNotNull(deprecateProfile.getDeprecatingEmails());
-        assertEquals("blah blah", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
-        assertEquals("1000-2000-3000-4000", deprecateProfile.getDeprecatingOrcid());
-        assertEquals("1000-2000-3000-4000@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
-        assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
-        assertTrue(deprecateProfile.getErrors().isEmpty());
-    }
+    
 
-    @Test
-    public void testValidateDeprecateProfileWithValidDataUsingEmail() {
-        DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setDeprecatingOrcidOrEmail("1001-2002-3003-4004@orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+    
 
-        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
-        assertNotNull(deprecateProfile.getDeprecatingAccountName());
-        assertNotNull(deprecateProfile.getDeprecatingEmails());
-        assertEquals("singlename", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(1, deprecateProfile.getDeprecatingEmails().size());
-        assertEquals("1001-2002-3003-4004@orcid.org", deprecateProfile.getDeprecatingEmails().get(0));
-        assertEquals("1001-2002-3003-4004", deprecateProfile.getDeprecatingOrcid());
-        assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("test@test.com"));
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("user@user.com"));
-        assertTrue(deprecateProfile.getPrimaryEmails().contains("billie@holiday.com"));
-        assertTrue(deprecateProfile.getErrors().isEmpty());
-    }
+    
 
-    @Test
-    public void testValidateDeprecateProfileWithInvalidDataBadCredentialsUsingEmail() {
-        DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setPrimaryAccountName("B. Holiday");
-        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
-        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
-        deprecateProfile.setDeprecatingOrcidOrEmail("1001-2002-3003-4004@orcid.org");
-        deprecateProfile.setDeprecatingPassword("wrong password");
-
-        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
-        assertNull(deprecateProfile.getDeprecatingAccountName());
-        assertNotNull(deprecateProfile.getErrors());
-        assertEquals(1, deprecateProfile.getErrors().size());
-    }
-
-    @Test
-    public void testValidateDeprecateProfileWithInvalidDataBadCredentialsUsingOrcid() {
-        DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setPrimaryAccountName("B. Holiday");
-        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
-        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
-        deprecateProfile.setDeprecatingOrcidOrEmail("1000-2000-3000-4000");
-        deprecateProfile.setDeprecatingPassword("wrong password");
-
-        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
-        assertNull(deprecateProfile.getDeprecatingAccountName());
-        assertNull(deprecateProfile.getDeprecatingEmails());
-        assertNotNull(deprecateProfile.getErrors());
-        assertEquals(1, deprecateProfile.getErrors().size());
-    }
-
-    @Test
-    public void testValidateDeprecateProfileWithInvalidDataAlreadyDeprecatedProfileUsingEmail() {
-        DeprecateProfile deprecateProfile = new DeprecateProfile();
-        deprecateProfile.setPrimaryAccountName("B. Holiday");
-        deprecateProfile.setPrimaryOrcid("4444-4444-4444-4446");
-        deprecateProfile.setPrimaryEmails(Arrays.asList("josiah_carberry@brown.edu"));
-        deprecateProfile.setDeprecatingOrcidOrEmail("1101-2202-3303-4404@orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
-
-        deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
-        assertNull(deprecateProfile.getDeprecatingAccountName());
-        assertNotNull(deprecateProfile.getErrors());
-        assertEquals(1, deprecateProfile.getErrors().size());
-    }
+    
 
     @Test
     public void testValidateDeprecateProfileWithInvalidDataAlreadyDeprecatedProfileUsingOrcid() {

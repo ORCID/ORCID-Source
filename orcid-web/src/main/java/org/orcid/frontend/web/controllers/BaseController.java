@@ -128,7 +128,7 @@ public class BaseController {
     private String cdnConfigFile;
 
     @Resource
-    private LocaleManager localeManager;
+    protected LocaleManager localeManager;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;

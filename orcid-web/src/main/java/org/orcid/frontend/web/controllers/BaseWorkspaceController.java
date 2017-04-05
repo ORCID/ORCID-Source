@@ -57,9 +57,6 @@ public class BaseWorkspaceController extends BaseController {
     protected CrossRefManager crossRefManager;
 
     @Resource
-    private LocaleManager localeManager;
-
-    @Resource
     protected SecurityQuestionManager securityQuestionManager;
 
     @Resource

@@ -499,8 +499,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deprecateProfile;
         }
 
-        OrcidProfileUserDetails primaryDetails = getCurrentUser();
-        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(primaryDetails.getOrcid());
+        String currentUserOrcid = getCurrentUserOrcid();
+        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(currentUserOrcid);
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
         
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
@@ -519,7 +519,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
         String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
-        deprecateProfile.setPrimaryOrcid(primaryDetails.getOrcid());
+        deprecateProfile.setPrimaryOrcid(currentUserOrcid);
         deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);
         deprecateProfile.setDeprecatingOrcid(deprecatingEntity.getId());
 
