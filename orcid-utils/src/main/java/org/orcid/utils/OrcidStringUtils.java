@@ -51,7 +51,7 @@ public class OrcidStringUtils {
 	private static String DECODED_APOS = "'";
 	private static String DECODED_QUOT = "\"";
 
-	private static final Pattern orcidPattern = Pattern
+	public static final Pattern orcidPattern = Pattern
 			.compile(ORCID_STRING);
 	private static final Pattern orcidUriPattern = Pattern
                 .compile(ORCID_URI_STRING);
