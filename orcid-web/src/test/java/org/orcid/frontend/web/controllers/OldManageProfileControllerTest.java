@@ -132,36 +132,7 @@ public class OldManageProfileControllerTest extends BaseControllerTest {
     private ProfileEntityManager profileEntityManager;
 
     
-
-    
-    @Test
-    public void testChangeSecurityDetailsSuccess() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
-        ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
-        changeSecurityQuestionForm.setSecurityQuestionId(1);
-        changeSecurityQuestionForm.setSecurityQuestionAnswer("securityQuestionAnswer");
-
-        when(bindingResult.hasErrors()).thenReturn(false);
-        ModelAndView modelAndView = controller.updateWithChangedSecurityQuestion(changeSecurityQuestionForm, bindingResult);
-        assertEquals("change_security_question", modelAndView.getViewName());
-        Boolean updatedSuccess = (Boolean) modelAndView.getModel().get("securityQuestionSaved");
-        assertEquals(Boolean.TRUE, updatedSuccess);
-    }
-
-    @Test
-    public void testChangeSecurityDetailsFailedValidation() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
-        ChangeSecurityQuestionForm changeSecurityQuestionForm = new ChangeSecurityQuestionForm();
-        changeSecurityQuestionForm.setSecurityQuestionId(1);
-        changeSecurityQuestionForm.setSecurityQuestionAnswer("securityQuestionAnswer");
-
-        when(bindingResult.hasErrors()).thenReturn(true);
-        ModelAndView modelAndView = controller.updateWithChangedSecurityQuestion(changeSecurityQuestionForm, bindingResult);
-
-        assertEquals("change_security_question", modelAndView.getViewName());
-        Boolean updatedSuccess = (Boolean) modelAndView.getModel().get("securityQuestionSaved");
-        assertNull(updatedSuccess);
-    }
+        
 
     @Test
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {

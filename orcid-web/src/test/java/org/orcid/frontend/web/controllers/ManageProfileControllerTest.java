@@ -351,6 +351,16 @@ public class ManageProfileControllerTest {
     }
     
     @Test
+    public void testGetSecurityQuestion() {
+        fail();
+    }
+    
+    @Test
+    public void testSetSecurityQuestion() {
+        fail();
+    }
+    
+    @Test
     public void testGetDeprecateProfile() {
         DeprecateProfile deprecateProfile = controller.getDeprecateProfile();
         assertNotNull(deprecateProfile);

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -51,11 +50,9 @@ import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -83,7 +80,6 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -264,30 +260,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             mav = new ModelAndView("redirect:/my-orcid");
         }
         return mav;
-    }
-
-    private ManagePasswordOptionsForm populateManagePasswordFormFromUserInfo() {
-        OrcidProfile profile = getEffectiveProfile();
-
-        // TODO - placeholder just to test the retrieve etc..replace with only
-        // fields that we will populate
-        // password fields are never populated
-        OrcidProfile unecryptedProfile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
-        ManagePasswordOptionsForm managePasswordOptionsForm = new ManagePasswordOptionsForm();
-        managePasswordOptionsForm.setVerificationNumber(unecryptedProfile.getVerificationCode());
-        managePasswordOptionsForm.setSecurityQuestionAnswer(unecryptedProfile.getSecurityQuestionAnswer());
-        Integer securityQuestionId = null;
-        SecurityDetails securityDetails = unecryptedProfile.getOrcidInternal().getSecurityDetails();
-        // TODO - confirm that security details aren't null and that we can
-        // change schema to be an int for security
-        // questions field
-        if (securityDetails != null) {
-            securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
-        }
-
-        managePasswordOptionsForm.setSecurityQuestionId(securityQuestionId);
-
-        return managePasswordOptionsForm;
     }        
 
     @ModelAttribute("securityQuestions")
@@ -298,57 +270,27 @@ public class ManageProfileController extends BaseWorkspaceController {
             securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
         }
         return securityQuestionsWithMessages;
-    }    
-
-    @RequestMapping(value = { "/security-question", "/change-security-question" }, method = RequestMethod.GET)
-    public ModelAndView viewChangeSecurityQuestion() {
-        return populateChangeSecurityDetailsViewFromUserProfile(new ChangeSecurityQuestionForm());
-    }
-
-    @RequestMapping(value = { "/security-question", "/change-security-question" }, method = RequestMethod.POST)
-    public ModelAndView updateWithChangedSecurityQuestion(@ModelAttribute("changeSecurityQuestionForm") @Valid ChangeSecurityQuestionForm changeSecurityQuestionForm,
-            BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            ModelAndView changeSecurityDetailsView = new ModelAndView("change_security_question");
-            changeSecurityDetailsView.addAllObjects(bindingResult.getModel());
-            changeSecurityDetailsView.addObject(changeSecurityQuestionForm);
-            return changeSecurityDetailsView;
-        }
-        OrcidProfile profile = getEffectiveProfile();
-        profile.setSecurityQuestionAnswer(changeSecurityQuestionForm.getSecurityQuestionAnswer());
-        profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId(changeSecurityQuestionForm.getSecurityQuestionId()));
-        orcidProfileManager.updateSecurityQuestionInformation(profile);
-        ModelAndView changeSecurityDetailsView = populateChangeSecurityDetailsViewFromUserProfile(changeSecurityQuestionForm);
-        changeSecurityDetailsView.addObject("securityQuestionSaved", true);
-        return changeSecurityDetailsView;
-
-    }
+    }        
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
-    public @ResponseBody SecurityQuestion getSecurityQuestionJson(HttpServletRequest request) {
-        OrcidProfile profile = getEffectiveProfile();
-        SecurityDetails sd = profile.getOrcidInternal().getSecurityDetails();
-        SecurityQuestionId securityQuestionId = sd.getSecurityQuestionId();
-        EncryptedSecurityAnswer encryptedSecurityAnswer = sd.getEncryptedSecurityAnswer();
-
-        if (securityQuestionId == null) {
-            sd.getSecurityQuestionId();
-            securityQuestionId = new SecurityQuestionId();
-        }
-
+    public @ResponseBody SecurityQuestion getSecurityQuestion(HttpServletRequest request) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         SecurityQuestion securityQuestion = new SecurityQuestion();
-        securityQuestion.setSecurityQuestionId(securityQuestionId.getValue());
-
-        if (encryptedSecurityAnswer != null) {
-            securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedSecurityAnswer.getContent()));
-        }
+        
+        if(profile.getSecurityQuestion() != null) {
+            Long id = Long.valueOf(profile.getSecurityQuestion().getId());
+            String encryptedAnswer = profile.getEncryptedSecurityAnswer();
+            if(!PojoUtil.isEmpty(encryptedAnswer)) {
+                securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedAnswer));
+            }
+            securityQuestion.setSecurityQuestionId(id);
+        }                
 
         return securityQuestion;
     }
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
-    public @ResponseBody SecurityQuestion setSecurityQuestionJson(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+    public @ResponseBody SecurityQuestion setSecurityQuestion(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
@@ -363,15 +305,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             securityQuestion.setSecurityAnswer(new String());
 
         if (errors.size() == 0) {
-            OrcidProfile profile = getEffectiveProfile();
-            if (profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId() == null)
-                profile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(new SecurityQuestionId());
-            profile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().setValue(securityQuestion.getSecurityQuestionId());
-
-            if (profile.getOrcidInternal().getSecurityDetails().getEncryptedSecurityAnswer() == null)
-                profile.getOrcidInternal().getSecurityDetails().setEncryptedSecurityAnswer(new EncryptedSecurityAnswer());
-            profile.setSecurityQuestionAnswer(securityQuestion.getSecurityAnswer());
-            orcidProfileManager.updateSecurityQuestionInformation(profile);
+            Integer id = Long.valueOf(securityQuestion.getSecurityQuestionId()).intValue();
+            profileEntityManager.updateSecurityQuestion(getCurrentUserOrcid(), id, securityQuestion.getSecurityAnswer());
             errors.add(getMessage("manage.securityQuestionUpdated"));
         }
 
@@ -379,6 +314,47 @@ public class ManageProfileController extends BaseWorkspaceController {
         return securityQuestion;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //TODO
+    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.GET)
+    public @ResponseBody String getEmailPreference() {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        return String.valueOf(profile.getSendEmailFrequencyDays());
+    }
+    
+    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.GET)
+    public @ResponseBody String setEmailPreference( @RequestBody String emailFrequencyDays) {
+        if(PojoUtil.isEmpty(emailFrequencyDays)) {
+            throw new IllegalArgumentException("Invalid value: " + emailFrequencyDays);
+        }
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        return String.valueOf(profile.getSendEmailFrequencyDays());
+    }
+    
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request) {
         OrcidProfile profile = getEffectiveProfile();
@@ -390,30 +366,67 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
         orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
         return preferences;
-    }
+    }    
 
-    private ModelAndView populateChangeSecurityDetailsViewFromUserProfile(ChangeSecurityQuestionForm changeSecurityQuestionForm) {
-        ModelAndView changeSecurityDetailsView = new ModelAndView("change_security_question");
-
-        Integer securityQuestionId = null;
-
-        SecurityDetails securityDetails = getEffectiveProfile().getOrcidInternal().getSecurityDetails();
-        if (securityDetails != null) {
-            securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
-
-        }
-
-        String encryptedSecurityAnswer = securityDetails != null && securityDetails.getEncryptedSecurityAnswer() != null
-                ? securityDetails.getEncryptedSecurityAnswer().getContent() : null;
-        String securityAnswer = StringUtils.isNotBlank(encryptedSecurityAnswer) ? encryptionManager.decryptForInternalUse(encryptedSecurityAnswer) : "";
-
-        changeSecurityQuestionForm.setSecurityQuestionId(securityQuestionId);
-        changeSecurityQuestionForm.setSecurityQuestionAnswer(securityAnswer);
-
-        changeSecurityDetailsView.addObject("changeSecurityQuestionForm", changeSecurityQuestionForm);
-        return changeSecurityDetailsView;
-    }
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
     public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
         ChangePassword p = new ChangePassword();
@@ -1007,4 +1020,28 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailManager.verifyPrimaryEmail(orcid);
         }
     }
+    
+    private ManagePasswordOptionsForm populateManagePasswordFormFromUserInfo() {
+        OrcidProfile profile = getEffectiveProfile();
+
+        // TODO - placeholder just to test the retrieve etc..replace with only
+        // fields that we will populate
+        // password fields are never populated
+        OrcidProfile unecryptedProfile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
+        ManagePasswordOptionsForm managePasswordOptionsForm = new ManagePasswordOptionsForm();
+        managePasswordOptionsForm.setVerificationNumber(unecryptedProfile.getVerificationCode());
+        managePasswordOptionsForm.setSecurityQuestionAnswer(unecryptedProfile.getSecurityQuestionAnswer());
+        Integer securityQuestionId = null;
+        SecurityDetails securityDetails = unecryptedProfile.getOrcidInternal().getSecurityDetails();
+        // TODO - confirm that security details aren't null and that we can
+        // change schema to be an int for security
+        // questions field
+        if (securityDetails != null) {
+            securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
+        }
+
+        managePasswordOptionsForm.setSecurityQuestionId(securityQuestionId);
+
+        return managePasswordOptionsForm;
+    }   
 }

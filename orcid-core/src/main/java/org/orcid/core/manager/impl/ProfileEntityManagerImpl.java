@@ -688,7 +688,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+    public void updateSecurityQuestion(String orcid, Integer questionId, String answer) {
+        String encryptedAnswer = encryptionManager.encryptForInternalUse(answer);
         profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
     }
 
