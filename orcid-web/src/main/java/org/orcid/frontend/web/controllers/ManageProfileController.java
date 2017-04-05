@@ -223,17 +223,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageDelegate;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         String orcid = getCurrentUserOrcid();
@@ -299,28 +288,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         managePasswordOptionsForm.setSecurityQuestionId(securityQuestionId);
 
         return managePasswordOptionsForm;
-    }
-
-    @ModelAttribute("changeNotificationsMap")
-    public Map<String, String> getChangeNotificationsMap() {
-        Map<String, String> changeNotificationsMap = new HashMap<String, String>();
-        changeNotificationsMap.put("sendMe", "");
-        return changeNotificationsMap;
-    }
-
-    @ModelAttribute("orcidNewsMap")
-    public Map<String, String> getOrcidNewsMap() {
-        Map<String, String> orcidNewsMap = new HashMap<String, String>();
-        orcidNewsMap.put("sendMe", "");
-        return orcidNewsMap;
-    }
-
-    @ModelAttribute("colleagueConfirmedRegistrationMap")
-    public Map<String, String> getColleagueConfirmedRegistrationMap() {
-        Map<String, String> otherNewsMap = new HashMap<String, String>();
-        otherNewsMap.put("sendMe", "");
-        return otherNewsMap;
-    }
+    }        
 
     @ModelAttribute("securityQuestions")
     public Map<String, String> getSecurityQuestions() {
@@ -330,13 +298,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
         }
         return securityQuestionsWithMessages;
-    }
-
-    @RequestMapping(value = "/view-account-settings", method = RequestMethod.GET)
-    public String viewAccountSettings() {
-        // Defunct page, redirect to main account page in case of bookmarks.
-        return "redirect:/account";
-    }
+    }    
 
     @RequestMapping(value = { "/security-question", "/change-security-question" }, method = RequestMethod.GET)
     public ModelAndView viewChangeSecurityQuestion() {
