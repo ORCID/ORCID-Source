@@ -241,21 +241,14 @@ public class NotificationManagerTest extends DBUnitTest {
         delegateProfileEntity.setSendChangeNotifications(true);
         delegateProfileEntity.setSendAdministrativeChangeNotifications(true);
         profileDao.merge(delegateProfileEntity);
+        
+        DelegationDetails firstNewDelegate = new DelegationDetails();
+        DelegateSummary firstNewDelegateSummary = new DelegateSummary();
+        firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
+        firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
+        firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
 
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            DelegationDetails firstNewDelegate = new DelegationDetails();
-            DelegateSummary firstNewDelegateSummary = new DelegateSummary();
-            firstNewDelegateSummary.setCreditName(new CreditName("Jimmy Dove"));
-            firstNewDelegate.setDelegateSummary(firstNewDelegateSummary);
-            firstNewDelegateSummary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-
-            DelegationDetails secondNewDelegate = new DelegationDetails();
-            DelegateSummary secondNewDelegateSummary = new DelegateSummary();
-            secondNewDelegate.setDelegateSummary(secondNewDelegateSummary);
-
-            notificationManager.sendNotificationToAddedDelegate(orcidProfile, Arrays.asList(new DelegationDetails[] { firstNewDelegate }));
-        }
+        notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", firstNewDelegate);        
     }
 
     @Test

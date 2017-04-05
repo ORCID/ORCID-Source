@@ -61,7 +61,6 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -626,7 +625,7 @@ public class OldManageProfileControllerTest extends BaseControllerTest {
         addDelegate.setDelegateToManage("5555-5555-5555-555X");
         addDelegate.setPassword("password");
         controller.addDelegate(addDelegate);
-        verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(OrcidProfile.class), (argThat(onlyNewDelegateAdded())));
+        verify(mockNotificationManager, times(1)).sendNotificationToAddedDelegate(any(String.class), (argThat(onlyNewDelegateAdded())));
     }
 
     @Test
@@ -669,14 +668,13 @@ public class OldManageProfileControllerTest extends BaseControllerTest {
         assertEquals("Family Name", nfFromDB.getFamilyName().getValue());
     }
 
-    public static ArgumentMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
-        return new ArgumentMatcher<List<DelegationDetails>>() {
+    public static ArgumentMatcher<DelegationDetails> onlyNewDelegateAdded() {
+        return new ArgumentMatcher<DelegationDetails>() {
 
             @Override
-            public boolean matches(List<DelegationDetails> delegatesAdded) {
-                if (delegatesAdded != null && delegatesAdded.size() == 1) {
-                    DelegationDetails delegationDetails = delegatesAdded.get(0);
-                    return "5555-5555-5555-555X".equals(delegationDetails.getDelegateSummary().getOrcidIdentifier().getPath());
+            public boolean matches(DelegationDetails delegateAdded) {
+                if (delegateAdded != null) {
+                    return "5555-5555-5555-555X".equals(delegateAdded.getDelegateSummary().getOrcidIdentifier().getPath());
                 }
                 return false;
             }

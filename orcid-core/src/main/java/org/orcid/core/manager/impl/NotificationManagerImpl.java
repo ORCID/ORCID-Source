@@ -604,7 +604,7 @@ public class NotificationManagerImpl implements NotificationManager {
         // Generate html from template
         String html = templateManager.processTemplate("amend_email_html.ftl", templateParams);
 
-        boolean notificationsEnabled = profileDao.find(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
+        boolean notificationsEnabled = profileEntityCacheManager.retrieve(amendedProfile.getOrcidIdentifier().getPath()).getEnableNotifications();
         if (notificationsEnabled) {
             NotificationAmended notification = new NotificationAmended();
             notification.setNotificationType(NotificationType.AMENDED);
