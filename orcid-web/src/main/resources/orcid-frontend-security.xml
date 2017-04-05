@@ -21,9 +21,9 @@
 	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<context:annotation-config />
@@ -94,13 +94,20 @@
     <bean id="ajaxAuthenticationFailureHandlerSocial"
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
 
-	<sec:authentication-manager alias="authenticationManager">
-		<sec:authentication-provider
-			user-service-ref="userDetailsService">
-			<sec:password-encoder ref="encryptionManager" />
-		</sec:authentication-provider>
+	<sec:authentication-manager id="authenticationManager">
+		<sec:authentication-provider ref="authenticationProvider" />
 		<sec:authentication-provider ref="preauthAuthProvider" />
 	</sec:authentication-manager>
+	
+	<bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService" ref="userDetailsService"/>
+		<property name="authoritiesMapper" ref="authoritiesMapper"/>
+		<property name="passwordEncoder" ref="encryptionManager"/>
+	</bean>
+	
+	<bean id="authoritiesMapper" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper">
+		<constructor-arg ref="roleHierarchy"/>
+	</bean>
 	
 	<bean id="preauthAuthProvider"
         class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
@@ -122,7 +129,7 @@
 	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" />
 	<sec:http pattern="/static/**" security="none" />
-	<sec:http path-type="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -134,9 +141,9 @@
         <sec:access-denied-handler ref="oauthAccessDeniedHandler" />
     </sec:http>
     
-	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
-		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
-		path-type="regex">
+	<sec:http use-expressions="false" pattern="/oauth/.*" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		request-matcher="regex">
+		<sec:access-denied-handler error-page="/oauth/signin" />
 		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
@@ -173,9 +180,10 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
-	<sec:http pattern="/shibboleth/.*" access-denied-page="/shibboleth/signin"
+	<sec:http pattern="/shibboleth/.*" use-expressions="false"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
-		path-type="regex">
+		request-matcher="regex">
+		<sec:access-denied-handler error-page="/shibboleth/signin" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -195,9 +203,10 @@
         <property name="defaultTargetUrl" value="/my-orcid" />
     </bean>
 	
-	<sec:http pattern="/social/.*" access-denied-page="/signin"
+	<sec:http pattern="/social/.*" use-expressions="false"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
-		path-type="regex">
+		request-matcher="regex">
+		<sec:access-denied-handler error-page="/signin" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -209,10 +218,10 @@
 			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
-
-	<sec:http access-denied-page="/signin"
-		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
-		path-type="regex">
+	
+	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+		request-matcher="regex">
+		<sec:access-denied-handler error-page="/signin"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
