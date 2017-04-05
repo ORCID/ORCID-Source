@@ -113,8 +113,6 @@ import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.NotFoundException;
-
 /**
  * <p/>
  * The delegator for the tier 2 API.
