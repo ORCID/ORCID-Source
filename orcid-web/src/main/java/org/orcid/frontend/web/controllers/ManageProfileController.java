@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
@@ -39,6 +40,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.GivenPermissionToManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSocialManager;
+import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
@@ -47,12 +49,12 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -78,6 +80,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.NullUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
@@ -145,6 +148,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private RecordNameManager recordNameManager;
+    
+    @Resource
+    private PreferenceManager preferenceManager;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -339,35 +345,54 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     
     
-    //TODO
-    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.GET)
-    public @ResponseBody String getEmailPreference() {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        return String.valueOf(profile.getSendEmailFrequencyDays());
-    }
-    
-    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.GET)
-    public @ResponseBody String setEmailPreference( @RequestBody String emailFrequencyDays) {
-        if(PojoUtil.isEmpty(emailFrequencyDays)) {
-            throw new IllegalArgumentException("Invalid value: " + emailFrequencyDays);
-        }
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        return String.valueOf(profile.getSendEmailFrequencyDays());
-    }
-    
+    //TODO   
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
-    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request) {
-        OrcidProfile profile = getEffectiveProfile();
-        profile.getOrcidInternal().getPreferences();
-        return profile.getOrcidInternal().getPreferences() != null ? profile.getOrcidInternal().getPreferences() : new Preferences();
-    }
-
-    @RequestMapping(value = "/preferences.json", method = RequestMethod.POST)
-    public @ResponseBody Preferences setDefaultPreference(HttpServletRequest request, @RequestBody Preferences preferences) {
-        orcidProfileManager.updatePreferences(getCurrentUserOrcid(), preferences);
+    public @ResponseBody Map<String, Object> getDefaultPreference(HttpServletRequest request) {
+        Map<String, Object> preferences = new HashMap<String, Object>();
+        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        preferences.put("email_frequency", String.valueOf(entity.getSendEmailFrequencyDays()));
+        preferences.put("visibility_defaults", entity.getActivitiesVisibilityDefault());
+        preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
+        preferences.put("notifications_enabled", entity.getEnableNotifications());
+        preferences.put("send_administrative_change_notifications", entity.getSendAdministrativeChangeNotifications());
+        preferences.put("send_change_notifications", entity.getSendChangeNotifications());
+        preferences.put("send_member_update_requests", entity.getSendMemberUpdateRequests());
+        preferences.put("send_orcid_news", entity.getSendOrcidNews());        
         return preferences;
-    }    
-
+    }
+    
+    @RequestMapping(value = "/email_preferences.json", method = RequestMethod.POST)
+    public @ResponseBody String setEmailFrequency(@RequestBody String emailFrequencyDays) {
+        SendEmailFrequency newFrequency = null;
+        for(SendEmailFrequency f : SendEmailFrequency.values()) {
+            if(f.value().equals(emailFrequencyDays)) {
+                newFrequency = f;
+                break;
+            }
+        }
+        
+        if(newFrequency == null) {
+            throw new IllegalArgumentException("Invalid value: " + emailFrequencyDays);
+        }                
+        
+        preferenceManager.updateEmailFrequencyDays(getCurrentUserOrcid(), newFrequency);
+        return newFrequency.value();
+    }
+             
+    @RequestMapping(value = "/notification_preferences.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> setEmailFrequency(@RequestBody Map<String, Object> preferences) {
+        Boolean sendAdministrativeChangeNotifications = (Boolean) preferences.get("send_administrative_change_notifications");
+        Boolean sendChangeNotifications = (Boolean) preferences.get("send_change_notifications");
+        Boolean sendMemberUpdateRequests = (Boolean) preferences.get("send_member_update_requests");
+        Boolean sendOrcidNews = (Boolean) preferences.get("send_orcid_news");
+        
+        if(NullUtils.anyNull(sendAdministrativeChangeNotifications, sendChangeNotifications, sendMemberUpdateRequests, sendOrcidNews)) {
+            throw new IllegalArgumentException("Please provide all notification preferences: " + preferences.toString());
+        }                
+        
+        preferenceManager.updateNotifications(getCurrentUserOrcid(), sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests);
+        return preferences;
+    }
     
     
     

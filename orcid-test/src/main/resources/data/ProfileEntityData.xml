@@ -44,8 +44,8 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
-            enable_notifications="true"
-            send_email_frequency_days = "0.0"
+            enable_notifications="false"
+            send_email_frequency_days = "7.0"
             />
             
     <profile

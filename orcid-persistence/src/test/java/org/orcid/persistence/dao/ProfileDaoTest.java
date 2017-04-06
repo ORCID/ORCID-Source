@@ -66,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-profile-last-modified-aspect-disabled-context.xml" })
 public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
@@ -91,6 +91,7 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
+        
         assertNotNull(profileDao);
     }
     
@@ -333,7 +334,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testOrcidsFindByIndexingStatus() {
         List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
         assertNotNull(results);
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
         assertEquals("4444-4444-4444-4445", results.get(0).getLeft());
         assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
@@ -348,7 +349,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
         List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertEquals(3, resultsList.size());
+        assertEquals(2, resultsList.size());
 
         // test far back
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());

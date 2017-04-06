@@ -89,27 +89,27 @@
                             <label class="checkbox"> <input type="checkbox"
                                 id="sendOrcidChangeNotifcations"
                                 name="sendOrcidChangeNotifcations"
-                                ng-model="prefsSrvc.prefs.sendChangeNotifications.value"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                ng-model="prefsSrvc.prefs['send_change_notifications']"
+                                ng-change="prefsSrvc.updateNotificationPreferences()" />
                                 ${springMacroRequestContext.getMessage("change_notification_preferences.sendnotification")}
                             </label>
                             <label class="checkbox"> <input type="checkbox"
                                 id="sendAdministrativeChangeNotifcations"
                                 name="sendAdministrativeChangeNotifcations"
-                                ng-model="prefsSrvc.prefs.sendAdministrativeChangeNotifications.value"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                ng-model="prefsSrvc.prefs['send_administrative_change_notifications']"
+                                ng-change="prefsSrvc.updateNotificationPreferences()" />
                                 ${springMacroRequestContext.getMessage("change_notification_preferences.sendadministrativenotification")}
                             </label>                                
                             <label class="checkbox"> <input type="checkbox"
                                 id="sendMemberUpdateRequests" name="sendMemberUpdateRequests"
-                                ng-model="prefsSrvc.prefs.sendMemberUpdateRequests"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                ng-model="prefsSrvc.prefs['send_member_update_requests']"
+                                ng-change="prefsSrvc.updateNotificationPreferences()" />
                                 ${springMacroRequestContext.getMessage("change_notification_preferences.sendmemberupdaterequests")}
                             </label>
                             <label class="checkbox"> <input type="checkbox"
                                 id="sendOrcidNews" name="sendOrcidNews"
-                                ng-model="prefsSrvc.prefs.sendOrcidNews.value"
-                                ng-change="prefsSrvc.savePrivacyPreferences()" />
+                                ng-model="prefsSrvc.prefs['send_orcid_news']"
+                                ng-change="prefsSrvc.updateNotificationPreferences()" />
                                 ${springMacroRequestContext.getMessage("change_notification_preferences.news")}
                             <label>
                         </div>
