@@ -287,9 +287,10 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate) {
-        // Create verification url
-
+    public void sendOrcidDeactivateEmail(String userOrcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.deactivate", orcidToDeactivate);
@@ -347,12 +348,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     public void sendVerificationEmail(String userOrcid, String email) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);                
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
-        Locale userLocale = LocaleUtils.toLocale("en");
-
-        if (locale != null) {
-            userLocale = LocaleUtils.toLocale(locale.value());
-        }
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
         
         String subject = getSubject("email.subject.verify_reminder", userLocale);
         
@@ -631,18 +627,8 @@ public class NotificationManagerImpl implements NotificationManager {
     @Override
     @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser) {
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
-        
-        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
-        Locale userLocale = LocaleUtils.toLocale("en");
-
-        if (locale != null) {
-            userLocale = LocaleUtils.toLocale(locale.value());
-        }
-        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);        
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);        
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
 
         for (DelegationDetails newDelegation : delegatesGrantedByUser) {
@@ -658,7 +644,7 @@ public class NotificationManagerImpl implements NotificationManager {
             String grantingOrcidEmail = primaryEmail.getEmail();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
             String email = delegateProfileEntity.getPrimaryEmail().getId();
-
+            Map<String, Object> templateParams = new HashMap<String, Object>();
             templateParams.put("emailNameForDelegate", emailNameForDelegate);
             templateParams.put("grantingOrcidValue", userGrantingPermission);
             templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
@@ -1275,6 +1261,15 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("verified_required_announcement_2017_html.ftl", templateParams);
         
         return mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
+    }
+    
+    private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        if (locale != null) {
+            return LocaleUtils.toLocale(locale.value());
+        }
+        
+        return LocaleUtils.toLocale("en");
     }
 
 }

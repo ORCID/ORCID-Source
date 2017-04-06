@@ -337,9 +337,9 @@
 	        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 	        $.ajax({
 	            url: getBaseUri() + '/account/send-deactivate-account.json',
-	            dataType: 'json',
+	            dataType: 'text',
 	            success: function(data) {
-	                $scope.primaryEmail = data.value;
+	                $scope.primaryEmail = data;
 	                $.colorbox({
 	                    html : $compile($('#deactivate-account-modal').html())($scope)
 	                });

@@ -570,42 +570,30 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.jaxb.model.message.Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        org.orcid.jaxb.model.message.Email email = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-        notificationManager.sendOrcidDeactivateEmail(currentProfile);
-        return email;
+    public @ResponseBody String startDeactivateOrcidAccountJson(HttpServletRequest request) {
+        String currentUserOrcid = getCurrentUserOrcid();
+        notificationManager.sendOrcidDeactivateEmail(currentUserOrcid);
+        return emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
         Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));       

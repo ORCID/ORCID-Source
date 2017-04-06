@@ -60,7 +60,7 @@ public interface NotificationManager {
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
 
-    void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
+    void sendOrcidDeactivateEmail(String userOrcid);
 
     void sendOrcidLockedEmail(OrcidProfile orcidToLock);
 
