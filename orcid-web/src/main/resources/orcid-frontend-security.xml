@@ -57,13 +57,12 @@
     	class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
 		<property name="hierarchy">
    			<value>
-   				ROLE_ADMIN > ROLE_PREMIUM_INSTITUTION 
-   				ROLE_ADMIN > ROLE_PREMIUM
    				ROLE_PREMIUM_INSTITUTION > ROLE_BASIC_INSTITUTION   				
    				ROLE_PREMIUM > ROLE_BASIC		
    				ROLE_BASIC_INSTITUTION > ROLE_GROUP
       			ROLE_BASIC > ROLE_GROUP  
 				ROLE_GROUP > ROLE_USER
+				ROLE_ADMIN > ROLE_USER
    			</value>
 		</property>
 	</bean>
@@ -219,7 +218,7 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
-	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
+	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
 		<sec:access-denied-handler error-page="/signin"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
@@ -365,7 +364,7 @@
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-		<sec:form-login login-processing-url="/signin/auth.json"
+		<sec:form-login login-processing-url="/signin/auth.json" 
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />

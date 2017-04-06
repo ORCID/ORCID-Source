@@ -48,9 +48,13 @@
     </sec:http>
 
 	<!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
-    <sec:authentication-manager alias="x509AuthenticationManager">
-        <sec:authentication-provider user-service-ref="x509UserService"/>
+    <sec:authentication-manager id="x509AuthenticationManager">
+        <sec:authentication-provider ref="x509AuthenticationProvider"/>
     </sec:authentication-manager>
+    
+    <bean id="x509AuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="x509UserService" />
+    </bean>
 	
 	<!-- A simple hard-coded user service that will pick up the CN from the cert and perform a simple match -->
     <sec:user-service id="x509UserService">
