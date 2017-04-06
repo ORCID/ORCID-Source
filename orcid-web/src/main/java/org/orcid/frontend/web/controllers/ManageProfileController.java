@@ -45,7 +45,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
@@ -380,66 +379,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         return defaultVisibility;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
     public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
-        ChangePassword p = new ChangePassword();
-        return p;
+        return new ChangePassword();        
     }
 
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
@@ -460,10 +402,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
 
-        if (errors.size() == 0) {
-            OrcidProfile profile = getEffectiveProfile();
-            profile.setPassword(cp.getPassword());
-            orcidProfileManager.updatePasswordInformation(profile);
+        if (errors.size() == 0) {            
+            profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
             cp = new ChangePassword();
             errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
         }
@@ -524,9 +464,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-
-        OrcidProfileUserDetails primaryDetails = getCurrentUser();
-        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(primaryDetails.getOrcid());
+        
+        ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
         
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
@@ -592,8 +531,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
     public ModelAndView viewDeactivateOrcidAccount() {
-        ModelAndView deactivateOrcidView = new ModelAndView("deactivate_orcid");
-        return deactivateOrcidView;
+        return new ModelAndView("deactivate_orcid");
     }
 
     @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
@@ -601,11 +539,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             RedirectAttributes redirectAttributes) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        OrcidProfile profile = getEffectiveProfile();
-        // Since all profiles have at least one email address, this must never
-        // be null
-
-        String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String primaryEmail = emailManager.findPrimaryEmail(getCurrentUserOrcid()).getEmail();
 
         if (decryptedEmail.equals(primaryEmail)) {
             profileEntityManager.deactivateRecord(getCurrentUserOrcid());
@@ -618,15 +552,15 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         return result;
     }
-
+    
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        String primaryEmail = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+    public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {   
+        String currentUserOrcid = getCurrentUserOrcid();
+        String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
             request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
 
-        notificationManager.sendVerificationEmail(currentProfile, email);
+        notificationManager.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
     }
 
@@ -636,6 +570,34 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
     public @ResponseBody org.orcid.jaxb.model.message.Email startDeactivateOrcidAccountJson(HttpServletRequest request) {
         OrcidProfile currentProfile = getEffectiveProfile();
@@ -690,7 +652,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 emailManager.addEmail(getCurrentUserOrcid(), email.toV2Email());
 
                 // send verifcation email for new address
-                notificationManager.sendVerificationEmail(currentProfile, email.getValue());
+                notificationManager.sendVerificationEmail(getCurrentUserOrcid(), email.getValue());
 
                 // if primary also send change notification.
                 if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime.getValue())) {
@@ -761,7 +723,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (oldPrime != null && !newPrime.getValue().equalsIgnoreCase(oldPrime.getValue())) {
                 notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 if (!newPrime.isVerified()) {
-                    notificationManager.sendVerificationEmail(currentProfile, newPrime.getValue());
+                    notificationManager.sendVerificationEmail(getCurrentUserOrcid(), newPrime.getValue());
                     request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
                 }
             }

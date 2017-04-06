@@ -82,7 +82,6 @@ import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -345,25 +344,35 @@ public class NotificationManagerImpl implements NotificationManager {
 
     // look like the following is our best best for i18n emails
     // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    public void sendVerificationEmail(OrcidProfile orcidProfile, String email) {
+    @Override
+    public void sendVerificationEmail(String userOrcid, String email) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);                
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        Locale userLocale = LocaleUtils.toLocale("en");
+
+        if (locale != null) {
+            userLocale = LocaleUtils.toLocale(locale.value());
+        }
+        
+        String subject = getSubject("email.subject.verify_reminder", userLocale);
+        
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-        templateParams.put("primaryEmail", primaryEmail);
-        String emailFriendlyName = deriveEmailFriendlyName(orcidProfile);
+        templateParams.put("primaryEmail", email);
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
         templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("subject", getSubject("email.subject.verify_reminder", orcidProfile));
+        templateParams.put("subject", subject);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcid", orcidProfile.getOrcidIdentifier().getPath());
+        templateParams.put("orcid", userOrcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
 
-        addMessageParams(templateParams, orcidProfile);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, getSubject("email.subject.verify_reminder", orcidProfile), body, htmlBody);
+        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }
 
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile) {
@@ -645,8 +654,8 @@ public class NotificationManagerImpl implements NotificationManager {
                 return;
             }
 
-            EmailEntity primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);            
-            String grantingOrcidEmail = primaryEmail.getId();
+            org.orcid.jaxb.model.record_v2.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);            
+            String grantingOrcidEmail = primaryEmail.getEmail();
             String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
             String email = delegateProfileEntity.getPrimaryEmail().getId();
 

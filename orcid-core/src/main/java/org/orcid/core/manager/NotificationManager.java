@@ -38,7 +38,7 @@ public interface NotificationManager {
 
     void sendWelcomeEmail(String userOrcid, String email);
 
-    void sendVerificationEmail(OrcidProfile orcidProfile, String email);
+    void sendVerificationEmail(String userOrcid, String email);
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
