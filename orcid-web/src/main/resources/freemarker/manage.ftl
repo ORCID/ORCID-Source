@@ -183,7 +183,7 @@
                         <div class="editTablePadCell35" id="privacy-settings">
                             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
                             <@orcid.privacyToggle3
-						    angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
+						    angularModel="prefsSrvc.prefs['default_visibility']"
 						    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 						    clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
 						    publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)" 

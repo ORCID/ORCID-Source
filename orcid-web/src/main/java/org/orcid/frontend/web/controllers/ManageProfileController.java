@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
@@ -52,7 +51,6 @@ import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -320,38 +318,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return securityQuestion;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //TODO   
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDefaultPreference(HttpServletRequest request) {
         Map<String, Object> preferences = new HashMap<String, Object>();
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         preferences.put("email_frequency", String.valueOf(entity.getSendEmailFrequencyDays()));
-        preferences.put("visibility_defaults", entity.getActivitiesVisibilityDefault());
+        preferences.put("default_visibility", entity.getActivitiesVisibilityDefault());
         preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
         preferences.put("notifications_enabled", entity.getEnableNotifications());
         preferences.put("send_administrative_change_notifications", entity.getSendAdministrativeChangeNotifications());
@@ -362,7 +334,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/email_preferences.json", method = RequestMethod.POST)
-    public @ResponseBody String setEmailFrequency(@RequestBody String emailFrequencyDays) {
+    public @ResponseBody String setEmailFrequency(@RequestBody String emailFrequencyDays) throws IllegalArgumentException {
         SendEmailFrequency newFrequency = null;
         for(SendEmailFrequency f : SendEmailFrequency.values()) {
             if(f.value().equals(emailFrequencyDays)) {
@@ -380,7 +352,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
              
     @RequestMapping(value = "/notification_preferences.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> setEmailFrequency(@RequestBody Map<String, Object> preferences) {
+    public @ResponseBody Map<String, Object> setEmailFrequency(@RequestBody Map<String, Object> preferences) throws IllegalArgumentException {
         Boolean sendAdministrativeChangeNotifications = (Boolean) preferences.get("send_administrative_change_notifications");
         Boolean sendChangeNotifications = (Boolean) preferences.get("send_change_notifications");
         Boolean sendMemberUpdateRequests = (Boolean) preferences.get("send_member_update_requests");
@@ -394,7 +366,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         return preferences;
     }
     
-    
+    @RequestMapping(value = "/default_visibility.json", method = RequestMethod.POST)
+    public @ResponseBody String setDefaultVisibility(@RequestBody String defaultVisibility) throws IllegalArgumentException {
+        try {
+            org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility); 
+            if(org.orcid.jaxb.model.common_v2.Visibility.REGISTERED_ONLY.equals(visibility) || org.orcid.jaxb.model.common_v2.Visibility.SYSTEM.equals(visibility)) {
+                throw new IllegalArgumentException();
+            }
+            preferenceManager.updateDefaultVisibility(getCurrentUserOrcid(), visibility);
+        } catch(IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
+        }
+        return defaultVisibility;
+    }
     
     
     

@@ -248,8 +248,8 @@ angular.module('orcidApp').controller('WorksPrivacyPreferencesCtrl',['$scope', '
     };
 
     $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
-        $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
-        $scope.prefsSrvc.savePrivacyPreferences();
+        $scope.prefsSrvc.prefs['default_visibility'] = priv;        
+        $scope.prefsSrvc.updateDefaultVisibility();        
     };
     
     $scope.showTooltip = function(el){
