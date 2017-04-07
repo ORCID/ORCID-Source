@@ -1549,6 +1549,13 @@
             approval_date="2011-10-17 16:59:32.00"
             />
     
+    <given_permission_to
+            given_permission_to_id="3"
+            giver_orcid="0000-0000-0000-0006"
+            receiver_orcid="0000-0000-0000-0003"
+            approval_date="2017-10-17 16:59:32.00"
+            />
+    
     <email
         orcid="4444-4444-4444-4441"
         email="spike@milligan.com"
