@@ -60,7 +60,14 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
     @Override
     public void remove(String giverOrcid, String receiverOrcid) {
-        givenPermissionToDao.remove(giverOrcid, receiverOrcid);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                givenPermissionToDao.remove(giverOrcid, receiverOrcid);
+                profileEntityManager.updateLastModifed(giverOrcid);
+                profileEntityManager.updateLastModifed(receiverOrcid);
+            }
+        });            
     }
 
     @Override

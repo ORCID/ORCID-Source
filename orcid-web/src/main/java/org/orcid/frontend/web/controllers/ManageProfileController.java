@@ -48,10 +48,6 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
-import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -185,8 +181,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         // Check password
         String password = addDelegate.getPassword();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
             addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return addDelegate;
         }
@@ -207,13 +204,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         // Check password
         String password = manageDelegate.getPassword();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
             manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageDelegate;
-        }
-        String giverOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeDelegate(giverOrcid, manageDelegate.getDelegateToManage());
+        }               
+        givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
         return manageDelegate;
     }
 
@@ -228,8 +225,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
         // Check password
         String password = manageSocialAccount.getPassword();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, getEffectiveProfile().getPassword()))) {
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
             manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
@@ -271,7 +269,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }        
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
-    public @ResponseBody SecurityQuestion getSecurityQuestion(HttpServletRequest request) {
+    public @ResponseBody SecurityQuestion getSecurityQuestion() {
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         SecurityQuestion securityQuestion = new SecurityQuestion();
         
@@ -288,13 +286,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
-    public @ResponseBody SecurityQuestion setSecurityQuestion(HttpServletRequest request, @RequestBody SecurityQuestion securityQuestion) {
+    public @ResponseBody SecurityQuestion setSecurityQuestion(@RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
             errors.add(getMessage("manage.pleaseProvideAnAnswer"));
 
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), getEffectiveProfile().getPassword()))) {
+                && (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), profile.getEncryptedPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -382,7 +381,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
     public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
-
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        
         if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
             errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
@@ -393,7 +393,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             errors.add(getMessage("password.too_common", cp.getPassword()));
         }
 
-        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), getEffectiveProfile().getPassword())) {
+        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
 
@@ -581,10 +581,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmails(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
-        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         // Check password
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword()))) {
+                && (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), profile.getEncryptedPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -667,31 +667,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         return emails;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
-
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
@@ -705,7 +683,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
         // Set the default visibility
-        if (profile != null && profile.getActivitiesVisibilityDefault() != null) {
+        if (profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
         }
 
@@ -755,10 +733,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
         String currentOrcid = getCurrentUserOrcid();
         Name name = recordNameManager.getRecordName(currentOrcid, profileEntityManager.getLastModified(currentOrcid));
-        NamesForm nf = NamesForm.valueOf(name);
-        return nf;
+        return NamesForm.valueOf(name);
     }
-
+    
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
     public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
@@ -838,8 +815,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
     public @ResponseBody boolean isTwitterEnabled() {
-        String orcid = getEffectiveUserOrcid();
-        return orcidSocialManager.isTwitterEnabled(orcid);
+        return orcidSocialManager.isTwitterEnabled(getEffectiveUserOrcid());
     }
 
     /**
@@ -847,27 +823,18 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
     public @ResponseBody String goToTwitterAuthPage() throws Exception {
-        String authUrl = orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());
-        return authUrl;
+        return orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());        
     }
 
     /**
      * Get the twitter credentials and enable it on the user profile
      */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
-    public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {
-        OrcidProfile profile = getEffectiveProfile();
+    public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {      
         ModelAndView mav = new ModelAndView("manage");
-        mav.addObject("showPrivacy", true);
-        mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
-        mav.addObject("preferencesForm", new PreferencesForm(profile));
-        mav.addObject("profile", profile);
+        mav.addObject("showPrivacy", true);        
         mav.addObject("activeTab", "profile-tab");
         mav.addObject("securityQuestions", getSecurityQuestions());
-        if (profile != null) {
-            orcidSocialManager.enableTwitter(getEffectiveUserOrcid(), verifier);
-            mav.addObject("twitter", true);
-        }
         return mav;
     }
 
@@ -876,8 +843,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
     public @ResponseBody boolean disableTwitter() throws Exception {
-        String orcid = getEffectiveUserOrcid();
-        orcidSocialManager.disableTwitter(orcid);
+        orcidSocialManager.disableTwitter(getEffectiveUserOrcid());
         return true;
     }
 
@@ -887,13 +853,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = { "/authorize-delegates" }, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
         ModelAndView mav = new ModelAndView("manage");
-        // Set default objects the manage page needs
-        mav.addObject("showPrivacy", true);
-        mav.addObject("managePasswordOptionsForm", populateManagePasswordFormFromUserInfo());
-        mav.addObject("preferencesForm", new PreferencesForm(getEffectiveProfile()));
-        mav.addObject("profile", getEffectiveProfile());
-        mav.addObject("activeTab", "profile-tab");
-        mav.addObject("securityQuestions", getSecurityQuestions());
 
         try {
             Map<String, String> params = decryptDelegationKey(key);
@@ -948,28 +907,4 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailManager.verifyPrimaryEmail(orcid);
         }
     }
-    
-    private ManagePasswordOptionsForm populateManagePasswordFormFromUserInfo() {
-        OrcidProfile profile = getEffectiveProfile();
-
-        // TODO - placeholder just to test the retrieve etc..replace with only
-        // fields that we will populate
-        // password fields are never populated
-        OrcidProfile unecryptedProfile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
-        ManagePasswordOptionsForm managePasswordOptionsForm = new ManagePasswordOptionsForm();
-        managePasswordOptionsForm.setVerificationNumber(unecryptedProfile.getVerificationCode());
-        managePasswordOptionsForm.setSecurityQuestionAnswer(unecryptedProfile.getSecurityQuestionAnswer());
-        Integer securityQuestionId = null;
-        SecurityDetails securityDetails = unecryptedProfile.getOrcidInternal().getSecurityDetails();
-        // TODO - confirm that security details aren't null and that we can
-        // change schema to be an int for security
-        // questions field
-        if (securityDetails != null) {
-            securityQuestionId = securityDetails.getSecurityQuestionId() != null ? new Integer((int) securityDetails.getSecurityQuestionId().getValue()) : null;
-        }
-
-        managePasswordOptionsForm.setSecurityQuestionId(securityQuestionId);
-
-        return managePasswordOptionsForm;
-    }   
 }

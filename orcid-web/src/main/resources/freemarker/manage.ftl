@@ -440,7 +440,7 @@
                         <td width="10%" class="tooltip-container">
                             <a
                             ng-hide="realUserOrcid === delegationDetails.receiver.value || isPasswordConfirmationRequired"
-                            ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiver.value)"
+                            ng-click="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.value)"
                             class="glyphicon glyphicon-trash grey"">
                            		<div class="popover popover-tooltip top">
     								<div class="arrow"></div>

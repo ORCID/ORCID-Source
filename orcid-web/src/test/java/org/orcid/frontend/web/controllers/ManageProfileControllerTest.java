@@ -20,8 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -38,16 +40,25 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.GivenPermissionToManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.record_v2.FamilyName;
+import org.orcid.jaxb.model.record_v2.GivenNames;
+import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -55,10 +66,16 @@ import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
+import org.orcid.pojo.ManageDelegate;
+import org.orcid.pojo.SecurityQuestion;
+import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -84,6 +101,12 @@ public class ManageProfileControllerTest {
 
     @Mock
     private ProfileEntityManager mockProfileEntityManager;
+    
+    @Mock
+    private GivenPermissionToManager mockGivenPermissionToManager;
+    
+    @Mock
+    private OrcidSecurityManager mockOrcidSecurityManager;
 
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
@@ -103,7 +126,10 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
-
+        TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager);        
+        TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);                
+        
+        when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.eq("invalid password"), Mockito.anyString())).thenReturn(false);
         when(mockProfileEntityManager.deprecateProfile(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
@@ -333,32 +359,7 @@ public class ManageProfileControllerTest {
 
         assertTrue(found1);
         assertTrue(found2);
-    }
-
-    @Test
-    public void testAddDelegate() {
-        fail();
-    }
-    
-    @Test
-    public void testAddDelegateByEmail() {
-        fail();
-    }
-    
-    @Test
-    public void testRevokeDelegate() {
-        fail();
-    }
-    
-    @Test
-    public void testGetSecurityQuestion() {
-        fail();
-    }
-    
-    @Test
-    public void testSetSecurityQuestion() {
-        fail();
-    }
+    }   
     
     @Test
     public void testGetDeprecateProfile() {
@@ -662,6 +663,188 @@ public class ManageProfileControllerTest {
         assertEquals("deprecate_orcid.profile_matches_current", deprecateProfile.getErrors().get(0));
     }
 
+    @Test
+    public void testAddDelegate() throws Exception {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+
+        when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).then(new Answer<ProfileEntity>() {
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                ProfileEntity entity = new ProfileEntity();
+                entity.setId(invocation.getArgument(0));
+
+                EmailEntity email1 = new EmailEntity();
+                email1.setId(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setVerified(true);
+                email1.setCurrent(true);
+                email1.setDateCreated(new Date());
+                email1.setLastModified(new Date());
+                email1.setPrimary(true);
+                email1.setVisibility(Visibility.PUBLIC);
+
+                Set<EmailEntity> emails = new HashSet<EmailEntity>();
+                emails.add(email1);
+                entity.setEmails(emails);
+
+                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
+                // Mark it as deactivated
+                entity.setDeactivationDate(new Date());
+                entity.setEncryptedPassword("password");
+                return entity;
+            }
+        });
+        
+        ManageDelegate addDelegate = new ManageDelegate();
+        addDelegate.setDelegateToManage("0000-0000-0000-0000");
+        addDelegate.setPassword("password");
+        controller.addDelegate(addDelegate);
+        verify(mockGivenPermissionToManager, times(1)).create(USER_ORCID, "0000-0000-0000-0000");
+    }
+    
+    @Test
+    public void testStripHtmlFromNames() throws NoSuchRequestHandlingMethodException {
+        RecordNameManager mockRecordNameManager = Mockito.mock(RecordNameManager.class);
+        
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        TargetProxyHelper.injectIntoProxy(controller, "recordNameManager", mockRecordNameManager);
+        
+        when(mockRecordNameManager.exists(Mockito.anyString())).thenReturn(true);
+        
+        NamesForm nf = new NamesForm();
+        nf.setCreditName(Text.valueOf("<button onclick=\"alert('hello')\">Credit Name</button>"));
+        nf.setGivenNames(Text.valueOf("<button onclick=\"alert('hello')\">Given Names</button>"));
+        nf.setFamilyName(Text.valueOf("<button onclick=\"alert('hello')\">Family Name</button>"));
+        nf = controller.setNameFormJson(nf);
+        assertEquals("Credit Name", nf.getCreditName().getValue());
+        assertEquals("Given Names", nf.getGivenNames().getValue());
+        assertEquals("Family Name", nf.getFamilyName().getValue());
+    
+        Name name = new Name();
+        name.setCreditName(new CreditName("Credit Name"));
+        name.setFamilyName(new FamilyName("Family Name"));
+        name.setGivenNames(new GivenNames("Given Names"));
+        name.setVisibility(Visibility.PUBLIC);
+        
+        verify(mockRecordNameManager, times(1)).updateRecordName(Mockito.eq(USER_ORCID), Mockito.eq(name));
+    }
+    
+    @Test
+    public void testValidateBiography() {
+        BiographyManager mockBiographyManager = Mockito.mock(BiographyManager.class);
+        
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        TargetProxyHelper.injectIntoProxy(controller, "biographyManager", mockBiographyManager);
+        
+        when(mockBiographyManager.exists(Mockito.anyString())).thenReturn(true);
+                
+        BiographyForm bf = new BiographyForm();
+        // No NPE exception on empty bio
+        controller.setBiographyFormJson(bf);
+        assertNotNull(bf.getErrors());
+        assertTrue(bf.getErrors().isEmpty());
+        String bio = StringUtils.repeat('a', 5001);
+        bf.setBiography(Text.valueOf(bio));
+        controller.setBiographyFormJson(bf);
+        assertEquals(1, bf.getErrors().size());
+        assertEquals("Length.changePersonalInfoForm.biography", bf.getErrors().get(0));
+        bio = StringUtils.repeat('a', 5000);
+        bf.setBiography(Text.valueOf(bio));
+        controller.setBiographyFormJson(bf);
+        assertTrue(bf.getErrors().isEmpty()); 
+        
+        Biography bioElement = new Biography();
+        bioElement.setContent(bio);        
+        
+        verify(mockBiographyManager, times(1)).updateBiography(Mockito.eq(USER_ORCID), Mockito.eq(bioElement));
+    }
+    
+    @Test
+    public void testAddDelegateWithInvalidPassword() {
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage(USER_ORCID);
+        manageDelegate.setPassword("invalid password");
+        controller.addDelegate(manageDelegate);
+        
+        assertEquals(1, manageDelegate.getErrors().size());
+        assertEquals("check_password_modal.incorrect_password", manageDelegate.getErrors().get(0));
+        
+        verify(mockGivenPermissionToManager, times(0)).create(Mockito.anyString(), Mockito.anyString());       
+    }
+    
+    @Test
+    public void testRevokeDelegate() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage("0000-0000-0000-0000");
+        manageDelegate.setPassword("password");
+        
+        controller.revokeDelegate(manageDelegate);
+        
+        assertEquals(0, manageDelegate.getErrors().size());
+        
+        verify(mockGivenPermissionToManager, times(1)).remove(Mockito.eq(USER_ORCID), Mockito.eq("0000-0000-0000-0000"));      
+    }
+        
+    @Test
+    public void testRevokeDelegateWithInvalidPassword() {
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage(USER_ORCID);
+        manageDelegate.setPassword("invalid password");
+                
+        controller.revokeDelegate(manageDelegate);
+        
+        assertEquals(1, manageDelegate.getErrors().size());
+        assertEquals("check_password_modal.incorrect_password", manageDelegate.getErrors().get(0));
+        
+        verify(mockGivenPermissionToManager, times(0)).remove(Mockito.anyString(), Mockito.anyString());      
+    }
+    
+    @Test
+    public void testSetSecurityQuestion() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));        
+        SecurityQuestion s = new SecurityQuestion();
+        s.setPassword("password");
+        s.setSecurityAnswer("answer");
+        s.setSecurityQuestionId(1L);
+        
+        controller.setSecurityQuestion(s);
+        
+        assertEquals(1, s.getErrors().size());
+        assertEquals("manage.securityQuestionUpdated", s.getErrors().get(0));
+        
+        verify(mockProfileEntityManager, times(1)).updateSecurityQuestion(Mockito.eq(USER_ORCID), Mockito.eq(Integer.valueOf(1)), Mockito.eq("answer"));
+    }
+    
+    @Test
+    public void testSetSecurityQuestionWithIvalidPassword() {
+        SecurityQuestion s = new SecurityQuestion();
+        s.setPassword("invalid password");
+        s.setSecurityAnswer("answer");
+        s.setSecurityQuestionId(1L);
+        
+        controller.setSecurityQuestion(s);
+        
+        assertEquals(1, s.getErrors().size());
+        assertEquals("check_password_modal.incorrect_password", s.getErrors().get(0));
+        
+        verify(mockProfileEntityManager, times(0)).updateSecurityQuestion(Mockito.anyString(), Mockito.any(), Mockito.any());       
+    }
+    
+    @Test
+    public void testSetSecurityQuestionWithEmptyAnswer() {
+        SecurityQuestion s = new SecurityQuestion();
+        s.setPassword("password");
+        s.setSecurityAnswer("");
+        s.setSecurityQuestionId(1L);
+        
+        controller.setSecurityQuestion(s);
+        
+        assertEquals(1, s.getErrors().size());
+        assertEquals("manage.pleaseProvideAnAnswer", s.getErrors().get(0));
+        
+        verify(mockProfileEntityManager, times(0)).updateSecurityQuestion(Mockito.anyString(), Mockito.any(), Mockito.any());       
+    }
+    
     protected Authentication getAuthentication(String orcid) {
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null);
         details.setOrcidType(OrcidType.USER);
