@@ -179,7 +179,7 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 	
-	<sec:http pattern="/shibboleth/.*" use-expressions="false"
+	<sec:http pattern="/shibboleth/.*" use-expressions="false" authentication-manager-ref="authenticationManager" 
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		request-matcher="regex">
 		<sec:access-denied-handler error-page="/shibboleth/signin" />
@@ -202,7 +202,7 @@
         <property name="defaultTargetUrl" value="/my-orcid" />
     </bean>
 	
-	<sec:http pattern="/social/.*" use-expressions="false"
+	<sec:http pattern="/social/.*" authentication-manager-ref="authenticationManager" use-expressions="false"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		request-matcher="regex">
 		<sec:access-denied-handler error-page="/signin" />
