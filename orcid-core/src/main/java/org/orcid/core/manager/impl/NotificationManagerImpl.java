@@ -290,25 +290,25 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        
+        org.orcid.jaxb.model.record_v2.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
-        String subject = getSubject("email.subject.deactivate", orcidToDeactivate);
-        String email = orcidToDeactivate.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+        String subject = getSubject("email.subject.deactivate", userLocale);
+        String email = primaryEmail.getEmail();
         String encryptedEmail = encryptionManager.encryptForExternalUse(email);
         String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
         String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
 
-        String emailFriendlyName = deriveEmailFriendlyName(orcidToDeactivate);
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
         templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", orcidToDeactivate.getOrcidIdentifier().getPath());
+        templateParams.put("orcid", userOrcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
         templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, orcidToDeactivate);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);

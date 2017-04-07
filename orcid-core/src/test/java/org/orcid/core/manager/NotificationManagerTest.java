@@ -62,6 +62,7 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.DelegationDetails;
@@ -75,6 +76,7 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -127,6 +129,12 @@ public class NotificationManagerTest extends DBUnitTest {
     @Mock
     private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
+    @Mock
+    private ProfileEntityCacheManager mockProfileEntityCacheManager;
+    
+    @Mock
+    private EmailManager mockEmailManager;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -253,10 +261,25 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendOrcidDeactivateEmail(orcidProfile);
-
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
+        final String orcid = "0000-0000-0000-0003";
+        
+        ProfileEntity profile = new ProfileEntity(orcid);
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("My credit name");
+        recordName.setVisibility(Visibility.PUBLIC);
+        profile.setRecordNameEntity(recordName);
+        
+        Email email = new Email();
+        email.setEmail("test@email.com");
+        
+        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
+        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
+        
+        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
+            profile.setLocale(locale);
+            notificationManager.sendOrcidDeactivateEmail(orcid);
         }
     }
 
@@ -302,9 +325,25 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testChangeEmailAddress() throws Exception {
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendEmailAddressChangedNotification(orcidProfile, "original@email.com");
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
+        final String orcid = "0000-0000-0000-0003";
+        
+        ProfileEntity profile = new ProfileEntity(orcid);
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("My credit name");
+        recordName.setVisibility(Visibility.PUBLIC);
+        profile.setRecordNameEntity(recordName);
+        
+        Email email = new Email();
+        email.setEmail("test@email.com");
+        
+        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
+        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
+        
+        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
+            profile.setLocale(locale);
+            notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
     }
 

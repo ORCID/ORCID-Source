@@ -31,7 +31,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
  */
 public interface EmailManager extends EmailManagerReadOnly {
 
-    void updateEmails(String orcid, Emails emails);
+    void updateEmails(HttpServletRequest request, String orcid, Emails emails);
 
     void addEmail(HttpServletRequest request, String orcid, Email email);
     
