@@ -68,7 +68,7 @@ public interface NotificationManager {
     
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
-    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail);
+    void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 

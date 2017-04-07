@@ -674,24 +674,26 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail) {
-
+    public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(currentUserOrcid);        
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        
         // build up old template
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject("email.subject.email_removed", updatedProfile);
-        String emailFriendlyName = deriveEmailFriendlyName(updatedProfile);
+        Map<String, Object> templateParams = new HashMap<String, Object>();        
+        
+        String subject = getSubject("email.subject.email_removed", userLocale);
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidUrlManager.getBaseUrl());
+        String verificationUrl = createVerificationUrl(newEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("oldEmail", oldEmail);
-        templateParams.put("newEmail", updatedProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-        templateParams.put("orcid", updatedProfile.getOrcidIdentifier().getPath());
+        templateParams.put("newEmail", newEmail);
+        templateParams.put("orcid", currentUserOrcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, updatedProfile);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("email_removed.ftl", templateParams);

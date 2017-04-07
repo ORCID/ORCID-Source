@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
@@ -102,13 +103,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String IS_SELF = "isSelf";
 
-    private static final String FOUND = "found";
-
-    /*
-     * session attribute that is used to see if we should check and notify the
-     * user if their primary email ins't verified.
-     */
-    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
+    private static final String FOUND = "found";   
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -558,7 +553,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String currentUserOrcid = getCurrentUserOrcid();
         String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
         if (primaryEmail.equals(email))
-            request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
 
         notificationManager.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
@@ -566,7 +561,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/delayVerifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors delayVerifyEmailJson(HttpServletRequest request) {
-        request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+        request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         return new Errors();
     }
 
@@ -577,82 +572,62 @@ public class ManageProfileController extends BaseWorkspaceController {
         return emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
         Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid(), profileEntityManager.getLastModified(getCurrentUserOrcid()));       
         return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
+        
         // Check password
         if (orcidSecurityManager.isPasswordConfirmationRequired()
                 && (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), getEffectiveProfile().getPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
+        // if blank
+        if (PojoUtil.isEmpty(email.getValue())) {
+            errors.add(getMessage("Email.personalInfoForm.email"));
+        }
+
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // make sure there are no dups
+        validateEmailAddress(email.getValue(), false, false, request, mbr);
+
+        for (ObjectError oe : mbr.getAllErrors()) {
+            errors.add(getMessage(oe.getCode(), email.getValue()));
+        }
+        
         if (errors.isEmpty()) {
-            OrcidProfile currentProfile = getEffectiveProfile();
-            org.orcid.jaxb.model.message.Email oldPrime = currentProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
-            String newPrime = null;
-            List<String> emailErrors = new ArrayList<String>();
-
-            // clear errros
+            // clear errors
             email.setErrors(new ArrayList<String>());
-
-            // if blank
-            if (PojoUtil.isEmpty(email.getValue())) {
-                emailErrors.add(getMessage("Email.personalInfoForm.email"));
-            }            
-            
-            MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-            // make sure there are no dups
-            validateEmailAddress(email.getValue(), false, false, request, mbr);
-
-            for (ObjectError oe : mbr.getAllErrors()) {
-                emailErrors.add(getMessage(oe.getCode(), email.getValue()));
-            }
-            email.setErrors(emailErrors);
-
-            if (emailErrors.size() == 0) {
-                if (email.isPrimary()) {
-                    newPrime = email.getValue();
-                }
-                
-                emailManager.addEmail(getCurrentUserOrcid(), email.toV2Email());
-
-                // send verifcation email for new address
-                notificationManager.sendVerificationEmail(getCurrentUserOrcid(), email.getValue());
-
-                // if primary also send change notification.
-                if (newPrime != null && !newPrime.equalsIgnoreCase(oldPrime.getValue())) {
-                    request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-                    notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
-                }
-
-            }
+            String currentUserOrcid = getCurrentUserOrcid();            
+            emailManager.addEmail(request, currentUserOrcid, email.toV2Email());                            
         } else {
             email.setErrors(errors);
         }
-
         return email;
     }
 
@@ -712,13 +687,65 @@ public class ManageProfileController extends BaseWorkspaceController {
                 notificationManager.sendEmailAddressChangedNotification(currentProfile, oldPrime.getValue());
                 if (!newPrime.isVerified()) {
                     notificationManager.sendVerificationEmail(getCurrentUserOrcid(), newPrime.getValue());
-                    request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+                    request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 }
             }
         }
         return emails;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         long lastModifiedTime = profileEntityManager.getLastModified(getCurrentUserOrcid());        
