@@ -131,7 +131,8 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 
     <!-- Authenticate the client before reaching the token endpoint -->
-    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+    <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+    	<sec:csrf disabled="true"/>
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
@@ -408,9 +409,12 @@
 	</oauth2:authorization-server>
 
 	<sec:authentication-manager id="clientAuthenticationManager">
-		<sec:authentication-provider
-			user-service-ref="clientDetailsUserService" />
+		<sec:authentication-provider ref="clientAuthenticationProvider" />
 	</sec:authentication-manager>
+	
+	<bean id="clientAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
+        <property name="userDetailsService" ref="clientDetailsUserService" />
+    </bean>
 
 	<bean id="clientDetailsUserService"
 		class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">

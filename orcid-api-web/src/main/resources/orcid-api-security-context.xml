@@ -33,7 +33,8 @@
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 
     <!-- Authenticate the client before reaching the token endpoint -->
-    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+    <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+        <sec:csrf disabled="true"/>
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
@@ -44,6 +45,7 @@
 
     <!-- Authentication for member V2 API, has different exception renderer -->
     <sec:http pattern="/v2**" use-expressions="true" create-session="stateless">
+    	<sec:csrf disabled="true"/>
         <sec:anonymous enabled="false" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="**" access="#oauth2.clientHasRole('ROLE_CLIENT') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_USER')"/>
@@ -54,6 +56,7 @@
 
     <!-- Authentication for notifications API, has different exception renderer -->
     <sec:http pattern="/**/notifications/**" use-expressions="true" create-session="stateless">
+    	<sec:csrf disabled="true"/>
         <sec:anonymous enabled="false" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="**" access="#oauth2.clientHasRole('ROLE_CLIENT') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_USER')"/>
@@ -64,6 +67,7 @@
 
     <!-- All other authentication will come through this. If a certificate is not found, it will attempt OAuth2 auth -->
     <sec:http use-expressions="true" create-session="stateless">
+    	<sec:csrf disabled="true"/>
         <sec:anonymous enabled="false" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_USER')"/>
