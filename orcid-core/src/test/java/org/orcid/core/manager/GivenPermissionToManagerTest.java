@@ -33,7 +33,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 
 public class GivenPermissionToManagerTest extends BaseTest {
@@ -48,7 +47,7 @@ public class GivenPermissionToManagerTest extends BaseTest {
     private GivenPermissionToManager givenPermissionToManager;
 
     @Resource
-    private ProfileDao profileDao;
+    private ProfileEntityManager profileEntityManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -80,17 +79,17 @@ public class GivenPermissionToManagerTest extends BaseTest {
         assertEquals(RECEIVER, entity.getGiver());
         assertEquals(GIVER, entity.getReceiver().getId());
 
-        Date rLastModifiedBefore = profileDao.find(RECEIVER).getLastModified();
-        Date gLastModifiedBefore = profileDao.find(GIVER).getLastModified();
-
+        Date rLastModifiedBefore = profileEntityManager.getLastModifiedDate(RECEIVER);
+        Date gLastModifiedBefore = profileEntityManager.getLastModifiedDate(GIVER);
+        
         // Delete it
         givenPermissionToManager.remove(RECEIVER, GIVER);
         // Verify it was deleted
         entity = givenPermissionToManager.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
         assertNull(entity);
 
-        Date rLastModifiedAfter = profileDao.find(RECEIVER).getLastModified();
-        Date gLastModifiedAfter = profileDao.find(GIVER).getLastModified();
+        Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
+        Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
 
         assertTrue(rLastModifiedAfter.after(rLastModifiedBefore));
         assertTrue(gLastModifiedAfter.after(gLastModifiedBefore));
@@ -98,8 +97,8 @@ public class GivenPermissionToManagerTest extends BaseTest {
 
     @Test
     public void testCreate() {
-        Date rLastModifiedBefore = profileDao.find(RECEIVER).getLastModified();
-        Date gLastModifiedBefore = profileDao.find(GIVER).getLastModified();
+        Date rLastModifiedBefore = profileEntityManager.getLastModifiedDate(RECEIVER);
+        Date gLastModifiedBefore = profileEntityManager.getLastModifiedDate(GIVER);
 
         // Create one
         givenPermissionToManager.create(RECEIVER, GIVER);
@@ -109,8 +108,8 @@ public class GivenPermissionToManagerTest extends BaseTest {
         assertEquals(RECEIVER, entity.getGiver());
         assertEquals(GIVER, entity.getReceiver().getId());
 
-        Date rLastModifiedAfter = profileDao.find(RECEIVER).getLastModified();
-        Date gLastModifiedAfter = profileDao.find(GIVER).getLastModified();
+        Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
+        Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
 
         assertTrue(rLastModifiedAfter.after(rLastModifiedBefore));
         assertTrue(gLastModifiedAfter.after(gLastModifiedBefore));
