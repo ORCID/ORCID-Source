@@ -247,6 +247,10 @@ public class BlackBoxBase {
     }
 
     public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        changeDefaultUserVisibility(webDriver, visibility, true);
+    }
+    
+    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility, boolean logUserOut) {
         String baseUri = BBBUtil.getProperty("org.orcid.web.baseUri");
         String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
         String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
@@ -255,14 +259,17 @@ public class BlackBoxBase {
             baseUri = "https://localhost:8443/orcid-web";
         }
         
-        BBBUtil.logUserOut(baseUri, webDriver);
-        webDriver.get(baseUri + "/account");
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        
-        SigninTest.signIn(webDriver, userOrcid, userPassword);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
-        
+        if(logUserOut) {
+            BBBUtil.logUserOut(baseUri, webDriver);
+            webDriver.get(baseUri + "/account");        
+            SigninTest.signIn(webDriver, userOrcid, userPassword);
+            BBBUtil.noSpinners(webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
+        } else {
+            webDriver.get(baseUri + "/account");
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);                    
+        }
+                
         By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle), webDriver);
         WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
@@ -275,8 +282,9 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
     }
+    
     
     public static void changeBiography(String bioValue, Visibility changeTo) throws Exception {
         int privacyIndex = getPrivacyIndex(changeTo);
@@ -992,8 +1000,9 @@ public class BlackBoxBase {
     /**
      * ACCOUNT SETTINGS PAGE
      * */
-    public void showAccountSettingsPage() {
-        webDriver.get(getWebBaseUrl() + "/account");
+    public static void showAccountSettingsPage() {
+        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        webDriver.get(baseUrl + "/account");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.noSpinners(webDriver);
@@ -1059,13 +1068,13 @@ public class BlackBoxBase {
     /**
      * EMAIL ON ACCOUNT SETTINGS PAGE
      * */
-    public void openEditEmailsSectionOnAccountSettingsPage() {
+    public static void openEditEmailsSectionOnAccountSettingsPage() {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("account-settings-toggle-email-edit")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("account-settings-toggle-email-edit")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
-    public boolean emailExists(String emailValue) {
+    public static boolean emailExists(String emailValue) {
         String emailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
         try {
             BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
@@ -1088,7 +1097,7 @@ public class BlackBoxBase {
         return true;
     }
     
-    public void updatePrimaryEmailVisibility(Visibility visibility) {
+    public static void updatePrimaryEmailVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String primaryEmailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::td[contains(@class, 'primaryEmail')]]/td[6]//ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(primaryEmailVisibilityXpath)), webDriver);
@@ -1096,7 +1105,7 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);    
     }
     
-    public void updateEmailVisibility(String emailValue, Visibility visibility) {
+    public static void updateEmailVisibility(String emailValue, Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String emailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[6]//ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailVisibilityXpath)), webDriver);
@@ -1104,7 +1113,7 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
-    public void addEmail(String emailValue, Visibility visibility) {
+    public static void addEmail(String emailValue, Visibility visibility) {
         String emailFormXpath = "//div[@ng-controller='EmailEditCtrl']//input[@type='email']";
         String saveButtonXpath = "//div[@ng-controller='EmailEditCtrl']//input[@type='email']/following-sibling::span[1]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(emailFormXpath)), webDriver);
@@ -1262,7 +1271,7 @@ public class BlackBoxBase {
         return scopes;
     }        
     
-    public void removePopOver() {
+    public static void removePopOver() {
         Actions a = new Actions(webDriver);
         a.moveByOffset(500, 500).perform();        
     }
