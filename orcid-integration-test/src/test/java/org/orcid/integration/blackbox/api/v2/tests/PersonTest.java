@@ -28,9 +28,11 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -67,23 +69,19 @@ public class PersonTest extends BlackBoxBaseV2Release {
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
     
-    private String limitedEmail = "limited@test.orcid.org";
+    private static final String limitedEmail = "limited@test.orcid.org";
 
     private static boolean allSet = false;
 
     private static String researcherUrl1 = "http://test.orcid.org/1/" + System.currentTimeMillis();
     private static String researcherUrl2 = "http://test.orcid.org/2/" + System.currentTimeMillis();
 
-    @Before
-    public void setUpUserInUi() throws Exception {
-        if (allSet) {
-            return;
-        }
-
+    @BeforeClass
+    public static void setUpUserInUi() throws Exception {
         signin();
         
         //Set the default visibility to public, so, all elements created are public by default
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, false);
         
         showMyOrcidPage();
 
@@ -108,15 +106,15 @@ public class PersonTest extends BlackBoxBaseV2Release {
         deleteResearcherUrls();
         createResearcherUrl(researcherUrl1);
         createResearcherUrl(researcherUrl2);
-        saveResearcherUrlsModal();
+        saveResearcherUrlsModal();        
+                
+        // Set biography to public
+        String bio = BBBUtil.getProperty("org.orcid.web.testUser1.bio");
+        changeBiography(bio, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
 
-        if (hasExternalIdentifiers()) {
-            showMyOrcidPage();
-            openEditExternalIdentifiersModal();
-            deleteExternalIdentifiers();
-            saveExternalIdentifiersModal();
-        }
-
+        // Set names to public
+        changeNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
         updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
@@ -125,26 +123,36 @@ public class PersonTest extends BlackBoxBaseV2Release {
             updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         } else {
             addEmail(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        }                
+    }
+    
+    @Before
+    public void before() throws InterruptedException, JSONException {
+        if(allSet) {
+            return;
         }
-
+        
+        showMyOrcidPage();
+        
+        if (hasExternalIdentifiers()) {
+            openEditExternalIdentifiersModal();
+            deleteExternalIdentifiers();
+            saveExternalIdentifiersModal();
+        }
+        
         String accessToken = getAccessToken(getScopes(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE));
         createExternalIdentifier("A-0001", getUser1OrcidId(), accessToken);
         createExternalIdentifier("A-0002", getUser1OrcidId(), accessToken);
 
         showMyOrcidPage();
+        
         openEditExternalIdentifiersModal();
         updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
         saveExternalIdentifiersModal();
-
-        // Set biography to public
-        changeBiography(null, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-
-        // Set names to public
-        changeNamesVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-
+        
         allSet = true;
-    }
+    }            
 
     @AfterClass
     public static void afterClass() {

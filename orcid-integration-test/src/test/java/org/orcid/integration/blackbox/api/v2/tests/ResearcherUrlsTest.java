@@ -79,7 +79,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         createResearcherUrl(researcherUrl1);
         changeResearcherUrlsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         saveResearcherUrlsModal();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, false);
     }
 
     @AfterClass
