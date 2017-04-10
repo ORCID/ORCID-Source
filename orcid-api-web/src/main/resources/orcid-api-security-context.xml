@@ -26,6 +26,8 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+	
+	<sec:http-firewall ref="httpFirewall"/>
 
 	<sec:http pattern="/resources/**" security="none"/>
 	
@@ -137,6 +139,11 @@
         <property name="realmName" value="ORCID T2 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
+    </bean>
+    
+    <bean id="httpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall">
+        <!--  Allow slash for webhooks --> 
+        <property name="allowUrlEncodedSlash" value="true" />
     </bean>
         
 </beans>
