@@ -318,11 +318,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         preferences.put("email_frequency", String.valueOf(entity.getSendEmailFrequencyDays()));
         preferences.put("default_visibility", entity.getActivitiesVisibilityDefault());
         preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
-        preferences.put("notifications_enabled", entity.getEnableNotifications());
-        preferences.put("send_administrative_change_notifications", entity.getSendAdministrativeChangeNotifications());
-        preferences.put("send_change_notifications", entity.getSendChangeNotifications());
-        preferences.put("send_member_update_requests", entity.getSendMemberUpdateRequests());
-        preferences.put("send_orcid_news", entity.getSendOrcidNews());        
+        preferences.put("notifications_enabled", entity.getEnableNotifications() == null ? false : entity.getEnableNotifications());
+        preferences.put("send_administrative_change_notifications", entity.getSendAdministrativeChangeNotifications() == null ? false : entity.getSendAdministrativeChangeNotifications());
+        preferences.put("send_change_notifications", entity.getSendChangeNotifications() == null ? false : entity.getSendChangeNotifications());
+        preferences.put("send_member_update_requests", entity.getSendMemberUpdateRequests() == null ? false : entity.getSendMemberUpdateRequests());
+        preferences.put("send_orcid_news", entity.getSendOrcidNews() == null ? false : entity.getSendOrcidNews());        
         return preferences;
     }
     
