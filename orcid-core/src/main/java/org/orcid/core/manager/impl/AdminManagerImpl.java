@@ -35,6 +35,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
@@ -141,7 +142,9 @@ public class AdminManagerImpl implements AdminManager {
         // Send email to managed account
         notificationManager.sendDelegationRequestEmail(managed, trusted, link);
 
-        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", emailManager.findPrimaryEmail(managed)));
+        Email primaryEmail = emailManager.findPrimaryEmail(managed);
+        
+        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", primaryEmail.getEmail()));
         
         return request;
     }

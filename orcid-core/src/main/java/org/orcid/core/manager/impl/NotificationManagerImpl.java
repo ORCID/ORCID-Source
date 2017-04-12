@@ -932,7 +932,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("trustedOrcidValue", trustedOrcid);
         templateParams.put("managedOrcidValue", managedOrcid);
 
-        String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getId();
+        String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getEmail();
         if (primaryEmail == null) {
             LOGGER.info("Cant send admin delegate email if primary email is null: {}", managedOrcid);
             return;

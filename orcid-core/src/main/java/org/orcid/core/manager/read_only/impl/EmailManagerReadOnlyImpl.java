@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -153,10 +154,10 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
 
     @Override
-    public EmailEntity findPrimaryEmail(String orcid) {
+    public Email findPrimaryEmail(String orcid) {
         if(PojoUtil.isEmpty(orcid)) {
             return null;
         }
-        return emailDao.findPrimaryEmail(orcid);
+        return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
     }
 }
