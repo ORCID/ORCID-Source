@@ -94,8 +94,9 @@ public class PasswordResetController extends BaseController {
     private RegistrationController registrationController;
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
-    public ModelAndView resetPassword() {
+    public ModelAndView resetPassword(@RequestParam(value = "expired", required = false) boolean expired) {
         ModelAndView mav = new ModelAndView("reset_password");
+        mav.addObject("tokenExpired", expired);
         return mav;
     }
 
@@ -144,7 +145,7 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
         if (isTokenExpired(passwordResetToken)) {
             redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
-            return new ModelAndView("redirect:/reset-password");
+            return new ModelAndView("redirect:/reset-password?expired=true");
         }
         return new ModelAndView("password_one_time_reset_optional_security_questions");
     }

@@ -257,7 +257,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         }
         return false;
     }
-    
+
     @Override
     public EmailEntity findPrimaryEmail(String orcid) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and primary = true", EmailEntity.class);

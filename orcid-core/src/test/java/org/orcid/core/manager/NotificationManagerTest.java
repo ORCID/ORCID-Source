@@ -435,9 +435,8 @@ public class NotificationManagerTest extends DBUnitTest {
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
         when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
 
-        for (Locale locale : Locale.values()) {
-            OrcidProfile orcidProfile = getProfile(locale);
-            notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
+        for (Locale locale : Locale.values()) {            
+            notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
         }
     }
 

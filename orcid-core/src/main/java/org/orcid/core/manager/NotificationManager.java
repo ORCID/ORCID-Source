@@ -62,7 +62,7 @@ public interface NotificationManager {
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
-    void sendOrcidLockedEmail(OrcidProfile orcidToLock);
+    void sendOrcidLockedEmail(String orcidToLock);
 
     void sendApiRecordCreationEmail(String toEmail, String orcid);
     
@@ -74,7 +74,7 @@ public interface NotificationManager {
 
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile);
 
-    void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link);
+    void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
     public List<Notification> findUnsentByOrcid(String orcid);
 

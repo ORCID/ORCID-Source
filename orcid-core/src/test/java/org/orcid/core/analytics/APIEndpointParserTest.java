@@ -17,7 +17,7 @@
 package org.orcid.core.analytics;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 
@@ -51,7 +51,8 @@ public class APIEndpointParserTest {
     public void testAPIEndpointParserWithoutApiVersionOrOrcid() {
         ContainerRequest request = getRequest("https://localhost:8443/orcid-api-web/oauth/token");
         APIEndpointParser parser = new APIEndpointParser(request);
-        assertNull(parser.getApiVersion());
+        assertNotNull(parser.getApiVersion());
+        assertEquals("", parser.getApiVersion());
         assertEquals("oauth", parser.getCategory());
     }
     
@@ -59,7 +60,8 @@ public class APIEndpointParserTest {
     public void testAPIEndpointParserWithoutApiVersionWithOrcid() {
         ContainerRequest request = getRequest("https://localhost:8443/orcid-api-web/1234-4321-1234-4321/orcid-bio");
         APIEndpointParser parser = new APIEndpointParser(request);
-        assertNull(parser.getApiVersion());
+        assertNotNull(parser.getApiVersion());
+        assertEquals("", parser.getApiVersion());
         assertEquals("orcid-bio", parser.getCategory());
     }
     
@@ -83,7 +85,8 @@ public class APIEndpointParserTest {
     public void testAPIEndpointParserNoCategoryOrVersion() {
         ContainerRequest request = getRequest("https://localhost:8443/orcid-api-web/1234-4321-1234-4321");
         APIEndpointParser parser = new APIEndpointParser(request);
-        assertNull(parser.getApiVersion());
+        assertNotNull(parser.getApiVersion());
+        assertEquals("", parser.getApiVersion());
         assertEquals("orcid-bio", parser.getCategory());
     }    
     

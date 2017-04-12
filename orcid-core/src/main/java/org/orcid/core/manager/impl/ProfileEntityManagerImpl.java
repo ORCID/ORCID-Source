@@ -29,7 +29,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
@@ -39,26 +38,23 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
@@ -98,9 +94,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);    
 
     @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
-
-    @Resource
     private AffiliationsManager affiliationsManager;
 
     @Resource
@@ -128,9 +121,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private ProfileKeywordManager profileKeywordManager;
 
     @Resource
-    private PersonalDetailsManager personalDetailsManager;
-
-    @Resource
     private OtherNameManager otherNameManager;
 
     @Resource
@@ -152,13 +142,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private UserConnectionDao userConnectionDao;
     
     @Resource
-    private OrcidProfileManager orcidProfileManager;
-    
-    @Resource
     private NotificationManager notificationManager;
-    
-    @Resource
-    private SourceManager sourceManager;
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
@@ -652,10 +636,21 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         //Delete all connections
         userConnectionDao.deleteByOrcid(orcid);                
         
-        OrcidProfile deactivated = orcidProfileManager.retrieveOrcidProfile(orcid);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+        return true;
+    }
+    
+    @Override
+    @Transactional
+    public boolean reactivateRecord(String orcid) {
+        ProfileEntity toReactivate = profileDao.find(orcid);
+        toReactivate.setLastModified(new Date());
+        toReactivate.setDeactivationDate(null);
+        profileDao.merge(toReactivate);
+        profileDao.flush();
         
-        notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
-        return false;
+        notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+        return true;
     }
 
     @Override
@@ -708,4 +703,32 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public Locale retrieveLocale(String orcid) {
         return profileDao.retrieveLocale(orcid);
     }
+
+    /**
+     * Set the locked status of an account to true
+     * 
+     * @param orcid
+     *            the id of the profile that should be locked
+     * @return true if the account was locked
+     */
+    @Override
+    public boolean lockProfile(String orcid, String lockReason, String description) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
+        if (wasLocked) {
+            notificationManager.sendOrcidLockedEmail(orcid);
+        }
+        return wasLocked;
+    }
+    
+    /**
+     * Set the locked status of an account to false
+     * 
+     * @param orcid
+     *            the id of the profile that should be unlocked
+     * @return true if the account was unlocked
+     */
+    @Override
+    public boolean unlockProfile(String orcid) {
+        return profileDao.unlockProfile(orcid);
+    }   
 }

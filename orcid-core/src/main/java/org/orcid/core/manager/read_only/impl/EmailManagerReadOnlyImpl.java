@@ -152,7 +152,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     public EmailEntity find(String email) {
         return emailDao.find(email);
     }
-    
+
     @Override
     public Email findPrimaryEmail(String orcid) {
         if(PojoUtil.isEmpty(orcid)) {
