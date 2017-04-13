@@ -20,7 +20,7 @@
 <#escape x as x?html>
 <#setting date_format="yyyy-MM-dd">
 <div class="row workspace-top public-profile">
-    <div class="col-md-3 left-aside">
+    <div class="col-md-12">
         <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
         	<div class="id-banner">
 	            <h2 class="full-name">	            	
@@ -314,7 +314,7 @@
         </div>
     </div>
     
-    <div class="col-md-9 right-aside">
+    <div class="col-md-12">
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
         		<div class="workspace-inner-public workspace-public workspace-accordion">
 	        		<#if (isProfileEmpty)?? && isProfileEmpty>

@@ -15,7 +15,7 @@
  * =============================================================================
  */
 
-@media print {
+@media all {
     /*Begin of boilerplate default styles for printing */
     *,
     *:before,
@@ -138,8 +138,7 @@
     }
 
     .bottom-margin-medium,
-    .bottomBuffer,
-    .main {
+    .bottomBuffer {
         margin: 0;
     }
 
@@ -227,10 +226,22 @@
     .workspace-section .workspace-section-heading li.right span.toggle {
         display: none;
     }
+    
+    .main {
+        margin: 20px 0 0 0;
+    }
 
     .mobile-box {
         padding: 0;
     }
+    
+    #orcid-id-before{
+    	padding: 2px;
+    }
+    .orcid-id-info {
+	    border-bottom: 1px solid #000;
+	    margin: 5px 0;
+	}
 
     .info-detail, 
     .workspace-accordion-content,
@@ -263,12 +274,12 @@
     .workspace-accordion-content .col-sm-12.bottomBuffer {
         padding-left: 15px;
     }
-
-    .affiliation-date::after {
-        content: " | ";
-    }
     
     .role {
         margin-left: 4px;
+    }
+    
+    .workspace-top{
+    	border: none;
     }
 }

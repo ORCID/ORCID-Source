@@ -18,8 +18,11 @@
 -->
 <#if RequestParameters['print']??>
 	<div class="print-orcid-record">
-		<a id="printRecord" onclick="printPublicRecord('${baseUri}/${(effectiveUserOrcid)!}')"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>	
-		
+		<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated)>
+			<a id="printRecord" href="${baseUri}/${(effectiveUserOrcid)!}/print"><span class="glyphicon glyphicon-print"></span> Print this ORCID record</a>	
+		<#else>
+			<a id="printRecord" href="${baseUri}/${(effectiveUserOrcid)!}/print"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>	
+		</#if>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
         <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>

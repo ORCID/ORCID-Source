@@ -179,8 +179,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         return new ModelAndView(rv);
     }
 
-    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}")
-    public ModelAndView publicPreview(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
+
+    @RequestMapping(value = {"/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print"})
+    public ModelAndView printPublic(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
 
@@ -239,7 +240,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         ModelAndView mav = null;
-        mav = new ModelAndView("public_profile_v3");
+        if (request.getRequestURI().contains("/print")) {
+            mav = new ModelAndView("print_public_record");
+            mav.addObject("hideUserVoiceScript", true);
+        } else {
+            mav = new ModelAndView("public_profile_v3");
+        }
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
 
