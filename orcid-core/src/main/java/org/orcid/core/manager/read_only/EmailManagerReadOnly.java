@@ -51,4 +51,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     EmailEntity findCaseInsensitive(String email);
     
     EmailEntity find(String email);
+    
+    Email findPrimaryEmail(String orcid);
 }

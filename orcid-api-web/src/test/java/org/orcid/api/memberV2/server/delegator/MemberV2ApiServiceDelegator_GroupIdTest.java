@@ -96,9 +96,7 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     public void testCreateGroupIdRecord() {
         SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
         Response response = serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
-        // Response created with location as the group-id
         assertNotNull(response.getMetadata().get("Location").get(0));
-        assertEquals(response.getMetadata().get("Location").get(0).toString(), "6");
     }
 
     @Test

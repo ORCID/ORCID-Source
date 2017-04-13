@@ -38,7 +38,7 @@ public class UniversalAnalyticsClientTest {
         assertNotNull(payload);
         
         String[] params = UriEncoder.decode(payload).split("&");
-        assertEquals(12, params.length);
+        assertEquals(13, params.length);
         assertEquals(UniversalAnalyticsClient.PROTOCOL_VERSION_PARAM + "=1", params[0]);
         assertEquals(UniversalAnalyticsClient.TRACKING_ID_PARAM + "=some-tracking-code", params[1]);
         assertEquals(UniversalAnalyticsClient.CLIENT_ID_PARAM + "=" + data.getClientId(), params[2]);
@@ -47,10 +47,11 @@ public class UniversalAnalyticsClientTest {
         assertEquals(UniversalAnalyticsClient.HIT_TYPE_PARAM + "=event", params[5]);
         assertEquals(UniversalAnalyticsClient.EVENT_ACTION_PARAM + "=" + data.getMethod(), params[6]);
         assertEquals(UniversalAnalyticsClient.EVENT_CATEGORY_PARAM + "=" + data.getCategory(), params[7]);
-        assertEquals(UniversalAnalyticsClient.EVENT_LABEL_PARAM + "=" + data.getClientDetailsString(), params[8]);
+        assertEquals(UniversalAnalyticsClient.EVENT_LABEL_PARAM + "=" + data.getUrl(), params[8]);
         assertEquals(UniversalAnalyticsClient.API_VERSION_PARAM + "=" + data.getApiVersion(), params[9]);
         assertEquals(UniversalAnalyticsClient.CONTENT_TYPE_PARAM + "=" + data.getContentType(), params[10]);
         assertEquals(UniversalAnalyticsClient.RESPONSE_CODE_PARAM + "=" + data.getResponseCode(), params[11]);
+        assertEquals(UniversalAnalyticsClient.CLIENT_PARAM + "=" + data.getClientDetailsString(), params[12]);
     }
     
     @Test

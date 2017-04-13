@@ -48,7 +48,6 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
-import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -64,7 +63,6 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -123,18 +121,15 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private ActivityCacheManager activityCacheManager;
 
-    @Resource
-    private ProfileEntityManager profileEntManager;
-
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
 
     @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
-
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private ProfileEntityManager profileEntManager;
+    
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
@@ -170,6 +165,10 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     public static int ORCID_HASH_LENGTH = 8;
 
+    private Long getLastModifiedTime(String orcid) {
+        return profileEntManager.getLastModified(orcid);
+    }
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
@@ -184,13 +183,15 @@ public class PublicProfileController extends BaseWorkspaceController {
     public ModelAndView printPublic(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
-
-        if (!profileEntManager.orcidExists(orcid)) {
+               
+        ProfileEntity profile = null; 
+        
+        try {
+            profile = profileEntityCacheManager.retrieve(orcid);
+        } catch(Exception e) {
             return new ModelAndView("error-404");
-        }
-
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-
+        }    
+        
         try {
             // Check if the profile is deprecated, non claimed or locked
             orcidSecurityManager.checkProfile(orcid);
@@ -233,12 +234,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             return mav;
         }
 
-        Date lastModified = profile.getLastModified();
-        long lastModifiedTime = 0;
-        if (lastModified != null) {
-            lastModifiedTime = lastModified.getTime();
-        }
-
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        
         ModelAndView mav = null;
         if (request.getRequestURI().contains("/print")) {
             mav = new ModelAndView("print_public_record");
@@ -357,7 +354,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
 
-        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModified.getTime());
+        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModifiedTime);
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -371,14 +368,14 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav.addObject("affiliationsEmpty", true);
         }
 
-        fundingMap = fundingMap(orcid);
+        fundingMap = fundingMap(orcid, lastModifiedTime);
         if (fundingMap.size() > 0)
             isProfileEmtpy = false;
         else {
             mav.addObject("fundingEmpty", true);
         }
 
-        peerReviewMap = peerReviewMap(orcid);
+        peerReviewMap = peerReviewMap(orcid, lastModifiedTime);
         if (peerReviewMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -560,7 +557,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
-            validateVisibility(aff.getVisibility());                       
+            validateVisibility(aff.getVisibility());
             AffiliationForm form = AffiliationForm.valueOf(aff);
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
             affs.add(form);            
@@ -574,7 +571,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "fundingIds") String fundingIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<FundingForm> fundings = new ArrayList<FundingForm>();
-        Map<Long, Funding> fundingMap = fundingMap(orcid);
+        Map<Long, Funding> fundingMap = fundingMap(orcid, getLastModifiedTime(orcid));
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
@@ -609,7 +606,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
 
-        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid));
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, getLastModifiedTime(orcid));
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -656,7 +653,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workObj != null) {            
             validateVisibility(workObj.getVisibility());            
             sourceUtils.setSourceName(workObj);
-            
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
@@ -689,7 +685,6 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             return work;
         }
-
         return null;
     }
 
@@ -698,7 +693,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "peerReviewIds") String peerReviewIdsStr) {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         List<PeerReviewForm> peerReviews = new ArrayList<PeerReviewForm>();
-        Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid);
+        Map<Long, PeerReview> peerReviewMap = peerReviewMap(orcid, getLastModifiedTime(orcid));
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
             PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));            
@@ -837,20 +832,16 @@ public class PublicProfileController extends BaseWorkspaceController {
         return groupIdRecordManager.getGroupIdRecord(groupId);
     }
 
-    public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
-        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        return activityCacheManager.fundingMap(orcid, lastModified.getTime());
+    public LinkedHashMap<Long, Funding> fundingMap(String orcid, Long lastModified) {       
+        return activityCacheManager.fundingMap(orcid, lastModified);
     }
 
     public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid, Long lastModified) {
         return activityCacheManager.affiliationMap(orcid, lastModified);
     }
 
-    public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {
-        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        return activityCacheManager.pubPeerReviewsMap(orcid, lastModified.getTime());
+    public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid, Long lastModified) {
+        return activityCacheManager.pubPeerReviewsMap(orcid, lastModified);
     }
 
     /**

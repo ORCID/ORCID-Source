@@ -39,6 +39,8 @@ public interface OrcidSearchManager {
     
     static final int MAX_SEARCH_ROWS = 200; 
     
+    static final int MAX_SEARCH_START = 10000;
+    
     OrcidMessage findOrcidSearchResultsById(String orcid);
 
     /**

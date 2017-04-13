@@ -178,7 +178,7 @@ public class ScopePathTypeTest {
 	public void test_ORCID_PROFILE_CREATE() {
 		// Test ORCID_PROFILE_READ_LIMITED
 		Set<ScopePathType> combined = ScopePathType.ORCID_PROFILE_CREATE.combined();
-		assertEquals(27, combined.size());
+		assertEquals(29, combined.size());
 		assertTrue(combined.contains(ScopePathType.ACTIVITIES_READ_LIMITED));
 		assertTrue(combined.contains(ScopePathType.ACTIVITIES_UPDATE));
 		assertTrue(combined.contains(ScopePathType.AFFILIATIONS_CREATE));
@@ -206,6 +206,11 @@ public class ScopePathTypeTest {
 		assertTrue(combined.contains(ScopePathType.PERSON_UPDATE));
 		assertTrue(combined.contains(ScopePathType.READ_LIMITED));
 		assertTrue(combined.contains(ScopePathType.READ_PUBLIC));
+		assertTrue(combined.contains(ScopePathType.PEER_REVIEW_CREATE));
+		assertTrue(combined.contains(ScopePathType.PEER_REVIEW_UPDATE));
+		assertTrue(combined.contains(ScopePathType.PEER_REVIEW_READ_LIMITED));
+		assertTrue(combined.contains(ScopePathType.GROUP_ID_RECORD_READ));
+		assertTrue(combined.contains(ScopePathType.GROUP_ID_RECORD_UPDATE));
 	}
 
 	@Test

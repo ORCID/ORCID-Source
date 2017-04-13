@@ -66,6 +66,8 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.dao.GroupIdRecordDao;
+import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
@@ -82,6 +84,9 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
 
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
+    
+    @Resource
+    private GroupIdRecordDao groupIdRecordDao;
 
     @Resource(name = "memberV2ApiServiceDelegator")
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
@@ -104,61 +109,64 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         // Test can't create
         try {
             serviceDelegator.createAddress(ORCID, Utils.getAddress());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEducation(ORCID, Utils.getEducation());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createEmployment(ORCID, Utils.getEmployment());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createExternalIdentifier(ORCID, Utils.getPersonExternalIdentifier());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createFunding(ORCID, Utils.getFunding());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createKeyword(ORCID, Utils.getKeyword());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createOtherName(ORCID, Utils.getOtherName());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createPeerReview(ORCID, Utils.getPeerReview());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createResearcherUrl(ORCID, Utils.getResearcherUrl());
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.createWork(ORCID, Utils.getWork("work # 1 " + System.currentTimeMillis()));
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
-        try {
-            serviceDelegator.createGroupIdRecord(Utils.getGroupIdRecord());
-        } catch (OrcidAccessControlException e) {
-            
-        } catch(Exception e) {
-            fail();
-        } 
     }
 
     @Test
@@ -166,173 +174,216 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.viewActivities(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddress(ORCID, 9L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewAddresses(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewBiography(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducation(ORCID, 20L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducationSummary(ORCID, 20L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEducations(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmails(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployment(ORCID, 17L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmploymentSummary(ORCID, 17L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewEmployments(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewExternalIdentifiers(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFunding(ORCID, 10L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundingSummary(ORCID, 10L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewFundings(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeyword(ORCID, 9L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewKeywords(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherName(ORCID, 13L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewOtherNames(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReview(ORCID, 9L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviewSummary(ORCID, 9L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPeerReviews(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPerson(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewPersonalDetails(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrl(ORCID, 13L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewResearcherUrls(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWork(ORCID, 11L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorkSummary(ORCID, 11L);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewWorks(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
         try {
             serviceDelegator.viewRecord(ORCID);
+            fail();
         } catch (IllegalStateException e) {
             assertEquals("Non client credential scope found in client request", e.getMessage());
         }
+    }
+    
+    @Test
+    public void testOrcidProfileCreateCanViewAndCreateGroupIds() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
         try {
             serviceDelegator.viewGroupIdRecord(1L);
-        } catch (OrcidAccessControlException e) {
-            
         } catch(Exception e) {
             fail();
         } 
+        
         try {
-            serviceDelegator.viewGroupIdRecords("10", "0");
-        } catch (OrcidAccessControlException e) {
-            
+            serviceDelegator.viewGroupIdRecords("10", "1");
         } catch(Exception e) {
             fail();
         } 
+        
+        GroupIdRecord groupIdRecord = Utils.getGroupIdRecord();
+        try {
+            serviceDelegator.createGroupIdRecord(groupIdRecord);
+        } catch(Exception e) {
+            fail();
+        } 
+        
+        GroupIdRecordEntity toDelete = groupIdRecordDao.findByGroupId(groupIdRecord.getGroupId());
+        groupIdRecordDao.remove(toDelete.getId());
     }
 
     @Test

@@ -383,7 +383,7 @@
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-        <constructor-arg value="\${org.orcid.persistence.solr.url}" />
+        <constructor-arg value="\${org.orcid.persistence.solr.url}/profile" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
         <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
@@ -393,7 +393,7 @@
         <property name="parser" ref="responseParser" />
     </bean>
     <bean id="solrServerReadOnly" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}" />
+        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}/profile" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
         <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
@@ -403,7 +403,7 @@
         <property name="parser" ref="responseParser" />
     </bean>
     <bean id="solrServerForStreaming" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}" />
+        <constructor-arg value="\${org.orcid.persistence.solr.read.only.url}/profile" />
         <constructor-arg><null/></constructor-arg>
         <constructor-arg><null/></constructor-arg>
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />

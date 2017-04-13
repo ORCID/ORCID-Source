@@ -318,21 +318,28 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendOrcidLockedEmail(OrcidProfile orcidToLock) {
-
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject("email.subject.locked", orcidToLock);
-        String email = orcidToLock.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
-
-        String emailFriendlyName = deriveEmailFriendlyName(orcidToLock);
+    public void sendOrcidLockedEmail(String orcidToLock) {
+        ProfileEntity profile = profileDao.find(orcidToLock);
+                
+        org.orcid.jaxb.model.common_v2.Locale locale = profile.getLocale();
+        Locale userLocale = LocaleUtils.toLocale("en");
+        
+        if(locale != null) {
+            userLocale = LocaleUtils.toLocale(locale.value());
+        }   
+        
+        String subject = getSubject("email.subject.locked", userLocale);
+        String email = profile.getPrimaryEmail().getId();
+        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        
+        Map<String, Object> templateParams = new HashMap<String, Object>();                
         templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", orcidToLock.getOrcidIdentifier().getPath());
+        templateParams.put("orcid", orcidToLock);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", subject);
 
-        addMessageParams(templateParams, orcidToLock);
+        addMessageParams(templateParams, userLocale);
 
         // Generate body from template
         String body = templateManager.processTemplate("locked_orcid_email.ftl", templateParams);
@@ -437,11 +444,6 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
-    }
-
-    private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
-        return messages.getMessage(code, args, locale);
     }
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email) {
@@ -560,7 +562,9 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item) {
         OrcidProfile amendedProfile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY);
         Collection<Item> items = new ArrayList<Item>(1);
-        items.add(item);
+        if(item != null) {
+            items.add(item);
+        }        
         sendAmendEmail(amendedProfile, amendedSection, items);
     }
 
@@ -911,48 +915,54 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link) {
-        // Create map of template params
-        String orcid = managed.getOrcidIdentifier().getPath();
+    public void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link) {
+        // Create map of template params        
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("link", link);
 
-        String trustedOrcidValue = trusted.retrieveOrcidPath();
-        String managedOrcidValue = managed.retrieveOrcidPath();
-        String emailNameForDelegate = deriveEmailFriendlyName(managed);
-        String trustedOrcidName = deriveEmailFriendlyName(trusted);
+        ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managedOrcid);
+        ProfileEntity trustedEntity = profileEntityCacheManager.retrieve(trustedOrcid);
+        
+        String emailNameForDelegate = deriveEmailFriendlyName(managedEntity);
+        String trustedOrcidName = deriveEmailFriendlyName(trustedEntity);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("trustedOrcidName", trustedOrcidName);
-        templateParams.put("trustedOrcidValue", trustedOrcidValue);
-        templateParams.put("managedOrcidValue", managedOrcidValue);
+        templateParams.put("trustedOrcidValue", trustedOrcid);
+        templateParams.put("managedOrcidValue", managedOrcid);
 
-        Email primaryEmail = managed.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getEmail();
         if (primaryEmail == null) {
-            LOGGER.info("Cant send admin delegate email if primary email is null: {}", orcid);
+            LOGGER.info("Cant send admin delegate email if primary email is null: {}", managedOrcid);
             return;
         }
+        
+        org.orcid.jaxb.model.common_v2.Locale locale = managedEntity.getLocale();
+        Locale userLocale = LocaleUtils.toLocale("en");
+        
+        if(locale != null) {
+            userLocale = LocaleUtils.toLocale(locale.value());
+        }        
 
-        addMessageParams(templateParams, managed);
-
+        addMessageParams(templateParams, userLocale);
+        
         String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            String subject = getSubject("email.subject.admin_as_delegate", managed, trustedOrcidName);
-            ProfileEntity trustedProfileEntity = profileDao.find(trusted.getOrcidIdentifier().getPath());
-            boolean notificationsEnabled = trustedProfileEntity != null ? trustedProfileEntity.getEnableNotifications() : false;
+            String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[]{trustedOrcidName}, userLocale);
+            boolean notificationsEnabled = trustedEntity != null ? trustedEntity.getEnableNotifications() : false;
             if (notificationsEnabled) {
                 NotificationCustom notification = new NotificationCustom();
                 notification.setNotificationType(NotificationType.CUSTOM);
                 notification.setSubject(subject);
                 notification.setBodyHtml(htmlBody);
-                createNotification(managed.getOrcidIdentifier().getPath(), notification);
+                createNotification(managedOrcid, notification);
             } else {
-                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail.getValue(), subject, null, htmlBody);
+                mailGunManager.sendEmail(DELEGATE_NOTIFY_ORCID_ORG, primaryEmail, subject, null, htmlBody);
             }
-            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
+            profileEventDao.persist(new ProfileEventEntity(managedOrcid, ProfileEventType.ADMIN_PROFILE_DELEGATION_REQUEST));
         } else {
             LOGGER.debug("Not sending admin delegate email, because API record creation email option is disabled. Message would have been: {}", htmlBody);
         }
