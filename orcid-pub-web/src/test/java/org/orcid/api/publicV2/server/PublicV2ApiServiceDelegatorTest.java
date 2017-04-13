@@ -45,6 +45,7 @@ import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorI
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
+import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.locale.LocaleManagerImpl;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -1158,7 +1159,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         delegator.searchByQuery(params);
     }
 
-    @Test(expected = OrcidBadRequestException.class)
+    @Test(expected = SearchStartParameterLimitExceededException.class)
     public void testSearchByQueryIllegalStart() {
         Map<String, List<String>> params = new HashMap<>();
         params.put("start", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_START + 20)));
