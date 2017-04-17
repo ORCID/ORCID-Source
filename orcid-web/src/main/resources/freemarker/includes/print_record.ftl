@@ -17,11 +17,11 @@
 
 -->
 <#if RequestParameters['print']??>
-	<div class="print-orcid-record">
+	<div class="print-orcid-record" ng-controller="PrintRecordCtrl">
 		<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated)>
-			<a id="printRecord" href="${baseUri}/${(effectiveUserOrcid)!}/print"><span class="glyphicon glyphicon-print"></span> Print this ORCID record</a>	
+			<a id="printRecord" ng-click="printRecord('${baseUriHttp}/${(effectiveUserOrcid)!}/print')"><span class="glyphicon glyphicon-print"></span> Print this ORCID record</a>	
 		<#else>
-			<a id="printRecord" href="${baseUri}/${(effectiveUserOrcid)!}/print"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>	
+			<a id="printRecord" ng-click="printRecord('${baseUri}/${(effectiveUserOrcid)!}/print')"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>	
 		</#if>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
         <div class="popover-help-container">

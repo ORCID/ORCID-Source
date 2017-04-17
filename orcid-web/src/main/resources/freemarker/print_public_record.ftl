@@ -19,9 +19,9 @@
 <@public >
 <#escape x as x?html>
 <#setting date_format="yyyy-MM-dd">
-<div class="row workspace-top public-profile">
+<div class="row workspace-top public-profile print">
     <div class="col-md-12">
-        <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
+        <div class="workspace-left workspace-profile" ng-controller="PrintRecordPageCtrl">
         	<div class="id-banner">
 	            <h2 class="full-name">	            	
 					${(displayName)!}	                
@@ -39,8 +39,6 @@
 						</div>						
 					</div>
 				</div>
-				 <#include "includes/print_record.ftl"/>					        
-
 				<#if (locked)?? && !locked>
 					<!-- Other Names -->
 		            <#if (publicGroupedOtherNames)?? && (publicGroupedOtherNames?size != 0)>
