@@ -91,7 +91,9 @@
     h2,
     h3,
     h4,
-    h5 {
+    h5,
+    .workspace-section-title,
+    .workspace-title {
         page-break-after: avoid;
     }
 
@@ -193,6 +195,10 @@
         padding: 0;
     }
     
+    .info-detail span {
+    	width: 100%;
+    }
+    
     .main {
         margin: 20px 0 0 0;
     }
@@ -246,6 +252,15 @@
         font-weight: bold;
     }
     
+    .workspace-profile,
+    #workspace-education,
+    #workspace-employment,
+    #workspace-funding,
+    #workspace-works,
+    #workspace-peer-review {
+    	color: red;
+    	page-break-inside: avoid;
+    }
     .workspace-profile .workspace-section {
         display: block;
         float: left;
