@@ -93,6 +93,9 @@
     </#if>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <#if springMacroRequestContext.requestUri?contains("/print")>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
+    </#if>
 
     <!--[if lt IE 8]>
     	<link rel="stylesheet" href="${staticCdn}/css/orcid-ie7.css?v=${ver}"/>
@@ -119,6 +122,5 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
-    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/noto-font.css?v=${ver}"/>
 </head>

@@ -6318,9 +6318,15 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', 'widgetSrvc', func
     
 }]);
 
-angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
     $scope.showSources = new Array();
     $scope.showPopover = new Array();
+
+    $scope.printRecord = function(url){
+        //open window
+        printWindow = $window.open(url);  
+    }
+
     $scope.toggleSourcesDisplay = function(section){        
         $scope.showSources[section] = !$scope.showSources[section];     
     }

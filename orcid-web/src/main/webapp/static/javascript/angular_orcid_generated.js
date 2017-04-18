@@ -6385,9 +6385,15 @@
 	    
 	}]);
 
-	angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+	angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
 	    $scope.showSources = new Array();
 	    $scope.showPopover = new Array();
+
+	    $scope.printRecord = function(url){
+	        //open window
+	        printWindow = $window.open(url);  
+	    }
+
 	    $scope.toggleSourcesDisplay = function(section){        
 	        $scope.showSources[section] = !$scope.showSources[section];     
 	    }
@@ -6998,6 +7004,8 @@
 		"./NotificationsCountCtrl.js": 13,
 		"./NotificationsCtrl.js": 14,
 		"./OtherNamesCtrl.js": 15,
+		"./PrintRecordCtrl.js": 55,
+		"./PrintRecordPageCtrl.js": 56,
 		"./RecordCorrectionsCtrl.js": 16,
 		"./RequestPasswordResetCtrl.js": 17,
 		"./RequestResendClaimCtrl.js": 18,
@@ -13958,6 +13966,49 @@
 	module.exports = webpackContext;
 	webpackContext.id = 54;
 
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('PrintRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+
+	    $scope.printRecord = function(url){
+	        //open window
+	        printWindow = $window.open(url);  
+	    }
+
+	}]);
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('PrintRecordPageCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+
+	    $(document).ready(
+	        function() {
+	            printFrameReadyToPrint(printFunc); 
+	        }
+	    );
+
+	    var printFunc = function() {
+	        window.print();
+	        setTimeout(window.close, 0);
+	    }
+
+	    var printFrameReadyToPrint = function (func) {
+	        console.log("print frame ready to print function");
+	        // Step 1: make sure angular 1 is ready by putting a function on the angular apply queue
+	        angular.element(document.documentElement).scope().$root.$apply(
+	            function() {
+	                // Step 2: if JQuery has any outstanding request repeat otherwise call otherwise print
+	                $.active>0?setTimeout(printFrameReadyToPrint):printFunc();
+	            }
+	        );
+	    }
+
+	}]);
 
 /***/ }
 /******/ ]);
