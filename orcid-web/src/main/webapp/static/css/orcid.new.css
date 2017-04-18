@@ -7351,19 +7351,24 @@ ul.comma li:last-child:after {
 }
 
 .footer-main .btn-social {
-    margin-right: 15px;
+    margin-right: 20px;
+    margin-top: 4px;
 }
 
 .footer-main .btn-social:last-child {
     margin-right: 0;
 }
 
+.footer-main .cc-icon {
+    margin: 0 0 3px 10px;
+}
+
 .footer-main .inline-list li {
-    margin: 2px 0 0 0;
+    margin: 4px 0 0 0;
 }
 
 .footer-main .col-md-10 .inline-list li {
-    margin: 12px 20px 0 0;
+    margin: 0 20px 0 0;
 }
 
 .footer-main .inline-list li:last-child {
@@ -7374,6 +7379,10 @@ ul.comma li:last-child:after {
     margin: 0 0 6px 0;
 }
 
+.footer-main .social {
+    padding-left: 32px;
+}
+
 .inline-list li {
     display: inline;
 }
@@ -7381,12 +7390,12 @@ ul.comma li:last-child:after {
 
 .social-button .social {
     display: block;
-    height: 20px;
+    height: 22px;
 }
 
 .social-button .social:before {
     color: #a6a8ab;
-    font-size: 20px;
+    font-size: 21px;
 }
 
 .social-button .social:hover:before {

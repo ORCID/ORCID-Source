@@ -62,6 +62,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(JsonParseException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9001));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalArgumentException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9006));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidBadRequestException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9012));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(SearchStartParameterLimitExceededException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9043));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MismatchedPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9019));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidPutCodeException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9024));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidValidationException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9020));
