@@ -96,6 +96,11 @@ if (typeof angular == 'undefined') {
 
 <script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
 
+<#if springMacroRequestContext.requestUri?contains("/print")>
+    <script src="${staticCdn}/javascript/printRecord.js"></script>
+</#if>
+
+
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
 	
