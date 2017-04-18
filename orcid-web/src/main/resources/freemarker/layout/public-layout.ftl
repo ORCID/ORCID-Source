@@ -529,12 +529,12 @@
                         <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="_blank"><span class="social social-facebook"></span></a></li>
                         <li><a class="social-button" href="https://twitter.com/orcid_org" target="_blank"><span class="social social-twitter"></span></a></li>
                         <li><a class="social-button" href="http://orcid.org/blog/feed" target="_blank"><span class="social social-rss"></span></a></li>
-                        <li><a class="social-button" href="https://github.com/ORCID" target="_blank"><span class="fa fa-github"></span></a></li>
+                        <li><a class="social-button" href="https://github.com/ORCID" target="_blank"><span class="social social-github"></span></a></li>
                     </ul>
                 </nav>
             </div>
             <div class="col-md-10">
-                <p><strong>&copy; 2017 ORCID, Inc</strong> Some really fascinating and important information about copyright here. This site user cookies. By continuing to browse the site, you are agreeing to our use of cookies. <a href="">Find out more</a></p>
+                <p><strong>&copy; 2017 ORCID, Inc</strong><br>Except where otherwise noted, content on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. This website makes minimal use of cookies. By continuing to use this site, you are agreeing to our use of cookies. <a href="http://support.orcid.org/knowledgebase/articles/159728-supported-browsers-and-plugins#cookies">Learn more about how we use cookies</a><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a></p>
                 <nav>
                     <ul class="inline-list bold">
                         <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
