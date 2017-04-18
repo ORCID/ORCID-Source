@@ -44,7 +44,7 @@
     </util:map>
 	
 	 <bean id="addJerseyLoggingFilter" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject"><ref local="jerseyClient"/></property>
+        <property name="targetObject"><ref bean="jerseyClient"/></property>
         <property name="targetMethod"><value>addFilter</value></property>
         <property name="arguments">
             <list>
