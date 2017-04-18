@@ -19,6 +19,7 @@ package org.orcid.frontend.web.forms.validate;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -39,6 +40,8 @@ import static org.junit.Assert.*;
  * @See {@link VerifyRegistrationForm}
  * 
  */
+
+@WebAppConfiguration
 public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintValidator<ManagePasswordOptionsForm> {
 
     Validator validator;

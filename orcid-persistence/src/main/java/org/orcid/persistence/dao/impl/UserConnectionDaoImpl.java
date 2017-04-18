@@ -38,6 +38,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
+    @Transactional
     public void updateLoginInformation(UserconnectionPK pk) {
         UserconnectionEntity entity = find(pk);
         entity.setLastLogin(new Timestamp(new Date().getTime()));

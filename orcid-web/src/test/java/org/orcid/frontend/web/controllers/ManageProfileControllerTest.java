@@ -58,7 +58,6 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
-import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -71,6 +70,7 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
@@ -81,6 +81,7 @@ import com.google.common.collect.Sets;
  * @author Declan Newman (declan) Date: 23/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
+@WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class ManageProfileControllerTest extends BaseControllerTest {
 

@@ -17,7 +17,7 @@
 
 -->
 <@public nav="developer-tools">
-<@security.authorize ifNotGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
+<@security.authorize access="!hasAnyRole('ROLE_GROUP','ROLE_BASIC','ROLE_PREMIUM','ROLE_BASIC_INSTITUTION','ROLE_PREMIUM_INSTITUTION','ROLE_CREATOR','ROLE_PREMIUM_CREATOR','ROLE_UPDATER','ROLE_PREMIUM_UPDATER')">
 	<div class="row">
 		<div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">
 			<#include "includes/id_banner.ftl"/>
@@ -447,7 +447,7 @@
 		</div>				
 	</div>		
 </@security.authorize>
-<@security.authorize ifAnyGranted="ROLE_GROUP,ROLE_BASIC,ROLE_PREMIUM,ROLE_BASIC_INSTITUTION,ROLE_PREMIUM_INSTITUTION,ROLE_CREATOR,ROLE_PREMIUM_CREATOR,ROLE_UPDATER,ROLE_PREMIUM_UPDATER">
+<@security.authorize access="hasAnyRole('ROLE_GROUP','ROLE_BASIC','ROLE_PREMIUM','ROLE_BASIC_INSTITUTION','ROLE_PREMIUM_INSTITUTION','ROLE_CREATOR','ROLE_PREMIUM_CREATOR','ROLE_UPDATER','ROLE_PREMIUM_UPDATER')">
 	<@orcid.msg 'developer_tools.invalid_page'/>
 </@security.authorize>
 

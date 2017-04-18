@@ -32,7 +32,9 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangePasswordForm;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+@WebAppConfiguration
 public class ChangePasswordFormValidatorTest extends AbstractConstraintValidator<ChangePasswordForm> {
 
     Validator validator;

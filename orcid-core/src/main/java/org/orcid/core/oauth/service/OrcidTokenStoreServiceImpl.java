@@ -85,12 +85,14 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      * @return The authentication, or null if none.
      */
     @Override
+    @Transactional
     public OAuth2Authentication readAuthentication(String token) {
         OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(token);
         return getOAuth2AuthenticationFromDetails(detail);
     }
 
     @Override
+    @Transactional
     public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
         return readAuthentication(token.getValue());
     }

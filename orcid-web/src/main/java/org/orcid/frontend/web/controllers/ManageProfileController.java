@@ -339,7 +339,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (StringUtils.isNotBlank(targetOrcid))
             targetOrcid = targetOrcid.trim();
         if (profileEntityManager.orcidExists(targetOrcid)) {
-            mav = new ModelAndView("redirect:/switch-user?j_username=" + targetOrcid);
+            mav = new ModelAndView("redirect:/switch-user?username=" + targetOrcid);
         } else {
             redirectAttributes.addFlashAttribute("invalidOrcid", true);
             mav = new ModelAndView("redirect:/my-orcid");

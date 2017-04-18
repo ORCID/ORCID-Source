@@ -52,12 +52,14 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.google.common.collect.Lists;
 
 import orcid.pojo.ajaxForm.WorkFormTest;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
+@WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class WorksControllerTest extends BaseControllerTest {
 

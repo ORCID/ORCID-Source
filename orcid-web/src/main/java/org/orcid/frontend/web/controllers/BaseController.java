@@ -151,7 +151,7 @@ public class BaseController {
     @Resource
     private InternalSSOManager internalSSOManager;
 
-    @Resource
+    @Resource(name = "csrfTokenRepo")
     protected CsrfTokenRepository csrfTokenRepository;
     
     @Resource
