@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(23));
-	requireAll(__webpack_require__(24));
-	requireAll(__webpack_require__(31));
-	requireAll(__webpack_require__(32));
-	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
+	requireAll(__webpack_require__(25));
+	requireAll(__webpack_require__(26));
+	requireAll(__webpack_require__(33));
 	requireAll(__webpack_require__(34));
-	requireAll(__webpack_require__(54));
+	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
+	requireAll(__webpack_require__(36));
+	requireAll(__webpack_require__(56));
 
 /***/ },
 /* 1 */
@@ -7004,15 +7004,15 @@
 		"./NotificationsCountCtrl.js": 13,
 		"./NotificationsCtrl.js": 14,
 		"./OtherNamesCtrl.js": 15,
-		"./PrintRecordCtrl.js": 55,
-		"./PrintRecordPageCtrl.js": 56,
-		"./RecordCorrectionsCtrl.js": 16,
-		"./RequestPasswordResetCtrl.js": 17,
-		"./RequestResendClaimCtrl.js": 18,
-		"./externalConsortiumCtrl.js": 19,
-		"./languageCtrl.js": 20,
-		"./websitesCtrl.js": 21,
-		"./workCtrl.js": 22
+		"./PrintRecordCtrl.js": 16,
+		"./PrintRecordPageCtrl.js": 17,
+		"./RecordCorrectionsCtrl.js": 18,
+		"./RequestPasswordResetCtrl.js": 19,
+		"./RequestResendClaimCtrl.js": 20,
+		"./externalConsortiumCtrl.js": 21,
+		"./languageCtrl.js": 22,
+		"./websitesCtrl.js": 23,
+		"./workCtrl.js": 24
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8879,6 +8879,49 @@
 /* 16 */
 /***/ function(module, exports) {
 
+	angular.module('orcidApp').controller('PrintRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+
+	    $scope.printRecord = function(url){
+	        //open window
+	        printWindow = $window.open(url);  
+	    }
+
+	}]);
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	angular.module('orcidApp').controller('PrintRecordPageCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+
+	    $(document).ready(
+	        function() {
+	            printFrameReadyToPrint(printFunc); 
+	        }
+	    );
+
+	    var printFunc = function() {
+	        window.print();
+	        setTimeout(window.close, 0);
+	    }
+
+	    var printFrameReadyToPrint = function (func) {
+	        console.log("print frame ready to print function");
+	        // Step 1: make sure angular 1 is ready by putting a function on the angular apply queue
+	        angular.element(document.documentElement).scope().$root.$apply(
+	            function() {
+	                // Step 2: if JQuery has any outstanding request repeat otherwise call otherwise print
+	                $.active>0?setTimeout(printFrameReadyToPrint):printFunc();
+	            }
+	        );
+	    }
+
+	}]);
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
 	angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$compile', 'utilsService', function RecordCorrectionsCtrl($scope, $compile, utilsService) {
 	    $scope.currentPage = null;
 	    $scope.currentElement = null;
@@ -8923,7 +8966,7 @@
 	}]);
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', 'utilsService', function RequestPasswordResetCtrl($scope, $timeout, $compile, utilsService) {
@@ -8983,7 +9026,7 @@
 	}]);
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestResendClaimCtrl', ['$scope', '$compile', function RequestResendClaimCtrl($scope, $compile) {
@@ -9050,7 +9093,7 @@
 	}]);
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/**
@@ -9471,7 +9514,7 @@
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -9654,7 +9697,7 @@
 	}]);
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -9929,7 +9972,7 @@
 	}]);
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -10886,7 +10929,7 @@
 	);
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -10895,20 +10938,20 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 25;
 
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 25,
-		"./focusMe.js": 26,
-		"./modalEmailUnVerified.js": 27,
-		"./modalUnverifiedEmailSetPrimary.js": 28,
-		"./ngEnter.js": 29,
-		"./ngEnterSubmit.js": 30
+		"./fnForm.js": 27,
+		"./focusMe.js": 28,
+		"./modalEmailUnVerified.js": 29,
+		"./modalUnverifiedEmailSetPrimary.js": 30,
+		"./ngEnter.js": 31,
+		"./ngEnterSubmit.js": 32
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -10921,11 +10964,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 24;
+	webpackContext.id = 26;
 
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/*
@@ -10961,7 +11004,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -10985,7 +11028,7 @@
 	);
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -11092,7 +11135,7 @@
 	);
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/*
@@ -11173,7 +11216,7 @@
 	);
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports) {
 
 	/*
@@ -11195,7 +11238,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/*
@@ -11217,7 +11260,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11226,15 +11269,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 31;
+	webpackContext.id = 33;
 
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 33
+		"./ui.multiselect.js": 35
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11247,11 +11290,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 34;
 
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11532,29 +11575,29 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 35,
-		"./affiliationsSrvc.js": 36,
-		"./bioBulkSrvc.js": 37,
-		"./clearMemberListFilterSrvc.js": 38,
-		"./commonSrvc.js": 39,
-		"./discoSrvc.js": 40,
-		"./emailSrvc.js": 41,
-		"./fundingSrvc.js": 42,
-		"./groupedActivitiesService.js": 43,
-		"./groupedActivitiesUtil.js": 44,
-		"./initialConfigService.js": 45,
-		"./membersListSrvc.js": 46,
-		"./notificationsSrvc.js": 47,
-		"./peerReviewSrvc.js": 48,
-		"./prefsSrvc.js": 49,
-		"./utilsService.js": 50,
-		"./widgetSrvc.js": 51,
-		"./worksSrvc.js": 52,
-		"./workspaceSrvc.js": 53
+		"./actBulkSrvc.js": 37,
+		"./affiliationsSrvc.js": 38,
+		"./bioBulkSrvc.js": 39,
+		"./clearMemberListFilterSrvc.js": 40,
+		"./commonSrvc.js": 41,
+		"./discoSrvc.js": 42,
+		"./emailSrvc.js": 43,
+		"./fundingSrvc.js": 44,
+		"./groupedActivitiesService.js": 45,
+		"./groupedActivitiesUtil.js": 46,
+		"./initialConfigService.js": 47,
+		"./membersListSrvc.js": 48,
+		"./notificationsSrvc.js": 49,
+		"./peerReviewSrvc.js": 50,
+		"./prefsSrvc.js": 51,
+		"./utilsService.js": 52,
+		"./widgetSrvc.js": 53,
+		"./worksSrvc.js": 54,
+		"./workspaceSrvc.js": 55
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11567,11 +11610,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 34;
+	webpackContext.id = 36;
 
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11590,7 +11633,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -11719,7 +11762,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11739,7 +11782,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
@@ -11753,7 +11796,7 @@
 	 }]);
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -11818,7 +11861,7 @@
 	}]);
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
@@ -11874,7 +11917,7 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
@@ -12030,7 +12073,7 @@
 	});
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -12241,7 +12284,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12359,7 +12402,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/*
@@ -12414,14 +12457,14 @@
 	*/
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
 	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
 	    var configValues = {
 	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
-	        showModalManualEditVerificationEnabled: false
+	        showModalManualEditVerificationEnabled: true
 	    };
 
 	    var paramVerifyEditRegex = /.*\?(.*\&)*(verifyEdit){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
@@ -12441,7 +12484,7 @@
 	}]);
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -12565,7 +12608,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12808,7 +12851,7 @@
 	}]);
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
@@ -13104,7 +13147,7 @@
 	}]);
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
@@ -13153,7 +13196,7 @@
 	});
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13272,7 +13315,7 @@
 	);
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
@@ -13286,7 +13329,7 @@
 	}]);
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
@@ -13900,7 +13943,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13955,7 +13998,7 @@
 	}]);
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13964,51 +14007,8 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 54;
+	webpackContext.id = 56;
 
-
-/***/ },
-/* 55 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('PrintRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
-
-	    $scope.printRecord = function(url){
-	        //open window
-	        printWindow = $window.open(url);  
-	    }
-
-	}]);
-
-/***/ },
-/* 56 */
-/***/ function(module, exports) {
-
-	angular.module('orcidApp').controller('PrintRecordPageCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
-
-	    $(document).ready(
-	        function() {
-	            printFrameReadyToPrint(printFunc); 
-	        }
-	    );
-
-	    var printFunc = function() {
-	        window.print();
-	        setTimeout(window.close, 0);
-	    }
-
-	    var printFrameReadyToPrint = function (func) {
-	        console.log("print frame ready to print function");
-	        // Step 1: make sure angular 1 is ready by putting a function on the angular apply queue
-	        angular.element(document.documentElement).scope().$root.$apply(
-	            function() {
-	                // Step 2: if JQuery has any outstanding request repeat otherwise call otherwise print
-	                $.active>0?setTimeout(printFrameReadyToPrint):printFunc();
-	            }
-	        );
-	    }
-
-	}]);
 
 /***/ }
 /******/ ]);
