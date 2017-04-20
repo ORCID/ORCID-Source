@@ -13482,22 +13482,22 @@
 	                    {
 	                        type: "disclosure",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "license",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "patent",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "registered-copyright",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    }
 	                ]
 	            },
@@ -13546,7 +13546,7 @@
 	                    {
 	                        type: "other",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleOtherPlaceholder")
 	                    }
 	                ]
 	            }
