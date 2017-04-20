@@ -7346,7 +7346,7 @@ ul.comma li:last-child:after {
     border-top: 1px solid #c9c9c9;
     font-size: 11px;
     padding-bottom: 20px;
-    padding-top: 20px;
+    padding-top: 14px;
     line-height: normal;
 }
 
@@ -7359,12 +7359,16 @@ ul.comma li:last-child:after {
     margin-right: 0;
 }
 
-.footer-main .cc-icon {
-    margin: 0 0 3px 10px;
+.footer-main .inline-list li {
+    margin: 0;
 }
 
-.footer-main .inline-list li {
-    margin: 4px 0 0 0;
+.footer-main .col-md-2 {
+    float: left;
+}
+
+.footer-main .col-md-10 {
+    margin-top: 6px;
 }
 
 .footer-main .col-md-10 .inline-list li {
@@ -7380,7 +7384,7 @@ ul.comma li:last-child:after {
 }
 
 .footer-main .social {
-    padding-left: 32px;
+    padding-left: 29px;
 }
 
 .inline-list li {
@@ -7390,12 +7394,12 @@ ul.comma li:last-child:after {
 
 .social-button .social {
     display: block;
-    height: 22px;
+    height: 20px;
 }
 
 .social-button .social:before {
     color: #a6a8ab;
-    font-size: 21px;
+    font-size: 20px;
 }
 
 .social-button .social:hover:before {
