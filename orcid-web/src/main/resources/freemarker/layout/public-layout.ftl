@@ -521,7 +521,7 @@
             <div class="col-md-2">
                 <p>
                     <a href="https://orcid.org" alt="ORCID logo">
-                        <img src="${staticCdn}/img/orcid-logo.svg" width="118px" alt="ORCID logo">
+                        <img src="${staticCdn}/img/orcid-logo.svg" width="108px" alt="ORCID logo">
                     </a>
                 </p>
                 <nav>
@@ -534,7 +534,7 @@
                 </nav>
             </div>
             <div class="col-md-10">
-                <p><strong>&copy; 2017 ORCID, Inc</strong> <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a><br>Except where otherwise noted, content on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. This website makes minimal use of cookies. By continuing to use this site, you are agreeing to our use of cookies. <a href="http://support.orcid.org/knowledgebase/articles/159728-supported-browsers-and-plugins#cookies">Learn more about how we use cookies</a></p>
+                <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img class="cc-icon" alt="Creative Commons License" style="border-width:0" src="${staticCdn}/img/cc-zero.svg" width="16"/></a> To the extent possible under law, the person who associated CC0 with this work has waived all copyright and related or neighboring rights to this work, unless otherwise indicated.</p>
                 <nav>
                     <ul class="inline-list">
                         <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
