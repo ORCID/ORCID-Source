@@ -333,7 +333,7 @@
 			in the background concurrently. An error is returned if this limit is exceeded. 
 			Recommend values of 1-2 for read-only slaves, higher for masters w/o cache 
 			warming. -->
-		<maxWarmingSearchers>2</maxWarmingSearchers>
+		<maxWarmingSearchers>4</maxWarmingSearchers>
 
 	</query>
 
@@ -627,7 +627,7 @@
 		</lst>
 		<lst name="slave">
 			<str name="enable">${solr.enable.slave:false}</str>
-			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web}/replication</str>
+			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web}/${solr.core.name}</str>
 			<str name="pollInterval">${solr.poll.interval:00:00:60}</str>
 		</lst>
 	</requestHandler>

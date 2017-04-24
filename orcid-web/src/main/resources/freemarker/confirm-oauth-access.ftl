@@ -20,7 +20,7 @@
 <!-- colorbox-content -->
 <div class="container top-green-border confirm-oauth-access oneStepWidth" ng-controller="OauthAuthorizationController">     
     <!-- /Freemarker and GA variables -->
-    <@security.authorize ifAnyGranted="ROLE_USER">
+    <@security.authorize access="hasRole('ROLE_USER')">
         <div class="row top-header">
             <div class="col-md-4 col-sm-12 col-xs-12">
                 <div class="logo">

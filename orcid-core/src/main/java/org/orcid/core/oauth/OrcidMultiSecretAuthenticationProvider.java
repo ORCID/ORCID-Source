@@ -47,7 +47,7 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
 
         if (authentication.getCredentials() == null) {
             logger.debug("Authentication failed: no credentials provided");
-            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), userDetails);
+            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
 
         String presentedPassword = authentication.getCredentials().toString();
@@ -58,7 +58,7 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
             }
         }
         logger.debug("Authentication failed: password does not match any value");
-        throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"), userDetails);
+        throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
     }
 
 }

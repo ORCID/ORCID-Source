@@ -40,6 +40,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -83,6 +84,9 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     
     @Resource
     private OrcidMessageUtil orcidMessageUtil;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
@@ -380,6 +384,32 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     private void validateSearchParams(Map<String, List<String>> queryMap) {
+        validateRows(queryMap);
+        validateStart(queryMap);
+    }
+
+    private void validateStart(Map<String, List<String>> queryMap) {
+        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+        if (clientId == null) { 
+            // only validate start param where no client credentials
+            List<String> startList = queryMap.get("start");
+            if (startList != null && !startList.isEmpty()) {
+                try {
+                    String startString = startList.get(0);
+                    int start = Integer.valueOf(startString);
+                    if (start < 0 || start > OrcidSearchManager.MAX_SEARCH_START) {
+                        throw new OrcidBadRequestException(
+                                localeManager.resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START));
+                    }
+                } catch (NumberFormatException e) {
+                    throw new OrcidBadRequestException(
+                            localeManager.resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START));
+                }
+            }
+        }
+    }
+
+    private void validateRows(Map<String, List<String>> queryMap) {
         List<String> rowsList = queryMap.get("rows");
         if (rowsList != null && !rowsList.isEmpty()) {
             try {
