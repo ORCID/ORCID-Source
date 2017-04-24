@@ -28,34 +28,39 @@
         <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>                    
             <#if !(isPublicProfile??)>
-                <ul class="workspace-bar-menu">                         
+                <ul class="workspace-bar-menu">
+                    <li  ng-cloak><!-- ng-show="worksSrvc.groups.length > 1" -->
+                        <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
+                            <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
+                        </a>
+                    </li>                    
                     <!-- Link Manually -->
                     <li class="hidden-xs">                  
-                    	<div class="menu-container" id="add-education-container">
-	                    	<ul class="toggle-menu">
-	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
-			                    	<span class="glyphicon glyphicon-plus"></span>
-				                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
-				                    <ul class="menu-options education">	                    	
-					                    <!-- Add Manually -->
-					                    <li>          
-					                        <a id="add-education" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
-					                            <span class="glyphicon glyphicon-plus"></span>
-					                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-					                        </a>
-					                   </li>
-					                </ul>
-					             </li>
-					      </ul>
-					    </div>         
+                        <div class="menu-container" id="add-education-container">
+                            <ul class="toggle-menu">
+                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
+                                    <ul class="menu-options education">                         
+                                        <!-- Add Manually -->
+                                        <li>          
+                                            <a id="add-education" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            </a>
+                                       </li>
+                                    </ul>
+                                 </li>
+                            </ul>
+                        </div>         
                     </li>
                     <!-- Mobile Workaround -->                    
                     <li class="hidden-md hidden-sm visible-xs-inline">          
-                       <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
-                           <span class="glyphicon glyphicon-plus"></span>
-                           <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                       </a>
-                   </li>		                                    
+                        <a href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('education')">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                        </a>
+                   </li>                                            
                 </ul>
             </#if>
         </div>

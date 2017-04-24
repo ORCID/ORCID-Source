@@ -7709,83 +7709,100 @@
 	    /////////////////////// End of verified email logic for work
 
 	    $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
-	    $scope.sort = function(key) {
-	        $scope.sortState.sortBy(key);
-	    };
 
-	    $scope.getEmptyExtId = function() {
-	        return {
-	                "errors": [],
-	                "type": {
-	                    "errors": [],
-	                    "value": "award",
-	                    "required": true,
-	                    "getRequiredMessage": null
-	                },
-	                "value": {
-	                    "errors": [],
-	                    "value": "",
-	                    "required": true,
-	                    "getRequiredMessage": null
-	                },
-	                "url": {
-	                    "errors": [],
-	                    "value": "",
-	                    "required": true,
-	                    "getRequiredMessage": null
-	                },
-	                "putCode": null,
-	                "relationship": {
-	                    "errors": [],
-	                    "value": "self",
-	                    "required": true,
-	                    "getRequiredMessage": null
+	    /* Bulk Funtions */
+	    $scope.toggleBulkEdit = function() {
+
+	                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+	                    if (!$scope.bulkEditShow) {
+	                        $scope.bulkEditMap = {};
+	                        $scope.bulkChecked = false;
+	                        for (var idx in worksSrvc.groups){
+	                            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+	                        }
+	                    };
+	                    $scope.bulkEditShow = !$scope.bulkEditShow;
+	                    $scope.showBibtexImportWizard = false;
+	                    $scope.workImportWizard = false;
+	                    $scope.showBibtexExport = false;
+	                }else{
+	                    showEmailVerificationModal();
 	                }
 	            };
-	    }
-	    
-	    // remove once grouping is live
-	    $scope.toggleClickMoreInfo = function(key) {
-	        if (!document.documentElement.className.contains('no-touch')) {
-	            if ($scope.moreInfoCurKey != null
-	                    && $scope.moreInfoCurKey != key) {
-	                $scope.moreInfo[$scope.moreInfoCurKey]=false;
-	            }
-	            $scope.moreInfoCurKey = key;
-	            $scope.moreInfo[key]=!$scope.moreInfo[key];
-	        }
-	    };
 
-	    $scope.hideSources = function(group) {
-	        $scope.editSources[group.groupId] = false;
-	        group.activePutCode = group.defaultPutCode;
-	    };
 
-	    $scope.showSources = function(group) {
-	        $scope.editSources[group.groupId] = true;
-	    };
+	            $scope.bulkApply = function(func) {
+	                for (var idx in worksSrvc.groups) {
+	                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+	                        func(worksSrvc.groups[idx].getActive().putCode.value);
+	                    }
+	                }
+	            };
 
-	    // remove once grouping is live
-	    $scope.moreInfoMouseEnter = function(key, $event) {
-	        $event.stopPropagation();
-	        if (document.documentElement.className.contains('no-touch')) {
-	            if ($scope.moreInfoCurKey != null
-	                    && $scope.moreInfoCurKey != key) {
-	                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
-	            }
-	            $scope.moreInfoCurKey = key;
-	            $scope.moreInfo[key]=true;
-	        }
-	    };
+	            $scope.swapbulkChangeAll = function() {
+	                $scope.bulkChecked = !$scope.bulkChecked;
+	                for (var idx in worksSrvc.groups){
+	                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = $scope.bulkChecked;
+	                }
+	                $scope.bulkDisplayToggle = false;
+	            };
 
-	    $scope.showDetailsMouseClick = function(key, $event) {
-	        $event.stopPropagation();
-	        $scope.moreInfo[key] = !$scope.moreInfo[key];        
-	    };
+	            $scope.bulkChangeAll = function(bool) {
+	                $scope.bulkChecked = bool;
+	                $scope.bulkDisplayToggle = false;
+	                for (var idx in worksSrvc.groups){
+	                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+	                }
+	            };
 
-	    $scope.closeMoreInfo = function(key) {
-	        $scope.moreInfo[key]=false;
-	    };
+	            $scope.setBulkGroupPrivacy = function(priv) {
+	                var putCodes = new Array();
+	                for (var idx in worksSrvc.groups){
+	                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
+	                        for (var idj in worksSrvc.groups[idx].activities) {
+	                            putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+	                            worksSrvc.groups[idx].activities[idj].visibility = priv;
+	                        }
+	                    }
+	                }
+	                worksSrvc.updateVisibility(putCodes, priv);
+	            };
+
+	            $scope.deleteBulk = function () {
+	                if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+	                    $scope.bulkDeleteSubmit = true;
+	                    return;
+	                }
+	                var delPuts = new Array();
+	                for (var idx in worksSrvc.groups){
+	                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+	                        delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
+	                    }
+	                }
+	                worksSrvc.deleteGroupWorks(delPuts);
+	                $.colorbox.close();
+	                $scope.bulkEditShow = false;
+	            };
+
+
+	            $scope.deleteBulkConfirm = function(idx) {
+	                $scope.bulkDeleteCount = 0;
+	                $scope.bulkDeleteSubmit = false;        
+	                $scope.delCountVerify = 0;
+	                for (var idx in worksSrvc.groups){
+	                    if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+	                        $scope.bulkDeleteCount++;
+	                    }
+	                }
+
+	                $scope.bulkDeleteFunction = $scope.deleteBulk;
+
+	                $.colorbox({
+	                    html: $compile($('#bulk-delete-modal').html())($scope)
+	                });
+	                $.colorbox.resize();
+	            };
+	            /* Bulk functions end */ 
 
 	    $scope.addFundingModal = function(data){
 	        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
@@ -7815,27 +7832,62 @@
 	        }
 	    };
 
-	    $scope.showAddModal = function(){
-	        $scope.editTranslatedTitle = false;
-	        $.colorbox({
-	            html: $compile($('#add-funding-modal').html())($scope),
-	            width: utilsService.formColorBoxResize(),
-	            onComplete: function() {
-	                //resize to insure content fits
-	                utilsService.formColorBoxResize();
-	                $scope.bindTypeaheadForOrgs();
-	                $scope.bindTypeaheadForSubTypes();
-	            },
-	            onClosed: function() {
-	                $scope.closeAllMoreInfo();
-	                fundingSrvc.getFundings('fundings/fundingIds.json');
-	            }
-	        });
-	    };
-
 	    $scope.closeAllMoreInfo = function() {
 	        for (var idx in $scope.moreInfo){
 	            $scope.moreInfo[idx]=false;
+	        }
+	    };
+
+	    $scope.closeMoreInfo = function(key) {
+	        $scope.moreInfo[key]=false;
+	    };
+
+	    $scope.getEmptyExtId = function() {
+	        return {
+	            "errors": [],
+	            "type": {
+	                "errors": [],
+	                "value": "award",
+	                "required": true,
+	                "getRequiredMessage": null
+	            },
+	            "value": {
+	                "errors": [],
+	                "value": "",
+	                "required": true,
+	                "getRequiredMessage": null
+	            },
+	            "url": {
+	                "errors": [],
+	                "value": "",
+	                "required": true,
+	                "getRequiredMessage": null
+	            },
+	            "putCode": null,
+	            "relationship": {
+	                "errors": [],
+	                "value": "self",
+	                "required": true,
+	                "getRequiredMessage": null
+	            }
+	        };
+	    };
+
+	    $scope.hideSources = function(group) {
+	        $scope.editSources[group.groupId] = false;
+	        group.activePutCode = group.defaultPutCode;
+	    };
+	    
+	    // remove once grouping is live
+	    $scope.moreInfoMouseEnter = function(key, $event) {
+	        $event.stopPropagation();
+	        if (document.documentElement.className.contains('no-touch')) {
+	            if ($scope.moreInfoCurKey != null
+	                    && $scope.moreInfoCurKey != key) {
+	                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
+	            }
+	            $scope.moreInfoCurKey = key;
+	            $scope.moreInfo[key]=true;
 	        }
 	    };
 
@@ -7869,6 +7921,48 @@
 	            $scope.addingFunding = false;
 	            console.log("error adding fundings");
 	        });
+	    };
+
+	    $scope.showAddModal = function(){
+	        $scope.editTranslatedTitle = false;
+	        $.colorbox({
+	            html: $compile($('#add-funding-modal').html())($scope),
+	            width: utilsService.formColorBoxResize(),
+	            onComplete: function() {
+	                //resize to insure content fits
+	                utilsService.formColorBoxResize();
+	                $scope.bindTypeaheadForOrgs();
+	                $scope.bindTypeaheadForSubTypes();
+	            },
+	            onClosed: function() {
+	                $scope.closeAllMoreInfo();
+	                fundingSrvc.getFundings('fundings/fundingIds.json');
+	            }
+	        });
+	    };
+
+	    $scope.showDetailsMouseClick = function(key, $event) {
+	        $event.stopPropagation();
+	        $scope.moreInfo[key] = !$scope.moreInfo[key];        
+	    };
+
+	    $scope.showSources = function(group) {
+	        $scope.editSources[group.groupId] = true;
+	    };
+
+	    $scope.sort = function(key) {
+	        $scope.sortState.sortBy(key);
+	    };
+
+	    $scope.toggleClickMoreInfo = function(key) {
+	        if (!document.documentElement.className.contains('no-touch')) {
+	            if ($scope.moreInfoCurKey != null
+	                    && $scope.moreInfoCurKey != key) {
+	                $scope.moreInfo[$scope.moreInfoCurKey]=false;
+	            }
+	            $scope.moreInfoCurKey = key;
+	            $scope.moreInfo[key]=!$scope.moreInfo[key];
+	        }
 	    };
 
 	    //Resizing window after error message is shown
@@ -11683,47 +11777,6 @@
 	                serv.loading = false;
 	            };
 	        },
-	        setIdsToAdd: function(ids) {
-	            serv.affiliationsToAddIds = ids;
-	        },
-	        getAffiliations: function(path) {
-	            //clear out current affiliations
-	            serv.loading = true;
-	            serv.affiliationsToAddIds = null;
-	            serv.educations.length = 0;
-	            serv.employments.length = 0;
-	            //get affiliation ids
-	            $.ajax({
-	                url: getBaseUri() + '/' + path,
-	                dataType: 'json',
-	                success: function(data) {
-	                    serv.affiliationsToAddIds = data;
-	                    serv.addAffiliationToScope('affiliations/affiliations.json');
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function(e){
-	                // something bad is happening!
-	                console.log("error fetching affiliations");
-	                logAjaxError(e);
-	            });
-	        },
-	        updateProfileAffiliation: function(aff) {
-	            $.ajax({
-	                url: getBaseUri() + '/affiliations/affiliation.json',
-	                type: 'PUT',
-	                data: angular.toJson(aff),
-	                contentType: 'application/json;charset=UTF-8',
-	                dataType: 'json',
-	                success: function(data) {
-	                    if(data.errors.length != 0){
-	                        console.log("Unable to update profile affiliation.");
-	                    }
-	                    $rootScope.$apply();
-	                }
-	            }).fail(function() {
-	                console.log("Error updating profile affiliation.");
-	            });
-	        },
 	        deleteAffiliation: function(affiliation) {
 	            var arr = null;
 	            var idx;
@@ -11755,6 +11808,47 @@
 	                }
 	            }).fail(function() {
 	                console.log("Error deleting affiliation.");
+	            });
+	        },
+	        getAffiliations: function(path) {
+	            //clear out current affiliations
+	            serv.loading = true;
+	            serv.affiliationsToAddIds = null;
+	            serv.educations.length = 0;
+	            serv.employments.length = 0;
+	            //get affiliation ids
+	            $.ajax({
+	                url: getBaseUri() + '/' + path,
+	                dataType: 'json',
+	                success: function(data) {
+	                    serv.affiliationsToAddIds = data;
+	                    serv.addAffiliationToScope('affiliations/affiliations.json');
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function(e){
+	                // something bad is happening!
+	                console.log("error fetching affiliations");
+	                logAjaxError(e);
+	            });
+	        },
+	        setIdsToAdd: function(ids) {
+	            serv.affiliationsToAddIds = ids;
+	        },
+	        updateProfileAffiliation: function(aff) {
+	            $.ajax({
+	                url: getBaseUri() + '/affiliations/affiliation.json',
+	                type: 'PUT',
+	                data: angular.toJson(aff),
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'json',
+	                success: function(data) {
+	                    if(data.errors.length != 0){
+	                        console.log("Unable to update profile affiliation.");
+	                    }
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                console.log("Error updating profile affiliation.");
 	            });
 	        }
 	    };

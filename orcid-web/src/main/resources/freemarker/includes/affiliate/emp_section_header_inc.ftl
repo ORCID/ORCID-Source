@@ -29,25 +29,30 @@
             <#include "../workspace/workspace_act_sort_menu.ftl"/>  
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">                         
+                    <li  ng-cloak><!-- ng-show="worksSrvc.groups.length > 1" -->
+                        <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
+                            <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
+                        </a>
+                    </li>
                     <!-- Link Manually -->
                     <li class="hidden-xs">                  
-                    	<div class="menu-container" id="add-employment-container">
-	                    	<ul class="toggle-menu">
-	                    		<li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
-			                    	<span class="glyphicon glyphicon-plus"></span>
-				                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
-				                    <ul class="menu-options employment">	                    	
-					                    <!-- Add Manually -->
-					                    <li>                            
-					                        <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
-					                            <span class="glyphicon glyphicon-plus"></span>
-					                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-					                        </a>                
-                   						 </li>
-					                </ul>
-					             </li>
-					      </ul>
-					    </div>         
+                        <div class="menu-container" id="add-employment-container">
+                            <ul class="toggle-menu">
+                                <li ng-class="{'green-bg' : showBibtexImportWizard == true}">       
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
+                                    <ul class="menu-options employment">                            
+                                        <!-- Add Manually -->
+                                        <li>                            
+                                            <a id="add-employment" href="" class="action-option manage-button two-options" ng-click="addAffiliationModal('employment')">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                            </a>                
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>         
                     </li>
                     <!-- Mobile workaound -->
                     <li class="hidden-md hidden-sm visible-xs-inline">                            
@@ -55,12 +60,7 @@
                             <span class="glyphicon glyphicon-plus"></span>
                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                         </a>                
-              		</li>
-                    
-                    
-                    
-                    
-                    
+                    </li>
                 </ul>
             </#if>
         </div>

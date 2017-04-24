@@ -45,47 +45,6 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 serv.loading = false;
             };
         },
-        setIdsToAdd: function(ids) {
-            serv.affiliationsToAddIds = ids;
-        },
-        getAffiliations: function(path) {
-            //clear out current affiliations
-            serv.loading = true;
-            serv.affiliationsToAddIds = null;
-            serv.educations.length = 0;
-            serv.employments.length = 0;
-            //get affiliation ids
-            $.ajax({
-                url: getBaseUri() + '/' + path,
-                dataType: 'json',
-                success: function(data) {
-                    serv.affiliationsToAddIds = data;
-                    serv.addAffiliationToScope('affiliations/affiliations.json');
-                    $rootScope.$apply();
-                }
-            }).fail(function(e){
-                // something bad is happening!
-                console.log("error fetching affiliations");
-                logAjaxError(e);
-            });
-        },
-        updateProfileAffiliation: function(aff) {
-            $.ajax({
-                url: getBaseUri() + '/affiliations/affiliation.json',
-                type: 'PUT',
-                data: angular.toJson(aff),
-                contentType: 'application/json;charset=UTF-8',
-                dataType: 'json',
-                success: function(data) {
-                    if(data.errors.length != 0){
-                        console.log("Unable to update profile affiliation.");
-                    }
-                    $rootScope.$apply();
-                }
-            }).fail(function() {
-                console.log("Error updating profile affiliation.");
-            });
-        },
         deleteAffiliation: function(affiliation) {
             var arr = null;
             var idx;
@@ -117,6 +76,47 @@ angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function (
                 }
             }).fail(function() {
                 console.log("Error deleting affiliation.");
+            });
+        },
+        getAffiliations: function(path) {
+            //clear out current affiliations
+            serv.loading = true;
+            serv.affiliationsToAddIds = null;
+            serv.educations.length = 0;
+            serv.employments.length = 0;
+            //get affiliation ids
+            $.ajax({
+                url: getBaseUri() + '/' + path,
+                dataType: 'json',
+                success: function(data) {
+                    serv.affiliationsToAddIds = data;
+                    serv.addAffiliationToScope('affiliations/affiliations.json');
+                    $rootScope.$apply();
+                }
+            }).fail(function(e){
+                // something bad is happening!
+                console.log("error fetching affiliations");
+                logAjaxError(e);
+            });
+        },
+        setIdsToAdd: function(ids) {
+            serv.affiliationsToAddIds = ids;
+        },
+        updateProfileAffiliation: function(aff) {
+            $.ajax({
+                url: getBaseUri() + '/affiliations/affiliation.json',
+                type: 'PUT',
+                data: angular.toJson(aff),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if(data.errors.length != 0){
+                        console.log("Unable to update profile affiliation.");
+                    }
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                console.log("Error updating profile affiliation.");
             });
         }
     };
