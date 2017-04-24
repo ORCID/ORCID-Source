@@ -49,7 +49,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-security.xml" })
+@ContextConfiguration(locations = { "classpath:statistics-core-context.xml", "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 public class AuthenticationManagerTest extends DBUnitTest {
 
     @Resource
