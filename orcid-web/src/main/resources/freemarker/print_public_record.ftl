@@ -21,7 +21,7 @@
 <#setting date_format="yyyy-MM-dd">
 <div class="row workspace-top public-profile print">
     <div class="col-md-12">
-        <div class="workspace-left workspace-profile" ng-controller="PrintRecordPageCtrl">
+        <div class="workspace-left workspace-profile">
         	<div class="id-banner">
 	            <h2 class="full-name">	            	
 					${(displayName)!}	                
