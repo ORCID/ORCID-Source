@@ -513,8 +513,9 @@
         '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
     </div>
 </div>
+
 <!-- .container -->
-<#if RequestParameters['newFooter']??>
+<#if RequestParameters['NEW_FOOTER']?? && FEATURE['NEW_FOOTER']>
 <footer class="footer-main">
     <div class="container">
         <div class="row">
@@ -549,9 +550,7 @@
         </div>
     </div>
 </footer>
-</#if>
-
-<#if !RequestParameters['newFooter']??>
+<#else>
 <div class="footer clear-fix">
     <div class="container">
         <div class="row">

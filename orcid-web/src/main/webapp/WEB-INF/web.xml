@@ -56,14 +56,14 @@
         <param-value>
             classpath*:/orcid-core-context.xml
             classpath*:/statistics-core-context.xml
-            classpath*:/orcid-frontend-security.xml
+            classpath*:/orcid-frontend-web-servlet.xml
         </param-value>
     </context-param>
     
     <context-param>
         <param-name>log4jExposeWebAppRoot</param-name>
         <param-value>false</param-value>
-    </context-param>
+    </context-param>	
 
     <filter>
         <filter-name>encodingFilter</filter-name>
