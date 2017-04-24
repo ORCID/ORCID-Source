@@ -315,8 +315,8 @@
 	    };
 
 	    $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
-	        $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
-	        $scope.prefsSrvc.savePrivacyPreferences();
+	        $scope.prefsSrvc.prefs['default_visibility'] = priv;        
+	        $scope.prefsSrvc.updateDefaultVisibility();        
 	    };
 	    
 	    $scope.showTooltip = function(el){
@@ -337,9 +337,9 @@
 	        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 	        $.ajax({
 	            url: getBaseUri() + '/account/send-deactivate-account.json',
-	            dataType: 'json',
+	            dataType: 'text',
 	            success: function(data) {
-	                $scope.primaryEmail = data.value;
+	                $scope.primaryEmail = data;
 	                $.colorbox({
 	                    html : $compile($('#deactivate-account-modal').html())($scope)
 	                });
@@ -2760,10 +2760,10 @@
 	            success: function(data) {
 	                $scope.delegatesByOrcid = {};
 	                $scope.delegation = data;
-	                if(data != null && data.givenPermissionTo != null){
-	                    for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
-	                        var delegate = data.givenPermissionTo.delegationDetails[i];
-	                        $scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
+	                if(data != null){
+	                    for(var i=0; i < data.length; i++){
+	                        var delegate = data[i];
+	                        $scope.delegatesByOrcid[delegate.receiverOrcid.value] = delegate;
 	                    }
 	                }
 	                $scope.showInitLoader = false;
@@ -13123,7 +13123,7 @@
 	    var serv = {
 	        prefs: null,
 	        saved: false,
-	        getPrivacyPreferences: function() {
+	        getPrivacyPreferences: function() {        	
 	            $.ajax({
 	                url: getBaseUri() + '/account/preferences.json',
 	                dataType: 'json',
@@ -13136,15 +13136,30 @@
 	                console.log("error with prefs");
 	            });
 	        },
-	        savePrivacyPreferences: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/account/preferences.json',
+	        updateEmailFrequency: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/email_preferences.json',
+	                type: 'POST',
+	                data: serv.prefs['email_frequency'],
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'text',
+	                success: function(data) {                    
+	                    serv.saved = true;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        }, 
+	        updateNotificationPreferences: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/notification_preferences.json',
 	                type: 'POST',
 	                data: angular.toJson(serv.prefs),
 	                contentType: 'application/json;charset=UTF-8',
 	                dataType: 'json',
-	                success: function(data) {
-	                    serv.prefs = data;
+	                success: function(data) {                    
 	                    serv.saved = true;
 	                    $rootScope.$apply();
 	                }
@@ -13153,6 +13168,25 @@
 	                console.log("error with prefs");
 	            });
 	        },
+	        updateDefaultVisibility: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/default_visibility.json',
+	                type: 'POST',
+	                data: serv.prefs['default_visibility'],
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'text',
+	                success: function(data) {                    
+	                    serv.saved = true;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function(jqXHR, textStatus, errorThrown) {
+	            	console.log(textStatus);
+	            	console.log(errorThrown);
+	            	console.log(jqXHR);
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        }, 
 	        clearMessage: function(){
 	            serv.saved = false;
 	        }

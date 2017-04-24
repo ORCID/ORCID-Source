@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.NotificationManager;
@@ -542,7 +543,7 @@ public class RegistrationController extends BaseController {
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
-        request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
+        request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { newUserOrcid, email, sessionId });
         return newUserOrcid;

@@ -14,15 +14,16 @@
  *
  * =============================================================================
  */
-package org.orcid.core.constants;
+package org.orcid.core.manager;
 
-public class EmailConstants {
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 
-    public static final String WILDCARD_VERIFICATION_URL = "${verification_url}";
+public interface PreferenceManager {
+    boolean updateEmailFrequencyDays(String orcid, SendEmailFrequency newValue);
 
-    /*
-     * session attribute that is used to see if we should check and notify the
-     * user if their primary email ins't verified.
-     */
-    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";    
+    boolean updateNotifications(String orcid, Boolean sendChangeNotifications, Boolean sendAdministrativeChangeNotifications, Boolean sendOrcidNews,
+            Boolean sendMemberUpdateRequests);
+
+    boolean updateDefaultVisibility(String orcid, Visibility newValue);
 }

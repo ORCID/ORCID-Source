@@ -17,9 +17,9 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -43,6 +43,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.OrcidType;
+import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
@@ -64,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-profile-last-modified-aspect-disabled-context.xml" })
 public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
@@ -89,6 +91,7 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Before
     public void beforeRunning() {
+        
         assertNotNull(profileDao);
     }
     
@@ -436,5 +439,146 @@ public class ProfileDaoTest extends DBUnitTest {
         assertTrue(profileDao.getClaimedStatusByEmail("pUbLiC_0000-0000-0000-0003@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("limited_0000-0000-0000-0003@test.orcid.org"));
         assertTrue(profileDao.getClaimedStatusByEmail("private_0000-0000-0000-0003@test.orcid.org"));
+    }
+    
+    @Test
+    @Rollback(true)
+    public void testUpdateNotificationsPreferences() {
+        ProfileEntity entity1 = profileDao.find("1000-0000-0000-0001");
+        ProfileEntity entity6 = profileDao.find("0000-0000-0000-0006");
+        assertFalse(entity1.getSendChangeNotifications());
+        assertFalse(entity1.getSendAdministrativeChangeNotifications());
+        assertFalse(entity1.getSendOrcidNews());
+        assertFalse(entity1.getSendMemberUpdateRequests());        
+        
+        assertFalse(entity6.getSendChangeNotifications());
+        assertFalse(entity6.getSendAdministrativeChangeNotifications());
+        assertFalse(entity6.getSendOrcidNews());
+        assertFalse(entity6.getSendMemberUpdateRequests());                       
+        
+        // Enable some preferences
+        assertTrue(profileDao.updateNotificationsPreferences("0000-0000-0000-0006", true, false, true, false));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        // Nothing changed on entity1
+        assertFalse(entity1.getSendChangeNotifications());
+        assertFalse(entity1.getSendAdministrativeChangeNotifications());
+        assertFalse(entity1.getSendOrcidNews());
+        assertFalse(entity1.getSendMemberUpdateRequests());        
+        
+        // Updates on entity6
+        assertTrue(entity6.getSendChangeNotifications());
+        assertFalse(entity6.getSendAdministrativeChangeNotifications());
+        assertTrue(entity6.getSendOrcidNews());
+        assertFalse(entity6.getSendMemberUpdateRequests());  
+        
+        // Enable all preferences
+        assertTrue(profileDao.updateNotificationsPreferences("0000-0000-0000-0006", true, true, true, true));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        // Nothing changed on entity1
+        assertFalse(entity1.getSendChangeNotifications());
+        assertFalse(entity1.getSendAdministrativeChangeNotifications());
+        assertFalse(entity1.getSendOrcidNews());
+        assertFalse(entity1.getSendMemberUpdateRequests());        
+        
+        // Updates on entity6
+        assertTrue(entity6.getSendChangeNotifications());
+        assertTrue(entity6.getSendAdministrativeChangeNotifications());
+        assertTrue(entity6.getSendOrcidNews());
+        assertTrue(entity6.getSendMemberUpdateRequests());  
+        
+        // Disable all preferences
+        assertTrue(profileDao.updateNotificationsPreferences("0000-0000-0000-0006", false, false, false, false));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        // Nothing changed on entity1
+        assertFalse(entity1.getSendChangeNotifications());
+        assertFalse(entity1.getSendAdministrativeChangeNotifications());
+        assertFalse(entity1.getSendOrcidNews());
+        assertFalse(entity1.getSendMemberUpdateRequests());        
+        
+        // Updates on entity6
+        assertFalse(entity6.getSendChangeNotifications());
+        assertFalse(entity6.getSendAdministrativeChangeNotifications());
+        assertFalse(entity6.getSendOrcidNews());
+        assertFalse(entity6.getSendMemberUpdateRequests()); 
+    }
+    
+    @Test
+    @Rollback(true)
+    public void testUpdateDefaultVisibility() {
+        ProfileEntity entity1 = profileDao.find("1000-0000-0000-0001");
+        ProfileEntity entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
+        assertEquals(Visibility.PUBLIC, entity6.getActivitiesVisibilityDefault());
+        
+        // Set it private
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.PRIVATE));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
+        assertEquals(Visibility.PRIVATE, entity6.getActivitiesVisibilityDefault());
+        
+        // Set it limited
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.LIMITED));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
+        assertEquals(Visibility.LIMITED, entity6.getActivitiesVisibilityDefault());
+        
+        // Set it public again
+        assertTrue(profileDao.updateDefaultVisibility("0000-0000-0000-0006", Visibility.PUBLIC));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Visibility.PUBLIC, entity1.getActivitiesVisibilityDefault());
+        assertEquals(Visibility.PUBLIC, entity6.getActivitiesVisibilityDefault());
+    }
+    
+    @Test
+    @Rollback(true)
+    public void testUpdateSendEmailFrequencyDays() {
+        ProfileEntity entity1 = profileDao.find("1000-0000-0000-0001");
+        ProfileEntity entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
+        
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.DAILY.value())));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
+        assertEquals(Float.valueOf(1.0F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
+        
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.QUARTERLY.value())));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
+        assertEquals(Float.valueOf(91.3105F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
+        
+        assertTrue(profileDao.updateSendEmailFrequencyDays("0000-0000-0000-0006", Float.valueOf(SendEmailFrequency.IMMEDIATELY.value())));
+        
+        entity1 = profileDao.find("1000-0000-0000-0001");
+        entity6 = profileDao.find("0000-0000-0000-0006");
+        
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity1.getSendEmailFrequencyDays()));
+        assertEquals(Float.valueOf(0.0F), Float.valueOf(entity6.getSendEmailFrequencyDays()));
     }
 }

@@ -678,13 +678,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updatePassword(String orcid, String updatedPassword) {
-        String encryptedPassword = encryptionManager.hashForInternalUse(updatedPassword);
+    public void updatePassword(String orcid, String password) {
+        String encryptedPassword = encryptionManager.hashForInternalUse(password);
         profileDao.updateEncryptedPassword(orcid, encryptedPassword);
     }
 
     @Override
-    public void updateSecurityQuestion(String orcid, Integer questionId, String encryptedAnswer) {
+    public void updateSecurityQuestion(String orcid, Integer questionId, String answer) {
+        String encryptedAnswer = encryptionManager.encryptForInternalUse(answer);
         profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
     }
 

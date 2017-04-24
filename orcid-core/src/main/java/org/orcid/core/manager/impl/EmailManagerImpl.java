@@ -19,8 +19,12 @@ package org.orcid.core.manager.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -50,6 +54,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private NotificationManager notificationManager;
 
     @Override
     @Transactional
@@ -119,12 +126,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public void updateEmails(String orcid, Emails emails) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
+    public void updateEmails(HttpServletRequest request, String orcid, Emails emails) {
+        Email currentPrimaryEmail = findPrimaryEmail(orcid);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 boolean primaryFound = false;
+                Email newPrimaryEmail = null;
                 if (emails != null && !emails.getEmails().isEmpty()) {
                     for (Email email : emails.getEmails()) {
                         emailDao.updateEmail(orcid, email.getEmail(), email.isCurrent(), email.getVisibility());
@@ -133,30 +140,44 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                                 throw new IllegalArgumentException("More than one primary email specified");
                             } else {
                                 primaryFound = true;
+                                newPrimaryEmail = email;
                             }
                             emailDao.updatePrimary(orcid, email.getEmail());
                         }
                     }
                 }
+                
+                if(!StringUtils.equals(currentPrimaryEmail.getEmail(), newPrimaryEmail.getEmail())) {
+                    notificationManager.sendEmailAddressChangedNotification(orcid, newPrimaryEmail.getEmail(), currentPrimaryEmail.getEmail());
+                    if (!newPrimaryEmail.isVerified()) {
+                        notificationManager.sendVerificationEmail(orcid, newPrimaryEmail.getEmail());
+                        request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                    }
+                }
             }
-        });
-
+        });        
     }
 
     @Override
     @Transactional
-    public void addEmail(String orcid, Email email) {
+    public void addEmail(HttpServletRequest request, String orcid, Email email) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        String sourceId = null;
-        String clientSourceId = null;
-        if (sourceEntity.getSourceProfile() != null) {
-            sourceId = sourceEntity.getSourceProfile().getId();
-        }
-
-        if (sourceEntity.getSourceClient() != null) {
-            clientSourceId = sourceEntity.getSourceClient().getId();
-        }
+        String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
+        String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();
+                
+        Email currentPrimaryEmail = findPrimaryEmail(orcid);
+        
+        // Create the new email
         emailDao.addEmail(orcid, email.getEmail(), email.getVisibility(), sourceId, clientSourceId);
+        
+        // if primary email changed send notification.
+        if (!StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
+            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+            notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
+        }
+                
+        // send verifcation email for new address
+        notificationManager.sendVerificationEmail(orcid, email.getEmail());
     }
 
     @Override

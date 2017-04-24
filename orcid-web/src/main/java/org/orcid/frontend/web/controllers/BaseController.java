@@ -128,7 +128,7 @@ public class BaseController {
     private String cdnConfigFile;
 
     @Resource
-    private LocaleManager localeManager;
+    protected LocaleManager localeManager;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -184,22 +184,6 @@ public class BaseController {
 
     public void setShibbolethEnabled(boolean shibbolethEnabled) {
         this.shibbolethEnabled = shibbolethEnabled;
-    }
-
-    public LocaleManager getLocaleManager() {
-        return localeManager;
-    }
-
-    public void setLocaleManager(LocaleManager localeManager) {
-        this.localeManager = localeManager;
-    }
-
-    public OrcidProfileManager getOrcidProfileManager() {
-        return orcidProfileManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
     }
 
     @ModelAttribute("devSandboxUrl")
