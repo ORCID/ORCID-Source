@@ -46,8 +46,8 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     $scope.bulkDeleteCount = 0;
     $scope.bulkDeleteSubmit = false;
 
-    emailVerified = true;
     $scope.toggleBulkEdit = function() {
+        emailVerified = true;  //Remove this line
 
         if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
             if (!$scope.bulkEditShow) {
