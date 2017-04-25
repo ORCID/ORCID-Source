@@ -131,6 +131,20 @@
 	<sec:http pattern="/static/**" security="none" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
+	
+	<sec:http pattern="/togglz/.*" 
+		use-expressions="false" 
+		access-decision-manager-ref="accessDecisionManager" 
+		authentication-manager-ref="authenticationManager" 
+		create-session="ifRequired"
+		request-matcher="regex">
+		<sec:csrf disabled="true"/>
+        <sec:anonymous enabled="false" />        
+        <sec:intercept-url pattern="/togglz/index" access="ROLE_ADMIN" />        
+        <sec:intercept-url pattern="/togglz/edit" access="ROLE_ADMIN" />
+        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+	</sec:http>
+
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -219,7 +233,7 @@
 			username-parameter="userId" password-parameter="password" 
 			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
-	</sec:http>
+	</sec:http> 
 	
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
