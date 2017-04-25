@@ -58,9 +58,6 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
                 }*/
             };
             $scope.bulkEditShow = !$scope.bulkEditShow;
-            $scope.showBibtexImportWizard = false;
-            $scope.workImportWizard = false;
-            $scope.showBibtexExport = false;
         }else{
             showEmailVerificationModal();
         }

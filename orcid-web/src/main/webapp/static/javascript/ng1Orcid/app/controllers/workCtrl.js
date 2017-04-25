@@ -63,7 +63,7 @@ angular.module('orcidApp').controller(
 
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();
-            var emailVerified = false;
+            var emailVerified = true;
             var emails = {};
 
             var showEmailVerificationModal = function(){
@@ -102,7 +102,7 @@ angular.module('orcidApp').controller(
 
             $scope.toggleBulkEdit = function() {
 
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+                //if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
                     if (!$scope.bulkEditShow) {
                         $scope.bulkEditMap = {};
                         $scope.bulkChecked = false;
@@ -114,9 +114,9 @@ angular.module('orcidApp').controller(
                     $scope.showBibtexImportWizard = false;
                     $scope.workImportWizard = false;
                     $scope.showBibtexExport = false;
-                }else{
-                    showEmailVerificationModal();
-                }
+                //}else{
+                //    showEmailVerificationModal();
+                //}
             };
 
 
