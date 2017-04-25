@@ -44,8 +44,6 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -94,7 +92,6 @@ public class Funding implements Filterable, Activity, Serializable, Organization
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true) 
     protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;

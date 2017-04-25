@@ -37,8 +37,6 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -73,7 +71,6 @@ abstract public class Notification implements Serializable, SourceAware {
 
     private final static long serialVersionUID = 1L;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlElement(name = "notification-type", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected NotificationType notificationType;

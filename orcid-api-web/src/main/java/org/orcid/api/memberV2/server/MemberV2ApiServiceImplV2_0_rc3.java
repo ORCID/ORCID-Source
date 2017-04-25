@@ -123,7 +123,6 @@ import io.swagger.annotations.ResponseHeader;
  * @author Angel Montenegro
  * 
  */
-@Api("Member API v2.0_rc3")
 @Path("/v2.0_rc3")
 public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper {
 

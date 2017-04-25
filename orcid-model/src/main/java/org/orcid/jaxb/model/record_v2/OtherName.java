@@ -31,8 +31,6 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * 
  * @author Angel Montenegro
@@ -48,7 +46,6 @@ public class OtherName implements Filterable, Serializable, Comparable<OtherName
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;

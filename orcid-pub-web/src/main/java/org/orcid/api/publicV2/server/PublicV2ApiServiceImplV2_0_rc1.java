@@ -70,7 +70,6 @@ import io.swagger.annotations.ApiResponses;
  * @author Angel Montenegro
  * 
  */
-@Api("Public API v2.0_rc1")
 @Path("/v2.0_rc1")
 public class PublicV2ApiServiceImplV2_0_rc1 {
     protected PublicV2ApiServiceDelegator<Education, Employment, ?, Funding, GroupIdRecord, ?, PeerReview, ?, Work> serviceDelegator;
