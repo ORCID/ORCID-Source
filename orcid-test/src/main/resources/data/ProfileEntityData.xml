@@ -1811,7 +1811,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="user@user.com"
-        is_primary="true"
+        is_primary="false"
         is_current="true"
         is_verified="true"
         visibility="PRIVATE"

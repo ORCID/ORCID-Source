@@ -353,8 +353,10 @@ public class NotificationManagerImpl implements NotificationManager {
         
         String subject = getSubject("email.subject.verify_reminder", userLocale);
         
+        org.orcid.jaxb.model.record_v2.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("primaryEmail", email);
+        templateParams.put("primaryEmail", primaryEmail.getEmail());
         String emailFriendlyName = deriveEmailFriendlyName(profile);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("subject", subject);
