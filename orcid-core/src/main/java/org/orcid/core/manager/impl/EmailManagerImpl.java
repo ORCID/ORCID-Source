@@ -171,7 +171,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         emailDao.addEmail(orcid, email.getEmail(), email.getVisibility(), sourceId, clientSourceId);
         
         // if primary email changed send notification.
-        if (!StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
+        if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
             request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
         }
