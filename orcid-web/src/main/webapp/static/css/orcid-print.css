@@ -252,13 +252,25 @@
         font-weight: bold;
     }
     
+    .workspace-peer-review .title::before {
+    content: "• ";
+	}
+    
+    #workspace-peer-review .peer-review-title {
+    	font-size: 14px;
+    	font-weight: bold;
+    }
+    
+    .workspace-peer-review .title .glyphicon {
+    	display: none;
+    } 
+    
     .workspace-profile,
     #workspace-education,
     #workspace-employment,
     #workspace-funding,
     #workspace-works,
     #workspace-peer-review {
-    	color: red;
     	page-break-inside: avoid;
     }
     .workspace-profile .workspace-section {

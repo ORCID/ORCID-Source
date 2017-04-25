@@ -109,7 +109,6 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Angel Montenegro
  * 
  */
-@Api("Member API v2.0_rc2")
 @Path("/v2.0_rc2")
 public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper {
 

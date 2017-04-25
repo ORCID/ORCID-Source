@@ -248,8 +248,8 @@ angular.module('orcidApp').controller('WorksPrivacyPreferencesCtrl',['$scope', '
     };
 
     $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
-        $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
-        $scope.prefsSrvc.savePrivacyPreferences();
+        $scope.prefsSrvc.prefs['default_visibility'] = priv;        
+        $scope.prefsSrvc.updateDefaultVisibility();        
     };
     
     $scope.showTooltip = function(el){
@@ -270,9 +270,9 @@ angular.module('orcidApp').controller('DeactivateAccountCtrl', ['$scope', '$comp
         orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
         $.ajax({
             url: getBaseUri() + '/account/send-deactivate-account.json',
-            dataType: 'json',
+            dataType: 'text',
             success: function(data) {
-                $scope.primaryEmail = data.value;
+                $scope.primaryEmail = data;
                 $.colorbox({
                     html : $compile($('#deactivate-account-modal').html())($scope)
                 });
@@ -2693,10 +2693,10 @@ angular.module('orcidApp').controller('DelegatesCtrl',['$scope', '$compile', fun
             success: function(data) {
                 $scope.delegatesByOrcid = {};
                 $scope.delegation = data;
-                if(data != null && data.givenPermissionTo != null){
-                    for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
-                        var delegate = data.givenPermissionTo.delegationDetails[i];
-                        $scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
+                if(data != null){
+                    for(var i=0; i < data.length; i++){
+                        var delegate = data[i];
+                        $scope.delegatesByOrcid[delegate.receiverOrcid.value] = delegate;
                     }
                 }
                 $scope.showInitLoader = false;

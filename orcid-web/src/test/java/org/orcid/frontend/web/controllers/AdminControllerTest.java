@@ -25,6 +25,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
@@ -122,6 +127,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Before
     public void beforeInstance() {
+        MockitoAnnotations.initMocks(this);
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         assertNotNull(adminController);
         assertNotNull(profileDao);
@@ -301,6 +307,10 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void verifyEmailTest() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpSession session = mock(HttpSession.class);
+        when(request.getSession()).thenReturn(session);
+        
         //Add not verified email
         Email email = new Email();
         email.setEmail("not-verified@email.com");
@@ -308,7 +318,7 @@ public class AdminControllerTest extends BaseControllerTest {
         email.setPrimary(false);
         email.setVerified(false);
         email.setVisibility(Visibility.PUBLIC);
-        emailManager.addEmail("4444-4444-4444-4499", email);
+        emailManager.addEmail(request, "4444-4444-4444-4499", email);
 
         // Verify the email
         adminController.adminVerifyEmail("not-verified@email.com");
