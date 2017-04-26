@@ -515,7 +515,7 @@
 </div>
 
 <!-- .container -->
-<#if RequestParameters['NEW_FOOTER']?? && FEATURE['NEW_FOOTER']>
+<#if RequestParameters['NEW_FOOTER']?? || FEATURE['NEW_FOOTER']>
 <footer class="footer-main">
     <div class="container">
         <div class="row">
