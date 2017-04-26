@@ -515,7 +515,7 @@
 </div>
 
 <!-- .container -->
-<#if RequestParameters['NEW_FOOTER']?? || FEATURE['NEW_FOOTER']>
+<@orcid.isEnabled 'NEW_FOOTER'>
 <footer class="footer-main">
     <div class="container">
         <div class="row">
@@ -550,7 +550,9 @@
         </div>
     </div>
 </footer>
-<#else>
+</@orcid.isEnabled>
+
+<@orcid.isDisabled 'NEW_FOOTER'>
 <div class="footer clear-fix">
     <div class="container">
         <div class="row">
@@ -565,7 +567,7 @@
         </div>
     </div>
 </div>
-</#if>
+</@orcid.isDisabled>
 
 <form action="<@orcid.rootPath '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">
