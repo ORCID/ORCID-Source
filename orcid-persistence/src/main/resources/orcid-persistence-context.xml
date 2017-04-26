@@ -394,7 +394,7 @@
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
-    </bean>
+    </bean>        
     
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
