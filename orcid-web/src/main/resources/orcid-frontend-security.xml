@@ -137,12 +137,15 @@
 		access-decision-manager-ref="accessDecisionManager" 
 		authentication-manager-ref="authenticationManager" 
 		create-session="ifRequired"
-		request-matcher="regex">
+		request-matcher="regex" >
 		<sec:csrf disabled="true"/>
         <sec:anonymous enabled="false" />        
         <sec:intercept-url pattern="/togglz/index" access="ROLE_ADMIN" />        
-        <sec:intercept-url pattern="/togglz/edit" access="ROLE_ADMIN" />
-        <sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
+        <sec:intercept-url pattern="/togglz/edit" access="ROLE_ADMIN" />        
+        <sec:form-login login-processing-url="/signin/auth.json" 
+			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
+			username-parameter="userId" password-parameter="password" />     
 	</sec:http>
 
 

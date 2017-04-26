@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
+import org.togglz.core.repository.cache.CachingStateRepository;
 import org.togglz.core.repository.jdbc.JDBCStateRepository;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.SimpleFeatureUser;
@@ -38,6 +40,9 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
     @javax.annotation.Resource(name = "featuresDataSource")
     private DataSource dataSource;
 
+    @Value("${org.orcid.persistence.togglz.cache.ttl:60000}")
+    private Long cacheTTL;
+    
     @Override
     public Class<? extends Feature> getFeatureClass() {
         return Features.class;
@@ -45,7 +50,8 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
 
     @Override
     public StateRepository getStateRepository() {
-        return new JDBCStateRepository(dataSource);
+        StateRepository dbRepo = new JDBCStateRepository(dataSource);
+        return new CachingStateRepository(dbRepo, cacheTTL);
     }
 
     @Override
