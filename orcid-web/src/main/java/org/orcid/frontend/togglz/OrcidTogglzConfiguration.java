@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.togglz;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -37,7 +38,7 @@ import org.togglz.core.user.UserProvider;
 @Component
 public class OrcidTogglzConfiguration implements TogglzConfig {
 
-    @javax.annotation.Resource(name = "featuresDataSource")
+    @Resource(name = "featuresDataSource")
     private DataSource dataSource;
 
     @Value("${org.orcid.persistence.togglz.cache.ttl:60000}")
