@@ -357,3 +357,17 @@ kind of variable. This temp value is only used in this macro lib -->
 	   	</div>                
    	</div>	
 </#macro>
+
+<#macro checkFeatureStatus featureName enabled=true>
+	<#if enabled>
+		<#if RequestParameters[featureName]??>
+			<#nested>
+		<#elseif FEATURE[featureName]>
+			<#nested>
+		</#if>
+	<#else>
+		<#if !RequestParameters[featureName]?? && !FEATURE[featureName]>
+			<#nested>
+		</#if>
+	</#if>
+</#macro>
