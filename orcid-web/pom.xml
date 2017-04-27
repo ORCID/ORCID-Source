@@ -217,6 +217,11 @@
 		</dependency>   		
 		<dependency>
 			<groupId>org.togglz</groupId>
+			<artifactId>togglz-spring-security</artifactId>
+			<version>2.4.1.Final</version>
+		</dependency>					
+		<dependency>
+			<groupId>org.togglz</groupId>
 			<artifactId>togglz-console</artifactId>
 			<version>2.4.1.Final</version>
 		</dependency> 		

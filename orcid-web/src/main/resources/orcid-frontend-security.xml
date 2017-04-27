@@ -137,9 +137,9 @@
 		access-decision-manager-ref="accessDecisionManager" 
 		authentication-manager-ref="authenticationManager" 
 		create-session="ifRequired"
-		request-matcher="regex" >
-		<sec:csrf disabled="true"/>
-        <sec:anonymous enabled="false" />        
+		request-matcher="regex" >	
+		<sec:csrf token-repository-ref="csrfTokenRepo" />
+        <sec:anonymous enabled="false" />    
         <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />        
         <sec:form-login login-processing-url="/signin/auth.json" 
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
