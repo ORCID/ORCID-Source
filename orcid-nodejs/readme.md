@@ -27,5 +27,5 @@ you could simply append next line at the top of file.
 
     alert('It works')
     
-then, browse to [localhost](https://localhost:8443/orcid-web/) and confime _It works_ message comes up.
+then, browse to [localhost](https://localhost:8443/orcid-web/) and confirm _It works_ message comes up.
 
