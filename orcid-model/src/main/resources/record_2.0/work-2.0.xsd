@@ -279,7 +279,9 @@
 				the conference name.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="common:string-1000"/> 
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1000"/>			
+		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:complexType name="citation">

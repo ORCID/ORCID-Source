@@ -1357,7 +1357,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="common:non-empty-string">
+		<xs:restriction base="xs:string">
 			<xs:maxLength value="500" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1379,7 +1379,7 @@
 				characters
 			</xs:documentation> 
 		</xs:annotation>
-		<xs:restriction base="common:non-empty-string">
+		<xs:restriction base="xs:string">
 			<xs:maxLength value="200" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1390,14 +1390,14 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="common:non-empty-string">
+		<xs:restriction base="xs:string">
 			<xs:maxLength value="255" />
 		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:simpleType name="string-350">
 		<xs:annotation>
-			<xs:documentation>A non-empty string that has a maximum size of 1000
+			<xs:documentation>A non-empty string that has a maximum size of 350
 				characters
 			</xs:documentation>
 		</xs:annotation>
@@ -1492,11 +1492,16 @@
 		</xs:annotation>
 	</xs:element>
 
-	<xs:element name="subtitle" type="common:string-1000">		
+	<xs:element name="subtitle">		
 		<xs:annotation>
 			<xs:documentation>If the work has a subtitle, include it here.
 			</xs:documentation>
 		</xs:annotation>		
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1000"/>			
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 
 	<xs:element name="translated-title">
