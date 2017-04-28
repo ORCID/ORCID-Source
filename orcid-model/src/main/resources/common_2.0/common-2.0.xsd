@@ -1353,11 +1353,11 @@
 
 	<xs:simpleType name="short-text">
 		<xs:annotation>
-			<xs:documentation>A non-empty string that has a maximum size of 2084
+			<xs:documentation>A non-empty string that has a maximum size of 500
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
+		<xs:restriction base="common:non-empty-string">
 			<xs:maxLength value="500" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1377,9 +1377,9 @@
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 200
 				characters
-			</xs:documentation>
+			</xs:documentation> 
 		</xs:annotation>
-		<xs:restriction base="xs:string">
+		<xs:restriction base="common:non-empty-string">
 			<xs:maxLength value="200" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1390,7 +1390,7 @@
 				characters
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
+		<xs:restriction base="common:non-empty-string">
 			<xs:maxLength value="255" />
 		</xs:restriction>
 	</xs:simpleType>
@@ -1459,10 +1459,8 @@
 				space, carriage return or linefeed
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1" />
-			<xs:maxLength value="4000" />
-			<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />			
+		<xs:restriction base="common:non-empty-string">			
+			<xs:maxLength value="4000" />					
 		</xs:restriction>		
 	</xs:simpleType>
 
