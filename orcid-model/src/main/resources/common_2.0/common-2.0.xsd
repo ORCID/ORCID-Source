@@ -164,7 +164,7 @@
 		</xs:annotation>
 
 		<xs:sequence>
-			<xs:element name="name" type="common:non-empty-string" />
+			<xs:element name="name" type="common:long-text" />
 			<xs:element name="address" type="common:organization-address" />
 			<xs:element name="disambiguated-organization" type="common:disambiguated-organization"
 				minOccurs="0" maxOccurs="1" />
@@ -177,12 +177,12 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element minOccurs="1" name="city" type="common:non-empty-string">
+			<xs:element minOccurs="1" name="city" type="common:long-text">
 				<xs:annotation>
 					<xs:documentation>City</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element minOccurs="0" name="region" type="common:non-empty-string">
+			<xs:element minOccurs="0" name="region" type="common:long-text">
 				<xs:annotation>
 					<xs:documentation>Region within a country</xs:documentation>
 				</xs:annotation>
@@ -1362,6 +1362,28 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="string-150">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 150
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="150" />	
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-200">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 200
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200" />
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="string-255">
 		<xs:annotation>
 			<xs:documentation>A non-empty string that has a maximum size of 255
@@ -1370,6 +1392,17 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="255" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-350">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 1000
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="350" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -1393,7 +1426,7 @@
 		<xs:restriction base="common:non-empty-string">
 			<xs:maxLength value="2084" />
 		</xs:restriction>
-	</xs:simpleType>
+	</xs:simpleType>	
 
 	<xs:complexType name="string-with-lang-code">
 		<xs:annotation>
@@ -1416,8 +1449,21 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:maxLength value="5000"></xs:maxLength>
+			<xs:maxLength value="5000" />
 		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="long-text">
+		<xs:annotation>
+			<xs:documentation>Must contain one or more charaters that are not a
+				space, carriage return or linefeed
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1" />
+			<xs:maxLength value="4000" />
+			<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />			
+		</xs:restriction>		
 	</xs:simpleType>
 
 	<xs:complexType name="credit-name">
@@ -1435,7 +1481,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>
-			<xs:extension base="common:non-empty-string" />
+			<xs:extension base="common:string-150" />
 		</xs:simpleContent>
 	</xs:complexType>
 
@@ -1448,13 +1494,11 @@
 		</xs:annotation>
 	</xs:element>
 
-	<xs:element name="subtitle">
-		<xs:complexType mixed="true">
-			<xs:annotation>
-				<xs:documentation>If the work has a subtitle, include it here.
-				</xs:documentation>
-			</xs:annotation>
-		</xs:complexType>
+	<xs:element name="subtitle" type="common:string-1000">		
+		<xs:annotation>
+			<xs:documentation>If the work has a subtitle, include it here.
+			</xs:documentation>
+		</xs:annotation>		
 	</xs:element>
 
 	<xs:element name="translated-title">
@@ -1618,5 +1662,6 @@
 		<xs:restriction base="common:string-1000">
 			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\^._~:/?#\[\]@!$&amp;'()*+,;=-]){2,}" />
 		</xs:restriction>    		
-	</xs:simpleType>
+	</xs:simpleType>		
+	
 </xs:schema>

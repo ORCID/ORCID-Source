@@ -16,7 +16,7 @@
 			            </xs:restriction>
 			        </xs:simpleType>
 			    </xs:element>
-				<xs:element type="xs:string" name="subject"/>
+				<xs:element type="common:string-200" name="subject"/>
 				<xs:element type="xs:string" name="body-text"/>
 				<xs:element type="xs:string" name="body-html"/>
 				<xs:element ref="common:created-date" minOccurs="0"/>

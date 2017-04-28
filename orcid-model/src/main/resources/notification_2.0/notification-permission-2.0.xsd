@@ -88,9 +88,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="1000" />
-			</xs:restriction>
+			<xs:restriction base="common:string-1000" />
 		</xs:simpleType>
 	</xs:element>
 	<xs:complexType name="items">
@@ -102,7 +100,7 @@
 	<xs:complexType name="item">
 		<xs:sequence>
 			<xs:element name="item-type" type="notification:activity-type" />
-			<xs:element name="item-name" type="xs:string" />
+			<xs:element name="item-name" type="common:string-1000" />
 			<xs:element ref="common:external-id" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
