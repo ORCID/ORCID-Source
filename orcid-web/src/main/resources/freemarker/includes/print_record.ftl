@@ -17,17 +17,19 @@
 
 -->
 <#if RequestParameters['print']??>
-	<div class="print-orcid-record">
-		<a id="printRecord" onclick="printPublicRecord('${baseUri}/${(effectiveUserOrcid)!}')"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>	
-		
-		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
+	<div class="print-orcid-record" ng-controller="PrintRecordCtrl">
+		<#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated)>
+			<a id="printRecord" ng-click="printRecord('${baseUriHttp}/${(effectiveUserOrcid)!}/print')">	
+		<#else>
+			<a id="printRecord" ng-click="printRecord('${baseUri}/${(effectiveUserOrcid)!}/print')">	
+		</#if>
+        <span class="glyphicon glyphicon-print"></span> ${springMacroRequestContext.getMessage("public_record.printView")}</a>
         <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div id="print-help" class="popover bottom">
                 <div class="arrow"></div>
                 <div class="popover-content">
-                    <p>Print the public view of your ORCID record</p>
-                    <#--<p><@orcid.msg 'workspace.qrcode.help'/></p>-->
+                    <p>${springMacroRequestContext.getMessage("public_record.printHelpText")}</p>
                 </div>
             </div>
         </div>

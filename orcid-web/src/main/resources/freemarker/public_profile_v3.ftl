@@ -38,7 +38,8 @@
 				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
 						</div>						
 					</div>
-				</div>					        
+				</div>
+				 <#include "includes/print_record.ftl"/>					        
 
 				<#if (locked)?? && !locked>
 					<!-- Other Names -->

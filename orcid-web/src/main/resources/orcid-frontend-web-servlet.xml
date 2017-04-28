@@ -24,12 +24,16 @@
        xmlns:cache="http://www.springframework.org/schema/cache"
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+        xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd 
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<tx:annotation-driven />
 
     <context:property-placeholder location="${org.orcid.config.file:}"
                                   ignore-resource-not-found="true" ignore-unresolvable="true" />
@@ -39,7 +43,7 @@
     <mvc:resources location="/static/" mapping="/static/**" cache-period="1206297260"/>
 
     <context:component-scan base-package="org.orcid"/>
-    <mvc:annotation-driven ignoreDefaultModelOnRedirect="true"/>
+    <mvc:annotation-driven ignore-default-model-on-redirect="true" />
 	<task:annotation-driven />
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>

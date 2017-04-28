@@ -44,7 +44,8 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
-            enable_notifications="true"
+            enable_notifications="false"
+            send_email_frequency_days = "7.0"
             />
             
     <profile
@@ -70,7 +71,8 @@
             orcid_type="USER"
             reviewed="true"  
             record_locked="false"      
-            enable_notifications="true"        
+            enable_notifications="true"  
+            send_email_frequency_days = "0.0"      
             />
 
     <profile
@@ -99,6 +101,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
     <profile
@@ -126,6 +129,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
     <profile
@@ -153,6 +157,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
     <profile
@@ -180,6 +185,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
     <profile
@@ -206,6 +212,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 	
 	<profile
@@ -234,6 +241,7 @@
             record_locked="false"
             enable_notifications="true"
             orcid_type="USER"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -260,6 +268,7 @@
             reviewed="false"     
             record_locked="false"     
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />            
 
 	<profile
@@ -286,6 +295,7 @@
             reviewed="false"     
             record_locked="false"     
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
             
 	<profile
@@ -314,6 +324,7 @@
             reviewed="false"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
             
 	<profile
@@ -340,6 +351,7 @@
             reviewed="false"     
             record_locked="false"     
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -365,6 +377,7 @@
             client_source_id="APP-5555555555555555"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -394,6 +407,7 @@
             reviewed="true"
             record_locked="false"
             enable_notifications="false"
+            send_email_frequency_days = "0.0"
             />
             
 	<profile
@@ -424,6 +438,7 @@
             client_source_id="APP-5555555555555555"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -456,6 +471,7 @@
             client_source_id="APP-5555555555555555"
             record_locked="false"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -486,6 +502,7 @@
             record_locked="true"            
             client_source_id="APP-5555555555555555"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
 	<profile
@@ -504,9 +521,11 @@
             encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
             security_question_id="1"
             encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
-            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="            
+            send_administrative_change_notifications = "false"
             send_change_notifications="false"
-            send_orcid_news="false"
+            send_member_update_requests = "false"
+            send_orcid_news="false"            
             activities_visibility_default="PUBLIC"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
@@ -516,6 +535,7 @@
             record_locked="true"            
             client_source_id="APP-5555555555555556"
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
             
     <profile
@@ -535,7 +555,9 @@
             security_question_id="1"
             encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_administrative_change_notifications = "false"
             send_change_notifications="false"
+            send_member_update_requests = "false"
             send_orcid_news="false"
             activities_visibility_default="PUBLIC"
             indexing_status="DONE"
@@ -544,6 +566,7 @@
             reviewed="true"
             record_locked="false"            
             enable_notifications="true"
+            send_email_frequency_days = "0.0"
             />
 
     <granted_authority
@@ -1526,6 +1549,13 @@
             approval_date="2011-10-17 16:59:32.00"
             />
     
+    <given_permission_to
+            given_permission_to_id="3"
+            giver_orcid="0000-0000-0000-0006"
+            receiver_orcid="0000-0000-0000-0003"
+            approval_date="2017-10-17 16:59:32.00"
+            />
+    
     <email
         orcid="4444-4444-4444-4441"
         email="spike@milligan.com"
@@ -1781,7 +1811,7 @@
     <email
         orcid="4444-4444-4444-4446"
         email="user@user.com"
-        is_primary="true"
+        is_primary="false"
         is_current="true"
         is_verified="true"
         visibility="PRIVATE"

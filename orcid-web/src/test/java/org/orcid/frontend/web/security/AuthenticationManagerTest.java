@@ -38,6 +38,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -47,6 +48,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @author Declan Newman (declan) Date: 13/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
+@WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-security.xml" })
 public class AuthenticationManagerTest extends DBUnitTest {
 

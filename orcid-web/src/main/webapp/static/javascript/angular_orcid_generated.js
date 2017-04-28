@@ -53,13 +53,13 @@
 	__webpack_require__(1);
 	//require('./app/main.ts');
 	requireAll(__webpack_require__(2));
-	requireAll(__webpack_require__(23));
 	requireAll(__webpack_require__(24));
-	requireAll(__webpack_require__(31));
+	requireAll(__webpack_require__(25));
 	requireAll(__webpack_require__(32));
+	requireAll(__webpack_require__(33));
 	//requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
-	requireAll(__webpack_require__(34));
-	requireAll(__webpack_require__(54));
+	requireAll(__webpack_require__(35));
+	requireAll(__webpack_require__(55));
 
 /***/ },
 /* 1 */
@@ -315,8 +315,8 @@
 	    };
 
 	    $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
-	        $scope.prefsSrvc.prefs.activitiesVisibilityDefault.value = priv;
-	        $scope.prefsSrvc.savePrivacyPreferences();
+	        $scope.prefsSrvc.prefs['default_visibility'] = priv;        
+	        $scope.prefsSrvc.updateDefaultVisibility();        
 	    };
 	    
 	    $scope.showTooltip = function(el){
@@ -337,9 +337,9 @@
 	        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Deactivate_Initiate', 'Website']);
 	        $.ajax({
 	            url: getBaseUri() + '/account/send-deactivate-account.json',
-	            dataType: 'json',
+	            dataType: 'text',
 	            success: function(data) {
-	                $scope.primaryEmail = data.value;
+	                $scope.primaryEmail = data;
 	                $.colorbox({
 	                    html : $compile($('#deactivate-account-modal').html())($scope)
 	                });
@@ -2760,10 +2760,10 @@
 	            success: function(data) {
 	                $scope.delegatesByOrcid = {};
 	                $scope.delegation = data;
-	                if(data != null && data.givenPermissionTo != null){
-	                    for(var i=0; i < data.givenPermissionTo.delegationDetails.length; i++){
-	                        var delegate = data.givenPermissionTo.delegationDetails[i];
-	                        $scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
+	                if(data != null){
+	                    for(var i=0; i < data.length; i++){
+	                        var delegate = data[i];
+	                        $scope.delegatesByOrcid[delegate.receiverOrcid.value] = delegate;
 	                    }
 	                }
 	                $scope.showInitLoader = false;
@@ -6385,9 +6385,15 @@
 	    
 	}]);
 
-	angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+	angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
 	    $scope.showSources = new Array();
 	    $scope.showPopover = new Array();
+
+	    $scope.printRecord = function(url){
+	        //open window
+	        printWindow = $window.open(url);  
+	    }
+
 	    $scope.toggleSourcesDisplay = function(section){        
 	        $scope.showSources[section] = !$scope.showSources[section];     
 	    }
@@ -6998,13 +7004,14 @@
 		"./NotificationsCountCtrl.js": 13,
 		"./NotificationsCtrl.js": 14,
 		"./OtherNamesCtrl.js": 15,
-		"./RecordCorrectionsCtrl.js": 16,
-		"./RequestPasswordResetCtrl.js": 17,
-		"./RequestResendClaimCtrl.js": 18,
-		"./externalConsortiumCtrl.js": 19,
-		"./languageCtrl.js": 20,
-		"./websitesCtrl.js": 21,
-		"./workCtrl.js": 22
+		"./PrintRecordCtrl.js": 16,
+		"./RecordCorrectionsCtrl.js": 17,
+		"./RequestPasswordResetCtrl.js": 18,
+		"./RequestResendClaimCtrl.js": 19,
+		"./externalConsortiumCtrl.js": 20,
+		"./languageCtrl.js": 21,
+		"./websitesCtrl.js": 22,
+		"./workCtrl.js": 23
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -8871,6 +8878,19 @@
 /* 16 */
 /***/ function(module, exports) {
 
+	angular.module('orcidApp').controller('PrintRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+
+	    $scope.printRecord = function(url){
+	        //open window
+	        printWindow = $window.open(url);  
+	    }
+
+	}]);
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
 	angular.module('orcidApp').controller('RecordCorrectionsCtrl', ['$scope', '$compile', 'utilsService', function RecordCorrectionsCtrl($scope, $compile, utilsService) {
 	    $scope.currentPage = null;
 	    $scope.currentElement = null;
@@ -8915,7 +8935,7 @@
 	}]);
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestPasswordResetCtrl', ['$scope', '$timeout', '$compile', 'utilsService', function RequestPasswordResetCtrl($scope, $timeout, $compile, utilsService) {
@@ -8975,7 +8995,7 @@
 	}]);
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('RequestResendClaimCtrl', ['$scope', '$compile', function RequestResendClaimCtrl($scope, $compile) {
@@ -9042,7 +9062,7 @@
 	}]);
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	/**
@@ -9463,7 +9483,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', function ($scope, $cookies, widgetSrvc) {
@@ -9646,7 +9666,7 @@
 	}]);
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller('WebsitesCtrl', ['$scope', '$rootScope', '$compile','bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function WebsitesCtrl($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
@@ -9921,7 +9941,7 @@
 	}]);
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').controller(
@@ -10878,7 +10898,7 @@
 	);
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -10887,20 +10907,20 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 23;
+	webpackContext.id = 24;
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./fnForm.js": 25,
-		"./focusMe.js": 26,
-		"./modalEmailUnVerified.js": 27,
-		"./modalUnverifiedEmailSetPrimary.js": 28,
-		"./ngEnter.js": 29,
-		"./ngEnterSubmit.js": 30
+		"./fnForm.js": 26,
+		"./focusMe.js": 27,
+		"./modalEmailUnVerified.js": 28,
+		"./modalUnverifiedEmailSetPrimary.js": 29,
+		"./ngEnter.js": 30,
+		"./ngEnterSubmit.js": 31
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -10913,11 +10933,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 24;
+	webpackContext.id = 25;
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/*
@@ -10953,7 +10973,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').directive(
@@ -10977,7 +10997,7 @@
 	);
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	/*
@@ -11084,7 +11104,7 @@
 	);
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/*
@@ -11165,7 +11185,7 @@
 	);
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/*
@@ -11187,7 +11207,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports) {
 
 	/*
@@ -11209,7 +11229,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -11218,15 +11238,15 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 31;
+	webpackContext.id = 32;
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./ui.multiselect.js": 33
+		"./ui.multiselect.js": 34
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11239,11 +11259,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 32;
+	webpackContext.id = 33;
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/* Angular Multi-selectbox */
@@ -11524,29 +11544,29 @@
 	}]);
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./actBulkSrvc.js": 35,
-		"./affiliationsSrvc.js": 36,
-		"./bioBulkSrvc.js": 37,
-		"./clearMemberListFilterSrvc.js": 38,
-		"./commonSrvc.js": 39,
-		"./discoSrvc.js": 40,
-		"./emailSrvc.js": 41,
-		"./fundingSrvc.js": 42,
-		"./groupedActivitiesService.js": 43,
-		"./groupedActivitiesUtil.js": 44,
-		"./initialConfigService.js": 45,
-		"./membersListSrvc.js": 46,
-		"./notificationsSrvc.js": 47,
-		"./peerReviewSrvc.js": 48,
-		"./prefsSrvc.js": 49,
-		"./utilsService.js": 50,
-		"./widgetSrvc.js": 51,
-		"./worksSrvc.js": 52,
-		"./workspaceSrvc.js": 53
+		"./actBulkSrvc.js": 36,
+		"./affiliationsSrvc.js": 37,
+		"./bioBulkSrvc.js": 38,
+		"./clearMemberListFilterSrvc.js": 39,
+		"./commonSrvc.js": 40,
+		"./discoSrvc.js": 41,
+		"./emailSrvc.js": 42,
+		"./fundingSrvc.js": 43,
+		"./groupedActivitiesService.js": 44,
+		"./groupedActivitiesUtil.js": 45,
+		"./initialConfigService.js": 46,
+		"./membersListSrvc.js": 47,
+		"./notificationsSrvc.js": 48,
+		"./peerReviewSrvc.js": 49,
+		"./prefsSrvc.js": 50,
+		"./utilsService.js": 51,
+		"./widgetSrvc.js": 52,
+		"./worksSrvc.js": 53,
+		"./workspaceSrvc.js": 54
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -11559,11 +11579,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 34;
+	webpackContext.id = 35;
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11582,7 +11602,7 @@
 	}]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
@@ -11711,7 +11731,7 @@
 	}]);
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
@@ -11731,7 +11751,7 @@
 	}]);
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("clearMemberListFilterSrvc", ['$rootScope', function ($rootScope) {
@@ -11745,7 +11765,7 @@
 	 }]);
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
@@ -11810,7 +11830,7 @@
 	}]);
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
@@ -11866,7 +11886,7 @@
 	}]);
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("emailSrvc", function ($rootScope, $location, $timeout) {
@@ -12022,7 +12042,7 @@
 	});
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/**
@@ -12233,7 +12253,7 @@
 	}]);
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -12351,7 +12371,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	/*
@@ -12406,14 +12426,14 @@
 	*/
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("initialConfigService", ['$rootScope', '$location', function ($rootScope, $location) {
 	    //location requires param after # example: https://localhost:8443/orcid-web/my-orcid#?flag Otherwise it doesn't found the param and returns an empty object
 	    var configValues = {
 	        propertyManualEditVerificationEnabled: orcidVar.emailVerificationManualEditEnabled,
-	        showModalManualEditVerificationEnabled: false
+	        showModalManualEditVerificationEnabled: true
 	    };
 
 	    var paramVerifyEditRegex = /.*\?(.*\&)*(verifyEdit){1}(=true){0,1}(?!=false)((\&){1}.+)*/g;
@@ -12433,7 +12453,7 @@
 	}]);
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("membersListSrvc", ['$rootScope', function ($rootScope) {
@@ -12557,7 +12577,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
@@ -12800,7 +12820,7 @@
 	}]);
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
@@ -13096,14 +13116,14 @@
 	}]);
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("prefsSrvc", function ($rootScope) {
 	    var serv = {
 	        prefs: null,
 	        saved: false,
-	        getPrivacyPreferences: function() {
+	        getPrivacyPreferences: function() {        	
 	            $.ajax({
 	                url: getBaseUri() + '/account/preferences.json',
 	                dataType: 'json',
@@ -13116,15 +13136,30 @@
 	                console.log("error with prefs");
 	            });
 	        },
-	        savePrivacyPreferences: function() {
-	            $.ajax({
-	                url: getBaseUri() + '/account/preferences.json',
+	        updateEmailFrequency: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/email_preferences.json',
+	                type: 'POST',
+	                data: serv.prefs['email_frequency'],
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'text',
+	                success: function(data) {                    
+	                    serv.saved = true;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function() {
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        }, 
+	        updateNotificationPreferences: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/notification_preferences.json',
 	                type: 'POST',
 	                data: angular.toJson(serv.prefs),
 	                contentType: 'application/json;charset=UTF-8',
 	                dataType: 'json',
-	                success: function(data) {
-	                    serv.prefs = data;
+	                success: function(data) {                    
 	                    serv.saved = true;
 	                    $rootScope.$apply();
 	                }
@@ -13133,6 +13168,25 @@
 	                console.log("error with prefs");
 	            });
 	        },
+	        updateDefaultVisibility: function() {
+	        	$.ajax({
+	                url: getBaseUri() + '/account/default_visibility.json',
+	                type: 'POST',
+	                data: serv.prefs['default_visibility'],
+	                contentType: 'application/json;charset=UTF-8',
+	                dataType: 'text',
+	                success: function(data) {                    
+	                    serv.saved = true;
+	                    $rootScope.$apply();
+	                }
+	            }).fail(function(jqXHR, textStatus, errorThrown) {
+	            	console.log(textStatus);
+	            	console.log(errorThrown);
+	            	console.log(jqXHR);
+	                // something bad is happening!
+	                console.log("error with prefs");
+	            });
+	        }, 
 	        clearMessage: function(){
 	            serv.saved = false;
 	        }
@@ -13145,7 +13199,7 @@
 	});
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory(
@@ -13264,7 +13318,7 @@
 	);
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("widgetSrvc", ['$rootScope', function ($rootScope) {
@@ -13278,7 +13332,7 @@
 	}]);
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("worksSrvc", ['$rootScope', function ($rootScope) {
@@ -13431,22 +13485,22 @@
 	                    {
 	                        type: "disclosure",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "license",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "patent",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    },
 	                    {
 	                        type: "registered-copyright",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleIntellectualPropertyPlaceholder")
 	                    }
 	                ]
 	            },
@@ -13495,7 +13549,7 @@
 	                    {
 	                        type: "other",
 	                        titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
-	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
+	                        titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleOtherPlaceholder")
 	                    }
 	                ]
 	            }
@@ -13892,7 +13946,7 @@
 	}]);
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports) {
 
 	angular.module('orcidApp').factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
@@ -13947,7 +14001,7 @@
 	}]);
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports) {
 
 	function webpackContext(req) {
@@ -13956,7 +14010,7 @@
 	webpackContext.keys = function() { return []; };
 	webpackContext.resolve = webpackContext;
 	module.exports = webpackContext;
-	webpackContext.id = 54;
+	webpackContext.id = 55;
 
 
 /***/ }

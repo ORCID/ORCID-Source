@@ -18,11 +18,13 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -32,11 +34,14 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationItemEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
@@ -124,5 +129,34 @@ public class NotificationDaoTest extends DBUnitTest {
     	assertEquals(1, entities.size());
     	
     }
-
+    
+    @Test
+    public void testFindLatestByOrcid() {
+        NotificationEntity entity = notificationDao.findLatestByOrcid("0000-0000-0000-0003");
+        assertNull(entity);
+        Long lastId = null;
+        for(int i = 0; i < 5; i++) {
+            Date now = new Date();
+            NotificationAmendedEntity newEntity = new NotificationAmendedEntity();
+            newEntity.setAmendedSection(AmendedSection.UNKNOWN);
+            newEntity.setClientSourceId("APP-6666666666666666");
+            newEntity.setDateCreated(now);
+            newEntity.setLastModified(now);
+            newEntity.setNotificationIntro("Intro");
+            newEntity.setNotificationSubject("Subject");
+            newEntity.setNotificationType(NotificationType.AMENDED);
+            newEntity.setProfile(new ProfileEntity("0000-0000-0000-0003"));
+            newEntity.setSendable(true);
+            notificationDao.persist(newEntity);
+            
+            NotificationEntity freshFromDB = notificationDao.findLatestByOrcid("0000-0000-0000-0003");
+            assertNotNull(freshFromDB);
+            if(lastId == null) {
+                lastId = freshFromDB.getId();
+            } else {
+                assertTrue(lastId < freshFromDB.getId());
+                lastId = freshFromDB.getId();
+            }
+        }                
+    }
 }

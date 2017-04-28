@@ -38,7 +38,7 @@ public interface NotificationManager {
 
     void sendWelcomeEmail(String userOrcid, String email);
 
-    void sendVerificationEmail(OrcidProfile orcidProfile, String email);
+    void sendVerificationEmail(String userOrcid, String email);
 
     public void sendVerificationReminderEmail(OrcidProfile orcidProfile, String email);
 
@@ -52,7 +52,7 @@ public interface NotificationManager {
 
     public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
-    void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
+    void sendNotificationToAddedDelegate(String userGrantingPermission, DelegationDetails ... delegatesGrantedByUser);
 
     void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
@@ -60,21 +60,21 @@ public interface NotificationManager {
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection, Collection<Item> activities);
 
-    void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
+    void sendOrcidDeactivateEmail(String userOrcid);
 
-    void sendOrcidLockedEmail(OrcidProfile orcidToLock);
+    void sendOrcidLockedEmail(String orcidToLock);
 
     void sendApiRecordCreationEmail(String toEmail, String orcid);
     
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
-    void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, String oldEmail);
+    void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
     void sendClaimReminderEmail(OrcidProfile orcidProfile, int daysUntilActivation);
 
     public boolean sendPrivPolicyEmail2014_03(OrcidProfile orcidProfile);
 
-    void sendDelegationRequestEmail(OrcidProfile managed, OrcidProfile trusted, String link);
+    void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
     public List<Notification> findUnsentByOrcid(String orcid);
 

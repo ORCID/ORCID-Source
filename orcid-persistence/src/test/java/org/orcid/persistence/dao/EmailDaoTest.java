@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -164,5 +165,16 @@ public class EmailDaoTest extends DBUnitTest {
     	email = emailDao.find("teddybass3public@semantico.com");
     	assertNotNull(email);
     	assertTrue(email.getVerified());
+    }
+    
+    @Test
+    public void testFindPrimaryEmail() {
+        EmailEntity email = emailDao.findPrimaryEmail("0000-0000-0000-0003");
+        assertNotNull(email);
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getId());
+        
+        email = emailDao.findPrimaryEmail("0000-0000-0000-0004");
+        assertNotNull(email);
+        assertEquals("private_0000-0000-0000-0004@test.orcid.org", email.getId());
     }
 }

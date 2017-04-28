@@ -62,9 +62,8 @@ public class OrcidUrlManager {
     private ServletContext servletContext;
 
     public String getAppName() {
-        if (servletContext != null) {
-            String contextPath = servletContext.getContextPath();
-            return contextPath.substring(1);
+        if (servletContext != null && servletContext.getContextPath().length() > 1) {
+            return servletContext.getContextPath().substring(1);
         }
         return DEFAULT_APP_NAME;
     }

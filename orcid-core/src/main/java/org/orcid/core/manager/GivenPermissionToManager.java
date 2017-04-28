@@ -24,6 +24,6 @@ public interface GivenPermissionToManager {
 
     void remove(String giverOrcid, String receiverOrcid);
 
-    void merge(GivenPermissionToEntity permission);
+    void create(String userOrcid, String delegateOrcid);
 
 }

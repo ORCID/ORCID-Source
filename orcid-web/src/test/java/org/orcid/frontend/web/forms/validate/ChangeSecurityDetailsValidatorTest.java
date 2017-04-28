@@ -30,7 +30,9 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+@WebAppConfiguration
 public class ChangeSecurityDetailsValidatorTest extends AbstractConstraintValidator<ChangeSecurityQuestionForm> {
 
     Validator validator;

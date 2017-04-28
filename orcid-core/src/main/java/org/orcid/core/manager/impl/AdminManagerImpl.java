@@ -32,11 +32,10 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
@@ -57,9 +56,6 @@ public class AdminManagerImpl implements AdminManager {
     
     @Resource
     NotificationManager notificationManager;
-    
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
     
     @Resource
     private EncryptionManager encryptionManager;
@@ -142,13 +138,13 @@ public class AdminManagerImpl implements AdminManager {
 
         // Generate link
         String link = generateEncryptedLink(trusted, managed);
-        // Get primary emails
-        OrcidProfile managedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(managed);
-        OrcidProfile trustedOrcidProfile = orcidProfileManager.retrieveClaimedOrcidProfile(trusted);
-        // Send email to managed account
-        notificationManager.sendDelegationRequestEmail(managedOrcidProfile, trustedOrcidProfile, link);
 
-        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", managedOrcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue()));
+        // Send email to managed account
+        notificationManager.sendDelegationRequestEmail(managed, trusted, link);
+
+        Email primaryEmail = emailManager.findPrimaryEmail(managed);
+        
+        request.setSuccessMessage(localeManager.resolveMessage("admin.delegate.admin.success", primaryEmail.getEmail()));
         
         return request;
     }
@@ -174,21 +170,13 @@ public class AdminManagerImpl implements AdminManager {
         }
     }
     
+    @Override
     public String removeSecurityQuestion(String orcid) {
         if(profileEntityManager.orcidExists(orcid)) {                    
-                OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
-                if (orcidProfile != null) {
-                    orcidProfile.getOrcidInternal().getSecurityDetails().setSecurityQuestionId(null);
-                    orcidProfile.setSecurityQuestionAnswer(null);
-                    orcidProfileManager.updateSecurityQuestionInformation(orcidProfile);
-                } else {
-                    return localeManager.resolveMessage("admin.errors.unexisting_orcid");
-                }
-            
+            profileEntityManager.updateSecurityQuestion(orcid, null, null);
         } else {
             return localeManager.resolveMessage("admin.errors.unable_to_fetch_info");
-        }
-        
+        }        
         return null;
     }
 

@@ -32,10 +32,10 @@
 				</div>
 				
 				<div class="col-md-3 col-sm-2 col-xs-2">				
-					<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_PREMIUM, ROLE_ADMIN">						
+					<@security.authorize access="hasAnyRole('ROLE_PREMIUM_INSTITUTION', 'ROLE_PREMIUM', 'ROLE_ADMIN')">						
 						<a href="" class="pull-right"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>										
 					</@security.authorize>
-					<@security.authorize ifAnyGranted="ROLE_BASIC_INSTITUTION, ROLE_BASIC">
+					<@security.authorize access="hasAnyRole('ROLE_BASIC_INSTITUTION', 'ROLE_BASIC')">
 						<#if (group)?? && (group.orcidClient)?? && !(group.orcidClient?has_content)> 							
 							<a href="" ng-hide="clients.length > 0"><span id="label btn-primary cboxElement" ng-click="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>				
 						</#if>
@@ -252,7 +252,7 @@
 					</div>					
 				</div>
 								
-				<@security.authorize ifAnyGranted="ROLE_PREMIUM_INSTITUTION, ROLE_BASIC_INSTITUTION">																					
+				<@security.authorize access="hasAnyRole('ROLE_PREMIUM_INSTITUTION', 'ROLE_BASIC_INSTITUTION')">																					
 					<div class="row bottomBuffer">
 						<!-- Custom Emails -->
 						<div class="col-md-3 col-sm-3 col-xs-12">

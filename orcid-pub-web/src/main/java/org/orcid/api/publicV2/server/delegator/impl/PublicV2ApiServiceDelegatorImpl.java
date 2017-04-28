@@ -33,9 +33,11 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
+import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -171,30 +173,33 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private SourceUtils sourceUtilsReadOnly;
-    
+
     @Resource
     private ContributorUtils contributorUtilsReadOnly;
 
     @Resource
     private RecordManager recordManager;
-    
+
     @Resource
     private SourceUtils sourceUtils;
-    
+
     @Resource
     private OrcidSearchManager orcidSearchManager;
+    
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private PublicAPISecurityManagerV2 publicAPISecurityManagerV2;
-    
+
     @Resource
     private LocaleManager localeManager;
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
+
     @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;    
+    private String baseUrl;
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManagerReadOnly.getLastModified(orcid);
@@ -539,7 +544,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Addresses addresses = addressManagerReadOnly.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         publicAPISecurityManagerV2.filter(addresses);
         ElementUtils.setPathToAddresses(addresses, orcid);
-        //Set the latest last modified
+        // Set the latest last modified
         Api2_0_LastModifiedDatesHelper.calculateLastModified(addresses);
         sourceUtilsReadOnly.setSourceName(addresses);
         return Response.ok(addresses).build();
@@ -579,7 +584,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
     }
-    
+
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
@@ -599,8 +604,34 @@ public class PublicV2ApiServiceDelegatorImpl
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
     }
-    
+
     private void validateSearchParams(Map<String, List<String>> queryMap) {
+        validateRows(queryMap);
+        validateStart(queryMap);
+    }
+
+    private void validateStart(Map<String, List<String>> queryMap) {
+        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+        if (clientId == null) { 
+            // only validate start param where no client credentials
+            List<String> startList = queryMap.get("start");
+            if (startList != null && !startList.isEmpty()) {
+                try {
+                    String startString = startList.get(0);
+                    int start = Integer.valueOf(startString);
+                    if (start < 0 || start > OrcidSearchManager.MAX_SEARCH_START) {
+                        throw new SearchStartParameterLimitExceededException(
+                                localeManager.resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START));
+                    }
+                } catch (NumberFormatException e) {
+                    throw new OrcidBadRequestException(
+                            localeManager.resolveMessage("apiError.badrequest_invalid_search_start.exception", OrcidSearchManager.MAX_SEARCH_START));
+                }
+            }
+        }
+    }
+
+    private void validateRows(Map<String, List<String>> queryMap) {
         List<String> rowsList = queryMap.get("rows");
         if (rowsList != null && !rowsList.isEmpty()) {
             try {
@@ -611,7 +642,7 @@ public class PublicV2ApiServiceDelegatorImpl
                             localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
                 }
             } catch (NumberFormatException e) {
-                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception", OrcidSearchManager.MAX_SEARCH_ROWS));
             }
         } else {
             // Set the default number of results

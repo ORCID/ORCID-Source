@@ -54,6 +54,7 @@ public class APIEndpointParser {
             }
         } else {
             // no api version
+            apiVersion = "";
             categoryIndex--;
             if (!path.get(0).toString().matches(ORCID_REGEX)) {
                 // no ORCID iD

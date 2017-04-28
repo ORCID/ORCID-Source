@@ -22,13 +22,14 @@
        xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<sec:http pattern="/resources/**" security="none"/>		
 
     <!-- Authenticate the client before reaching the token endpoint -->
-    <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+    <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
+        <sec:csrf disabled="true"/>
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
         <sec:anonymous enabled="false" />
         <sec:http-basic entry-point-ref="orcidOauthAuthenticationEntryPoint" />
@@ -39,6 +40,7 @@
 
     <!-- Authentication for internal API -->
     <sec:http use-expressions="true" create-session="stateless">
+    	<sec:csrf disabled="true"/>
         <sec:anonymous enabled="true" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or isAnonymous()"/>
@@ -49,9 +51,13 @@
 	
 
 	<!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
-    <sec:authentication-manager alias="x509AuthenticationManager">
-        <sec:authentication-provider user-service-ref="x509UserService"/>
+    <sec:authentication-manager id="x509AuthenticationManager">
+        <sec:authentication-provider ref="x509AuthenticationProvider"/>
     </sec:authentication-manager>
+    
+    <bean id="x509AuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService" ref="x509UserService" />
+    </bean>
 
     <!-- A simple hard-coded user service that will pick up the CN from the cert and perform a simple match -->
     <sec:user-service id="x509UserService">

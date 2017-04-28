@@ -96,6 +96,7 @@ if (typeof angular == 'undefined') {
 
 <script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
 
+
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
 	
