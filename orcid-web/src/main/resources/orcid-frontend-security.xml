@@ -26,6 +26,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
+	<context:component-scan base-package="org.orcid"/>
 	<context:annotation-config />
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	<sec:global-method-security pre-post-annotations="enabled" />
@@ -130,6 +131,22 @@
 	<sec:http pattern="/static/**" security="none" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
+	
+	<sec:http pattern="/togglz/.*" 
+		use-expressions="false" 
+		access-decision-manager-ref="accessDecisionManager" 
+		authentication-manager-ref="authenticationManager" 
+		create-session="ifRequired"
+		request-matcher="regex" >	
+		<sec:csrf token-repository-ref="csrfTokenRepo" />
+        <sec:anonymous enabled="false" />    
+        <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />        
+        <sec:form-login login-processing-url="/signin/auth.json" 
+			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
+			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
+			username-parameter="userId" password-parameter="password" />     
+	</sec:http>
+
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -218,7 +235,7 @@
 			username-parameter="userId" password-parameter="password" 
 			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
-	</sec:http>
+	</sec:http> 
 	
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">

@@ -57,6 +57,7 @@ import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.togglz.Features;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
@@ -825,6 +826,15 @@ public class BaseController {
             roleMap.put(roleType.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, roleType.name())));
         }
         return roleMap;
+    }
+    
+    @ModelAttribute("FEATURE")
+    public Map<String, Boolean> getFeatures() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        return features;
     }
     
 }
