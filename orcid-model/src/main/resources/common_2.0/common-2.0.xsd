@@ -942,7 +942,8 @@
 			<xs:documentation>Type to represent an email address.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="common:string-350">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="350" />
 			<xs:pattern value="[^@]+@[^\.]+\..+" />
 		</xs:restriction>
 	</xs:simpleType>
