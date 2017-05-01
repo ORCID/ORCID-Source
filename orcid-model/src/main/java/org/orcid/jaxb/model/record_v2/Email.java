@@ -34,8 +34,6 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * 
  * @author Angel Montenegro
@@ -55,7 +53,6 @@ public class Email implements Filterable, Serializable, SourceAware {
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
     protected CreatedDate createdDate;
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true)
     protected Long putCode;
     @XmlAttribute
     protected String path;

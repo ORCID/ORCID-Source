@@ -1114,5 +1114,7 @@
 	
 	
 	<bean id="givenPermissionToManager" class="org.orcid.core.manager.impl.GivenPermissionToManagerImpl"/>
+	
+	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 </beans>

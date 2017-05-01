@@ -57,6 +57,7 @@ import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.togglz.Features;
 import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.jaxb.model.message.Email;
@@ -128,7 +129,7 @@ public class BaseController {
     private String cdnConfigFile;
 
     @Resource
-    private LocaleManager localeManager;
+    protected LocaleManager localeManager;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -184,22 +185,6 @@ public class BaseController {
 
     public void setShibbolethEnabled(boolean shibbolethEnabled) {
         this.shibbolethEnabled = shibbolethEnabled;
-    }
-
-    public LocaleManager getLocaleManager() {
-        return localeManager;
-    }
-
-    public void setLocaleManager(LocaleManager localeManager) {
-        this.localeManager = localeManager;
-    }
-
-    public OrcidProfileManager getOrcidProfileManager() {
-        return orcidProfileManager;
-    }
-
-    public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
     }
 
     @ModelAttribute("devSandboxUrl")
@@ -841,6 +826,15 @@ public class BaseController {
             roleMap.put(roleType.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, roleType.name())));
         }
         return roleMap;
+    }
+    
+    @ModelAttribute("FEATURE")
+    public Map<String, Boolean> getFeatures() {
+        Map<String, Boolean> features = new HashMap<String, Boolean>();
+        for(Features f : Features.values()) {
+            features.put(f.name(), f.isActive());
+        }
+        return features;
     }
     
 }

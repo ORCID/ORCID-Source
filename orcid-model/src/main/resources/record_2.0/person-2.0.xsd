@@ -82,17 +82,4 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:complexType name="credit-name">
-		<xs:simpleContent>
-			<xs:extension base="personal-details:credit-name" />				
-		</xs:simpleContent>
-	</xs:complexType>
-
-	<xs:complexType name="scope-paths">
-		<xs:sequence>
-			<xs:element name="scope-path" type="common:scope-path-type"
-				minOccurs="1" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
 </xs:schema>

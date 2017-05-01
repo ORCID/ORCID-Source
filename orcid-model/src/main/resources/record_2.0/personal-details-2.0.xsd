@@ -115,7 +115,7 @@
 				</xs:annotation>
 				<xs:complexType>
 					<xs:simpleContent>
-						<xs:extension base="common:non-empty-string" />
+						<xs:extension base="common:string-150" />
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
@@ -128,7 +128,7 @@
 				</xs:annotation>
 				<xs:complexType>
 					<xs:simpleContent>
-						<xs:extension base="common:non-empty-string" />
+						<xs:extension base="common:string-150" />
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
@@ -178,7 +178,7 @@
 
 	<xs:complexType name="credit-name">
 		<xs:simpleContent>
-			<xs:extension base="common:non-empty-string" />
+			<xs:extension base="common:credit-name" />
 		</xs:simpleContent>
 	</xs:complexType>
 </xs:schema>

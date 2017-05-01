@@ -513,8 +513,9 @@
         '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
     </div>
 </div>
+
 <!-- .container -->
-<#if RequestParameters['newFooter']??>
+<@orcid.checkFeatureStatus 'NEW_FOOTER'>
 <footer class="footer-main">
     <div class="container">
         <div class="row">
@@ -549,9 +550,9 @@
         </div>
     </div>
 </footer>
-</#if>
+</@orcid.checkFeatureStatus>
 
-<#if !RequestParameters['newFooter']??>
+<@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
 <div class="footer clear-fix">
     <div class="container">
         <div class="row">
@@ -566,7 +567,7 @@
         </div>
     </div>
 </div>
-</#if>
+</@orcid.checkFeatureStatus>
 
 <form action="<@orcid.rootPath '/'/>">
     <input id="imageUrl" type="hidden" value="${staticCdn}/images">

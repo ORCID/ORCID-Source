@@ -155,125 +155,8 @@
 			<xs:enumeration value="working-paper" />
 		</xs:restriction>
 	</xs:simpleType>
-	<!-- 
-	<xs:complexType name="work-external-identifiers">
-		<xs:annotation>
-			<xs:documentation>Container for storing the external references to
-				the work.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0"
-				name="work-external-identifier" type="work:external-identifier" />
-		</xs:sequence>
-	</xs:complexType>
-	  
-	<xs:complexType name="external-identifier">
-		<xs:annotation>
-			<xs:documentation>External references to the work.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="common:external-identifier">
-				<xs:sequence>
-						<xs:element name="external-identifier-type" type="work:external-identifier-type"
-							maxOccurs="1" />
-						<xs:element name="external-identifier-id" maxOccurs="1"
-							type="common:non-empty-string">
-						<xs:annotation>
-							<xs:documentation>Value for the identifier</xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>		
-	</xs:complexType>
 	
-	<xs:simpleType name="external-identifier-type">
-		<xs:annotation>
-			<xs:documentation>The type of work external identifier, e.g DOI, PMID
-				etc.
-			</xs:documentation>
-		</xs:annotation>
-
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="agr">
-				<xs:annotation>
-					<xs:documentation>Agricola</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="arxiv" />
-			<xs:enumeration value="asin" />
-			<xs:enumeration value="asin-tld" />
-			<xs:enumeration value="bibcode" />
-			<xs:enumeration value="cba">
-				<xs:annotation>
-					<xs:documentation>Chinese Biological Abstracts</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="cit">
-				<xs:annotation>
-					<xs:documentation>CiteSeer</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="ctx">
-				<xs:annotation>
-					<xs:documentation>CiteXplore submission</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="doi" />
-			<xs:enumeration value="eid" />
-			<xs:enumeration value="ethos">
-				<xs:annotation>
-					<xs:documentation>EThOS Peristent ID</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="handle" />
-			<xs:enumeration value="hir">
-				<xs:annotation>
-					<xs:documentation>NHS Evidence</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="isbn" />
-			<xs:enumeration value="issn" />
-			<xs:enumeration value="jfm" />
-			<xs:enumeration value="jstor" />
-			<xs:enumeration value="lccn" />
-			<xs:enumeration value="mr" />
-			<xs:enumeration value="oclc" />
-			<xs:enumeration value="ol" />
-			<xs:enumeration value="osti" />
-			<xs:enumeration value="other-id" />
-			<xs:enumeration value="pat">
-				<xs:annotation>
-					<xs:documentation>Patent number prefixed with ISO 3611 two letter
-						country code
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="pmc" />
-			<xs:enumeration value="pmid" />
-			<xs:enumeration value="rfc" />
-			<xs:enumeration value="source-work-id">
-				<xs:annotation>
-					<xs:documentation>Non-standard ID with meaning only in the system
-						from which the work data were sourced
-					</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="ssrn" />
-			<xs:enumeration value="uri" />
-			<xs:enumeration value="urn" />
-			<xs:enumeration value="wosuid">
-				<xs:annotation>
-					<xs:documentation>Web of Science™ identifier</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="zbl" />
-		</xs:restriction>
-	</xs:simpleType>
-	 -->
-	 <xs:complexType name="work-contributors">
+	<xs:complexType name="work-contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a Work.
 			</xs:documentation>
@@ -380,7 +263,7 @@
 			<xs:element ref="common:translated-title" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
-	<xs:complexType mixed="true" name="journal-title">
+	<xs:simpleType name="journal-title">
 		<xs:annotation>
 			<xs:documentation>The title of the publication or group under which
 				the work was published.
@@ -396,14 +279,10 @@
 				the conference name.
 			</xs:documentation>
 		</xs:annotation>
-	</xs:complexType>
-
-	<xs:complexType name="subtitle" mixed="true">
-		<xs:annotation>
-			<xs:documentation>If the work has a subtitle, include it here.
-			</xs:documentation>
-		</xs:annotation>
-	</xs:complexType>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1000"/>			
+		</xs:restriction>
+	</xs:simpleType>
 
 	<xs:complexType name="citation">
 		<xs:annotation>

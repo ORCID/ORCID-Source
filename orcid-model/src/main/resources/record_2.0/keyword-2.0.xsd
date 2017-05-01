@@ -64,7 +64,7 @@
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">
 				<xs:sequence>
-					<xs:element minOccurs="1" name="content" type="common:non-empty-string" />				
+					<xs:element minOccurs="1" name="content" type="common:string-255" />				
 				</xs:sequence>			
 				</xs:extension>
 		</xs:complexContent>

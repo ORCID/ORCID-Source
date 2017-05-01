@@ -380,6 +380,22 @@
         <property name="password" value="\${org.orcid.persistence.db.readonly.password}" />
     </bean>	
     
+    <!-- Features -->
+    <bean id="featuresDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="\${org.orcid.persistence.togglz.db.class}" />
+        <property name="jdbcUrl" value="\${org.orcid.persistence.togglz.db.url}" />
+        <property name="user" value="\${org.orcid.persistence.togglz.db.username}" />
+        <property name="password" value="\${org.orcid.persistence.togglz.db.password}" />
+        <property name="initialPoolSize" value="\${org.orcid.persistence.togglz.db.initialPoolSize}" />
+        <property name="minPoolSize" value="\${org.orcid.persistence.togglz.db.minPoolSize}" />
+        <property name="maxPoolSize" value="\${org.orcid.persistence.togglz.db.maxPoolSize}" />
+        <property name="maxStatements" value="\${org.orcid.persistence.togglz.db.maxStatements}" />
+        <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.togglz.db.idleConnectionTestPeriod}" />
+        <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
+        <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
+        <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
+    </bean>        
+    
     <!--SOLR -->
     <!-- Confusingly, the client is actually called a server -->
     <bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">

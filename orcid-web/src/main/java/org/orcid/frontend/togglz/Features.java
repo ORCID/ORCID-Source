@@ -14,15 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.core.constants;
+package org.orcid.frontend.togglz;
 
-public class EmailConstants {
+import org.togglz.core.Feature;
+import org.togglz.core.annotation.Label;
+import org.togglz.core.context.FeatureContext;
 
-    public static final String WILDCARD_VERIFICATION_URL = "${verification_url}";
+public enum Features implements Feature {
+    @Label("New footer")
+    NEW_FOOTER;
 
-    /*
-     * session attribute that is used to see if we should check and notify the
-     * user if their primary email ins't verified.
-     */
-    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";    
+    public boolean isActive() {
+        return FeatureContext.getFeatureManager().isActive(this);
+    }
 }
