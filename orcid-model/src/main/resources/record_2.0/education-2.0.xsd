@@ -56,9 +56,9 @@
 			<xs:complexContent>
 				<xs:extension base="common:element-summary">
 					<xs:sequence>
-						<xs:element name="department-name" type="common:non-empty-string"
+						<xs:element name="department-name" type="common:long-text"
 							minOccurs="0" maxOccurs="1" />
-						<xs:element name="role-title" type="common:non-empty-string"
+						<xs:element name="role-title" type="common:long-text"
 							minOccurs="0" maxOccurs="1" />
 						<xs:element ref="common:start-date" minOccurs="0"
 							maxOccurs="1" />
@@ -77,9 +77,9 @@
 			<xs:complexContent>
 				<xs:extension base="common:element-summary">
 					<xs:sequence>
-						<xs:element name="department-name" type="common:non-empty-string"
+						<xs:element name="department-name" type="common:long-text"
 							minOccurs="0" maxOccurs="1" />
-						<xs:element name="role-title" type="common:non-empty-string"
+						<xs:element name="role-title" type="common:long-text"
 							minOccurs="0" maxOccurs="1" />
 						<xs:element ref="common:start-date" minOccurs="0"
 							maxOccurs="1" />
