@@ -247,7 +247,7 @@ public class OrcidCoreExceptionMapper {
                 }
             }
             return devMessage;
-        } else if (javax.xml.bind.UnmarshalException.class.isAssignableFrom(t.getCause().getClass())) {
+        } else if (t != null && t.getCause() != null && javax.xml.bind.UnmarshalException.class.isAssignableFrom(t.getCause().getClass())) {
             Throwable cause = t.getCause();
             String exceptionMessage = t.getLocalizedMessage();
             if (exceptionMessage != null) {
