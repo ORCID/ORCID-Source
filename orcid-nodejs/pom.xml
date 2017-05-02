@@ -54,17 +54,17 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <!-- keep commented to return terminal during mvn execution -->
-                    <!--execution>
+                    <!-- keep commented to return terminal control during mvn execution -->
+                    <execution>
                         <id>webpack build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>-d - -config webpack.config.js ${webpack.output}</arguments>
+                            <arguments>--debug --config webpack.config.js ${webpack.output}</arguments>
                         </configuration>
-                    </execution-->
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
