@@ -491,7 +491,7 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By emptyInput = By.xpath("(//input[@ng-model='otherName.content'])[last()]");
+        By emptyInput = By.xpath("(//input[@ng-model='otherName.content' and contains(@class, 'ng-empty')])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
         input.sendKeys(otherName);
@@ -547,7 +547,7 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
-        By emptyInput = By.xpath("(//input[@ng-model='keyword.content'])[last()]");
+        By emptyInput = By.xpath("(//input[@ng-model='keyword.content' and contains(@class, 'ng-empty')])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
         input.sendKeys(value);
