@@ -6142,6 +6142,11 @@ textarea.form-control,
     margin-top: 5px;
 }
 
+.widget-container .widget-code-container small{
+    margin-top: 5px;
+    display: inline-block;
+}
+
 .action-icon-align-right {
     position: absolute;
     top: 8px;
