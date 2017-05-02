@@ -162,8 +162,7 @@
 	<filter-mapping>
 		<filter-name>jsonpCallbackFilterWeb</filter-name>
 		<url-pattern>/userStatus.json</url-pattern>
-		<url-pattern>/public/*</url-pattern>
-		<url-pattern>/public_widgets/*</url-pattern>		
+		<url-pattern>/public/*</url-pattern>		
 	</filter-mapping>
 
 	<filter>
@@ -175,7 +174,6 @@
 		<filter-name>corsFilterWeb</filter-name>
 		<url-pattern>/userStatus.json</url-pattern>
 		<url-pattern>/public/*</url-pattern>
-		<url-pattern>/public_widgets/*</url-pattern>
 	</filter-mapping>
 
 
