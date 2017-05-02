@@ -233,17 +233,19 @@ public class OrcidCoreExceptionMapper {
 
         // Assign message from the exception
         if ("".equals(devMessage)) {
-            devMessage = t.getClass().getCanonicalName();
-            Throwable cause = t.getCause();
-            String exceptionMessage = t.getLocalizedMessage();
-            if (exceptionMessage != null) {
-                devMessage += ": " + exceptionMessage;
-            }
+            if(t != null) {
+                devMessage = t.getClass().getCanonicalName();
+                Throwable cause = t.getCause();
+                String exceptionMessage = t.getLocalizedMessage();
+                if (exceptionMessage != null) {
+                    devMessage += ": " + exceptionMessage;
+                }
 
-            if (cause != null) {
-                String causeMessage = cause.getLocalizedMessage();
-                if (causeMessage != null) {
-                    devMessage += " (" + causeMessage + ")";
+                if (cause != null) {
+                    String causeMessage = cause.getLocalizedMessage();
+                    if (causeMessage != null) {
+                        devMessage += " (" + causeMessage + ")";
+                    }
                 }
             }
             return devMessage;
