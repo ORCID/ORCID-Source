@@ -79,6 +79,7 @@ public class AnalyticsProcess implements Runnable {
 
     private AnalyticsData getAnalyticsData() {
         String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
+        ip = maskIp(ip);
         APIEndpointParser parser = new APIEndpointParser(request);
                 
         AnalyticsData analyticsData = new AnalyticsData();
@@ -93,6 +94,10 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
         analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String maskIp(String ip) {
+        return ip.substring(0, ip.lastIndexOf(".")) + ".0";
     }
 
     private String getApiString(String apiVersion) {
