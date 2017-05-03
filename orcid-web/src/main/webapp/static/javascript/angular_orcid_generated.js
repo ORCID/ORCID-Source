@@ -1387,10 +1387,13 @@
 	    };
 	}]);
 
-	angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', '$location', 'workspaceSrvc', 'affiliationsSrvc', 'utilsService', function ($scope, $compile, $filter, $location, workspaceSrvc , affiliationsSrvc, utilsService ){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
+	    $scope.utilsService = utilsService;
 	    $scope.moreInfo = {};
+	 
+	    $scope.printView =  utilsService.isPrintView(window.location.pathname);
 
 	    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
 	    $scope.sort = function(key) {       
@@ -1421,11 +1424,13 @@
 
 	}]);
 
-	angular.module('orcidApp').controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', 'utilsService', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc, utilsService){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
+	    $scope.utilsService = utilsService;
 	    $scope.moreInfo = {};
 
+	    $scope.printView =  utilsService.isPrintView(window.location.pathname);
 	    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
 	    $scope.sort = function(key) {
 	        $scope.sortState.sortBy(key);
@@ -13299,6 +13304,15 @@
 	            isEmail: function(email) {
 	                var re = /\S+@\S+\.\S+/;
 	                return re.test(email);
+	            },
+
+	            isPrintView: function(path) {
+	                var re = new RegExp("(/print)(.*)?$");
+	                if (re.test(path)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
 	            },
 
 	            openImportWizardUrl: function(url) {

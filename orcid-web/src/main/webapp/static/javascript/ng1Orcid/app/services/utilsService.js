@@ -97,6 +97,15 @@ angular.module('orcidApp').factory(
                 return re.test(email);
             },
 
+            isPrintView: function(path) {
+                var re = new RegExp("(/print)(.*)?$");
+                if (re.test(path)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+
             openImportWizardUrl: function(url) {
                 var win = window.open(url, "_target");
                 setTimeout( function() {
