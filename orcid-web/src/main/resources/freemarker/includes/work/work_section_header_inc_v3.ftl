@@ -19,8 +19,7 @@
 <div class="workspace-accordion-header">
     <div class="row">
         <div class="col-md-3 col-sm-2 col-xs-12">
-            <a name='workspace-works' />
-            <div class="workspace-title" ng-controller="WorkspaceSummaryCtrl">
+            <div ng-controller="WorkspaceSummaryCtrl">
                 <a href="" ng-click="workspaceSrvc.toggleWorks($event)" class="toggle-text">
                    <i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
                    <@orcid.msg 'workspace.Works'/> (<span ng-bind="worksSrvc.groups.length"></span>)
@@ -66,15 +65,15 @@
                                                     <span class="glyphicons file_import bibtex-wizard"></span>
                                                     <@orcid.msg 'workspace.bibtexImporter.link_bibtex'/>
                                                 </a>
-                                            </li>              
-                                        <![endif]>            
+                                            </li>
+                                        <![endif]>
                                         <!-- Add Manually -->
                                         <li>
                                             <a id="add-work" class="action-option manage-button" ng-click="addWorkModal()">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                             </a>
-                                        </li>                                                                                
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>
@@ -100,7 +99,7 @@
                             <span class="glyphicon glyphicon-plus"></span>
                             <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                         </a>
-                    </li>                                        
+                    </li>
                 </ul>
             </#if>
         </div>
