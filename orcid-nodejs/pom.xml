@@ -62,7 +62,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>--debug --config ${nodejs.workingDirectory}/webpack.config.js --output-filename ${webpack.output}</arguments>
+                            <arguments>--debug --config ${nodejs.workingDirectory}/webpack.config.js --output-path ${webpack.output} --output-filename angular_orcid_generated.js</arguments>
                         </configuration>
                     </execution>
                 </executions>
