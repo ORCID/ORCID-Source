@@ -491,6 +491,12 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         By emptyInput = By.xpath("(//input[@ng-model='otherName.content' and contains(@class, 'ng-empty')])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
@@ -547,6 +553,12 @@ public class BlackBoxBase {
         waitForAngular();
         ngAwareClick(findElement(addNew));
         waitForAngular();
+        try {
+            Thread.sleep(750);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         By emptyInput = By.xpath("(//input[@ng-model='keyword.content' and contains(@class, 'ng-empty')])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
