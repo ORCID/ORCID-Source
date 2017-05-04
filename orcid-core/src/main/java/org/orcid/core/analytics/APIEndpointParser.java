@@ -34,10 +34,12 @@ public class APIEndpointParser {
 
     private static final String ORCID_BIO_CATEGORY = "orcid-bio";
 
+    private String orcidId;
+    
     private String apiVersion;
 
     private String category;
-
+    
     public APIEndpointParser(ContainerRequest request) {
         parse(request);
     }
@@ -51,6 +53,8 @@ public class APIEndpointParser {
             if (!path.get(1).toString().matches(ORCID_REGEX)) {
                 // no ORCID iD
                 categoryIndex--;
+            } else {
+                orcidId = path.get(1).toString();
             }
         } else {
             // no api version
@@ -59,6 +63,8 @@ public class APIEndpointParser {
             if (!path.get(0).toString().matches(ORCID_REGEX)) {
                 // no ORCID iD
                 categoryIndex--;
+            } else {
+                orcidId = path.get(0).toString();
             }
         }
 
@@ -79,6 +85,10 @@ public class APIEndpointParser {
 
     public String getCategory() {
         return category;
+    }
+
+    public String getOrcidId() {
+        return orcidId;
     }
 
 }

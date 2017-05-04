@@ -16,7 +16,13 @@
 			            </xs:restriction>
 			        </xs:simpleType>
 			    </xs:element>
-				<xs:element type="xs:string" name="subject"/>
+				<xs:element name="subject">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="200" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
 				<xs:element type="xs:string" name="body-text"/>
 				<xs:element type="xs:string" name="body-html"/>
 				<xs:element ref="common:created-date" minOccurs="0"/>

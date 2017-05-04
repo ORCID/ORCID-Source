@@ -182,7 +182,7 @@ public class ClaimController extends BaseController {
                     boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
                     if (!claimed) {
                         throw new IllegalStateException("Unable to claim record " + orcid);
-                    }
+                    }                    
                     // Update the password
                     profileEntityManager.updatePassword(orcid, claim.getPassword().getValue());
                     // Notify

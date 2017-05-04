@@ -77,7 +77,6 @@ public class Employment implements Serializable, Affiliation, Filterable, Activi
     protected CreatedDate createdDate;
 
     @XmlAttribute(name = "put-code")
-    @ApiModelProperty(hidden = true) 
     protected Long putCode;
     @XmlAttribute(name = "path")
     protected String path;

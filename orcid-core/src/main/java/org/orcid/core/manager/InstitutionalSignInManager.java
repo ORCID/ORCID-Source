@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import org.orcid.pojo.HeaderCheckResult;
+import org.orcid.pojo.RemoteUser;
 
 public interface InstitutionalSignInManager {
 
@@ -41,4 +42,8 @@ public interface InstitutionalSignInManager {
     void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException;
 
     HeaderCheckResult checkHeaders(Map<String, String> originalHeaders, Map<String, String> currentHeaders);
+
+    RemoteUser retrieveRemoteUser(Map<String, String> headers);
+
+    String retrieveDisplayName(Map<String, String> headers);
 }

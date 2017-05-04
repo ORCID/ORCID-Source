@@ -75,7 +75,7 @@
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">
 				<xs:sequence>
-					<xs:element minOccurs="1" name="content" type="common:non-empty-string">
+					<xs:element minOccurs="1" name="content" type="common:string-255">
 						<xs:annotation>
 							<xs:documentation>A short display name describing the URL.
 							</xs:documentation>

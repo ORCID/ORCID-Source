@@ -39,6 +39,9 @@ psql -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE statistics to 
 psql -U postgres -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
 psql -U postgres -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
 psql -U postgres -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
+
+psql -U postgres -c "CREATE DATABASE features;"
+psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE features to orcid;"
 ```
 
 * Verify user login and database exist

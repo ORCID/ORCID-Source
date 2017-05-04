@@ -25,6 +25,7 @@
                 <@orcid.msg 'workspace.Funding'/> (<span ng-bind="fundingSrvc.groups.length"></span>)
             </a>
         </div>
+
         <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayFunding">
             <!-- Sort -->
             <#include "../workspace/workspace_act_sort_menu.ftl"/>
@@ -70,7 +71,7 @@
                         <li class="hidden-md hidden-sm visible-xs-inline">                                               
                             <a class="action-option manage-button action-funding-mobile" ng-click="showFundingImportWizard()">
                                 <span class="glyphicon glyphicon-cloud-upload"></span>
-                                            <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                             </a>
                         </li>
                     </#if>                      

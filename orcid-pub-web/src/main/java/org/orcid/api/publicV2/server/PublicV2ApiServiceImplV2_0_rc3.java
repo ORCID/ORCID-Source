@@ -96,7 +96,6 @@ import io.swagger.annotations.ExternalDocs;
  * @author Angel Montenegro
  * 
  */
-@Api("Public API v2.0_rc3")
 @Path("/v2.0_rc3")
 public class PublicV2ApiServiceImplV2_0_rc3 {
 

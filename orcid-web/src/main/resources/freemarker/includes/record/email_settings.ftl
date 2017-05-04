@@ -179,15 +179,15 @@
     				<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
         			<form class="form-inline">
         				<div class="form-group">							
-            				<div class="input-group">
-                				<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.clearMessage()">
+            				<div class="input-group">            					
+                				<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs['email_frequency']" ng-change="prefsSrvc.clearMessage()">
          							<#list sendEmailFrequencies?keys as key>
     									<option value="${key}">${sendEmailFrequencies[key]}</option>
 									</#list>
                     			</select>
                 			</div>
             			</div>
-            			<button ng-click="prefsSrvc.savePrivacyPreferences()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
+            			<button ng-click="prefsSrvc.updateEmailFrequency()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.send_email_frequency_save")}</button>
             			<small class="green" ng-show="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
         			</form>
     			</div>

@@ -58,12 +58,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     /**
      * Get a list of the ORCID id's with the given indexing status
+     * 
      * @param indexingStatuses
-     *          The list of desired indexing status
+     *            The list of desired indexing status
      * @param maxResults
-     *          Max number of results
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
+     *            Max number of results
+     * @return a list of object arrays where the object[0] contains the orcid id
+     *         and object[1] contains the indexing status
+     */
     @SuppressWarnings("unchecked")
     @Override
     public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
@@ -72,14 +74,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     /**
      * Get a list of the ORCID id's with the given indexing status
+     * 
      * @param indexingStatuses
-     *          The list of desired indexing status
+     *            The list of desired indexing status
      * @param maxResults
-     *          Max number of results
+     *            Max number of results
      * @param orcidsToExclude
-     *          List of ORCID id's to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
+     *            List of ORCID id's to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id
+     *         and object[1] contains the indexing status
+     */
     @Override
     public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
         List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
@@ -89,17 +93,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     /**
      * Get a list of the ORCID id's with the given indexing status
+     * 
      * @param indexingStatuses
-     *          The list of desired indexing status
+     *            The list of desired indexing status
      * @param maxResults
-     *          Max number of results
+     *            Max number of results
      * @param orcidsToExclude
-     *          List of ORCID id's to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
+     *            List of ORCID id's to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id
+     *         and object[1] contains the indexing status
+     */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults,
+            Collection<String> orcidsToExclude) {
         StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
@@ -114,7 +121,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         }
         query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();
-        List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();  
+        List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();
         dbInfo.stream().forEach(element -> {
             IndexingStatus i = element[1] == null ? null : IndexingStatus.valueOf((String) element[1]);
             Pair<String, IndexingStatus> pair = Pair.of((String) element[0], i);
@@ -241,7 +248,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         builder.append("select p.orcid from profile p left join profile_event pe on pe.orcid = p.orcid and ");
 
-        // builder.append("in (select pe.orcid from profile_event as pe where ");
+        // builder.append("in (select pe.orcid from profile_event as pe where
+        // ");
         builder.append("(");
         for (int i = 0; i < pets.size(); i++) {
             if (i != 0)
@@ -282,10 +290,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
-        TypedQuery<ProfileEntity> query = entityManager
-                .createQuery(
-                        "from ProfileEntity where (lastModified > lastIndexedDate or lastIndexedDate is null) and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified",
-                        ProfileEntity.class);
+        TypedQuery<ProfileEntity> query = entityManager.createQuery(
+                "from ProfileEntity where (lastModified > lastIndexedDate or lastIndexedDate is null) and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified",
+                ProfileEntity.class);
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
@@ -329,16 +336,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private void removeChildren(String orcid, Collection<? extends BaseEntity<?>> entities, String orcidPath) {
         if (entities != null && !entities.isEmpty()) {
-            entityManager.createQuery("delete from " + entities.iterator().next().getClass().getName() + " where " + orcidPath + " = :orcid")
-                    .setParameter("orcid", orcid).executeUpdate();
+            entityManager.createQuery("delete from " + entities.iterator().next().getClass().getName() + " where " + orcidPath + " = :orcid").setParameter("orcid", orcid)
+                    .executeUpdate();
             entities.clear();
         }
     }
 
     @Override
     public boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid) {
-        TypedQuery<Long> query = entityManager.createQuery(
-                "select count(gpt.id) from GivenPermissionToEntity gpt where gpt.giver = :giverOrcid and gpt.receiver.id = :receiverOrcid", Long.class);
+        TypedQuery<Long> query = entityManager
+                .createQuery("select count(gpt.id) from GivenPermissionToEntity gpt where gpt.giver = :giverOrcid and gpt.receiver.id = :receiverOrcid", Long.class);
         query.setParameter("giverOrcid", giverOrcid);
         query.setParameter("receiverOrcid", receiverOrcid);
         Long result = query.getSingleResult();
@@ -347,10 +354,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
-        TypedQuery<Long> query = entityManager
-                .createQuery(
-                        "select count(p.id) from ProfileEntity p where p.claimed = FALSE and (p.source.sourceClient.id = :clientId or p.source.sourceProfile.id = :clientId) and p.id = :messageOrcid",
-                        Long.class);
+        TypedQuery<Long> query = entityManager.createQuery(
+                "select count(p.id) from ProfileEntity p where p.claimed = FALSE and (p.source.sourceClient.id = :clientId or p.source.sourceProfile.id = :clientId) and p.id = :messageOrcid",
+                Long.class);
         query.setParameter("clientId", clientId);
         query.setParameter("messageOrcid", messageOrcid);
         Long result = query.getSingleResult();
@@ -395,8 +401,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
-    /** Fetches the last modified from the database
-     * Do not call unless it also manages the request level cache 
+    /**
+     * Fetches the last modified from the database Do not call unless it also
+     * manages the request level cache
+     * 
      * @See ProfileLastModifiedAspect
      * 
      */
@@ -429,7 +437,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
 
-    /** This method is used to update the last modified and indexing status without triggering last update events 
+    /**
+     * This method is used to update the last modified and indexing status
+     * without triggering last update events
      * 
      * @param orcid
      * @param indexingStatus
@@ -445,8 +455,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     private void updateWebhookProfileLastUpdate(String orcid) {
-        Query query = entityManager.createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) "
-                + "where orcid = :orcid ");
+        Query query = entityManager
+                .createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) " + "where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -491,9 +501,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
         query.setParameter("orcid", toDeprecate);
         query.setParameter("indexing_status", IndexingStatus.PENDING);
-        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));        
+        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
         query.setParameter("defaultVisibility", Visibility.PRIVATE);
-                
+
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -521,8 +531,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery(
+                "update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("securityQuestionId", securityQuestionId);
         updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
@@ -533,8 +543,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery(
+                "update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
         updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
@@ -552,7 +562,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param type
      *            OrcidType that indicates the profile type we want to fetch
      * @return the list of profiles that belongs to the specified type
-     * */
+     */
     @Override
     @Transactional
     @SuppressWarnings("unchecked")
@@ -570,7 +580,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param enabled
      *            the new value of the developer tools
      * @return true if the developer tools was successfully updated
-     * */
+     */
     @Override
     @Transactional
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
@@ -596,7 +606,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param orcid
      *            The profile to look for
      * @return the client type, null if it is not a client
-     * */
+     */
     @Override
     public ClientType getClientType(String orcid) {
         TypedQuery<ClientType> query = entityManager.createQuery("select clientType from ClientDetailsEntity where id = :orcid", ClientType.class);
@@ -611,7 +621,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param orcid
      *            The profile to look for
      * @return the group type, null if it is not a group
-     * */
+     */
     @Override
     public MemberType getGroupType(String orcid) {
         TypedQuery<MemberType> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", MemberType.class);
@@ -626,7 +636,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param orcid
      *            The id of the profile to remove
      * @return true if the profile was deleted
-     * */
+     */
     @Override
     @Transactional
     public boolean removeProfile(String orcid) {
@@ -644,7 +654,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param orcid
      *            the id of the profile that should be locked
      * @return true if the account was locked
-     * */
+     */
     @Override
     @Transactional
     public boolean lockProfile(String orcid, String reason, String description) {
@@ -657,7 +667,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @param orcid
      *            the id of the profile that should be unlocked
      * @return true if the account was locked
-     * */
+     */
     @Override
     @Transactional
     public boolean unlockProfile(String orcid) {
@@ -666,7 +676,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Transactional
     private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+        Query query = entityManager.createNativeQuery(
+                "update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("locked", locked);
         query.setParameter("lockReason", reason);
@@ -718,13 +729,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("reviewed", reviewFlag);
         return query.executeUpdate() > 0;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     @Deprecated
     public List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize) {
-        Query query = entityManager.createNativeQuery("SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
-        query.setParameter("batchSize", batchSize);        
+        Query query = entityManager.createNativeQuery(
+                "SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
+        query.setParameter("batchSize", batchSize);
         return (List<Object[]>) query.getResultList();
     }
 
@@ -733,5 +745,56 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE trim(lower(email)) = trim(lower(:email)))");
         query.setParameter("email", email);
         return (Boolean) query.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public boolean updateNotificationsPreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
+            boolean sendMemberUpdateRequests) {
+        Query updateQuery = entityManager.createQuery(
+                "update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
+        updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
+        updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
+        updateQuery.setParameter("sendMemberUpdateRequests", sendMemberUpdateRequests);
+        return updateQuery.executeUpdate() > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateDefaultVisibility(String orcid, Visibility visibility) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("activitiesVisibilityDefault", visibility);
+        return updateQuery.executeUpdate() > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays) {
+        Query updateQuery = entityManager
+                .createQuery("update ProfileEntity set lastModified = now(), sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
+        updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
+        return updateQuery.executeUpdate() > 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getProfilesWithNoHashedOrcid(int limit) {
+        Query query = entityManager.createNativeQuery("select orcid from profile where hashed_orcid is null");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateHashedOrcid(String orcid, String hashedOrcid) {
+        Query query = entityManager.createNativeQuery("update profile set hashed_orcid = :hashedOrcid where orcid = :orcid");
+        query.setParameter("hashedOrcid", hashedOrcid);
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
     }
 }

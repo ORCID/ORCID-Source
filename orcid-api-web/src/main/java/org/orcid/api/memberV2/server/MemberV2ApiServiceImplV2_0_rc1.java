@@ -98,7 +98,6 @@ import io.swagger.annotations.ResponseHeader;
  * @author rcpeters
  * 
  */
-@Api("Member API v2.0_rc1")
 @Path("/v2.0_rc1")
 public class MemberV2ApiServiceImplV2_0_rc1 extends MemberV2ApiServiceImplHelper {
 
