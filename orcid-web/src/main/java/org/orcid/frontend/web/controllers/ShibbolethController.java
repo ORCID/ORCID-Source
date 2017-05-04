@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.UserConnectionManager;
@@ -192,7 +191,7 @@ public class ShibbolethController extends BaseController {
                 }
             }
         }
-        throw new OrcidBadRequestException("Couldn't find any user display name headers");
+        return null;
     }
 
     /**
