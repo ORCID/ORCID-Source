@@ -2584,7 +2584,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .lightbox-container {
-    padding: 5px 15px 30px;
+    /*padding: 5px 15px 30px;*/
+    padding: 0;
 }
 
 .lightbox-container .cancel-option{
@@ -6632,11 +6633,11 @@ a:hover .mozilla-badge {
 /* Edit Also Known as */
 
 .edit-record {
-    width: 600px;
-    min-height: 550px;
     height: auto;
-    padding: 15px 0 15px 15px;
+    min-height: 550px;
     overflow: visible;
+    padding: 15px 0 14px 15px;
+    width: 600px;
 }
 
 .edit-record-bulk-edit {
