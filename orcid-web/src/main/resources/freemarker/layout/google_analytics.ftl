@@ -25,6 +25,7 @@
 	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 	ga('create', '${googleAnalyticsTrackingId}', 'auto', {'legacyCookieDomain': 'orcid.org'});  // Replace with your property ID.
+    ga('set', 'anonymizeIp', true); //Anonymize user IP
 	ga('send', 'pageview');
 
 	</script>
