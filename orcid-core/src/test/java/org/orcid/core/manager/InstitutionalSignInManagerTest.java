@@ -108,8 +108,7 @@ public class InstitutionalSignInManagerTest {
     public void testCreateUserConnectionAndNotify() throws UnsupportedEncodingException {
         ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
 
-        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString()))
-                .thenReturn(null);
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
@@ -124,8 +123,7 @@ public class InstitutionalSignInManagerTest {
     public void testDontSendNotificationIfClientKnowUser() throws UnsupportedEncodingException {
         ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
 
-        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString()))
-                .thenReturn(null);
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
 
@@ -138,8 +136,7 @@ public class InstitutionalSignInManagerTest {
 
     @Test
     public void testDontSendNotificationIfIdPNotLinkedToClient() throws UnsupportedEncodingException {
-        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString()))
-                .thenReturn(null);
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
         when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
@@ -153,8 +150,7 @@ public class InstitutionalSignInManagerTest {
     @Test
     public void testDontPersistIfUserConnectionAlreadyExists() throws UnsupportedEncodingException {
         ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
-        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString()))
-                .thenReturn(new UserconnectionEntity());
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
         when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
@@ -167,8 +163,7 @@ public class InstitutionalSignInManagerTest {
 
     @Test
     public void testDontPersistAndDontNotify() throws UnsupportedEncodingException {
-        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString()))
-                .thenReturn(new UserconnectionEntity());
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
         when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
 
@@ -205,6 +200,32 @@ public class InstitutionalSignInManagerTest {
         result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
         assertTrue(result.isSuccess());
         assertEquals(0, result.getMismatches().size());
+
+        // When eppn is duplicated but unchanged
+        currentHeaders.put("eppn", "myself@testshib.org;myself@testshib.org");
+        result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertTrue(result.isSuccess());
+        assertEquals(0, result.getMismatches().size());
+
+        // When eppn is duplicated and changed
+        currentHeaders.put("eppn", "someoneelse@testshib.org;someoneelse@testshib.org");
+        result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertFalse(result.isSuccess());
+        assertEquals(1, result.getMismatches().size());
+        mismatch = result.getMismatches().get(0);
+        assertEquals("eppn", mismatch.getHeaderName());
+        assertEquals("myself@testshib.org", mismatch.getOriginalValue());
+        assertEquals("someoneelse@testshib.org;someoneelse@testshib.org", mismatch.getCurrentValue());
+
+        // When eppn is duplicated and one of values changed
+        currentHeaders.put("eppn", "myself@testshib.org;someoneelse@testshib.org");
+        result = institutionalSignInManager.checkHeaders(originalHeaders, currentHeaders);
+        assertFalse(result.isSuccess());
+        assertEquals(1, result.getMismatches().size());
+        mismatch = result.getMismatches().get(0);
+        assertEquals("eppn", mismatch.getHeaderName());
+        assertEquals("myself@testshib.org", mismatch.getOriginalValue());
+        assertEquals("myself@testshib.org;someoneelse@testshib.org", mismatch.getCurrentValue());
     }
 
 }

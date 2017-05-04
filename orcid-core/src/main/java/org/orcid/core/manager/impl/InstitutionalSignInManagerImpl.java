@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -48,33 +50,33 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 public class InstitutionalSignInManagerImpl implements InstitutionalSignInManager {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InstitutionalSignInManagerImpl.class);
-    
+
     private static final String SEPARATOR = ";";
-    
+
     private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
 
     private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
 
     @Resource
     protected UserConnectionDao userConnectionDao;
-    
+
     @Resource
     protected OrcidUrlManager orcidUrlManager;
-    
+
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource
     protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
+
     @Resource
     protected NotificationManager notificationManager;
-    
+
     @Resource
     private SlackManager slackManager;
-    
+
     @Override
     @Transactional
     public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid, Map<String, String> headers)
@@ -103,21 +105,22 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
 
         sendNotification(userOrcid, providerId);
     }
-    
+
     @Override
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
-            //If the client doesn't know about the user yet, send a notification
-            if(!clientKnowsUser) {
+            // If the client doesn't know about the user yet, send a
+            // notification
+            if (!clientKnowsUser) {
                 notificationManager.sendAcknowledgeMessage(userOrcid, clientDetails.getClientId());
             }
-        } catch(IllegalArgumentException e) {
-            //The provided IdP hasn't not been linked to any client yet.
+        } catch (IllegalArgumentException e) {
+            // The provided IdP hasn't not been linked to any client yet.
         }
     }
-    
+
     @Override
     public HeaderCheckResult checkHeaders(Map<String, String> originalHeaders, Map<String, String> currentHeaders) {
         HeaderCheckResult result = new HeaderCheckResult();
@@ -130,7 +133,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             // Only compare where both are not blank, because otherwise could
             // just be an IdP config change to add/remove the attribute
             if (StringUtils.isNoneBlank(original, current)) {
-                if (!current.equals(original)) {
+                Set<String> originalDeduped = dedupe(original);
+                Set<String> currentDeduped = dedupe(current);
+                if (!currentDeduped.equals(originalDeduped)) {
                     result.addMismatch(new HeaderMismatch(headerName, original, current));
                 }
             }
@@ -142,7 +147,16 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         }
         return result;
     }
-    
+
+    private Set<String> dedupe(String headerValue) {
+        String[] values = ATTRIBUTE_SEPARATOR_PATTERN.split(headerValue);
+        Set<String> deduped = new HashSet<>();
+        for (String value : values) {
+            deduped.add(value);
+        }
+        return deduped;
+    }
+
     @Override
     public RemoteUser retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : InstitutionalSignInManager.POSSIBLE_REMOTE_USER_HEADERS) {
@@ -184,8 +198,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         }
         return null;
     }
-    
-    
+
     /**
      * Shibboleth SP combines multiple values by concatenating, using semicolon
      * as the separator (the escape character is '\'). Mutliple values will be
