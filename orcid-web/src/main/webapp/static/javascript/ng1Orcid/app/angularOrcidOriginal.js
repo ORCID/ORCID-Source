@@ -6719,7 +6719,8 @@ angular.module('orcidApp').filter('unique', function () {
               break;
             }
           }
-          if (!isDuplicate) {
+          if (!isDuplicate && item[filterOn]!=null && item[filterOn]!=undefined) {
+            console.log(item);
             newItems.push(item);
           }
 
