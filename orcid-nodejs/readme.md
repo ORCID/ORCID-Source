@@ -8,11 +8,11 @@ Simply download code via git clone then start tomcat with your orcid-web modules
 
 #### Start listening for changes on your orcid.js file
 
-* open a terminal at your root project and run
+Open a terminal at your root project and run
 
-    mvn -f orcid-nodejs/pom.xml \
-    -Dnodejs.workingDirectory=~/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid \
-    -Dwebpack.output=~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/angular_orcid_generated.js \
+    mvn -f orcid-nodejs/pom.xml \\
+    -Dnodejs.workingDirectory=~/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid \\
+    -Dwebpack.output=~/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/angular_orcid_generated.js \\
     clean install
 
 where **nodejs.workingDirectory** must be replaced with full path to folder containing _package.json_ and **webpack.output** pointing to tomcat installation + generated js path
