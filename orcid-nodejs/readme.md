@@ -8,7 +8,7 @@ Simply download code via git clone then start tomcat with your orcid-web modules
 
 #### Start listening for changes on your orcid.js file
 
-* open a terminal at your root project and run
+Open a terminal at your root project and run
 
     mvn -f orcid-nodejs/pom.xml \
     -Dnodejs.workingDirectory=~/git/ORCID-Source/orcid-web/src/main/webapp/static/javascript/ng1Orcid \
