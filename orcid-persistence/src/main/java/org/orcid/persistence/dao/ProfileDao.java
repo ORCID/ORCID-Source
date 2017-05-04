@@ -163,4 +163,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean updateDefaultVisibility(String orcid, Visibility visibility);
     
     boolean updateSendEmailFrequencyDays(String orcid, Float sendEmailFrequencyDays);
+
+    List<String> getProfilesWithNoHashedOrcid(int limit);
+    
+    void updateHashedOrcid(String orcid, String hashedOrcid);
 }
