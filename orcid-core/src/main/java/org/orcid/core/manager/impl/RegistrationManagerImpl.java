@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -96,7 +97,7 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
 
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
-
+    
     private List<String> commonPasswords;
 
     @Required
@@ -171,6 +172,13 @@ public class RegistrationManagerImpl implements RegistrationManager, Initializin
         String orcid = orcidGenerationManager.createNewOrcid();
         ProfileEntity newRecord = new ProfileEntity();
         newRecord.setId(orcid);
+        
+        try {
+            newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        
         newRecord.setOrcidType(OrcidType.USER);
         newRecord.setDateCreated(now);
         newRecord.setLastModified(now);
