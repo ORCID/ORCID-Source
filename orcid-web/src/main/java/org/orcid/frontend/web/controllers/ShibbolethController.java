@@ -20,22 +20,20 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.HeaderCheckResult;
+import org.orcid.pojo.RemoteUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,12 +59,6 @@ public class ShibbolethController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
-    private static final String SEPARATOR = ";";
-
-    private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
-
-    private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
-
     @Resource
     private UserConnectionManager userConnectionManager;
 
@@ -86,9 +78,9 @@ public class ShibbolethController extends BaseController {
         mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
         mav.addObject("providerId", shibIdentityProvider);
-        String displayName = retrieveDisplayName(headers);
+        String displayName = institutionalSignInManager.retrieveDisplayName(headers);
         mav.addObject("accountId", displayName);
-        RemoteUser remoteUser = retrieveRemoteUser(headers);
+        RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         if (remoteUser == null) {
             LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
             identityProviderManager.incrementFailedCount(shibIdentityProvider);
@@ -152,63 +144,6 @@ public class ShibbolethController extends BaseController {
         if (!isShibbolethEnabled()) {
             throw new FeatureDisabledException();
         }
-    }
-
-    public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
-        for (String possibleHeader : InstitutionalSignInManager.POSSIBLE_REMOTE_USER_HEADERS) {
-            String userId = extractFirst(headers.get(possibleHeader));
-            if (userId != null) {
-                return new RemoteUser(userId, possibleHeader);
-            }
-        }
-        return null;
-    }
-
-    public static String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = extractFirst(headers.get(InstitutionalSignInManager.EPPN_HEADER));
-        if (StringUtils.isNotBlank(eppn)) {
-            return eppn;
-        }
-        String displayName = extractFirst(headers.get(InstitutionalSignInManager.DISPLAY_NAME_HEADER));
-        if (StringUtils.isNotBlank(displayName)) {
-            return displayName;
-        }
-        String givenName = extractFirst(headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
-        String sn = extractFirst(headers.get(InstitutionalSignInManager.SN_HEADER));
-        String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
-        if (StringUtils.isNotBlank(combinedNames)) {
-            return combinedNames;
-        }
-        RemoteUser remoteUser = retrieveRemoteUser(headers);
-        if (remoteUser != null) {
-            String remoteUserId = remoteUser.getUserId();
-            if (StringUtils.isNotBlank(remoteUserId)) {
-                int indexOfBang = remoteUserId.lastIndexOf("!");
-                if (indexOfBang != -1) {
-                    return remoteUserId.substring(indexOfBang);
-                } else {
-                    return remoteUserId;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Shibboleth SP combines multiple values by concatenating, using semicolon
-     * as the separator (the escape character is '\'). Mutliple values will be
-     * provided, even if it is actually the same attribute in mace and oid
-     * format.
-     * 
-     * @param headerValue
-     * @return the first attribute value
-     */
-    private static String extractFirst(String headerValue) {
-        if (headerValue == null) {
-            return null;
-        }
-        String[] values = ATTRIBUTE_SEPARATOR_PATTERN.split(headerValue);
-        return values.length > 0 ? ESCAPED_SEPARATOR_PATTERN.matcher(values[0]).replaceAll(SEPARATOR) : "";
     }
 
 }
