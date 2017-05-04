@@ -233,7 +233,23 @@ public class OrcidCoreExceptionMapper {
 
         // Assign message from the exception
         if ("".equals(devMessage)) {
-            devMessage = t.getClass().getCanonicalName();
+            if(t != null) {
+                devMessage = t.getClass().getCanonicalName();
+                Throwable cause = t.getCause();
+                String exceptionMessage = t.getLocalizedMessage();
+                if (exceptionMessage != null) {
+                    devMessage += ": " + exceptionMessage;
+                }
+
+                if (cause != null) {
+                    String causeMessage = cause.getLocalizedMessage();
+                    if (causeMessage != null) {
+                        devMessage += " (" + causeMessage + ")";
+                    }
+                }
+            }
+            return devMessage;
+        } else if (t != null && t.getCause() != null && javax.xml.bind.UnmarshalException.class.isAssignableFrom(t.getCause().getClass())) {
             Throwable cause = t.getCause();
             String exceptionMessage = t.getLocalizedMessage();
             if (exceptionMessage != null) {
@@ -246,7 +262,7 @@ public class OrcidCoreExceptionMapper {
                     devMessage += " (" + causeMessage + ")";
                 }
             }
-            return devMessage;
+
         }
         return resolveMessage(devMessage, params);
     }

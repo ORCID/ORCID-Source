@@ -20,7 +20,9 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
@@ -44,6 +46,8 @@ public class AnalyticsProcess implements Runnable {
     private String clientDetailsId;
     
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     public boolean publicApi;
 
@@ -76,13 +80,17 @@ public class AnalyticsProcess implements Runnable {
     public void setPublicApi(boolean publicApi) {
         this.publicApi = publicApi;
     }
-
+    
+    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+    }
+    
     private AnalyticsData getAnalyticsData() {
         String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
         APIEndpointParser parser = new APIEndpointParser(request);
                 
         AnalyticsData analyticsData = new AnalyticsData();
-        analyticsData.setUrl(request.getAbsolutePath().toString());
+        analyticsData.setUrl(getUrlWithHashedOrcidId(parser.getOrcidId(), request.getAbsolutePath().toString()));
         analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip); 
         analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
@@ -93,6 +101,11 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
         analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String getUrlWithHashedOrcidId(String orcidId, String url) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
+        return url.replace(orcidId, profile.getHashedOrcid());
     }
 
     private String getApiString(String apiVersion) {

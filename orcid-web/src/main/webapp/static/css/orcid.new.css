@@ -2584,7 +2584,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .lightbox-container {
-    padding: 5px 15px 30px;
+    /*padding: 5px 15px 30px;*/
+    padding: 0;
 }
 
 .lightbox-container .cancel-option{
@@ -6100,9 +6101,22 @@ textarea.form-control,
 
 /* Widget */
 
+#widget-sample {
+    font-family: initial;
+    color: blue;
+    text-decoration: underline;
+}
+
 .widget-container {
     float: left;
     width: 100%;
+}
+
+.widget-container .widget-code {
+    height: 100px;
+    cursor: text;
+    margin-bottom: 15px;
+    word-break: break-all;
 }
 
 .widget-container .widget-header a {
@@ -6119,12 +6133,19 @@ textarea.form-control,
 }
 
 .widget-container .widget-instructions,
-.widget-container .widget-code-container a {
-    font-size: 14px;
+.widget-container p{
+    font-size: 13px;
+    line-height: normal;
 }
 
 .widget-container .widget-code-container a {
     float: right;
+    margin-top: 5px;
+}
+
+.widget-container .widget-code-container small{
+    margin-top: 5px;
+    display: inline-block;
 }
 
 .action-icon-align-right {
@@ -6246,12 +6267,6 @@ textarea.form-control,
 .orcid-summary-widget .orcid-widget-button:hover {
     color: #FFF;
     background: #a6ce39;
-}
-
-.widget-container .widget-code {
-    height: 100px;
-    cursor: text;
-    margin-bottom: 15px;
 }
 
 .widget-container .popover-help-container .popover {
@@ -6632,11 +6647,11 @@ a:hover .mozilla-badge {
 /* Edit Also Known as */
 
 .edit-record {
-    width: 600px;
-    min-height: 550px;
     height: auto;
-    padding: 15px 0 15px 15px;
+    min-height: 550px;
     overflow: visible;
+    padding: 15px 0 14px 15px;
+    width: 600px;
 }
 
 .edit-record-bulk-edit {

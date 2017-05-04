@@ -18,6 +18,7 @@ package org.orcid.core.analytics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.URI;
 
@@ -37,6 +38,7 @@ public class APIEndpointParserTest {
         APIEndpointParser parser = new APIEndpointParser(request);
         assertEquals("v2.0", parser.getApiVersion());
         assertEquals("works", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }
     
     @Test
@@ -45,6 +47,7 @@ public class APIEndpointParserTest {
         APIEndpointParser parser = new APIEndpointParser(request);
         assertEquals("v1.2", parser.getApiVersion());
         assertEquals("orcid-profile", parser.getCategory());
+        assertNull(parser.getOrcidId());
     }
     
     @Test
@@ -54,6 +57,7 @@ public class APIEndpointParserTest {
         assertNotNull(parser.getApiVersion());
         assertEquals("", parser.getApiVersion());
         assertEquals("oauth", parser.getCategory());
+        assertNull(parser.getOrcidId());
     }
     
     @Test
@@ -63,6 +67,7 @@ public class APIEndpointParserTest {
         assertNotNull(parser.getApiVersion());
         assertEquals("", parser.getApiVersion());
         assertEquals("orcid-bio", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }
     
     @Test
@@ -71,6 +76,7 @@ public class APIEndpointParserTest {
         APIEndpointParser parser = new APIEndpointParser(request);
         assertEquals("v2.0", parser.getApiVersion());
         assertEquals("record", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }
     
     @Test
@@ -79,6 +85,7 @@ public class APIEndpointParserTest {
         APIEndpointParser parser = new APIEndpointParser(request);
         assertEquals("v1.2", parser.getApiVersion());
         assertEquals("orcid-bio", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }
     
     @Test
@@ -88,6 +95,7 @@ public class APIEndpointParserTest {
         assertNotNull(parser.getApiVersion());
         assertEquals("", parser.getApiVersion());
         assertEquals("orcid-bio", parser.getCategory());
+        assertEquals("1234-4321-1234-4321", parser.getOrcidId());
     }    
     
     private ContainerRequest getRequest(String url) {
