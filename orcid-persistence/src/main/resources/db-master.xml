@@ -233,5 +233,5 @@
 	<include file="/db/updates/add_id_and_indexes_to_invalid_record_data_changes.xml" />
 	<include file="/db/updates/grant_permissions_to_invalid_record_data_changes.xml" />
 	<include file="/db/updates/add_hashed_orcid_to_profile_entity.xml" />
-	
+	<include file="/db/updates/varchar_to_text.xml" />
 </databaseChangeLog>
