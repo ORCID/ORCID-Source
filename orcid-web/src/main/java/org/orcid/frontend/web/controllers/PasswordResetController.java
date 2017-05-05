@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -116,28 +117,32 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
-    public @ResponseBody EmailRequest issuePasswordResetRequest(@RequestBody EmailRequest passwordResetRequest) {
+    public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
+        if (request.getParameterNames().hasMoreElements()) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
-            return passwordResetRequest;
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
         OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(passwordResetRequest.getEmail(), LoadOptions.BIO_ONLY);
         if (profile == null) {
             errors.add(getMessage("orcid.frontend.reset.password.email_not_found", passwordResetRequest.getEmail()));
-            return passwordResetRequest;
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
         if (profile.isDeactivated()) {
             errors.add(getMessage("orcid.frontend.reset.password.disabled_account", passwordResetRequest.getEmail()));
-            return passwordResetRequest;
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
 
         registrationManager.resetUserPassword(passwordResetRequest.getEmail(), profile);
         passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-        return passwordResetRequest;
+        return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)

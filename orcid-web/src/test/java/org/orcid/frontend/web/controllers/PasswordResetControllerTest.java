@@ -64,6 +64,7 @@ import org.orcid.pojo.EmailRequest;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
@@ -120,7 +121,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     public void testPasswordResetUserNotFound() {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
         EmailRequest resetRequest = new EmailRequest();
-        resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
+        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
     }
@@ -130,16 +131,16 @@ public class PasswordResetControllerTest extends DBUnitTest {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(new Date());
         XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        
+
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setDeactivationDate(new DeactivationDate(date));
 
         OrcidProfile deactivatedProfile = new OrcidProfile();
         deactivatedProfile.setOrcidHistory(orcidHistory);
-        
+
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
         EmailRequest resetRequest = new EmailRequest();
-        resetRequest = passwordResetController.issuePasswordResetRequest(resetRequest);
+        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
     }
