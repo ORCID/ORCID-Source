@@ -287,14 +287,17 @@ var OrcidGA = function() {
          * window.ga is blocked by Ghostery and disconnect.me 
          * window.gaGlobal is blocked by uBlock
         */
+
         if(window.ga && window.gaGlobal) {
             if(typeof trackArray === 'function') {
                 ga(trackArray);
             } else {
+                //Anonymize IP for each hit per
+                //https://developers.google.com/analytics/devguides/collection/analyticsjs/ip-anonymization
                 if(trackArray[5] == undefined) {
-                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4]);
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], {'anonymizeIp': true});
                 } else {
-                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5]);
+                    ga(trackArray[0], trackArray[1], trackArray[2], trackArray[3], trackArray[4], trackArray[5], {'anonymizeIp': true});
                 }                
                 console.log("_gap.push for " + trackArray);
             }
