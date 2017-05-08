@@ -134,7 +134,7 @@
                         <li><a href="<@orcid.rootPath "/about" />">About ORCID</a></li>
                         <li><a href="<@orcid.rootPath "/contact-us" />">Contact us</a></li>
                         <li><a href="<@orcid.rootPath "/help" />">Help</a></li>
-                    </ul>
+                    </ul> 
                     </#if>
                 </div>
             <#else>
