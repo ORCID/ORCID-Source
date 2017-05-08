@@ -550,8 +550,11 @@
 </script>
         
 <script type="text/ng-template" id="settings-verify-email-modal">
-    <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
-    <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
+    <div style="padding: 20px;">
+        <h4><@orcid.msg 'workspace.sent'/></h4>
+        <@orcid.msg 'workspace.check_your_email'/><br />
+        <br />
+        <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
 	</div>
 </script>
 

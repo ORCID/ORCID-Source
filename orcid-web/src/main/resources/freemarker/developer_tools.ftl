@@ -39,9 +39,9 @@
 									<#else>				
 										<div ng-cloak>
 											<button class="btn btn-primary bottomBuffer" ng-click="verifyEmail()"><@orcid.msg 'developer_tools.public_member.verify.button' /></button>		
-											<div class="red" ng-show="verifyEmailSent">      											
-      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.1")} {{verifyEmailObject.value}}${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.2")}<br />
-      											${springMacroRequestContext.getMessage("manage.email.verificationEmail.sent.3")}
+											<div class="red" ng-show="verifyEmailSent">      							
+										        <h4><@orcid.msg 'workspace.sent'/></h4>
+										        <@orcid.msg 'workspace.check_your_email'/><br />
     										</div>																						
 										</div>
 									</#if>

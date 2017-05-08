@@ -122,7 +122,8 @@
 				<!-- Email confirmation -->
 				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="verify-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
-						${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}
+						<h4><@orcid.msg 'workspace.sent'/></h4>
+				        <@orcid.msg 'workspace.check_your_email'/><br />
 					</div>
 					<div>
 						<ul class="pull-right inline-list">
