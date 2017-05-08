@@ -41,7 +41,7 @@
         	<span class="role" ng-if="group.getActive().roleTitle.value" ng-bind="group.getActive().roleTitle.value"></span>       	
         	
 			<span ng-if="group.getActive().departmentName.value">
-				<span ng-if="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+				<span ng-if="group.getActive().roleTitle.value && !printView">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
 			
 			

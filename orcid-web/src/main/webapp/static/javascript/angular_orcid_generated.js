@@ -1395,10 +1395,13 @@
 	    };
 	}]);
 
-	angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', '$location', 'workspaceSrvc', 'affiliationsSrvc', 'utilsService', function ($scope, $compile, $filter, $location, workspaceSrvc , affiliationsSrvc, utilsService ){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
+	    $scope.utilsService = utilsService;
 	    $scope.moreInfo = {};
+	 
+	    $scope.printView =  utilsService.isPrintView(window.location.pathname);
 
 	    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
 	    $scope.sort = function(key) {       
@@ -1429,11 +1432,13 @@
 
 	}]);
 
-	angular.module('orcidApp').controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc){
+	angular.module('orcidApp').controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', 'utilsService', function ($scope, $compile, $filter, workspaceSrvc, affiliationsSrvc, utilsService){
 	    $scope.workspaceSrvc = workspaceSrvc;
 	    $scope.affiliationsSrvc = affiliationsSrvc;
+	    $scope.utilsService = utilsService;
 	    $scope.moreInfo = {};
 
+	    $scope.printView =  utilsService.isPrintView(window.location.pathname);
 	    $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
 	    $scope.sort = function(key) {
 	        $scope.sortState.sortBy(key);
@@ -6376,8 +6381,8 @@
 	    $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
 	    $scope.showCode = false;
 	    $scope.widgetSrvc = widgetSrvc;
-	    
-	    $scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
+
+	    $scope.widgetURLND = '<a href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="_blank" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;"">' + getBaseUri() + '/' + orcidVar.orcidId + '</a>';
 	    
 	    $scope.inputTextAreaSelectAll = function($event){
 	        $event.target.select();
@@ -6794,7 +6799,8 @@
 	              break;
 	            }
 	          }
-	          if (!isDuplicate) {
+	          if (!isDuplicate && item[filterOn]!=null && item[filterOn]!=undefined) {
+	            console.log(item);
 	            newItems.push(item);
 	          }
 
@@ -13307,6 +13313,15 @@
 	            isEmail: function(email) {
 	                var re = /\S+@\S+\.\S+/;
 	                return re.test(email);
+	            },
+
+	            isPrintView: function(path) {
+	                var re = new RegExp("(/print)(.*)?$");
+	                if (re.test(path)) {
+	                    return true;
+	                } else {
+	                    return false;
+	                }
 	            },
 
 	            openImportWizardUrl: function(url) {

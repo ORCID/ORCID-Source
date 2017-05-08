@@ -151,6 +151,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     
     private BiographyEntity biographyEntity;    
     
+    private String hashedOrcid;
+    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -159,6 +161,22 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setId(String orcid) {
         this.orcid = orcid;
+    }
+    
+    /**
+     * @return the hashedOrcid
+     */
+    @Column(name = "hashed_orcid")
+    public String getHashedOrcid() {
+        return hashedOrcid;
+    }
+
+    /**
+     * @param hashedOrcid
+     *            a hashed version of the orcid id
+     */
+    public void setHashedOrcid(String hashedOrcid) {
+        this.hashedOrcid = hashedOrcid;
     }
 
     @Basic

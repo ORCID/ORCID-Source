@@ -213,83 +213,49 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
             url: getBaseUri() + '/affiliations/affiliation.json',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            type: 'POST',
-            data:  angular.toJson($scope.editAffiliation),
             success: function(data) {
-                if (data.errors.length == 0){
-                    $.colorbox.close();
-                    $scope.addingAffiliation = false;
-                    affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
-                } else {
-                    $scope.editAffiliation = data;
-                    commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
-                    $scope.addingAffiliation = false;
-                    $scope.$apply();
+                $scope.register = data;
+
+                if ($scope.register.errors.length == 0) {
+                    if ($scope.register.url != null) {
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'Website']);
+                        orcidGA.windowLocationHrefDelay($scope.register.url);
+                    }
                 }
-            }
-        }).fail(function(){
-            // something bad is happening!
-            $scope.addingAffiliation = false;
-            console.log("error adding affiliations");
-        });
-    };
-
-    // For resizing color box in case of error
-    $scope.$watch('addingAffiliation', function() {
-         setTimeout(function(){
-             $.colorbox.resize();;
-         }, 50);
-    });
-
-    $scope.deleteAffiliation = function(aff) {
-        $scope.deleAff = aff;
-
-        if (aff.affiliationName && aff.affiliationName.value)
-            $scope.fixedTitle = aff.affiliationName.value;
-        else $scope.fixedTitle = '';
-        var maxSize = 100;
-        if($scope.fixedTitle.length > maxSize)
-            $scope.fixedTitle = $scope.fixedTitle.substring(0, maxSize) + '...';
-        $.colorbox({
-            html : $compile($('#delete-affiliation-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-    };
-
-    $scope.deleteAff = function(delAff) {
-        affiliationsSrvc.deleteAffiliation(delAff);
-        $.colorbox.close();
-    };
-
-    $scope.closeModal = function() {
-        $.colorbox.close();
-    };
-
-    $scope.setAddAffiliationPrivacy = function(priv, $event) {
-        $event.preventDefault();
-        $scope.editAffiliation.visibility.visibility = priv;
-    };
-
-    $scope.setPrivacy = function(aff, priv, $event) {
-        $event.preventDefault();
-        aff.visibility.visibility = priv;
-        affiliationsSrvc.updateProfileAffiliation(aff);
-    };
-
-    $scope.serverValidate = function (relativePath) {
-        $.ajax({
-            url: getBaseUri() + '/' + relativePath,
-            type: 'POST',
-            data:  angular.toJson($scope.editAffiliation),
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                commonSrvc.copyErrorsLeft($scope.editAffiliation, data);
+                $scope.postingClaim = false;
                 $scope.$apply();
             }
         }).fail(function() {
             // something bad is happening!
-            console.log("RegistrationCtrl.serverValidate() error");
+            console.log("RegistrationCtrl.postRegister() error");
+            $scope.postingClaim = false;
+        });
+    };
+
+    $scope.getClaimAjaxUrl = function () {
+        return window.location.href.split("?")[0]+".json";
+    };
+
+    $scope.updateActivitiesVisibilityDefault = function(priv, $event) {
+        $scope.register.activitiesVisibilityDefault.visibility = priv;
+    };
+
+    $scope.serverValidate = function (field) {
+        if (field === undefined) field = '';
+        $.ajax({
+            url: getBaseUri() + '/claim' + field + 'Validate.json',
+            type: 'POST',
+            data:  angular.toJson($scope.register),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                // alert(angular.toJson(data));
+                commonSrvc.copyErrorsLeft($scope.register, data);
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("RegistrationCtrl.postRegisterValidate() error");
         });
     };
 
@@ -302,17 +268,5 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     };
 
     // init
-    affiliationsSrvc.getAffiliations('affiliations/affiliationIds.json');
-
-    $scope.openEditAffiliation = function(affiliation) {
-        $scope.addAffiliationModal(affiliation.affiliationType.value, affiliation);
-    };
-    
-    $scope.showTooltip = function (element){        
-        $scope.showElement[element] = true;
-    };
-
-    $scope.hideTooltip = function (element){        
-        $scope.showElement[element] = false;
-    };
+    $scope.getClaim();
 }]);

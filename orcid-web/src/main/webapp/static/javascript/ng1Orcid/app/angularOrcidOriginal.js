@@ -650,6 +650,55 @@ angular.module('orcidApp').controller('ClaimCtrl', ['$scope', '$compile', 'commo
     $scope.getClaim();
 }]);
 
+angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
+    $scope.showThanks = function () {
+        var colorboxHtml;
+            if ($scope.sourceGrantReadWizard.url == null)
+                colorboxHtml = $compile($('#claimed-record-thanks').html())($scope);
+            else
+                colorboxHtml = $compile($('#claimed-record-thanks-source-grand-read').html())($scope);
+        $.colorbox({
+            html : colorboxHtml,
+            escKey: true,
+            overlayClose: true,
+            transition: 'fade',
+            close: '',
+            scrolling: false
+                    });
+        $scope.$apply(); // this seems to make sure angular renders in the
+                            // colorbox
+        $.colorbox.resize();
+    };
+
+    $scope.getSourceGrantReadWizard = function(){
+        $.ajax({
+            url: getBaseUri() + '/my-orcid/sourceGrantReadWizard.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.sourceGrantReadWizard = data;
+                $scope.$apply();
+                $scope.showThanks();
+            }
+        }).fail(function(){
+            // something bad is happening!
+            console.log("error fetching external identifiers");
+        });
+
+    };
+
+    $scope.yes = function () {
+        $.colorbox.close();
+        var newWin = window.open($scope.sourceGrantReadWizard.url);
+        if (!newWin) window.location.href = $scope.sourceGrantReadWizard.url;
+        else newWin.focus();
+    };
+
+    $scope.close = function () {
+        $.colorbox.close();
+    };
+
+    $scope.getSourceGrantReadWizard();
+}]);
 
 angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
     $scope.showThanks = function () {
@@ -5009,8 +5058,8 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', 'widgetSrvc', func
     $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
     $scope.showCode = false;
     $scope.widgetSrvc = widgetSrvc;
-    
-    $scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
+
+    $scope.widgetURLND = '<a href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="_blank" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;"">' + getBaseUri() + '/' + orcidVar.orcidId + '</a>';
     
     $scope.inputTextAreaSelectAll = function($event){
         $event.target.select();
@@ -5427,7 +5476,8 @@ angular.module('orcidApp').filter('unique', function () {
               break;
             }
           }
-          if (!isDuplicate) {
+          if (!isDuplicate && item[filterOn]!=null && item[filterOn]!=undefined) {
+            console.log(item);
             newItems.push(item);
           }
 

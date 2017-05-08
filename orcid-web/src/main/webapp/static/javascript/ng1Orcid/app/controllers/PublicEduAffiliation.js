@@ -1,7 +1,10 @@
-angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'affiliationsSrvc', function ($scope, $compile, $filter, workspaceSrvc , affiliationsSrvc){
+angular.module('orcidApp').controller('PublicEduAffiliation', ['$scope', '$compile', '$filter', '$location', 'workspaceSrvc', 'affiliationsSrvc', 'utilsService', function ($scope, $compile, $filter, $location, workspaceSrvc , affiliationsSrvc, utilsService ){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
+    $scope.utilsService = utilsService;
     $scope.moreInfo = {};
+ 
+    $scope.printView =  utilsService.isPrintView(window.location.pathname);
 
     $scope.sortState = new ActSortState(GroupedActivities.AFFILIATION);
     $scope.sort = function(key) {       
