@@ -40,83 +40,105 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     /////////////////////// End of verified email logic for work
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
-    $scope.sort = function(key) {
-        $scope.sortState.sortBy(key);
-    };
 
-    $scope.getEmptyExtId = function() {
-        return {
-                "errors": [],
-                "type": {
-                    "errors": [],
-                    "value": "award",
-                    "required": true,
-                    "getRequiredMessage": null
-                },
-                "value": {
-                    "errors": [],
-                    "value": "",
-                    "required": true,
-                    "getRequiredMessage": null
-                },
-                "url": {
-                    "errors": [],
-                    "value": "",
-                    "required": true,
-                    "getRequiredMessage": null
-                },
-                "putCode": null,
-                "relationship": {
-                    "errors": [],
-                    "value": "self",
-                    "required": true,
-                    "getRequiredMessage": null
-                }
-            };
-    }
+    /* Bulk Funtions */
     
-    // remove once grouping is live
-    $scope.toggleClickMoreInfo = function(key) {
-        if (!document.documentElement.className.contains('no-touch')) {
-            if ($scope.moreInfoCurKey != null
-                    && $scope.moreInfoCurKey != key) {
-                $scope.moreInfo[$scope.moreInfoCurKey]=false;
-            }
-            $scope.moreInfoCurKey = key;
-            $scope.moreInfo[key]=!$scope.moreInfo[key];
+    $scope.bulkDeleteCount = 0;
+    $scope.bulkDeleteSubmit = false;
+
+    $scope.toggleBulkEdit = function() {
+        emailVerified = true;  //Remove this line
+
+        if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+            if (!$scope.bulkEditShow) {
+                $scope.bulkEditMap = {};
+                $scope.bulkChecked = false;
+                /*for (var idx in worksSrvc.groups){
+                    $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = false;
+                }*/
+            };
+            $scope.bulkEditShow = !$scope.bulkEditShow;
+        }else{
+            showEmailVerificationModal();
         }
     };
 
-    $scope.hideSources = function(group) {
-        $scope.editSources[group.groupId] = false;
-        group.activePutCode = group.defaultPutCode;
-    };
 
-    $scope.showSources = function(group) {
-        $scope.editSources[group.groupId] = true;
-    };
-
-    // remove once grouping is live
-    $scope.moreInfoMouseEnter = function(key, $event) {
-        $event.stopPropagation();
-        if (document.documentElement.className.contains('no-touch')) {
-            if ($scope.moreInfoCurKey != null
-                    && $scope.moreInfoCurKey != key) {
-                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
+    $scope.bulkApply = function(func) {
+        /*for (var idx in worksSrvc.groups) {
+            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+                func(worksSrvc.groups[idx].getActive().putCode.value);
             }
-            $scope.moreInfoCurKey = key;
-            $scope.moreInfo[key]=true;
+        }*/
+    };
+
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        /*for (var idx in worksSrvc.groups){
+            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = $scope.bulkChecked;
+        }*/
+        $scope.bulkDisplayToggle = false;
+    };
+
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        /*for (var idx in worksSrvc.groups){
+            $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
+        }*/
+    };
+
+    $scope.setBulkGroupPrivacy = function(priv) {
+        var putCodes = new Array();
+        /*for (var idx in worksSrvc.groups){
+            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){    
+                for (var idj in worksSrvc.groups[idx].activities) {
+                    putCodes.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                    worksSrvc.groups[idx].activities[idj].visibility = priv;
+                }
+            }
         }
+        worksSrvc.updateVisibility(putCodes, priv);
+        */
     };
 
-    $scope.showDetailsMouseClick = function(key, $event) {
-        $event.stopPropagation();
-        $scope.moreInfo[key] = !$scope.moreInfo[key];        
+    $scope.deleteBulk = function () {
+        var delPuts = new Array();
+        if ($scope.delCountVerify != parseInt($scope.bulkDeleteCount)) {
+            $scope.bulkDeleteSubmit = true;
+            return;
+        }
+        /*
+        for (var idx in worksSrvc.groups){
+            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+                delPuts.push(worksSrvc.groups[idx].getActive().putCode.value);
+            }
+        }
+        worksSrvc.deleteGroupWorks(delPuts);
+        */
+        $.colorbox.close();
+        $scope.bulkEditShow = false;
     };
 
-    $scope.closeMoreInfo = function(key) {
-        $scope.moreInfo[key]=false;
+
+    $scope.deleteBulkConfirm = function(idx) {
+        $scope.bulkDeleteCount = 0;
+        $scope.bulkDeleteSubmit = false;        
+        $scope.delCountVerify = 0;
+        /*for (var idx in worksSrvc.groups){
+            if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
+                $scope.bulkDeleteCount++;
+            }
+        }*/
+
+        $scope.bulkDeleteFunction = $scope.deleteBulk;
+
+        $.colorbox({
+            html: $compile($('#bulk-delete-modal').html())($scope)
+        });
+        $.colorbox.resize();
     };
+        /* Bulk functions end */ 
 
     $scope.addFundingModal = function(data){
         if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
@@ -146,27 +168,62 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
         }
     };
 
-    $scope.showAddModal = function(){
-        $scope.editTranslatedTitle = false;
-        $.colorbox({
-            html: $compile($('#add-funding-modal').html())($scope),
-            width: utilsService.formColorBoxResize(),
-            onComplete: function() {
-                //resize to insure content fits
-                utilsService.formColorBoxResize();
-                $scope.bindTypeaheadForOrgs();
-                $scope.bindTypeaheadForSubTypes();
-            },
-            onClosed: function() {
-                $scope.closeAllMoreInfo();
-                fundingSrvc.getFundings('fundings/fundingIds.json');
-            }
-        });
-    };
-
     $scope.closeAllMoreInfo = function() {
         for (var idx in $scope.moreInfo){
             $scope.moreInfo[idx]=false;
+        }
+    };
+
+    $scope.closeMoreInfo = function(key) {
+        $scope.moreInfo[key]=false;
+    };
+
+    $scope.getEmptyExtId = function() {
+        return {
+            "errors": [],
+            "type": {
+                "errors": [],
+                "value": "award",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "value": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "url": {
+                "errors": [],
+                "value": "",
+                "required": true,
+                "getRequiredMessage": null
+            },
+            "putCode": null,
+            "relationship": {
+                "errors": [],
+                "value": "self",
+                "required": true,
+                "getRequiredMessage": null
+            }
+        };
+    };
+
+    $scope.hideSources = function(group) {
+        $scope.editSources[group.groupId] = false;
+        group.activePutCode = group.defaultPutCode;
+    };
+    
+    // remove once grouping is live
+    $scope.moreInfoMouseEnter = function(key, $event) {
+        $event.stopPropagation();
+        if (document.documentElement.className.contains('no-touch')) {
+            if ($scope.moreInfoCurKey != null
+                    && $scope.moreInfoCurKey != key) {
+                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
+            }
+            $scope.moreInfoCurKey = key;
+            $scope.moreInfo[key]=true;
         }
     };
 
@@ -200,6 +257,48 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
             $scope.addingFunding = false;
             console.log("error adding fundings");
         });
+    };
+
+    $scope.showAddModal = function(){
+        $scope.editTranslatedTitle = false;
+        $.colorbox({
+            html: $compile($('#add-funding-modal').html())($scope),
+            width: utilsService.formColorBoxResize(),
+            onComplete: function() {
+                //resize to insure content fits
+                utilsService.formColorBoxResize();
+                $scope.bindTypeaheadForOrgs();
+                $scope.bindTypeaheadForSubTypes();
+            },
+            onClosed: function() {
+                $scope.closeAllMoreInfo();
+                fundingSrvc.getFundings('fundings/fundingIds.json');
+            }
+        });
+    };
+
+    $scope.showDetailsMouseClick = function(key, $event) {
+        $event.stopPropagation();
+        $scope.moreInfo[key] = !$scope.moreInfo[key];        
+    };
+
+    $scope.showSources = function(group) {
+        $scope.editSources[group.groupId] = true;
+    };
+
+    $scope.sort = function(key) {
+        $scope.sortState.sortBy(key);
+    };
+
+    $scope.toggleClickMoreInfo = function(key) {
+        if (!document.documentElement.className.contains('no-touch')) {
+            if ($scope.moreInfoCurKey != null
+                    && $scope.moreInfoCurKey != key) {
+                $scope.moreInfo[$scope.moreInfoCurKey]=false;
+            }
+            $scope.moreInfoCurKey = key;
+            $scope.moreInfo[key]=!$scope.moreInfo[key];
+        }
     };
 
     //Resizing window after error message is shown

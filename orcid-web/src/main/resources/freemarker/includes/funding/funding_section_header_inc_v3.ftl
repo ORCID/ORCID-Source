@@ -32,6 +32,11 @@
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">
                     <!-- Link Manually -->
+                    <li  ng-cloak><!-- ng-show="worksSrvc.groups.length > 1" -->
+                        <a class="action-option works manage-button" ng-class="{'green-bg' : bulkEditShow == true}" ng-click="toggleBulkEdit()">
+                            <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
+                        </a>
+                    </li>
                     <li class="hidden-xs">
                         <div class="menu-container" id="add-funding-container">
                             <ul class="toggle-menu">
