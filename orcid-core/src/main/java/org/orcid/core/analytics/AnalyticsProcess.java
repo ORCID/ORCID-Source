@@ -18,16 +18,21 @@ package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.eclipse.jetty.util.log.Log;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
 
     private static final String REMOTE_IP_HEADER_NAME = "X-FORWARDED-FOR";
 
@@ -109,8 +114,17 @@ public class AnalyticsProcess implements Runnable {
     }
 
     private String getUrlWithHashedOrcidId(String orcidId, String url) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
-        return url.replace(orcidId, profile.getHashedOrcid());
+        if (orcidId == null) {
+            return url;
+        }
+
+        try {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
+            return url.replace(orcidId, profile.getHashedOrcid());
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid ORCID iD supplied in API call, original URL will be posted to GA");
+            return url;
+        }
     }
 
     private String getApiString(String apiVersion) {
