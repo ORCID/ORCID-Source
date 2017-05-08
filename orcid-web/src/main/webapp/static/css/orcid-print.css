@@ -43,6 +43,10 @@
         content: " (" attr(href) ")";
     }
 
+    .url-work a[href]:after {
+        content: none;
+    }
+
     abbr[title]:after {
         content: " (" attr(title) ")";
     }
@@ -125,6 +129,7 @@
     .country-edit,
     .divisor,
     .footer,
+    .footer-main,
     .glyphicon-pencil,
     .gray-button,
     .id-banner .row .col-md-3,
@@ -177,10 +182,31 @@
     }
 
     .col-md-3,
+    .col-md-9,
+    .col-md-10,
+    .col-md-12,
+    .col-sm-3,
+    .col-sm-9,
+    .col-sm-10, 
+    .col-sm-12,
+    .col-xs-7,
+    .col-xs-8,
+    .col-xs-12,
+    .workspace-accordion,
+    .workspace-accordion-content li,
+    .workspace-accordion-content ul.sources-edit-list li {
+        padding-left: 0;
+    }
+
+    .col-md-3,
     .col-sm-3,
     .col-xs-12,
     .left-aside {
         width: 100%;
+    }
+
+    .container {
+        overflow-x: hidden;
     }
 
     .full-name {
@@ -218,7 +244,28 @@
         font-size: 14px;
         line-height: 22px;
     }
-    
+
+    .info-detail span.role:after{
+        content: none;
+    }
+
+    .info-detail span.ng-scope{
+        //display: none;
+    }
+
+    .row .row {
+        margin-left: 0;
+    }
+
+    .truncate-anchor {
+        width: 100%;
+        white-space: normal;
+        overflow: visible;
+        display: inline;
+        word-break: break-all;
+        //vertical-align: bottom;
+    }
+
     .work-title a.toggle-text,
     .workspace-accordion-header .row,
     #workspace-personal .row:first-child {
@@ -231,18 +278,7 @@
         margin-bottom: 16px;
         width: 100%;
     }
-    
-    .workspace-accordion,
-    .workspace-accordion-content .col-md-12, 
-    .workspace-accordion-content .col-sm-12,
-    .workspace-accordion-content .col-xs-12 {
-        padding-left: 0;
-    }
-    
-    .workspace-accordion-content .col-sm-12.bottomBuffer {
-        padding-left: 15px;
-    }
-    
+
     .workspace-accordion-content .workspace-title .journaltitle {
         font-style: italic;
         font-weight: normal;

@@ -340,19 +340,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         profileDao.flush();
     }
     
-    @Test
-    public void testGetInfo() throws Exception {
-        String orcid = "0000-0000-0000-0002";
-        String hash = encryptionManager.sha256Hash(orcid);
-        OrcidInfo orcidInfo = publicProfileController.getInfo(orcid, hash, null);
-        assertEquals("", orcidInfo.getName());
-        
-        orcid = "0000-0000-0000-0003";
-        hash = encryptionManager.sha256Hash(orcid);
-        orcidInfo = publicProfileController.getInfo(orcid, hash, null);
-        assertEquals("Credit Name", orcidInfo.getName());
-    }
-    
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
         assertEquals("public_profile_unavailable", mav.getViewName());
         Map<String, Object> model = mav.getModel();

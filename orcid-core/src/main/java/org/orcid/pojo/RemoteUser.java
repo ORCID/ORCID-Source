@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.web.util;
+package org.orcid.pojo;
 
 /**
  * 

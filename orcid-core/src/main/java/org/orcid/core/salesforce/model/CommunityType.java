@@ -23,7 +23,7 @@ package org.orcid.core.salesforce.model;
  */
 public enum CommunityType {
 
-    ASSOCIATION("Association"), FUNDER("Funder"), GOVERNMENT("Government"), REPOSITORY("Repository/Profile Org"), RESEARCH_INSTITUTE("Research Institute");
+    ASSOCIATION("Association"), FUNDER("Funder"), GOVERNMENT("Government"), OTHER("Other"), PUBLISHER("Publisher"), REPOSITORY("Repository/Profile Org"), RESEARCH_INSTITUTE("Research Institute");
 
     private final String value;
 

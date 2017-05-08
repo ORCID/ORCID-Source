@@ -28,9 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.InstitutionalSignInManager;
-import org.orcid.frontend.web.controllers.ShibbolethController;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
-import org.orcid.frontend.web.util.RemoteUser;
+import org.orcid.pojo.RemoteUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,11 +65,11 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         }
         LOGGER.info("Headers for shibboleth link: {}", headers);
         checkEnabled();
-        RemoteUser remoteUser = ShibbolethController.retrieveRemoteUser(headers);
+        RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         String remoteUserId = remoteUser.getUserId();
         String idType = remoteUser.getIdType();
-        String displayName = ShibbolethController.retrieveDisplayName(headers);
+        String displayName = institutionalSignInManager.retrieveDisplayName(headers);
         String userOrcid = getRealUserOrcid();                
         institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid, headers);
     }
