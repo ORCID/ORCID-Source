@@ -122,12 +122,12 @@
 				<!-- Email confirmation -->
 				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="verify-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
-						<h4><@orcid.msg 'workspace.sent'/></h4>
-				        <@orcid.msg 'workspace.check_your_email'/><br />
+				        <h4><@orcid.msg 'manage.email.verificationEmail'/> {{verifyEmailObject.value}}</h4>
+				        <p><@orcid.msg 'workspace.check_your_email'/></p>
 					</div>
 					<div>
 						<ul class="pull-right inline-list">
-							<li><a href="" ng-click="closeVerificationBox()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</a></li>
+							<li><a href="" ng-click="closeVerificationBox()"><@orcid.msg 'freemarker.btnclose'/></a></li>
 						</ul>
 					</div>
 				</div>    			
