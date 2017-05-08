@@ -18,23 +18,28 @@ package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.eclipse.jetty.util.log.Log;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
 
     private static final String REMOTE_IP_HEADER_NAME = "X-FORWARDED-FOR";
-    
+
     private static final String PUBLIC_API_USER = "Public API user";
-    
+
     private static final String PUBLIC_API = "Public API";
-    
+
     private static final String MEMBER_API = "Member API";
 
     private ContainerRequest request;
@@ -44,11 +49,11 @@ public class AnalyticsProcess implements Runnable {
     private AnalyticsClient analyticsClient;
 
     private String clientDetailsId;
-    
+
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     public boolean publicApi;
 
     @Override
@@ -56,7 +61,7 @@ public class AnalyticsProcess implements Runnable {
         AnalyticsData data = getAnalyticsData();
         analyticsClient.sendAnalyticsData(data);
     }
-    
+
     public void setRequest(ContainerRequest request) {
         this.request = request;
     }
@@ -76,23 +81,24 @@ public class AnalyticsProcess implements Runnable {
     public void setClientDetailsId(String clientDetailsId) {
         this.clientDetailsId = clientDetailsId;
     }
-    
+
     public void setPublicApi(boolean publicApi) {
         this.publicApi = publicApi;
     }
-    
+
     public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
-    
+
     private AnalyticsData getAnalyticsData() {
         String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
+        ip = maskIp(ip);
         APIEndpointParser parser = new APIEndpointParser(request);
-                
+
         AnalyticsData analyticsData = new AnalyticsData();
         analyticsData.setUrl(getUrlWithHashedOrcidId(parser.getOrcidId(), request.getAbsolutePath().toString()));
         analyticsData.setClientDetailsString(getClientDetailsString());
-        analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip); 
+        analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
         analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
         analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
@@ -103,9 +109,22 @@ public class AnalyticsProcess implements Runnable {
         return analyticsData;
     }
 
+    private String maskIp(String ip) {
+        return ip.substring(0, ip.lastIndexOf(".")) + ".0";
+    }
+
     private String getUrlWithHashedOrcidId(String orcidId, String url) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
-        return url.replace(orcidId, profile.getHashedOrcid());
+        if (orcidId == null) {
+            return url;
+        }
+
+        try {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
+            return url.replace(orcidId, profile.getHashedOrcid());
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid ORCID iD supplied in API call, original URL will be posted to GA");
+            return url;
+        }
     }
 
     private String getApiString(String apiVersion) {
