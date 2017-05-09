@@ -94,39 +94,12 @@
 		<sql>ALTER TABLE notification_item ALTER COLUMN external_id_value TYPE text;</sql>		
 	</changeSet>
 	
-	<changeSet id="UPDATE-ORG" author="Angel Montenegro" dbms="postgresql">
-		<sql>ALTER TABLE org ALTER COLUMN name TYPE text;</sql>
-		<sql>ALTER TABLE org ALTER COLUMN city TYPE text;</sql>
-		<sql>ALTER TABLE org ALTER COLUMN region TYPE text;</sql>
-		<sql>ALTER TABLE org ALTER COLUMN country TYPE text;</sql>
-		<sql>ALTER TABLE org ALTER COLUMN url TYPE text;</sql>
-	</changeSet>
-	
 	<changeSet id="UPDATE-ORG-AFFILIATION-RELATION" author="Angel Montenegro" dbms="postgresql">
 		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN org_affiliation_relation_role TYPE text;</sql>
 		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN org_affiliation_relation_title TYPE text;</sql>
 		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN department TYPE text;</sql>		
 	</changeSet>
 
-	<changeSet id="UPDATE-ORG-DISAMBIGUATED" author="Angel Montenegro" dbms="postgresql">
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN source_id TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN source_url TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN source_type TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN org_type TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN name TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN city TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN region TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN country TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN url TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN status TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated ALTER COLUMN source_parent_id TYPE text;</sql>
-	</changeSet>
-
-	<changeSet id="UPDATE-ORG-DISAMBIGUATED-EXTERNAL-IDENTIFIER" author="Angel Montenegro" dbms="postgresql">
-		<sql>ALTER TABLE org_disambiguated_external_identifier ALTER COLUMN identifier TYPE text;</sql>
-		<sql>ALTER TABLE org_disambiguated_external_identifier ALTER COLUMN identifier_type TYPE text;</sql>		
-	</changeSet>
-	
 	<changeSet id="UPDATE-OTHER-NAME" author="Angel Montenegro" dbms="postgresql">
 		<sql>ALTER TABLE other_name ALTER COLUMN display_name TYPE text;</sql>		
 	</changeSet>
