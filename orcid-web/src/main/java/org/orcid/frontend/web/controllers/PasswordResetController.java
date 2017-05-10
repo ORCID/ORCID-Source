@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -93,6 +94,8 @@ public class PasswordResetController extends BaseController {
 
     @Resource
     private RegistrationController registrationController;
+    
+    private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
     public ModelAndView resetPassword(@RequestParam(value = "expired", required = false) boolean expired) {
@@ -118,8 +121,11 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
-        if (request.getParameterNames().hasMoreElements()) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        for (String param : request.getParameterMap().keySet()) {
+            if (!RESET_PASSWORD_PARAMS_WHITELIST.contains(param)) {
+                // found parameter that has not been white-listed
+                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            }
         }
         
         List<String> errors = new ArrayList<>();
