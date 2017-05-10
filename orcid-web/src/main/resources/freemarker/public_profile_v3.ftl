@@ -311,11 +311,6 @@
 			             </div>	                
 		            </#if>
 				</#if>
-				<@orcid.checkFeatureStatus 'LAST_MOD'>
-					<div id="public-last-modified" class="workspace-section">
-				    	<p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>					
-					</div>
-				</ @orcid.checkFeatureStatus>
 	        </div>
         </div>
     </div>
@@ -343,7 +338,12 @@
 		                <#assign publicProfile = true />
 		                <#include "workspace_preview_activities_v3.ftl"/>	                    	
 	        		</#if>
-	        	</div>	                   
+	        	</div>	
+	        	<@orcid.checkFeatureStatus 'LAST_MOD'>
+					<div id="public-last-modified" class="workspace-section">
+				    	<p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>					
+					</div>
+				</@orcid.checkFeatureStatus>                   
         </div>
     </div>
 </div>

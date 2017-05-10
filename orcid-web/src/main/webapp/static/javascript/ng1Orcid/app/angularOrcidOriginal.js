@@ -5074,13 +5074,9 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', function ($scope){
     
 }]);
 
-angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', 'utilsService', function ($scope, $compile, $window, utilsService) {
+angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
     $scope.showSources = new Array();
     $scope.showPopover = new Array();
-
-    var lastModified = orcidVar.lastModified;
-    var lastModifiedNoCommas = lastModified.replace(/,/g , "");
-    $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedNoCommas));
 
     $scope.printRecord = function(url){
         //open window
