@@ -4783,6 +4783,10 @@ ul.sources-edit-list > li {
     margin-top: 15px;
 }
 
+#public-last-modified p.small {
+    line-height: normal;
+}
+
 .workspace-section-title div.glyphicon-pencil,
 #workspace-personal span.glyphicon-pencil {
     padding: 3px 5px 5px 0;

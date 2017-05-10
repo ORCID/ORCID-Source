@@ -311,8 +311,8 @@
 			             </div>	                
 		            </#if>
 				</#if>
-				<div class="workspace-section">
-			    	<p class="small italic">Record last modified: {{lastModifiedDate}}</p>					
+				<div id="public-last-modified" class="workspace-section">
+			    	<p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>					
 				</div>
 	        </div>
         </div>
