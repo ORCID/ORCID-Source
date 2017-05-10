@@ -5080,7 +5080,7 @@ angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', 
 
     var lastModified = orcidVar.lastModified;
     var lastModifiedNoCommas = lastModified.replace(/,/g , "");
-    $scope.lastModifiedDate = utilsService.formatDate(Number(lastModifiedNoCommas));
+    $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedNoCommas));
 
     $scope.printRecord = function(url){
         //open window
