@@ -351,7 +351,9 @@ public class WorkspaceController extends BaseWorkspaceController {
             @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
-
+        long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
+        
+        mav.addObject("lastModifiedTime", lastModifiedTime);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
         mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
