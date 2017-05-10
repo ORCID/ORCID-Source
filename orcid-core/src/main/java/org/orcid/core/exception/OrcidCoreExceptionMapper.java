@@ -237,8 +237,9 @@ public class OrcidCoreExceptionMapper {
                 devMessage = t.getClass().getCanonicalName();
                 Throwable cause = t.getCause();
                 String exceptionMessage = t.getLocalizedMessage();
+                String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
                 if (exceptionMessage != null) {
-                    devMessage += ": " + exceptionMessage;
+                    devMessage += " " + validationMessage + " " + exceptionMessage;
                 }
 
                 if (cause != null) {
@@ -252,8 +253,9 @@ public class OrcidCoreExceptionMapper {
         } else if (t != null && t.getCause() != null && javax.xml.bind.UnmarshalException.class.isAssignableFrom(t.getCause().getClass())) {
             Throwable cause = t.getCause();
             String exceptionMessage = t.getLocalizedMessage();
+            String validationMessage = messageSource.getMessage("apiError.validation.message", null, "", locale);
             if (exceptionMessage != null) {
-                devMessage += ": " + exceptionMessage;
+                devMessage += " " + validationMessage + " " + exceptionMessage;
             }
 
             if (cause != null) {

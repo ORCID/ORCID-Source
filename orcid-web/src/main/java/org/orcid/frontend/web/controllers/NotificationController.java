@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -158,8 +159,9 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping(value = "/CUSTOM/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public @ResponseBody String getCustomNotificationHtml(@PathVariable("id") String id) {
+    public @ResponseBody String getCustomNotificationHtml(HttpServletResponse response, @PathVariable("id") String id) {
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
         if (notification instanceof NotificationCustom) {
             return ((NotificationCustom) notification).getBodyHtml();
         } else {
@@ -174,6 +176,7 @@ public class NotificationController extends BaseController {
         addSourceDescription(notification);
         mav.addObject("notification", notification);
         mav.setViewName("notification/add_activities_notification");
+        mav.addObject("noIndex", true);
         return mav;
     }
 
@@ -185,6 +188,7 @@ public class NotificationController extends BaseController {
         mav.addObject("notification", notification);
         mav.addObject("emailName", notificationManager.deriveEmailFriendlyName(getEffectiveProfile()));
         mav.setViewName("notification/amended_notification");
+        mav.addObject("noIndex", true);
         return mav;
     }
 
@@ -201,20 +205,23 @@ public class NotificationController extends BaseController {
         mav.addObject("clientId", clientId);
         mav.addObject("authorizationUrl", authorizationUrl);
         mav.setViewName("notification/institutional_connection_notification");
+        mav.addObject("noIndex", true);
         return mav;
     }
     
     @RequestMapping(value = "{id}/read.json")
-    public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsRead(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationManager.flagAsRead(currentUserOrcid, Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
     @RequestMapping(value = "{id}/archive.json")
-    public @ResponseBody Notification flagAsArchived(@PathVariable("id") String id) {
+    public @ResponseBody Notification flagAsArchived(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationManager.flagAsArchived(currentUserOrcid, Long.valueOf(id), false);
+        response.addHeader("X-Robots-Tag", "noindex");
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
@@ -250,23 +257,26 @@ public class NotificationController extends BaseController {
     }
     
     @RequestMapping(value = "{id}/suppressAlert.json")
-    public @ResponseBody void suppressAlert(@PathVariable("id") String id) {
+    public @ResponseBody void suppressAlert(HttpServletResponse response, @PathVariable("id") String id) {
         userSession.getSuppressedNotificationAlertIds().add(Long.valueOf(id));
+        response.addHeader("X-Robots-Tag", "noindex");
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.GET)
-    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+    public @ResponseBody Preferences getDefaultPreference(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
     	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
+    	response.addHeader("X-Robots-Tag", "noindex");
     	Preferences pref = profile.getOrcidInternal().getPreferences();
         return pref != null ? pref : new Preferences();
     }
     
     @RequestMapping(value = "/frequencies/{encryptedEmail}/email-frequencies.json", method = RequestMethod.POST)
-    public @ResponseBody Preferences setPreference(HttpServletRequest request, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
+    public @ResponseBody Preferences setPreference(HttpServletRequest request, HttpServletResponse response, @RequestBody Preferences preferences, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
     	String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
     	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
     	orcidProfileManager.updatePreferences(profile.getOrcidIdentifier().getPath(), preferences);
+    	response.addHeader("X-Robots-Tag", "noindex");
         return preferences;
     }
     
@@ -282,6 +292,7 @@ public class NotificationController extends BaseController {
         if (decryptedEmail.equals(primaryEmail)) {
         	result = new ModelAndView("email_frequency");
         	result.addObject("primaryEmail", primaryEmail);
+        	result.addObject("noIndex", true);
         }
 
         return result;

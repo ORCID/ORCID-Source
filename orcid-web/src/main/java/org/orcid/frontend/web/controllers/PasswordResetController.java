@@ -158,7 +158,9 @@ public class PasswordResetController extends BaseController {
             redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
             return new ModelAndView("redirect:/reset-password?expired=true");
         }
-        return new ModelAndView("password_one_time_reset_optional_security_questions");
+        ModelAndView result = new ModelAndView("password_one_time_reset_optional_security_questions");
+        result.addObject("noIndex", true);
+        return result;
     }
 
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)

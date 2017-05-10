@@ -567,7 +567,7 @@
   <div class="lightbox-container">
     <div class="row">
       <div class="col-md-12 col-sm-12 col-xs-12">
-        <h4><@orcid.msg 'workspace.sent'/></h4>
+        <h4><@orcid.msg 'manage.email.verificationEmail'/> {{emailsPojo.emails[0].value}}</h4>
         <@orcid.msg 'workspace.check_your_email'/><br />
         <br />
         <button class="btn" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btnclose'/></button>
