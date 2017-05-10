@@ -52,7 +52,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
 
-    @Value("${org.orcid.frontend.outhSignin.showLogin.default:false}")
+    @Value("${org.orcid.frontend.oauthSignin.showLogin.default:true}")
     private boolean showLoginDefault;
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
