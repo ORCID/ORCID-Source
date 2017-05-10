@@ -23,7 +23,7 @@
  *  - 3 - Angular Services
  *  - 4 - Angular Controllers
  *  - 5 - Angular Filters
- *  - 6 - Angular DirectivesgetClaim
+ *  - 6 - Angular Directives
  *  - 7 - Angular Multiselect Module
  *  
  */
