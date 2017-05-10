@@ -4,7 +4,7 @@ angular.module('orcidApp').controller('PersonalInfoCtrl', ['$scope', '$compile',
     $scope.toggleDisplayInfo = function () {
         $scope.displayInfo = !$scope.displayInfo;
     };
-    var lastModified = orcidVar.lastModified;
-    var lastModifiedNoCommas = lastModified.replace(/,/g , "");
-    $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedNoCommas));
+
+    var lastModifiedTimeString = orcidVar.lastModified.replace(/,/g , "");
+    $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedTimeString));
 }]);
