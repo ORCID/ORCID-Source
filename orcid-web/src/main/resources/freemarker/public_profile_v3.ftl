@@ -311,9 +311,11 @@
 			             </div>	                
 		            </#if>
 				</#if>
-				<div id="public-last-modified" class="workspace-section">
-			    	<p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>					
-				</div>
+				<@orcid.checkFeatureStatus 'LAST_MOD'>
+					<div id="public-last-modified" class="workspace-section">
+				    	<p class="small italic">${springMacroRequestContext.getMessage("public_profile.labelLastModified")} {{lastModifiedDate}}</p>					
+					</div>
+				</ @orcid.checkFeatureStatus>
 	        </div>
         </div>
     </div>
