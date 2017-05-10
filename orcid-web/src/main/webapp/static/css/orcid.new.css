@@ -2584,8 +2584,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .lightbox-container {
-    /*padding: 5px 15px 30px;*/
-    padding: 0;
+    padding: 5px 15px 30px;
 }
 
 .lightbox-container .cancel-option{

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="UPDATE-CLIENT-REDIRECT-URI" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN redirect_uri TYPE text;</sql>
+		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN predefined_client_redirect_scope TYPE text;</sql>
+		<sql>ALTER TABLE client_redirect_uri ALTER COLUMN redirect_uri_type TYPE text;</sql>
+	</changeSet>
+
+	<changeSet id="UPDATE-CUSTOM-EMAIL" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE custom_email ALTER COLUMN sender TYPE text;</sql>
+		<sql>ALTER TABLE custom_email ALTER COLUMN subject TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-EMAIL" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE email ALTER COLUMN email TYPE text;</sql>																		
+	</changeSet>
+
+	<changeSet id="UPDATE-EMAIL-EVENT" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE email_event ALTER COLUMN email TYPE text;</sql>
+	</changeSet>
+
+	<changeSet id="UPDATE-EXTERNAL-IDENTIFIER" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE external_identifier ALTER COLUMN external_id_reference TYPE text;</sql>
+		<sql>ALTER TABLE external_identifier ALTER COLUMN external_id_type TYPE text;</sql>
+		<sql>ALTER TABLE external_identifier ALTER COLUMN external_id_url TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-FUNDING-SUBTYPE-TO-INDEX" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE funding_subtype_to_index ALTER COLUMN subtype TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-GROUP-ID-RECORD" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE group_id_record ALTER COLUMN group_id TYPE text;</sql>
+		<sql>ALTER TABLE group_id_record ALTER COLUMN group_name TYPE text;</sql>
+		<sql>ALTER TABLE group_id_record ALTER COLUMN group_description TYPE text;</sql>
+		<sql>ALTER TABLE group_id_record ALTER COLUMN group_type TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-IDENTIFIER-TYPE" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE identifier_type ALTER COLUMN id_name TYPE text;</sql>
+		<sql>ALTER TABLE identifier_type ALTER COLUMN id_validation_regex TYPE text;</sql>
+		<sql>ALTER TABLE identifier_type ALTER COLUMN id_resolution_prefix TYPE text;</sql>
+		<sql>ALTER TABLE identifier_type ALTER COLUMN primary_use TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-IDENTITY-PROVIDER" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE identity_provider ALTER COLUMN providerid TYPE text;</sql>
+		<sql>ALTER TABLE identity_provider ALTER COLUMN display_name TYPE text;</sql>
+		<sql>ALTER TABLE identity_provider ALTER COLUMN support_email TYPE text;</sql>
+		<sql>ALTER TABLE identity_provider ALTER COLUMN admin_email TYPE text;</sql>
+		<sql>ALTER TABLE identity_provider ALTER COLUMN tech_email TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-IDENITY-PROVIDER-NAME" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE identity_provider_name ALTER COLUMN display_name TYPE text;</sql>
+		<sql>ALTER TABLE identity_provider_name ALTER COLUMN lang TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-NOTIFICATION" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE notification ALTER COLUMN notification_type TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN subject TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN authorization_url TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN lang TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN amended_section TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN notification_intro TYPE text;</sql>
+		<sql>ALTER TABLE notification ALTER COLUMN authentication_provider_id TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-NOTIFICATION-ITEM" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE notification_item ALTER COLUMN item_type TYPE text;</sql>
+		<sql>ALTER TABLE notification_item ALTER COLUMN item_name TYPE text;</sql>
+		<sql>ALTER TABLE notification_item ALTER COLUMN external_id_type TYPE text;</sql>
+		<sql>ALTER TABLE notification_item ALTER COLUMN external_id_value TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-ORG-AFFILIATION-RELATION" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN org_affiliation_relation_role TYPE text;</sql>
+		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN org_affiliation_relation_title TYPE text;</sql>
+		<sql>ALTER TABLE org_affiliation_relation ALTER COLUMN department TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-OTHER-NAME" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE other_name ALTER COLUMN display_name TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-PEER-REVIEW" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE peer_review ALTER COLUMN peer_review_role TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN peer_review_type TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN url TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_type TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_container_name TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_name TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_translated_name TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_translated_name_language_code TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN subject_url TYPE text;</sql>
+		<sql>ALTER TABLE peer_review ALTER COLUMN group_id TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-PEER-REVIEW-SUBJECT" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN title TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN work_type TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN sub_title TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN translated_title TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN translated_title_language_code TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN url TYPE text;</sql>
+		<sql>ALTER TABLE peer_review_subject ALTER COLUMN journal_title TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-PROFILE" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE profile ALTER COLUMN reason_locked TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-PROFILE-EVENT" author="Angel Montenegro" dbms="postgresql">		
+		<sql>ALTER TABLE profile_event ALTER COLUMN comment TYPE text;</sql>
+	</changeSet>
+
+	<changeSet id="UPDATE-PROFILE-FUNDING" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE profile_funding ALTER COLUMN title TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN type TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN translated_title TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN translated_title_language_code TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN description TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN url TYPE text;</sql>
+		<sql>ALTER TABLE profile_funding ALTER COLUMN organization_defined_type TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-PROFILE-KEYWORD" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE profile_keyword ALTER COLUMN keywords_name TYPE text;</sql>
+	</changeSet>
+
+	<changeSet id="UPDATE-RECORD-NAME" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE record_name ALTER COLUMN credit_name TYPE text;</sql>
+		<sql>ALTER TABLE record_name ALTER COLUMN family_name TYPE text;</sql>
+		<sql>ALTER TABLE record_name ALTER COLUMN given_names TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-RESEARCHER-URL" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE researcher_url ALTER COLUMN url TYPE text;</sql>
+		<sql>ALTER TABLE researcher_url ALTER COLUMN url_name TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-SALESFORCE-CONNECTION" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE salesforce_connection ALTER COLUMN email TYPE text;</sql>
+		<sql>ALTER TABLE salesforce_connection ALTER COLUMN salesforce_account_id TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-SHIBBOLETH-ACCOUNT" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE shibboleth_account ALTER COLUMN remote_user TYPE text;</sql>
+		<sql>ALTER TABLE shibboleth_account ALTER COLUMN shib_identity_provider TYPE text;</sql>		
+	</changeSet>
+
+	<changeSet id="UPDATE-SUBJECT" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE subject ALTER COLUMN name TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-USERCONNECTION" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE userconnection ALTER COLUMN userid TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN email TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN providerid TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN provideruserid TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN displayname TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN profileurl TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN imageurl TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN accesstoken TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN secret TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN refreshtoken TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN id_type TYPE text;</sql>
+		<sql>ALTER TABLE userconnection ALTER COLUMN status TYPE text;</sql>		
+	</changeSet>
+	
+	<changeSet id="UPDATE-WEBHOOK" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE webhook ALTER COLUMN uri TYPE text;</sql>
+	</changeSet>
+	
+	<changeSet id="UPDATE-WORK" author="Angel Montenegro" dbms="postgresql">
+		<sql>ALTER TABLE work ALTER COLUMN title TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN subtitle TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN description TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN work_url TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN work_type TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN citation_type TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN journal_title TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN language_code TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN translated_title TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN translated_title_language_code TYPE text;</sql>
+		<sql>ALTER TABLE work ALTER COLUMN iso2_country TYPE text;</sql>	
+	</changeSet>
+
+</databaseChangeLog>
