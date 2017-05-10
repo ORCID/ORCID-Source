@@ -245,6 +245,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
+        mav.addObject("lastModifiedTime", lastModifiedTime);
 
         boolean isProfileEmtpy = true;
 

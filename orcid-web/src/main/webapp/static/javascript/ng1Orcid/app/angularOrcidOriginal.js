@@ -23,7 +23,7 @@
  *  - 3 - Angular Services
  *  - 4 - Angular Controllers
  *  - 5 - Angular Filters
- *  - 6 - Angular Directives
+ *  - 6 - Angular DirectivesgetClaim
  *  - 7 - Angular Multiselect Module
  *  
  */
@@ -5074,9 +5074,13 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', function ($scope){
     
 }]);
 
-angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
+angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', 'utilsService', function ($scope, $compile, $window, utilsService) {
     $scope.showSources = new Array();
     $scope.showPopover = new Array();
+
+    var lastModified = orcidVar.lastModified;
+    var lastModifiedNoCommas = lastModified.replace(/,/g , "");
+    $scope.lastModifiedDate = utilsService.formatDate(Number(lastModifiedNoCommas));
 
     $scope.printRecord = function(url){
         //open window

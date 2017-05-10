@@ -26,7 +26,8 @@
 	            <h2 class="full-name">	            	
 					${(displayName)!}	                
 	            </h2>	            	            
-	            
+	             <div>
+				</div>
 	            <div class="oid">
 					<div class="id-banner-header">
 						<span><@orcid.msg 'common.orcid_id' /></span>
@@ -310,6 +311,9 @@
 			             </div>	                
 		            </#if>
 				</#if>
+				<div class="workspace-section">
+			    	<p class="small italic">Record last modified: {{lastModifiedDate}}</p>					
+				</div>
 	        </div>
         </div>
     </div>
