@@ -9,8 +9,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <nodejs.workingDirectory>~/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid/</nodejs.workingDirectory>
-        <webpack.output>~/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript/angular_orcid_generated.js</webpack.output>
+        <nodejs.workingDirectory>~/git/ORCID-Source/orcid-web/static/javascript/ng1Orcid</nodejs.workingDirectory>
+        <webpack.output>~/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/orcid-web/static/javascript</webpack.output>
+        <webpack.watch>true</webpack.watch>
     </properties>
     <artifactId>orcid-nodejs</artifactId>
     <name>ORCID - NodeJS</name>
@@ -62,7 +63,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <arguments>--debug --config ${nodejs.workingDirectory}/webpack.config.js --output-path ${webpack.output} --output-filename angular_orcid_generated.js</arguments>
+                            <arguments>--debug --config ${nodejs.workingDirectory}/webpack.config.js --watch ${webpack.watch} --output-path ${webpack.output} --output-filename angular_orcid_generated.js</arguments>
                         </configuration>
                     </execution>
                 </executions>
