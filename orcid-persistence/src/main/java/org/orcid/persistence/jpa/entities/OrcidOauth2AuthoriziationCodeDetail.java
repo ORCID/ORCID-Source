@@ -59,6 +59,10 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
     private ProfileEntity profileEntity;
     private String sessionId;
     private Boolean authenticated;
+    
+    //openID connect
+    private String nonce;
+    private String maxAge;
 
     @Override
     @Id
@@ -197,5 +201,21 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
+    }
+
+    public String getMaxAge() {
+        return maxAge;
+    }
+
+    public void setMaxAge(String maxAge) {
+        this.maxAge = maxAge;
     }
 }
