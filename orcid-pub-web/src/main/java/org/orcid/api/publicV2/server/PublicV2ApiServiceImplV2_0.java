@@ -51,6 +51,8 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.USER_INFO;
+import static org.orcid.core.api.OrcidApiConstants.JWKS;
 
 import java.util.List;
 import java.util.Map;
@@ -427,5 +429,21 @@ public class PublicV2ApiServiceImplV2_0 {
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/client-2.0.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
+    }
+    
+    @GET
+    @Path(USER_INFO)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @ApiOperation(value = "Fetch OpenID Connect information for the current user")
+    public Response viewUserInfo() {
+        return serviceDelegator.viewUserInfo();
+    }
+    
+    @GET
+    @Path(JWKS)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @ApiOperation(value = "Fetch OpenID Connect Javascript Web Key information")
+    public Response viewJWKS() {
+        return serviceDelegator.viewJWKS();
     }
 }

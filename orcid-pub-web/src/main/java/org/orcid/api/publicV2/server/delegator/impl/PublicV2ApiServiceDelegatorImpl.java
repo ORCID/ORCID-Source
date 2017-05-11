@@ -56,6 +56,8 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
+import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.oauth.openid.UserInfo;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -63,6 +65,7 @@ import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
@@ -197,6 +200,9 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private OpenIDConnectKeyService openIDConnectKeyService;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -654,5 +660,18 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewClient(String clientId) {
         Client client = clientDetailsManager.getClient(clientId);
         return Response.ok(client).build();
+    }
+
+    @Override
+    public Response viewUserInfo() {
+        String orcid = orcidSecurityManager.getOrcidFromToken();        
+        Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
+        publicAPISecurityManagerV2.filter(person);
+        return Response.ok(new UserInfo(orcid,person)).build();
+    }
+
+    @Override
+    public Response viewJWKS() {        
+        return Response.ok(openIDConnectKeyService.getPublicJWK()).build();
     }
 }

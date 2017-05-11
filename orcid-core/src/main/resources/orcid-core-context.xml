@@ -69,13 +69,12 @@
         <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
-	<!-- <bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" /> 
-	 -->
+	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
 	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
 		<property name="tokenEnhancers">
 		<list>
 			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
-			<bean class="org.orcid.core.oauth.OpenIDConnectTokenEnhancer" />
+			<bean class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer" />
 		</list>
 		</property>
 	</bean>

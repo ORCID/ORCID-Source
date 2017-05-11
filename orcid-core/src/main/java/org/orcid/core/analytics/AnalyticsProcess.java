@@ -110,6 +110,8 @@ public class AnalyticsProcess implements Runnable {
     }
 
     private String maskIp(String ip) {
+        if (ip == null)
+            return "";
         return ip.substring(0, ip.lastIndexOf(".")) + ".0";
     }
 

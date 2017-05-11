@@ -1,35 +1,26 @@
 package org.orcid.core.oauth.openid;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.service.OpenIDConnectKeyService;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.KeyLengthException;
-import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 
+@Component
 public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
@@ -51,12 +42,9 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         Map<String,String> params = authentication.getOAuth2Request().getRequestParameters();
         
         //inject the OpenID Connect "id_token" (authn).  This is distinct from the access token (authz), so is for transporting info to the client only
-        //this means we do not have to support using them for authentication purposes.  Yay!        
-        //Some APIs support it, but it is not part of the spec.          
+        //this means we do not have to support using them for authentication purposes. Some APIs support it, but it is not part of the spec.          
         try {
             //shared secret for signing. Use HMAC as we can do it with existing keys and not certs
-            ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(authentication.getOAuth2Request().getClientId());
-            JWSSigner signer = new MACSigner(StringUtils.rightPad(clientEntity.getDecryptedClientSecret(), 32, "#").getBytes());
             Builder claims = new JWTClaimsSet.Builder();
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
             claims.subject(accessToken.getAdditionalInformation().get("orcid").toString());
@@ -69,18 +57,11 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
                 //When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
                 //This is a privacy leak and probably should not be implemented.
                 //However, not implementing it means we cannot conform with spec.
-            }            
-            
-            
-            SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims.build());
-            signedJWT.sign(signer);            
+            }                                                    
+            SignedJWT signedJWT = keyManager.sign(claims.build());
             String idTok = signedJWT.serialize();
             accessToken.getAdditionalInformation().put("id_token", idTok);
-        } catch (KeyLengthException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (JOSEException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
@@ -89,5 +70,6 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         return accessToken;
         
     }
+    
         //during authn prompt=login and prompt=none must be honored
 }

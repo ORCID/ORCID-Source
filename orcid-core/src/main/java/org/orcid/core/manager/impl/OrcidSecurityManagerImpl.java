@@ -752,4 +752,27 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
         }
     }
+    
+    @Override
+    public String getOrcidFromToken(){
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if (oAuth2Authentication == null) {
+            throw new OrcidUnauthorizedException("No OAuth2 authentication found");
+        }
+        
+        checkScopes(ScopePathType.AUTHENTICATE);
+        
+        Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+        if (userAuthentication != null) {
+            Object principal = userAuthentication.getPrincipal();
+            if (principal instanceof ProfileEntity) {
+                ProfileEntity profileEntity = (ProfileEntity) principal;
+                return profileEntity.getId();
+            } else {
+                throw new OrcidUnauthorizedException("Missing user authentication");
+            }
+        } else {
+            throw new IllegalStateException("Non client credential scope found in client request");
+        }
+    }
 }
