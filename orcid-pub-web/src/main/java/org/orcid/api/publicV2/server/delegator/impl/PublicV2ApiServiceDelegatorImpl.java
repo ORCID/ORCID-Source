@@ -672,6 +672,6 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewJWKS() {        
-        return Response.ok(openIDConnectKeyService.getPublicJWK()).build();
+        return Response.ok(openIDConnectKeyService.getPublicJWK().toJSONObject()).build();
     }
 }
