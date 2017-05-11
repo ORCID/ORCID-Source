@@ -1,7 +1,7 @@
 /**
  * =============================================================================
  *
-integra * ORCID (R) Open Source
+ * ORCID (R) Open Source
  * http://orcid.org
  *
  * Copyright (c) 2012-2014 ORCID, Inc.
