@@ -1,7 +1,7 @@
 /**
  * =============================================================================
  *
- * ORCID (R) Open Source
+integra * ORCID (R) Open Source
  * http://orcid.org
  *
  * Copyright (c) 2012-2014 ORCID, Inc.
@@ -410,7 +410,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='%s'",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
                 memberId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
