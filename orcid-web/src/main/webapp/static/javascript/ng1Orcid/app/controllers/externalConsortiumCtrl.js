@@ -7,6 +7,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.addSubMemberShowLoader = false;
     $scope.membersListSrvc = membersListSrvc;
     $scope.consortium = null;
+    $scope.contacts = null;
     $scope.input = {};
     $scope.showInitLoader = true;
     $scope.updateConsortiumDisabled = false;
@@ -70,6 +71,24 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          window.location.reload();
     };
     
+    /**
+     * GET
+     * */
+    $scope.getContacts = function() {
+         $.ajax({
+              url: getBaseUri()+'/manage-consortium/get-contacts.json',
+              type: 'GET',
+              dataType: 'json',
+              success: function(data){
+                    $scope.contacts = data;
+                    $scope.$apply();
+              }
+         }).fail(function(error) {
+              // something bad is happening!
+              console.log("Error getting the contacts");
+         });
+    };
+    
     $scope.search = function(){
         $('#invalid-email-alert').hide();
         if(utilsService.isEmail($scope.input.text)){
@@ -122,7 +141,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data: angular.toJson(addContact),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
-                $scope.getConsortium();
+                $scope.getContacts();
                 $scope.addContactDisabled = false;
                 $scope.input.text = "";
                 $scope.$apply();
@@ -156,7 +175,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             data:  angular.toJson($scope.contactToRevoke),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
-                $scope.getConsortium();
+                $scope.getContacts();
                 $scope.$apply();
                 $scope.closeModal();
             }
@@ -271,5 +290,6 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     
     // Init
     $scope.getConsortium();
+    $scope.getContacts();
     
 }]);

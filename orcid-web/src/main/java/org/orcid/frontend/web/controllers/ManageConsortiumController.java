@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -90,10 +91,6 @@ public class ManageConsortiumController extends BaseController {
         String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
-        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
-        salesForceManager.addOrcidsToContacts(contactsList);
-        consortiumForm.setContactsList(contactsList);
-        consortiumForm.setRoleMap(generateSalesForceRoleMap());
         return consortiumForm;
     }
 
@@ -107,6 +104,17 @@ public class ManageConsortiumController extends BaseController {
         }
         salesForceManager.updateMember(member);
         return consortium;
+    }
+    
+    @RequestMapping(value = "/get-contacts.json", method = RequestMethod.GET)
+    public @ResponseBody ContactsForm getContacts() {
+        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        ContactsForm contactsForm = new ContactsForm();
+        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        contactsForm.setContactsList(contactsList);
+        contactsForm.setRoleMap(generateSalesForceRoleMap());
+        return contactsForm;
     }
 
     @RequestMapping(value = "/add-contact-by-email.json")
@@ -141,6 +149,18 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);
         return contact;
+    }
+    
+    @RequestMapping(value = "/update-contacts.json", method = RequestMethod.POST)
+    public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
+        contactsForm.getContactsList().forEach(c -> salesForceManager.updateContact(c));
+        return contactsForm;
+    }
+    
+    @RequestMapping(value = "/validate-contacts.json", method = RequestMethod.POST)
+    public @ResponseBody ContactsForm validateContacts(@RequestBody ContactsForm contactsForm) {
+        // XXX Validation here
+        return contactsForm;
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)

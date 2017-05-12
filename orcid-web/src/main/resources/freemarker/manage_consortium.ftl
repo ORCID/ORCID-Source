@@ -111,7 +111,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="contact in consortium.contactsList">
+                            <tr ng-repeat="contact in contacts.contactsList">
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
