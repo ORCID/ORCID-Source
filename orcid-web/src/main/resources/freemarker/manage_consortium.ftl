@@ -118,7 +118,6 @@
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
-								     	ng-change="update(contact)">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
@@ -139,6 +138,14 @@
                             </tr>
                         </tbody>
                     </table>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button id="bottom-confirm-update-contacts" class="btn btn-primary" ng-click="updateContacts()" ng-disabled="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
+	                        <a href="" class="cancel-right" ng-click="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
+	                    </div>
+	                </div>
                     <div class="bottomBuffer">
                     	<h3>
                         	<@spring.message "manage_consortium.add_contacts_heading"/>

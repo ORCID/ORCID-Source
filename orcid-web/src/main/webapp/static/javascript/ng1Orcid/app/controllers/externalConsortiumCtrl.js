@@ -12,6 +12,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.showInitLoader = true;
     $scope.updateConsortiumDisabled = false;
     $scope.updateConsortiumShowLoader = false;
+    $scope.updateContactsDisabled = false;
+    $scope.updateContactsShowLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
     $scope.toggleFindConsortiumModal = function() {
@@ -86,6 +88,32 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          }).fail(function(error) {
               // something bad is happening!
               console.log("Error getting the contacts");
+         });
+    };
+    
+    $scope.updateContacts = function() {
+        $scope.updateContactsShowLoader = true;
+        $scope.updateContactsDisabled = true;
+         $.ajax({
+              url: getBaseUri()+'/manage-consortium/update-contacts.json',
+              contentType: 'application/json;charset=UTF-8',
+              type: 'POST',
+              dataType: 'json',
+              data: angular.toJson($scope.contacts),
+              success: function(data){
+                    $scope.updateContactsShowLoader = false;
+                    $scope.updateContactsDisabled = false;
+                    $scope.$apply(function(){
+                         if(data.errors.length == 0){
+                              $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
+                         } else {
+                              $scope.contacts = data;
+                         }
+                    });
+              }
+         }).fail(function(error) {
+              // something bad is happening!
+              console.log("Error updating the contacts");
          });
     };
     

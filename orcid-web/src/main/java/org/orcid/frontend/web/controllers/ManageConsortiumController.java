@@ -154,7 +154,7 @@ public class ManageConsortiumController extends BaseController {
     @RequestMapping(value = "/update-contacts.json", method = RequestMethod.POST)
     public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
         contactsForm.getContactsList().forEach(c -> salesForceManager.updateContact(c));
-        return contactsForm;
+        return getContacts();
     }
     
     @RequestMapping(value = "/validate-contacts.json", method = RequestMethod.POST)
