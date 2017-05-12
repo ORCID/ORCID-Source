@@ -91,6 +91,24 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          });
     };
     
+    $scope.validateContacts = function() {
+         $.ajax({
+              url: getBaseUri()+'/manage-consortium/validate-contacts.json',
+              contentType: 'application/json;charset=UTF-8',
+              type: 'POST',
+              dataType: 'json',
+              data: angular.toJson($scope.contacts),
+              success: function(data){
+                    $scope.$apply(function(){
+                        $scope.contacts.errors = data.errors;
+                    });
+              }
+         }).fail(function(error) {
+              // something bad is happening!
+              console.log("Error validating the contacts");
+         });
+    };
+    
     $scope.updateContacts = function() {
         $scope.updateContactsShowLoader = true;
         $scope.updateContactsDisabled = true;

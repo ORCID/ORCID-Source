@@ -104,6 +104,9 @@
                     <p>
                         <@spring.message "manage_consortium.contacts_text"/>
                     </p>
+                    <span class="orcid-error" ng-show="contacts.errors.length > 0">
+                        <div ng-repeat='error in contacts.errors' ng-bind-html="error"></div>
+                    </span>
                     <table>
                         <thead>
                             <tr>
@@ -118,6 +121,7 @@
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
+								     	ng-change="validateContacts()">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
