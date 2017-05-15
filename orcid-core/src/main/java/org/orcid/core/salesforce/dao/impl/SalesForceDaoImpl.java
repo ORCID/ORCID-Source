@@ -447,7 +447,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
         WebResource resource = createQueryResource(
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c From Membership_Contact_Roles__r Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
                 accountId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);

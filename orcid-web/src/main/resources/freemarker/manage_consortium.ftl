@@ -110,7 +110,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Role</th>
+                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Voting contact</th><th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,6 +118,7 @@
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
+                                <td>{{contact.votingContact}}</td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"

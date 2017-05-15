@@ -18,6 +18,7 @@ package org.orcid.core.salesforce.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -152,6 +153,7 @@ public class SalesForceAdapterTest {
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
+        assertTrue(contact.isVotingContact());
     }
 
     @Test
@@ -164,6 +166,7 @@ public class SalesForceAdapterTest {
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
+        assertTrue(contact.isVotingContact());
     }
 
     @Test

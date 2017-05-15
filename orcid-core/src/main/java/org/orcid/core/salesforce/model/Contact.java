@@ -33,6 +33,7 @@ public class Contact implements Serializable {
     private String lastName;
     private String email;
     private ContactRole role;
+    private Boolean isVotingContact;
     private String orcid;
 
     public String getId() {
@@ -91,6 +92,14 @@ public class Contact implements Serializable {
         return ContactRoleType.MAIN_CONTACT.equals(role);
     }
 
+    public Boolean isVotingContact() {
+        return isVotingContact;
+    }
+
+    public void setVotingContact(Boolean isVotingContact) {
+        this.isVotingContact = isVotingContact;
+    }
+
     public String getOrcid() {
         return orcid;
     }
@@ -102,7 +111,7 @@ public class Contact implements Serializable {
     @Override
     public String toString() {
         return "Contact [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", role=" + role
-                + ", orcid=" + orcid + "]";
+                + ", isVotingContact=" + isVotingContact + ", orcid=" + orcid + "]";
     }
 
 }
