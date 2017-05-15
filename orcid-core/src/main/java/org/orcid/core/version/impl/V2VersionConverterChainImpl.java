@@ -31,9 +31,9 @@ import org.orcid.core.version.V2VersionConverterChain;
  */
 public class V2VersionConverterChainImpl implements V2VersionConverterChain {
 
-    private List<V2VersionConverter> converters;
-    private List<V2VersionConverter> descendingConverters;
-    private ArrayList<String> versionIndex;
+    protected List<V2VersionConverter> converters;
+    protected List<V2VersionConverter> descendingConverters;
+    protected ArrayList<String> versionIndex;
 
     public void setConverters(List<V2VersionConverter> converters) {
         this.converters = converters;
@@ -79,7 +79,7 @@ public class V2VersionConverterChainImpl implements V2VersionConverterChain {
         return objectToUpgrade;
     }
 
-    private int compareVersion(String v1, String v2) {
+    protected int compareVersion(String v1, String v2) {
         if (versionIndex.indexOf(v1) < versionIndex.indexOf(v2)) {
             return -1;
         } else if (versionIndex.indexOf(v1) > versionIndex.indexOf(v2)) {
