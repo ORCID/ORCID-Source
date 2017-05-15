@@ -30,7 +30,7 @@
 
 console.log("testmjc6");
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
+angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
 
 angular.element(function() {
     angular.bootstrap(

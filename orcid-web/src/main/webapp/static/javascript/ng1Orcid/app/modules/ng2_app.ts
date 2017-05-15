@@ -1,27 +1,31 @@
 import 'reflect-metadata';
 
-import {NgModule, Component} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-//import {UpgradeModule} from '@angular/upgrade/static';
+import { NgModule, Component } from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser";
+import { UpgradeModule } from '@angular/upgrade/static';
 
 @Component({
-  selector: 'root-cmp',
-  template: `
-    <div class="ng-view"></div>
-  `,
+    selector: 'ng2-comp',
+    template: '<div>{{value}}</div>'
 }) 
-export class RootCmp {}
+export class Ng2Comp {
+    private value;
 
-@NgModule({
-  imports: [
-    //BrowserModule,
-    //UpgradeModule
-  ]//,
-  //bootstrap: [RootCmp],
-  //declarations: [RootCmp]
-})
-export class Ng2AppModule {
-  //constructor(public upgrade: UpgradeModule){}
-  //ngDoBootstrap() {}
+    constructor() {
+        this.value = "Success ng2"
+    }
+
+    ngDoBootstrap() {}
 }
 
+@NgModule({
+    imports: [
+        BrowserModule,
+        UpgradeModule
+    ],
+    bootstrap: [Ng2Comp],
+    declarations: [Ng2Comp]
+})
+export class Ng2AppModule {
+    constructor(public upgrade: UpgradeModule){}
+}
