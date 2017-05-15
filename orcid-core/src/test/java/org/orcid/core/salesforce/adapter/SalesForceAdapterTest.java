@@ -153,7 +153,7 @@ public class SalesForceAdapterTest {
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
-        assertTrue(contact.isVotingContact());
+        assertTrue(contact.getRole().isVotingContact());
     }
 
     @Test
@@ -166,7 +166,7 @@ public class SalesForceAdapterTest {
         assertEquals("Contact1FirstName Contact1LastName", contact.getName());
         assertEquals("contact1@mailinator.com", contact.getEmail());
         assertEquals(ContactRoleType.MAIN_CONTACT, contact.getRole().getRoleType());
-        assertTrue(contact.isVotingContact());
+        assertTrue(contact.getRole().isVotingContact());
     }
 
     @Test

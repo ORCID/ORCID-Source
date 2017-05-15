@@ -124,9 +124,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                     $scope.$apply(function(){
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
-                         } else {
-                              $scope.contacts = data;
                          }
+                         $scope.contacts = data;
                     });
               }
          }).fail(function(error) {

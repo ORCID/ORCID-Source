@@ -144,6 +144,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public void updateContact(Contact contact) {
+        retryConsumer(accessToken -> updateContactInSalesForce(accessToken, contact));
+    }
+
+    @Override
     public String createContactRole(ContactRole contact) {
         return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
     }
@@ -207,6 +212,20 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact in SalesForce");
         return result.optString("id");
+    }
+
+    private void updateContactInSalesForce(String accessToken, Contact contact) {
+        LOGGER.info("About update contact in SalesForce");
+        String contactId = contact.getId();
+        validateSalesForceId(contactId);
+        WebResource resource = createObjectsResource("/Contact/", contactId).queryParam("_HttpMethod", "PATCH");
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
+        // SalesForce doesn't allow the Id in the body
+        contactJson.remove("Id");
+        ClientResponse response = doPostRequest(resource, contactJson, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error updating contact in SalesForce");
+        return;
     }
 
     private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {

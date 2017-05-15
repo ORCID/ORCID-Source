@@ -305,12 +305,17 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void updateContact(Contact contact) {
         String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
+        if (roles.stream().noneMatch(r -> r.getContactId().equals(contact.getId()))) {
+            // The user should not be able to update this contact
+            return;
+        }
         salesForceDao.removeContactRole(contact.getRole().getId());
         if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRoleType()))) {
             ContactRole contactRole = new ContactRole();
             contactRole.setAccountId(accountId);
             contactRole.setContactId(contact.getId());
             contactRole.setRoleType(contact.getRole().getRoleType());
+            contactRole.setVotingContact(contact.getRole().isVotingContact());
             String contactRoleId = salesForceDao.createContactRole(contactRole);
             contact.getRole().setId(contactRoleId);
         }
