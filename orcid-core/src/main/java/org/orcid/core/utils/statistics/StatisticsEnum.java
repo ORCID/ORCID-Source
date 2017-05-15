@@ -42,7 +42,7 @@ public enum StatisticsEnum {
      * Annoyingly this can only be an inline static final if we want it to work
      * There is a unit test to check it correctly contains all values in declared order
      */
-    public static final String allowableSwaggerValues = "liveIds,idsWithExternalId,idsWithEducation,idsWithEmployment,idsWithFunding,idsWithPeerReview,idsWithPersonId,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,uniqueDois,employment,employmentUniqueOrg,education,educationUniqueOrg,funding,fundingUniqueOrg,peerReview,personId";
+    public static final String allowableSwaggerValues = "liveIds,idsWithEducation,idsWithEmployment,idsWithExternalId,idsWithFunding,idsWithPeerReview,idsWithPersonId,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,uniqueDois,employment,employmentUniqueOrg,education,educationUniqueOrg,funding,fundingUniqueOrg,peerReview,personId";
     
     private final String value;
 
