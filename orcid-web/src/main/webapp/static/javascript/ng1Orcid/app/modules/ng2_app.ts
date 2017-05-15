@@ -1,9 +1,8 @@
 import 'reflect-metadata';
 
 import {NgModule, Component} from '@angular/core';
-import {Router, RouterModule, UrlHandlingStrategy} from '@angular/router';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeModule} from '@angular/upgrade/static';
+//import {UpgradeModule} from '@angular/upgrade/static';
 
 @Component({
   selector: 'root-cmp',
@@ -15,14 +14,14 @@ export class RootCmp {}
 
 @NgModule({
   imports: [
-    BrowserModule,
-    UpgradeModule
-  ],
-  bootstrap: [RootCmp],
-  declarations: [RootCmp]
+    //BrowserModule,
+    //UpgradeModule
+  ]//,
+  //bootstrap: [RootCmp],
+  //declarations: [RootCmp]
 })
 export class Ng2AppModule {
-  constructor(public upgrade: UpgradeModule){}
+  //constructor(public upgrade: UpgradeModule){}
   //ngDoBootstrap() {}
 }
 

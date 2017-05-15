@@ -28,6 +28,8 @@
  *  
  */
 
+console.log("testmjc6");
+
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
 
 angular.element(function() {
