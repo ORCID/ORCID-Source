@@ -4859,7 +4859,6 @@ angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoS
     
 }]);
 
-
 angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
     $scope.showSources = new Array();
     $scope.showPopover = new Array();

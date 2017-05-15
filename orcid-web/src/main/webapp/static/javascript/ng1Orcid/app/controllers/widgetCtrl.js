@@ -3,7 +3,6 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', function ($scope){
     $scope.showCode = false;
 
     $scope.widgetURLND = '<a href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="_blank" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">' + getBaseUri() + '/' + orcidVar.orcidId + '</a>';
-    orcid.show
     $scope.inputTextAreaSelectAll = function($event){
         $event.target.select();
     }
