@@ -18,6 +18,12 @@ package org.orcid.core.utils.statistics;
 
 public enum StatisticsEnum {
     KEY_LIVE_IDS("liveIds"), 
+    KEY_IDS_WITH_EDUCATION("idsWithEducation"),
+    KEY_IDS_WITH_EMPLOYMENT("idsWithEmployment"),
+    KEY_IDS_WITH_EXTERNAL_ID("idsWithExternalId"),
+    KEY_IDS_WITH_FUNDING("idsWithFunding"),
+    KEY_IDS_WITH_PEER_REVIEW("idsWithPeerReview"),
+    KEY_IDS_WITH_PERSON_ID("idsWithPersonId"),
     KEY_IDS_WITH_VERIFIED_EMAIL("idsWithVerifiedEmail"),
     KEY_IDS_WITH_WORKS("idsWithWorks"),
     KEY_NUMBER_OF_WORKS("works"),
@@ -28,13 +34,15 @@ public enum StatisticsEnum {
     KEY_NUMBER_OF_EDUCATION("education"),
     KEY_EDUCATION_UNIQUE_ORG("educationUniqueOrg"),
     KEY_NUMBER_OF_FUNDING("funding"),
-    KEY_FUNDING_UNIQUE_ORG("fundingUniqueOrg");
+    KEY_FUNDING_UNIQUE_ORG("fundingUniqueOrg"),
+    KEY_NUMBER_OF_PEER_REVIEW("peerReview"),
+    KEY_NUMBER_OF_PERSON_ID("personId");
     
     /** For use as allowable values list for swagger
      * Annoyingly this can only be an inline static final if we want it to work
      * There is a unit test to check it correctly contains all values in declared order
      */
-    public static final String allowableSwaggerValues = "liveIds,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,uniqueDois,employment,employmentUniqueOrg,education,educationUniqueOrg,funding,fundingUniqueOrg";
+    public static final String allowableSwaggerValues = "liveIds,idsWithExternalId,idsWithEducation,idsWithEmployment,idsWithFunding,idsWithPeerReview,idsWithPersonId,idsWithVerifiedEmail,idsWithWorks,works,worksWithDois,uniqueDois,employment,employmentUniqueOrg,education,educationUniqueOrg,funding,fundingUniqueOrg,peerReview,personId";
     
     private final String value;
 
