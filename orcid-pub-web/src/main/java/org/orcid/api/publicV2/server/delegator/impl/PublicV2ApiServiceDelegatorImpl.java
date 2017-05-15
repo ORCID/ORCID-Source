@@ -664,6 +664,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewUserInfo() {
+        orcidSecurityManager.checkScopes(ScopePathType.OPENID);  
         String orcid = orcidSecurityManager.getOrcidFromToken();        
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
