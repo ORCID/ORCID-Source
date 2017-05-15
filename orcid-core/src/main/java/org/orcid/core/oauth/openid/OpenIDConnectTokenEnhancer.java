@@ -13,14 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 
-@Component
 public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     
     @Value("${org.orcid.core.token.read_validity_seconds:631138519}")
@@ -52,7 +50,8 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             claims.expirationTime(accessToken.getExpiration());
             claims.issueTime(new Date());
             claims.jwtID(UUID.randomUUID().toString());
-            claims.claim("nonce", params.get("nonce"));
+            if (params.get("nonce") != null)
+                claims.claim("nonce", params.get("nonce"));
             if (params.get("max_age") != null){
                 //When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
                 //This is a privacy leak and probably should not be implemented.

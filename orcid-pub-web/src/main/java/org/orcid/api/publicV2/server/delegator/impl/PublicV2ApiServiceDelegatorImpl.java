@@ -57,7 +57,7 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
-import org.orcid.core.oauth.openid.UserInfo;
+import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -667,7 +667,7 @@ public class PublicV2ApiServiceDelegatorImpl
         String orcid = orcidSecurityManager.getOrcidFromToken();        
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
-        return Response.ok(new UserInfo(orcid,person)).build();
+        return Response.ok(new OpenIDConnectUserInfo(orcid,person)).build();
     }
 
     @Override

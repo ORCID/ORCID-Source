@@ -70,11 +70,12 @@
     </bean>
 	
 	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
+	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
 	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
 		<property name="tokenEnhancers">
 		<list>
 			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
-			<bean class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer" />
+			<ref bean="openIDConnectTokenEnhancer" />
 		</list>
 		</property>
 	</bean>
