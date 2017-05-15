@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
 import { UpgradeModule } from '@angular/upgrade/static';
+import { EmailFrequencyCtrlNg2Module } from './../controllers/EmailFrequencyCtrl.ts'
 
 @Component({
     selector: 'ng2-comp',
@@ -21,7 +22,8 @@ export class Ng2Comp {
 @NgModule({
     imports: [
         BrowserModule,
-        UpgradeModule
+        UpgradeModule,
+        EmailFrequencyCtrlNg2Module
     ],
     bootstrap: [Ng2Comp],
     declarations: [Ng2Comp]

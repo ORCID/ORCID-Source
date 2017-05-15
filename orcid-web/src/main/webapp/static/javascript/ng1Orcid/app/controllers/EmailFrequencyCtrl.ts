@@ -16,4 +16,4 @@ export const EmailFrequencyCtrl = angular.module('orcidApp').controller('EmailFr
 
 // This is the Angular 2 part of the module
 @NgModule({})
-export class EmailFrequencyCtrl {}
+export class EmailFrequencyCtrlNg2Module {}
