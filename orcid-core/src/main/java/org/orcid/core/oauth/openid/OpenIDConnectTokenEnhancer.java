@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -38,6 +40,12 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         //We have the code at this point, but it has already been consumed and removed.
         //So instead we check for a nonce and max_age which are added back into request by OrcidClientCredentialEndPointDelegatorImpl
         Map<String,String> params = authentication.getOAuth2Request().getRequestParameters();
+
+        //only add if we're using openid scope.
+        String scopes = params.get(OrcidOauth2Constants.SCOPE_PARAM);        
+        if (PojoUtil.isEmpty(scopes) || !ScopePathType.getScopesFromSpaceSeparatedString(scopes).contains(ScopePathType.OPENID) ){
+            return accessToken;
+        }
         
         //inject the OpenID Connect "id_token" (authn).  This is distinct from the access token (authz), so is for transporting info to the client only
         //this means we do not have to support using them for authentication purposes. Some APIs support it, but it is not part of the spec.          
