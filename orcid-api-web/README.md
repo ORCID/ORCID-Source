@@ -13,33 +13,35 @@ Generating an access token requires interacting with the Registry interface as a
 | Parameter             |Contents               |
 |--------------------|--------------------------|
 | host 				| https://sandbox.orcid.org/oauth/authorize|
-| client\_id= 		| *Your client ID*|
-| response\_type=	| code|
-| scope=			| [*Your selected scopes*](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0#scopes)|
-| redirect\_uri=	| redirect\_uri=*Your landing page*|
+| client\_id 		| *Your client ID*|
+| response\_type	| code|
+| scope				| [*Your selected scopes*](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0#scopes)|
+| redirect\_uri		| *Your landing page*|
 
 Example Authorization URL
 
 ```https://sandbox.orcid.org/oauth/authorize?client_id=APP-674MCQQR985VZZQ2&response_type=code&scope=/activities/update%20/read-limited&redirect_uri=https://developers.google.com/oauthplayground```
 
 [More information](http://members.orcid.org/api/resources/customize)
+
 2. Visit the URL and grant access
 
 After granting access you will be taken to the redirect URI with a six digit authorization code.
+
 3. Exchange the authorization code for an access token
 
 | Item               |Parameter               |
 |--------------------|--------------------------|
 | URL 				| https://sandbox.orcid.org/oauth/token|
-| client\_id= 		| *Your client ID*|
-| client\_secret=	| *Your client secret*|
-| grant\_type=		| authorization\_code|
-| code=				| *The authorization code*|
+| client\_id 		| *Your client ID*|
+| client\_secret	| *Your client secret*|
+| grant\_type		| authorization\_code|
+| code				| *The authorization code*|
 
 Example call in curl
 
 ```
-curl -i -L -H 'Accept: application/json' --data 'client\_id=APP-674MCQQR985VZZQ2&client\_secret=d08b711e-9411-788d-a474-46efd3956652&grant\_type=authorization\_code&code=*WkiYjn*' 'https://sandbox.orcid.org/oauth/token'
+curl -i -L -H 'Accept: application/json' --data 'client_id=APP-674MCQQR985VZZQ2&client_secret=d08b711e-9411-788d-a474-46efd3956652&grant_type=authorization_code&code=*WkiYjn*' 'https://sandbox.orcid.org/oauth/token'
 ```
 4. Store the ORCID iD, access token, and, optionally, refresh token from the response
 
@@ -61,10 +63,10 @@ Send a request to the ORCID API for a two step token
 | Item              |Parameter               |
 |-------------------|--------------------------|
 | URL 				| https://sandbox.orcid.org/oauth/token|
-| client\_id= 		| *Your client ID*|
-| client\_secret=	| *Your client secret*|
-| grant\_type=		| client\_credentials|
-| code=				| /read-public|
+| client\_id 		| *Your client ID*|
+| client\_secret	| *Your client secret*|
+| grant\_type		| client\_credentials|
+| scope				| /read-public|
 
 Example request in curl
 
@@ -73,6 +75,9 @@ curl -i -L -H 'Accept: application/json' -d 'client_id=APP-674MCQQR985VZZQ2' -d 
 ```
 ## Further documentation
 
-[About the ORCID XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources) - also check the documentation on the latest version
-[Members.orcid.org](https://members.orcid.org/api/) for detailed tutorials and workflows
+* [About the ORCID XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
+
+* [Documentation on the latest XSD version](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/README.md)
+
+* [Members.orcid.org](https://members.orcid.org/api/) for detailed tutorials and workflows
 
