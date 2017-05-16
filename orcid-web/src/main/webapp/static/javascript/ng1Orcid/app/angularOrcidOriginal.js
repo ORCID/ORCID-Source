@@ -1155,6 +1155,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     $scope.input.text = $('#SearchCtrl').data('search-query');
 
     $scope.getResults = function(){
+        console.log($scope.input);
         $.ajax({
             url: orcidSearchUrlJs.buildUrl($scope.input),
             dataType: 'json',

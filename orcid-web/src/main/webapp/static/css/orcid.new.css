@@ -1096,6 +1096,16 @@ select {
     color: #fff;
 }
 
+/*Advanced search*/
+.main-search .control-group {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.main-search input[type="text"] {
+    margin-bottom: 0;
+}
+
 
 /*
     bold fonts

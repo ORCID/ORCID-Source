@@ -4183,7 +4183,7 @@ this.w3cLatexCharMap = {
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v2.0/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(
@@ -4223,6 +4223,14 @@ this.w3cLatexCharMap = {
             query += 'keyword:' + input.keyword.toLowerCase();
             doneSomething = true;
         }
+        if (hasValue(input.affiliationOrgName)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            query += 'affiliation-org-name:' + input.affiliationOrgName.toLowerCase();
+            doneSomething = true;
+        }
+        
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
                 + offset(input) : baseUrl + '?q=';
     }
@@ -4233,7 +4241,7 @@ this.w3cLatexCharMap = {
 
     exports.isValidInput = function(input) {
         var fieldsToCheck = [ input.text, input.givenNames, input.familyName,
-                input.keyword ];
+                input.keyword, input.affiliationOrgName ];
         for ( var i = 0; i < fieldsToCheck.length; i++) {
             if (hasValue(fieldsToCheck[i])) {
                 return true;
