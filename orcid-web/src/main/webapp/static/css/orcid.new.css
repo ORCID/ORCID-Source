@@ -6829,7 +6829,7 @@ a:hover .mozilla-badge {
 }
 
 .verify-email-box {
-    height: 80px;
+    min-height: 80px;
 }
 
 .revoke-social .form-social-sign-in #ajax-loader {
