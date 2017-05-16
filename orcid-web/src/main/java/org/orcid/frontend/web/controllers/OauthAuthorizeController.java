@@ -27,8 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
     @Resource
     protected OrcidRandomValueTokenServices tokenServices;
+    
+    @Resource 
+    private OauthLoginController oauthLoginController;
     
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
@@ -88,13 +93,28 @@ public class OauthAuthorizeController extends OauthControllerBase {
             error.setView(rView);
             return error;
         }  
+        
+        //for already logged in users:
+        //Add check for prompt=confirm  here.  This is a SHOULD in the openid spec.
+        //Add check for prompt=login here. This is a MUST in the openid spec.
+        boolean forceConfirm = false;
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter("prompt");
+            if (prompt != null && prompt.equals("confirm")){
+                forceConfirm=true;
+            }else if (prompt!=null && prompt.equals("login")){
+                request.getParameterMap().remove("prompt");
+                return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
+                //(Not You?) = https://localhost:8443/orcid-web/oauth/signin?client_id=4444-4444-4444-4445&response_type=code&scope=/authenticate%20openid&redirect_uri=https://localhost:8443/&nonce=n1&max_age=100&prompt=confirm#show_login
+            }
+        }
 
         // Check if the client has persistent tokens enabled
         if (clientDetails.isPersistentTokensEnabled()) {
             usePersistentTokens = true;
         }
 
-        if (usePersistentTokens) {
+        if (!forceConfirm && usePersistentTokens) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");

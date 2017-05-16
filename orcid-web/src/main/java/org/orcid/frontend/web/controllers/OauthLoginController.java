@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -92,6 +93,18 @@ public class OauthLoginController extends OauthControllerBase {
             ModelAndView error = new ModelAndView();
             error.setView(rView);
             return error;
+        }
+        
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter("prompt");
+            if (prompt != null && prompt.equals("none")){
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+                redirectUriWithParams += "?error=login_required";
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
+            }
         }
         
         mav.addObject("hideUserVoiceScript", true);

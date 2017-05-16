@@ -62,8 +62,6 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
                 claims.claim("nonce", params.get("nonce"));
             if (params.get("max_age") != null){
                 //When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
-                //This is a privacy leak and probably should not be implemented.
-                //However, not implementing it means we cannot conform with spec.
             }                                                    
             SignedJWT signedJWT = keyManager.sign(claims.build());
             String idTok = signedJWT.serialize();
