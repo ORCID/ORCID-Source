@@ -41,7 +41,7 @@ v2.0 is the current release of the ORCID API and should be used for all developm
 - [work-2.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd)
 **stable**
 
-##Changes from Release candidate 2.0_rc3:
+## Changes from Release candidate 2.0_rc3:
 ### Search
 - Addition of search endpoints
 
@@ -53,19 +53,19 @@ v2.0 is the current release of the ORCID API and should be used for all developm
 ### Email addresses
 - Include primary and verified status when reading an email address
 
-##Changes from Version 1.2
+## Changes from Version 1.2
 A number of changes to the ORCID API have been made to improve on the existing 1.2 release, this section highlights the most notable changes.
 
-###Multiple XSD
+### Multiple XSD
 The ORCID Messages Schema has been broken down in to multiple files. Namespaces are now used and common elements are reused in multiple sections.
 
-###Per item API
+### Per item API
 With version 2.0 the ORCID API information is now added, updated, and read as individual items, as compared to entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually (with the exception of works which can be added up to 100 at a time). To read an entire section of a record the activities summary can be accessed.
 
-###Activities summary:
+### Activities summary:
 When reading the works, funding, and peer-review sections, a summary of each activity is returned. The summary is intended to provide basic information about the item, including title, type, date, organization, source and identifiers. The full item can be retrieved by accessing the individual item using the put-code provided.
 
-###Activities group:
+### Activities group:
 
 Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the items and contains a last modified date for the group and the identifier(s) used to create the group.
 
@@ -82,59 +82,59 @@ Funding, Works and Peer-review items are grouped together based on a common exte
 - *external-id-url* indicates how the identifier will resolve
 - *external-id-relationship* indicates the relationship between the item and the identifier
 
-###Peer-review
+### Peer-review
 A new activities section, peer-review, captures the formal review activity of researchers.
 
-###Non-editable fields
+### Non-editable fields
 The 2.0 API can not be used to edit the fields give-name, family-name or biography. 
 
-###Repeatable address field
+### Repeatable address field
 With 2.0 the address field can be repeated
 
 
 ## Sample files:
 
-- [read activities-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/activities-2.0.xml)
-- [read address-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/address-2.0.xml)
-- [write address-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/address-2.0.xml)
-- [write bulk-work xml-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_samples/bulk-work-2.0.xml)
-- [write bulk-work-2.0.json] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_samples/bulk-work-2.0.json)
-- [read biography-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/biography-2.0.xml)
-- [read education-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/education-2.0.xml)
-- [write education-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/education-2.0.xml)
-- [read educations-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/educations-2.0.xml)
-- [read email-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/email-2.0.xml)
-- [read emails-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/emails-2.0.xml)
-- [read employment-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/employment-2.0.xml)
-- [write employment-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/employment-2.0.xml)
-- [read employments-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/employments-2.0.xml)
-- [error-message-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/error-2.0.xml)
-- [read external-identifier-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/external-identifier-2.0.xml)
-- [write external-identifier-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/external-identifier-2.0.xml)
-- [read external-identifiers-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/external-identifiers-2.0.xml)
-- [read funding-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/funding-2.0.xml)
-- [write funding-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/funding-2.0.xml)
-- [read fundings-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/fundings-2.0.xml)
-- [read keyword-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/keyword-2.0.xml)
-- [write keyword-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/keyword-2.0.xml)
-- [keywords-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/keywords-2.0.xml)
-- [read other-name-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-name-2.0.xml)
-- [write other-name-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-name-2.0.xml)
-- [read other-names-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-names-2.0.xml)
-- [read peer-review-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/peer-review-2.0.xml)
-- [write full peer-review-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/peer-review-full-2.0.xml)
-- [write simple peer-review-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/peer-review-simple-2.0.xml)
-- [read peer-reviews-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/peer-reviews-2.0.xml)
-- [read person-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/person-2.0.xml)
-- [read personal-details-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/personal-details-2.0.xml)
-- [read researcher-url-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/researcher-url-2.0.xml)
-- [write researcher-url-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/researcher-url-2.0.xml)
-- [read researcher-urls-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/researcher-urls-2.0.xml)
-- [search-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/search-2.0.xml)
-- [read work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/work-2.0.xml)
-- [write full work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-full-2.0.xml)
-- [write simple work-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-simple-2.0.xml)
-- [read works-2.0.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/works-2.0.xml)
+- [read activities-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/activities-2.0.xml)
+- [read address-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/address-2.0.xml)
+- [write address-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/address-2.0.xml)
+- [write bulk-work xml-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_samples/bulk-work-2.0.xml)
+- [write bulk-work-2.0.json](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_samples/bulk-work-2.0.json)
+- [read biography-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/biography-2.0.xml)
+- [read education-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/education-2.0.xml)
+- [write education-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/education-2.0.xml)
+- [read educations-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/educations-2.0.xml)
+- [read email-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/email-2.0.xml)
+- [read emails-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/emails-2.0.xml)
+- [read employment-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/employment-2.0.xml)
+- [write employment-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/employment-2.0.xml)
+- [read employments-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/employments-2.0.xml)
+- [error-message-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/error-2.0.xml)
+- [read external-identifier-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/external-identifier-2.0.xml)
+- [write external-identifier-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/external-identifier-2.0.xml)
+- [read external-identifiers-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/external-identifiers-2.0.xml)
+- [read funding-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/funding-2.0.xml)
+- [write funding-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/funding-2.0.xml)
+- [read fundings-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/fundings-2.0.xml)
+- [read keyword-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/keyword-2.0.xml)
+- [write keyword-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/keyword-2.0.xml)
+- [keywords-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/keywords-2.0.xml)
+- [read other-name-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-name-2.0.xml)
+- [write other-name-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-name-2.0.xml)
+- [read other-names-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/other-names-2.0.xml)
+- [read peer-review-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/peer-review-2.0.xml)
+- [write full peer-review-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/peer-review-full-2.0.xml)
+- [write simple peer-review-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/peer-review-simple-2.0.xml)
+- [read peer-reviews-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/peer-reviews-2.0.xml)
+- [read person-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/person-2.0.xml)
+- [read personal-details-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/personal-details-2.0.xml)
+- [read researcher-url-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/researcher-url-2.0.xml)
+- [write researcher-url-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/researcher-url-2.0.xml)
+- [read researcher-urls-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/researcher-urls-2.0.xml)
+- [search-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/search-2.0.xml)
+- [read work-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/work-2.0.xml)
+- [write full work-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-full-2.0.xml)
+- [write simple work-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/write_sample/work-simple-2.0.xml)
+- [read works-2.0.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/samples/read_samples/works-2.0.xml)
 
 ## REST API Reference
 
@@ -165,7 +165,7 @@ The swagger interfaces to the API available at:
 | Add a person item    | POST        | /person/update       		 | https://[HOST]/v2.0/[ORCID]/[SECTION]            |
 | Update a person item | PUT         | /person/update  				 | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Delete a person item | DELETE      | /person/update				 | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
-| Add an activity    | POST          | /activities/update       | https://[HOST]/[ORCID]/[SECTION]            |
+| Add an activity    | POST          | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]            |
 | Update an activity | PUT           | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Delete an activity | DELETE        | /activities/update       | https://[HOST]/v2.0/[ORCID]/[SECTION]/[PUT-CODE] |
 | Add multiple works| POST           | /read-limited or /read-public | https://[HOST]/v2.0/[ORCID]/works		             |
@@ -200,7 +200,8 @@ The swagger interfaces to the API available at:
 **Notes:** 
 - biography, email, person and personal-details sections are read only
 - when reading multiple works a maximum of 50 works can be accessed with a single call, when posting multiple works a maximum of 100 works can be posted with a single call.
-- When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. For help with SOLR searching see [https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser)
+- When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. 
+- [Help with SOLR searching](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser)
 
 ## Examples
 
@@ -298,6 +299,6 @@ When updating a record item, include the put code as an attribute in the root el
 | Delete a webhook  	| /webhook |```curl -v -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'http://api.sandbox.orcid.org/0000-0002-9227-8514/webhook/http%3A%2F%2Fencoded.url%2F0000-0002-9227-8514'  ```|
 
 ### Search
-| Item               | Scope               |  Example cURL Statement                                         |
-|--------------------|--------------------------|-------------------------------------------------------|----------------------------------------------------------------|
+| Item               | Scope               |  Example cURL Statement |
+|--------------------|--------------------------|-------------------------------------------------------|
 | Search records     | /read-public             | ```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.0/search?q=Simpson'```|
