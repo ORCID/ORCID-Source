@@ -757,7 +757,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]" />
+				value="https://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]" />
 		</xs:restriction>
 	</xs:simpleType>
 

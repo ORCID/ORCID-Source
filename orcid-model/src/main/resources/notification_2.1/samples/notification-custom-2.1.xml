@@ -19,7 +19,7 @@
 -->
 <notification:notification put-code="1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-custom-2.0.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/notification ../notification-custom-2.1.xsd"
     xmlns:notification="http://www.orcid.org/ns/notification"
     xmlns:common="http://www.orcid.org/ns/common"
     xml:lang="en-gb">

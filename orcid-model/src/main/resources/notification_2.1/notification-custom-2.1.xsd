@@ -4,7 +4,7 @@
 	xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1">
-	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="../common_2.0/common-2.0.xsd" />
+	<xs:import namespace="http://www.orcid.org/ns/common" schemaLocation="../common_2.1/common-2.1.xsd" />
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../xml.xsd"/>
 	<xs:element name="notification">
 		<xs:complexType>
