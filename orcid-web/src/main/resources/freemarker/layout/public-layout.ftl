@@ -107,7 +107,7 @@
         </div>
         <!-- .row -->
         <div class="row flexbox-container">         
-            <#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated) && (!(RequestParameters['publicRecordMenu']??) | RequestParameters['publicRecordMenu'] != 'false')> 
+            <#if ((isPublicProfile)?? && isPublicProfile == true | (deprecated)?? && deprecated) && (!(RequestParameters['publicRecordMenu']??) | RequestParameters['publicRecordMenu'] != 'false')> 
                 <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">
                     
                     <!-- Mobile View -->
@@ -128,14 +128,12 @@
                     
                     
                     <!-- Desktop / Tablet View -->
-                    <#if (locked)?? && !locked>
                     <ul class="menu public" ng-show="menuVisible == true" resize>
                         <li class="active-trail"><a href="<@orcid.rootPath "/my-orcid" />">Edit your record</a></li>
                         <li><a href="<@orcid.rootPath "/about" />">About ORCID</a></li>
                         <li><a href="<@orcid.rootPath "/contact-us" />">Contact us</a></li>
                         <li><a href="<@orcid.rootPath "/help" />">Help</a></li>
                     </ul> 
-                    </#if>
                 </div>
             <#else>
                 <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
