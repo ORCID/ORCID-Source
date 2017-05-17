@@ -93,13 +93,16 @@
     
     <bean id="ajaxAuthenticationFailureHandlerSocial"
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+        
+    <bean id="authenticationDetailsSource" 
+        class="org.orcid.frontend.spring.OrcidAuthenticationDetailsSource" />
 
 	<sec:authentication-manager id="authenticationManager">
 		<sec:authentication-provider ref="authenticationProvider" />
 		<sec:authentication-provider ref="preauthAuthProvider" />
 	</sec:authentication-manager>
 	
-	<bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+	<bean id="authenticationProvider" class="org.orcid.frontend.spring.OrcidAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService"/>
 		<property name="authoritiesMapper" ref="authoritiesMapper"/>
 		<property name="passwordEncoder" ref="encryptionManager"/>
@@ -384,7 +387,7 @@
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-		<sec:form-login login-processing-url="/signin/auth.json" 
+		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />

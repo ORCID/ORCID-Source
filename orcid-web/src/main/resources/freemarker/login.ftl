@@ -56,6 +56,12 @@
 					                    <input type="password" id="password" name="password" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.password")}">					                    					                    
 					                </div>
 					                
+					                <div class="form-group" id="verificationCodeFor2FA">
+                                            ${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}
+                                            <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>                                       
+                                            <input id="verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">     
+                                    </div>
+					                
 					                <div class="form-group">                            
 					                    <button id='form-sign-in-button' class="btn btn-primary" type="submit" class="form-control">${springMacroRequestContext.getMessage("login.signin")}</button>					                    
 					                    <span id="ajax-loader" class="no-visible"><i id="ajax-loader-icon" class="glyphicon glyphicon-refresh spin x2 green"></i></span>					                    

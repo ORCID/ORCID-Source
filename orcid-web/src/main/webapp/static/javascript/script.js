@@ -593,7 +593,7 @@ $(function() {
                                         {
                                             url : loginUrl,
                                             type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 $('#ajax-loader').hide();
@@ -630,6 +630,8 @@ $(function() {
                                                     orcidGA
                                                             .windowLocationHrefDelay(data.url
                                                                     + window.location.hash);
+                                                } else if (data.verificationCodeRequired) {
+                                                    show2FA();
                                                 } else {
                                                     var message;
                                                     if (data.deprecated) {
@@ -663,6 +665,9 @@ $(function() {
                                                                 .replace(
                                                                         "{{resendClaimUrl}}",
                                                                        resendClaimUrl);
+                                                    } else if (data.badVerificationCode) {
+                                                        message = om
+                                                        .get('orcid.frontend.security.2fa.bad_verification_code');
                                                     } else {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
@@ -748,6 +753,10 @@ $(function() {
                         $('form#loginForm #login-deactivated-error').fadeIn('fast');
                      });
         }
+    }
+    
+    function show2FA() {
+        $('#verificationCodeFor2FA').attr("style", "display: block");
     }
 
     // Privacy toggle

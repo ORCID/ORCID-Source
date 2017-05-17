@@ -153,6 +153,11 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     
     private String hashedOrcid;
     
+    // 2FA
+    private boolean using2FA;
+    private String secretFor2FA;
+    
+    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -177,6 +182,24 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setHashedOrcid(String hashedOrcid) {
         this.hashedOrcid = hashedOrcid;
+    }
+    
+    @Column(name = "using_2FA")
+    public boolean isUsing2FA() {
+        return using2FA;
+    }
+
+    public void setUsing2FA(boolean using2FA) {
+        this.using2FA = using2FA;
+    }
+    
+    @Column(name = "secret_for_2FA")
+    public String getSecretFor2FA() {
+        return secretFor2FA;
+    }
+
+    public void setSecretFor2FA(String secretFor2FA) {
+        this.secretFor2FA = secretFor2FA;
     }
 
     @Basic
