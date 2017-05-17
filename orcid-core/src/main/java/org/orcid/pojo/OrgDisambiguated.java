@@ -95,7 +95,7 @@ public class OrgDisambiguated {
         datum.put("sourceId", this.getSourceId());
         datum.put("sourceType", this.getSourceType());
         datum.put("countryForDisplay", this.getCountryForDisplay());
-        datum.put("disambiguatedAffiliationIdentifier", this.getCountryForDisplay());
+        datum.put("disambiguatedAffiliationIdentifier", this.getDisambiguatedAffiliationIdentifier());
         return datum;
     }
     
