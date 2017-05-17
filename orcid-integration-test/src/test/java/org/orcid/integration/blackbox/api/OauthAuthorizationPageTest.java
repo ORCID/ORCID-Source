@@ -41,7 +41,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.blackbox.api.v12.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -58,7 +57,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class OauthAuthorizationPageTest extends BlackBoxBaseRC2 {
+public class OauthAuthorizationPageTest extends BlackBoxBase {
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /read-limited";    
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
