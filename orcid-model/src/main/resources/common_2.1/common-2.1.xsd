@@ -1,0 +1,1643 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/common" xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2014 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+			The top level element is orcid-message.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="orcid" uri="http://www.orcid.org/ns/orcid" />
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="last-modified-date">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The date time when the element was last modified.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="xs:dateTime" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="created-date">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The date time when element was created.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="xs:dateTime" />
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="read-date">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The date time when element was first read by the user.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime" />
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="archived-date">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The date time when element was archived.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime" />
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="sent-date">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The date time when element was sent to the user.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime" />
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+	<xs:element name="approval-date">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The date time when element was approved.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleContent>
+                <xs:extension base="xs:dateTime" />
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+	<xs:element name="source" type="common:source-type" />
+
+	<xs:element name="external-ids" type="common:external-ids" />
+	<xs:element name="external-id" type="common:external-id" />
+
+	<xs:complexType name="source-type">
+		<xs:annotation>
+			<xs:documentation>The client application (Member organization's
+				system) or user that created the item. XSD VERSION 1.2 UPDATE: the
+				identifier for the source may be either an ORCID iD (representing
+				individuals and legacy client applications) or a Client ID
+				(representing all newer client applications)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice minOccurs="0">
+				<xs:element ref="common:source-orcid">
+					<xs:annotation>
+						<xs:documentation>The ORCID identifier for the individual user (or
+							legacy client application) that created the item. For identifiers
+							of
+							individual users, it may be used to look up ORCID record
+							details via
+							the API.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="source-client-id" type="common:client-id">
+					<xs:annotation>
+						<xs:documentation>The client ID for the client application (Member
+							organization system) that created the item.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="source-name" type="common:source-name"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="source-name" mixed="true">
+		<xs:annotation>
+			<xs:documentation>The human-readable name of the client application
+				(Member organization system) or individual user that created the
+				item. Value for the same person/organization could change over time.
+				source-orcid or source-client-id fields are more appropriate for
+				disambiguated matching.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+
+	<xs:complexType name="organization">
+		<xs:annotation>
+			<xs:documentation>A reference to an organization. When available, an
+				organization will be tied to a disambiguated organization which
+				uniquely identifies the organization.
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:sequence>
+			<xs:element name="name" type="common:long-text" />
+			<xs:element name="address" type="common:organization-address" />
+			<xs:element name="disambiguated-organization" type="common:disambiguated-organization"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="organization-address">
+		<xs:annotation>
+			<xs:documentation>Container for organization location information
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="1" name="city" type="common:long-text">
+				<xs:annotation>
+					<xs:documentation>City</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" name="region" type="common:long-text">
+				<xs:annotation>
+					<xs:documentation>Region within a country</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="1" name="country" type="common:iso-3166-country" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="disambiguated-organization">
+		<xs:annotation>
+			<xs:documentation>A reference to a disambiguated version the
+				organization to which the researcher or contributor is affiliated.
+				The list of disambiguated organizations come from ORCID partners
+				such as Ringgold, ISNI and FundRef.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="disambiguated-organization-identifier"
+				type="common:short-text">
+				<xs:annotation>
+					<xs:documentation>The disambiguated organization identifier.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="disambiguation-source" type="common:short-text">
+				<xs:annotation>
+					<xs:documentation>The source for providing the disambiguated
+						organization ID.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="locale">
+		<xs:annotation>
+			<xs:documentation>Supported locales for site
+				translations/localizations
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="en" />
+			<xs:enumeration value="es" />
+			<xs:enumeration value="fr" />
+			<xs:enumeration value="ko" />
+			<xs:enumeration value="pt" />
+			<xs:enumeration value="ru" />
+			<xs:enumeration value="zh_CN" />
+			<xs:enumeration value="zh_TW" />
+			<xs:enumeration value="it" />
+			<xs:enumeration value="ja" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="non-empty-string">
+		<xs:annotation>
+			<xs:documentation>Must contain one or more charaters that are not a
+				space, carriage return or linefeed
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[\s\S]*[^\s\n\r]+[\s\S]*" />			
+		</xs:restriction>		
+	</xs:simpleType>
+		
+	<xs:complexType name="amount">
+		<xs:annotation>
+			<xs:documentation>The funding amount.
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="currency-code" type="common:currency-code"
+					use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="currency-code">
+		<xs:annotation>
+			<xs:documentation>The currency code used for funding amounts. From
+				the ISO 4217 list
+				(www.iso.org/iso/home/standards/currency_codes.htm).
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ADP" />
+			<xs:enumeration value="AED" />
+			<xs:enumeration value="AFA" />
+			<xs:enumeration value="AFN" />
+			<xs:enumeration value="ALL" />
+			<xs:enumeration value="AMD" />
+			<xs:enumeration value="ANG" />
+			<xs:enumeration value="AOA" />
+			<xs:enumeration value="ARS" />
+			<xs:enumeration value="ATS" />
+			<xs:enumeration value="AUD" />
+			<xs:enumeration value="AWG" />
+			<xs:enumeration value="AYM" />
+			<xs:enumeration value="AZM" />
+			<xs:enumeration value="AZN" />
+			<xs:enumeration value="BAM" />
+			<xs:enumeration value="BBD" />
+			<xs:enumeration value="BDT" />
+			<xs:enumeration value="BEF" />
+			<xs:enumeration value="BGL" />
+			<xs:enumeration value="BGN" />
+			<xs:enumeration value="BHD" />
+			<xs:enumeration value="BIF" />
+			<xs:enumeration value="BMD" />
+			<xs:enumeration value="BND" />
+			<xs:enumeration value="BOB" />
+			<xs:enumeration value="BOV" />
+			<xs:enumeration value="BRL" />
+			<xs:enumeration value="BSD" />
+			<xs:enumeration value="BTN" />
+			<xs:enumeration value="BWP" />
+			<xs:enumeration value="BYB" />
+			<xs:enumeration value="BYR" />
+			<xs:enumeration value="BZD" />
+			<xs:enumeration value="CAD" />
+			<xs:enumeration value="CDF" />
+			<xs:enumeration value="CHF" />
+			<xs:enumeration value="CLF" />
+			<xs:enumeration value="CLP" />
+			<xs:enumeration value="CNY" />
+			<xs:enumeration value="COP" />
+			<xs:enumeration value="CRC" />
+			<xs:enumeration value="CSD" />
+			<xs:enumeration value="CUC" />
+			<xs:enumeration value="CUP" />
+			<xs:enumeration value="CVE" />
+			<xs:enumeration value="CYP" />
+			<xs:enumeration value="CZK" />
+			<xs:enumeration value="DEM" />
+			<xs:enumeration value="DJF" />
+			<xs:enumeration value="DKK" />
+			<xs:enumeration value="DOP" />
+			<xs:enumeration value="DZD" />
+			<xs:enumeration value="EEK" />
+			<xs:enumeration value="EGP" />
+			<xs:enumeration value="ERN" />
+			<xs:enumeration value="ESP" />
+			<xs:enumeration value="ETB" />
+			<xs:enumeration value="EUR" />
+			<xs:enumeration value="FIM" />
+			<xs:enumeration value="FJD" />
+			<xs:enumeration value="FKP" />
+			<xs:enumeration value="FRF" />
+			<xs:enumeration value="GBP" />
+			<xs:enumeration value="GEL" />
+			<xs:enumeration value="GHC" />
+			<xs:enumeration value="GHS" />
+			<xs:enumeration value="GIP" />
+			<xs:enumeration value="GMD" />
+			<xs:enumeration value="GNF" />
+			<xs:enumeration value="GRD" />
+			<xs:enumeration value="GTQ" />
+			<xs:enumeration value="GWP" />
+			<xs:enumeration value="GYD" />
+			<xs:enumeration value="HKD" />
+			<xs:enumeration value="HNL" />
+			<xs:enumeration value="HRK" />
+			<xs:enumeration value="HTG" />
+			<xs:enumeration value="HUF" />
+			<xs:enumeration value="IDR" />
+			<xs:enumeration value="IEP" />
+			<xs:enumeration value="ILS" />
+			<xs:enumeration value="INR" />
+			<xs:enumeration value="IQD" />
+			<xs:enumeration value="IRR" />
+			<xs:enumeration value="ISK" />
+			<xs:enumeration value="ITL" />
+			<xs:enumeration value="JMD" />
+			<xs:enumeration value="JOD" />
+			<xs:enumeration value="JPY" />
+			<xs:enumeration value="KES" />
+			<xs:enumeration value="KGS" />
+			<xs:enumeration value="KHR" />
+			<xs:enumeration value="KMF" />
+			<xs:enumeration value="KPW" />
+			<xs:enumeration value="KRW" />
+			<xs:enumeration value="KWD" />
+			<xs:enumeration value="KYD" />
+			<xs:enumeration value="KZT" />
+			<xs:enumeration value="LAK" />
+			<xs:enumeration value="LBP" />
+			<xs:enumeration value="LKR" />
+			<xs:enumeration value="LRD" />
+			<xs:enumeration value="LSL" />
+			<xs:enumeration value="LTL" />
+			<xs:enumeration value="LUF" />
+			<xs:enumeration value="LVL" />
+			<xs:enumeration value="LYD" />
+			<xs:enumeration value="MAD" />
+			<xs:enumeration value="MDL" />
+			<xs:enumeration value="MGA" />
+			<xs:enumeration value="MGF" />
+			<xs:enumeration value="MKD" />
+			<xs:enumeration value="MMK" />
+			<xs:enumeration value="MNT" />
+			<xs:enumeration value="MOP" />
+			<xs:enumeration value="MRO" />
+			<xs:enumeration value="MTL" />
+			<xs:enumeration value="MUR" />
+			<xs:enumeration value="MVR" />
+			<xs:enumeration value="MWK" />
+			<xs:enumeration value="MXN" />
+			<xs:enumeration value="MXV" />
+			<xs:enumeration value="MYR" />
+			<xs:enumeration value="MZM" />
+			<xs:enumeration value="MZN" />
+			<xs:enumeration value="NAD" />
+			<xs:enumeration value="NGN" />
+			<xs:enumeration value="NIO" />
+			<xs:enumeration value="NLG" />
+			<xs:enumeration value="NOK" />
+			<xs:enumeration value="NPR" />
+			<xs:enumeration value="NZD" />
+			<xs:enumeration value="OMR" />
+			<xs:enumeration value="PAB" />
+			<xs:enumeration value="PEN" />
+			<xs:enumeration value="PGK" />
+			<xs:enumeration value="PHP" />
+			<xs:enumeration value="PKR" />
+			<xs:enumeration value="PLN" />
+			<xs:enumeration value="PTE" />
+			<xs:enumeration value="PYG" />
+			<xs:enumeration value="QAR" />
+			<xs:enumeration value="ROL" />
+			<xs:enumeration value="RON" />
+			<xs:enumeration value="RSD" />
+			<xs:enumeration value="RUB" />
+			<xs:enumeration value="RUR" />
+			<xs:enumeration value="RWF" />
+			<xs:enumeration value="SAR" />
+			<xs:enumeration value="SBD" />
+			<xs:enumeration value="SCR" />
+			<xs:enumeration value="SDD" />
+			<xs:enumeration value="SDG" />
+			<xs:enumeration value="SEK" />
+			<xs:enumeration value="SGD" />
+			<xs:enumeration value="SHP" />
+			<xs:enumeration value="SIT" />
+			<xs:enumeration value="SKK" />
+			<xs:enumeration value="SLL" />
+			<xs:enumeration value="SOS" />
+			<xs:enumeration value="SRD" />
+			<xs:enumeration value="SRG" />
+			<xs:enumeration value="STD" />
+			<xs:enumeration value="SVC" />
+			<xs:enumeration value="SYP" />
+			<xs:enumeration value="SZL" />
+			<xs:enumeration value="THB" />
+			<xs:enumeration value="TJS" />
+			<xs:enumeration value="TMM" />
+			<xs:enumeration value="TMT" />
+			<xs:enumeration value="TND" />
+			<xs:enumeration value="TOP" />
+			<xs:enumeration value="TPE" />
+			<xs:enumeration value="TRL" />
+			<xs:enumeration value="TRY" />
+			<xs:enumeration value="TTD" />
+			<xs:enumeration value="TWD" />
+			<xs:enumeration value="TZS" />
+			<xs:enumeration value="UAH" />
+			<xs:enumeration value="UGX" />
+			<xs:enumeration value="USD" />
+			<xs:enumeration value="USN" />
+			<xs:enumeration value="USS" />
+			<xs:enumeration value="UYU" />
+			<xs:enumeration value="UZS" />
+			<xs:enumeration value="VEB" />
+			<xs:enumeration value="VEF" />
+			<xs:enumeration value="VND" />
+			<xs:enumeration value="VUV" />
+			<xs:enumeration value="WST" />
+			<xs:enumeration value="XAF" />
+			<xs:enumeration value="XAG" />
+			<xs:enumeration value="XAU" />
+			<xs:enumeration value="XBA" />
+			<xs:enumeration value="XBB" />
+			<xs:enumeration value="XBC" />
+			<xs:enumeration value="XBD" />
+			<xs:enumeration value="XCD" />
+			<xs:enumeration value="XDR" />
+			<xs:enumeration value="XFO" />
+			<xs:enumeration value="XFU" />
+			<xs:enumeration value="XOF" />
+			<xs:enumeration value="XPD" />
+			<xs:enumeration value="XPF" />
+			<xs:enumeration value="XPT" />
+			<xs:enumeration value="XSU" />
+			<xs:enumeration value="XTS" />
+			<xs:enumeration value="XUA" />
+			<xs:enumeration value="XXX" />
+			<xs:enumeration value="YER" />
+			<xs:enumeration value="YUM" />
+			<xs:enumeration value="ZAR" />
+			<xs:enumeration value="ZMK" />
+			<xs:enumeration value="ZWD" />
+			<xs:enumeration value="ZWL" />
+			<xs:enumeration value="ZWN" />
+			<xs:enumeration value="ZWR" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="organization-defined-type">
+		<xs:annotation>
+			<xs:documentation>Container for a organization defined type for an
+				external identifier.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:string-255">
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="language-code" type="common:language-code"></xs:element>
+
+	<xs:simpleType name="language-code">
+		<xs:annotation>
+			<xs:documentation>Two letter language code to identify the language
+				used in work fields. Chinese is expressed in more than two letters,
+				with a modifier to indicate simplified (zh_CN) or traditional
+				(zh_TW) Chinese.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="en" />
+			<xs:enumeration value="ab" />
+			<xs:enumeration value="aa" />
+			<xs:enumeration value="af" />
+			<xs:enumeration value="ak" />
+			<xs:enumeration value="sq" />
+			<xs:enumeration value="am" />
+			<xs:enumeration value="ar" />
+			<xs:enumeration value="an" />
+			<xs:enumeration value="hy" />
+			<xs:enumeration value="as" />
+			<xs:enumeration value="av" />
+			<xs:enumeration value="ae" />
+			<xs:enumeration value="ay" />
+			<xs:enumeration value="az" />
+			<xs:enumeration value="bm" />
+			<xs:enumeration value="ba" />
+			<xs:enumeration value="eu" />
+			<xs:enumeration value="be" />
+			<xs:enumeration value="bn" />
+			<xs:enumeration value="bh" />
+			<xs:enumeration value="bi" />
+			<xs:enumeration value="bs" />
+			<xs:enumeration value="br" />
+			<xs:enumeration value="bg" />
+			<xs:enumeration value="my" />
+			<xs:enumeration value="ca" />
+			<xs:enumeration value="ch" />
+			<xs:enumeration value="ce" />
+			<xs:enumeration value="zh_CN" />
+			<xs:enumeration value="zh_TW" />
+			<xs:enumeration value="cu" />
+			<xs:enumeration value="cv" />
+			<xs:enumeration value="kw" />
+			<xs:enumeration value="co" />
+			<xs:enumeration value="cr" />
+			<xs:enumeration value="hr" />
+			<xs:enumeration value="cs" />
+			<xs:enumeration value="da" />
+			<xs:enumeration value="dv" />
+			<xs:enumeration value="nl" />
+			<xs:enumeration value="dz" />
+			<xs:enumeration value="en" />
+			<xs:enumeration value="eo" />
+			<xs:enumeration value="et" />
+			<xs:enumeration value="ee" />
+			<xs:enumeration value="fo" />
+			<xs:enumeration value="fj" />
+			<xs:enumeration value="fi" />
+			<xs:enumeration value="fr" />
+			<xs:enumeration value="fy" />
+			<xs:enumeration value="ff" />
+			<xs:enumeration value="gl" />
+			<xs:enumeration value="lg" />
+			<xs:enumeration value="ka" />
+			<xs:enumeration value="de" />
+			<xs:enumeration value="el" />
+			<xs:enumeration value="kl" />
+			<xs:enumeration value="gn" />
+			<xs:enumeration value="gu" />
+			<xs:enumeration value="ht" />
+			<xs:enumeration value="ha" />
+			<xs:enumeration value="iw" />
+			<xs:enumeration value="hz" />
+			<xs:enumeration value="hi" />
+			<xs:enumeration value="ho" />
+			<xs:enumeration value="hu" />
+			<xs:enumeration value="is" />
+			<xs:enumeration value="io" />
+			<xs:enumeration value="ig" />
+			<xs:enumeration value="in" />
+			<xs:enumeration value="ia" />
+			<xs:enumeration value="ie" />
+			<xs:enumeration value="iu" />
+			<xs:enumeration value="ik" />
+			<xs:enumeration value="ga" />
+			<xs:enumeration value="it" />
+			<xs:enumeration value="ja" />
+			<xs:enumeration value="jv" />
+			<xs:enumeration value="kn" />
+			<xs:enumeration value="kr" />
+			<xs:enumeration value="ks" />
+			<xs:enumeration value="kk" />
+			<xs:enumeration value="km" />
+			<xs:enumeration value="ki" />
+			<xs:enumeration value="rw" />
+			<xs:enumeration value="ky" />
+			<xs:enumeration value="kv" />
+			<xs:enumeration value="kg" />
+			<xs:enumeration value="ko" />
+			<xs:enumeration value="ku" />
+			<xs:enumeration value="kj" />
+			<xs:enumeration value="lo" />
+			<xs:enumeration value="la" />
+			<xs:enumeration value="lv" />
+			<xs:enumeration value="li" />
+			<xs:enumeration value="ln" />
+			<xs:enumeration value="lt" />
+			<xs:enumeration value="lu" />
+			<xs:enumeration value="lb" />
+			<xs:enumeration value="mk" />
+			<xs:enumeration value="mg" />
+			<xs:enumeration value="ms" />
+			<xs:enumeration value="ml" />
+			<xs:enumeration value="mt" />
+			<xs:enumeration value="gv" />
+			<xs:enumeration value="mi" />
+			<xs:enumeration value="mr" />
+			<xs:enumeration value="mh" />
+			<xs:enumeration value="mo" />
+			<xs:enumeration value="mn" />
+			<xs:enumeration value="na" />
+			<xs:enumeration value="nv" />
+			<xs:enumeration value="ng" />
+			<xs:enumeration value="ne" />
+			<xs:enumeration value="nd" />
+			<xs:enumeration value="se" />
+			<xs:enumeration value="no" />
+			<xs:enumeration value="nb" />
+			<xs:enumeration value="nn" />
+			<xs:enumeration value="ny" />
+			<xs:enumeration value="oc" />
+			<xs:enumeration value="oj" />
+			<xs:enumeration value="or" />
+			<xs:enumeration value="om" />
+			<xs:enumeration value="os" />
+			<xs:enumeration value="pi" />
+			<xs:enumeration value="pa" />
+			<xs:enumeration value="fa" />
+			<xs:enumeration value="pl" />
+			<xs:enumeration value="pt" />
+			<xs:enumeration value="ps" />
+			<xs:enumeration value="qu" />
+			<xs:enumeration value="rm" />
+			<xs:enumeration value="ro" />
+			<xs:enumeration value="rn" />
+			<xs:enumeration value="ru" />
+			<xs:enumeration value="sm" />
+			<xs:enumeration value="sg" />
+			<xs:enumeration value="sa" />
+			<xs:enumeration value="sc" />
+			<xs:enumeration value="gd" />
+			<xs:enumeration value="sr" />
+			<xs:enumeration value="sn" />
+			<xs:enumeration value="ii" />
+			<xs:enumeration value="sd" />
+			<xs:enumeration value="si" />
+			<xs:enumeration value="sk" />
+			<xs:enumeration value="sl" />
+			<xs:enumeration value="so" />
+			<xs:enumeration value="nr" />
+			<xs:enumeration value="st" />
+			<xs:enumeration value="es" />
+			<xs:enumeration value="su" />
+			<xs:enumeration value="sw" />
+			<xs:enumeration value="ss" />
+			<xs:enumeration value="sv" />
+			<xs:enumeration value="tl" />
+			<xs:enumeration value="ty" />
+			<xs:enumeration value="tg" />
+			<xs:enumeration value="ta" />
+			<xs:enumeration value="tt" />
+			<xs:enumeration value="te" />
+			<xs:enumeration value="th" />
+			<xs:enumeration value="bo" />
+			<xs:enumeration value="ti" />
+			<xs:enumeration value="to" />
+			<xs:enumeration value="ts" />
+			<xs:enumeration value="tn" />
+			<xs:enumeration value="tr" />
+			<xs:enumeration value="tk" />
+			<xs:enumeration value="tw" />
+			<xs:enumeration value="ug" />
+			<xs:enumeration value="uk" />
+			<xs:enumeration value="ur" />
+			<xs:enumeration value="uz" />
+			<xs:enumeration value="ve" />
+			<xs:enumeration value="vi" />
+			<xs:enumeration value="vo" />
+			<xs:enumeration value="wa" />
+			<xs:enumeration value="cy" />
+			<xs:enumeration value="wo" />
+			<xs:enumeration value="xh" />
+			<xs:enumeration value="ji" />
+			<xs:enumeration value="yo" />
+			<xs:enumeration value="za" />
+			<xs:enumeration value="zu" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="url">
+		<xs:annotation>
+			<xs:documentation>Represents a URL in the XML anyURI format
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:anyURI" />
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="address">
+		<xs:annotation>
+			<xs:documentation>Container for address information. Only country
+				information is included at this time.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element minOccurs="0" ref="common:country" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="country">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Country represented by its ISO 3611 code. The
+					visibility attribute (private, limited or public) can be set at
+					record creation, and indicates who can see this section of
+					information.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:extension base="common:iso-3166-country-or-empty">
+					<xs:attribute name="visibility" type="common:visibility" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="orcid-path">
+		<xs:annotation>
+			<xs:documentation>Path for the ORCID iD.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d{4}-){3,}\d{3}[\dX]" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="orcid-uri">
+		<xs:annotation>
+			<xs:documentation>ORCID URI for the ORCID iD.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/(\d{4}-){3,}\d{3}[\dX]" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="application-group-orcid" type="common:orcid-id" />
+	<xs:element name="application-orcid" type="common:orcid-id" />
+	<xs:element name="orcid-identifier" type="common:orcid-id" />
+	<xs:element name="contributor-orcid" type="common:orcid-id" />
+	<xs:element name="group-orcid-identifier" type="common:orcid-id" />
+	<xs:element name="source-orcid" type="common:orcid-id" />
+	<xs:element name="orcid-id" type="common:orcid-id" />
+	<xs:complexType name="orcid-id">
+		<xs:annotation>
+			<xs:documentation>The identifier of the researcher or contributor in
+				ORCID (the ORCID iD). At least one of uri or path must be given.
+				NOTE: this type is also used for legacy client IDs.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="uri" type="common:orcid-uri">
+						<xs:annotation>
+							<xs:documentation>ORCID iD in URI form (preferred).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="path" type="common:orcid-path"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>ORCID path (16-character identifier) of the
+								ORCID iD.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				<xs:element name="path" type="common:orcid-path">
+					<xs:annotation>
+						<xs:documentation>ORCID path (16-character identifier) of the
+							ORCID iD.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="host" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ORCID host (base URL) of the ORCID iD.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="client-path">
+		<xs:annotation>
+			<xs:documentation>Path for the API client ID.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(APP-[\da-zA-Z]{16}|(\d{4}-){3,}\d{3}[\dX])" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="client-uri">
+		<xs:annotation>
+			<xs:documentation>ORCID URI for the API client ID.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="http://([^/]*orcid\.org|localhost.*/orcid-web)/client/(APP-[\da-zA-Z]{16}|(\d{4}-){3,}\d{3}[\dX])" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="client-id">
+		<xs:annotation>
+			<xs:documentation>The identifier of an ORCID API client app. At least
+				one of uri or path must be given. NOTE: legacy API clients still may
+				be identified by the orcid-id type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="uri" type="common:client-uri" />
+					<xs:element name="path" type="common:client-path"
+						minOccurs="0" />
+				</xs:sequence>
+				<xs:element name="path" type="common:client-path" />
+			</xs:choice>
+			<xs:element name="host" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ORCID host (base URL) of the ORCID iD.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="orcid-type">
+		<xs:annotation>
+			<xs:documentation>Indicates the ORCID record type for the ORCID iD
+				referenced. NOTE: orcid-types of API client are only used for legacy
+				API clients.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="admin" />
+			<xs:enumeration value="user" />
+			<xs:enumeration value="group" />
+			<xs:enumeration value="client" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="put-code">
+		<xs:annotation>
+			<xs:documentation>The put-code attribute is present only when reading
+				elements. The code must be used when PUTing (updating) items that
+				contain the attribute (works, affiliations, etc) to ensure that the
+				existing item's history is retained.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="element-path">
+	<xs:annotation>
+		<xs:documentation>The activity-path attribute is present only when
+			reading elements. It will be of the form /{orcid}/{activity-name}/{put-code} for
+			activity elements or /{orcid}/person/{element-name}/{put-code} for person element
+		</xs:documentation>
+	</xs:annotation>
+	<xs:restriction base="xs:string">
+	</xs:restriction>
+</xs:simpleType>	
+
+	<xs:simpleType name="visibility">
+		<xs:annotation>
+			<xs:documentation>Indicates who can see the value of the element when
+				reading the ORCID record. See the enumerations for definitions of
+				each value, private, limited, public, registered-only.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="private">
+				<xs:annotation>
+					<xs:documentation>The data can only be seen by the researcher or
+						contributor. This data may be used internally by ORCID for Record
+						disambiguation purposes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="limited">
+				<xs:annotation>
+					<xs:documentation>The data can only be seen by trusted parties
+						(organizations or people) as indicated by the researcher or
+						contributor. This information is only shared with systems that the
+						researcher or contributor has specifically granted authorization
+						(using OAuth).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="public">
+				<xs:annotation>
+					<xs:documentation>The data can be seen by anyone. It is publically
+						available via the ORCID Registry website and the public API
+						without further authroization by the researcher or contributor.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="registered-only">
+				<xs:annotation>
+					<xs:documentation>The data is shared only with the registered user.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="email">
+		<xs:annotation>
+			<xs:documentation>Type to represent an email address.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="350" />
+			<xs:pattern value="[^@]+@[^\.]+\..+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="media-type">
+		<xs:annotation>
+			<xs:documentation>Used with the publication date to indicate which
+				version of the publication the date refers to.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="print" />
+			<xs:enumeration value="online" />
+			<xs:enumeration value="other" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="year">
+		<xs:annotation>
+			<xs:documentation>4-character string representing a year of a date.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{4}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="month">
+		<xs:annotation>
+			<xs:documentation>2-character string representing a month of a date.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="day">
+		<xs:annotation>
+			<xs:documentation>2-character string representing a day of a date.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="fuzzy-date" type="common:fuzzy-date" />
+	<xs:element name="start-date" type="common:fuzzy-date" />
+	<xs:element name="end-date" type="common:fuzzy-date" />
+	<xs:element name="publication-date" type="common:fuzzy-date" />
+	<xs:complexType name="fuzzy-date">
+		<xs:annotation>
+			<xs:documentation>In some places the full date is not required.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="year">
+				<xs:annotation>
+					<xs:documentation>Used with the fuzzy-date type. Represents the
+						year
+						of the date.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType mixed="true">
+					<xs:simpleContent>
+						<xs:extension base="common:year" />
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:sequence minOccurs="0">
+				<xs:element name="month">
+					<xs:annotation>
+						<xs:documentation>Used with the fuzzy-date type. Represents the
+							month
+							of the date.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType mixed="true">
+						<xs:simpleContent>
+							<xs:extension base="common:month" />
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="day" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Used with the fuzzy-date type. Represents the
+							day
+							of the date.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType mixed="true">
+						<xs:simpleContent>
+							<xs:extension base="common:day" />
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>	
+
+	<xs:simpleType name="iso-3166-country">
+		<xs:annotation>
+			<xs:documentation>ISO 3166 country codes. NOTE: the values displayed
+				to the website user are localized (translated) in the ORCID Registry
+				web interface. For reference:
+				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AF" />
+			<xs:enumeration value="AX" />
+			<xs:enumeration value="AL" />
+			<xs:enumeration value="DZ" />
+			<xs:enumeration value="AS" />
+			<xs:enumeration value="AD" />
+			<xs:enumeration value="AO" />
+			<xs:enumeration value="AI" />
+			<xs:enumeration value="AQ" />
+			<xs:enumeration value="AG" />
+			<xs:enumeration value="AR" />
+			<xs:enumeration value="AM" />
+			<xs:enumeration value="AW" />
+			<xs:enumeration value="AU" />
+			<xs:enumeration value="AT" />
+			<xs:enumeration value="AZ" />
+			<xs:enumeration value="BS" />
+			<xs:enumeration value="BH" />
+			<xs:enumeration value="BD" />
+			<xs:enumeration value="BB" />
+			<xs:enumeration value="BY" />
+			<xs:enumeration value="BE" />
+			<xs:enumeration value="BZ" />
+			<xs:enumeration value="BJ" />
+			<xs:enumeration value="BM" />
+			<xs:enumeration value="BT" />
+			<xs:enumeration value="BO" />
+			<xs:enumeration value="BQ" />
+			<xs:enumeration value="BA" />
+			<xs:enumeration value="BW" />
+			<xs:enumeration value="BV" />
+			<xs:enumeration value="BR" />
+			<xs:enumeration value="IO" />
+			<xs:enumeration value="BN" />
+			<xs:enumeration value="BG" />
+			<xs:enumeration value="BF" />
+			<xs:enumeration value="BI" />
+			<xs:enumeration value="KH" />
+			<xs:enumeration value="CM" />
+			<xs:enumeration value="CA" />
+			<xs:enumeration value="CV" />
+			<xs:enumeration value="KY" />
+			<xs:enumeration value="CF" />
+			<xs:enumeration value="TD" />
+			<xs:enumeration value="CL" />
+			<xs:enumeration value="CN" />
+			<xs:enumeration value="CX" />
+			<xs:enumeration value="CC" />
+			<xs:enumeration value="CO" />
+			<xs:enumeration value="KM" />
+			<xs:enumeration value="CG" />
+			<xs:enumeration value="CD" />
+			<xs:enumeration value="CK" />
+			<xs:enumeration value="CR" />
+			<xs:enumeration value="CI" />
+			<xs:enumeration value="HR" />
+			<xs:enumeration value="CU" />
+			<xs:enumeration value="CW" />
+			<xs:enumeration value="CY" />
+			<xs:enumeration value="CZ" />
+			<xs:enumeration value="DK" />
+			<xs:enumeration value="DJ" />
+			<xs:enumeration value="DM" />
+			<xs:enumeration value="DO" />
+			<xs:enumeration value="EC" />
+			<xs:enumeration value="EG" />
+			<xs:enumeration value="SV" />
+			<xs:enumeration value="GQ" />
+			<xs:enumeration value="ER" />
+			<xs:enumeration value="EE" />
+			<xs:enumeration value="ET" />
+			<xs:enumeration value="FK" />
+			<xs:enumeration value="FO" />
+			<xs:enumeration value="FJ" />
+			<xs:enumeration value="FI" />
+			<xs:enumeration value="FR" />
+			<xs:enumeration value="GF" />
+			<xs:enumeration value="PF" />
+			<xs:enumeration value="TF" />
+			<xs:enumeration value="GA" />
+			<xs:enumeration value="GM" />
+			<xs:enumeration value="GE" />
+			<xs:enumeration value="DE" />
+			<xs:enumeration value="GH" />
+			<xs:enumeration value="GI" />
+			<xs:enumeration value="GR" />
+			<xs:enumeration value="GL" />
+			<xs:enumeration value="GD" />
+			<xs:enumeration value="GP" />
+			<xs:enumeration value="GU" />
+			<xs:enumeration value="GT" />
+			<xs:enumeration value="GG" />
+			<xs:enumeration value="GN" />
+			<xs:enumeration value="GW" />
+			<xs:enumeration value="GY" />
+			<xs:enumeration value="HT" />
+			<xs:enumeration value="HM" />
+			<xs:enumeration value="VA" />
+			<xs:enumeration value="HN" />
+			<xs:enumeration value="HK" />
+			<xs:enumeration value="HU" />
+			<xs:enumeration value="IS" />
+			<xs:enumeration value="IN" />
+			<xs:enumeration value="ID" />
+			<xs:enumeration value="IR" />
+			<xs:enumeration value="IQ" />
+			<xs:enumeration value="IE" />
+			<xs:enumeration value="IM" />
+			<xs:enumeration value="IL" />
+			<xs:enumeration value="IT" />
+			<xs:enumeration value="JM" />
+			<xs:enumeration value="JP" />
+			<xs:enumeration value="JE" />
+			<xs:enumeration value="JO" />
+			<xs:enumeration value="KZ" />
+			<xs:enumeration value="KE" />
+			<xs:enumeration value="KI" />
+			<xs:enumeration value="KP" />
+			<xs:enumeration value="KR" />
+			<xs:enumeration value="KW" />
+			<xs:enumeration value="KG" />
+			<xs:enumeration value="LA" />
+			<xs:enumeration value="LV" />
+			<xs:enumeration value="LB" />
+			<xs:enumeration value="LS" />
+			<xs:enumeration value="LR" />
+			<xs:enumeration value="LY" />
+			<xs:enumeration value="LI" />
+			<xs:enumeration value="LT" />
+			<xs:enumeration value="LU" />
+			<xs:enumeration value="MO" />
+			<xs:enumeration value="MK" />
+			<xs:enumeration value="MG" />
+			<xs:enumeration value="MW" />
+			<xs:enumeration value="MY" />
+			<xs:enumeration value="MV" />
+			<xs:enumeration value="ML" />
+			<xs:enumeration value="MT" />
+			<xs:enumeration value="MH" />
+			<xs:enumeration value="MQ" />
+			<xs:enumeration value="MR" />
+			<xs:enumeration value="MU" />
+			<xs:enumeration value="YT" />
+			<xs:enumeration value="MX" />
+			<xs:enumeration value="FM" />
+			<xs:enumeration value="MD" />
+			<xs:enumeration value="MC" />
+			<xs:enumeration value="MN" />
+			<xs:enumeration value="ME" />
+			<xs:enumeration value="MS" />
+			<xs:enumeration value="MA" />
+			<xs:enumeration value="MZ" />
+			<xs:enumeration value="MM" />
+			<xs:enumeration value="NA" />
+			<xs:enumeration value="NR" />
+			<xs:enumeration value="NP" />
+			<xs:enumeration value="NL" />
+			<xs:enumeration value="NC" />
+			<xs:enumeration value="NZ" />
+			<xs:enumeration value="NI" />
+			<xs:enumeration value="NE" />
+			<xs:enumeration value="NG" />
+			<xs:enumeration value="NU" />
+			<xs:enumeration value="NF" />
+			<xs:enumeration value="MP" />
+			<xs:enumeration value="NO" />
+			<xs:enumeration value="OM" />
+			<xs:enumeration value="PK" />
+			<xs:enumeration value="PW" />
+			<xs:enumeration value="PS" />
+			<xs:enumeration value="PA" />
+			<xs:enumeration value="PG" />
+			<xs:enumeration value="PY" />
+			<xs:enumeration value="PE" />
+			<xs:enumeration value="PH" />
+			<xs:enumeration value="PN" />
+			<xs:enumeration value="PL" />
+			<xs:enumeration value="PT" />
+			<xs:enumeration value="PR" />
+			<xs:enumeration value="QA" />
+			<xs:enumeration value="RE" />
+			<xs:enumeration value="RO" />
+			<xs:enumeration value="RU" />
+			<xs:enumeration value="RW" />
+			<xs:enumeration value="BL" />
+			<xs:enumeration value="SH" />
+			<xs:enumeration value="KN" />
+			<xs:enumeration value="LC" />
+			<xs:enumeration value="MF" />
+			<xs:enumeration value="PM" />
+			<xs:enumeration value="VC" />
+			<xs:enumeration value="WS" />
+			<xs:enumeration value="SM" />
+			<xs:enumeration value="ST" />
+			<xs:enumeration value="SA" />
+			<xs:enumeration value="SN" />
+			<xs:enumeration value="RS" />
+			<xs:enumeration value="SC" />
+			<xs:enumeration value="SL" />
+			<xs:enumeration value="SG" />
+			<xs:enumeration value="SX" />
+			<xs:enumeration value="SK" />
+			<xs:enumeration value="SI" />
+			<xs:enumeration value="SB" />
+			<xs:enumeration value="SO" />
+			<xs:enumeration value="ZA" />
+			<xs:enumeration value="GS" />
+			<xs:enumeration value="SS" />
+			<xs:enumeration value="ES" />
+			<xs:enumeration value="LK" />
+			<xs:enumeration value="SD" />
+			<xs:enumeration value="SR" />
+			<xs:enumeration value="SJ" />
+			<xs:enumeration value="SZ" />
+			<xs:enumeration value="SE" />
+			<xs:enumeration value="CH" />
+			<xs:enumeration value="SY" />
+			<xs:enumeration value="TJ" />
+			<xs:enumeration value="TZ" />
+			<xs:enumeration value="TH" />
+			<xs:enumeration value="TL" />
+			<xs:enumeration value="TG" />
+			<xs:enumeration value="TK" />
+			<xs:enumeration value="TO" />
+			<xs:enumeration value="TT" />
+			<xs:enumeration value="TN" />
+			<xs:enumeration value="TR" />
+			<xs:enumeration value="TM" />
+			<xs:enumeration value="TC" />
+			<xs:enumeration value="TV" />
+			<xs:enumeration value="UG" />
+			<xs:enumeration value="UA" />
+			<xs:enumeration value="AE" />
+			<xs:enumeration value="GB" />
+			<xs:enumeration value="US" />
+			<xs:enumeration value="UM" />
+			<xs:enumeration value="UY" />
+			<xs:enumeration value="UZ" />
+			<xs:enumeration value="VU" />
+			<xs:enumeration value="VE" />
+			<xs:enumeration value="VN" />
+			<xs:enumeration value="VG" />
+			<xs:enumeration value="VI" />
+			<xs:enumeration value="WF" />
+			<xs:enumeration value="EH" />
+			<xs:enumeration value="YE" />
+			<xs:enumeration value="ZM" />
+			<xs:enumeration value="ZW" />
+			<xs:enumeration value="TW" />
+			<xs:enumeration value="XK" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="iso-3166-country-or-empty">
+		<xs:annotation>
+			<xs:documentation>Contains either a country code or an empty value
+			</xs:documentation>
+		</xs:annotation>
+		<xs:union memberTypes="common:iso-3166-country" />
+	</xs:simpleType>
+
+	<xs:simpleType name="empty">
+		<xs:annotation>
+			<xs:documentation>An empty string</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="short-text">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 500
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="500" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-150">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 150
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="150" />	
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-200">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 200
+				characters
+			</xs:documentation> 
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="200" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-255">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 255
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-350">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 350
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="350" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-1000">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 1000
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="1000" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="string-2084">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that has a maximum size of 2084
+				characters
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">
+			<xs:maxLength value="2084" />
+		</xs:restriction>
+	</xs:simpleType>	
+
+	<xs:complexType name="string-with-lang-code">
+		<xs:annotation>
+			<xs:documentation>A non-empty string that includes a language code to
+				indicate the language used for the string's value.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:non-empty-string">
+				<xs:attribute name="language-code" type="common:language-code"
+					use="required" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="short-description">
+		<xs:annotation>
+			<xs:documentation>A short narrative (few sentences) describing the
+				item.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="5000" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="long-text">
+		<xs:annotation>
+			<xs:documentation>Must contain one or more charaters that are not a
+				space, carriage return or linefeed
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="common:non-empty-string">			
+			<xs:maxLength value="4000" />					
+		</xs:restriction>		
+	</xs:simpleType>
+
+	<xs:complexType name="credit-name">
+		<xs:annotation>
+			<xs:documentation>The name to use for the researcher or contributor
+				when credited or cited, for example, in an article or index, or as a
+				funding contributor. The value of this field also is used as the
+				display name for the researcher or contributor in the ORCID Registry
+				in their ORCID Record, or when listed as a contributor on other
+				ORCID Records. If this element is NULL, given-name family-name will
+				be used for display purposes, with a visibility of "public". The
+				visibility attribute (private, limited or public) can be set at
+				record creation, and indicates who can see this section of
+				information.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:string-150" />
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:element name="title" type="common:string-1000">
+		<xs:annotation>
+			<xs:documentation>The main name or title of the work. For a
+				spin-off
+				company, include use the company name
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<xs:element name="subtitle">		
+		<xs:annotation>
+			<xs:documentation>If the work has a subtitle, include it here.
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1000"/>			
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+
+	<xs:element name="translated-title">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>The main title of the work or funding translated
+					into another language. The translated language will be included in
+					the &lt;language-code&gt; attribute.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+				<xs:restriction base="common:string-with-lang-code">
+					<xs:maxLength value="1000" />
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="contributor-email">
+		<xs:annotation>
+			<xs:documentation>Email of the collaborator or other contributor.
+				When provided during creation or update, the email address is used
+				to look up and add the contributor's ORCID iD.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="common:email" />
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="contributor-attributes">
+		<xs:annotation>
+			<xs:documentation>Provides detail of the nature of the contribution
+				by the collaborator or other contirbutor.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="contributor-sequence" type="common:contributor-sequence"
+				minOccurs="0" />
+			<xs:element name="contributor-role" type="common:contributor-role"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="contributor-sequence">
+		<xs:annotation>
+			<xs:documentation>Indication of where in the contributor list the
+				collaborator or other contributor's name would appear
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="first" />
+			<xs:enumeration value="additional" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="contributor-role">
+		<xs:annotation>
+			<xs:documentation>The role performed by the collaborator or other
+				contributor.
+			</xs:documentation>
+		</xs:annotation>
+
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="author" />
+			<xs:enumeration value="assignee" />
+			<xs:enumeration value="editor" />
+			<xs:enumeration value="chair-or-translator" />
+			<xs:enumeration value="co-investigator" />
+			<xs:enumeration value="co-inventor" />
+			<xs:enumeration value="graduate-student" />
+			<xs:enumeration value="other-inventor" />
+			<xs:enumeration value="principal-investigator" />
+			<xs:enumeration value="postdoctoral-researcher" />
+			<xs:enumeration value="support-staff" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="group-type">
+		<xs:annotation>
+			<xs:documentation>Indicates the group type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="basic" />
+			<xs:enumeration value="premium" />
+			<xs:enumeration value="basic-institution" />
+			<xs:enumeration value="premium-institution" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="client-type">
+		<xs:annotation>
+			<xs:documentation>Indicates the client type for the API client based
+				on the ORCID membership type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="creator" />
+			<xs:enumeration value="premium-creator" />
+			<xs:enumeration value="updater" />
+			<xs:enumeration value="premium-updater" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="element-summary">
+		<xs:sequence>
+			<xs:element ref="common:created-date" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="put-code" type="common:put-code" use="optional" />
+		<xs:attribute name="visibility" type="common:visibility" />
+		<xs:attribute name="display-index" type="xs:string" use="optional" />
+		<xs:attribute name="path" type="common:element-path" use="optional" />
+	</xs:complexType>
+	
+	<xs:simpleType name="relationship-type">
+		<xs:annotation>
+			<xs:documentation>Indicates the relationship type.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="self" />
+			<xs:enumeration value="part-of" />
+		</xs:restriction>
+	</xs:simpleType>
+	 
+	<xs:complexType name="external-id">
+		<xs:annotation>
+			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence>
+					<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
+					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />		
+					<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
+					<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	 
+	 <xs:complexType name="external-ids">
+		<xs:annotation>
+			<xs:documentation>Container for storing external ids</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="external-id" type="common:external-id" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="group-id">
+		<xs:annotation>
+			<xs:documentation>Identifier for the group that this review should be a part of for aggregation purposes
+			</xs:documentation>
+		</xs:annotation>		
+		<xs:restriction base="common:string-1000">
+			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\^._~:/?#\[\]@!$&amp;'()*+,;=-]){2,}" />
+		</xs:restriction>    		
+	</xs:simpleType>		
+	
+</xs:schema>
