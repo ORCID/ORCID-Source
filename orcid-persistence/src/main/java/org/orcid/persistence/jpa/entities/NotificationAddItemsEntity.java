@@ -22,6 +22,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
@@ -48,7 +49,7 @@ public class NotificationAddItemsEntity extends NotificationEntity implements Ac
         this.authorizationUrl = authorizationUrl;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "notification_id")
     public Set<NotificationItemEntity> getNotificationItems() {
         return notificationItems;
