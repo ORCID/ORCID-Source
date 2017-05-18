@@ -1116,6 +1116,10 @@ select {
     vertical-align: middle;
 }
 
+.search-results {
+    margin-top: 10px;
+}
+
 
 /*
     bold fonts
