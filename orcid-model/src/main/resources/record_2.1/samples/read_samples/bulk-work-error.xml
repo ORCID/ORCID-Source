@@ -4,7 +4,7 @@
     xmlns:work="http://www.orcid.org/ns/work"
     xmlns:bulk="http://www.orcid.org/ns/bulk" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.0.xsd">
+    xsi:schemaLocation="http://www.orcid.org/ns/bulk ../bulk-2.1.xsd">
     <work:work put-code="156043" visibility="public">
         <common:created-date>2017-02-16T22:06:56.222Z</common:created-date>
         <common:last-modified-date>2017-02-16T22:06:56.222Z</common:last-modified-date>

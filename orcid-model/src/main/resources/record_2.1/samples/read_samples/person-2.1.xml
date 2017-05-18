@@ -8,7 +8,7 @@
 	xmlns:keyword="http://www.orcid.org/ns/keyword"
 	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0.xsd">
+	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.1.xsd">
 	<common:last-modified-date>2016-04-14T20:56:22.279Z</common:last-modified-date>
 	<person:name visibility="public"> 		
 		<common:created-date>2016-04-14T20:56:22.279Z</common:created-date>

@@ -3,7 +3,7 @@
 	visibility="private" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/peer-review ../peer-review-2.0.xsd ">		
+	xsi:schemaLocation="http://www.orcid.org/ns/peer-review ../peer-review-2.1.xsd ">		
 	<common:created-date>2001-12-31T12:00:00</common:created-date>
 	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 	<common:source>

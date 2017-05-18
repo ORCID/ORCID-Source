@@ -2,7 +2,7 @@
 <researcher-url:researcher-urls
 	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/researcher-url ../researcher-url-2.0.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/researcher-url ../researcher-url-2.1.xsd ">
 	<researcher-url:researcher-url put-code="1248"
 		visibility="public">
 		<common:created-date>2001-12-31T12:00:00</common:created-date>

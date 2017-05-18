@@ -2,7 +2,7 @@
 <history:history visibility="private"
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:history="http://www.orcid.org/ns/history"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/history ../history-2.0.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/history ../history-2.1.xsd ">
 	<history:creation-method>API</history:creation-method>
 	<history:completion-date>2001-12-31T12:00:00</history:completion-date>
 	<history:submission-date>2001-12-31T12:00:00</history:submission-date>

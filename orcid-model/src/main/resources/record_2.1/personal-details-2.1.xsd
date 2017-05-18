@@ -4,7 +4,7 @@
 	targetNamespace="http://www.orcid.org/ns/personal-details"
 	xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details">
-	<xs:annotation>
+	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
 

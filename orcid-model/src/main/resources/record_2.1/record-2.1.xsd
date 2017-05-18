@@ -8,7 +8,7 @@
 	xmlns:activities="http://www.orcid.org/ns/activities" xmlns:history="http://www.orcid.org/ns/history"
 	xmlns:record="http://www.orcid.org/ns/record" xmlns:preferences="http://www.orcid.org/ns/preferences"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review">
-	<xs:annotation>
+	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
 

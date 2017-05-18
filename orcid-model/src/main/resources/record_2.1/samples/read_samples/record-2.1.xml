@@ -12,7 +12,7 @@
 	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
 	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0.xsd ">
+	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.1.xsd ">
 	<common:orcid-identifier>
 		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>

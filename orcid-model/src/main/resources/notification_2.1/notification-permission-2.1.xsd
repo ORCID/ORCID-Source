@@ -9,7 +9,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/activities"
 		schemaLocation="../record_2.1/activities-2.1.xsd" />
 	
-	<xs:element name="notifications">
+	<xs:element name="notifications"> 
 		<xs:annotation>
 			<xs:documentation>Notification container</xs:documentation>
 		</xs:annotation>
