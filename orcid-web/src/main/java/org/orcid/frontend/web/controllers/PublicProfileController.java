@@ -223,6 +223,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
             } else {
                 mav.addObject("locked", true);
+                mav.addObject("isPublicProfile", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }

@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -34,6 +35,8 @@ import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.ReleaseNameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -43,7 +46,9 @@ import net.sf.ehcache.Element;
  * @author Will Simpson
  *
  */
-public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {    
+public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager { 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);
+    
     @Resource(name = "workLastModifiedCache")
     private Cache workLastModifiedCache;
 
@@ -68,6 +73,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     private WorkDao workDao;
 
+    @Resource
+    private SlackManager slackManager;
+    
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -75,11 +83,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
         Object key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(workLastModifiedCache.get(key));
+        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key));
         if (workLastModifiedList == null) {
             try {
                 synchronized (lockers.obtainLock(orcid)) {
-                    workLastModifiedList = toWorkLastModifiedList(workLastModifiedCache.get(key));
+                    workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key));
                     if (workLastModifiedList == null) {
                         workLastModifiedList = workDao.getWorkLastModifiedList(orcid);
                         workLastModifiedCache.put(new Element(key, workLastModifiedList));
@@ -95,11 +103,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified) {
         Object key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
+        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key));
         if (workLastModifiedList == null) {
             try {
                 synchronized (publicWorkLastModifiedListLockers.obtainLock(orcid)) {
-                    workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
+                    workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key));
                     if (workLastModifiedList == null) {
                         workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
                         publicWorkLastModifiedCache.put(new Element(key, workLastModifiedList));
@@ -115,11 +123,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
-        MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(minimizedWorkEntityCache.get(key));
+        MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(getFromMinimizedWorkEntityCache(key));
         if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
             try {
                 synchronized (lockerMinimizedWork.obtainLock(Long.toString(workId))) {
-                    minimizedWorkEntity = toMinimizedWork(minimizedWorkEntityCache.get(key));
+                    minimizedWorkEntity = toMinimizedWork(getFromMinimizedWorkEntityCache(key));
                     if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
                         minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
                         workDao.detach(minimizedWorkEntity);                        
@@ -142,11 +150,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
-        WorkEntity workEntity = (WorkEntity) toWorkBaseEntity(fullWorkEntityCache.get(key));
+        WorkEntity workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key));
         if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
             try {
                 synchronized (lockerFullWork.obtainLock(Long.toString(workId))) {
-                    workEntity = (WorkEntity) toWorkBaseEntity(fullWorkEntityCache.get(key));
+                    workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key));
                     if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                         workEntity = workDao.getWork(orcid, workId);
                         workDao.detach(workEntity);                        
@@ -271,4 +279,48 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         return (List<WorkLastModifiedEntity>) (element != null ? element.getObjectValue() : null);
     }
 
+    private Element getFromWorkLastModifiedCache(Object key) {
+        try {
+            return workLastModifiedCache.get(key);
+        } catch(Exception e) {
+            String message = String.format("Exception fetching element: '%s' from workLasModifiedCache", key);
+            LOGGER.info(message);
+            slackManager.sendSystemAlert(message);
+            throw e;
+        }
+    }
+    
+    private Element getFromPublicWorkLastModifiedCache(Object key) {
+        try {
+            return publicWorkLastModifiedCache.get(key);
+        } catch(Exception e) {
+            String message = String.format("Exception fetching element: '%s' from publicWorkLastModifiedCache", key);
+            LOGGER.info(message);
+            slackManager.sendSystemAlert(message);
+            throw e;
+        }
+    }
+        
+    private Element getFromMinimizedWorkEntityCache(Object key) {
+        try {
+            return minimizedWorkEntityCache.get(key);
+        } catch(Exception e) {
+            String message = String.format("Exception fetching element: '%s' from minimizedWorkEntityCache", key);
+            LOGGER.info(message);
+            slackManager.sendSystemAlert(message);
+            throw e;
+        }
+    }
+    
+    private Element getFromFullWorkEntityCache(Object key) {
+        try {
+            return fullWorkEntityCache.get(key);
+        } catch(Exception e) {
+            String message = String.format("Exception fetching element: '%s' from fullWorkEntityCache", key);
+            LOGGER.info(message);
+            slackManager.sendSystemAlert(message);
+            throw e;
+        }
+    }
+    
 }

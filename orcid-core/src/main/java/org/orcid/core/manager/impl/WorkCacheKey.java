@@ -63,4 +63,8 @@ public class WorkCacheKey implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "WorkCacheKey [id=" + id + ", releaseName=" + releaseName + "]";
+    }
 }
