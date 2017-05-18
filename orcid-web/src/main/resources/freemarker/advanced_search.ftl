@@ -95,7 +95,6 @@
 							<div class="control-group">
 								<!-- Search by ORCID iD -->
 								<label for="orcid" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelsearchbyorcid")}</label>
-								<small>${springMacroRequestContext.getMessage("orcid_bio_search.help.searchbyorcid")}</small>
 								<div class="controls">
 									<input type="text" class="input-xlarge" name="orcid" id="orcid" ng-model="input.text">
 									<span id="invalid-orcid" class="orcid-error"ng-cloak ng-hide="isValidOrcidId()"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
@@ -117,7 +116,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row search-results">
 		<div class="col-md-12">
 			<#if noResultsFound??>
 				<!-- no results -->
