@@ -61,7 +61,7 @@
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-cloak><a href="{{member.websiteUrl}}" target="_blank">{{member.publicDisplayName}}</a></h2>	                        
-	                        	<p ng-cloak>{{membersListSrvc.communityTypes[member.researchCommunity]}} | {{member.country}}</p>
+	                        	<p ng-cloak><span ng-if="membersListSrvc.communityTypes[member.researchCommunity]">{{membersListSrvc.communityTypes[member.researchCommunity]}}</span><span ng-if="membersListSrvc.communityTypes[member.researchCommunity]&&member.country"> | </span>{{member.country}}</p>
 	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
 	                        	<p>
