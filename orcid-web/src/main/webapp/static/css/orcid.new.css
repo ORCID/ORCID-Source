@@ -1326,8 +1326,8 @@ ul.privacyHelp li.private {
 }
 
 #statistics span.stat-name {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 1.2em;
+    //font-weight: bold;
     font-style: normal;
     color: #494A4C;
 }
@@ -1339,7 +1339,7 @@ ul.privacyHelp li.private {
 }
 
 #statistics span.stat-data {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #494A4C;
     font-weight: bold;
     font-style: normal;
@@ -1352,6 +1352,10 @@ ul.privacyHelp li.private {
 #statistics .col-xs-12 {
     border-top: 1px solid #EEE;
     padding: 15px;
+}
+
+#statistics .stat-subheader {
+    border: none;
 }
 
 .dropup,
@@ -4782,6 +4786,10 @@ ul.sources-edit-list > li {
 
 .id-banner .row .col-md-3 {
     margin-top: 15px;
+}
+
+#public-last-modified p.small {
+    line-height: normal;
 }
 
 .workspace-section-title div.glyphicon-pencil,
