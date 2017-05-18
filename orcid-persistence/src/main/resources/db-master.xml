@@ -235,4 +235,5 @@
 	<include file="/db/updates/add_hashed_orcid_to_profile_entity.xml" />
 	<include file="/db/updates/remove_keyword_view.xml" />
 	<include file="/db/updates/varchar_to_text.xml" />
+	<include file="/db/updates/notifications_indexes.xml" />
 </databaseChangeLog>

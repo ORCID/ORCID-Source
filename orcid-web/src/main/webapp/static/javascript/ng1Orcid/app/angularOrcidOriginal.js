@@ -4312,7 +4312,7 @@ angular.module('orcidApp').controller('adminDelegatesCtrl',['$scope',function ($
 
 angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
-    $scope.showRegisterForm = true;
+    $scope.showRegisterForm = false;
     $scope.isOrcidPresent = false;
     $scope.authorizationForm = {};
     $scope.registrationForm = {};
@@ -4389,12 +4389,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
                     $scope.showRegisterForm = false;   
                     $scope.$broadcast("loginHasUserId", { userName: $scope.authorizationForm.userName.value });                 
                 }
-                // #show_login - legacy fragment id, we should remove this
-                // sometime
-                // after November 2014 and only support &show_login=true
-                if(window.location.href.endsWith('#show_login'))
-                    $scope.showRegisterForm = false;
-                else if(!$scope.isOrcidPresent)
+                if(!$scope.isOrcidPresent)
                     $scope.showRegisterForm = !orcidVar.showLogin;                
                 
                 $scope.$apply();
@@ -5059,7 +5054,6 @@ angular.module('orcidApp').controller('widgetCtrl',['$scope', function ($scope){
     $scope.showCode = false;
 
     $scope.widgetURLND = '<a href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="_blank" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">' + getBaseUri() + '/' + orcidVar.orcidId + '</a>';
-    
     $scope.inputTextAreaSelectAll = function($event){
         $event.target.select();
     }

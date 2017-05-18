@@ -304,7 +304,7 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
     };
 
     $scope.selectFunding = function(datum) {
-        if (datum != undefined && datum != null) {
+    	if (datum != undefined && datum != null) {
             $scope.editFunding.fundingName.value = datum.value;
             if(datum.value){
                 $scope.editFunding.fundingName.errors = [];
@@ -320,15 +320,15 @@ angular.module('orcidApp').controller('FundingCtrl',['$scope', '$rootScope', '$c
                 $scope.editFunding.country.errors = [];
             }
 
-            if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
-                $scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
+            if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
+                $scope.getDisambiguatedFunding(datum.disambiguatedAffiliationIdentifier);
                 $scope.unbindTypeaheadForOrgs();
             }
         }
     };
 
     $scope.getDisambiguatedFunding = function(id) {
-        $.ajax({
+    	$.ajax({
             url: getBaseUri() + '/fundings/disambiguated/id/' + id,
             dataType: 'json',
             type: 'GET',
