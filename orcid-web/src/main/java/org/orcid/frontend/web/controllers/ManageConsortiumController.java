@@ -166,12 +166,27 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody ContactsForm validateContacts(@RequestBody ContactsForm contactsForm) {
         List<String> errors = contactsForm.getErrors();
         errors.clear();
-        long mainContactCount = contactsForm.getContactsList().stream().filter(c -> ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType())).count();
+        int mainContactCount = 0;
+        int votingContactCount = 0;
+        for (Contact contact : contactsForm.getContactsList()) {
+            if (ContactRoleType.MAIN_CONTACT.equals(contact.getRole().getRoleType())) {
+                mainContactCount++;
+            }
+            if (contact.getRole().isVotingContact()) {
+                votingContactCount++;
+            }
+        }
         if (mainContactCount == 0) {
             errors.add(getMessage("manage_consortium.contacts_must_have_main_contact"));
         }
         if (mainContactCount > 1) {
             errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_main_contact"));
+        }
+        if (votingContactCount == 0) {
+            errors.add(getMessage("manage_consortium.contacts_must_have_voting_contact"));
+        }
+        if (votingContactCount > 1) {
+            errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_voting_contact"));
         }
         return contactsForm;
     }

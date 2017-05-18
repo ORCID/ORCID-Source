@@ -118,7 +118,7 @@
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
-                                <td><input type="checkbox" ng-model="contact.role.votingContact"></input></td>
+                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
