@@ -19,6 +19,18 @@ package org.orcid.persistence.dao;
 public interface StatisticsGeneratorDao {
 
     public long getLiveIds();
+    
+    public long getAccountsWithEducation();
+    
+    public long getAccountsWithEmployment();
+    
+    public long getAccountsWithExternalId();
+    
+    public long getAccountsWithFunding();
+    
+    public long getAccountsWithPeerReview();
+    
+    public long getAccountsWithPersonId();
 
     public long getAccountsWithVerifiedEmails();
 
@@ -33,6 +45,10 @@ public interface StatisticsGeneratorDao {
     long getNumberOfEducation();
 
     long getNumberOfFunding();
+    
+    public long getNumberOfPeerReview();
+    
+    public long getNumberOfPersonId();
 
     long getNumberOfEmploymentUniqueOrg();
 
