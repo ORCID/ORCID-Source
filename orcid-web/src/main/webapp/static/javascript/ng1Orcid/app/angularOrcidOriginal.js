@@ -1161,7 +1161,8 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
             dataType: 'json',
             headers: { Accept: 'application/json'},
             success: function(data) {
-                $('#ajax-loader').hide();
+                $('#ajax-loader-search').hide();
+                $('#ajax-loader-show-more').hide();
                 var resultsContainer = data['orcid-search-results'];
                 $scope.numFound = resultsContainer['num-found'];
                 if(resultsContainer['orcid-search-result']){
@@ -1205,7 +1206,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
         $scope.areMoreResults = false;
         if($scope.isValid()){
             $scope.hasErrors = false;
-            $('#ajax-loader').show();
+            $('#ajax-loader-search').show();
             $scope.getResults();
         }
         else{
@@ -1214,7 +1215,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     };
 
     $scope.getMoreResults = function(){
-        $('#ajax-loader').show();
+        $('#ajax-loader-show-more').show();
         $scope.input.start += 10;
         $scope.getResults();
     };

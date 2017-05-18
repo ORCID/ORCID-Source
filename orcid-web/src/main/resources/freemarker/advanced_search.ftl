@@ -105,24 +105,25 @@
 					</fieldset>
 					<hr>
 					<div class="row">
-							<p ng-if="hasErrors" ng-cloak><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
-							<div class="control-group">
-								<div class="controls">
-									<button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
-								</div>
+						<p ng-if="hasErrors" ng-cloak><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
+						<div class="control-group">
+							<div class="controls">
+								<button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
+								<span id="ajax-loader-search" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
 							</div>
 						</div>
+					</div>
 				</form>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<#if noResultsFound??>
-					<!-- no results -->
-				<#else>
-					<#include "includes/search/search_results.ftl"/>
-				</#if>
-			</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<#if noResultsFound??>
+				<!-- no results -->
+			<#else>
+				<#include "includes/search/search_results.ftl"/>
+			</#if>
 		</div>
 	</div>
 </div>

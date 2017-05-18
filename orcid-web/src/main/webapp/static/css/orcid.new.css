@@ -1102,8 +1102,18 @@ select {
     padding-bottom: 0;
 }
 
+.main-search #ajax-loader-search,
+.main-search #ajax-loader-show-more {
+        margin: 0 10px;
+        vertical-align: middle;
+}
+
 .main-search input[type="text"] {
     margin-bottom: 0;
+}
+
+.main-search .x2 {
+    vertical-align: middle;
 }
 
 
