@@ -1,0 +1,63 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="ADD-NOTIFICATION-READ-DATE-INDEX" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="notification_read_date_index" tableName="notification" />
+            </not>
+        </preConditions>
+        <createIndex indexName="notification_read_date_index" tableName="notification">
+        	<column name="read_date" />
+    	</createIndex>
+    </changeSet>
+    <changeSet id="ADD-NOTIFICATION-TYPE-INDEX" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="notification_type_index" tableName="notification" />
+            </not>
+        </preConditions>
+        <createIndex indexName="notification_type_index" tableName="notification">
+        	<column name="notification_type" />
+    	</createIndex>
+    </changeSet>
+    <changeSet id="ADD-NOTIFICATION-CLIENT-SOURCE-ID-INDEX" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="notification_client_source_id" tableName="notification" />
+            </not>
+        </preConditions>
+        <createIndex indexName="notification_client_source_id" tableName="notification">
+        	<column name="client_source_id" />
+    	</createIndex>
+    </changeSet>
+    <changeSet id="ADD-NOTIFICATION-AUTHENTICATION-PROVIDER-ID-INDEX" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="notification_authentication_provider_id" tableName="notification" />
+            </not>
+        </preConditions>
+        <createIndex indexName="notification_authentication_provider_id" tableName="notification">
+        	<column name="authentication_provider_id" />
+    	</createIndex>
+    </changeSet>
+    
+</databaseChangeLog>

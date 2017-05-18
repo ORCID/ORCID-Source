@@ -129,7 +129,10 @@ public class ClaimController extends BaseController {
             if (profileEntityManager.isProfileClaimedByEmail(decryptedEmail)) {
                 return new ModelAndView("redirect:/signin?alreadyClaimed");
             }
-            return new ModelAndView("claim");
+            
+            ModelAndView result = new ModelAndView("claim");
+            result.addObject("noIndex", true);
+            return result;
         } catch (EncryptionOperationNotPossibleException e) {
             LOGGER.warn("Error decypting claim email from the claim profile link");
             return new ModelAndView("redirect:/signin?invalidClaimUrl");

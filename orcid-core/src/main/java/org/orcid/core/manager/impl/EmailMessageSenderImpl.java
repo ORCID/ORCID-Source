@@ -43,15 +43,13 @@ import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.DigestEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.Lists;
@@ -68,7 +66,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private NotificationDao notificationDao;
-    
+
     @Resource
     private NotificationDao notificationDaoReadOnly;
 
@@ -79,8 +77,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private MailGunManager mailGunManager;
 
     @Resource
-    private ProfileDao profileDao;
-
+    private EmailDao emailDao;
+    
     @Resource
     private TransactionTemplate transactionTemplate;
 
@@ -185,28 +183,22 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         List<String> orcidsWithMessagesToSend = notificationDaoReadOnly.findOrcidsWithNotificationsToSend();
         for (final String orcid : orcidsWithMessagesToSend) {
             try {
-                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                    @Override
-                    protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        LOGGER.info("Sending messages for orcid: {}", orcid);
-                        List<Notification> notifications = notificationManager.findUnsentByOrcid(orcid);
-                        LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                        EmailMessage digestMessage = createDigest(orcid, notifications);
-                        digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                        EmailEntity primaryEmail = profileDao.find(orcid).getPrimaryEmail();
-                        if (primaryEmail == null) {
-                            LOGGER.info("No primary email for orcid: " + orcid);
-                            return;
-                        }
-                        digestMessage.setTo(primaryEmail.getId());
-                        flagAsSent(notifications);
-                        boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                                digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                        if (!successfullySent) {
-                            status.setRollbackOnly();
-                        }
-                    }
-                });
+                LOGGER.info("Sending messages for orcid: {}", orcid);
+                List<Notification> notifications = notificationManager.findUnsentByOrcid(orcid);
+                LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
+                EmailMessage digestMessage = createDigest(orcid, notifications);
+                digestMessage.setFrom(DIGEST_FROM_ADDRESS);
+                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                if (primaryEmail == null) {
+                    LOGGER.info("No primary email for orcid: " + orcid);
+                    return;
+                }
+                digestMessage.setTo(primaryEmail.getId());
+                boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
+                        digestMessage.getBodyText(), digestMessage.getBodyHtml());
+                if (successfullySent) {
+                    flagAsSent(notifications);
+                }
             } catch (RuntimeException e) {
                 LOGGER.warn("Problem sending email message to user: " + orcid, e);
             }

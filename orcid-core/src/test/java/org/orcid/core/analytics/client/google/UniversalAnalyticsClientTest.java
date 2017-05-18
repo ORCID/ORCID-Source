@@ -73,7 +73,7 @@ public class UniversalAnalyticsClientTest {
         data.setContentType("application/xml");
         data.setUserAgent("blah");
         data.setResponseCode(200);
-        data.setIpAddress("37.14.150.83");
+        data.setIpAddress("37.14.150.0");
         data.setMethod("GET");
         return data;
     }
