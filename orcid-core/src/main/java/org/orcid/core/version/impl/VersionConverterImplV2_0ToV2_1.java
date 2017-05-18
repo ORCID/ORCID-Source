@@ -102,59 +102,59 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapperFactory.classMap(GroupIdRecord.class, GroupIdRecord.class).byDefault().register();
         
         //ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, ExternalIDs.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(ExternalIDs.class, ExternalIDs.class).byDefault().register();
         mapperFactory.classMap(ExternalID.class, ExternalID.class).customize(sourceMapper).byDefault().register();
         
         // Other names
-        mapperFactory.classMap(OtherNames.class, OtherNames.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(OtherNames.class, OtherNames.class).byDefault().register();
         mapperFactory.classMap(OtherName.class, OtherName.class).customize(sourceMapper).byDefault().register();
 
         //Keywords
-        mapperFactory.classMap(Keywords.class, Keywords.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Keywords.class, Keywords.class).byDefault().register();
         mapperFactory.classMap(Keyword.class, Keyword.class).customize(sourceMapper).byDefault().register();
         
         //Address
-        mapperFactory.classMap(Addresses.class, Addresses.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Addresses.class, Addresses.class).byDefault().register();
         mapperFactory.classMap(Address.class, Address.class).customize(sourceMapper).byDefault().register();
         
         //ResearcherUrl
-        mapperFactory.classMap(ResearcherUrls.class, ResearcherUrls.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(ResearcherUrls.class, ResearcherUrls.class).byDefault().register();
         mapperFactory.classMap(ResearcherUrl.class, ResearcherUrl.class).customize(sourceMapper).byDefault().register();
         
         //Person External ID
-        mapperFactory.classMap(PersonExternalIdentifiers.class, PersonExternalIdentifiers.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(PersonExternalIdentifiers.class, PersonExternalIdentifiers.class).byDefault().register();
         mapperFactory.classMap(PersonExternalIdentifier.class, PersonExternalIdentifier.class).customize(sourceMapper).byDefault().register();
         
         //Emails
-        mapperFactory.classMap(Emails.class, Emails.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Emails.class, Emails.class).byDefault().register();
         mapperFactory.classMap(Email.class, Email.class).customize(sourceMapper).byDefault().register();
         
         // WORK         
-        mapperFactory.classMap(WorkGroup.class, WorkGroup.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Works.class, Works.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(WorkGroup.class, WorkGroup.class).byDefault().register();
+        mapperFactory.classMap(Works.class, Works.class).byDefault().register();
         mapperFactory.classMap(Work.class, Work.class).customize(sourceMapper).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, WorkSummary.class).customize(sourceMapper).byDefault().register();
         
         //FUNDING        
-        mapperFactory.classMap(FundingGroup.class, FundingGroup.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Fundings.class, Fundings.class).byDefault().customize(sourceMapper).register();
-        mapperFactory.classMap(Funding.class, Funding.class).byDefault().customize(sourceMapper).register();
+        mapperFactory.classMap(FundingGroup.class, FundingGroup.class).byDefault().register();
+        mapperFactory.classMap(Fundings.class, Fundings.class).byDefault().register();
+        mapperFactory.classMap(Funding.class, Funding.class).customize(sourceMapper).byDefault().register();
         mapperFactory.classMap(FundingSummary.class, FundingSummary.class).customize(sourceMapper).byDefault().register();
         
         //EDUCATION
-        mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Educations.class, org.orcid.jaxb.model.record_v2.Educations.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Education.class, Education.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Educations.class, Educations.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Educations.class, org.orcid.jaxb.model.record_v2.Educations.class).byDefault().register();
+        mapperFactory.classMap(Educations.class, Educations.class).byDefault().register();
+        mapperFactory.classMap(Education.class, Education.class).customize(sourceMapper).byDefault().register();        
         mapperFactory.classMap(EducationSummary.class, EducationSummary.class).customize(sourceMapper).byDefault().register();
         
         //EMPLOYMENT
-        mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Employments.class, org.orcid.jaxb.model.record_v2.Employments.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Employment.class, Employment.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(Employments.class, Employments.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Employments.class, org.orcid.jaxb.model.record_v2.Employments.class).byDefault().register();
+        mapperFactory.classMap(Employments.class, Employments.class).byDefault().register();
+        mapperFactory.classMap(Employment.class, Employment.class).customize(sourceMapper).byDefault().register();        
         mapperFactory.classMap(EmploymentSummary.class, EmploymentSummary.class).customize(sourceMapper).byDefault().register();
         
         //PEER REVIEW
-        mapperFactory.classMap(PeerReviews.class, PeerReviews.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(PeerReviews.class, PeerReviews.class).byDefault().register();
         mapperFactory.classMap(PeerReview.class, PeerReview.class).customize(sourceMapper).byDefault().register();        
         mapperFactory.classMap(PeerReviewSummary.class, PeerReviewSummary.class).customize(sourceMapper).byDefault().register();                
         
@@ -162,10 +162,10 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_v2.NotificationPermission.class).byDefault().register();
         
         //Person
-        mapperFactory.classMap(Person.class, Person.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Person.class, Person.class).byDefault().register();
         
         //Record
-        mapperFactory.classMap(Record.class, Record.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Record.class, Record.class).byDefault().register();
         
         mapper = mapperFactory.getMapperFacade();
     }
