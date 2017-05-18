@@ -33,7 +33,7 @@
 		</xs:appinfo>
 	</xs:annotation>
 	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="../common_2.0/common-2.0.xsd" />
+		schemaLocation="../common_2.1/common-2.1.xsd" />
 	<xs:element name="preferences">
     <xs:complexType>
         <xs:annotation>

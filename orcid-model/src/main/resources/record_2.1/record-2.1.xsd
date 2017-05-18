@@ -39,25 +39,25 @@
 	</xs:annotation>
 
 	<xs:import namespace="http://www.orcid.org/ns/activities"
-		schemaLocation="activities-2.0.xsd" />
+		schemaLocation="activities-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/person"
-		schemaLocation="person-2.0.xsd" />
+		schemaLocation="person-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/common"
-		schemaLocation="../common_2.0/common-2.0.xsd" />
+		schemaLocation="../common_2.1/common-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/history"
-		schemaLocation="history-2.0.xsd" />
+		schemaLocation="history-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/preferences"
-		schemaLocation="preferences-2.0.xsd" />
+		schemaLocation="preferences-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/work"
-		schemaLocation="work-2.0.xsd" />
+		schemaLocation="work-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/funding"
-		schemaLocation="funding-2.0.xsd" />
+		schemaLocation="funding-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/education"
-		schemaLocation="education-2.0.xsd" />
+		schemaLocation="education-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/employment"
-		schemaLocation="employment-2.0.xsd" />
+		schemaLocation="employment-2.1.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/peer-review"
-		schemaLocation="peer-review-2.0.xsd" />
+		schemaLocation="peer-review-2.1.xsd" />
 
 	<xs:element name="record">
 		<xs:complexType>

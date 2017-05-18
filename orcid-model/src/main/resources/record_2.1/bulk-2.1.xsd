@@ -36,10 +36,10 @@
 	</xs:annotation>
 	
 	<xs:import namespace="http://www.orcid.org/ns/error"
-		schemaLocation="error-2.0.xsd" />
+		schemaLocation="error-2.1.xsd" />
 		
 	<xs:import namespace="http://www.orcid.org/ns/work"
-		schemaLocation="work-2.0.xsd" />
+		schemaLocation="work-2.1.xsd" />
 	
 	<xs:element name="bulk">
 		<xs:complexType>
