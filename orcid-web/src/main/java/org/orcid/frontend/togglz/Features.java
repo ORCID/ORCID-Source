@@ -22,7 +22,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
     @Label("New footer")
-    NEW_FOOTER;
+    NEW_FOOTER,
+    @Label("Affiliation search")
+    AFFILIATION_SEARCH;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
