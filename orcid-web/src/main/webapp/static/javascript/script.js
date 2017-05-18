@@ -4227,7 +4227,12 @@ this.w3cLatexCharMap = {
             if (doneSomething) {
                 query += ' AND ';
             }
-            query += 'affiliation-org-name:' + input.affiliationOrgName.toLowerCase();
+            //if all chars are numbers, assume it's a ringgold id
+            if (input.affiliationOrgName.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrgName;
+            } else {
+                query += 'affiliation-org-name:' + input.affiliationOrgName.toLowerCase();
+            }
             doneSomething = true;
         }
         
