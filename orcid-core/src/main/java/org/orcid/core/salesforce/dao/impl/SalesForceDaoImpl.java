@@ -144,6 +144,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public void updateContact(Contact contact) {
+        retryConsumer(accessToken -> updateContactInSalesForce(accessToken, contact));
+    }
+
+    @Override
     public String createContactRole(ContactRole contact) {
         return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
     }
@@ -207,6 +212,20 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating contact in SalesForce");
         return result.optString("id");
+    }
+
+    private void updateContactInSalesForce(String accessToken, Contact contact) {
+        LOGGER.info("About update contact in SalesForce");
+        String contactId = contact.getId();
+        validateSalesForceId(contactId);
+        WebResource resource = createObjectsResource("/Contact/", contactId).queryParam("_HttpMethod", "PATCH");
+        JSONObject contactJson = salesForceAdapter.createSaleForceRecordFromContact(contact);
+        // SalesForce doesn't allow the Id in the body
+        contactJson.remove("Id");
+        ClientResponse response = doPostRequest(resource, contactJson, accessToken);
+        checkAuthorization(response);
+        checkResponse(response, 204, "Error updating contact in SalesForce");
+        return;
     }
 
     private String createContactRoleInSalesForce(String accessToken, ContactRole contactRole) {
@@ -304,7 +323,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersObject(String accessToken) {
         WebResource resource = createQueryResource(
-                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+                "SELECT Account.Id, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         return checkResponse(response, 200, "Error getting member list from SalesForce");
@@ -348,7 +367,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<Member> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of consortia from SalesForce");
         WebResource resource = createQueryResource(
-                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
+                "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortia list from SalesForce");
@@ -366,7 +385,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
+                "SELECT (SELECT Id, Account.Name, Account.Public_Display_Name__c FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='%s'",
                 consortiumId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
@@ -410,7 +429,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='%s'",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r WHERE Integration__c.inactive__c=FALSE) from Account WHERE Id='%s'",
                 memberId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
@@ -447,7 +466,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceId(accountId);
         WebResource resource = createQueryResource(
-                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c From Membership_Contact_Roles__r) From Account a Where Id='%s'",
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c From Membership_Contact_Roles__r Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'",
                 accountId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);

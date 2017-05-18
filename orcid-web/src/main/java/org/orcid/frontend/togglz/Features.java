@@ -23,6 +23,10 @@ import org.togglz.core.context.FeatureContext;
 public enum Features implements Feature {
     @Label("New footer")
     NEW_FOOTER,
+    
+    @Label("Last modified")
+    LAST_MOD,
+    
     @Label("Affiliation search")
     AFFILIATION_SEARCH;
 

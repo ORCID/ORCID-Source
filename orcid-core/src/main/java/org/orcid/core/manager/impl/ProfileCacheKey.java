@@ -71,4 +71,8 @@ public class ProfileCacheKey implements Serializable {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "ProfileCacheKey [orcid=" + orcid + ", lastModified=" + lastModified + ", releaseName=" + releaseName + "]";
+    }    
 }

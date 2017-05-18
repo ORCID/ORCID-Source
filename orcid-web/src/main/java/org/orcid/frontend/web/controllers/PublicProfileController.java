@@ -223,6 +223,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
             } else {
                 mav.addObject("locked", true);
+                mav.addObject("isPublicProfile", true);
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
@@ -245,6 +246,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
+        mav.addObject("lastModifiedTime", lastModifiedTime);
 
         boolean isProfileEmtpy = true;
 

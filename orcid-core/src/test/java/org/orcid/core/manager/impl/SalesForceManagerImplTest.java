@@ -106,15 +106,16 @@ public class SalesForceManagerImplTest {
     }
 
     private void setUpContact2() {
-        List<ContactRole> contact1Roles = new ArrayList<>();
-        contact1Roles.add(createContactRole("contact2Idrole1Id", ContactRoleType.MAIN_CONTACT));
-        when(salesForceDao.retrieveContactRolesByContactIdAndAccountId("contact2Id", "account1Id")).thenReturn(contact1Roles);
+        List<ContactRole> contact2Roles = new ArrayList<>();
+        contact2Roles.add(createContactRole("contact2Id", "contact2Idrole1Id", ContactRoleType.MAIN_CONTACT));
+        when(salesForceDao.retrieveContactRolesByContactIdAndAccountId("contact2Id", "account1Id")).thenReturn(contact2Roles);
     }
 
-    private ContactRole createContactRole(String roleId, ContactRoleType roleType) {
+    private ContactRole createContactRole(String contactId, String roleId, ContactRoleType roleType) {
         ContactRole contactRole = new ContactRole();
         contactRole.setId(roleId);
         contactRole.setRoleType(roleType);
+        contactRole.setContactId(contactId);
         return contactRole;
     }
 
