@@ -65,9 +65,16 @@ public class ManageConsortiumController extends BaseController {
     public Map<String, String> retrieveContactRoleTypesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (ContactRoleType type : ContactRoleType.values()) {
-            map.put(type.name(), type.value());
+            map.put(type.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, type.name())));
         }
-        return map;
+        
+        Map<String, String> sorted = new LinkedHashMap<>();
+        
+        map.entrySet().stream()
+        .sorted(Map.Entry.<String, String> comparingByValue())
+        .forEachOrdered(x -> sorted.put(x.getKey(), x.getValue()));
+        
+        return sorted;
     }
 
     @ModelAttribute("communityTypes")
