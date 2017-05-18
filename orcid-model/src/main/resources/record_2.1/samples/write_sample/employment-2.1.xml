@@ -2,7 +2,7 @@
 <employment:employment 
 	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.0.xsd ">	
+	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.1.xsd ">	
 	<employment:department-name>Department</employment:department-name>
 	<employment:role-title>Role</employment:role-title> 
 	<common:start-date>
