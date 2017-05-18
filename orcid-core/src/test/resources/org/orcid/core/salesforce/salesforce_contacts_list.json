@@ -24,7 +24,8 @@
           "LastName" : "Contact1LastName",
           "Email" : "contact1@mailinator.com"
         },
-        "Member_Org_Role__c" : "Main relationship contact (OFFICIAL)"
+        "Member_Org_Role__c" : "Main relationship contact (OFFICIAL)",
+        "Voting_Contact__c": true
       }, {
         "attributes" : {
           "type" : "Membership_Contact_Role__c",
@@ -40,7 +41,8 @@
           "LastName" : "Contact2LastName",
           "Email" : "contact2@mailinator.com"
         },
-        "Member_Org_Role__c" : "Technical contact"
+        "Member_Org_Role__c" : "Technical contact",
+        "Voting_Contact__c": false
       } ]
     }
   } ]
