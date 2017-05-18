@@ -4227,15 +4227,15 @@ this.w3cLatexCharMap = {
             query += 'keyword:' + input.keyword.toLowerCase();
             doneSomething = true;
         }
-        if (hasValue(input.affiliationOrgName)) {
+        if (hasValue(input.affiliationOrg)) {
             if (doneSomething) {
                 query += ' AND ';
             }
             //if all chars are numbers, assume it's a ringgold id
-            if (input.affiliationOrgName.match(/^[0-9]*$/)) {
-                query += 'ringgold-org-id:' + input.affiliationOrgName;
+            if (input.affiliationOrg.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrg;
             } else {
-                query += 'affiliation-org-name:' + input.affiliationOrgName.toLowerCase();
+                query += 'affiliation-org-name:' + input.affiliationOrg.toLowerCase();
             }
             doneSomething = true;
         }
@@ -4250,7 +4250,7 @@ this.w3cLatexCharMap = {
 
     exports.isValidInput = function(input) {
         var fieldsToCheck = [ input.text, input.givenNames, input.familyName,
-                input.keyword, input.affiliationOrgName ];
+                input.keyword, input.affiliationOrg ];
         for ( var i = 0; i < fieldsToCheck.length; i++) {
             if (hasValue(fieldsToCheck[i])) {
                 return true;

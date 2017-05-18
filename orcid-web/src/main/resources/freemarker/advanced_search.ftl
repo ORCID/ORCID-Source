@@ -112,7 +112,7 @@
 							<div class="row">
 								<div class="control-group col-md-6">
 									<!-- Affiliation organization -->
-									<label for="affiliationOrgName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelaffiliationorgname")}</label>
+									<label for="affiliationOrg" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelaffiliationorg")}</label>
 									<div class="popover-help-container">
 							            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
 							            <div id="search-help-affiliation" class="popover bottom">
@@ -123,7 +123,7 @@
 							            </div>
 							         </div>
 									<div class="controls">
-										<input type="text" class="input-xlarge" name="affiliationOrgName" id="affiliationOrgName" ng-model="input.affiliationOrgName">
+										<input type="text" class="input-xlarge" name="affiliationOrg" id="affiliationOrg" ng-model="input.affiliationOrg">
 									</div>
 								</div>
 								<div class="control-group col-md-6">
