@@ -66,6 +66,11 @@ public class EmailTest extends BlackBoxBaseV2Release {
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
 
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
+    
     private String limitedEmailValue = "limited@test.orcid.org";
 
     @Before
@@ -268,6 +273,39 @@ public class EmailTest extends BlackBoxBaseV2Release {
         fail();
     }
 
+    /**
+     * --------- -- -- -- V2.1 -- -- -- ---------
+     * 
+     */
+
+    /**
+     * PRECONDITIONS: The primary email must be public
+     */
+    @Test
+    public void testGetWithPublicAPI_V2_1() {
+        ClientResponse getAllResponse = publicV2_1ApiClient_release.viewEmailXML(getUser1OrcidId());
+        assertNotNull(getAllResponse);
+        org.orcid.jaxb.model.record_v2.Emails emails = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.Emails.class);
+        assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, emails);
+    }
+
+    /**
+     * PRECONDITIONS: The primary email must be public The user must have a
+     * limited email limited@email.com
+     * 
+     * @throws JSONException
+     * @throws InterruptedException
+     */
+    @Test
+    public void testGetWithMembersAPI_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        ClientResponse getAllResponse = memberV2_1ApiClient_release.getEmails(getUser1OrcidId(), accessToken);
+        assertNotNull(getAllResponse);
+        org.orcid.jaxb.model.record_v2.Emails emails = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.Emails.class);
+        assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, emails);
+        assertListContainsEmail_release("limited@test.orcid.org", org.orcid.jaxb.model.common_v2.Visibility.LIMITED, emails);
+    }
+    
     public String getAccessToken() throws InterruptedException, JSONException {
         List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
         return getAccessToken(scopes);

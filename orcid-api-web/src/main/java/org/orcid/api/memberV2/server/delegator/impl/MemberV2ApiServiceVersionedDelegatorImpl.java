@@ -94,14 +94,14 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createWork(String orcid, Object work) {
         checkProfileStatus(orcid);
         schemaValidator.validate(work);
-        work = upgradeObject(work);
+        work = processObject(work);
         return memberV2ApiServiceDelegator.createWork(orcid, work);
     }
 
     @Override
     public Response createWorks(String orcid, Object works) {
         checkProfileStatus(orcid);
-        works = upgradeObject(works);
+        works = processObject(works);
         return memberV2ApiServiceDelegator.createWorks(orcid, works);
     }
     
@@ -109,7 +109,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateWork(String orcid, Long putCode, Object work) {
         checkProfileStatus(orcid);
         schemaValidator.validate(work);
-        work = upgradeObject(work);
+        work = processObject(work);
         return processReponse(memberV2ApiServiceDelegator.updateWork(orcid, putCode, work));
     }
 
@@ -141,7 +141,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createFunding(String orcid, Object funding) {
         checkProfileStatus(orcid);
         schemaValidator.validate(funding);
-        funding = upgradeObject(funding);
+        funding = processObject(funding);
         return memberV2ApiServiceDelegator.createFunding(orcid, funding);
     }
 
@@ -149,7 +149,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateFunding(String orcid, Long putCode, Object funding) {
         checkProfileStatus(orcid);
         schemaValidator.validate(funding);
-        funding = upgradeObject(funding);
+        funding = processObject(funding);
         return processReponse(memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding));
     }
 
@@ -181,7 +181,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createEducation(String orcid, Object education) {
         checkProfileStatus(orcid);
         schemaValidator.validate(education);
-        education = upgradeObject(education);
+        education = processObject(education);
         return memberV2ApiServiceDelegator.createEducation(orcid, education);
     }
 
@@ -189,7 +189,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateEducation(String orcid, Long putCode, Object education) {
         checkProfileStatus(orcid);
         schemaValidator.validate(education);
-        education = upgradeObject(education);
+        education = processObject(education);
         return processReponse(memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education));
     }
 
@@ -215,7 +215,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createEmployment(String orcid, Object employment) {
         checkProfileStatus(orcid);
         schemaValidator.validate(employment);
-        employment = upgradeObject(employment);
+        employment = processObject(employment);
         return memberV2ApiServiceDelegator.createEmployment(orcid, employment);
     }
 
@@ -223,7 +223,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateEmployment(String orcid, Long putCode, Object employment) {
         checkProfileStatus(orcid);
         schemaValidator.validate(employment);
-        employment = upgradeObject(employment);
+        employment = processObject(employment);
         return processReponse(memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment));
     }
 
@@ -255,7 +255,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createPeerReview(String orcid, Object peerReview) {
         checkProfileStatus(orcid);
         schemaValidator.validate(peerReview);
-        peerReview = upgradeObject(peerReview);
+        peerReview = processObject(peerReview);
         return memberV2ApiServiceDelegator.createPeerReview(orcid, peerReview);
     }
 
@@ -263,7 +263,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
         checkProfileStatus(orcid);
         schemaValidator.validate(peerReview);
-        peerReview = upgradeObject(peerReview);
+        peerReview = processObject(peerReview);
         return processReponse(memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview));
     }
 
@@ -280,13 +280,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
 
     @Override
     public Response createGroupIdRecord(Object groupIdRecord) {
-        groupIdRecord = upgradeObject(groupIdRecord);
+        groupIdRecord = processObject(groupIdRecord);
         return memberV2ApiServiceDelegator.createGroupIdRecord(groupIdRecord);
     }
 
     @Override
     public Response updateGroupIdRecord(Object groupIdRecord, Long putCode) {
-        groupIdRecord = upgradeObject(groupIdRecord);
+        groupIdRecord = processObject(groupIdRecord);
         return processReponse(memberV2ApiServiceDelegator.updateGroupIdRecord(groupIdRecord, putCode));
     }
 
@@ -321,7 +321,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
         checkProfileStatus(orcid);
         schemaValidator.validate(researcherUrl);
-        researcherUrl = upgradeObject(researcherUrl);
+        researcherUrl = processObject(researcherUrl);
         return processReponse(memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl));
     }
 
@@ -329,7 +329,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createResearcherUrl(String orcid, Object researcherUrl) {
         checkProfileStatus(orcid);
         schemaValidator.validate(researcherUrl);
-        researcherUrl = upgradeObject(researcherUrl);
+        researcherUrl = processObject(researcherUrl);
         return memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
 
@@ -361,7 +361,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createOtherName(String orcid, Object otherName) {
         checkProfileStatus(orcid);
         schemaValidator.validate(otherName);
-        otherName = upgradeObject(otherName);
+        otherName = processObject(otherName);
         return memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
     }
 
@@ -369,7 +369,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateOtherName(String orcid, Long putCode, Object otherName) {
         checkProfileStatus(orcid);
         schemaValidator.validate(otherName);
-        otherName = upgradeObject(otherName);
+        otherName = processObject(otherName);
         return processReponse(memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName));
     }
 
@@ -401,7 +401,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
         checkProfileStatus(orcid);
         schemaValidator.validate(externalIdentifier);
-        externalIdentifier = upgradeObject(externalIdentifier);
+        externalIdentifier = processObject(externalIdentifier);
         return processReponse(memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier));
     }
 
@@ -409,7 +409,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createExternalIdentifier(String orcid, Object externalIdentifier) {
         checkProfileStatus(orcid);
         schemaValidator.validate(externalIdentifier);
-        externalIdentifier = upgradeObject(externalIdentifier);
+        externalIdentifier = processObject(externalIdentifier);
         return memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
 
@@ -454,7 +454,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createKeyword(String orcid, Object keyword) {
         checkProfileStatus(orcid);
         schemaValidator.validate(keyword);
-        keyword = upgradeObject(keyword);
+        keyword = processObject(keyword);
         return memberV2ApiServiceDelegator.createKeyword(orcid, keyword);
     }
 
@@ -462,7 +462,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateKeyword(String orcid, Long putCode, Object keyword) {
         checkProfileStatus(orcid);
         schemaValidator.validate(keyword);
-        keyword = upgradeObject(keyword);
+        keyword = processObject(keyword);
         return processReponse(memberV2ApiServiceDelegator.updateKeyword(orcid, putCode, keyword));
     }
 
@@ -488,7 +488,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response createAddress(String orcid, Object address) {
         checkProfileStatus(orcid);
         schemaValidator.validate(address);
-        address = upgradeObject(address);
+        address = processObject(address);
         return memberV2ApiServiceDelegator.createAddress(orcid, address);
     }
 
@@ -496,7 +496,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response updateAddress(String orcid, Long putCode, Object address) {
         checkProfileStatus(orcid);
         schemaValidator.validate(address);
-        address = upgradeObject(address);
+        address = processObject(address);
         return processReponse(memberV2ApiServiceDelegator.updateAddress(orcid, putCode, address));
     }
 
@@ -554,10 +554,26 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return response;
     }
 
+    private Object processObject(Object object) {
+        if(externalVersion.equals("2.1")) {
+            return downgradeObject(object);
+        } else {
+            return upgradeObject(object);
+        }
+    }
+    
     private Object upgradeObject(Object entity) {
         V2Convertible result = null;
         if (entity != null) {
             result = v2VersionConverterChain.upgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
+        }
+        return result.getObjectToConvert();
+    }
+    
+    private Object downgradeObject(Object entity) {
+        V2Convertible result = null;
+        if (entity != null) {
+            result = v2VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
         }
         return result.getObjectToConvert();
     }

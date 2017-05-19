@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -91,6 +92,11 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
     
     @Resource(name = "memberV2ApiClient")
     private MemberV2ApiClientImpl memberV2ApiClient_release;    
+
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
     
     @Before
     public void cleanUpOldTest() throws JSONException {
@@ -287,6 +293,47 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
     }     
     
     /**
+     * --------- -- -- -- V2.1 -- -- -- ---------
+     * 
+     */
+    @Test
+    public void testGetGroupIdRecordsWithSeveralFormats_v2_1() throws JSONException, InterruptedException, URISyntaxException, UnsupportedEncodingException {
+        String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
+        
+        for(String groupId : VALID_GROUP_IDS) {            
+            org.orcid.jaxb.model.groupid_v2.GroupIdRecord g1 = new org.orcid.jaxb.model.groupid_v2.GroupIdRecord();
+            g1.setDescription("Description");
+            g1.setGroupId(groupId);
+            g1.setName("Group # " + System.currentTimeMillis());
+            g1.setType("publisher");
+            ClientResponse r1 = memberV2_1ApiClient_release.createGroupIdRecord(g1, token);
+            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+            g1.setPutCode(Long.valueOf(r1LocationPutCode));
+            
+            webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());
+            WebElement preElement = webDriver.findElement(By.tagName("pre"));
+            String groupElementString = preElement.getText();
+            assertFalse(PojoUtil.isEmpty(groupElementString));
+            org.orcid.jaxb.model.groupid_v2.GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, org.orcid.jaxb.model.groupid_v2.GroupIdRecord.class);
+            assertNotNull(groupFromWebPage);
+            assertEquals("Missing " + groupId, groupId, groupFromWebPage.getGroupId());
+            
+            putsToDelete.add(g1.getPutCode());
+        }
+        
+        for(String invdalidGroupId : INVALID_GROUP_IDS) {            
+            org.orcid.jaxb.model.groupid_v2.GroupIdRecord g1 = new org.orcid.jaxb.model.groupid_v2.GroupIdRecord();
+            g1.setDescription("Description");
+            g1.setGroupId(invdalidGroupId);
+            g1.setName("Group # " + System.currentTimeMillis());
+            g1.setType("publisher");
+            ClientResponse r1 = memberV2_1ApiClient_release.createGroupIdRecord(g1, token);
+            assertNotNull(r1);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
+        }        
+    }
+    
+    /**
      * --------- -- -- -- ALL -- -- -- ---------
      * 
      */
@@ -344,6 +391,15 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", v2.getDescription());
         assertEquals(groupId, v2.getGroupId());
         assertEquals(groupId, v2.getName());
-    }
-   
+        
+        //View it with V2.1
+        ClientResponse v2_1Result = memberV2_1ApiClient_release.getGroupIdRecord(putCode, token);
+        assertEquals(Response.Status.OK.getStatusCode(), v2_1Result.getStatus());
+        org.orcid.jaxb.model.groupid_v2.GroupIdRecord v2_1 = v2_1Result.getEntity(org.orcid.jaxb.model.groupid_v2.GroupIdRecord.class);
+        assertEquals(putCode, v2_1.getPutCode());
+        assertEquals("publisher", v2_1.getType());
+        assertEquals("Description", v2_1.getDescription());
+        assertEquals(groupId, v2_1.getGroupId());
+        assertEquals(groupId, v2_1.getName());
+    }   
 }
