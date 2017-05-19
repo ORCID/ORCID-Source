@@ -22,6 +22,7 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
+import org.orcid.jaxb.model.common_v2.ContributorOrcid;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -96,6 +97,7 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         SourceMapper sourceMapper = new SourceMapper();
+        ContributorOrcidMapper contributorOrcidMapper = new ContributorOrcidMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, GroupIdRecords.class).byDefault().register();
@@ -132,13 +134,13 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         // WORK
         mapperFactory.classMap(WorkGroup.class, WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, Work.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Work.class, Work.class).customize(sourceMapper).customize(contributorOrcidMapper).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, WorkSummary.class).customize(sourceMapper).byDefault().register();
 
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, FundingGroup.class).byDefault().register();
         mapperFactory.classMap(Fundings.class, Fundings.class).byDefault().register();
-        mapperFactory.classMap(Funding.class, Funding.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Funding.class, Funding.class).customize(sourceMapper).customize(contributorOrcidMapper).byDefault().register();
         mapperFactory.classMap(FundingSummary.class, FundingSummary.class).customize(sourceMapper).byDefault().register();
 
         // EDUCATION
@@ -193,6 +195,45 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
                 s.setSourceName(a.getSource().getSourceName());
                 b.setSource(s);
             }
+        }
+        
+        @SuppressWarnings("deprecation")
+        @Override
+        public void mapBtoA(SourceAware b, SourceAware a, MappingContext context) {
+            Source source = b.getSource();
+            if (source == null) {
+                return;
+            }
+
+            if (source.getSourceClientId() != null) {
+                a.setSource(source);
+            } else if (source.getSourceOrcid() != null) {
+                String path = source.getSourceOrcid().getPath();
+                SourceOrcid sourceOrcid = new SourceOrcid();
+                sourceOrcid.setHost(orcidUrlManager.getBaseHost());
+                sourceOrcid.setUri(orcidUrlManager.getBaseUriHttp() + "/" + path);
+                sourceOrcid.setPath(path);
+                Source s = new Source();
+                s.setSourceOrcid(sourceOrcid);
+                s.setSourceName(a.getSource().getSourceName());
+                a.setSource(s);
+            }
+        }
+    }
+    
+    private class ContributorOrcidMapper<Y, A> extends CustomMapper<ContributorOrcid, ContributorOrcid> {       
+        @Override
+        public void mapAtoB(ContributorOrcid a, ContributorOrcid b, MappingContext context) {
+            b.setHost(a.getHost());
+            b.setPath(a.getPath());
+            b.setUri(orcidUrlManager.getBaseHost() + "/" + a.getPath());
+        }
+                
+        @Override
+        public void mapBtoA(ContributorOrcid b, ContributorOrcid a, MappingContext context) {
+            a.setHost(b.getHost());
+            a.setPath(b.getPath());
+            a.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());
         }
     }
 
