@@ -3,20 +3,21 @@ import 'reflect-metadata';
 import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
 import { UpgradeModule } from '@angular/upgrade/static';
+
 import { EmailFrequencyCtrlNg2Module } from './../controllers/EmailFrequencyCtrl.ts'
 
 @Component({
     selector: 'ng2-comp',
-    template: '<div>{{value}}</div>'
+    template: '<div class="ng-view"></div>'
 }) 
 export class Ng2Comp {
-    private value;
+    /*private value;
 
     constructor() {
         this.value = "Success ng2"
-    }
+    }*/
 
-    ngDoBootstrap() {}
+    //ngDoBootstrap() {}
 }
 
 @NgModule({
