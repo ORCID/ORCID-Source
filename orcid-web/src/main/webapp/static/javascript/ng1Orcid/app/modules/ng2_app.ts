@@ -7,10 +7,10 @@ import { UpgradeModule } from '@angular/upgrade/static';
 import { EmailFrequencyCtrlNg2Module } from './../controllers/EmailFrequencyCtrl.ts';
 
 @Component({
-    selector: 'ng2-comp',
+    selector: 'root-cmp',
     template: '<div class="ng-view"></div>'
 }) 
-export class Ng2Comp {
+export class RootCmp {
     /*private value;
 
     constructor() {
@@ -24,10 +24,10 @@ export class Ng2Comp {
     imports: [
         BrowserModule,
         UpgradeModule,
-        //EmailFrequencyCtrlNg2Module
+        EmailFrequencyCtrlNg2Module
     ],
-    bootstrap: [Ng2Comp],
-    declarations: [Ng2Comp]
+    bootstrap: [RootCmp],
+    declarations: [RootCmp]
 })
 export class Ng2AppModule {
     constructor(public upgrade: UpgradeModule){}

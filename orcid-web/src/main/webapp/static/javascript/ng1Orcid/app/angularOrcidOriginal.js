@@ -29,7 +29,6 @@
  */
 
 console.log("testmjc8");
-
 /*
 angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
 

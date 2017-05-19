@@ -15,7 +15,6 @@ import { Ng2AppModule } from './modules/ng2_app.ts';
 platformBrowserDynamic().bootstrapModule(Ng2AppModule).then(platformRef => {
   console.log('upgrade bootstraped v0.11');
 
-  //(<any>platformRef.instance).upgrade.bootstrap(document.body, [orcidApp.name]);
   const upgrade = (<any>platformRef.instance).upgrade;
   // bootstrap angular1
   upgrade.bootstrap(document.body, [orcidApp.name]);
