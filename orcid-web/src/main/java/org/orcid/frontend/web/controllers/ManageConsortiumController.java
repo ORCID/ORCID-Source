@@ -68,13 +68,13 @@ public class ManageConsortiumController extends BaseController {
         for (ContactRoleType type : ContactRoleType.values()) {
             map.put(type.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, type.name())));
         }
-        
+
         Map<String, String> sorted = new LinkedHashMap<>();
-        
+        // @formatter:off
         map.entrySet().stream()
         .sorted(Map.Entry.<String, String> comparingByValue())
         .forEachOrdered(x -> sorted.put(x.getKey(), x.getValue()));
-        
+        // @formatter:on
         return sorted;
     }
 
@@ -162,7 +162,7 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
         validateContacts(contactsForm);
         if (contactsForm.getErrors().isEmpty()) {
-            contactsForm.getContactsList().forEach(c -> salesForceManager.updateContact(c));
+            salesForceManager.updateContacts(contactsForm.getContactsList());
             return getContacts();
         } else {
             return contactsForm;

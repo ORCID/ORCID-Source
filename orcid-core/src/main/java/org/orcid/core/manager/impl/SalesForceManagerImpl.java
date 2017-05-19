@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -304,23 +305,28 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void updateContact(Contact contact) {
         String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        if (roles.stream().noneMatch(r -> r.getContactId().equals(contact.getId()))) {
-            // The user should not be able to update this contact
-            return;
-        }
-        salesForceDao.removeContactRole(contact.getRole().getId());
-        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRoleType()))) {
-            ContactRole contactRole = new ContactRole();
-            contactRole.setAccountId(accountId);
-            contactRole.setContactId(contact.getId());
-            contactRole.setRoleType(contact.getRole().getRoleType());
-            contactRole.setVotingContact(contact.getRole().isVotingContact());
-            String contactRoleId = salesForceDao.createContactRole(contactRole);
-            contact.getRole().setId(contactRoleId);
-        }
+        removeContactRole(contact);
+        ContactRole contactRole = new ContactRole();
+        contactRole.setAccountId(accountId);
+        contactRole.setContactId(contact.getId());
+        contactRole.setRoleType(contact.getRole().getRoleType());
+        contactRole.setVotingContact(contact.getRole().isVotingContact());
+        String contactRoleId = salesForceDao.createContactRole(contactRole);
+        contact.getRole().setId(contactRoleId);
         // Need to make more granular!
         evictAll();
+    }
+
+    @Override
+    public void updateContacts(Collection<Contact> contacts) {
+        // Need to remove roles with validation rules in SF first
+        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        existingContacts.stream().filter(c -> {
+            return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
+                    || c.getRole().isVotingContact();
+        }).forEach(c -> removeContactRole(c));
+        contacts.stream().forEach(c -> updateContact(c));
     }
 
     @Override
