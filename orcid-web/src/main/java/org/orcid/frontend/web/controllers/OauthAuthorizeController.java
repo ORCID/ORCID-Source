@@ -112,24 +112,25 @@ public class OauthAuthorizeController extends OauthControllerBase {
         //Add check for prompt=confirm here. This is a SHOULD in the openid spec.
         boolean forceConfirm = false;
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
-            String prompt = request.getParameter("prompt");
-            String maxAge = request.getParameter("max_age");
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            String maxAge = request.getParameter(OrcidOauth2Constants.MAX_AGE);
+            String orcid = getEffectiveUserOrcid();
             if (maxAge!=null){
                 //if maxAge+lastlogin > now, force login
-                java.util.Date authTime = profileEntityManager.getAuthTime();
+                java.util.Date authTime = profileEntityManager.getLastLogin(orcid); //is also on the entity.
                 try{
-                    long max = Long.parseLong(maxAge);                
-                    if (authTime != null && (authTime.getTime() + max) > (new java.util.Date()).getTime()){
+                    long max = Long.parseLong(maxAge);        
+                    if (authTime == null || ((authTime.getTime() + max) < (new java.util.Date()).getTime())){
                         return oauthLoginController.loginGetHandler(request,response,new ModelAndView());                    
                     }                    
                 }catch(NumberFormatException e){
                     //ignore
                 }
             }
-            if (prompt != null && prompt.equals("confirm")){
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_CONFIRM)){
                 forceConfirm=true;
-            }else if (prompt!=null && prompt.equals("login")){
-                request.getParameterMap().remove("prompt");
+            }else if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)){
+                request.getParameterMap().remove(OrcidOauth2Constants.PROMPT);
                 return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
             }
         }

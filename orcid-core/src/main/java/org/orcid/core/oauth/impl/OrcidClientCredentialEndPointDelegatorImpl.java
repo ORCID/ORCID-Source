@@ -207,10 +207,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 if (authorizationCodeEntity.getNonce() !=null){
                     authorizationParameters.put(OrcidOauth2Constants.NONCE, authorizationCodeEntity.getNonce());
                 }
-                //also do max_age
-                if (authorizationCodeEntity.getMaxAge() !=null){
-                    authorizationParameters.put(OrcidOauth2Constants.MAX_AGE, authorizationCodeEntity.getMaxAge());
-                }
             } else {
                 authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
             }                        

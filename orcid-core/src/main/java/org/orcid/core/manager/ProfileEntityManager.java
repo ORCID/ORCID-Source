@@ -85,7 +85,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public void updateSecurityQuestion(String orcid, Integer questionId, String answer);
     
-    public void updateIpAddress(String orcid, String ipAddress);
+    public void updateLastLoginDetails(String orcid, String ipAddress);
     
     public Locale retrieveLocale(String orcid);      
     
@@ -93,5 +93,5 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean unlockProfile(String orcid);
 
-    Date getAuthTime();
+    Date getLastLogin(String orcid);
 }

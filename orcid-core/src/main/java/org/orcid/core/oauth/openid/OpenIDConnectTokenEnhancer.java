@@ -58,14 +58,12 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             claims.expirationTime(accessToken.getExpiration());
             claims.issueTime(new Date());
             claims.jwtID(UUID.randomUUID().toString());
-            if (params.get("nonce") != null)
-                claims.claim("nonce", params.get("nonce"));
-            if (params.get("max_age") != null){
-                //When max_age is used, the ID Token returned MUST include an auth_time Claim Value.
-            }                                                    
+            if (params.get(OrcidOauth2Constants.NONCE) != null)
+                claims.claim(OrcidOauth2Constants.NONCE, params.get(OrcidOauth2Constants.NONCE));
+            claims.claim(OrcidOauth2Constants.AUTH_TIME, profileEntityManager.getLastLogin(accessToken.getAdditionalInformation().get("orcid").toString()));
             SignedJWT signedJWT = keyManager.sign(claims.build());
             String idTok = signedJWT.serialize();
-            accessToken.getAdditionalInformation().put("id_token", idTok);
+            accessToken.getAdditionalInformation().put(OrcidOauth2Constants.ID_TOKEN, idTok);
         } catch (JOSEException e) {
             e.printStackTrace();
         } catch (Exception e){

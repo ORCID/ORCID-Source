@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
@@ -101,9 +102,10 @@ public class OauthLoginController extends OauthControllerBase {
             return error;
         }
         
+        //handle openID behaviour
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
-            String prompt = request.getParameter("prompt");
-            if (prompt != null && prompt.equals("none")){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
                 String redirectUriWithParams = requestInfoForm.getRedirectUrl();
                 redirectUriWithParams += "?error=login_required";
                 RedirectView rView = new RedirectView(redirectUriWithParams);
@@ -133,7 +135,7 @@ public class OauthLoginController extends OauthControllerBase {
                 try {
                     // Authenticate user
                     Authentication auth = authenticateUser(request, form);
-                    profileEntityManager.updateIpAddress(auth.getName(), OrcidRequestUtil.getIpAddress(request));
+                    profileEntityManager.updateLastLoginDetails(auth.getName(), OrcidRequestUtil.getIpAddress(request));
 
                     // Create authorization params
                     SimpleSessionStatus status = new SimpleSessionStatus();

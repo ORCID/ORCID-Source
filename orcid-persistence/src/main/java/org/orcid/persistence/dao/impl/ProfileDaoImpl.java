@@ -703,8 +703,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateIpAddress(String orcid, String ipAddress) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
+    public void updateLastLoginDetails(String orcid, String ipAddress) {
+        Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("ipAddr", ipAddress);
         query.executeUpdate();
@@ -796,5 +796,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("hashedOrcid", hashedOrcid);
         query.setParameter("orcid", orcid);
         query.executeUpdate();
+    }
+
+    @Override
+    public Date getLastLogin(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastLogin from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        Date result = query.getSingleResult();
+        return result;
     }
 }

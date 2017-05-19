@@ -132,8 +132,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             //persist the openID params if present
             if (requestParameters.get(OrcidOauth2Constants.NONCE) != null)
                 detail.setNonce((String)requestParameters.get(OrcidOauth2Constants.NONCE));
-            if (requestParameters.get(OrcidOauth2Constants.MAX_AGE) != null)
-                detail.setMaxAge((String)requestParameters.get(OrcidOauth2Constants.MAX_AGE));
         }
 
         detail.setId(code);

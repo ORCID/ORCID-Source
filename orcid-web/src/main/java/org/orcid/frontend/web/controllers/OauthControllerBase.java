@@ -321,7 +321,6 @@ public class OauthControllerBase extends BaseController {
         infoForm.setStateParam(stateParam);
         infoForm.setResponseType(responseType);
         infoForm.setNonce(nonce);
-        infoForm.setMax_age(maxAge);
         
         return infoForm;
     }
@@ -368,9 +367,6 @@ public class OauthControllerBase extends BaseController {
         //OpenID connect
         if (!PojoUtil.isEmpty(requestInfoForm.getNonce())){
             params.put(OrcidOauth2Constants.NONCE, requestInfoForm.getNonce());
-        }
-        if (!PojoUtil.isEmpty(requestInfoForm.getMax_age())){
-            params.put(OrcidOauth2Constants.MAX_AGE, requestInfoForm.getMax_age());
         }
     }
     

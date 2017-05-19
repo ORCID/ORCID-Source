@@ -45,7 +45,6 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String userFamilyNames;
     //OpenID Connect
     private String nonce;
-    private String max_age;
 
     public String getNonce() {
         return nonce;
@@ -53,14 +52,6 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setNonce(String nonce) {
         this.nonce = nonce;
-    }
-
-    public String getMax_age() {
-        return max_age;
-    }
-
-    public void setMax_age(String max_age) {
-        this.max_age = max_age;
     }
 
     private boolean clientHavePersistentTokens = false;
