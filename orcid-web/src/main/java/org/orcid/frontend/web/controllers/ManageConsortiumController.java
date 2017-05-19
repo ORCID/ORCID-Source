@@ -95,7 +95,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/get-consortium.json", method = RequestMethod.GET)
     public @ResponseBody ConsortiumForm getConsortium() {
-        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
         return consortiumForm;
@@ -104,7 +104,7 @@ public class ManageConsortiumController extends BaseController {
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
     public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
         MemberDetails memberDetails = consortium.toMemberDetails();
-        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String usersAuthorizedAccountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         Member member = memberDetails.getMember();
         if (!usersAuthorizedAccountId.equals(member.getId())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
@@ -115,7 +115,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/get-contacts.json", method = RequestMethod.GET)
     public @ResponseBody ContactsForm getContacts() {
-        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         ContactsForm contactsForm = new ContactsForm();
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
         salesForceManager.addOrcidsToContacts(contactsList);
