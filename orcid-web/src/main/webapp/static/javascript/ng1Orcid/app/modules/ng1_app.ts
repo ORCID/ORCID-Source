@@ -15,6 +15,6 @@ export const orcidApp = angular.module(
 		'ui.multiselect', 
 		'vcRecaptcha',
 		'ui.bootstrap',
-		EmailFrequencyCtrl.name
+		'EmailFrequencyCtrl'
 	]
 );
