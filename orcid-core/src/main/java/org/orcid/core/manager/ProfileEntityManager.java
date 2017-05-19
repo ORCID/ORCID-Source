@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
@@ -91,4 +92,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean lockProfile(String orcid, String lockReason, String description);
 
     boolean unlockProfile(String orcid);
+
+    Date getAuthTime();
 }

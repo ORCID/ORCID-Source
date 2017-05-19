@@ -75,6 +75,4 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         return accessToken;
         
     }
-    
-        //during authn prompt=login and prompt=none must be honored
 }

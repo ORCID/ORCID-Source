@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -39,6 +40,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.implicit.ImplicitTokenRequest;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +62,18 @@ public class OauthAuthorizeController extends OauthControllerBase {
     @Resource 
     private OauthLoginController oauthLoginController;
     
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    /** This is called if user is already logged in.  
+     * Checks permissions have been granted to client and generates access code.
+     * 
+     * @param request
+     * @param response
+     * @param mav
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         //Get and save the request information form
@@ -94,18 +108,29 @@ public class OauthAuthorizeController extends OauthControllerBase {
             return error;
         }  
         
-        //for already logged in users:
-        //Add check for prompt=confirm  here.  This is a SHOULD in the openid spec.
-        //Add check for prompt=login here. This is a MUST in the openid spec.
+        //Add check for prompt=login and max_age here. This is a MUST in the openid spec.
+        //Add check for prompt=confirm here. This is a SHOULD in the openid spec.
         boolean forceConfirm = false;
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
             String prompt = request.getParameter("prompt");
+            String maxAge = request.getParameter("max_age");
+            if (maxAge!=null){
+                //if maxAge+lastlogin > now, force login
+                java.util.Date authTime = profileEntityManager.getAuthTime();
+                try{
+                    long max = Long.parseLong(maxAge);                
+                    if (authTime != null && (authTime.getTime() + max) > (new java.util.Date()).getTime()){
+                        return oauthLoginController.loginGetHandler(request,response,new ModelAndView());                    
+                    }                    
+                }catch(NumberFormatException e){
+                    //ignore
+                }
+            }
             if (prompt != null && prompt.equals("confirm")){
                 forceConfirm=true;
             }else if (prompt!=null && prompt.equals("login")){
                 request.getParameterMap().remove("prompt");
                 return oauthLoginController.loginGetHandler(request,response,new ModelAndView());
-                //(Not You?) = https://localhost:8443/orcid-web/oauth/signin?client_id=4444-4444-4444-4445&response_type=code&scope=/authenticate%20openid&redirect_uri=https://localhost:8443/&nonce=n1&max_age=100&prompt=confirm#show_login
             }
         }
 
@@ -143,7 +168,8 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 Map<String, Object> model = new HashMap<String, Object>();
                 model.put("authorizationRequest", authorizationRequest);
 
-                // Approve
+                // Approve using the spring authorization endpoint code. 
+                //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));
                 RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 ModelAndView authCodeView = new ModelAndView();
                 authCodeView.setView(view);
