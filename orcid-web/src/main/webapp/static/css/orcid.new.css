@@ -6754,6 +6754,10 @@ a:hover .mozilla-badge {
     width: 100%;
 }
 
+.edit-country .fixed-area {
+    min-height: 300px;
+}
+
 .record-settings > li {
     position: relative;
 }
