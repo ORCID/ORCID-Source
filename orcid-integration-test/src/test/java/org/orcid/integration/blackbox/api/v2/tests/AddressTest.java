@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -71,7 +72,7 @@ public class AddressTest extends BlackBoxBaseV2Release {
     private PublicV2ApiClientImpl publicV2ApiClient_release;
 
     @Resource(name = "memberV2_1ApiClient")
-    private MemberV2ApiClientImpl memberV2_1ApiClient_release;
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
     @Resource(name = "publicV2_1ApiClient")
     private PublicV2ApiClientImpl publicV2_1ApiClient_release;
     
@@ -883,10 +884,10 @@ public class AddressTest extends BlackBoxBaseV2Release {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         
-        // Release
+        // V2.1
         org.orcid.jaxb.model.record_v2.Address address_v2_1 = new org.orcid.jaxb.model.record_v2.Address();
-        address_v2.setCountry(new org.orcid.jaxb.model.common_v2.Country(org.orcid.jaxb.model.common_v2.Iso3166Country.MX));
-        address_v2.setPutCode(1234567890L);
+        address_v2_1.setCountry(new org.orcid.jaxb.model.common_v2.Country(org.orcid.jaxb.model.common_v2.Iso3166Country.MX));
+        address_v2_1.setPutCode(1234567890L);
         
         response = memberV2_1ApiClient_release.updateAddress(getUser1OrcidId(), address_v2_1, accessToken);
         assertNotNull(response);

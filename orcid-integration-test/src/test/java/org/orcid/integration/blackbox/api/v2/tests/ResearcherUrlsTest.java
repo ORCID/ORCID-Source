@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -70,7 +71,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
     private PublicV2ApiClientImpl publicV2ApiClient_release;
     
     @Resource(name = "memberV2_1ApiClient")
-    private MemberV2ApiClientImpl memberV2_1ApiClient_release;
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
     @Resource(name = "publicV2_1ApiClient")
     private PublicV2ApiClientImpl publicV2_1ApiClient_release;
 
@@ -1199,7 +1200,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(researcherUrls_v2.getResearcherUrls());
         assertTrue(researcherUrls_v2.getResearcherUrls().isEmpty());
 
-        // Release
+        // V2.1
         getAllResponse = memberV2_1ApiClient_release.getResearcherUrls(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         researcherUrls_v2_1 = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
