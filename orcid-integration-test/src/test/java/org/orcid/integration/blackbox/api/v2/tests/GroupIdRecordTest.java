@@ -308,7 +308,7 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
             g1.setName("Group # " + System.currentTimeMillis());
             g1.setType("publisher");
             ClientResponse r1 = memberV2_1ApiClient_release.createGroupIdRecord(g1, token);
-            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0/group-id-record/", "");
+            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.1/group-id-record/", "");
             g1.setPutCode(Long.valueOf(r1LocationPutCode));
             
             webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());

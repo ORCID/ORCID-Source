@@ -810,7 +810,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.1/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
 
         // Read
         ClientResponse getResponse = memberV2_1ApiClient_release.viewLocationXml(postResponse.getLocation(), accessToken);
