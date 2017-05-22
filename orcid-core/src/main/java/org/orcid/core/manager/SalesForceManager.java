@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.salesforce.model.Consortium;
@@ -47,7 +48,7 @@ public interface SalesForceManager {
 
     void enableAccess(String accountId, List<Contact> contactsList);
 
-    String retriveAccountIdByOrcid(String orcid);
+    String retrieveAccountIdByOrcid(String orcid);
     
     /**
      * 
@@ -67,11 +68,9 @@ public interface SalesForceManager {
 
     void createContact(Contact contact);
 
-    /**
-     * Updates the roles as specified by the boolean properties in the contact
-     * object
-     */
     void updateContact(Contact contact);
+    
+    void updateContacts(Collection<Contact> contacts);
 
     void removeContact(Contact contact);
     

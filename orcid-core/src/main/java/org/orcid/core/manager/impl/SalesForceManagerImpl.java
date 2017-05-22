@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -174,7 +175,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
-    public String retriveAccountIdByOrcid(String orcid) {
+    public String retrieveAccountIdByOrcid(String orcid) {
         SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcid(orcid);
         return connection != null ? connection.getSalesForceAccountId() : null;
     }
@@ -190,7 +191,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             accountId = salesForceDao.createMember(member);
         }
         opportunity.setTargetAccountId(accountId);
-        opportunity.setConsortiumLeadId(retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
+        opportunity.setConsortiumLeadId(retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid()));
         opportunity.setType(OPPORTUNITY_TYPE);
         opportunity.setMemberType(getPremiumConsortiumMemberTypeId());
         opportunity.setStageName(OPPORTUNITY_INITIAL_STAGE_NAME);
@@ -249,7 +250,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void flagOpportunityAsClosed(String opportunityId) {
-        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         MemberDetails memberDetails = retrieveDetails(accountId);
         boolean authorized = memberDetails.getSubMembers().stream().anyMatch(s -> opportunityId.equals(s.getOpportunity().getId()));
         if (authorized) {
@@ -264,7 +265,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void createContact(Contact contact) {
-        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         contact.setAccountId(accountId);
         if (StringUtils.isBlank(contact.getEmail())) {
             String contactOrcid = contact.getOrcid();
@@ -285,7 +286,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void removeContact(Contact contact) {
-        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
         contactRoles.forEach(r -> salesForceDao.removeContactRole(r.getId()));
         // Need to make more granular!
@@ -294,7 +295,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void removeContactRole(Contact contact) {
-        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
         contactRoles.stream().filter(r -> r.getId().equals(contact.getRole().getId())).findFirst().ifPresent(r -> salesForceDao.removeContactRole(r.getId()));
         // Need to make more granular!
@@ -303,24 +304,29 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void updateContact(Contact contact) {
-        String accountId = retriveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        List<ContactRole> roles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        if (roles.stream().noneMatch(r -> r.getContactId().equals(contact.getId()))) {
-            // The user should not be able to update this contact
-            return;
-        }
-        salesForceDao.removeContactRole(contact.getRole().getId());
-        if (roles.stream().noneMatch(r -> contact.getRole().equals(r.getRoleType()))) {
-            ContactRole contactRole = new ContactRole();
-            contactRole.setAccountId(accountId);
-            contactRole.setContactId(contact.getId());
-            contactRole.setRoleType(contact.getRole().getRoleType());
-            contactRole.setVotingContact(contact.getRole().isVotingContact());
-            String contactRoleId = salesForceDao.createContactRole(contactRole);
-            contact.getRole().setId(contactRoleId);
-        }
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        removeContactRole(contact);
+        ContactRole contactRole = new ContactRole();
+        contactRole.setAccountId(accountId);
+        contactRole.setContactId(contact.getId());
+        contactRole.setRoleType(contact.getRole().getRoleType());
+        contactRole.setVotingContact(contact.getRole().isVotingContact());
+        String contactRoleId = salesForceDao.createContactRole(contactRole);
+        contact.getRole().setId(contactRoleId);
         // Need to make more granular!
         evictAll();
+    }
+
+    @Override
+    public void updateContacts(Collection<Contact> contacts) {
+        // Need to remove roles with validation rules in SF first
+        String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
+        List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        existingContacts.stream().filter(c -> {
+            return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
+                    || c.getRole().isVotingContact();
+        }).forEach(c -> removeContactRole(c));
+        contacts.stream().forEach(c -> updateContact(c));
     }
 
     @Override
