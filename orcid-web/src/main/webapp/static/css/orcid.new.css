@@ -2593,7 +2593,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .lightbox-container .edit-country {
-    /*margin: -5px -15px -30px;*/
+    margin: -5px -15px -30px;
+    min-width: 600px;
     width: calc(100% - 30px);
 }
 
@@ -6751,6 +6752,10 @@ a:hover .mozilla-badge {
     overflow: visible;
     /*overflow-x: hidden;*/
     width: 100%;
+}
+
+.edit-country .fixed-area {
+    min-height: 300px;
 }
 
 .record-settings > li {
