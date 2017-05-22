@@ -23,7 +23,6 @@ import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
-import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -60,7 +59,6 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 
 import ma.glasnost.orika.CustomMapper;
@@ -96,7 +94,7 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
     public VersionConverterImplV2_0ToV2_1() {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        SourceMapper sourceMapper = new SourceMapper();
+        SourceOrcidMapper sourceOrcidMapper = new SourceOrcidMapper();
         ContributorOrcidMapper contributorOrcidMapper = new ContributorOrcidMapper();
 
         // GROUP ID
@@ -107,58 +105,64 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapperFactory.classMap(ExternalIDs.class, ExternalIDs.class).byDefault().register();
         mapperFactory.classMap(ExternalID.class, ExternalID.class).byDefault().register();
 
+        // Contributor
+        mapperFactory.classMap(ContributorOrcid.class, ContributorOrcid.class).customize(contributorOrcidMapper).register();
+        
+        // Source Orcid
+        mapperFactory.classMap(SourceOrcid.class, SourceOrcid.class).customize(sourceOrcidMapper).register();
+        
         // Other names
         mapperFactory.classMap(OtherNames.class, OtherNames.class).byDefault().register();
-        mapperFactory.classMap(OtherName.class, OtherName.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(OtherName.class, OtherName.class).byDefault().register();
 
         // Keywords
         mapperFactory.classMap(Keywords.class, Keywords.class).byDefault().register();
-        mapperFactory.classMap(Keyword.class, Keyword.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Keyword.class, Keyword.class).byDefault().register();
 
         // Address
         mapperFactory.classMap(Addresses.class, Addresses.class).byDefault().register();
-        mapperFactory.classMap(Address.class, Address.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Address.class, Address.class).byDefault().register();
 
         // ResearcherUrl
         mapperFactory.classMap(ResearcherUrls.class, ResearcherUrls.class).byDefault().register();
-        mapperFactory.classMap(ResearcherUrl.class, ResearcherUrl.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(ResearcherUrl.class, ResearcherUrl.class).byDefault().register();
 
         // Person External ID
         mapperFactory.classMap(PersonExternalIdentifiers.class, PersonExternalIdentifiers.class).byDefault().register();
-        mapperFactory.classMap(PersonExternalIdentifier.class, PersonExternalIdentifier.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(PersonExternalIdentifier.class, PersonExternalIdentifier.class).byDefault().register();
 
         // Emails
         mapperFactory.classMap(Emails.class, Emails.class).byDefault().register();
-        mapperFactory.classMap(Email.class, Email.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Email.class, Email.class).byDefault().register();
 
         // WORK
         mapperFactory.classMap(WorkGroup.class, WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, Work.class).customize(sourceMapper).customize(contributorOrcidMapper).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, WorkSummary.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Work.class, Work.class).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, WorkSummary.class).byDefault().register();
 
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, FundingGroup.class).byDefault().register();
         mapperFactory.classMap(Fundings.class, Fundings.class).byDefault().register();
-        mapperFactory.classMap(Funding.class, Funding.class).customize(sourceMapper).customize(contributorOrcidMapper).byDefault().register();
-        mapperFactory.classMap(FundingSummary.class, FundingSummary.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Funding.class, Funding.class).byDefault().register();
+        mapperFactory.classMap(FundingSummary.class, FundingSummary.class).byDefault().register();
 
         // EDUCATION
         mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Educations.class, org.orcid.jaxb.model.record_v2.Educations.class).byDefault().register();
         mapperFactory.classMap(Educations.class, Educations.class).byDefault().register();
-        mapperFactory.classMap(Education.class, Education.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(EducationSummary.class, EducationSummary.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Education.class, Education.class).byDefault().register();
+        mapperFactory.classMap(EducationSummary.class, EducationSummary.class).byDefault().register();
 
         // EMPLOYMENT
         mapperFactory.classMap(org.orcid.jaxb.model.record_v2.Employments.class, org.orcid.jaxb.model.record_v2.Employments.class).byDefault().register();
         mapperFactory.classMap(Employments.class, Employments.class).byDefault().register();
-        mapperFactory.classMap(Employment.class, Employment.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(EmploymentSummary.class, EmploymentSummary.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(Employment.class, Employment.class).byDefault().register();
+        mapperFactory.classMap(EmploymentSummary.class, EmploymentSummary.class).byDefault().register();
 
         // PEER REVIEW
         mapperFactory.classMap(PeerReviews.class, PeerReviews.class).byDefault().register();
-        mapperFactory.classMap(PeerReview.class, PeerReview.class).customize(sourceMapper).byDefault().register();
-        mapperFactory.classMap(PeerReviewSummary.class, PeerReviewSummary.class).customize(sourceMapper).byDefault().register();
+        mapperFactory.classMap(PeerReview.class, PeerReview.class).byDefault().register();
+        mapperFactory.classMap(PeerReviewSummary.class, PeerReviewSummary.class).byDefault().register();
 
         // NOTIFICATIONS
         mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_v2.NotificationPermission.class).byDefault().register();
@@ -172,68 +176,39 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapper = mapperFactory.getMapperFacade();
     }
 
-    private class SourceMapper<Y, A> extends CustomMapper<SourceAware, SourceAware> {
-
-        @SuppressWarnings("deprecation")
+    private class SourceOrcidMapper<Y, A> extends CustomMapper<SourceOrcid, SourceOrcid> {
         @Override
-        public void mapAtoB(SourceAware a, SourceAware b, MappingContext context) {
-            Source source = a.getSource();
-            if (source == null) {
-                return;
-            }
-
-            if (source.getSourceClientId() != null) {
-                b.setSource(source);
-            } else if (source.getSourceOrcid() != null) {
-                String path = source.getSourceOrcid().getPath();
-                SourceOrcid sourceOrcid = new SourceOrcid();
-                sourceOrcid.setHost(orcidUrlManager.getBaseHost());
-                sourceOrcid.setUri(orcidUrlManager.getBaseUrl() + "/" + path);
-                sourceOrcid.setPath(path);
-                Source s = new Source();
-                s.setSourceOrcid(sourceOrcid);
-                s.setSourceName(a.getSource().getSourceName());
-                b.setSource(s);
-            }
+        public void mapAtoB(SourceOrcid a, SourceOrcid b, MappingContext context) {
+            b.setHost(a.getHost());
+            b.setPath(a.getPath());
+            if(context.getProperty("downgrade") != null) {
+                boolean isDowngrade = (boolean) context.getProperty("downgrade");
+                if(isDowngrade) {
+                    // From 2.1 to 2.0 set the base http uri
+                    b.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());                    
+                } else {
+                    // From 2.0 to 2.1 set the base uri which is https
+                    b.setUri(orcidUrlManager.getBaseUrl() + "/" + a.getPath());
+                }                                        
+            }               
         }
+    }        
         
-        @SuppressWarnings("deprecation")
-        @Override
-        public void mapBtoA(SourceAware b, SourceAware a, MappingContext context) {
-            Source source = b.getSource();
-            if (source == null) {
-                return;
-            }
-
-            if (source.getSourceClientId() != null) {
-                a.setSource(source);
-            } else if (source.getSourceOrcid() != null) {
-                String path = source.getSourceOrcid().getPath();
-                SourceOrcid sourceOrcid = new SourceOrcid();
-                sourceOrcid.setHost(orcidUrlManager.getBaseHost());
-                sourceOrcid.setUri(orcidUrlManager.getBaseUriHttp() + "/" + path);
-                sourceOrcid.setPath(path);
-                Source s = new Source();
-                s.setSourceOrcid(sourceOrcid);
-                s.setSourceName(a.getSource().getSourceName());
-                a.setSource(s);
-            }
-        }
-    }
-    
     private class ContributorOrcidMapper<Y, A> extends CustomMapper<ContributorOrcid, ContributorOrcid> {       
         @Override
         public void mapAtoB(ContributorOrcid a, ContributorOrcid b, MappingContext context) {
             b.setHost(a.getHost());
             b.setPath(a.getPath());
-            b.setUri(orcidUrlManager.getBaseHost() + "/" + a.getPath());
-        }
-                
-        @Override
-        public void mapBtoA(ContributorOrcid b, ContributorOrcid a, MappingContext context) {
-            a.setHost(b.getHost());
-            a.setPath(b.getPath());
-            a.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());
+            if(context.getProperty("downgrade") != null) {
+                boolean isDowngrade = (boolean) context.getProperty("downgrade");
+                if(isDowngrade) {
+                    // From 2.1 to 2.0 set the base http uri
+                    b.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());                    
+                } else {
+                    // From 2.0 to 2.1 set the base uri which is https
+                    b.setUri(orcidUrlManager.getBaseUrl() + "/" + a.getPath());
+                }
+            }                        
         }
     }
 
@@ -241,7 +216,9 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
     public V2Convertible downgrade(V2Convertible objectToDowngrade) {
         Object objectToConvert = objectToDowngrade.getObjectToConvert();
         Object targetObject = v2VersionObjectFactory.createEquivalentInstance(objectToConvert, LOWER_VERSION);
-        mapper.map(objectToConvert, targetObject);
+        MappingContext context = new MappingContext.Factory().getContext();
+        context.setProperty("downgrade", true);
+        mapper.map(objectToConvert, targetObject, context);
         return new V2Convertible(targetObject, LOWER_VERSION);
     }
 
@@ -249,7 +226,9 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
     public V2Convertible upgrade(V2Convertible objectToUpgrade) {
         Object objectToConvert = objectToUpgrade.getObjectToConvert();
         Object targetObject = v2VersionObjectFactory.createEquivalentInstance(objectToConvert, UPPER_VERSION);
-        mapper.map(objectToConvert, targetObject);
+        MappingContext context = new MappingContext.Factory().getContext();
+        context.setProperty("downgrade", false);        
+        mapper.map(objectToConvert, targetObject, context);
         return new V2Convertible(targetObject, UPPER_VERSION);
-    }
+    }        
 }

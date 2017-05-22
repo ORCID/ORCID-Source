@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 public class OrcidStringUtils {
 
         public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
-        public static String ORCID_URI_STRING = "(http|https)://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
+        public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
         
 	private static String LT = "&lt;";
 	private static String GT = "&gt;";

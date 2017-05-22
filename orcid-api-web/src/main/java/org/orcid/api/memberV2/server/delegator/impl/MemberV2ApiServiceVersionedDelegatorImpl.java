@@ -573,7 +573,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private Object downgradeObject(Object entity) {
         V2Convertible result = null;
         if (entity != null) {
-            result = v2VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
+            if(externalVersion.equals("2.1")) {
+                result = v2_1VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
+            } else {
+                result = v2VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
+            }            
         }
         return result.getObjectToConvert();
     }

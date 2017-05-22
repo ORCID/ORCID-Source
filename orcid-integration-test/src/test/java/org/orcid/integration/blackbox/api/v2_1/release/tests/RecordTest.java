@@ -28,8 +28,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2_1.release.BlackBoxBaseV2_1Release;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
@@ -74,7 +74,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
 public class RecordTest extends BlackBoxBaseV2_1Release {    
     @Resource(name = "memberV2_1ApiClient")
-    private MemberV2ApiClientImpl memberV2_1ApiClient;
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient;
     @Resource(name = "publicV2_1ApiClient")
     private PublicV2ApiClientImpl publicV2_1ApiClient;
         
