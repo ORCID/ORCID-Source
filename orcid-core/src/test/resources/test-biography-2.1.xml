@@ -24,5 +24,5 @@
 	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.1.xsd">	
 	<common:created-date>2016-04-27T13:22:53.471-06:00</common:created-date>
     <common:last-modified-date>2016-04-27T13:22:53.471-06:00</common:last-modified-date>
-	<personal-details:content>biography V2.0</personal-details:content>	
+	<personal-details:content>biography V2.1</personal-details:content>	
 </personal-details:biography> 
