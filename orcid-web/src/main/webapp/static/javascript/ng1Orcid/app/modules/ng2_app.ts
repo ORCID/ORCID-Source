@@ -4,7 +4,8 @@ import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from "@angular/platform-browser";
 import { UpgradeModule } from '@angular/upgrade/static';
 
-import { EmailFrequencyCtrlNg2Module } from './../controllers/EmailFrequencyCtrl.ts';
+//import { EmailFrequencyCtrlNg2Module } from './../controllers/EmailFrequencyCtrl.ts';
+//import { EmailPreferencesCtrlNg2Module } from './../controllers/EmailPreferencesCtrlNg2Module.ts';
 
 @Component({
     selector: 'root-cmp',
@@ -24,7 +25,9 @@ export class RootCmp {
     imports: [
         BrowserModule,
         UpgradeModule,
-        EmailFrequencyCtrlNg2Module
+        //Adding this is breaking the controller load, problem with the upgrade module
+        //EmailFrequencyCtrlNg2Module, 
+        //EmailPreferencesCtrlNg2Module
     ],
     bootstrap: [RootCmp],
     declarations: [RootCmp]

@@ -5,7 +5,8 @@
 
 import * as angular from 'angular'
 
-import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts'
+import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
+import { EmailPreferencesCtrl } from './../controllers/EmailPreferencesCtrl.ts'
 
 export const orcidApp = angular.module(
 	'orcidApp', 
@@ -15,6 +16,7 @@ export const orcidApp = angular.module(
 		'ui.multiselect', 
 		'vcRecaptcha',
 		'ui.bootstrap',
-		'EmailFrequencyCtrl'
+		'EmailFrequencyCtrl',
+		'EmailPreferencesCtrl' //Couldn't found this one in the freemarker code
 	]
 );
