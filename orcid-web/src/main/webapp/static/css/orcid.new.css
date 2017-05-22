@@ -2593,7 +2593,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .lightbox-container .edit-country {
-    /*margin: -5px -15px -30px;*/
+    margin: -5px -15px -30px;
+    min-width: 600px;
     width: calc(100% - 30px);
 }
 
