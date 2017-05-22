@@ -2592,6 +2592,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     padding: 5px 15px 30px;
 }
 
+.lightbox-container .edit-country {
+    /*margin: -5px -15px -30px;*/
+    width: calc(100% - 30px);
+}
+
 .lightbox-container .cancel-option{
     margin: 0 10px;
 }
