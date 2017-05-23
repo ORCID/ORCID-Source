@@ -7261,6 +7261,10 @@ a:hover .mozilla-badge {
     width: 300px;
 }
 
+#country-popover .bulk-edit-modal #bulk-help {
+    left: -143px;
+}
+
 .bulk-edit-modal #bulk-help .arrow {
     left: 187px;
 }
