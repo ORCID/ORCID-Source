@@ -16,6 +16,8 @@
  */
 package org.orcid.api.filters;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.analytics.AnalyticsProcess;
@@ -23,6 +25,7 @@ import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.utils.OrcidRequestUtil;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -44,6 +47,9 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @InjectParam("profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
+    @Context
+    private HttpServletRequest httpServletRequest;
+    
     @Override
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
         new Thread(getAnalyticsProcess(request, response)).start();
@@ -59,6 +65,7 @@ public class AnalyticsFilter implements ContainerResponseFilter {
         process.setClientDetailsId(orcidSecurityManager.getClientIdFromAPIRequest());
         process.setPublicApi(false);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setIp(OrcidRequestUtil.getIpAddress(httpServletRequest));
         return process;
     }
 

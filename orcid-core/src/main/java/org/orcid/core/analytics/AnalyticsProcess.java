@@ -33,8 +33,6 @@ public class AnalyticsProcess implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
 
-    private static final String REMOTE_IP_HEADER_NAME = "X-FORWARDED-FOR";
-
     private static final String PUBLIC_API_USER = "Public API user";
 
     private static final String PUBLIC_API = "Public API";
@@ -54,6 +52,8 @@ public class AnalyticsProcess implements Runnable {
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     public boolean publicApi;
+
+    private String ip;
 
     @Override
     public void run() {
@@ -89,8 +89,11 @@ public class AnalyticsProcess implements Runnable {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
 
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     private AnalyticsData getAnalyticsData() {
-        String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
         ip = maskIp(ip);
         APIEndpointParser parser = new APIEndpointParser(request);
 
@@ -109,7 +112,18 @@ public class AnalyticsProcess implements Runnable {
     }
 
     private String maskIp(String ip) {
-        return ip.substring(0, ip.lastIndexOf(".")) + ".0";
+        String delimiter = ".";
+        int delimiterIndex = ip.lastIndexOf(delimiter);
+        if (delimiterIndex == -1) {
+            delimiter = ":";
+            delimiterIndex = ip.lastIndexOf(":");
+        }
+        
+        if (delimiterIndex != -1) {
+            return ip.substring(0, delimiterIndex) + delimiter + "0";
+        } else {
+            return "";
+        }
     }
 
     private String getUrlWithHashedOrcidId(String orcidId, String url) {
