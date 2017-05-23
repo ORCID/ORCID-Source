@@ -106,23 +106,23 @@
             edit-record-bulk-edit
             </#if> edit-country row">
             <!-- Title -->
-            <div class="col-md-12 col-sm-12 col-xs-12">         
-
-                <h1 class="lightbox-title pull-left">
-                    <@orcid.msg 'manage_bio_settings.editCountry'/>
-                </h1>
-        
+            <div class="col-md-12 col-sm-12 col-xs-12">           
+                <div class=""> 
+                    <h1 class="lightbox-title pull-left">
+                        <@orcid.msg 'manage_bio_settings.editCountry'/>
+                    </h1>
+                </div>          
             </div>
-            <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">                            
+            <div class="bottomBuffer" style="margin: 0!important;">                          
                 <div ng-include="'bulk-edit'"></div>                    
             </div>              
             <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="padding-right-reset">
+                <div class=" padding-right-reset">
                     <span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>   
                 </div>
             </div>      
             <div class="col-md-12 col-xs-12 col-sm-12">
-                <div style="position: static">
+                <div class="" style="position: static">
                     <div class="fixed-area" scroll>             
                         <div class="scroll-area">       
                             <div class="row aka-row" ng-repeat="country in countryForm.addresses">
