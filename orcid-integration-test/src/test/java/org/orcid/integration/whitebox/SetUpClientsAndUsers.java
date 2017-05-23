@@ -685,7 +685,10 @@ public class SetUpClientsAndUsers {
             scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
             
             //Add notifications scope
-            scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());            
+            scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
+            
+            //Add openid scope
+            scopes.add(ScopePathType.OPENID.value());
         }
             
         clientDetailsManager.populateClientDetailsEntity(clientId, memberId, name, description, null, website, clientSecret, clientType, scopes,

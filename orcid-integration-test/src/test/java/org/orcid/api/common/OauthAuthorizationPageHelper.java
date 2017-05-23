@@ -16,6 +16,8 @@
  */
 package org.orcid.api.common;
 
+import java.util.Map;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -31,10 +33,18 @@ public class OauthAuthorizationPageHelper {
     public static String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s";
     
     public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, WebDriver webDriver) {
+        return loginAndAuthorize(baseUrl, clientId,  redirectUri, scopes, stateParam, userId, password, longLife, null, webDriver);
+    }
+    
+    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, Map<String,String> params,WebDriver webDriver) {
         String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId, scopes, redirectUri);
-        
         if(!PojoUtil.isEmpty(stateParam)) {
             formattedAuthorizationScreen += "&state=" + stateParam;
+        }
+        if (params != null){
+            for (String key : params.keySet()){
+                formattedAuthorizationScreen += "&"+key+"=" + params.get(key);
+            }
         }
         
         formattedAuthorizationScreen += "#show_login";

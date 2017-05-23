@@ -2,11 +2,8 @@ package org.orcid.core.oauth.openid;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +16,6 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -27,46 +23,34 @@ import com.nimbusds.jwt.SignedJWT;
 @Component
 public class OpenIDConnectKeyService {
 
-    private final String keyID = "OpenIDConnectKey1";
+    private final String keyID;
     private final RSAKey publicJWK;
     private final RSAKey privateJWK;
     private final JWSAlgorithm defaultAlg = JWSAlgorithm.RS256;
-        
+    
     /** Use a configured key ${org.orcid.openid.jwks_location} or generate a random key
      * 
      * New keys can be generated using this: https://mkjwk.org/ or a command line tool found here: https://connect2id.com/products/nimbus-jose-jwt/generator
      * @throws NoSuchAlgorithmException
      * @throws ParseException 
      * @throws IOException 
+     * @throws URISyntaxException 
      */
-    public OpenIDConnectKeyService(@Value("${org.orcid.openid.jwks_location}") String jwksLocation) throws NoSuchAlgorithmException, IOException, ParseException{
-        if (jwksLocation !=null && !jwksLocation.isEmpty()){
+    public OpenIDConnectKeyService(@Value("${org.orcid.openid.jwks_location}") String jwksLocation, @Value("${org.orcid.openid.jwks_key_name}") String keyName,@Value("${org.orcid.openid.jwks_test_key}") String testKey) throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException{
+        if (jwksLocation !=null && !jwksLocation.isEmpty() && keyName!=null && !keyName.isEmpty()){
             //use a configured key.
+            this.keyID = keyName;
             JWKSet keys = JWKSet.load(new File(jwksLocation));
             privateJWK = (RSAKey) keys.getKeyByKeyId(keyID);
             publicJWK = privateJWK.toPublicJWK();
-            
-        }else{
-            //generate a random key.  Fine for testing.
-            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-            keyGenerator.initialize(1024);
-            KeyPair kp = keyGenerator.genKeyPair();     
-            privateJWK = new RSAKey.Builder((RSAPublicKey)kp.getPublic())
-                    .privateKey((RSAPrivateKey)kp.getPrivate())
-                    .keyUse(KeyUse.SIGNATURE)
-                    .keyID(getDefaultKeyID())
-                    .algorithm(defaultAlg)
-                    .build();
-            
+        }else if (testKey!=null){
+            //use a key embedded in the properties file
+            this.keyID = keyName;
+            JWKSet keys = JWKSet.parse(testKey);
+            privateJWK = (RSAKey) keys.getKeyByKeyId(keyID);
             publicJWK = privateJWK.toPublicJWK();
-            /*new RSAKey.Builder((RSAPublicKey)kp.getPublic())
-                    .keyID(getDefaultKeyID())
-                    .keyUse(KeyUse.SIGNATURE)
-                    .algorithm(defaultAlg)
-                    .build();*/
-        }
-
-        
+        }else
+            throw new RuntimeException("OpenID jwks not configured!");
     }
     
     /** Get the private key for signing
@@ -82,7 +66,7 @@ public class OpenIDConnectKeyService {
         signedJWT.sign(signer);        
         return signedJWT;
         
-        /* For HMAC we could do:
+        /* For HMAC we could do the following.  This may be useful for the implicit flow:
         ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(authentication.getOAuth2Request().getClientId());
         JWSSigner signer = new MACSigner(StringUtils.rightPad(clientEntity.getDecryptedClientSecret(), 32, "#").getBytes());
         signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims.build());
