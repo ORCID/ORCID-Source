@@ -44,7 +44,7 @@ public class OpenIDConnectKeyService {
     private final RSAKey privateJWK;
     private final JWSAlgorithm defaultAlg = JWSAlgorithm.RS256;
     
-    /** Use a configured key ${org.orcid.openid.jwks_location} or generate a random key
+    /** Use a configured key ${org.orcid.openid.jwks_location} or ${org.orcid.openid.jwks_test_key} + ${org.orcid.openid.jwks_key_name}
      * 
      * New keys can be generated using this: https://mkjwk.org/ or a command line tool found here: https://connect2id.com/products/nimbus-jose-jwt/generator
      * @throws NoSuchAlgorithmException
@@ -52,7 +52,7 @@ public class OpenIDConnectKeyService {
      * @throws IOException 
      * @throws URISyntaxException 
      */
-    public OpenIDConnectKeyService(@Value("${org.orcid.openid.jwks_location}") String jwksLocation, @Value("${org.orcid.openid.jwks_key_name}") String keyName,@Value("${org.orcid.openid.jwks_test_key}") String testKey) throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException{
+    public OpenIDConnectKeyService(@Value("${org.orcid.openid.jwks_location:#{null}}") String jwksLocation, @Value("${org.orcid.openid.jwks_key_name}") String keyName,@Value("${org.orcid.openid.jwks_test_key}") String testKey) throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException{
         if (jwksLocation !=null && !jwksLocation.isEmpty() && keyName!=null && !keyName.isEmpty()){
             //use a configured key.
             this.keyID = keyName;
