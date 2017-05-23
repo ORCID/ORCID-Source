@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 
@@ -62,8 +63,10 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertEquals(Visibility.PUBLIC.value(), entity.getVisibility().value());        
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
-        //Source        
-        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());  
+        // Source
+        assertNull(entity.getSourceId());        
+        assertNull(entity.getClientSourceId());        
+        assertNull(entity.getElementSourceId());     
     }
 
     @Test

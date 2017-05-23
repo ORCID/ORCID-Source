@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 
@@ -76,8 +77,10 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
-        //Source
-        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());       
+        // Source
+        assertNull(oar.getSourceId());        
+        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getElementSourceId());
     }
     
     @Test
