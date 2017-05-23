@@ -1,7 +1,6 @@
 package org.orcid.integration.blackbox.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -42,7 +41,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     
     //client must have openid scope.
     @Test
-    public void createLongLivedTokenTest() throws InterruptedException, JSONException, ParseException, URISyntaxException, JOSEException {
+    public void checkIDTokenAndUserInfo() throws InterruptedException, JSONException, ParseException, URISyntaxException, JOSEException {
         //Get id token
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
@@ -83,5 +82,39 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals("User One Credit name",user.get("name"));
         Assert.assertEquals("One",user.get("family_name"));
         Assert.assertEquals("User",user.get("given_name"));
+    }
+    
+    @Test
+    public void checkFailWithoutOpenIDScope() throws InterruptedException, JSONException{
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
+        String clientSecret = getClient1ClientSecret();
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+        String scope = "/authenticate";
+        String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true);
+        assertNotNull(authorizationCode);
+        ClientResponse tokenResponse = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String body = tokenResponse.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);        
+        assertFalse(jsonObject.has("id_token"));
+    }
+    
+    @Test
+    public void testPromptNone() throws InterruptedException{
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+        String scope = "openid";
+        HashMap<String,String> params = new HashMap<String,String>();
+        params.put("nonce", "yesMate");
+        params.put("prompt", "none");
+        try{
+            String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true,params);            
+            fail();
+        }catch(Exception e){
+        }
     }
 }
