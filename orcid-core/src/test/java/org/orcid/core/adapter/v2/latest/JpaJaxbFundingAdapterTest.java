@@ -92,11 +92,13 @@ public class JpaJaxbFundingAdapterTest {
                 "{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}",
                 pfe.getExternalIdentifiersJson());
 
-        // Source
-        assertEquals("8888-8888-8888-8880", pfe.getElementSourceId());
-
         // Check org is null
         assertNull(pfe.getOrg()); 
+        
+        // Source
+        assertNull(pfe.getSourceId());        
+        assertNull(pfe.getClientSourceId());        
+        assertNull(pfe.getElementSourceId());
     }
 
     @Test

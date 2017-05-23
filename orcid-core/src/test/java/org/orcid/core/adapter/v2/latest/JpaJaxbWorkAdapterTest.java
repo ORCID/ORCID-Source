@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -83,7 +84,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
-        assertEquals("8888-8888-8888-8880", workEntity.getElementSourceId());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -107,6 +107,11 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 workEntity.getContributorsJson());
         assertEquals("en", workEntity.getLanguageCode());
         assertEquals(Iso3166Country.AF, workEntity.getIso2Country());
+        
+        // Source
+        assertNull(workEntity.getSourceId());        
+        assertNull(workEntity.getClientSourceId());        
+        assertNull(workEntity.getElementSourceId());
     }
 
     @Test

@@ -18,7 +18,6 @@ package org.orcid.core.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.eclipse.jetty.util.log.Log;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -31,10 +30,8 @@ import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
 
-    private static final String REMOTE_IP_HEADER_NAME = "X-FORWARDED-FOR";
+    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
 
     private static final String PUBLIC_API_USER = "Public API user";
 
@@ -55,6 +52,8 @@ public class AnalyticsProcess implements Runnable {
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     public boolean publicApi;
+
+    private String ip;
 
     @Override
     public void run() {
@@ -90,8 +89,11 @@ public class AnalyticsProcess implements Runnable {
         this.profileEntityCacheManager = profileEntityCacheManager;
     }
 
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
     private AnalyticsData getAnalyticsData() {
-        String ip = request.getHeaderValue(REMOTE_IP_HEADER_NAME);
         ip = maskIp(ip);
         APIEndpointParser parser = new APIEndpointParser(request);
 
@@ -110,7 +112,18 @@ public class AnalyticsProcess implements Runnable {
     }
 
     private String maskIp(String ip) {
-        return ip.substring(0, ip.lastIndexOf(".")) + ".0";
+        String delimiter = ".";
+        int delimiterIndex = ip.lastIndexOf(delimiter);
+        if (delimiterIndex == -1) {
+            delimiter = ":";
+            delimiterIndex = ip.lastIndexOf(":");
+        }
+        
+        if (delimiterIndex != -1) {
+            return ip.substring(0, delimiterIndex) + delimiter + "0";
+        } else {
+            return "";
+        }
     }
 
     private String getUrlWithHashedOrcidId(String orcidId, String url) {
@@ -120,7 +133,11 @@ public class AnalyticsProcess implements Runnable {
 
         try {
             ProfileEntity profile = profileEntityCacheManager.retrieve(orcidId);
-            return url.replace(orcidId, profile.getHashedOrcid());
+            if (profile.getHashedOrcid() != null) {
+                return url.replace(orcidId, profile.getHashedOrcid());
+            } else {
+                return url;
+            }
         } catch (IllegalArgumentException e) {
             LOG.warn("Invalid ORCID iD supplied in API call, original URL will be posted to GA");
             return url;

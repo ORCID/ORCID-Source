@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -129,7 +130,11 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
-        assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getElementSourceId());
+        // Source
+        assertNull(notificationEntity.getSourceId());        
+        assertNull(notificationEntity.getClientSourceId());        
+        assertNull(notificationEntity.getElementSourceId());
+
         Set<NotificationItemEntity> activityEntities = addActivitiesEntity.getNotificationItems();
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
@@ -137,8 +142,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals(ItemType.WORK, activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
-        assertEquals("1234/abc123", activityEntity.getExternalIdValue());
-        
+        assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
     }
 
     @Test
@@ -167,7 +171,11 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());        
-        assertEquals("APP-5555-5555-5555-5555", notificationAmendedEntity.getElementSourceId());
+        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());   
+        
+        // Source
+        assertNull(notificationAmendedEntity.getSourceId());        
+        assertNull(notificationAmendedEntity.getClientSourceId());        
+        assertNull(notificationAmendedEntity.getElementSourceId());        
     }
 }

@@ -68,13 +68,13 @@ public class ManageConsortiumController extends BaseController {
         for (ContactRoleType type : ContactRoleType.values()) {
             map.put(type.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, type.name())));
         }
-        
+
         Map<String, String> sorted = new LinkedHashMap<>();
-        
+        // @formatter:off
         map.entrySet().stream()
         .sorted(Map.Entry.<String, String> comparingByValue())
         .forEachOrdered(x -> sorted.put(x.getKey(), x.getValue()));
-        
+        // @formatter:on
         return sorted;
     }
 
@@ -95,7 +95,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/get-consortium.json", method = RequestMethod.GET)
     public @ResponseBody ConsortiumForm getConsortium() {
-        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
         return consortiumForm;
@@ -104,7 +104,7 @@ public class ManageConsortiumController extends BaseController {
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
     public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
         MemberDetails memberDetails = consortium.toMemberDetails();
-        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String usersAuthorizedAccountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         Member member = memberDetails.getMember();
         if (!usersAuthorizedAccountId.equals(member.getId())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
@@ -115,7 +115,7 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/get-contacts.json", method = RequestMethod.GET)
     public @ResponseBody ContactsForm getContacts() {
-        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         ContactsForm contactsForm = new ContactsForm();
         List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
         salesForceManager.addOrcidsToContacts(contactsList);
@@ -162,7 +162,7 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
         validateContacts(contactsForm);
         if (contactsForm.getErrors().isEmpty()) {
-            contactsForm.getContactsList().forEach(c -> salesForceManager.updateContact(c));
+            salesForceManager.updateContacts(contactsForm.getContactsList());
             return getContacts();
         } else {
             return contactsForm;
@@ -173,15 +173,25 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody ContactsForm validateContacts(@RequestBody ContactsForm contactsForm) {
         List<String> errors = contactsForm.getErrors();
         errors.clear();
+        int agreementSignatoryContactCount = 0;
         int mainContactCount = 0;
         int votingContactCount = 0;
         for (Contact contact : contactsForm.getContactsList()) {
+            if (ContactRoleType.AGREEMENT_SIGNATORY.equals(contact.getRole().getRoleType())) {
+                agreementSignatoryContactCount++;
+            }
             if (ContactRoleType.MAIN_CONTACT.equals(contact.getRole().getRoleType())) {
                 mainContactCount++;
             }
             if (contact.getRole().isVotingContact()) {
                 votingContactCount++;
             }
+        }
+        if (agreementSignatoryContactCount == 0) {
+            errors.add(getMessage("manage_consortium.contacts_must_have_agreement_signatory_contact"));
+        }
+        if (agreementSignatoryContactCount > 1) {
+            errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_agreement_signatory_contact"));
         }
         if (mainContactCount == 0) {
             errors.add(getMessage("manage_consortium.contacts_must_have_main_contact"));
