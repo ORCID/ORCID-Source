@@ -1149,18 +1149,21 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     $scope.hasErrors = false;
     $scope.results = new Array();
     $scope.numFound = 0;
+    $scope.resultsShowing = 0;
     $scope.input = {};
     $scope.input.start = 0;
     $scope.input.rows = 10;
     $scope.input.text = $('#SearchCtrl').data('search-query');
 
     $scope.getResults = function(){
+        console.log($scope.input);
         $.ajax({
             url: orcidSearchUrlJs.buildUrl($scope.input),
             dataType: 'json',
             headers: { Accept: 'application/json'},
             success: function(data) {
-                $('#ajax-loader').hide();
+                $('#ajax-loader-search').hide();
+                $('#ajax-loader-show-more').hide();
                 var resultsContainer = data['orcid-search-results'];
                 $scope.numFound = resultsContainer['num-found'];
                 if(resultsContainer['orcid-search-result']){
@@ -1170,6 +1173,20 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
                     $('#no-results-alert').fadeIn(1200);
                 }
                 $scope.areMoreResults = $scope.numFound > ($scope.input.start + $scope.input.rows);
+                
+                //if less than 10 results, show total number found
+                if($scope.numFound && $scope.numFound <= $scope.input.rows){
+                    $scope.resultsShowing = $scope.numFound;
+                }
+                //if more than 10 results increment num found by 10
+                if($scope.numFound && $scope.numFound > $scope.input.rows){
+                    if($scope.numFound > ($scope.input.start + $scope.input.rows)){
+                        $scope.resultsShowing = $scope.input.start + $scope.input.rows;
+                    } else {
+                        $scope.resultsShowing = ($scope.input.start + $scope.input.rows) - ($scope.input.rows - ($scope.numFound % scope.input.rows));
+                    }
+                }
+
                 $scope.$apply();
                 var newSearchResults = $('.new-search-result');
                 if(newSearchResults.length > 0){
@@ -1204,7 +1221,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
         $scope.areMoreResults = false;
         if($scope.isValid()){
             $scope.hasErrors = false;
-            $('#ajax-loader').show();
+            $('#ajax-loader-search').show();
             $scope.getResults();
         }
         else{
@@ -1213,7 +1230,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     };
 
     $scope.getMoreResults = function(){
-        $('#ajax-loader').show();
+        $('#ajax-loader-show-more').show();
         $scope.input.start += 10;
         $scope.getResults();
     };
