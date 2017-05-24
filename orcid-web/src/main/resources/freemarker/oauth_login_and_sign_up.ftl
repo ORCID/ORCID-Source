@@ -42,8 +42,8 @@
     <div class="login">
         <div class="row">
             <div class="col-md-12">
-                <p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" ng-click="switchForm()">Register now</a></p>
-                <p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" ng-click="switchForm()">Sign In</a></p>
+                <p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" id="switch-to-register-form" ng-click="switchForm()">Register now</a></p>
+                <p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
             </div>
             <div class="col-md-12">
                 <div class="row">

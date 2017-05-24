@@ -22,8 +22,9 @@ package org.orcid.core.salesforce.model;
  *
  */
 public enum ContactRoleType {
+    
     MAIN_CONTACT("Main relationship contact (OFFICIAL)"), TECHNICAL_CONTACT("Technical contact"), INVOICE_CONTACT("Invoice contact"), COMMS_CONTACT(
-            "Comms contact"), OTHER_CONTACT("Other contact");
+            "Comms contact"), OTHER_CONTACT("Other contact"), AGREEMENT_SIGNATORY("Agreement signatory (OFFICIAL)");
 
     private final String value;
 

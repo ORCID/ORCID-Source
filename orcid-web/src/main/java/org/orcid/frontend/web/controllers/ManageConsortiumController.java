@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -65,9 +66,16 @@ public class ManageConsortiumController extends BaseController {
     public Map<String, String> retrieveContactRoleTypesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (ContactRoleType type : ContactRoleType.values()) {
-            map.put(type.name(), type.value());
+            map.put(type.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, type.name())));
         }
-        return map;
+
+        Map<String, String> sorted = new LinkedHashMap<>();
+        // @formatter:off
+        map.entrySet().stream()
+        .sorted(Map.Entry.<String, String> comparingByValue())
+        .forEachOrdered(x -> sorted.put(x.getKey(), x.getValue()));
+        // @formatter:on
+        return sorted;
     }
 
     @ModelAttribute("communityTypes")
@@ -87,26 +95,33 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping(value = "/get-consortium.json", method = RequestMethod.GET)
     public @ResponseBody ConsortiumForm getConsortium() {
-        String accountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
         ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
-        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
-        salesForceManager.addOrcidsToContacts(contactsList);
-        consortiumForm.setContactsList(contactsList);
-        consortiumForm.setRoleMap(generateSalesForceRoleMap());
         return consortiumForm;
     }
 
     @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
     public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
         MemberDetails memberDetails = consortium.toMemberDetails();
-        String usersAuthorizedAccountId = salesForceManager.retriveAccountIdByOrcid(getCurrentUserOrcid());
+        String usersAuthorizedAccountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
         Member member = memberDetails.getMember();
         if (!usersAuthorizedAccountId.equals(member.getId())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + member.getId());
         }
         salesForceManager.updateMember(member);
         return consortium;
+    }
+
+    @RequestMapping(value = "/get-contacts.json", method = RequestMethod.GET)
+    public @ResponseBody ContactsForm getContacts() {
+        String accountId = salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid());
+        ContactsForm contactsForm = new ContactsForm();
+        List<Contact> contactsList = salesForceManager.retrieveContactsByAccountId(accountId);
+        salesForceManager.addOrcidsToContacts(contactsList);
+        contactsForm.setContactsList(contactsList);
+        contactsForm.setRoleMap(generateSalesForceRoleMap());
+        return contactsForm;
     }
 
     @RequestMapping(value = "/add-contact-by-email.json")
@@ -141,6 +156,56 @@ public class ManageConsortiumController extends BaseController {
     public @ResponseBody Contact updateContact(@RequestBody Contact contact) {
         salesForceManager.updateContact(contact);
         return contact;
+    }
+
+    @RequestMapping(value = "/update-contacts.json", method = RequestMethod.POST)
+    public @ResponseBody ContactsForm updateContacts(@RequestBody ContactsForm contactsForm) {
+        validateContacts(contactsForm);
+        if (contactsForm.getErrors().isEmpty()) {
+            salesForceManager.updateContacts(contactsForm.getContactsList());
+            return getContacts();
+        } else {
+            return contactsForm;
+        }
+    }
+
+    @RequestMapping(value = "/validate-contacts.json", method = RequestMethod.POST)
+    public @ResponseBody ContactsForm validateContacts(@RequestBody ContactsForm contactsForm) {
+        List<String> errors = contactsForm.getErrors();
+        errors.clear();
+        int agreementSignatoryContactCount = 0;
+        int mainContactCount = 0;
+        int votingContactCount = 0;
+        for (Contact contact : contactsForm.getContactsList()) {
+            if (ContactRoleType.AGREEMENT_SIGNATORY.equals(contact.getRole().getRoleType())) {
+                agreementSignatoryContactCount++;
+            }
+            if (ContactRoleType.MAIN_CONTACT.equals(contact.getRole().getRoleType())) {
+                mainContactCount++;
+            }
+            if (contact.getRole().isVotingContact()) {
+                votingContactCount++;
+            }
+        }
+        if (agreementSignatoryContactCount == 0) {
+            errors.add(getMessage("manage_consortium.contacts_must_have_agreement_signatory_contact"));
+        }
+        if (agreementSignatoryContactCount > 1) {
+            errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_agreement_signatory_contact"));
+        }
+        if (mainContactCount == 0) {
+            errors.add(getMessage("manage_consortium.contacts_must_have_main_contact"));
+        }
+        if (mainContactCount > 1) {
+            errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_main_contact"));
+        }
+        if (votingContactCount == 0) {
+            errors.add(getMessage("manage_consortium.contacts_must_have_voting_contact"));
+        }
+        if (votingContactCount > 1) {
+            errors.add(getMessage("manage_consortium.contacts_must_not_have_more_than_one_voting_contact"));
+        }
+        return contactsForm;
     }
 
     @RequestMapping(value = "/add-sub-member.json", method = RequestMethod.POST)

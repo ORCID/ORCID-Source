@@ -82,14 +82,14 @@
                         </div>
 
                         <div id="translatedTitle">
-                            <span class="orcid-error" ng-show="editWork.translatedTitle.errors.length > 0">
-                                <div ng-repeat='error in editWork.translatedTitle.errors' ng-bind-html="error"></div>
-                            </span>
                             <div class="form-group">
                                 <label><@orcid.msg 'manual_work_form_contents.labeltranslatedtitle'/></label>
                                 <div class="relative">
                                     <input name="translatedTitle" type="text" class="form-control" ng-model="editWork.translatedTitle.content" placeholder="<@orcid.msg 'manual_work_form_contents.add_translated_title'/>" ng-change="serverValidate('works/work/translatedTitleValidate.json')" ng-model-onblur/>                                                     
                                 </div>                      
+                                <span class="orcid-error" ng-show="editWork.translatedTitle.errors.length > 0">
+                                    <div ng-repeat='error in editWork.translatedTitle.errors' ng-bind-html="error"></div>
+                                </span>
                             </div>
 
                             <div class="form-group">

@@ -36,7 +36,6 @@ angular.module('orcidApp').factory(
                     );
                 }
             },
-
             formatDate: function(oldDate) {
                 var date = new Date(oldDate);
                 var day = date.getDate();
@@ -49,6 +48,10 @@ angular.module('orcidApp').factory(
                     day = '0' + day;
                 }
                 return (year + '-' + month + '-' + day);
+            },
+            formatTime: function(unixTimestamp) {
+                var date = new Date(unixTimestamp);
+                return date.toUTCString();
             },
             formColorBoxResize: function() {
                 if (isMobile()) {

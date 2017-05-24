@@ -85,6 +85,8 @@ public interface SalesForceDao {
      * @return the contact id
      */
     String createContact(Contact contact);
+    
+    void updateContact(Contact contact);
 
     /**
      * 

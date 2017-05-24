@@ -104,21 +104,25 @@
                     <p>
                         <@spring.message "manage_consortium.contacts_text"/>
                     </p>
+                    <span class="orcid-error" ng-show="contacts.errors.length > 0">
+                        <div ng-repeat='error in contacts.errors' ng-bind-html="error"></div>
+                    </span>
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Role</th>
+                                <th>Name</th><th>Email</th><th>ORCID iD</th><th>Voting contact</th><th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="contact in consortium.contactsList">
+                            <tr ng-repeat="contact in contacts.contactsList">
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
+                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
-								     	ng-change="update(contact)">
+								     	ng-change="validateContacts()">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
@@ -139,6 +143,14 @@
                             </tr>
                         </tbody>
                     </table>
+                    <!-- Buttons -->
+	                <div class="row">
+	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button id="bottom-confirm-update-contacts" class="btn btn-primary" ng-click="updateContacts()" ng-disabled="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
+	                        <a href="" class="cancel-right" ng-click="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
+	                    </div>
+	                </div>
                     <div class="bottomBuffer">
                     	<h3>
                         	<@spring.message "manage_consortium.add_contacts_heading"/>
