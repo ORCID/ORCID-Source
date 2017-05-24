@@ -134,6 +134,9 @@ public class LoginController extends BaseController {
         } catch(UnsupportedEncodingException e) {
             
         }
+        
+        request.getSession().setAttribute("queryString", queryString);
+        
         ModelAndView mav = new ModelAndView("oauth/signin");
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);

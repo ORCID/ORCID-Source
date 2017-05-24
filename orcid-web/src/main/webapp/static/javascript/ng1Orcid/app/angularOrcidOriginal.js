@@ -4820,21 +4820,44 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         head.appendChild(script); // Inject the script
     };
     
-    // Init
-    if(!orcidVar.oauth2Screens) {
-    	console.log("loadRequestInfoForm");
-    	$scope.loadRequestInfoForm();
-    }       
-    
     //--------------------------------
     //---  New oauth 2 pages code  ---
     //--------------------------------
-    $scope.login = function() {        
+    $scope.clientInfo = null;
+    
+    $scope.loadClientInfo = function() {
+    	$.ajax({
+            url: getBaseUri() + '/oauth/load/client_info',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data) {
+            	$scope.clientInfo = data;
+            	console.log($scope.clientInfo);
+            	console.log($scope.clientInfo.member_name);
+            	console.log($scope.clientInfo['member_name']);
+            	$scope.gaString = orcidGA.buildClientString($scope.clientInfo['member_name'], $scope.clientInfo['client_name']);
+            	console.log($scope.gaString);
+            }
+        }).fail(function() {
+            console.log("An error occured authenticating the user.");
+        });
+    };
+    
+    // Init
+    if(!orcidVar.oauth2Screens) {
+    	$scope.loadRequestInfoForm();
+    } else {
+    	$scope.loadClientInfo();
+    }   
+    
+    $scope.login = function(authorize = true) {    	
+    	$scope.authorizationForm.approved = authorize;
+    	
         // Fire GA sign-in-submit
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
         
         $.ajax({
-            url: getBaseUri() + '/oauth/login.json',
+            url: getBaseUri() + '/oauth/login/submit',
             type: 'POST',
             data: angular.toJson($scope.authorizationForm),
             contentType: 'application/json;charset=UTF-8',

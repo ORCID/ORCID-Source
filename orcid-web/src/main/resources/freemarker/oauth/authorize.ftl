@@ -21,4 +21,4 @@
 	<div>
 		Authorize page
 	</div>
-<@base>	
+</@base>	

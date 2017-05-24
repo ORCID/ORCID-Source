@@ -171,6 +171,15 @@
 		<sec:intercept-url pattern="/oauth/login/form.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		
+		<sec:intercept-url pattern="/oauth/login/submit.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
+		<sec:intercept-url pattern="/oauth/authorize.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		
+		<sec:intercept-url pattern="/oauth/load/client_info.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/signin(\?.*)?"

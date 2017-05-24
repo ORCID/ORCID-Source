@@ -96,7 +96,7 @@ public class BaseController {
     protected final Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     protected final Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
     protected final Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
-    protected final Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
+    protected final Pattern orcidPattern = Pattern.compile("orcid=([^&]*)");    
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     

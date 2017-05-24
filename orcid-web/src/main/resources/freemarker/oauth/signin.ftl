@@ -77,10 +77,10 @@
 					                                        </span>
 					                                    </div>
 					                                    <div class="form-group oauth-buttons">     
-					                                        <a class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
+					                                        <a class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="login(false)">
 					                                        <@orcid.msg 'confirm-oauth-access.Deny' />
 					                                        </a>                                                                                  
-					                                        <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+					                                        <button class="btn btn-primary" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="login()">
 					                                        <@orcid.msg 'confirm-oauth-access.Authorize' />
 					                                        </button>
 					                                    </div>                        
