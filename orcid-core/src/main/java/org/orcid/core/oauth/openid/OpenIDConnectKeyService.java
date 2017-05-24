@@ -22,9 +22,6 @@ import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -36,7 +33,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
-@Component
 public class OpenIDConnectKeyService {
 
     private final String keyID;
@@ -44,7 +40,31 @@ public class OpenIDConnectKeyService {
     private final RSAKey privateJWK;
     private final JWSAlgorithm defaultAlg = JWSAlgorithm.RS256;
     
-    /** Use a configured key ${org.orcid.openid.jwks_location} or ${org.orcid.openid.jwks_test_key} + ${org.orcid.openid.jwks_key_name}
+    public static class OpenIDConnectKeyServiceConfig{
+        String jwksLocation;
+        public String getJwksLocation() {
+            return jwksLocation;
+        }
+        public void setJwksLocation(String jwksLocation) {
+            this.jwksLocation = jwksLocation;
+        }
+        public String getJsonKey() {
+            return jsonKey;
+        }
+        public void setJsonKey(String jsonKey) {
+            this.jsonKey = jsonKey;
+        }
+        public String getKeyName() {
+            return keyName;
+        }
+        public void setKeyName(String keyName) {
+            this.keyName = keyName;
+        }
+        String jsonKey;
+        String keyName;
+    }
+    
+    /** Use a configured key ${org.orcid.openid.jwksLocation} or ${org.orcid.openid.jwksTestKey} + ${org.orcid.openid.jwksKeyName}
      * 
      * New keys can be generated using this: https://mkjwk.org/ or a command line tool found here: https://connect2id.com/products/nimbus-jose-jwt/generator
      * @throws NoSuchAlgorithmException
@@ -52,17 +72,17 @@ public class OpenIDConnectKeyService {
      * @throws IOException 
      * @throws URISyntaxException 
      */
-    public OpenIDConnectKeyService(@Value("${org.orcid.openid.jwks_location:#{null}}") String jwksLocation, @Value("${org.orcid.openid.jwks_key_name}") String keyName,@Value("${org.orcid.openid.jwks_test_key}") String testKey) throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException{
-        if (jwksLocation !=null && !jwksLocation.isEmpty() && keyName!=null && !keyName.isEmpty()){
+    public OpenIDConnectKeyService(OpenIDConnectKeyServiceConfig config) throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException{
+        if (config.jwksLocation !=null && !config.jwksLocation.isEmpty() && config.keyName!=null && !config.keyName.isEmpty()){
             //use a configured key.
-            this.keyID = keyName;
-            JWKSet keys = JWKSet.load(new File(jwksLocation));
+            this.keyID = config.keyName;
+            JWKSet keys = JWKSet.load(new File(config.jwksLocation));
             privateJWK = (RSAKey) keys.getKeyByKeyId(keyID);
             publicJWK = privateJWK.toPublicJWK();
-        }else if (testKey!=null){
+        }else if (config.jsonKey!=null){
             //use a key embedded in the properties file
-            this.keyID = keyName;
-            JWKSet keys = JWKSet.parse(testKey);
+            this.keyID = config.keyName;
+            JWKSet keys = JWKSet.parse(config.jsonKey);
             privateJWK = (RSAKey) keys.getKeyByKeyId(keyID);
             publicJWK = privateJWK.toPublicJWK();
         }else
