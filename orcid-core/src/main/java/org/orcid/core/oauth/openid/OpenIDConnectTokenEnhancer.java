@@ -71,8 +71,9 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             claims.audience(params.get(OrcidOauth2Constants.CLIENT_ID_PARAM));
             claims.subject(accessToken.getAdditionalInformation().get("orcid").toString());
             claims.issuer("https://orcid.org");
-            claims.expirationTime(accessToken.getExpiration());
-            claims.issueTime(new Date());
+            Date now = new Date();
+            claims.expirationTime(new Date(now.getTime()+600000));
+            claims.issueTime(now);
             claims.jwtID(UUID.randomUUID().toString());
             if (params.get(OrcidOauth2Constants.NONCE) != null)
                 claims.claim(OrcidOauth2Constants.NONCE, params.get(OrcidOauth2Constants.NONCE));
