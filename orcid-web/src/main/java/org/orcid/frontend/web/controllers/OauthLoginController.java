@@ -17,9 +17,11 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +56,7 @@ public class OauthLoginController extends OauthControllerBase {
 
     @Value("${org.orcid.frontend.oauthSignin.showLogin.default:true}")
     private boolean showLoginDefault;
-
+    
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
@@ -113,7 +115,7 @@ public class OauthLoginController extends OauthControllerBase {
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
-                    Authentication auth = authenticateUser(request, form);
+                    Authentication auth = authenticateUser(request, form.getUserName().getValue(), form.getPassword().getValue());
                     // Create authorization params
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
@@ -183,5 +185,5 @@ public class OauthLoginController extends OauthControllerBase {
         if (PojoUtil.isEmpty(form.getUserName()) || PojoUtil.isEmpty(form.getPassword())) {
             form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
         }
-    }
+    }           
 }

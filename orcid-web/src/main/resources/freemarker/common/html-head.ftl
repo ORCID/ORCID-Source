@@ -74,6 +74,11 @@
       orcidVar.emailVerificationManualEditEnabled = ${emailVerificationManualEditEnabled?string};
       orcidVar.version = "${ver}";
       orcidVar.knowledgeBaseUri = "${knowledgeBaseUri}";
+      <#if (oauth2Screens)??>
+      	orcidVar.oauth2Screens = true;
+      <#else>
+      	orcidVar.oauth2Screens = false;
+      </#if>
     </script>
 
     <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>

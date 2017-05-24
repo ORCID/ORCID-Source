@@ -4427,7 +4427,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         if($scope.allowEmailAccess) {
             $scope.authorizationForm.emailAccessAllowed = true;
         }
-        console.log(angular.toJson($scope.authorizationForm));
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -4821,8 +4821,97 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
     };
     
     // Init
-    $scope.loadRequestInfoForm();    
+    if(!orcidVar.oauth2Screens) {
+    	console.log("loadRequestInfoForm");
+    	$scope.loadRequestInfoForm();
+    }       
     
+    //--------------------------------
+    //---  New oauth 2 pages code  ---
+    //--------------------------------
+    $scope.login = function() {        
+        // Fire GA sign-in-submit
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
+        
+        $.ajax({
+            url: getBaseUri() + '/oauth/login.json',
+            type: 'POST',
+            data: angular.toJson($scope.authorizationForm),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                if(data) {
+                    if(data.errors.length != 0) {
+                        $scope.authorizationForm = data;
+                        $scope.showDeactivatedError = ($.inArray('orcid.frontend.security.orcid_deactivated', $scope.authorizationForm.errors) != -1);
+                        $scope.showReactivationSent = false;
+                        $scope.$apply();
+                    } else {
+                        // Fire google GA event
+                        if($scope.authorizationForm.approved) {
+                            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In' , 'OAuth ' + $scope.gaString]);                            
+                        } else {
+                            // Fire GA authorize-deny
+                            orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                        }
+                        orcidGA.windowLocationHrefDelay(data.redirectUrl);
+                    }
+                } else {
+                    console.log("Error authenticating the user");
+                }
+
+            }
+        }).fail(function() {
+            console.log("An error occured authenticating the user.");
+        });
+    };
+    
+    $scope.loadLoginForm = function() {
+        $scope.isOrcidPresent = false;
+        $.ajax({
+            url: getBaseUri() + '/oauth/login/form',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.authorizationForm = data;                                
+                if($scope.authorizationForm.userName.value) { 
+                    $scope.isOrcidPresent = true;
+                    $scope.showRegisterForm = false;   
+                    $scope.$broadcast("loginHasUserId", { userName: $scope.authorizationForm.userName.value });                 
+                }
+                if(!$scope.isOrcidPresent)
+                    $scope.showRegisterForm = !orcidVar.showLogin;                
+                
+                $scope.$apply();
+            }
+        }).fail(function() {
+            console.log("An error occured initializing the form.");
+        });
+    };
+    
+    $scope.loadRegistrationForm = function() {
+        $.ajax({
+            url: getBaseUri() + '/oauth/registration/form',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.registrationForm = data;                            
+                if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
+                    $scope.showRegisterForm = true;
+                $scope.$apply();
+                                
+                // special handling of deactivation error
+                $scope.$watch('registrationForm.email.errors', function(newValue, oldValue) {
+                    $scope.showDeactivatedError = ($.inArray('orcid.frontend.verify.deactivated_email', $scope.registrationForm.email.errors) != -1);
+                    $scope.showReactivationSent = false;
+                }); // initialize the watch
+            }
+        }).fail(function() {
+            console.log("An error occured initializing the registration form.");
+        });
+    };
 }]);
 
 angular.module('orcidApp').controller('LoginLayoutController',['$scope', function ($scope){

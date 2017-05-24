@@ -164,6 +164,13 @@
 		<sec:access-denied-handler error-page="/oauth/signin" />
 		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
+		
+		<sec:intercept-url pattern="/oauth/registration/form.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+		
+		<sec:intercept-url pattern="/oauth/login/form.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
@@ -186,9 +193,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />					
 			
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />		
 		<sec:form-login authentication-failure-url="/oauth/signin"
