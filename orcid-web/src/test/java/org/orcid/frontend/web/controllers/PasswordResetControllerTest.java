@@ -204,7 +204,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(bindingResult.hasErrors()).thenReturn(false);
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("http://testserver.orcid.org/my-orcid")
+        assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
                 || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 

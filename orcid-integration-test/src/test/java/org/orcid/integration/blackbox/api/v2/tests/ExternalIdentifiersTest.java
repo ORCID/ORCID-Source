@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -68,6 +69,11 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV2Release {
     private MemberV2ApiClientImpl memberV2ApiClient_release;
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
+    
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
     
     org.orcid.jaxb.model.common_v2.Visibility currentUserVisibility = null;
     
@@ -859,6 +865,177 @@ public class ExternalIdentifiersTest extends BlackBoxBaseV2Release {
         extId.setPutCode(1234567890L);
         
         ClientResponse response = memberV2ApiClient_release.updateExternalIdentifier(getUser1OrcidId(), extId, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+    
+    /**
+     * --------- -- -- -- V2_1 -- -- -- ---------
+     * 
+     */    
+    @Test
+    public void testGetExternalIdentifiersWithMembersAPI_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        
+        //Check you can view the external identifiers
+        ClientResponse getResponse = memberV2_1ApiClient_release.viewExternalIdentifiers(getUser1OrcidId(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers externalIdentifiers = getResponse.getEntity(org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers.class);
+        assertNotNull(externalIdentifiers);
+        assertNotNull(externalIdentifiers.getExternalIdentifiers());
+        
+        boolean found1 = false;
+        boolean found2 = false;
+        
+        for(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
+            if(extId1Value.equals(e.getType())) {
+                assertEquals(extId1Value, e.getValue());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, e.getVisibility());
+                assertEquals(putCode1, e.getPutCode());
+                found1 = true;
+            } else if(extId2Value.equals(e.getType())) {
+                assertEquals(extId2Value, e.getValue());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, e.getVisibility());
+                assertEquals(putCode2, e.getPutCode());
+                found2 = true;
+            }
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);                       
+    }
+            
+    @Test
+    public void testCreateGetUpdateAndDeleteExternalIdentifier_V2_1() throws InterruptedException, JSONException {        
+        //Get access token
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);                
+
+        String extId1Value = "A-0003" + System.currentTimeMillis();
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_v2.Visibility.LIMITED);               
+
+        //Get and verify
+        ClientResponse response = memberV2_1ApiClient_release.viewExternalIdentifiers(getUser1OrcidId(), accessToken);        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers ExternalIdentifiers = response.getEntity(org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers.class);
+        assertNotNull(ExternalIdentifiers);
+        assertNotNull(ExternalIdentifiers.getExternalIdentifiers());        
+        
+        boolean haveNew = false;
+        
+        for(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifiers()) {
+            if(extId1Value.equals(e.getType())) {                
+                assertEquals(extId1Value, e.getType());
+                assertEquals(extId1Value, e.getValue());
+                assertNotNull(e.getUrl());
+                assertEquals("http://ext-id/" + extId1Value, e.getUrl().getValue());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, e.getVisibility());
+                assertEquals("APP-9999999999999901", e.getSource().retrieveSourcePath());
+                assertEquals("Client APP-9999999999999901 - Fastest's Elephant", e.getSource().getSourceName().getContent());
+                assertEquals(putCode, e.getPutCode());
+                haveNew = true;
+            }
+        }
+        
+        assertTrue(haveNew);
+        
+        //Get it
+        response = memberV2_1ApiClient_release.viewExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifier externalIdentifier = response.getEntity(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier.class);
+        assertEquals(extId1Value, externalIdentifier.getType());
+        assertEquals(extId1Value, externalIdentifier.getValue());
+        assertNotNull(externalIdentifier.getUrl());
+        assertEquals("http://ext-id/" + extId1Value, externalIdentifier.getUrl().getValue());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, externalIdentifier.getVisibility());
+        assertEquals(putCode, externalIdentifier.getPutCode());
+        assertNotNull(externalIdentifier.getDisplayIndex());
+        Long originalDisplayIndex = externalIdentifier.getDisplayIndex();
+        
+        //Save the original visibility
+        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = externalIdentifier.getVisibility();
+        org.orcid.jaxb.model.common_v2.Visibility updatedVisibility = org.orcid.jaxb.model.common_v2.Visibility.PUBLIC;
+        
+        //Verify you can't update the visibility
+        externalIdentifier.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2_1ApiClient_release.updateExternalIdentifier(getUser1OrcidId(), externalIdentifier, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        org.orcid.jaxb.model.error_v2.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.error_v2.OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        externalIdentifier.setVisibility(originalVisibility);
+        
+        //Update it
+        String updatedValue = "A-0004" + System.currentTimeMillis();
+        externalIdentifier.setType(updatedValue);
+        externalIdentifier.setValue(updatedValue);
+        externalIdentifier.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://ext-id/" + updatedValue));
+        response = memberV2_1ApiClient_release.updateExternalIdentifier(getUser1OrcidId(), externalIdentifier, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
+        response = memberV2_1ApiClient_release.viewExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(updatedValue, externalIdentifier.getType());
+        assertEquals(updatedValue, externalIdentifier.getValue());
+        assertNotNull(externalIdentifier.getUrl());
+        assertEquals("http://ext-id/" + updatedValue, externalIdentifier.getUrl().getValue());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, externalIdentifier.getVisibility());
+        assertEquals(putCode, externalIdentifier.getPutCode());       
+        assertEquals(originalDisplayIndex, externalIdentifier.getDisplayIndex());
+        
+        //Delete it
+        response = memberV2_1ApiClient_release.deleteExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());   
+        
+        //Remove the put code from the list of elements to delete
+        createdPutCodes.remove(putCode);
+    }
+    
+    @Test
+    public void testGetExternalIdentifiersWithPublicAPI_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        
+        ClientResponse response = publicV2_1ApiClient_release.viewExternalIdentifiersXML(getUser1OrcidId());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers externalIdentifiers = response.getEntity(org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers.class);
+        
+        boolean found1 = false;
+        
+        for(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, e.getVisibility());
+            if(extId1Value.equals(e.getType())) {
+                assertEquals(extId1Value, e.getValue());                
+                assertEquals(putCode1, e.getPutCode());
+                found1 = true;
+                break;
+            } 
+        }
+        
+        assertTrue(found1);
+        
+        response = publicV2_1ApiClient_release.viewExternalIdentifierXML(getUser1OrcidId(), putCode1);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifier extId = response.getEntity(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier.class);
+        assertEquals(extId1Value, extId.getType());
+        assertEquals(extId1Value, extId.getValue());
+        assertEquals("http://ext-id/" + extId1Value, extId.getUrl().getValue());
+        assertEquals(putCode1, extId.getPutCode());        
+    }
+    
+    @Test
+    public void testInvalidPutCodeReturns404_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        
+        org.orcid.jaxb.model.record_v2.PersonExternalIdentifier extId = getExternalIdentifier_release("A-0004" + System.currentTimeMillis());       
+        extId.setPutCode(1234567890L);
+        
+        ClientResponse response = memberV2_1ApiClient_release.updateExternalIdentifier(getUser1OrcidId(), extId, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }

@@ -44,6 +44,7 @@ public class OrcidCoreExceptionMapper {
     public static final String V2_RC3 = "2.0_rc3";
     public static final String V2_RC4 = "2.0_rc4";
     public static final String V2 = "2.0";
+    public static final String V2_1 = "2.1";
 
     private static final String latest = "2.0";
     
