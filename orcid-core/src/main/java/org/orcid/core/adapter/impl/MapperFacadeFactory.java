@@ -261,23 +261,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
 
         @Override
-        public void mapAtoB(SourceAware a, SourceAwareEntity<?> b, MappingContext context) {
-            Source source = a.getSource();
-            if (source == null) {
-                return;
-            }
-            String sourceId = source.retrieveSourcePath();
-            if (StringUtils.isEmpty(sourceId)) {
-                return;
-            }
-            if (isClient(sourceId)) {
-                b.setClientSourceId(sourceId);
-            } else {
-                b.setSourceId(sourceId);
-            }
-        }
-
-        @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
             String sourceId = b.getElementSourceId();
             if (StringUtils.isEmpty(sourceId)) {

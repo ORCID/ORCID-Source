@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -57,8 +58,10 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(addressEntity);
         assertNotNull(addressEntity.getDateCreated());
         assertNotNull(addressEntity.getLastModified());
-        assertEquals(Iso3166Country.US, addressEntity.getIso2Country());        
-        assertEquals("8888-8888-8888-8880", addressEntity.getElementSourceId());
+        assertEquals(Iso3166Country.US, addressEntity.getIso2Country());  
+        assertNull(addressEntity.getSourceId());
+        assertNull(addressEntity.getClientSourceId());
+        assertNull(addressEntity.getElementSourceId());
     }
     
     @Test

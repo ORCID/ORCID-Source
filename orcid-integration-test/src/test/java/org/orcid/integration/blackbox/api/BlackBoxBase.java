@@ -375,6 +375,20 @@ public class BlackBoxBase {
     }
     
     /**
+     * OAuth pages
+     * 
+     * */
+    public void switchToRegisterForm() {
+        BBBUtil.waitForElementVisibility(By.id("switch-to-register-form"));
+        ngAwareClick(findElementById("switch-to-register-form"));   
+    }
+    
+    public void switchToLoginForm() {
+        BBBUtil.waitForElementVisibility(By.id("switch-to-login-form"));
+        ngAwareClick(findElementById("switch-to-login-form"));   
+    }
+    
+    /**
      * AUTHORIZATION CODE FUNCTIONS
      * @throws InterruptedException 
      */

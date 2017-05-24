@@ -65,6 +65,7 @@
         orcidVar.showLogin = ${showLogin};
       </#if>
       orcidVar.orcidId = '${(effectiveUserOrcid)!}';
+      orcidVar.lastModified = '${(lastModifiedTime)!}';
       orcidVar.orcidIdHash = '${(orcidIdHash)!}';
       orcidVar.realOrcidId = '${realUserOrcid!}';
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");

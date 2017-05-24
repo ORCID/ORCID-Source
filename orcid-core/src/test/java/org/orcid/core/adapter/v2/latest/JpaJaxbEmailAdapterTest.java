@@ -18,6 +18,7 @@ package org.orcid.core.adapter.v2.latest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -60,7 +61,11 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity.getLastModified());
         assertEquals("user1@email.com", entity.getId());
         assertEquals(Visibility.PUBLIC, entity.getVisibility());
-        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());
+        
+        // Source
+        assertNull(entity.getSourceId());        
+        assertNull(entity.getClientSourceId());        
+        assertNull(entity.getElementSourceId());
     }
 
     @Test

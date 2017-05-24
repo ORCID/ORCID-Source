@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -45,7 +44,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
-public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {   
+public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {   
     
     private String authorizeScreen = null;
     
@@ -56,7 +55,8 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
     
     @Test
     public void checkNoPrePop() throws JSONException, InterruptedException {
-        webDriver.get(authorizeScreen);
+        getUrlAndWait(authorizeScreen);
+        switchToRegisterForm();
         // make sure we are on the page
         By emailElement = By.xpath("//input[@name='email']");
         waitForElementVisibility(emailElement);        
@@ -71,7 +71,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
     public void emailPrePopulate() throws JSONException, InterruptedException {
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
-        getUrlAndWait(url);
+        getUrlAndWait(url);        
         
         By element = By.xpath("//input[@id='register-form-email']");
         waitForElementVisibility(element);       
@@ -104,7 +104,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
         getUrlAndWait(url);    
-        
+        switchToRegisterForm();
         By element = By.xpath("//input[@name='email']");
         waitForElementVisibility(element);
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));
@@ -172,7 +172,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form family and given names
         String url = authorizeScreen + "&family_names=test_family_names&given_names=test_given_name";
         getUrlAndWait(url);
-        
+        switchToRegisterForm();
         By element = By.xpath("//input[@name='familyNames']");
         waitForElementPresence(element);     
         assertTrue(findElement(element).getAttribute("value").equals("test_family_names"));

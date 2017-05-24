@@ -88,6 +88,7 @@ public class AnalyticsProcessTest {
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(true);
+        process.setIp("37.14.150.83");
 
         Thread t = new Thread(process);
         t.start();
@@ -103,6 +104,45 @@ public class AnalyticsProcessTest {
         assertEquals("Public API v2.0", data.getApiVersion());
         assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public client - some-client-details-id", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
+        assertEquals(Integer.valueOf(200), data.getResponseCode());
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
+        assertEquals("blah", data.getUserAgent());
+        assertEquals("application/xml", data.getContentType());
+    }
+    
+    @Test
+    public void testAnalyticsProcessForIPv6() throws InterruptedException {
+        String clientDetailsId = "some-client-details-id";
+        Mockito.when(clientDetailsEntityCacheManager.retrieve(Mockito.eq(clientDetailsId))).thenReturn(getPublicClient());
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getRequest();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setClientDetailsId(clientDetailsId);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("0:0:0:0:0:0:0:1");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("POST", data.getMethod());
+        assertEquals("works", data.getCategory());
+        assertEquals("Public API v2.0", data.getApiVersion());
+        assertEquals(ClientType.PUBLIC_CLIENT.value() + " | a public client - some-client-details-id", data.getClientDetailsString());
+        assertEquals("0:0:0:0:0:0:0:0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
         assertEquals("blah", data.getUserAgent());
@@ -126,6 +166,7 @@ public class AnalyticsProcessTest {
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(false);
+        process.setIp("37.14.150.83");
 
         Thread t = new Thread(process);
         t.start();
@@ -161,6 +202,7 @@ public class AnalyticsProcessTest {
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(true);
+        process.setIp("37.14.150.83");
 
         Thread t = new Thread(process);
         t.start();
@@ -213,7 +255,6 @@ public class AnalyticsProcessTest {
         InBoundHeaders headers = new InBoundHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
         headers.add(HttpHeaders.USER_AGENT, "blah");
-        headers.add("X-FORWARDED-FOR", "37.14.150.83");
         return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
     }

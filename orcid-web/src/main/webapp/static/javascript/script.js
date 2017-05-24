@@ -4152,6 +4152,10 @@ this.w3cLatexCharMap = {
    typeMap['cienciaiul'] = function (id) {
        return 'https://ciencia.iscte-iul.pt/id/' + encodeURIComponent(id);
    };
+   
+   typeMap['rrid'] = function (id) {
+       return 'http://identifiers.org/rrid/' + encodeURIComponent(id);
+   };
 
    exports.getLink = function(id, type) {
       if (id == null) id = "";//return null;

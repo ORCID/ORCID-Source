@@ -34,6 +34,12 @@ public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManage
     public Map<String, Long> generateStatistics() {        
         Map<String, Long> statistics = new HashMap<String, Long>();        
         statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsGeneratorDao.getLiveIds());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_EDUCATION.value(), statisticsGeneratorDao.getAccountsWithEducation());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_EMPLOYMENT.value(), statisticsGeneratorDao.getAccountsWithEmployment());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_FUNDING.value(), statisticsGeneratorDao.getAccountsWithFunding());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_EXTERNAL_ID.value(), statisticsGeneratorDao.getAccountsWithExternalId());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_PEER_REVIEW.value(), statisticsGeneratorDao.getAccountsWithPeerReview());
+        statistics.put(StatisticsEnum.KEY_IDS_WITH_PERSON_ID.value(), statisticsGeneratorDao.getAccountsWithPersonId());
         statistics.put(StatisticsEnum.KEY_IDS_WITH_VERIFIED_EMAIL.value(), statisticsGeneratorDao.getAccountsWithVerifiedEmails());
         statistics.put(StatisticsEnum.KEY_IDS_WITH_WORKS.value(), statisticsGeneratorDao.getAccountsWithWorks());
         statistics.put(StatisticsEnum.KEY_NUMBER_OF_WORKS.value(), statisticsGeneratorDao.getNumberOfWorks());
@@ -44,6 +50,8 @@ public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManage
         statistics.put(StatisticsEnum.KEY_EDUCATION_UNIQUE_ORG.value(), statisticsGeneratorDao.getNumberOfEducationUniqueOrg());
         statistics.put(StatisticsEnum.KEY_NUMBER_OF_FUNDING.value(), statisticsGeneratorDao.getNumberOfFunding());
         statistics.put(StatisticsEnum.KEY_FUNDING_UNIQUE_ORG.value(), statisticsGeneratorDao.getNumberOfFundingUniqueOrg());
+        statistics.put(StatisticsEnum.KEY_NUMBER_OF_PEER_REVIEW.value(), statisticsGeneratorDao.getNumberOfPeerReview());
+        statistics.put(StatisticsEnum.KEY_NUMBER_OF_PERSON_ID.value(), statisticsGeneratorDao.getNumberOfPersonId());
         
         return statistics;        
     }

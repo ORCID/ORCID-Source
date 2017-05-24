@@ -90,6 +90,7 @@ import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
+import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -107,6 +108,7 @@ import org.orcid.jaxb.model.record_v2.PersonalDetails;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
@@ -311,6 +313,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createWork(String orcid, Work work) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE);
+        clearSource(work);
         Work w = workManager.createWork(orcid, work, true);
         sourceUtils.setSourceName(w);
         try {
@@ -329,6 +332,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(work.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(work);
         Work w = workManager.updateWork(orcid, work, true);
         sourceUtils.setSourceName(w);
         return Response.ok(w).build();
@@ -337,6 +341,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, WorkBulk works) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_WORKS_CREATE);
+        if(works != null) {
+            for(BulkElement b : works.getBulk()) {
+                if(Work.class.isAssignableFrom(b.getClass())) {
+                    clearSource((Work) b);
+                }
+            }
+        }
         works = workManager.createWorks(orcid, works);
         sourceUtils.setSourceName(works);
         return Response.ok(works).build();
@@ -390,6 +401,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.FUNDING_CREATE);
+        clearSource(funding);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
         sourceUtils.setSourceName(f);
         try {
@@ -408,6 +420,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(funding.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(funding);
         Funding f = profileFundingManager.updateFunding(orcid, funding, true);
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
@@ -460,6 +473,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createEducation(String orcid, Education education) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE);
+        clearSource(education);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
         sourceUtils.setSourceName(e);
         try {
@@ -478,6 +492,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(education.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(education);
         Education e = affiliationsManager.updateEducationAffiliation(orcid, education, true);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
@@ -523,6 +538,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createEmployment(String orcid, Employment employment) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.AFFILIATIONS_CREATE);
+        clearSource(employment);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
         sourceUtils.setSourceName(e);
         try {
@@ -541,6 +557,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(employment.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(employment);
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment, true);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
@@ -593,6 +610,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createPeerReview(String orcid, PeerReview peerReview) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_CREATE);
+        clearSource(peerReview);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(newPeerReview);
         try {
@@ -611,6 +629,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(peerReview.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(peerReview);
         PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(updatedPeerReview);
         return Response.ok(updatedPeerReview).build();
@@ -716,6 +735,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(researcherUrl);
         ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, true);
         ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
         sourceUtils.setSourceName(updatedResearcherUrl);
@@ -725,6 +745,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
+        clearSource(researcherUrl);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
         sourceUtils.setSourceName(researcherUrl);
         try {
@@ -802,6 +823,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createOtherName(String orcid, OtherName otherName) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
+        clearSource(otherName);
         otherName = otherNameManager.createOtherName(orcid, otherName, true);
         sourceUtils.setSourceName(otherName);
         try {
@@ -820,7 +842,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(otherName.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-
+        clearSource(otherName);
         OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName, true);
         ElementUtils.setPathToOtherName(updatedOtherName, orcid);
         sourceUtils.setSourceName(updatedOtherName);
@@ -870,6 +892,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        clearSource(externalIdentifier);
         PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier, true);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         sourceUtils.setSourceName(extId);
@@ -879,6 +902,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+        clearSource(externalIdentifier);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
         try {
             return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
@@ -924,6 +948,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createKeyword(String orcid, Keyword keyword) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
+        clearSource(keyword);
         keyword = profileKeywordManager.createKeyword(orcid, keyword, true);
         sourceUtils.setSourceName(keyword);
         try {
@@ -942,7 +967,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(keyword.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-
+        clearSource(keyword);
         keyword = profileKeywordManager.updateKeyword(orcid, putCode, keyword, true);
         ElementUtils.setPathToKeyword(keyword, orcid);
         sourceUtils.setSourceName(keyword);
@@ -987,6 +1012,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createAddress(String orcid, Address address) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_UPDATE);
+        clearSource(address);
         address = addressManager.createAddress(orcid, address, true);
         sourceUtils.setSourceName(address);
         try {
@@ -1005,7 +1031,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(address.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-
+        clearSource(address);
         address = addressManager.updateAddress(orcid, putCode, address, true);
         ElementUtils.setPathToAddress(address, orcid);
         sourceUtils.setSourceName(address);
@@ -1096,6 +1122,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         Client client = clientDetailsManagerReadOnly.getClient(clientId);
         return Response.ok(client).build();
+    }
+    
+    private void clearSource(SourceAware element) {
+        element.setSource(null);
     }
 
 }
