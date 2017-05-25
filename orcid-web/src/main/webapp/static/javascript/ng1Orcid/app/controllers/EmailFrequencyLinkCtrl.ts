@@ -1,4 +1,7 @@
-angular.module('orcidApp').controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+export const EmailFrequencyLinkCtrl = angular.module('orcidApp').controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
     $scope.getEmailFrequencies = function() {
         $.ajax({
             url: window.location.href + '/email-frequencies.json',
@@ -31,3 +34,7 @@ angular.module('orcidApp').controller('EmailFrequencyLinkCtrl',['$scope','$rootS
     
     $scope.getEmailFrequencies();
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class EmailFrequencyLinkCtrlNg2Module {}

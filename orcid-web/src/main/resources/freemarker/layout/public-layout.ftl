@@ -37,6 +37,7 @@
 <!--<#if devSandboxUrl != ''>
     <div class="dev-watermark"></div>
 </#if>-->
+<root-cmp></root-cmp>
 <div class="container">
     <div class="header center" ng-controller="headerCtrl">
         

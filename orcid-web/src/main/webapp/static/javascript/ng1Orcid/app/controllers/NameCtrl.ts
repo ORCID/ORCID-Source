@@ -1,4 +1,12 @@
-angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
+declare var getBaseUri: any;
+declare var orcidVar: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+
+export const NameCtrl = angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function NameCtrl($scope, $compile) {
     $scope.nameForm = null;
     $scope.privacyHelp = false;
     $scope.showEdit = false;
@@ -52,3 +60,7 @@ angular.module('orcidApp').controller('NameCtrl', ['$scope', '$compile',function
 
     $scope.getNameForm();
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class NameCtrlNg2Module {}
