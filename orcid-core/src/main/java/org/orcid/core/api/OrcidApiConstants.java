@@ -98,7 +98,6 @@ public class OrcidApiConstants {
     public static final String ADDRESS = "/{orcid}/address";
     public static final String PERSON = "/{orcid}/person";
     public static final String USER_INFO = "/me";
-    public static final String JWKS = "/jwks";
     
     public static final int MAX_NOTIFICATIONS_AVAILABLE = 1000;
 }

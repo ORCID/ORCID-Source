@@ -17,6 +17,7 @@
 package org.orcid.core.oauth.openid;
 
 import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.jaxb.model.record_v2.PersonalDetails;
 
 public class OpenIDConnectUserInfo {
     private String sub;
@@ -36,6 +37,19 @@ public class OpenIDConnectUserInfo {
             this.given_name = person.getName().getGivenNames().getContent();
         }
     }
+    public OpenIDConnectUserInfo(String orcid, PersonalDetails person) {
+        this.sub = orcid;
+        if (person.getName().getCreditName() != null){
+            this.name = person.getName().getCreditName().getContent();
+        }
+        if (person.getName().getFamilyName() != null){
+            this.family_name = person.getName().getFamilyName().getContent();
+        }
+        if (person.getName().getGivenNames() != null){
+            this.given_name = person.getName().getGivenNames().getContent();
+        }
+    }
+    
     public String getName() {
         return name;
     }

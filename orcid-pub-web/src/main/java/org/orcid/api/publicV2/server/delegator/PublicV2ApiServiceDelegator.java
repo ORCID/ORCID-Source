@@ -108,5 +108,4 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
 
     Response viewUserInfo();
 
-    Response viewJWKS();
 }

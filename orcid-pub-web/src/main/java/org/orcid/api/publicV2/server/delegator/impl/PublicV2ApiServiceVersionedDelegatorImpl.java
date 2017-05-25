@@ -302,8 +302,4 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return publicV2ApiServiceDelegator.viewUserInfo();
     }
 
-    @Override
-    public Response viewJWKS() {
-        return publicV2ApiServiceDelegator.viewJWKS();
-    }
 }

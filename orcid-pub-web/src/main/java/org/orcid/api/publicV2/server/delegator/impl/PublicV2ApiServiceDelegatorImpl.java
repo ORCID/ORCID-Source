@@ -670,9 +670,4 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(person);
         return Response.ok(new OpenIDConnectUserInfo(orcid,person)).build();
     }
-
-    @Override
-    public Response viewJWKS() {        
-        return Response.ok(openIDConnectKeyService.getPublicJWK().toJSONObject()).build();
-    }
 }

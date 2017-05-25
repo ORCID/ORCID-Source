@@ -52,7 +52,6 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.USER_INFO;
-import static org.orcid.core.api.OrcidApiConstants.JWKS;
 
 import java.util.List;
 import java.util.Map;
@@ -439,11 +438,4 @@ public class PublicV2ApiServiceImplV2_0 {
         return serviceDelegator.viewUserInfo();
     }
     
-    @GET
-    @Path(JWKS)
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @ApiOperation(value = "Fetch OpenID Connect Javascript Web Key information")
-    public Response viewJWKS() {
-        return serviceDelegator.viewJWKS();
-    }
 }
