@@ -1,4 +1,7 @@
-/*import * as angular from 'angular';
+declare var getBaseUri: any;
+declare var orcidVar: any;
+
+import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
@@ -56,14 +59,8 @@ export const NameCtrl = angular.module('orcidApp').controller('NameCtrl', ['$sco
     };
 
     $scope.getNameForm();
-
-    function getBaseUri() {
-        return 'https:' == document.location.protocol ? orcidVar.baseUri
-                : orcidVar.baseUriHttp;
-    }
 }]);
 
 // This is the Angular 2 part of the module
 @NgModule({})
 export class NameCtrlNg2Module {}
-*/
