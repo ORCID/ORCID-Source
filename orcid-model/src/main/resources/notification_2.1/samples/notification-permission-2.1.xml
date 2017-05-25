@@ -49,7 +49,7 @@
     <common:source>
         <!--  Read only for API user - will only be able to see notifications for which they are the source -->
         <common:source-client-id>
-            <common:uri>http://orcid.org/client/APP-U4UKCNSSIM1OCVQY</common:uri>
+            <common:uri>https://orcid.org/client/APP-U4UKCNSSIM1OCVQY</common:uri>
             <common:path>APP-U4UKCNSSIM1OCVQY</common:path>
             <common:host>orcid.org</common:host>
         </common:source-client-id>

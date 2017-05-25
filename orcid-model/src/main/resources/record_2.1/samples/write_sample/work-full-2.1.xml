@@ -38,7 +38,7 @@
 	<work:contributors>
 		<work:contributor>
 			<common:contributor-orcid>
-				<common:uri>http://orcid.org/0000-0001-5109-3700</common:uri>
+				<common:uri>https://orcid.org/0000-0001-5109-3700</common:uri>
 				<common:path>0000-0001-5109-3700</common:path>
 				<common:host>orcid.org</common:host>
 			</common:contributor-orcid>

@@ -14,7 +14,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.1.xsd ">
 	<common:orcid-identifier>
-		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+		<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>
 		<common:host>orcid.org</common:host>
 	</common:orcid-identifier>
@@ -29,7 +29,7 @@
 		<history:claimed>true</history:claimed>
 		<common:source>
 			<common:source-orcid>
-				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
 
@@ -58,7 +58,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -82,7 +82,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -99,7 +99,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -116,7 +116,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -133,7 +133,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -151,7 +151,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -174,7 +174,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 					</common:source-orcid>
@@ -214,7 +214,7 @@
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 				<common:source>
 					<common:source-orcid>
-						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 						<common:path>8888-8888-8888-8880</common:path>
 						<common:host>orcid.org</common:host>
 
@@ -262,7 +262,7 @@
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
 						<common:source-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+							<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
 						</common:source-orcid>
@@ -324,7 +324,7 @@
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
 						<common:source-client-id>
-							<common:uri>http://orcid.org/client/APP-9999999999999901</common:uri>
+							<common:uri>https://orcid.org/client/APP-9999999999999901</common:uri>
 							<common:path>APP-9999999999999901</common:path>
 							<common:host>orcid.org</common:host>
 						</common:source-client-id>
@@ -376,7 +376,7 @@
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<common:source>
 						<common:source-client-id>
-							<common:uri>http://orcid.org/client/8888-8888-8888-8880</common:uri>
+							<common:uri>https://orcid.org/client/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path> 
 							<common:host>orcid.org</common:host>
 						</common:source-client-id>
