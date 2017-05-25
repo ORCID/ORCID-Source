@@ -34,7 +34,7 @@
 			</common:last-modified-date>
 			<common:source>
 				<common:source-client-id>
-					<common:uri>http://orcid.org/client/APP-9999999999999902</common:uri>
+					<common:uri>https://orcid.org/client/APP-9999999999999902</common:uri>
 					<common:path>APP-9999999999999902</common:path>
 					<common:host>orcid.org</common:host>
 				</common:source-client-id>
