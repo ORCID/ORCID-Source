@@ -179,6 +179,9 @@
 		
 		<sec:intercept-url pattern="/oauth/load/client_info.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
+		<sec:intercept-url pattern="/oauth/load/scopes.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

@@ -20,7 +20,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
@@ -31,15 +33,18 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.ScopeInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
@@ -48,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("OauthController")
 public class OauthController extends OauthControllerBase {
@@ -92,6 +96,38 @@ public class OauthController extends OauthControllerBase {
         return clientInfo;
     }
     
+    @RequestMapping(value = { "/oauth/load/scopes" }, method = RequestMethod.GET)
+    public @ResponseBody ScopeInfoForm loadScopesInfo(HttpServletRequest request, HttpServletResponse response) {
+        String queryString = (String) request.getSession().getAttribute("queryString");
+
+        Matcher scopeMatcher = scopesPattern.matcher(queryString);
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+        if (scopeMatcher.find()) {
+            String scopesString = scopeMatcher.group(1);
+            try {
+                scopesString = URLDecoder.decode(scopesString, "UTF-8").trim();
+            } catch(UnsupportedEncodingException e) {
+                
+            }
+            scopesString = scopesString.replaceAll(" +", " ");
+            scopes = ScopePathType.getScopesFromSpaceSeparatedString(scopesString);
+        }
+            
+        ScopeInfoForm scopesInfoForm = new ScopeInfoForm();
+        for (ScopePathType theScope : scopes) {
+            scopesInfoForm.setValue(theScope.value());
+            scopesInfoForm.setName(theScope.name());
+            try {
+                scopesInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
+                scopesInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+            } catch(NoSuchMessageException e) {
+                LOGGER.warn("Unable to find key message for scope: " + theScope.name() + " " + theScope.value());
+            }            
+        }
+        
+        return scopesInfoForm;
+    }
+    
     @RequestMapping(value = "/oauth/login/form", method = RequestMethod.GET)
     public @ResponseBody OauthAuthorizeForm getLoginForm(HttpServletRequest request, HttpServletResponse response) {
         String queryString = (String) request.getSession().getAttribute("queryString");
@@ -126,7 +162,7 @@ public class OauthController extends OauthControllerBase {
         Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(queryString);
         if(givenNamesMatcher.find()) {
             try {
-            registration.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim());
+                registration.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim());
             } catch (UnsupportedEncodingException e) {
                 LOGGER.warn("Unable to parse given names from URL: " + queryString);
             }

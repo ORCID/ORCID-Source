@@ -4823,20 +4823,34 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
     //--------------------------------
     //---  New oauth 2 pages code  ---
     //--------------------------------
-    $scope.clientInfo = null;
+    $scope.clientInfo = {};
+    $scope.scopesInfo = {};
     
     $scope.loadClientInfo = function() {
     	$.ajax({
             url: getBaseUri() + '/oauth/load/client_info',
             type: 'GET',
-            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
             success: function(data) {
-            	$scope.clientInfo = data;
-            	console.log($scope.clientInfo);
-            	console.log($scope.clientInfo.member_name);
-            	console.log($scope.clientInfo['member_name']);
+            	for(var i in data){
+            		$scope.clientInfo[i] = data[i];            		
+            	}
+                
             	$scope.gaString = orcidGA.buildClientString($scope.clientInfo['member_name'], $scope.clientInfo['client_name']);
             	console.log($scope.gaString);
+            }
+        }).fail(function() {
+            console.log("An error occured authenticating the user.");
+        });
+    };
+    
+    $scope.loadScopesInfo = function() {
+    	$.ajax({
+            url: getBaseUri() + '/oauth/load/scopes',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+            	$scope.scopesInfo = data;
             }
         }).fail(function() {
             console.log("An error occured authenticating the user.");
@@ -4848,6 +4862,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
     	$scope.loadRequestInfoForm();
     } else {
     	$scope.loadClientInfo();
+    	$scope.loadScopesInfo();
     }   
     
     $scope.login = function(authorize = true) {    	
