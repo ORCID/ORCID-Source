@@ -17,10 +17,8 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +30,7 @@ import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,7 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("loginController")
-public class LoginController extends BaseController {
+public class LoginController extends OauthControllerBase {
    
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -61,7 +60,7 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String query = request.getQueryString();
         if(!PojoUtil.isEmpty(query)) {
             if(query.contains("oauth")) {
@@ -92,25 +91,30 @@ public class LoginController extends BaseController {
         return "session_expired";
     }
     
-    private ModelAndView handleOauthSignIn(HttpServletRequest request, HttpServletResponse response) {
+    private ModelAndView handleOauthSignIn(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String queryString = request.getQueryString();
         String redirectUri = null;
-        Matcher redirectUriMatcher = redirectUriPattern.matcher(queryString);
-        if (redirectUriMatcher.find()) {
-            try {
-                redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
-            } catch (UnsupportedEncodingException e) {
-            }
-        }
+        
+        // Get and save the request information form
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
+        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        // Save also the original query string
+        request.getSession().setAttribute("queryString", queryString);
+        // Save a flag to indicate this is a request from the new 
+        request.getSession().setAttribute("OAUTH_2SCREENS", true);
+        
+       // Redirect URI
+       redirectUri = requestInfoForm.getRedirectUrl();
+       
         // Check that the client have the required permissions
         // Get client name
-        Matcher clientIdMatcher = clientIdPattern.matcher(queryString);
-        if (!clientIdMatcher.find()) {
+        String clientId = requestInfoForm.getClientId();
+        if (PojoUtil.isEmpty(clientId)) {
             String redirectUriWithParams = redirectUri + "?error=invalid_client&error_description=invalid client_id";
             return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
         // Validate client details
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientIdMatcher.group(1));
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         try {            
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch(LockedException e) {
@@ -119,25 +123,14 @@ public class LoginController extends BaseController {
         }
         
         // validate client scopes
-        try {
-            Matcher scopeMatcher = scopesPattern.matcher(queryString);
-            String scopesString = null;
-            if (scopeMatcher.find()) {
-                String scopes = scopeMatcher.group(1);
-                scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
-                scopesString = scopesString.replaceAll(" +", " ");
-            }
-            authorizationEndpoint.validateScope(scopesString, clientDetails);            
+        try {            
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);            
         } catch (InvalidScopeException e) {
             String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage(); 
             return new ModelAndView(new RedirectView(redirectUriWithParams));
-        } catch(UnsupportedEncodingException e) {
-            
-        }
+        }                 
         
-        request.getSession().setAttribute("queryString", queryString);
-        
-        ModelAndView mav = new ModelAndView("oauth/signin");
+        ModelAndView mav = new ModelAndView("login");
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("oauth2Screens", true);
         return mav;
