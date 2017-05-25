@@ -88,7 +88,7 @@ public class Contact implements Serializable {
     }
 
     public boolean isMainContact() {
-        return ContactRoleType.MAIN_CONTACT.equals(role);
+        return ContactRoleType.MAIN_CONTACT.equals(role.getRoleType());
     }
 
     public String getOrcid() {
