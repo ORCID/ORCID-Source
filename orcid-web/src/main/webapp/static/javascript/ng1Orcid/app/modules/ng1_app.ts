@@ -5,18 +5,17 @@
 
 import * as angular from 'angular'
 
-import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
-import { EmailPreferencesCtrl } from './../controllers/EmailPreferencesCtrl.ts'
+//import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
 
 export const orcidApp = angular.module(
-	'orcidApp', 
-	[
-		'ngCookies',
-		'ngSanitize', 
-		'ui.multiselect', 
-		'vcRecaptcha',
-		'ui.bootstrap',
-		'EmailFrequencyCtrl',
-		'EmailPreferencesCtrl' //Couldn't found this one in the freemarker code
-	]
+    'orcidApp', 
+    [
+        'ngCookies',
+        'ngSanitize', 
+        'ui.multiselect', 
+        //'vcRecaptcha',
+        'ui.bootstrap'//,
+        //'EmailFrequencyCtrl'
+        //EmailFrequencyModule.name
+    ]
 );

@@ -28,19 +28,6 @@
  *  
  */
 
-console.log("testmjc8");
-
-angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
-
-angular.element(function() {
-    angular.bootstrap(
-        document, 
-        ['orcidApp']
-    );
-});
-
-
-
 /*******************************************************************************
  * CONTROLLERS
 *******************************************************************************/
