@@ -133,7 +133,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             case OrcidCoreExceptionMapper.V2_RC3:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC3);
             case OrcidCoreExceptionMapper.V2_RC4:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);            
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);
+            case OrcidCoreExceptionMapper.V2_1:
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_1);
             }
         }
 

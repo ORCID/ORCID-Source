@@ -122,11 +122,13 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro absUrl url>
-	<#if (url.value)?? && !url.value?starts_with("http")>
-  		http://${url.value?html}
-	<#else>
-	${url.value}	
-	</#if>      
+    <#compress>
+    <#if (url.value)?? && !url.value?starts_with("http")>
+        http://${url.value?html}
+    <#else>
+        ${url.value}	
+    </#if> 
+    </#compress>     
 </#macro>
 
 <#macro privacy thing selected="protected" btnContainerClass="btn-group privacy-group abs-left-top" helpLink="${knowledgeBaseUri}/articles/124518 ">

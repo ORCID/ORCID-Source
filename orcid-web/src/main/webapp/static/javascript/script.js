@@ -4187,7 +4187,7 @@ this.w3cLatexCharMap = {
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v2.0/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(
@@ -4227,6 +4227,19 @@ this.w3cLatexCharMap = {
             query += 'keyword:' + input.keyword.toLowerCase();
             doneSomething = true;
         }
+        if (hasValue(input.affiliationOrg)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            //if all chars are numbers, assume it's a ringgold id
+            if (input.affiliationOrg.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrg;
+            } else {
+                query += 'affiliation-org-name:' + input.affiliationOrg.toLowerCase();
+            }
+            doneSomething = true;
+        }
+        
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
                 + offset(input) : baseUrl + '?q=';
     }
@@ -4237,7 +4250,7 @@ this.w3cLatexCharMap = {
 
     exports.isValidInput = function(input) {
         var fieldsToCheck = [ input.text, input.givenNames, input.familyName,
-                input.keyword ];
+                input.keyword, input.affiliationOrg ];
         for ( var i = 0; i < fieldsToCheck.length; i++) {
             if (hasValue(fieldsToCheck[i])) {
                 return true;

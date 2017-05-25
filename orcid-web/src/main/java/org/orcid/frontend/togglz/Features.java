@@ -25,7 +25,10 @@ public enum Features implements Feature {
     NEW_FOOTER,
     
     @Label("Last modified")
-    LAST_MOD;
+    LAST_MOD,
+    
+    @Label("Affiliation search")
+    AFFILIATION_SEARCH;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
