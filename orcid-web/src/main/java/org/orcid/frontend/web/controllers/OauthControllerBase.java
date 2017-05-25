@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +54,16 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 public class OauthControllerBase extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);        
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);
+    protected final Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    protected final Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    protected final Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
+    protected final Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
+    protected final Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
+    protected final Pattern orcidPattern = Pattern.compile("orcid=([^&]*)");    
+    protected static String PUBLIC_MEMBER_NAME = "PubApp";
+    protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
+            
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
 
     @Resource
