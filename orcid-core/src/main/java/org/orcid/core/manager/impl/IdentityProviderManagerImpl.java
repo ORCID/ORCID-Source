@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -97,6 +98,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     }
 
     @Override
+    @Transactional
     public String retrieveFreshIdentitifyProviderName(String providerid, Locale locale) {
         IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
         List<IdentityProviderNameEntity> names = idp.getNames();
