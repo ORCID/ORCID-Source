@@ -54,7 +54,7 @@ public class OpenIDController {
             //lookup token, check it's valid, check scope.
             String tokenValue = authHeader.replace("Bearer", "").trim();
             OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
-            if (tok != null){
+            if (tok != null && !tok.isExpired()){
                 boolean hasScope = false;
                 Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(tok.getScope());
                 for (ScopePathType scope : requestedScopes) {

@@ -662,12 +662,4 @@ public class PublicV2ApiServiceDelegatorImpl
         return Response.ok(client).build();
     }
 
-    @Override
-    public Response viewUserInfo() {
-        orcidSecurityManager.checkScopes(ScopePathType.OPENID);  
-        String orcid = orcidSecurityManager.getOrcidFromToken();        
-        Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-        publicAPISecurityManagerV2.filter(person);
-        return Response.ok(new OpenIDConnectUserInfo(orcid,person)).build();
-    }
 }

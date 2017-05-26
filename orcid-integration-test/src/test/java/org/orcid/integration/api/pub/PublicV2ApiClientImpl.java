@@ -244,16 +244,6 @@ public class PublicV2ApiClientImpl {
         return getClientReponse(uri, null);
     }
     
-    public ClientResponse getJWKS() throws URISyntaxException{
-        URI uri = new URI("/jwks");
-        return getClientReponse(uri, null, MediaType.APPLICATION_JSON);
-    }
-
-    public ClientResponse getMe(String token) throws URISyntaxException{
-        URI uri = new URI("/me");
-        return getClientReponse(uri, token, MediaType.APPLICATION_JSON);
-    }
-
     private ClientResponse getClientReponse(URI uri, String token) {
         return getClientReponse(uri, token, VND_ORCID_XML);
     }

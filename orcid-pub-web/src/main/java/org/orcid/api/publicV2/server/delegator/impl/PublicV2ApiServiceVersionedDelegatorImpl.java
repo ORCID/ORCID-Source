@@ -297,9 +297,4 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return publicV2ApiServiceDelegator.viewClient(clientId);
     }
 
-    @Override
-    public Response viewUserInfo() {
-        return publicV2ApiServiceDelegator.viewUserInfo();
-    }
-
 }

@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -32,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -41,7 +43,9 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-context.xml" })
@@ -49,6 +53,9 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
 
     @Resource(name = "publicV2ApiClient")
     PublicV2ApiClientImpl client;
+    
+    @Value("${org.orcid.web.baseUri}")
+    public String baseUri;
     
     @Before
     public void before() {
@@ -72,8 +79,8 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         ClientResponse tokenResponse = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
-        JSONObject jsonObject = new JSONObject(body);
-        String id = jsonObject.getString("id_token");
+        JSONObject tokenJSON = new JSONObject(body);
+        String id = tokenJSON.getString("id_token");
         assertNotNull(id);
         SignedJWT signedJWT = SignedJWT.parse(id);  
         Assert.assertEquals("https://orcid.org",signedJWT.getJWTClaimsSet().getIssuer());
@@ -81,8 +88,10 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertEquals("APP-9999999999999901",signedJWT.getJWTClaimsSet().getAudience().get(0));
         Assert.assertEquals("yesMate",signedJWT.getJWTClaimsSet().getClaim("nonce"));        
 
-        //get JWKS from https://localhost:8443/orcid-pub-web/v2.0/jwks
-        ClientResponse jwksResponse = client.getJWKS();
+        //get JWKS         
+        Client client = Client.create();
+        WebResource webResource = client.resource(baseUri+"/oauth/jwks");
+        ClientResponse jwksResponse = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         String jwkString = jwksResponse.getEntity(String.class);
         RSAKey jwk = (RSAKey) JWK.parse(jwkString);
         
@@ -91,7 +100,10 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         Assert.assertTrue(signedJWT.verify(verifier));        
         
         //get userinfo
-        ClientResponse userInfo = client.getMe(jsonObject.getString("access_token"));
+        webResource = client.resource(baseUri+"/oauth/userinfo");
+        ClientResponse userInfo = webResource
+                .header("Authorization", "Bearer "+tokenJSON.getString("access_token"))
+                .accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         String userInfoString = userInfo.getEntity(String.class);
         JSONObject user = new JSONObject(userInfoString);
         Assert.assertEquals("9999-0000-0000-0004",user.get("sub"));
@@ -101,7 +113,16 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     }
     
     @Test
-    public void checkFailWithoutOpenIDScope() throws InterruptedException, JSONException{
+    public void check403UserInfoWithoutToken() throws JSONException{
+        //get userinfo
+        Client client = Client.create();
+        WebResource webResource = client.resource(baseUri+"/oauth/userinfo");
+        ClientResponse userInfo = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        Assert.assertEquals(403,userInfo.getStatus());
+    }
+    
+    @Test
+    public void checkNoIDTokenWithoutOpenIDScope() throws InterruptedException, JSONException{
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
         String clientSecret = getClient1ClientSecret();
