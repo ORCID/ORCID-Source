@@ -188,7 +188,9 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/jwks"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
+		<sec:intercept-url pattern="/oauth/userinfo"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 			
