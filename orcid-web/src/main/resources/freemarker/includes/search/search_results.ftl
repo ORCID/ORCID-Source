@@ -17,7 +17,7 @@
 
 -->
 <div>
-    <p ng-if="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span ng-if="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span ng-if="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
+    <p ng-cloak ng-if="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span ng-if="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span ng-if="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
 	<table class="ng-cloak table table-striped" ng-show="areResults()">
 		<thead>
 		<tr>
