@@ -10,7 +10,7 @@
 	<history:claimed>true</history:claimed>
 	<common:source>
 		<common:source-orcid>
-			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 			<common:path>8888-8888-8888-8880</common:path>
 			<common:host>orcid.org</common:host>
 		</common:source-orcid>

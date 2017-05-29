@@ -19,6 +19,9 @@
 <@public classes=['home']>
 
 <div class="row" ng-controller="SearchCtrl" id="SearchCtrl" data-search-query="${searchQuery?html}">
+    <div class="centered">
+        <span id="ajax-loader-search" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+    </div>
 	<div class="col-md-12">
 		<#if noResultsFound??>
 			<!-- no results -->

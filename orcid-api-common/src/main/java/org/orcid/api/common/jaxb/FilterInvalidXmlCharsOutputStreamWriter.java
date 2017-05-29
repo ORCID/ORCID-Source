@@ -40,7 +40,7 @@ public class FilterInvalidXmlCharsOutputStreamWriter extends OutputStreamWriter 
     public void write(int c) throws IOException {
         // Don't write chars from ASCII controls that are not allowed in XML
         // 1.0!
-        if (c > 31 || c == 9 || c == 10 || c == 13) {
+        if ((c != 65535 && c != 65534) && (c > 31 || c == 9 || c == 10 || c == 13)) {
             super.write(c);
         }
     }

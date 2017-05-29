@@ -23,6 +23,9 @@ import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
 import org.orcid.jaxb.model.common_v2.ContributorOrcid;
+import org.orcid.jaxb.model.common_v2.OrcidIdBase;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -94,8 +97,7 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
     public VersionConverterImplV2_0ToV2_1() {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        SourceOrcidMapper sourceOrcidMapper = new SourceOrcidMapper();
-        ContributorOrcidMapper contributorOrcidMapper = new ContributorOrcidMapper();
+        OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();        
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, GroupIdRecords.class).byDefault().register();
@@ -106,10 +108,16 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapperFactory.classMap(ExternalID.class, ExternalID.class).byDefault().register();
 
         // Contributor
-        mapperFactory.classMap(ContributorOrcid.class, ContributorOrcid.class).customize(contributorOrcidMapper).register();
+        mapperFactory.classMap(ContributorOrcid.class, ContributorOrcid.class).customize(orcidIdBaseMapper).register();
         
         // Source Orcid
-        mapperFactory.classMap(SourceOrcid.class, SourceOrcid.class).customize(sourceOrcidMapper).register();
+        mapperFactory.classMap(SourceOrcid.class, SourceOrcid.class).customize(orcidIdBaseMapper).register();
+        
+        // Source client ID
+        mapperFactory.classMap(SourceClientId.class, SourceClientId.class).customize(orcidIdBaseMapper).register();
+        
+        // Orcid identifier
+        mapperFactory.classMap(OrcidIdentifier.class, OrcidIdentifier.class).customize(orcidIdBaseMapper).register();
         
         // Other names
         mapperFactory.classMap(OtherNames.class, OtherNames.class).byDefault().register();
@@ -174,44 +182,26 @@ public class VersionConverterImplV2_0ToV2_1 implements V2VersionConverter {
         mapperFactory.classMap(Record.class, Record.class).byDefault().register();
 
         mapper = mapperFactory.getMapperFacade();
-    }
-
-    private class SourceOrcidMapper<Y, A> extends CustomMapper<SourceOrcid, SourceOrcid> {
+    }    
+    
+    private class OrcidIdBaseMapper<Y, A> extends CustomMapper<OrcidIdBase, OrcidIdBase> {       
         @Override
-        public void mapAtoB(SourceOrcid a, SourceOrcid b, MappingContext context) {
+        public void mapAtoB(OrcidIdBase a, OrcidIdBase b, MappingContext context) {
             b.setHost(a.getHost());
             b.setPath(a.getPath());
             if(context.getProperty("downgrade") != null) {
                 boolean isDowngrade = (boolean) context.getProperty("downgrade");
                 if(isDowngrade) {
                     // From 2.1 to 2.0 set the base http uri
-                    b.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());                    
+                    b.setUri(orcidUrlManager.getBaseUriHttp() + (a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + b.getPath());                    
                 } else {
                     // From 2.0 to 2.1 set the base uri which is https
-                    b.setUri(orcidUrlManager.getBaseUrl() + "/" + a.getPath());
-                }                                        
-            }               
-        }
-    }        
-        
-    private class ContributorOrcidMapper<Y, A> extends CustomMapper<ContributorOrcid, ContributorOrcid> {       
-        @Override
-        public void mapAtoB(ContributorOrcid a, ContributorOrcid b, MappingContext context) {
-            b.setHost(a.getHost());
-            b.setPath(a.getPath());
-            if(context.getProperty("downgrade") != null) {
-                boolean isDowngrade = (boolean) context.getProperty("downgrade");
-                if(isDowngrade) {
-                    // From 2.1 to 2.0 set the base http uri
-                    b.setUri(orcidUrlManager.getBaseUriHttp() + "/" + b.getPath());                    
-                } else {
-                    // From 2.0 to 2.1 set the base uri which is https
-                    b.setUri(orcidUrlManager.getBaseUrl() + "/" + a.getPath());
+                    b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + a.getPath());
                 }
             }                        
         }
-    }
-
+    }    
+    
     @Override
     public V2Convertible downgrade(V2Convertible objectToDowngrade) {
         Object objectToConvert = objectToDowngrade.getObjectToConvert();
