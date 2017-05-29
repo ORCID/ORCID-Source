@@ -34,7 +34,6 @@
 									<span id="invalid-orcid" class="orcid-error"ng-cloak ng-hide="isValidOrcidId()"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
 								</div>
 							</div>
-							</div>
 						</fieldset>
 						<fieldset>
 							<div class="control-group">
@@ -66,9 +65,12 @@
 										<input type="text" class="input-xlarge" name="keyword" id="keyword" ng-model="input.keyword">
 								</div>
 							</div>
+							<p ng-if="hasErrors" ng-cloak><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
 							<div class="control-group">
 								<div class="controls">
-									<button class="btn" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
+									<br>
+									<button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
+									<span id="ajax-loader-search" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
 								</div>
 							</div>
 						</fieldset>
