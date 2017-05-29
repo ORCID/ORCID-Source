@@ -61,7 +61,7 @@ public class AddWorksTest extends BlackBoxBase {
     
     @After
     public void after() {
-        
+        signout();
     }
 
     @Test
