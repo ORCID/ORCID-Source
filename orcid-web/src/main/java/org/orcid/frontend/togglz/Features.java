@@ -25,7 +25,10 @@ public enum Features implements Feature {
     NEW_FOOTER,
     
     @Label("Last modified")
-    LAST_MOD;
+    LAST_MOD,
+    
+    @Label("Split oauth in 2 screens")
+    OAUTH_2SCREENS;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
