@@ -362,6 +362,8 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", rc2.getDescription());
         assertEquals(groupId, rc2.getGroupId());
         assertEquals(groupId, rc2.getName());
+        assertNotNull(rc2.getSource());
+        assertEquals(this.getClient1ClientId(), rc2.retrieveSourcePath());
         
         //View it with RC3
         ClientResponse rc3Result = memberV2ApiClient_rc3.getGroupIdRecord(putCode, token);
@@ -372,6 +374,8 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", rc3.getDescription());
         assertEquals(groupId, rc3.getGroupId());
         assertEquals(groupId, rc3.getName());
+        assertNotNull(rc3.getSource());
+        assertEquals(this.getClient1ClientId(), rc3.retrieveSourcePath());
         
         //View it with RC4
         ClientResponse rc4Result = memberV2ApiClient_rc4.getGroupIdRecord(putCode, token);
@@ -382,6 +386,8 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", rc4.getDescription());
         assertEquals(groupId, rc4.getGroupId());
         assertEquals(groupId, rc4.getName());
+        assertNotNull(rc4.getSource());
+        assertEquals(this.getClient1ClientId(), rc4.retrieveSourcePath());
         
         //View it with release
         ClientResponse v2Result = memberV2ApiClient_release.getGroupIdRecord(putCode, token);
@@ -392,6 +398,8 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", v2.getDescription());
         assertEquals(groupId, v2.getGroupId());
         assertEquals(groupId, v2.getName());
+        assertNotNull(v2.getSource());
+        assertEquals(this.getClient1ClientId(), v2.retrieveSourcePath());
         
         //View it with V2.1
         ClientResponse v2_1Result = memberV2_1ApiClient_release.getGroupIdRecord(putCode, token);
@@ -402,5 +410,7 @@ public class GroupIdRecordTest extends BlackBoxBaseV2Release {
         assertEquals("Description", v2_1.getDescription());
         assertEquals(groupId, v2_1.getGroupId());
         assertEquals(groupId, v2_1.getName());
+        assertNotNull(v2_1.getSource());
+        assertEquals(this.getClient1ClientId(), v2_1.retrieveSourcePath());
     }   
 }
