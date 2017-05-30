@@ -15,7 +15,6 @@ export const orcidApp = angular.module(
         'ngCookies',
         'ngSanitize', 
         'ui.multiselect', 
-        //'vcRecaptcha',
         vcRecaptcha,
         'ui.bootstrap'//,
         //'EmailFrequencyCtrl'
