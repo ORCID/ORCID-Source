@@ -105,11 +105,11 @@ public class AddWorksTest extends BlackBoxBase {
         BBBUtil.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
         
         //Pick the identifier type from the list 
-        WebElement input = findElement(By.id("worksIdType0"));
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("worksIdType0")), webDriver);
+        WebElement input = findElement(By.id("worksIdType0"));        
         input.sendKeys("doi");
         BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath("//a[starts-with(@title,\"doi\")]")), webDriver);
-        WebElement typeAheadList = BBBUtil.findElement(By.xpath("//a[starts-with(@title,\"doi\")]"));
-        typeAheadList.click();
+        ((JavascriptExecutor) webDriver).executeScript("$(\"a:contains('doi:')\").click()");        
         
         //Set other identifier attributes
         BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
