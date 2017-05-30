@@ -1,4 +1,11 @@
-angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const BiographyCtrl = angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$compile', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, emailSrvc, initialConfigService) {
     $scope.biographyForm = null;
     $scope.emailSrvc = emailSrvc;
     $scope.lengthError = false;
@@ -112,3 +119,7 @@ angular.module('orcidApp').controller('BiographyCtrl',['$scope','$rootScope', '$
     $scope.getBiographyForm();
 
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class BiographyCtrlNg2Module {}
