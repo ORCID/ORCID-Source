@@ -134,7 +134,7 @@ public class OauthLoginController extends OauthControllerBase {
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
-                    Authentication auth = authenticateUser(request, form);
+                    Authentication auth = authenticateUser(request, form.getUserName().getValue(), form.getPassword().getValue());
                     profileEntityManager.updateLastLoginDetails(auth.getName(), OrcidRequestUtil.getIpAddress(request));
 
                     // Create authorization params
@@ -208,5 +208,5 @@ public class OauthLoginController extends OauthControllerBase {
         if (PojoUtil.isEmpty(form.getUserName()) || PojoUtil.isEmpty(form.getPassword())) {
             form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
         }
-    }
+    }           
 }

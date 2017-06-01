@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
@@ -41,6 +42,8 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
  */
 public class OAuthAuthorizeNotSignedInFilter implements Filter {
 
+    private static final String OAUTH2_TWO_SCREENS_FEATURE_FLAG = "OAUTH_2SCREENS";
+    
     BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     @Resource
@@ -60,9 +63,15 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             if (session != null)
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
             if (baseControllerUtil.getCurrentUser(sci) == null) {
+                String queryString = request.getQueryString();
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
-                response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + request.getQueryString());
+                
+                if(!PojoUtil.isEmpty(queryString) && queryString.contains(OAUTH2_TWO_SCREENS_FEATURE_FLAG)) {
+                    response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);
+                } else {
+                    response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + queryString);
+                }                                                
                 return;
             }
         }

@@ -27,6 +27,9 @@ public enum Features implements Feature {
     @Label("Last modified")
     LAST_MOD,
     
+    @Label("Split oauth in 2 screens")
+    OAUTH_2SCREENS,
+    
     @Label("Affiliation search")
     AFFILIATION_SEARCH;
 
