@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Map;
+
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
@@ -103,7 +105,11 @@ public class OauthHelper {
     public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
         return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, longLife);
     }
-    
+
+    public String getAuthorizationCode(String clientId, String scopes, String email, String password, boolean longLife, Map<String,String> params) throws InterruptedException {
+        return webDriverHelper.obtainAuthorizationCode(scopes, clientId, email, password, longLife,params);
+    }
+
     public String getFullAuthorizationCodeUrl(String clientId, String scopes, String email, String password, boolean longLife) throws InterruptedException {
         return webDriverHelper.obtainFullAuthorizationCodeResponse(scopes, clientId, email, password, longLife);
     }
