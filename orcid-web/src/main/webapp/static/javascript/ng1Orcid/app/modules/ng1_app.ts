@@ -4,6 +4,8 @@
 //import 'reflect-metadata';
 
 import * as angular from 'angular'
+import * as vcRecaptcha from 'angular-recaptcha'
+
 
 //import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
 
@@ -13,7 +15,7 @@ export const orcidApp = angular.module(
         'ngCookies',
         'ngSanitize', 
         'ui.multiselect', 
-        //'vcRecaptcha',
+        vcRecaptcha,
         'ui.bootstrap'//,
         //'EmailFrequencyCtrl'
         //EmailFrequencyModule.name

@@ -4,6 +4,7 @@ function requireAll(requireContext) {
   return requireContext.keys().map(requireContext);
 }
 
+require('./app/polyfills.ts');
 require('./app/main.ts');
 require('./app/angularOrcidOriginal.js');
 requireAll(require.context("./app/controllers", true, /^\.\/.*\.js$/));

@@ -1,4 +1,13 @@
-angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
+declare var colorbox: any;
+declare var formColorBoxResize: any;
+declare var om: any;
+declare var $: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const EmailsCtrl = angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
     $scope.emailSrvc = emailSrvc;
     $scope.showEdit = false;
     $scope.showElement = {};
@@ -60,3 +69,7 @@ angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$com
     }
     
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class EmailsCtrlNg2Module {}
