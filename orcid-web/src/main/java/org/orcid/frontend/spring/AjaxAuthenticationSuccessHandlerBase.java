@@ -62,7 +62,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             if (internalSSOManager.enableCookie()) {
                 internalSSOManager.writeCookie(orcidId, request, response);
             }
-            profileEntityManager.updateIpAddress(orcidId, OrcidRequestUtil.getIpAddress(request));
+            profileEntityManager.updateLastLoginDetails(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);

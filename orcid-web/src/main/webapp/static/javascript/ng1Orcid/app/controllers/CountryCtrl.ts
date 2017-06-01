@@ -1,4 +1,15 @@
-angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
+declare var $: any;
+declare var colorbox: any;
+declare var contains: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var orcidVar: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const CountryCtrl = angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', 'utilsService', function ($scope, $rootScope, $compile, bioBulkSrvc, commonSrvc, emailSrvc, initialConfigService, utilsService) {
     bioBulkSrvc.initScope($scope);
     $scope.commonSrvc = commonSrvc;
     $scope.countryForm = null;
@@ -94,12 +105,6 @@ angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$
             console.log("error fetching external identifiers");
             logAjaxError(e);
         });
-    };
-
-    $scope.toggleClickPrivacyHelp = function() {
-        if (!document.documentElement.className.contains('no-touch')){
-            $scope.privacyHelp=!$scope.privacyHelp;
-        }
     };
 
     $scope.setCountryForm = function(){
@@ -200,9 +205,14 @@ angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$
         }
     };
     
-    $scope.updateDisplayIndex = function(){
-        for (var idx in $scope.countryForm.addresses){
-            $scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;                       
+    $scope.updateDisplayIndex = function():any {
+        let displayIndex: any;
+        let countryFormAddressesLength: any;
+        let idx: any;
+        for ( idx in $scope.countryForm.addresses ){
+            countryFormAddressesLength = $scope.countryForm.addresses.length;
+            displayIndex = countryFormAddressesLength - idx;
+            $scope.countryForm.addresses[idx]['displayIndex'] = displayIndex;
         }
     };
     
@@ -257,3 +267,7 @@ angular.module('orcidApp').controller('CountryCtrl', ['$scope', '$rootScope', '$
      
     $scope.getCountryForm();
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class CountryCtrlNg2Module {}

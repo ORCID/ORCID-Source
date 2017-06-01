@@ -393,9 +393,13 @@ public class BlackBoxBase {
      * @throws InterruptedException 
      */
     public String getAuthorizationCode(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife) throws InterruptedException {
+        return getAuthorizationCode(clientId, clientRedirectUri, scopes, userId, password, longLife, null);
+    }
+    
+    public String getAuthorizationCode(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife, Map<String,String> params) throws InterruptedException {
         WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper); 
-        return oauthHelper.getAuthorizationCode(clientId, scopes, userId, password, longLife);
+        return oauthHelper.getAuthorizationCode(clientId, scopes, userId, password, longLife,params);
     }
     
     public String getFullAuthorizationCodeUrl(String clientId, String clientRedirectUri, String scopes, String userId, String password, boolean longLife) throws InterruptedException {

@@ -69,7 +69,23 @@
         <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
-	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
+	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
+		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
+		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
+		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
+	</bean>
+	
+	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
+	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
+	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
+		<property name="tokenEnhancers">
+		<list>
+			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
+			<ref bean="openIDConnectTokenEnhancer" />
+		</list>
+		</property>
+	</bean>
+	
 	
 	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
 	

@@ -39,5 +39,14 @@ public class OrcidOauth2Constants {
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String AUTHORIZATION = "authorization";
     public static final String REVOKE_OLD = "revoke_old";
-    public static final String EXPIRES_IN = "expires_in";    
+    public static final String EXPIRES_IN = "expires_in";
+    //openid connect
+    public static final String NONCE = "nonce";
+    public static final String MAX_AGE = "max_age";
+    public static final String ID_TOKEN = "id_token";
+    public static final String PROMPT = "prompt";
+    public static final Object PROMPT_CONFIRM = "confirm";    
+    public static final Object PROMPT_LOGIN = "login";
+    public static final Object PROMPT_NONE = "none";    
+    public static final String AUTH_TIME = "auth_time";
 }

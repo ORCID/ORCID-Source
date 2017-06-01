@@ -105,4 +105,5 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewClient(String clientId);
     
     Response viewBulkWorks(String orcid, String putCodes);
+
 }

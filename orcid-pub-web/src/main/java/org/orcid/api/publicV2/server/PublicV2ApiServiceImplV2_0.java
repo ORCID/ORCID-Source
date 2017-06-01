@@ -428,4 +428,5 @@ public class PublicV2ApiServiceImplV2_0 {
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
     }
+    
 }

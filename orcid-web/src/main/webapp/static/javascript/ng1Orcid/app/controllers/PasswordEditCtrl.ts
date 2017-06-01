@@ -1,4 +1,11 @@
-angular.module('orcidApp').controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
+declare var getBaseUri: any;
+declare var fixZindexIE7: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const PasswordEditCtrl = angular.module('orcidApp').controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.getChangePassword = function() {
         $.ajax({
             url: getBaseUri() + '/account/change-password.json',
@@ -38,3 +45,7 @@ angular.module('orcidApp').controller('PasswordEditCtrl', ['$scope', '$http', fu
         });
     };
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class PasswordEditCtrlNg2Module {}

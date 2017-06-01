@@ -21,7 +21,9 @@
     "systemjs": "0.19.40",
     "typescript": "^2.1.5",
     "zone.js": "^0.7.6",
-    "angular-recaptcha": "~4.1.0"
+    "angular-recaptcha": "~4.1.0",
+    "intl": "~1.2.5",
+    "mdn-polyfills": "~3.4.0"
   },
   "description": "Angular 1.5 Orcid App",
   "devDependencies": {
