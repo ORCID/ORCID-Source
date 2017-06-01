@@ -5617,11 +5617,12 @@ ul.workspace-private-toolbar .popover-help-container .popover {
 }
 
 .qrcode-container,
-.print-orcid-record {
+.print-orcid-record, 
+.widget-container {
     display: block;
     width: 100%;
     float: left;
-    margin: 10px 0;
+    margin: 6px 0;
 }
 
 .qrcode-container .orcid-qr,
