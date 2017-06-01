@@ -1,0 +1,67 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+                   
+	<changeSet id="FIX-ORGS-MISSING-DISAMBIGUATED-ORG" author="Angel Montenegro" dbms="postgresql">  
+		<comment>
+			#1: Identify disambiguated orgs and put them in a temp table
+			#2: Update the orgs based on the info in temp_org_disambiguation_table
+			#3: Identify records that should be reindexed
+			#4: Reindex records		
+		</comment>
+		<sql>
+			drop table if exists temp_org_disambiguation_table;
+		</sql>
+		<sql>
+			create temp table temp_org_disambiguation_table as (
+				select o.id as org_id, od.id as org_disambiguated_id
+				from org o, org_disambiguated od 
+				where o.org_disambiguated_id is null and 
+					o.name = od.name and 
+					o.country = od.country and 
+					o.city = od.city and 
+					o.region = od.region
+				);
+		</sql>		
+		<sql>
+			update org o
+			set last_modified=now(), org_disambiguated_id=x.org_disambiguated_id
+			from temp_org_disambiguation_table x
+			where o.id = x.org_id;
+		</sql>
+		<sql>
+			drop table if exists temp_records_to_reindex;
+		</sql>
+		<sql>
+			create temp table temp_records_to_reindex as (
+				select distinct(orcid) from org_affiliation_relation where org_id in (select org_id from temp_org_disambiguation_table) 
+				union 
+				select distinct(orcid) from profile_funding where org_id in (select org_id from temp_org_disambiguation_table)
+				union 
+				select distinct(orcid) from peer_review where org_id in (select org_id from temp_org_disambiguation_table)
+			);
+		</sql>
+		<sql>
+			update profile 
+			set indexing_status='REINDEX', last_modified=now() 
+			where orcid in (select orcid from temp_records_to_reindex);
+		</sql>				
+    </changeSet>
+</databaseChangeLog>

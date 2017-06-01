@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,14 +31,19 @@ import java.util.Optional;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.TargetProxyHelper;
 
 /**
  * @author Angel Montenegro
@@ -45,10 +51,20 @@ import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 public class GroupIdRecordManagerTest extends BaseTest  {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+
+    private final String CLIENT_ID = "APP-5555555555555555";
     
     @Resource
-    private GroupIdRecordManager groupIdRecordManager;
+    private GroupIdRecordManager groupIdRecordManager;        
     
+    @Mock
+    private SourceManager sourceManager;
+    
+    @Before
+    public void before() {
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "sourceManager", sourceManager); 
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID)));
+    }
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -73,6 +89,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         //Create the first one
         g1 = groupIdRecordManager.createGroupIdRecord(g1);
         Long putCode = g1.getPutCode();
+        assertNotNull(g1.getSource());
+        assertNotNull(g1.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
         //Try to create a duplicate
         try {
@@ -117,6 +136,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(g2.getPutCode());
         assertTrue(!g2.getPutCode().equals(putCode));
         assertEquals("orcid-generated:valid-group-id#2", g2.getGroupId());
+        assertNotNull(g2.getSource());
+        assertNotNull(g2.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g2.getSource().getSourceClientId().getPath());
         
         //Try to create again a duplicate for any of the two existing
         try {
@@ -157,18 +179,27 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         //Create the first one
         g1 = groupIdRecordManager.createGroupIdRecord(g1);
         Long putCode1 = g1.getPutCode();
+        assertNotNull(g1.getSource());
+        assertNotNull(g1.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
         //Create another one
         g1.setPutCode(null);
         g1.setGroupId("orcid-generated:valid-group-id#2");
         g1 = groupIdRecordManager.createGroupIdRecord(g1);
         Long putCode2 = g1.getPutCode();
+        assertNotNull(g1.getSource());
+        assertNotNull(g1.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
         //Create another one
         g1.setPutCode(null);
         g1.setGroupId("orcid-generated:valid-group-id#3");
         g1 = groupIdRecordManager.createGroupIdRecord(g1);
         Long putCode3 = g1.getPutCode();
+        assertNotNull(g1.getSource());
+        assertNotNull(g1.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
         //Update #1 with an existing group id
         try {
@@ -206,6 +237,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertEquals("orcid-generated:valid-group-id#1-updated", existingOne.getGroupId());
         assertEquals("updated-description", existingOne.getDescription());
         assertEquals(groupName, existingOne.getName());
+        assertNotNull(existingOne.getSource());
+        assertNotNull(existingOne.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, existingOne.getSource().getSourceClientId().getPath());
         
         //Delete them
         groupIdRecordManager.deleteGroupIdRecord(putCode1);
@@ -222,10 +256,12 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         g1.setType("publisher");
         
         //Test create
-        g1 = groupIdRecordManager.createGroupIdRecord(g1);
-        
+        g1 = groupIdRecordManager.createGroupIdRecord(g1);        
         Long putCode = g1.getPutCode();
         assertNotNull(putCode);
+        assertNotNull(g1.getSource());
+        assertNotNull(g1.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
         //Test find
         assertTrue(groupIdRecordManager.exists(g1.getGroupId()));
@@ -235,12 +271,18 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(existingByGroupId.get().getPutCode());
         assertEquals(putCode, existingByGroupId.get().getPutCode());
         assertEquals(g1.getGroupId(), existingByGroupId.get().getGroupId());
+        assertNotNull(existingByGroupId.get().getSource());
+        assertNotNull(existingByGroupId.get().getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, existingByGroupId.get().getSource().getSourceClientId().getPath());
         
         GroupIdRecord existingByPutCode = groupIdRecordManager.getGroupIdRecord(g1.getPutCode());
         assertNotNull(existingByPutCode);
         assertNotNull(existingByPutCode.getPutCode());
         assertEquals(putCode, existingByPutCode.getPutCode());
-        assertEquals(g1.getGroupId(), existingByPutCode.getGroupId());                
+        assertEquals(g1.getGroupId(), existingByPutCode.getGroupId()); 
+        assertNotNull(existingByPutCode.getSource());
+        assertNotNull(existingByPutCode.getSource().getSourceClientId());
+        assertEquals(CLIENT_ID, existingByPutCode.getSource().getSourceClientId().getPath());
         
         //Test update with invalid value        
         try {

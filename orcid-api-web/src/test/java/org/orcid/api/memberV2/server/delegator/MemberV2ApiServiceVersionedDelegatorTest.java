@@ -54,6 +54,7 @@ import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
@@ -61,8 +62,11 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.PeerReview;
+import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Result;
@@ -81,9 +85,13 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
-    @Resource(name = "memberV2ApiServiceDelegatorRc2")
+    @Resource(name = "memberV2ApiServiceDelegatorV2_0")
     private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
+    
+    @Resource(name = "memberV2ApiServiceDelegatorV2_1")
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator_v2_1;
 
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -1581,6 +1589,123 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.viewBulkWorks("0000-0000-0000-0003", "11,12,13");
     }
 
+    @Test
+    public void test2_0() {        
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewRecord("0000-0000-0000-0003");
+        Record record = (Record) response.getEntity();        
+        assertNotNull(record.getActivitiesSummary());
+        ActivitiesSummary activitiesSummary = record.getActivitiesSummary();
+        if(activitiesSummary.getEducations() != null) {            
+            activitiesSummary.getEducations().getSummaries().forEach(e -> assertSourceElement(e, false));
+        }
+        
+        if(activitiesSummary.getEmployments() != null) {
+            activitiesSummary.getEmployments().getSummaries().forEach(e -> assertSourceElement(e, false));
+        }
+        
+        if(activitiesSummary.getFundings() != null) {
+            activitiesSummary.getFundings().getFundingGroup().forEach(g -> {g.getFundingSummary().forEach(e -> assertSourceElement(e, false));});
+        }
+        
+        if(activitiesSummary.getWorks() != null) {
+            activitiesSummary.getWorks().getWorkGroup().forEach(g -> {g.getWorkSummary().forEach(e -> assertSourceElement(e, false));});
+        }
+        
+        if(activitiesSummary.getPeerReviews() != null) {
+            activitiesSummary.getPeerReviews().getPeerReviewGroup().forEach(g -> {g.getPeerReviewSummary().forEach(e -> assertSourceElement(e, false));});
+        }
+        
+        assertNotNull(record.getPerson());
+        
+        Person person = record.getPerson();
+        if(person.getAddresses() != null) {
+            person.getAddresses().getAddress().forEach(e -> assertSourceElement(e, false));
+        }
+        
+        if(person.getExternalIdentifiers() != null) {
+            person.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertSourceElement(e, false));
+        }
+        
+        if(person.getKeywords() != null) {
+            person.getKeywords().getKeywords().forEach(e -> assertSourceElement(e, false));
+        }
+        
+        if(person.getOtherNames() != null) {
+            person.getOtherNames().getOtherNames().forEach(e -> assertSourceElement(e, false));
+        }
+
+        if(person.getResearcherUrls() != null) {
+            person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e, false));
+        }
+    }
+    
+    @Test
+    public void test2_1() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);        
+        Response response = serviceDelegator_v2_1.viewRecord("0000-0000-0000-0003");
+        Record record = (Record) response.getEntity();        
+        assertNotNull(record.getActivitiesSummary());
+        ActivitiesSummary activitiesSummary = record.getActivitiesSummary();
+        
+        if(activitiesSummary.getEducations() != null) {            
+            activitiesSummary.getEducations().getSummaries().forEach(e -> assertSourceElement(e, true));
+        }
+        
+        if(activitiesSummary.getEmployments() != null) {
+            activitiesSummary.getEmployments().getSummaries().forEach(e -> assertSourceElement(e, true));
+        }
+        
+        if(activitiesSummary.getFundings() != null) {
+            activitiesSummary.getFundings().getFundingGroup().forEach(g -> {g.getFundingSummary().forEach(e -> assertSourceElement(e, true));});
+        }
+        
+        if(activitiesSummary.getWorks() != null) {
+            activitiesSummary.getWorks().getWorkGroup().forEach(g -> {g.getWorkSummary().forEach(e -> assertSourceElement(e, true));});
+        }
+        
+        if(activitiesSummary.getPeerReviews() != null) {
+            activitiesSummary.getPeerReviews().getPeerReviewGroup().forEach(g -> {g.getPeerReviewSummary().forEach(e -> assertSourceElement(e, true));});
+        }
+        
+        assertNotNull(record.getPerson());
+        
+        Person person = record.getPerson();
+        if(person.getAddresses() != null) {
+            person.getAddresses().getAddress().forEach(e -> assertSourceElement(e, true));
+        }
+        
+        if(person.getExternalIdentifiers() != null) {
+            person.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertSourceElement(e, true));
+        }
+        
+        if(person.getKeywords() != null) {
+            person.getKeywords().getKeywords().forEach(e -> assertSourceElement(e, true));
+        }
+        
+        if(person.getOtherNames() != null) {
+            person.getOtherNames().getOtherNames().forEach(e -> assertSourceElement(e, true));
+        }
+
+        if(person.getResearcherUrls() != null) {
+            person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e, true));
+        }
+    }
+    
+    private void assertSourceElement(SourceAware element, boolean isHttps) {
+        if(element.getSource() != null && element.getSource().getSourceOrcid() != null) {
+            assertProtocol(element.getSource().getSourceOrcid().getUri(), isHttps);
+        }
+    }
+    
+    private void assertProtocol(String url, boolean isHttps) {
+        if(isHttps) {
+            assertTrue(url.startsWith("https://"));
+        } else {
+            assertTrue(url.startsWith("http://"));
+        }
+    }
+    
     private void updateProfileSubmissionDate(String orcid, int increment) {
         // Update the submission date so it is long enough
         ProfileEntity profileEntity = profileDao.find(orcid);

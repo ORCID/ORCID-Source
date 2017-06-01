@@ -54,13 +54,15 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 public class OauthControllerBase extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);
-    protected final Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
-    protected final Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
-    protected final Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
-    protected final Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
-    protected final Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
-    protected final Pattern orcidPattern = Pattern.compile("orcid=([^&]*)");    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);    
+    protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
+    protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
+    private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
+    private Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
+    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
+    private Pattern noncePattern = Pattern.compile("nonce=([^&]*)");
+    private Pattern maxAgePattern = Pattern.compile("max_age=([^&]*)");
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
             
@@ -107,8 +109,9 @@ public class OauthControllerBase extends BaseController {
         String orcid = request.getParameter("orcid");
         String givenNames = request.getParameter("given_names");
         String familyNames = request.getParameter("family_names");
-        
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
+        String nonce = request.getParameter("nonce");
+        String maxAge = request.getParameter("max_age");        
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames, nonce, maxAge);
     }
     
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
@@ -121,6 +124,9 @@ public class OauthControllerBase extends BaseController {
         String orcid = "";
         String givenNames = "";
         String familyNames = "";
+        
+        String nonce = "";
+        String maxAge = "";
 
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
@@ -190,11 +196,22 @@ public class OauthControllerBase extends BaseController {
                 familyNames = URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim();
             }
             
+            Matcher nonceMatcher = noncePattern.matcher(requestUrl);
+            if(nonceMatcher.find()) {
+                nonce = URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim();
+            }
+            
+            Matcher maxAgeMatcher = maxAgePattern.matcher(requestUrl);
+            if(maxAgeMatcher.find()) {
+                maxAge = URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim();
+            }
+            
+            
         }        
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames, nonce, maxAge);
     }
     
-    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid, String givenNames, String familyNames) throws UnsupportedEncodingException {
+    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid, String givenNames, String familyNames, String nonce, String maxAge) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
         
         //If the user is logged in 
@@ -300,7 +317,8 @@ public class OauthControllerBase extends BaseController {
         infoForm.setRedirectUrl(redirectUri);
         infoForm.setStateParam(stateParam);
         infoForm.setResponseType(responseType);
-
+        infoForm.setNonce(nonce);
+        
         return infoForm;
     }
     
@@ -341,6 +359,11 @@ public class OauthControllerBase extends BaseController {
             params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
         } else {
             params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+        }
+        
+        //OpenID connect
+        if (!PojoUtil.isEmpty(requestInfoForm.getNonce())){
+            params.put(OrcidOauth2Constants.NONCE, requestInfoForm.getNonce());
         }
     }
     

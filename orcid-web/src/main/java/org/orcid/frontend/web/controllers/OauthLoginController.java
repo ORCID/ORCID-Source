@@ -21,15 +21,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +60,9 @@ public class OauthLoginController extends OauthControllerBase {
     @Value("${org.orcid.frontend.oauthSignin.showLogin.default:true}")
     private boolean showLoginDefault;
     
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
@@ -94,6 +102,19 @@ public class OauthLoginController extends OauthControllerBase {
             return error;
         }
         
+        //handle openID behaviour
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+                redirectUriWithParams += "?error=login_required";
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
+            }
+        }
+        
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.setViewName("oauth_login");
@@ -113,7 +134,9 @@ public class OauthLoginController extends OauthControllerBase {
             if (form.getErrors().isEmpty()) {
                 try {
                     // Authenticate user
-                    Authentication auth = authenticateUser(request, form.getUserName().getValue(), form.getPassword().getValue());
+                    Authentication auth = authenticateUser(request, form);
+                    profileEntityManager.updateLastLoginDetails(auth.getName(), OrcidRequestUtil.getIpAddress(request));
+
                     // Create authorization params
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
@@ -149,6 +172,8 @@ public class OauthLoginController extends OauthControllerBase {
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                     form.setRedirectUrl(view.getUrl());
                     willBeRedirected = true;
+                    
+                    
                 } catch (AuthenticationException ae) {
                     if(ae.getCause() instanceof DisabledException){
                         // Handle this message in angular to allow AJAX action

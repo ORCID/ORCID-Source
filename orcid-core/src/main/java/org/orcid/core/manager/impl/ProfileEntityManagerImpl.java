@@ -695,8 +695,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updateIpAddress(String orcid, String ipAddress) {
-        profileDao.updateIpAddress(orcid, ipAddress);
+    public void updateLastLoginDetails(String orcid, String ipAddress) {
+        profileDao.updateLastLoginDetails(orcid, ipAddress);
     }
 
     @Override
@@ -730,5 +730,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public boolean unlockProfile(String orcid) {
         return profileDao.unlockProfile(orcid);
+    }
+
+    @Override
+    public Date getLastLogin(String orcid) {
+        return profileDao.getLastLogin(orcid);
     }   
 }

@@ -29,9 +29,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.common_v2.SourceClientId;
-import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -55,17 +52,14 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateGroupIdRecord(groupIdRecord, true, sourceEntity);
         validateDuplicate(groupIdRecord);
-        if (sourceEntity != null) {
-            Source source = new Source();
-            if (sourceEntity.getSourceClient() != null) {
-                source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
-            } else if (sourceEntity.getSourceProfile() != null) {
-                source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
-            }
-            groupIdRecord.setSource(source);
-        }
-
         GroupIdRecordEntity entity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
+        if (sourceEntity != null) {
+            if (sourceEntity.getSourceClient() != null) {
+                entity.setClientSourceId(sourceEntity.getSourceClient().getClientId());
+            } else if (sourceEntity.getSourceProfile() != null) {
+                entity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+        }
         groupIdRecordDao.persist(entity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
     }

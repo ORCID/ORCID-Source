@@ -144,7 +144,11 @@ public enum ScopePathType implements Serializable {
     // Internal scopes
     @XmlEnumValue(ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED) INTERNAL_PERSON_LAST_MODIFIED (ScopeConstants.INTERNAL_PERSON_LAST_MODIFIED),     
     
-    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE);
+    @XmlEnumValue(ScopeConstants.IDENTIFIER_TYPES_CREATE) IDENTIFIER_TYPES_CREATE(ScopeConstants.IDENTIFIER_TYPES_CREATE),
+    
+    // OpenID connect scopes
+    @XmlEnumValue(ScopeConstants.OPENID) OPENID(ScopeConstants.OPENID, AUTHENTICATE, READ_PUBLIC);
+    
     //@formatter:on
 
     private final String value;
@@ -232,6 +236,8 @@ public enum ScopePathType implements Serializable {
         case READ_LIMITED:
             return true;
         case PERSON_READ_LIMITED:
+            return true;
+        case OPENID:
             return true;
         default:
             return false;

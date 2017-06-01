@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -68,6 +69,11 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
     private MemberV2ApiClientImpl memberV2ApiClient_release;
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
+    
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
 
     private static String researcherUrl1 = "http://test.orcid.org/1/" + System.currentTimeMillis();
 
@@ -786,6 +792,178 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
     }
 
     /**
+     * --------- -- -- -- V2.1 -- -- -- ---------
+     * 
+     */
+    @Test
+    public void testCreateGetUpdateAndDeleteResearcherUrl_V2_1() throws InterruptedException, JSONException, URISyntaxException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        org.orcid.jaxb.model.record_v2.ResearcherUrl rUrlToCreate = new org.orcid.jaxb.model.record_v2.ResearcherUrl();
+        long time = System.currentTimeMillis();
+        String url = "http://test.orcid.org/test/" + time;
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(url));
+        rUrlToCreate.setUrlName(url);
+
+        // Create
+        ClientResponse postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.1/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
+
+        // Read
+        ClientResponse getResponse = memberV2_1ApiClient_release.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        org.orcid.jaxb.model.record_v2.ResearcherUrl gotResearcherUrl = getResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrl.class);
+        assertNotNull(gotResearcherUrl);
+        assertNotNull(gotResearcherUrl.getPutCode());
+        assertNotNull(gotResearcherUrl.getSource());
+        assertNotNull(gotResearcherUrl.getCreatedDate());
+        assertNotNull(gotResearcherUrl.getLastModifiedDate());
+        assertEquals(getClient1ClientId(), gotResearcherUrl.getSource().retrieveSourcePath());
+        assertEquals("http://test.orcid.org/test/" + time, gotResearcherUrl.getUrl().getValue());
+        assertEquals("http://test.orcid.org/test/" + time, gotResearcherUrl.getUrlName());
+        assertEquals("public", gotResearcherUrl.getVisibility().value());
+        assertNotNull(gotResearcherUrl.getDisplayIndex());
+        Long originalDisplayIndex = gotResearcherUrl.getDisplayIndex();
+
+        // Save the original visibility
+        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = gotResearcherUrl.getVisibility();
+        org.orcid.jaxb.model.common_v2.Visibility updatedVisibility = org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.equals(originalVisibility)
+                ? org.orcid.jaxb.model.common_v2.Visibility.LIMITED : org.orcid.jaxb.model.common_v2.Visibility.PRIVATE;
+
+        // Verify you cant update the visibility
+        gotResearcherUrl.setVisibility(updatedVisibility);
+        ClientResponse putResponse = memberV2_1ApiClient_release.updateLocationXml(postResponse.getLocation(), accessToken, gotResearcherUrl);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        org.orcid.jaxb.model.error_v2.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.error_v2.OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+
+        // Set the visibility again to the initial one
+        gotResearcherUrl.setVisibility(originalVisibility);
+
+        // Update
+        org.orcid.jaxb.model.common_v2.LastModifiedDate initialLastModified = gotResearcherUrl.getLastModifiedDate();
+        Long currentTime = System.currentTimeMillis();
+        gotResearcherUrl.setUrlName(gotResearcherUrl.getUrlName() + " - " + currentTime);
+        gotResearcherUrl.getUrl().setValue(gotResearcherUrl.getUrl().getValue() + currentTime);
+        ClientResponse updatedResearcherUrlResponse = memberV2_1ApiClient_release.updateResearcherUrls(getUser1OrcidId(), gotResearcherUrl, accessToken);
+        assertNotNull(updatedResearcherUrlResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), updatedResearcherUrlResponse.getStatus());
+        org.orcid.jaxb.model.record_v2.ResearcherUrl updatedResearcherUrl = updatedResearcherUrlResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrl.class);
+        assertNotNull(updatedResearcherUrl);
+        assertEquals("http://test.orcid.org/test/" + time + currentTime, updatedResearcherUrl.getUrl().getValue());
+        assertEquals("http://test.orcid.org/test/" + time + " - " + currentTime, updatedResearcherUrl.getUrlName());
+        assertEquals(originalDisplayIndex, updatedResearcherUrl.getDisplayIndex());
+
+        // Keep it public, since it is more restrictive than the user visibility
+        // default
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, updatedResearcherUrl.getVisibility());
+        assertFalse(initialLastModified.equals(updatedResearcherUrl.getLastModifiedDate()));
+
+        // Delete
+        ClientResponse deleteResponse = memberV2_1ApiClient_release.deleteResearcherUrl(getUser1OrcidId(), gotResearcherUrl.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+
+    @Test
+    public void testCantAddDuplicatedResearcherUrl_V2_1() throws InterruptedException, JSONException, URISyntaxException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        Long now = System.currentTimeMillis();
+        org.orcid.jaxb.model.record_v2.ResearcherUrl rUrlToCreate = new org.orcid.jaxb.model.record_v2.ResearcherUrl();
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://newurl.com/" + now));
+        rUrlToCreate.setUrlName("url-name-" + System.currentTimeMillis());
+        rUrlToCreate.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+
+        // Create it
+        ClientResponse postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String location = postResponse.getHeaders().getFirst("Location");
+        Long putCode1 = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+
+        // Add it again
+        postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());
+
+        // Check it can be created by other client
+        String otherClientToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_UPDATE), getClient2ClientId(),
+                getClient2ClientSecret(), getClient2RedirectUri());
+        postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, otherClientToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        location = postResponse.getHeaders().getFirst("Location");
+        Long putCode2 = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+
+        // Delete both
+        ClientResponse deleteResponse = memberV2_1ApiClient_release.deleteResearcherUrl(getUser1OrcidId(), putCode1, accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        deleteResponse = memberV2_1ApiClient_release.deleteResearcherUrl(getUser1OrcidId(), putCode2, otherClientToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+
+    @Test
+    public void testTryingToAddInvalidResearcherUrls_V2_1() throws InterruptedException, JSONException, URISyntaxException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        org.orcid.jaxb.model.record_v2.ResearcherUrl rUrlToCreate = new org.orcid.jaxb.model.record_v2.ResearcherUrl();
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(""));
+        rUrlToCreate.setUrlName("");
+        // Create
+        ClientResponse postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+
+        String _351Chars = new String();
+        for (int i = 0; i < 531; i++) {
+            _351Chars += "a";
+        }
+
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url(_351Chars));
+        postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://myurl.com"));
+        rUrlToCreate.setUrlName(_351Chars);
+        postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
+
+        rUrlToCreate.setUrlName("The name");
+        postResponse = memberV2_1ApiClient_release.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+
+        // Read it to delete it
+        ClientResponse getResponse = memberV2_1ApiClient_release.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        org.orcid.jaxb.model.record_v2.ResearcherUrl gotResearcherUrl = getResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrl.class);
+        ClientResponse deleteResponse = memberV2_1ApiClient_release.deleteResearcherUrl(getUser1OrcidId(), gotResearcherUrl.getPutCode(), accessToken);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+    }
+
+    @Test
+    public void testInvalidPutCodeReturns404_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+
+        org.orcid.jaxb.model.record_v2.ResearcherUrl rUrlToCreate = new org.orcid.jaxb.model.record_v2.ResearcherUrl();
+        rUrlToCreate.setUrl(new org.orcid.jaxb.model.common_v2.Url("http://newurl.com/" + System.currentTimeMillis()));
+        rUrlToCreate.setUrlName("url-name-" + System.currentTimeMillis());
+        rUrlToCreate.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        rUrlToCreate.setPutCode(1234567890L);
+
+        ClientResponse response = memberV2_1ApiClient_release.updateResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+    
+    /**
      * --------- -- -- -- ALL -- -- -- ---------
      * 
      */
@@ -857,6 +1035,21 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
             }
         }
 
+        // V2.1
+        found = false;
+
+        getAllResponse = publicV2_1ApiClient_release.viewResearcherUrlsXML(getUser1OrcidId());
+        assertNotNull(getAllResponse);
+        org.orcid.jaxb.model.record_v2.ResearcherUrls researcherUrls_v2_1 = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        assertNotNull(researcherUrls_v2_1);
+        assertNotNull(researcherUrls_v2_1.getResearcherUrls());
+        for (org.orcid.jaxb.model.record_v2.ResearcherUrl rUrl : researcherUrls_v2_1.getResearcherUrls()) {
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, rUrl.getVisibility());
+            if (researcherUrl1.equals(rUrl.getUrl().getValue())) {
+                found = true;
+            }
+        }
+        
         assertTrue(found);
 
         // SET ALL TO LIMITED
@@ -895,6 +1088,14 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(researcherUrls_v2.getResearcherUrls());
         assertTrue(researcherUrls_v2.getResearcherUrls().isEmpty());
 
+        // V2.1
+        getAllResponse = publicV2_1ApiClient_release.viewResearcherUrlsXML(getUser1OrcidId());
+        assertNotNull(getAllResponse);
+        researcherUrls_v2_1 = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        assertNotNull(researcherUrls_v2_1);
+        assertNotNull(researcherUrls_v2_1.getResearcherUrls());
+        assertTrue(researcherUrls_v2_1.getResearcherUrls().isEmpty());
+        
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();
         openEditResearcherUrlsModal();
@@ -953,6 +1154,16 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(researcherUrls_v2.getResearcherUrls().get(0).getUrl());
         assertEquals(researcherUrl1, researcherUrls_v2.getResearcherUrls().get(0).getUrl().getValue());
 
+        // V2.1
+        getAllResponse = memberV2_1ApiClient_release.getResearcherUrls(getUser1OrcidId(), accessToken);
+        assertNotNull(getAllResponse);
+        org.orcid.jaxb.model.record_v2.ResearcherUrls researcherUrls_v2_1 = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        assertNotNull(researcherUrls_v2_1);
+        assertNotNull(researcherUrls_v2_1.getResearcherUrls());
+        assertEquals(1, researcherUrls_v2_1.getResearcherUrls().size());
+        assertNotNull(researcherUrls_v2_1.getResearcherUrls().get(0).getUrl());
+        assertEquals(researcherUrl1, researcherUrls_v2_1.getResearcherUrls().get(0).getUrl().getValue());
+
         // SET THEM ALL TO PRIVATE
         showMyOrcidPage();
         openEditResearcherUrlsModal();
@@ -988,6 +1199,14 @@ public class ResearcherUrlsTest extends BlackBoxBaseV2Release {
         assertNotNull(researcherUrls_v2);
         assertNotNull(researcherUrls_v2.getResearcherUrls());
         assertTrue(researcherUrls_v2.getResearcherUrls().isEmpty());
+
+        // V2.1
+        getAllResponse = memberV2_1ApiClient_release.getResearcherUrls(getUser1OrcidId(), accessToken);
+        assertNotNull(getAllResponse);
+        researcherUrls_v2_1 = getAllResponse.getEntity(org.orcid.jaxb.model.record_v2.ResearcherUrls.class);
+        assertNotNull(researcherUrls_v2_1);
+        assertNotNull(researcherUrls_v2_1.getResearcherUrls());
+        assertTrue(researcherUrls_v2_1.getResearcherUrls().isEmpty());
 
         // SET THEM ALL TO PUBLIC BEFORE FINISHING THE TEST
         showMyOrcidPage();

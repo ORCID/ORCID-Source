@@ -100,6 +100,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
+    private Date lastLogin;
 
     // Deprecation fields
     private ProfileEntity primaryRecord;
@@ -975,5 +976,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setBiographyEntity(BiographyEntity biographyEntity) {
         this.biographyEntity = biographyEntity;
+    }
+
+    @Column(name="last_login")
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

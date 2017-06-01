@@ -186,7 +186,11 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
+		<sec:intercept-url pattern="/oauth/jwks"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/userinfo"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 			
@@ -364,6 +368,8 @@
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
 			access="ROLE_GROUP"/>			
+		<sec:intercept-url pattern="/group/developer-tools/get-available-scopes.json(\?.*)?" method="GET"
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/group/.*" 
 			access="ROLE_GROUP"/>			
 		<sec:intercept-url pattern="/admin-actions" 

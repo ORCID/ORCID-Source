@@ -28,7 +28,10 @@ public enum Features implements Feature {
     LAST_MOD,
     
     @Label("Split oauth in 2 screens")
-    OAUTH_2SCREENS;
+    OAUTH_2SCREENS,
+    
+    @Label("Affiliation search")
+    AFFILIATION_SEARCH;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

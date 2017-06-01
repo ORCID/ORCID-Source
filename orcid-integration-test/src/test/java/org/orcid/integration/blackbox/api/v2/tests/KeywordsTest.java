@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.Keywords;
@@ -69,6 +70,11 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
     private MemberV2ApiClientImpl memberV2ApiClient_release;
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
+    
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
 
     private static String keyword1 = "keyword-1-" + System.currentTimeMillis();
     private static String keyword2 = "keyword-2-" + System.currentTimeMillis();
@@ -574,6 +580,123 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
     }        
     
     /**
+     * --------- -- -- -- V2.1 -- -- -- ---------
+     * 
+     */
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    @Test
+    public void testCreateGetUpdateAndDeleteKeyword_V2_1() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED);
+        changeCurrentKeywordsVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);        
+
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        org.orcid.jaxb.model.record_v2.Keyword newKeyword = new org.orcid.jaxb.model.record_v2.Keyword();
+        newKeyword.setContent("keyword-3");
+        newKeyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        // Create
+        ClientResponse response = memberV2_1ApiClient_release.createKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+
+        // Get all and verify
+        response = memberV2_1ApiClient_release.viewKeywords(getUser1OrcidId(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.Keywords keywords = response.getEntity(org.orcid.jaxb.model.record_v2.Keywords.class);
+        assertNotNull(keywords);
+        assertNotNull(keywords.getKeywords());
+
+        boolean found1 = false;
+        boolean found2 = false;
+        boolean foundNew = false;
+
+        for (org.orcid.jaxb.model.record_v2.Keyword existingKeyword : keywords.getKeywords()) {
+            if (existingKeyword.getContent().equals(keyword1)) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, existingKeyword.getVisibility());
+                found1 = true;
+            } else if (existingKeyword.getContent().equals(keyword2)) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, existingKeyword.getVisibility());
+                found2 = true;
+            } else if (existingKeyword.getContent().equals(newKeyword.getContent())) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, existingKeyword.getVisibility());
+                assertEquals("keyword-3", existingKeyword.getContent());
+                assertEquals(getClient1ClientId(), existingKeyword.getSource().retrieveSourcePath());
+                foundNew = true;
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(foundNew);
+
+        // Get it
+        response = memberV2_1ApiClient_release.viewKeyword(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        newKeyword = response.getEntity(org.orcid.jaxb.model.record_v2.Keyword.class);
+        assertNotNull(newKeyword);
+        assertNotNull(newKeyword.getSource());
+        assertEquals(getClient1ClientId(), newKeyword.getSource().retrieveSourcePath());
+        assertEquals("keyword-3", newKeyword.getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, newKeyword.getVisibility());
+        assertNotNull(newKeyword.getDisplayIndex());
+        Long originalDisplayIndex = newKeyword.getDisplayIndex();
+
+        // Save the original visibility
+        org.orcid.jaxb.model.common_v2.Visibility originalVisibility = newKeyword.getVisibility();
+        org.orcid.jaxb.model.common_v2.Visibility updatedVisibility = org.orcid.jaxb.model.common_v2.Visibility.PRIVATE;
+
+        // Verify you cant update the visibility
+        newKeyword.setVisibility(updatedVisibility);
+        ClientResponse putResponse = memberV2_1ApiClient_release.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        org.orcid.jaxb.model.error_v2.OrcidError error = putResponse.getEntity(org.orcid.jaxb.model.error_v2.OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+
+        // Set the visibility again to the initial one
+        newKeyword.setVisibility(originalVisibility);
+
+        // Update
+        newKeyword.setContent("keyword-3-updated");
+        response = memberV2_1ApiClient_release.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
+        response = memberV2_1ApiClient_release.viewKeyword(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_v2.Keyword updatedKeyword = response.getEntity(org.orcid.jaxb.model.record_v2.Keyword.class);
+        assertNotNull(updatedKeyword);
+        assertEquals("keyword-3-updated", updatedKeyword.getContent());
+        assertEquals(newKeyword.getPutCode(), updatedKeyword.getPutCode());
+        assertEquals(originalDisplayIndex, updatedKeyword.getDisplayIndex());
+
+        // Delete
+        response = memberV2_1ApiClient_release.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void testInvalidPutCodeReturns404_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+
+        org.orcid.jaxb.model.record_v2.Keyword keyword = new org.orcid.jaxb.model.record_v2.Keyword();
+        keyword.setContent("keyword-3");
+        keyword.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
+        keyword.setPutCode(1234567890L);
+
+        ClientResponse response = memberV2_1ApiClient_release.updateKeyword(getUser1OrcidId(), keyword, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+    
+    /**
      * --------- -- -- -- All -- -- -- ---------
      * 
      */
@@ -672,6 +795,30 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
         found2 = false;
 
         for (org.orcid.jaxb.model.record_v2.Keyword keyword : keywordsV2.getKeywords()) {
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, keyword.getVisibility());
+            if (keyword.getContent().equals(keyword1)) {
+                found1 = true;
+
+            } else if (keyword.getContent().equals(keyword2)) {
+                found2 = true;
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        
+        // V2.1
+        response = publicV2_1ApiClient_release.viewKeywordsXML(getUser1OrcidId());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.Keywords keywordsV2_1 = response.getEntity(org.orcid.jaxb.model.record_v2.Keywords.class);
+        assertNotNull(keywordsV2_1);
+        assertNotNull(keywordsV2_1.getKeywords());
+
+        // There should be at least two, one public and one limited
+        found1 = false;
+        found2 = false;
+
+        for (org.orcid.jaxb.model.record_v2.Keyword keyword : keywordsV2_1.getKeywords()) {
             assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, keyword.getVisibility());
             if (keyword.getContent().equals(keyword1)) {
                 found1 = true;
@@ -790,10 +937,32 @@ public class KeywordsTest extends BlackBoxBaseV2Release {
 
         assertTrue(found1);
         assertTrue(found2);
+        
+        // V2.1
+        response = memberV2_1ApiClient_release.viewKeywords(getUser1OrcidId(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        org.orcid.jaxb.model.record_v2.Keywords keywordsV2_1 = response.getEntity(org.orcid.jaxb.model.record_v2.Keywords.class);
+        assertNotNull(keywordsV2_1);
+        assertNotNull(keywordsV2_1.getKeywords());
+        // There should be at least two, one public and one limited
+        found1 = false;
+        found2 = false;
+
+        for (org.orcid.jaxb.model.record_v2.Keyword keyword : keywordsV2_1.getKeywords()) {
+            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, keyword.getVisibility());
+            if (keyword.getContent().equals(keyword1)) {
+                found1 = true;
+
+            } else if (keyword.getContent().equals(keyword2)) {
+                found2 = true;
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
     }
 
     public String getAccessToken() throws InterruptedException, JSONException {
         return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
     }
-
 }

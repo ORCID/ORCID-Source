@@ -70,4 +70,7 @@ final public class ScopeConstants {
     public static final String INTERNAL_PERSON_LAST_MODIFIED = "/orcid-internal/person/last_modified";
     public static final String IDENTIFIER_TYPES_CREATE = "/identifier-types/create";
     
+    //openid
+    public static final String OPENID = "openid";
+    
 }

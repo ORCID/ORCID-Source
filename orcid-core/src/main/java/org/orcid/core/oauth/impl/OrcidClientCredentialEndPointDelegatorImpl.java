@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -201,6 +202,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     String scopesString = StringUtils.join(authorizationCodeEntity.getScopes(), ' ');
                     authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
+                
+                //This will pass through to the token generator as a request param.
+                if (authorizationCodeEntity.getNonce() !=null){
+                    authorizationParameters.put(OrcidOauth2Constants.NONCE, authorizationCodeEntity.getNonce());
+                }
             } else {
                 authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
             }                        
@@ -220,7 +226,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         AuthorizationRequest authorizationRequest = getOAuth2RequestFactory().createAuthorizationRequest(authorizationParameters);   
                 
         TokenRequest tokenRequest = getOAuth2RequestFactory().createTokenRequest(authorizationRequest, grantType);                
-        
+        //Need to change this to either the DefaultTokenType or start using a different token type.
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         Object params[] = {grantType};
         if (token == null) {
@@ -228,6 +234,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     clientId, grantType, code, scopes, state, redirectUri });
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
+        
         LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
                 clientId, grantType, code, scopes, state, redirectUri, token });
         
@@ -244,7 +251,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
         }
         
-        return Response.ok(accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
+        return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }
 
     protected Authentication getClientAuthentication() {

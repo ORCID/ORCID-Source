@@ -59,7 +59,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Declan Newman (declan)
  **/
-@Provider
+@Provider 
 @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmarshaller> {
@@ -184,11 +184,39 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_V2.put(org.orcid.jaxb.model.record.summary_v2.Employments.class, "record_2.0/activities-");
     }
     
+    private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1 = new HashMap<>();
+    static {
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.groupid_v2.GroupIdRecord.class, "group-id-2.1/group-id-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.notification.permission_v2.NotificationPermission.class, "notification_2.1/notification-permission-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(OrcidMessage.class, "orcid-message-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Address.class, "record_2.1/address-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Addresses.class, "record_2.1/address-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Education.class, "record_2.1/education-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Email.class, "record_2.1/email-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Employment.class, "record_2.1/employment-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.PersonExternalIdentifier.class, "record_2.1/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers.class, "record_2.1/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Funding.class, "record_2.1/funding-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Keyword.class, "record_2.1/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Keywords.class, "record_2.1/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Name.class, "record_2.1/personal-details-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.OtherName.class, "record_2.1/other-name-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.OtherNames.class, "record_2.1/other-name-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.PeerReview.class, "record_2.1/peer-review-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.ResearcherUrl.class, "record_2.1/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.ResearcherUrls.class, "record_2.1/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.Work.class, "record_2.1/work-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record_v2.WorkBulk.class, "record_2.1/bulk-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record.summary_v2.Educations.class, "record_2.1/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.put(org.orcid.jaxb.model.record.summary_v2.Employments.class, "record_2.1/activities-");
+    }
+    
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;
     private JAXBContext jaxbContext_2_0_rc3;
     private JAXBContext jaxbContext_2_0_rc4;
     private JAXBContext jaxbContext_2_0;
+    private JAXBContext jaxbContext_2_1;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();
     
     @Resource
@@ -262,6 +290,11 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                         jaxbContext_2_0_rc2 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.size()]));
                     }
                     return jaxbContext_2_0_rc2;
+                } else if(apiVersion.equals("2.1")) {
+                    if(jaxbContext_2_1 == null) {
+                        jaxbContext_2_1 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.size()]));
+                    }
+                    return jaxbContext_2_1;
                 }
             }
             //Return rc1 as the last resource
@@ -289,7 +322,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     private String getSchemaFilenamePrefix(Class<?> type, String apiVersion) {        
         if(apiVersion != null) {
-        	if(apiVersion.equals("2.0")) {
+            if(apiVersion.equals("2.0")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_V2.get(type);
             }
             if(apiVersion.equals("2.0_rc4")) {
@@ -300,7 +333,10 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             }
             if(apiVersion.equals("2.0_rc2")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.get(type);
-            }    
+            }   
+            if(apiVersion.equals("2.1")) {
+                return SCHEMA_FILENAME_PREFIX_BY_CLASS_V2_1.get(type);
+            }
         }               
         return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);
     }
