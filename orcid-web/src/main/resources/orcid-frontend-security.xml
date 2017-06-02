@@ -143,13 +143,14 @@
 		request-matcher="regex" >	
 		<sec:csrf token-repository-ref="csrfTokenRepo" />
         <sec:anonymous enabled="false" />    
-        <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />        
-        <sec:form-login login-processing-url="/signin/auth.json" 
-			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
-			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-			username-parameter="userId" password-parameter="password" />     
+        <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />      
+        
+        <sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
+            login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
+            authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
+            username-parameter="userId" password-parameter="password" />
+        <sec:session-management session-fixation-protection="migrateSession"/>  
 	</sec:http>
-
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -189,7 +190,11 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
+		<sec:intercept-url pattern="/oauth/jwks"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/userinfo"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 			
@@ -367,6 +372,8 @@
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients" 
 			access="ROLE_GROUP"/>			
+		<sec:intercept-url pattern="/group/developer-tools/get-available-scopes.json(\?.*)?" method="GET"
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/group/.*" 
 			access="ROLE_GROUP"/>			
 		<sec:intercept-url pattern="/admin-actions" 

@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.ScopeInfoForm;
@@ -48,7 +47,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -63,8 +61,11 @@ public class OauthControllerBase extends BaseController {
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
     private Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
     private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
+    private Pattern noncePattern = Pattern.compile("nonce=([^&]*)");
+    private Pattern maxAgePattern = Pattern.compile("max_age=([^&]*)");
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
+            
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
 
     @Resource
@@ -80,9 +81,7 @@ public class OauthControllerBase extends BaseController {
     protected AuthenticationManager authenticationManager;
 
     @Resource
-    protected OrcidAuthorizationEndpoint authorizationEndpoint;
-
-    
+    protected OrcidAuthorizationEndpoint authorizationEndpoint;    
     
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
@@ -110,8 +109,9 @@ public class OauthControllerBase extends BaseController {
         String orcid = request.getParameter("orcid");
         String givenNames = request.getParameter("given_names");
         String familyNames = request.getParameter("family_names");
-        
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
+        String nonce = request.getParameter("nonce");
+        String maxAge = request.getParameter("max_age");        
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames, nonce, maxAge);
     }
     
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
@@ -124,6 +124,9 @@ public class OauthControllerBase extends BaseController {
         String orcid = "";
         String givenNames = "";
         String familyNames = "";
+        
+        String nonce = "";
+        String maxAge = "";
 
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
@@ -193,11 +196,22 @@ public class OauthControllerBase extends BaseController {
                 familyNames = URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim();
             }
             
+            Matcher nonceMatcher = noncePattern.matcher(requestUrl);
+            if(nonceMatcher.find()) {
+                nonce = URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim();
+            }
+            
+            Matcher maxAgeMatcher = maxAgePattern.matcher(requestUrl);
+            if(maxAgeMatcher.find()) {
+                maxAge = URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim();
+            }
+            
+            
         }        
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames, nonce, maxAge);
     }
     
-    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid, String givenNames, String familyNames) throws UnsupportedEncodingException {
+    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid, String givenNames, String familyNames, String nonce, String maxAge) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
         
         //If the user is logged in 
@@ -303,7 +317,8 @@ public class OauthControllerBase extends BaseController {
         infoForm.setRedirectUrl(redirectUri);
         infoForm.setStateParam(stateParam);
         infoForm.setResponseType(responseType);
-
+        infoForm.setNonce(nonce);
+        
         return infoForm;
     }
     
@@ -345,6 +360,11 @@ public class OauthControllerBase extends BaseController {
         } else {
             params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
         }
+        
+        //OpenID connect
+        if (!PojoUtil.isEmpty(requestInfoForm.getNonce())){
+            params.put(OrcidOauth2Constants.NONCE, requestInfoForm.getNonce());
+        }
     }
     
     /**
@@ -380,19 +400,9 @@ public class OauthControllerBase extends BaseController {
     /*****************************
      * Authenticate user methods
      ****************************/
-    protected Authentication authenticateUser(HttpServletRequest request, OauthAuthorizeForm form) throws AuthenticationException {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(form.getUserName().getValue(), form.getPassword().getValue());
-        token.setDetails(new WebAuthenticationDetails(request));
-        return authenticateUser(token);
-    }
-
     protected Authentication authenticateUser(HttpServletRequest request, String email, String password) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
         token.setDetails(new WebAuthenticationDetails(request));
-        return authenticateUser(token);
-    }
-
-    protected Authentication authenticateUser(UsernamePasswordAuthenticationToken token) {
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;

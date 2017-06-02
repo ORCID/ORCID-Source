@@ -100,6 +100,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
+    private Date lastLogin;
 
     // Deprecation fields
     private ProfileEntity primaryRecord;
@@ -154,7 +155,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private String hashedOrcid;
     
     // 2FA
-    private boolean using2FA;
+    private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
     
     
@@ -184,16 +185,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         this.hashedOrcid = hashedOrcid;
     }
     
-    @Column(name = "using_2FA")
-    public boolean isUsing2FA() {
-        return using2FA;
+    @Column(name = "using_2fa")
+    public Boolean getUsing2FA() {
+        return using2FA != null ? using2FA : Boolean.FALSE;
     }
 
-    public void setUsing2FA(boolean using2FA) {
+    public void setUsing2FA(Boolean using2FA) {
         this.using2FA = using2FA;
     }
     
-    @Column(name = "secret_for_2FA")
+    @Column(name = "secret_for_2fa")
     public String getSecretFor2FA() {
         return secretFor2FA;
     }
@@ -998,5 +999,14 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setBiographyEntity(BiographyEntity biographyEntity) {
         this.biographyEntity = biographyEntity;
+    }
+
+    @Column(name="last_login")
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

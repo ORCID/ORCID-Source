@@ -79,7 +79,8 @@ public class BaseControllerTest extends DBUnitTest {
         	details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
                     .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, orcid, Arrays.asList(OrcidWebRole.ROLE_USER));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, details.getPassword(), Arrays.asList(OrcidWebRole.ROLE_USER));
+        auth.setDetails(details);
         return auth;
     }
 

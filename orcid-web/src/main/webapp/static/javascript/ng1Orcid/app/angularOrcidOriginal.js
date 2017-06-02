@@ -28,17 +28,6 @@
  *  
  */
 
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha','ui.bootstrap']);
-
-angular.element(function() {
-    angular.bootstrap(
-        document, 
-        ['orcidApp']
-    );
-});
-
-
-
 /*******************************************************************************
  * CONTROLLERS
 *******************************************************************************/
@@ -145,6 +134,179 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
     };
     
 }]);
+
+angular.module('orcidApp').controller('2FAStateCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    
+    $scope.check2FAState = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/status.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.update2FAStatus(data);
+            }
+        }).fail(function() {
+            console.log("An error occurred checking user's 2FA state");
+        });
+    };
+    
+    $scope.enable2FA = function() {
+        window.location.href = getBaseUri() + '/2FA/setup';
+    }
+    
+    $scope.disable2FA = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/disable.json',
+            dataType: 'json',
+            type: 'POST',
+            success: function(data) {               
+                $scope.update2FAStatus(data);
+            }
+        }).fail(function() {
+            console.log("An error occurred disabling user's 2FA");
+        });
+    }
+    
+    $scope.update2FAStatus = function(status) {
+        $scope.showEnabled2FA = status.enabled;
+        $scope.showDisabled2FA = !status.enabled;
+        $scope.$apply();
+    }
+}]);
+
+angular.module('orcidApp').controller('2FASetupCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    
+    $scope.startSetup = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/QRCode.json',
+            dataType: 'json',
+            success: function(data) {
+                $("#2FA-QR-code").attr("src", data.url);
+                $scope.showSetup2FA = true;
+                $scope.showQRCode = true;
+                $scope.showTextCode = false;
+                $scope.show2FARecoveryCodes = false;
+                
+                $.ajax({
+                    url: getBaseUri() + '/2FA/register.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.twoFactorAuthRegistration = data;
+                        $scope.$apply();
+                    }
+                }).fail(function(err) {
+                    console.log("An error occurred getting 2FA registration object");
+                });
+            }
+        }).fail(function(err) {
+            console.log("An error occurred getting user's 2FA QR code");
+        });
+        
+    };
+    
+    $scope.cancel2FASetup = function() {
+        window.location.href = getBaseUri() + "/account";
+    }
+    
+    $scope.done = function() {
+        window.location.href = getBaseUri() + "/account";
+    }
+    
+    $scope.sendVerificationCode = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/register.json',
+            dataType: 'json',
+            data: angular.toJson($scope.twoFactorAuthRegistration),
+            contentType: 'application/json;charset=UTF-8',
+            type: 'POST',
+            success: function(data) {               
+                if (data.valid) {
+                    $scope.showSetup2FA = false;
+                    $scope.show2FARecoveryCodes = true;
+                    $scope.recoveryCodes = data.backupCodes;
+                    $scope.showInvalidCodeError=false;
+                } else {
+                    $scope.showInvalidCodeError=true;
+                }
+                $scope.$apply();
+            }
+        }).fail(function(xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            alert(err.Message);
+        });
+    }
+    
+    $('#getTextCode').click(function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/secret.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.textCodeFor2FA = data.secret;
+                $scope.showTextCode = true;
+                $scope.showQRCode = false;
+                $scope.$apply();
+            }
+        }).fail(function(err) {
+            console.log("An error occurred getting 2FA secret");
+        });
+    });
+    
+    $scope.copyRecoveryCodes = function() {
+        var recoveryCodesString = getRecoveryCodesString();
+        
+        if (window.clipboardData) { // for IE
+            window.clipboardData.setData("Text", recoveryCodesString);        
+        } else {
+            var temp = $('<div />');
+            temp.text(recoveryCodesString);
+            temp.css({
+                position: "absolute",
+                left:     "-1000px",
+                top:      "-1000px",
+            });
+            
+            $('body').append(temp);
+            
+            var range = document.createRange();
+            range.selectNodeContents(temp.get(0));
+            
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            var copied = document.execCommand('copy', false, null);
+            alert(recoveryCodesString);
+            if (!copied) {
+                console.log("An error occurred copying recovery codes");
+            }
+            
+            temp.remove();
+        }
+    }   
+    
+    $scope.downloadRecoveryCodes = function() {
+        var recoveryCodesString = getRecoveryCodesString();
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(recoveryCodesString));
+        element.setAttribute('download', 'recovery-codes.txt');
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+    }
+    
+    function getRecoveryCodesString() {
+        var recoveryCodesString = "";
+        for (var i = 0; i < $scope.recoveryCodes.length; i++) {
+            recoveryCodesString += $scope.recoveryCodes[i] + "\n";
+        }
+        return recoveryCodesString;
+    }
+    
+}]);
+
 
 angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.errors = null;
@@ -700,62 +862,6 @@ angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', func
     $scope.getSourceGrantReadWizard();
 }]);
 
-angular.module('orcidApp').controller('ClaimThanks', ['$scope', '$compile', function ($scope, $compile) {
-    $scope.showThanks = function () {
-        var colorboxHtml;
-            if ($scope.sourceGrantReadWizard.url == null)
-                colorboxHtml = $compile($('#claimed-record-thanks').html())($scope);
-            else
-                colorboxHtml = $compile($('#claimed-record-thanks-source-grand-read').html())($scope);
-        $.colorbox({
-            html : colorboxHtml,
-            escKey: true,
-            overlayClose: true,
-            transition: 'fade',
-            close: '',
-            scrolling: false
-                    });
-        $scope.$apply(); // this seems to make sure angular renders in the
-                            // colorbox
-        $.colorbox.resize();
-    };
-
-    $scope.getSourceGrantReadWizard = function(){
-        $.ajax({
-            url: getBaseUri() + '/my-orcid/sourceGrantReadWizard.json',
-            dataType: 'json',
-            success: function(data) {
-                $scope.sourceGrantReadWizard = data;
-                $scope.$apply();
-                $scope.showThanks();
-            }
-        }).fail(function(){
-            // something bad is happening!
-            console.log("error fetching external identifiers");
-        });
-
-    };
-
-    $scope.yes = function () {
-        $.colorbox.close();
-        var newWin = window.open($scope.sourceGrantReadWizard.url);
-        if (!newWin) window.location.href = $scope.sourceGrantReadWizard.url;
-        else newWin.focus();
-    };
-
-    $scope.close = function () {
-        $.colorbox.close();
-    };
-
-    $scope.getSourceGrantReadWizard();
-}]);
-
-
-
-
-
-
-
 angular.module('orcidApp').controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'peerReviewSrvc',function ($scope, $compile, $filter, workspaceSrvc, peerReviewSrvc) {
      $scope.peerReviewSrvc = peerReviewSrvc;
      $scope.workspaceSrvc  = workspaceSrvc;
@@ -1149,6 +1255,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     $scope.hasErrors = false;
     $scope.results = new Array();
     $scope.numFound = 0;
+    $scope.resultsShowing = 0;
     $scope.input = {};
     $scope.input.start = 0;
     $scope.input.rows = 10;
@@ -1160,7 +1267,8 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
             dataType: 'json',
             headers: { Accept: 'application/json'},
             success: function(data) {
-                $('#ajax-loader').hide();
+                $('#ajax-loader-search').hide();
+                $('#ajax-loader-show-more').hide();
                 var resultsContainer = data['orcid-search-results'];
                 $scope.numFound = resultsContainer['num-found'];
                 if(resultsContainer['orcid-search-result']){
@@ -1170,6 +1278,20 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
                     $('#no-results-alert').fadeIn(1200);
                 }
                 $scope.areMoreResults = $scope.numFound > ($scope.input.start + $scope.input.rows);
+                
+                //if less than 10 results, show total number found
+                if($scope.numFound && $scope.numFound <= $scope.input.rows){
+                    $scope.resultsShowing = $scope.numFound;
+                }
+                //if more than 10 results increment num found by 10
+                if($scope.numFound && $scope.numFound > $scope.input.rows){
+                    if($scope.numFound > ($scope.input.start + $scope.input.rows)){
+                        $scope.resultsShowing = $scope.input.start + $scope.input.rows;
+                    } else {
+                        $scope.resultsShowing = ($scope.input.start + $scope.input.rows) - ($scope.input.rows - ($scope.numFound % $scope.input.rows));
+                    }
+                }
+
                 $scope.$apply();
                 var newSearchResults = $('.new-search-result');
                 if(newSearchResults.length > 0){
@@ -1204,7 +1326,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
         $scope.areMoreResults = false;
         if($scope.isValid()){
             $scope.hasErrors = false;
-            $('#ajax-loader').show();
+            $('#ajax-loader-search').show();
             $scope.getResults();
         }
         else{
@@ -1213,7 +1335,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
     };
 
     $scope.getMoreResults = function(){
-        $('#ajax-loader').show();
+        $('#ajax-loader-show-more').show();
         $scope.input.start += 10;
         $scope.getResults();
     };
@@ -1244,7 +1366,7 @@ angular.module('orcidApp').controller('SearchCtrl',['$scope', '$compile', functi
 
     // init
     if(typeof $scope.input.text !== 'undefined'){
-        $('#ajax-loader').show();
+        $('#ajax-loader-search').show();
         $scope.getResults();
     }
 }]);
@@ -4427,7 +4549,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         if($scope.allowEmailAccess) {
             $scope.authorizationForm.emailAccessAllowed = true;
         }
-        console.log(angular.toJson($scope.authorizationForm));
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -4617,19 +4739,20 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
             success: function(data) {
                 $scope.requestInfoForm = data;
                 if($scope.requestInfoForm.errors.length > 0) {                                  
-                    $scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
-                    console.log($scope.generalRegistrationError);
+                    $scope.generalRegistrationError = $scope.requestInfoForm.errors[0];                    
                     $scope.$apply();
                     $.colorbox.close();
                 } else {
                     orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                    if($scope.registrationForm.approved) {
-                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
-                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
-                        }
-                    } else {
-                        // Fire GA register deny
-                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                    if(!orcidVar.oauth2Screens) {
+	                    if($scope.registrationForm.approved) {
+	                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+	                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
+	                        }
+	                    } else {
+	                        // Fire GA register deny
+	                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+	                    }
                     }
                     orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
                 }                               
@@ -4818,11 +4941,10 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         script.src = getBaseUri() + url + '?v=' + orcidVar.version;
         script.onload =  onLoadFunction;
         head.appendChild(script); // Inject the script
-    };
+    };        
     
     // Init
-    $scope.loadRequestInfoForm();    
-    
+    $scope.loadRequestInfoForm();          
 }]);
 
 angular.module('orcidApp').controller('LoginLayoutController',['$scope', function ($scope){
@@ -4913,161 +5035,6 @@ angular.module('orcidApp').controller('LinkAccountController',['$scope', 'discoS
     
 }]);
 
-angular.module('orcidApp').controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){    
-    $scope.emailSrvc = emailSrvc;
-    $scope.showEdit = false;
-    $scope.showElement = {};
-
-    emailSrvc.getEmails();
-    
-    $scope.openEdit = function(){
-        $scope.showEdit = true;
-    }
-    
-    $scope.close = function(){      
-        $scope.showEdit = false;
-        prefsSrvc.saved = false;
-        $.colorbox.close();
-    }
-    
-    $scope.openEditModal = function(){
-        
-        var HTML = '<div class="lightbox-container" style="position: static">\
-                        <div class="edit-record edit-record-emails" style="position: static">\
-                            <div class="row">\
-                                <div class="col-md-12 col-sm-12 col-xs-12">\
-                                        <h1 class="lightbox-title pull-left">'+ om.get("manage.edit.emails") +'</h1>\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-12 col-xs-12 col-sm-12" style="position: static">\
-                                    <table class="settings-table" style="position: static">\
-                                        <tr>' +
-                                            $('#edit-emails').html()
-                                      +'</tr>\
-                                    </table>\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-12 col-sm-12 col-xs-12">\
-                                    <a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a>\
-                                </div>\
-                            </div>\
-                        </div>\
-                    </div>';  
-        
-        $scope.emailSrvc.popUp = true;
-        
-        $.colorbox({
-            scrolling: true,
-            html: $compile(HTML)($scope),
-            onLoad: function() {                
-                $('#cboxClose').remove();
-            },
-            width: formColorBoxResize(),
-            onComplete: function() {
-                $.colorbox.resize();
-            },
-            onClosed: function() {
-                $scope.emailSrvc.popUp = false;        
-            }            
-        });
-    }
-    
-}]);
-
-angular.module('orcidApp').controller('headerCtrl',['$scope', '$window', function ($scope, $window){ 
-    
-    $scope.searchFilterChanged = false;
-    $scope.filterActive = false;
-    $scope.conditionsActive = false;
-    $scope.menuVisible = false;
-    $scope.secondaryMenuVisible = {};
-    $scope.tertiaryMenuVisible = {};
-    $scope.searchVisible = false;
-    $scope.settingsVisible = false;
-    
-    $scope.searchFocus = function(){
-        $scope.filterActive = true;
-        $scope.conditionsActive = true;
-    }
-    
-    $scope.searchBlur = function(){     
-        $scope.hideSearchFilter();
-        $scope.conditionsActive = false;        
-    }
-    
-    $scope.filterChange = function(){
-        $scope.searchFilterChanged = true;
-    }
-    
-    $scope.hideSearchFilter = function(){
-        var searchInputValue = document.getElementById("search-input").value;
-        if (searchInputValue === ""){
-            setTimeout(function() {
-                if ($scope.searchFilterChanged === false) {
-                    $scope.filterActive = false;
-                }
-            }, 3000);
-        }
-    }
-    
-    
-    $scope.toggleMenu = function(){
-        $scope.menuVisible = !$scope.menuVisible;
-        $scope.searchVisible = false;
-        $scope.settingsVisible = false;     
-    }
-    
-    $scope.toggleSecondaryMenu = function(submenu){
-        $scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
-    }
-    
-    $scope.toggleTertiaryMenu = function(submenu){
-        $scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
-    }
-    
-    $scope.toggleSearch = function(){
-        $scope.searchVisible = !$scope.searchVisible;
-        $scope.menuVisible = false;     
-        $scope.settingsVisible = false;
-    }
-    
-    $scope.toggleSettings = function(){
-        $scope.settingsVisible = !$scope.settingsVisible;
-        $scope.menuVisible = false;
-        $scope.searchVisible = false;
-    }   
-    
-    $scope.handleMobileMenuOption = function($event){
-        $event.preventDefault();
-        var w = getWindowWidth();           
-        if(w > 767) {               
-            window.location = $event.target.getAttribute('href');
-        }
-    }
-    
-}]);
-
-angular.module('orcidApp').controller('widgetCtrl',['$scope', function ($scope){
-    $scope.hash = orcidVar.orcidIdHash.substr(0, 6);
-    $scope.showCode = false;
-
-    $scope.widgetURLND = '<a href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="_blank" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">' + getBaseUri() + '/' + orcidVar.orcidId + '</a>';
-    $scope.inputTextAreaSelectAll = function($event){
-        $event.target.select();
-    }
-    
-    $scope.toggleCopyWidget = function(){
-        $scope.showCode = !$scope.showCode;
-    }
-    
-    $scope.hideWidgetCode = function(){
-        $scope.showCode = false;
-    }
-    
-}]);
-
 angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', '$window', function ($scope, $compile, $window) {
     $scope.showSources = new Array();
     $scope.showPopover = new Array();
@@ -5089,414 +5056,6 @@ angular.module('orcidApp').controller('PublicRecordCtrl',['$scope', '$compile', 
         $scope.showPopover[section] = false;    
     }
 }]);
-
-/*
- * FILTERS
- */
-
-angular.module('orcidApp').filter('formatBibtexOutput', function () {
-    return function (text) {
-        var str = text.replace(/[\-?_?]/, ' ');
-        return str.toUpperCase();
-    };
-});
-
-
-angular.module('orcidApp').filter('orderObjectBy', function() {
-      return function(items, field, reverse) {
-        var filtered = [];
-        angular.forEach(items, function(item) {
-          filtered.push(item);
-        });
-        filtered.sort(function (a, b) {
-          return (a[field] > b[field] ? 1 : -1);
-        });
-        if(reverse) filtered.reverse();
-        return filtered;
-     };
-});
-
-angular.module('orcidApp').filter("filterImportWizards", function(){ 
-    return function(input, selectedWorkType, selectedGeoArea) {
-        var output = [];        
-        if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
-            output = input;
-        }else{
-            for(var i = 0; i < input.length; i ++) {
-                for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
-                    if (selectedWorkType == 'All'){
-                        if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-                            output.push(input[i]);
-                        }
-                    }else if(selectedGeoArea == 'All'){
-                        if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
-                            output.push(input[i]);
-                        }                       
-                    }else{                                      
-                        if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-                            output.push(input[i]);
-                        }
-                    }
-                }
-            }           
-        }
-        return output;
-    };
-});
-
-
-angular.module('orcidApp').filter('urlProtocol', function(){
-    return function(url){
-        if (url == null) return url;
-        if(!url.startsWith('http')) {               
-            if (url.startsWith('//')){              
-                url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
-            } else {
-                url = 'http://' + url;    
-            }
-        }
-        return url;
-    }
-});
-
-angular.module('orcidApp').filter('uri', function() {
-    return window.encodeURIComponent;
-});
-
-angular.module('orcidApp').filter('latex', function(){
-    return function(input){
-        if (input == null) return "";
-        return latexParseJs.decodeLatex(input);
-    };
-});
-
-angular.module('orcidApp').filter('ajaxFormDateToISO8601', function(){
-    return function(input){
-        if (typeof input != 'undefined'){
-            var str = '';
-            if (input.year) str += input.year;
-            if (input.month) {
-                if (str.length > 0) str += '-';
-                str += Number(input.month).pad(2);
-            }
-            if (input.day) {
-                if (str.length > 0)
-                    str += '-';
-                str += Number(input.day).pad(2);
-            }
-            return str;
-        } else {
-            return false;
-        }
-    };
-});
-
-angular.module('orcidApp').filter('humanDate', function($filter){
-    var standardDateFilter = $filter('date');
-    return function(input){
-        var inputDate = new Date(input);
-        var dateNow = new Date();
-        var dateFormat = (inputDate.getYear() === dateNow.getYear() && inputDate.getMonth() === dateNow.getMonth() && inputDate.getDate() === dateNow.getDate())  ? 'HH:mm' : 'yyyy-MM-dd';
-        return standardDateFilter(input, dateFormat);
-    };
-});
-
-angular.module('orcidApp').filter('contributorFilter', function(){
-    return function(ctrb){
-        var out = '';
-        if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
-        if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value;
-        if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value;
-        if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
-        if (out.length > 0) out = '(' + out + ')';
-        return out;
-    };
-});
-
-angular.module('orcidApp').filter('clean', function($filter){
-   return function(x, idx){
-       console.log(idx);
-       
-       return x;
-   }; 
-});
-
-angular.module('orcidApp').filter('workExternalIdentifierHtml', function($filter){
-    return function(workExternalIdentifier, first, last, length, moreInfo){
-        var id = null;
-        var isPartOf = false;
-        var link = null;
-        var ngclass = '';
-        var output = '';
-        var type = null;
-        
-        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
-        
-        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-            isPartOf = true;        
-        if (workExternalIdentifier == null){
-            return output;
-        } 
-        if (workExternalIdentifier.workExternalIdentifierId == null) {
-            return output;        
-        }
-        
-        id = workExternalIdentifier.workExternalIdentifierId.value;
-        type;
-        
-        if (workExternalIdentifier.workExternalIdentifierType != null) {
-            type = workExternalIdentifier.workExternalIdentifierType.value;        
-        }
-        if (type != null && typeof type != 'undefined') {
-            type.escapeHtml();
-            if(isPartOf) {
-                output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-            }
-            else {
-                output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
-            }
-        }
-        
-        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '') {
-            link = workExternalIdentifier.url.value;
-        }
-        else {
-            link = workIdLinkJs.getLink(id,type);   
-        }
-        if (link != null) {         
-            link = $filter('urlProtocol')(link);            
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
-        } else {
-            if( id ){
-                output += id.escapeHtml();        
-                
-            }
-        }
-        
-        if( link != null ) {
-            output += '<div class="popover-pos">\
-                <div class="popover-help-container">\
-                    <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
-                        <div class="arrow"></div>\
-                        <div class="popover-content">\
-                            <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-                        </div>\
-                    </div>\
-                </div>\
-          </div>';
-       }
-            
-       return output;
-    };
-});
-
-// Currently being used in Fundings only
-angular.module('orcidApp').filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
-    return function(externalIdentifier, first, last, length, type, moreInfo){
-        var isPartOf = false;
-        var link = null;
-        var ngclass = '';
-        var output = '';
-        var value = null;        
-
-        if (externalIdentifier == null) {
-            return output;
-        }
-
-        if(externalIdentifier.relationship != null && externalIdentifier.relationship.value == 'part-of') {
-            isPartOf = true;     
-        }
-
-        // If type is set always come: "grant_number"
-        if (type != null) {
-            if(isPartOf){
-                output += "<span class='italic'>" + om.get("common.part_of") + "</span>&nbsp";
-            }
-            if (type.value == 'grant') {
-                output += om.get('funding.add.external_id.value.label.grant') + ": ";
-            } else if (type.value == 'contract') {
-                output += om.get('funding.add.external_id.value.label.contract') + ": ";
-            } else {
-                output += om.get('funding.add.external_id.value.label.award') + ": ";
-            }
-            
-        }         
-        
-        if(externalIdentifier.value != null){
-            value = externalIdentifier.value.value;
-        }
-        
-        if(externalIdentifier.url != null) {
-            link = externalIdentifier.url.value;
-        }
- 
-        if(link != null) {
-            link = $filter('urlProtocol')(link);
-            
-            if(value != null) {
-                output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
-            } else {
-                if(type != null) {
-                    if (moreInfo == false || typeof moreInfo == 'undefined') {
-                        ngclass = 'truncate-anchor';
-                    }
-                    
-                    if(type.value == 'grant') {
-                        output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-                    } else if(type.value == 'contract') {
-                        output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-                    } else {
-                        output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
-                    }
-                    
-                }               
-            }
-        } else if(value != null) {
-            output = output + " " + value.escapeHtml();
-        }
-        
-        if( link != null ) {            
-            output += '<div class="popover-pos">\
-                        <div class="popover-help-container">\
-                            <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
-                                <div class="arrow"></div>\
-                                <div class="popover-content">\
-                                    <a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-                                </div>\
-                            </div>\
-                        </div>\
-                  </div>';
-        }
-        
-        return output;
-    };
-}]);
-
-angular.module('orcidApp').filter('peerReviewExternalIdentifierHtml', function($filter){
-    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
-        
-        var id = null;
-        var output = '';
-        var ngclass = '';
-        var isPartOf = false;
-        var type = null;
-        var link = null;
-        ngclass = 'truncate';
-        
-        if (peerReviewExternalIdentifier == null) return output;
-        
-        if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
-            isPartOf = true;
-        
-        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
-        
-        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
-            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
-            if (type != null) {
-                if(isPartOf)
-                    output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
-                else 
-                    output += "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
-            }
-        
-        if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
-            link = peerReviewExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type); 
-            
-        if (link != null){
-            link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
-        }else{
-            if( id ) {
-                output += id.escapeHtml();        
-            }
-        }
-        
-        if (length > 1 && !last) output = output + ',';
-        
-        
-        
-        if (link != null){
-            output += '\
-            <div class="popover-pos">\
-                <div class="popover-help-container">\
-                    <div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
-                        <div class="arrow"></div>\
-                        <div class="popover-content">\
-                            <a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
-                        </div>\
-                    </div>\
-                </div>\
-           </div>';
-        }
-        
-       if(own)
-            output = '<br/>' + output;
-        
-       return output;      
-      
-     
-    };
-});
-
-// used in dropdown filters on /members and /consortia
-angular.module('orcidApp').filter('unique', function () {
-
-    return function (items, filterOn) {
-
-      if (filterOn === false) {
-        return items;
-      }
-
-      if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
-        var hashCheck = {}, newItems = [];
-
-        var extractValueToCompare = function (item) {
-          if (angular.isObject(item) && angular.isString(filterOn)) {
-            return item[filterOn];
-          } else {
-            return item;
-          }
-        };
-
-        angular.forEach(items, function (item) {
-          var valueToCheck, isDuplicate = false;
-
-          for (var i = 0; i < newItems.length; i++) {
-            if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
-              isDuplicate = true;
-              break;
-            }
-          }
-          if (!isDuplicate && item[filterOn]!=null && item[filterOn]!=undefined) {
-            console.log(item);
-            newItems.push(item);
-          }
-
-        });
-        items = newItems;
-      }
-      return items;
-    };
-  });
-
-// used in alphabetical filter on /members and /consortia
-angular.module('orcidApp').filter('startsWithLetter', function() {
-    return function(items, letter) {
-
-        var filtered = [];
-        var letterMatch = new RegExp(letter, 'i');
-        var item = null;
-        for (var i = 0; i < items.length; i++) {
-          item = items[i];
-          if (letterMatch.test(item.name.substring(0, 1))) {
-            filtered.push(item);
-          }
-        }
-        return filtered;
-      };
-    });
 
 
 /*

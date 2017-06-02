@@ -22,8 +22,8 @@
 
     <changeSet author="George Nash" id="ADD-2FA-COLUMNS-TO-PROFILE-TABLE">
         <addColumn tableName="profile">
-                <column name="secret_for_2fa" type="VARCHAR(32)" />
-                <column name="using_2fa" type="boolean" />
+                <column name="secret_for_2fa" type="VARCHAR(255)" />
+                <column name="using_2fa" type="boolean" defaultValueBoolean="false" />
         </addColumn>
     </changeSet>
 </databaseChangeLog>    

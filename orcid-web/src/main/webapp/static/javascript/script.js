@@ -593,7 +593,7 @@ $(function() {
                                         {
                                             url : loginUrl,
                                             type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val()),
+                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()),
                                             dataType : 'json',
                                             success : function(data) {
                                                 $('#ajax-loader').hide();
@@ -668,6 +668,9 @@ $(function() {
                                                     } else if (data.badVerificationCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_verification_code');
+                                                    } else if (data.badRecoveryCode) {
+                                                        message = om
+                                                        .get('orcid.frontend.security.2fa.bad_recovery_code');
                                                     } else {
                                                         message = om
                                                                .get('orcid.frontend.security.bad_credentials');
@@ -757,6 +760,12 @@ $(function() {
     
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
+        $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
+        $('#RequestPasswordResetCtr').hide();
+        $('#2FAInstructions').show();
+        $('#enterRecoveryCode').click(function() {
+           $('#recoveryCodeSignin').show(); 
+        });
     }
 
     // Privacy toggle
@@ -4196,7 +4205,7 @@ this.w3cLatexCharMap = {
 /* browser and NodeJs compatible */
 (function(exports) {
 
-    var baseUrl = 'https://orcid.org/v1.2/search/orcid-bio/';
+    var baseUrl = 'https://orcid.org/v2.0/search/orcid-bio/';
     var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
     var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
     var orcidFullRegex = new RegExp(
@@ -4236,6 +4245,19 @@ this.w3cLatexCharMap = {
             query += 'keyword:' + input.keyword.toLowerCase();
             doneSomething = true;
         }
+        if (hasValue(input.affiliationOrg)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            //if all chars are numbers, assume it's a ringgold id
+            if (input.affiliationOrg.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrg;
+            } else {
+                query += 'affiliation-org-name:' + input.affiliationOrg.toLowerCase();
+            }
+            doneSomething = true;
+        }
+        
         return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
                 + offset(input) : baseUrl + '?q=';
     }
@@ -4246,7 +4268,7 @@ this.w3cLatexCharMap = {
 
     exports.isValidInput = function(input) {
         var fieldsToCheck = [ input.text, input.givenNames, input.familyName,
-                input.keyword ];
+                input.keyword, input.affiliationOrg ];
         for ( var i = 0; i < fieldsToCheck.length; i++) {
             if (hasValue(fieldsToCheck[i])) {
                 return true;

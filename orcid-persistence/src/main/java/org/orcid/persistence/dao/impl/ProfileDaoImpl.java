@@ -703,8 +703,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateIpAddress(String orcid, String ipAddress) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified=now(), indexing_status='REINDEX', user_last_ip=:ipAddr where orcid=:orcid");
+    public void updateLastLoginDetails(String orcid, String ipAddress) {
+        Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("ipAddr", ipAddress);
         query.executeUpdate();
@@ -795,6 +795,39 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery("update profile set hashed_orcid = :hashedOrcid where orcid = :orcid");
         query.setParameter("hashedOrcid", hashedOrcid);
         query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    public Date getLastLogin(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastLogin from ProfileEntity where orcid = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        Date result = query.getSingleResult();
+        return result;
+    }
+    
+    @Override
+    @Transactional
+    public void disable2FA(String orcid) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = false, secretFor2FA = null where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void enable2FA(String orcid) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = true where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public void update2FASecret(String orcid, String secret) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), secretFor2FA = :secret where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("secret", secret);
         query.executeUpdate();
     }
 }

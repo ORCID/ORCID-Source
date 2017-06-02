@@ -1096,6 +1096,30 @@ select {
     color: #fff;
 }
 
+/*Advanced search*/
+.main-search .control-group {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.main-search #ajax-loader-search,
+.main-search #ajax-loader-show-more {
+        margin: 0 10px;
+        vertical-align: middle;
+}
+
+.main-search input[type="text"] {
+    margin-bottom: 0;
+}
+
+.main-search .x2 {
+    vertical-align: middle;
+}
+
+.search-results {
+    margin-top: 10px;
+}
+
 
 /*
     bold fonts
@@ -5593,11 +5617,12 @@ ul.workspace-private-toolbar .popover-help-container .popover {
 }
 
 .qrcode-container,
-.print-orcid-record {
+.print-orcid-record, 
+.widget-container {
     display: block;
     width: 100%;
     float: left;
-    margin: 10px 0;
+    margin: 6px 0;
 }
 
 .qrcode-container .orcid-qr,

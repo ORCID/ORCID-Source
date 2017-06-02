@@ -17,6 +17,7 @@
 package org.orcid.core.manager;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
@@ -84,11 +85,19 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public void updateSecurityQuestion(String orcid, Integer questionId, String answer);
     
-    public void updateIpAddress(String orcid, String ipAddress);
+    public void updateLastLoginDetails(String orcid, String ipAddress);
     
     public Locale retrieveLocale(String orcid);      
     
     boolean lockProfile(String orcid, String lockReason, String description);
 
     boolean unlockProfile(String orcid);
+
+    Date getLastLogin(String orcid);
+    
+    void disable2FA(String orcid);
+    
+    void enable2FA(String orcid);
+
+    void update2FASecret(String orcid, String secret);
 }

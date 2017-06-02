@@ -62,8 +62,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
 
     private static final String REDIRECT_URI = "redirect_uri";
 
-    private static final String RESPONSE_TYPE = "response_type";           
-
+    private static final String RESPONSE_TYPE = "response_type"; 
+    
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;              
     
@@ -111,6 +111,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }
     
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
+
         OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
         Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
@@ -127,6 +128,10 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             detail.setRedirectUri((String)requestParameters.get(REDIRECT_URI));
             detail.setResponseType((String)requestParameters.get(RESPONSE_TYPE));
             detail.setClientDetailsEntity(clientDetails);
+            
+            //persist the openID params if present
+            if (requestParameters.get(OrcidOauth2Constants.NONCE) != null)
+                detail.setNonce((String)requestParameters.get(OrcidOauth2Constants.NONCE));
         }
 
         detail.setId(code);

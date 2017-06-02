@@ -19,6 +19,7 @@ package org.orcid.api.common;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -90,17 +91,26 @@ public class WebDriverHelper {
 
     public String obtainAuthorizationCode(String scopes, String clientId, String userId, String password, boolean longLife)
             throws InterruptedException {
-        String currentUrl = obtainFullAuthorizationCodeResponse(scopes, clientId, userId, password, longLife);
+        return obtainAuthorizationCode(scopes, clientId, userId, password, longLife, null);
+    }
+    
+    public String obtainAuthorizationCode(String scopes, String clientId, String userId, String password, boolean longLife, Map<String,String> params)
+            throws InterruptedException {
+        String currentUrl = obtainFullAuthorizationCodeResponse(scopes, clientId, userId, password, longLife,params);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertNotNull(authorizationCode);
         return authorizationCode;
     }
-    
+
     public String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife) {
+        return obtainFullAuthorizationCodeResponse(scopes, clientId, userId, password, longLife,null);
+    }
+    
+    public String obtainFullAuthorizationCodeResponse(String scopes, String clientId, String userId, String password, boolean longLife, Map<String,String> params) {
         BBBUtil.logUserOut(webBaseUrl, webDriver);
-        return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, webDriver);  
+        return OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, clientId, redirectUri, scopes, null, userId, password, longLife, params,webDriver);  
     }
 
     public String obtainAuthorizationCode(String scopes, String orcid) throws InterruptedException {

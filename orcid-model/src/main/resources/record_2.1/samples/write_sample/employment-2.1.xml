@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<employment:employment 
+	xmlns:employment="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/employment ../employment-2.1.xsd ">	
+	<employment:department-name>Department</employment:department-name>
+	<employment:role-title>Role</employment:role-title> 
+	<common:start-date>
+		<common:year>2012</common:year>
+		<common:month>07</common:month>
+		<common:day>01</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>2017</common:year>
+		<common:month>01</common:month>
+		<common:day>01</common:day>
+	</common:end-date>
+	<employment:organization>
+		<common:name>ORCID</common:name>
+		<common:address>
+			<common:city>Bethesda</common:city>
+			<common:region>MD</common:region>
+			<common:country>US</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>385488</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</employment:organization>	
+</employment:employment>

@@ -848,6 +848,8 @@ public class ManageProfileControllerTest {
     protected Authentication getAuthentication(String orcid) {
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null);
         details.setOrcidType(OrcidType.USER);
-        return new UsernamePasswordAuthenticationToken(details, orcid, Arrays.asList(OrcidWebRole.ROLE_USER));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, Arrays.asList(OrcidWebRole.ROLE_USER));
+        auth.setDetails(details);
+        return auth;
     }
 }

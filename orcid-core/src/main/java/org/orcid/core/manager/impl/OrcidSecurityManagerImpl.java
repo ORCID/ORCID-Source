@@ -121,9 +121,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     public boolean isAdmin() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof OrcidProfileUserDetails) {
-                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+            Object details = authentication.getDetails();
+            if (details instanceof OrcidProfileUserDetails) {
+                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
                 return OrcidType.ADMIN.equals(userDetails.getOrcidType());
             }
         }
@@ -750,6 +750,29 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
         if(client.getClientType() == null ||    ClientType.PUBLIC_CLIENT.equals(client.getClientType())) {
             throw new OrcidUnauthorizedException("The client application is forbidden to perform the action.");
+        }
+    }
+    
+    @Override
+    public String getOrcidFromToken(){
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if (oAuth2Authentication == null) {
+            throw new OrcidUnauthorizedException("No OAuth2 authentication found");
+        }
+        
+        checkScopes(ScopePathType.AUTHENTICATE);
+        
+        Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+        if (userAuthentication != null) {
+            Object principal = userAuthentication.getPrincipal();
+            if (principal instanceof ProfileEntity) {
+                ProfileEntity profileEntity = (ProfileEntity) principal;
+                return profileEntity.getId();
+            } else {
+                throw new OrcidUnauthorizedException("Missing user authentication");
+            }
+        } else {
+            throw new IllegalStateException("Non client credential scope found in client request");
         }
     }
 }

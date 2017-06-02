@@ -69,7 +69,23 @@
         <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
-	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
+	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
+		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
+		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
+		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
+	</bean>
+	
+	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
+	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
+	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
+		<property name="tokenEnhancers">
+		<list>
+			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
+			<ref bean="openIDConnectTokenEnhancer" />
+		</list>
+		</property>
+	</bean>
+	
 	
 	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
 	
@@ -629,7 +645,11 @@
     <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
     
     <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
+    
+    <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
+    <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+    
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate" />
@@ -658,14 +678,24 @@
 	            <ref bean="versionConverterV2_0_rc1ToV2_0_rc2" />
 	            <ref bean="versionConverterV2_0_rc2ToV2_0_rc3" />
 	            <ref bean="versionConverterV2_0_rc3ToV2_0_rc4" />
-	            <ref bean="versionConverterV2_0_rc4ToV2_0" />
+	            <ref bean="versionConverterV2_0_rc4ToV2_0" />	            
 	        </list>
 	    </property>
 	</bean>
+	
+	<bean id="v2_1VersionConverterChain" class="org.orcid.core.version.impl.V2_1VersionConverterChainImpl">
+	    <property name="converters">
+            <list>
+	            <ref bean="versionConverterV2_0ToV2_1" />
+	        </list>
+	    </property>
+	</bean>
+	
     <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
 	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
 	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
 	<bean id="versionConverterV2_0_rc4ToV2_0" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc4ToV2_0"/>
+	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	

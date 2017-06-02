@@ -71,7 +71,8 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
     public ModelAndView authorize(Map<String, Object> model,
                     @RequestParam Map<String, String> requestParameters, SessionStatus sessionStatus, Principal principal) {
         try {
-        	trimRequestParameters(requestParameters);
+
+            trimRequestParameters(requestParameters);
         } catch (InvalidScopeException ise) {
         	String redirectUri = requestParameters.get("redirect_uri");
         	String redirectUriWithParams = "";

@@ -35,6 +35,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.release.BlackBoxBaseV2Release;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.v2_1.release.MemberV2_1ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -68,6 +69,11 @@ public class PersonTest extends BlackBoxBaseV2Release {
     private MemberV2ApiClientImpl memberV2ApiClient_release;
     @Resource(name = "publicV2ApiClient")
     private PublicV2ApiClientImpl publicV2ApiClient_release;
+    
+    @Resource(name = "memberV2_1ApiClient")
+    private MemberV2_1ApiClientImpl memberV2_1ApiClient_release;
+    @Resource(name = "publicV2_1ApiClient")
+    private PublicV2ApiClientImpl publicV2_1ApiClient_release;
     
     private static final String limitedEmail = "limited@test.orcid.org";
 
@@ -795,6 +801,167 @@ public class PersonTest extends BlackBoxBaseV2Release {
     @Test
     public void testViewPersonFromPublicAPI_release() {
         ClientResponse response = publicV2ApiClient_release.viewPersonXML(getUser1OrcidId());
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_v2.Person person = response.getEntity(org.orcid.jaxb.model.record_v2.Person.class);
+        assertNotNull(person);
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getAddress());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
+
+        assertNotNull(person.getBiography());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getBiography().getVisibility());
+
+        assertNotNull(person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
+                person.getEmails());
+
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals("test", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
+
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(2, person.getKeywords().getKeywords().size());
+        assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
+        assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(2, person.getOtherNames().getOtherNames().size());
+        assertThat(person.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(person.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
+        assertNotNull(person.getResearcherUrls());
+        assertNotNull(person.getResearcherUrls().getResearcherUrls());
+        assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
+        assertNotNull(person.getName());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
+        assertNotNull(person.getName().getFamilyName());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
+        assertNotNull(person.getName().getCreditName());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getName().getVisibility());
+    }
+    
+    /**
+     * 
+     * V2.1
+     * 
+     */
+    @Test
+    public void testGetBioFromPublicAPI_V2_1() {
+        ClientResponse response = publicV2_1ApiClient_release.viewBiographyXML(getUser1OrcidId());
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_v2.Biography bio = response.getEntity(org.orcid.jaxb.model.record_v2.Biography.class);
+        assertNotNull(bio);
+        assertEquals(getUser1Bio(), bio.getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, bio.getVisibility());
+    }
+
+    @Test
+    public void testGetBioFromMemberAPI_V2_1() throws Exception {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        ClientResponse response = memberV2_1ApiClient_release.viewBiography(getUser1OrcidId(), accessToken);
+        assertNotNull(response);
+        org.orcid.jaxb.model.record_v2.Biography bio = response.getEntity(org.orcid.jaxb.model.record_v2.Biography.class);
+        assertNotNull(bio);
+        assertEquals(getUser1Bio(), bio.getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, bio.getVisibility());
+    }
+
+    @Test
+    public void testViewPersonFromMemberAPI_V2_1() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        ClientResponse response = memberV2_1ApiClient_release.viewPerson(getUser1OrcidId(), accessToken);
+        assertNotNull(response);
+        assertEquals("invalid " + response, 200, response.getStatus());
+        Thread.sleep(100);
+        org.orcid.jaxb.model.record_v2.Person person = response.getEntity(org.orcid.jaxb.model.record_v2.Person.class);
+        assertNotNull(person);
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getAddress());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
+
+        assertNotNull(person.getBiography());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getBiography().getVisibility());
+
+        assertNotNull(person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(getUser1UserName(), org.orcid.jaxb.model.common_v2.Visibility.PUBLIC,
+                person.getEmails());
+        org.orcid.integration.blackbox.api.v2.tests.EmailTest.assertListContainsEmail_release(limitedEmail, org.orcid.jaxb.model.common_v2.Visibility.LIMITED, person.getEmails());
+
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifiers().size());
+
+        boolean foundPublic = false;
+        boolean foundLimited = false;
+
+        for (org.orcid.jaxb.model.record_v2.PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
+            if ("A-0001".equals(e.getValue())) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, e.getVisibility());
+                foundPublic = true;
+            } else if ("A-0002".equals(e.getValue())) {
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED, e.getVisibility());
+                foundLimited = true;
+            }
+        }
+
+        assertTrue(foundPublic);
+        assertTrue(foundLimited);
+
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(2, person.getKeywords().getKeywords().size());
+        assertThat(person.getKeywords().getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
+        assertThat(person.getKeywords().getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getKeywords().getKeywords().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getKeywords().getKeywords().get(1).getVisibility());
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(2, person.getOtherNames().getOtherNames().size());
+        assertThat(person.getOtherNames().getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertThat(person.getOtherNames().getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(0).getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
+        assertNotNull(person.getResearcherUrls());
+        assertNotNull(person.getResearcherUrls().getResearcherUrls());
+        assertEquals(2, person.getResearcherUrls().getResearcherUrls().size());
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(0).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertThat(person.getResearcherUrls().getResearcherUrls().get(1).getUrl().getValue(), anyOf(is(researcherUrl1), is(researcherUrl2)));
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(0).getVisibility());        
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getResearcherUrls().getResearcherUrls().get(1).getVisibility());
+        assertNotNull(person.getName());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
+        assertNotNull(person.getName().getFamilyName());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
+        assertNotNull(person.getName().getCreditName());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC, person.getName().getVisibility());
+    }
+
+    @Test
+    public void testViewPersonFromPublicAPI_V2_1() {
+        ClientResponse response = publicV2_1ApiClient_release.viewPersonXML(getUser1OrcidId());
         assertNotNull(response);
         org.orcid.jaxb.model.record_v2.Person person = response.getEntity(org.orcid.jaxb.model.record_v2.Person.class);
         assertNotNull(person);

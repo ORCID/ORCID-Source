@@ -97,8 +97,8 @@ public class SourceManagerImpl implements SourceManager {
     }
 
     private String retrieveEffectiveOrcid(Authentication authentication) {
-        if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getOrcid();
+        if (authentication.getDetails() != null && OrcidProfileUserDetails.class.isAssignableFrom(authentication.getDetails().getClass())) {
+            return ((OrcidProfileUserDetails) authentication.getDetails()).getOrcid();
         }
         return null;
     }

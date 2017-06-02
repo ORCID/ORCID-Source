@@ -1,0 +1,39 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="INSTALL-BACKUP-CODES-TABLE" author="George Nash">
+         <createTable tableName="backup_code">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="backup_code_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="orcid" type="VARCHAR(19)">
+                <constraints nullable="false" />
+            </column>     
+            <column name="used_date" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="hashed_code" type="VARCHAR(255)"/>      
+        </createTable>           
+        <createSequence sequenceName="backup_code_seq"/>
+    </changeSet>
+</databaseChangeLog>                   
