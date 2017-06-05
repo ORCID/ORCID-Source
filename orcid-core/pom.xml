@@ -194,7 +194,12 @@
             <groupId>com.github.slugify</groupId>
             <artifactId>slugify</artifactId>
         </dependency>
-        
+        <!-- openIDConnect -->
+        <dependency>
+		    <groupId>com.nimbusds</groupId>
+		    <artifactId>nimbus-jose-jwt</artifactId>
+		    <version>4.23</version>
+		</dependency>
         <!-- Twitter -->
          <dependency>
             <groupId>org.twitter4j</groupId>

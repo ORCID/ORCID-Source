@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,17 +24,32 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
+import org.orcid.core.security.aop.LockedException;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("loginController")
-public class LoginController extends BaseController {
+public class LoginController extends OauthControllerBase {
+   
     @Resource
-    ClientDetailsManager clientDetailsManager;
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    protected OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
+    @Resource
+    protected OrcidAuthorizationEndpoint authorizationEndpoint;
     
     @ModelAttribute("yesNo")
     public Map<String, String> retrieveYesNoMap() {
@@ -44,10 +60,15 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = { "/signin", "/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) {
-        // in case have come via a link that requires them to be signed out
-        ModelAndView mav = new ModelAndView("login");
-        return mav;
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        String query = request.getQueryString();
+        if(!PojoUtil.isEmpty(query)) {
+            if(query.contains("oauth")) {
+                return handleOauthSignIn(request, response);
+            }
+        }
+        // in case have come via a link that requires them to be signed out        
+        return new ModelAndView("login");
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -69,5 +90,49 @@ public class LoginController extends BaseController {
     public String sessionExpiredHandler() {
         return "session_expired";
     }
-
+    
+    private ModelAndView handleOauthSignIn(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        String queryString = request.getQueryString();
+        String redirectUri = null;
+        
+        // Get and save the request information form
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
+        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        // Save also the original query string
+        request.getSession().setAttribute("queryString", queryString);
+        // Save a flag to indicate this is a request from the new 
+        request.getSession().setAttribute("OAUTH_2SCREENS", true);
+        
+       // Redirect URI
+       redirectUri = requestInfoForm.getRedirectUrl();
+       
+        // Check that the client have the required permissions
+        // Get client name
+        String clientId = requestInfoForm.getClientId();
+        if (PojoUtil.isEmpty(clientId)) {
+            String redirectUriWithParams = redirectUri + "?error=invalid_client&error_description=invalid client_id";
+            return new ModelAndView(new RedirectView(redirectUriWithParams));
+        }
+        // Validate client details
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        try {            
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch(LockedException e) {
+            String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();                        
+            return new ModelAndView(new RedirectView(redirectUriWithParams));
+        }
+        
+        // validate client scopes
+        try {            
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);            
+        } catch (InvalidScopeException e) {
+            String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage(); 
+            return new ModelAndView(new RedirectView(redirectUriWithParams));
+        }                 
+        
+        ModelAndView mav = new ModelAndView("login");
+        mav.addObject("hideUserVoiceScript", true);
+        mav.addObject("oauth2Screens", true);
+        return mav;
+    }
 }

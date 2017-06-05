@@ -43,6 +43,16 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String userEmail;
     private String userGivenNames;
     private String userFamilyNames;
+    //OpenID Connect
+    private String nonce;
+
+    public String getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(String nonce) {
+        this.nonce = nonce;
+    }
 
     private boolean clientHavePersistentTokens = false;
 

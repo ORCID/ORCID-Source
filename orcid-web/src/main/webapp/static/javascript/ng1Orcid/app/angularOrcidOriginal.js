@@ -4376,7 +4376,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         if($scope.allowEmailAccess) {
             $scope.authorizationForm.emailAccessAllowed = true;
         }
-        console.log(angular.toJson($scope.authorizationForm));
+        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -4566,19 +4566,20 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
             success: function(data) {
                 $scope.requestInfoForm = data;
                 if($scope.requestInfoForm.errors.length > 0) {                                  
-                    $scope.generalRegistrationError = $scope.requestInfoForm.errors[0];
-                    console.log($scope.generalRegistrationError);
+                    $scope.generalRegistrationError = $scope.requestInfoForm.errors[0];                    
                     $scope.$apply();
                     $.colorbox.close();
                 } else {
                     orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ $scope.gaString]);
-                    if($scope.registrationForm.approved) {
-                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
-                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
-                        }
-                    } else {
-                        // Fire GA register deny
-                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+                    if(!orcidVar.oauth2Screens) {
+	                    if($scope.registrationForm.approved) {
+	                        for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+	                            orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
+	                        }
+	                    } else {
+	                        // Fire GA register deny
+	                        orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
+	                    }
                     }
                     orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
                 }                               
@@ -4767,11 +4768,10 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         script.src = getBaseUri() + url + '?v=' + orcidVar.version;
         script.onload =  onLoadFunction;
         head.appendChild(script); // Inject the script
-    };
+    };        
     
     // Init
-    $scope.loadRequestInfoForm();    
-    
+    $scope.loadRequestInfoForm();          
 }]);
 
 angular.module('orcidApp').controller('LoginLayoutController',['$scope', function ($scope){

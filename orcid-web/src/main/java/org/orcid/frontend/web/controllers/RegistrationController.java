@@ -79,7 +79,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -469,7 +468,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
-            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         try {
             String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
             EmailEntity emailEntity = emailManager.find(decryptedEmail);

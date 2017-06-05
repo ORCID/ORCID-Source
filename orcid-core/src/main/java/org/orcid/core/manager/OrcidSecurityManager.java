@@ -72,4 +72,6 @@ public interface OrcidSecurityManager {
     void checkAndFilter(String orcid, Person person);
 
     void checkAndFilter(String orcid, Record record);
+
+    String getOrcidFromToken();
 }
