@@ -3141,6 +3141,9 @@ a.btn-primary:hover {
     display: block;
     float: right;
     font-size: 12px;
+    clear: right;
+    line-height: normal;
+    text-align: right;
 }
 
 

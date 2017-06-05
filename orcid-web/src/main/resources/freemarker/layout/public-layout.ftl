@@ -497,10 +497,16 @@
                 </h1>
                 <p><@orcid.msg 'public-layout.logo.tagline'/></p>
             </div>
-            <span class="see-more">${liveIds} <@orcid.msg
+            <p class="see-more">${liveIds} <@orcid.msg
                 'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
                 title=""><@orcid.msg 'public-layout.see_more'/></a>
-            </span>
+            </p>
+            <@orcid.checkFeatureStatus featureName='SURVEY'>
+                <p class="see-more">
+                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
+                  <@orcid.msg 'public-layout.survey_to_tell_us'/>
+                </p>
+            </@orcid.checkFeatureStatus>
             <!--
             <#if inDelegationMode>
                 <div class="delegation-label">
