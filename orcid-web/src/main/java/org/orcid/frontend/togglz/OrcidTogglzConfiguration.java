@@ -66,9 +66,10 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
                 if (context != null && context.getAuthentication() != null) {
                     Authentication authentication = context.getAuthentication();
                     if (authentication != null) {
-                        Object principal = authentication.getPrincipal();
+                        Object principal = authentication.getDetails();
                         if (principal instanceof OrcidProfileUserDetails) {
                             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+                            //TODO: userDetails.getOrcidType() is NULL
                             isAdmin = OrcidType.ADMIN.equals(userDetails.getOrcidType());
                             userOrcid = userDetails.getOrcid();
                         }

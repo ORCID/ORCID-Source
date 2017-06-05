@@ -133,24 +133,7 @@
 	<sec:http pattern="/favicon.ico" security="none" />
 	<sec:http pattern="/static/**" security="none" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
-	
-	<sec:http pattern="/togglz/.*" 
-		use-expressions="false" 
-		access-decision-manager-ref="accessDecisionManager" 
-		authentication-manager-ref="authenticationManager" 
-		create-session="ifRequired"
-		request-matcher="regex" >	
-		<sec:csrf token-repository-ref="csrfTokenRepo" />
-        <sec:anonymous enabled="false" />    
-        <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />      
-        
-        <sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
-            login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
-            authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-            username-parameter="userId" password-parameter="password" />
-        <sec:session-management session-fixation-protection="migrateSession"/>  
-	</sec:http>
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />		
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -388,6 +371,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/togglz/*" 
+			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
