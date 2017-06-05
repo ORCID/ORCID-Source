@@ -244,7 +244,7 @@
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
 		<sec:access-denied-handler error-page="/signin"/>
-		<sec:csrf token-repository-ref="csrfTokenRepo" request-matcher-ref="customCsrfSecurityRequestMatcher"/>
+		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:headers>
 			<sec:frame-options policy="SAMEORIGIN" />
 		</sec:headers>
@@ -462,5 +462,4 @@
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>        
     
-    <bean id="customCsrfSecurityRequestMatcher" class="org.orcid.frontend.spring.CustomCsrfSecurityRequestMatcher" />
 </beans>
