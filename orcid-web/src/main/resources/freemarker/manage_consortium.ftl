@@ -118,18 +118,19 @@
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
-                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()"></input></td>
+                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!consortium.allowedFullAccess"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
-								     	ng-change="validateContacts()">
+								     	ng-change="validateContacts()"
+								     	ng-disabled="!consortium.allowedFullAccess">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
 								    </select>
                                 </td>
                                 <td class="tooltip-container">
-                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)"
+                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="consortium.allowedFullAccess"
                                         class="glyphicon glyphicon-trash grey">
                                         <div class="popover popover-tooltip top">
                                             <div class="arrow"></div>
@@ -144,14 +145,14 @@
                         </tbody>
                     </table>
                     <!-- Buttons -->
-	                <div class="row">
+	                <div class="row" ng-show="consortium.allowedFullAccess">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button id="bottom-confirm-update-contacts" class="btn btn-primary" ng-click="updateContacts()" ng-disabled="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
 	                        <a href="" class="cancel-right" ng-click="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div>
-                    <div class="bottomBuffer">
+                    <div class="bottomBuffer" ng-show="consortium.allowedFullAccess">
                     	<h3>
                         	<@spring.message "manage_consortium.add_contacts_heading"/>
                     	</h3>
@@ -170,9 +171,9 @@
                 <h2>Consortium Members</h2>
                 <hr></hr>
             	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
-					<span><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></span>
+					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
 					<span class="tooltip-container">
-						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)"
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="consortium.allowedFullAccess"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
 	                            <div class="arrow"></div>
@@ -188,23 +189,25 @@
 					<p>This consortium does not have any members yet.</p>
 					<hr></hr>
                 </div>
-                <h3>New consortium member</h3>
-                <form>
-                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
-                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
-                    <!-- Buttons -->
-	                <div class="row">
-	                    <div class="controls col-md-12 col-sm-12 col-xs-12">
-	                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
-	                    </div>
-	                </div> 
-                </form>
+                <div ng-show="consortium.allowedFullAccess"
+	                <h3>New consortium member</h3>
+	                <form>
+	                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>
+	                    <label for="new-sub-member-website">Website</label><input id="new-sub-member-website" type="text" placeholder="Website" class="input-xlarge inline-input" ng-model="newSubMember.website"></input>
+	                    <!-- Buttons -->
+		                <div class="row">
+		                    <div class="controls col-md-12 col-sm-12 col-xs-12">
+		                    	<span id="ajax-loader" class="ng-cloak" ng-show="addSubMemberShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+		                        <button class="btn btn-primary" id="bottom-confirm-update-consortium" ng-click="addSubMember()" ng-disabled="addSubMemberDisabled"><@orcid.msg 'manage.spanadd'/></button>
+		                    </div>
+		                </div> 
+	                </form>
+	            </div>
 		    </div>
         </div>
     </div>
     <script type="text/ng-template" id="confirm-add-contact-modal">
-	    <div class="lightbox-container">
+	    <div class="lightbox-container">	
 	       <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
 	       <div ng-show="effectiveUserOrcid === contactToAdd">
 	          <p class="alert alert-error"><@orcid.msg 'manage_delegation.youcantaddyourself'/></p>

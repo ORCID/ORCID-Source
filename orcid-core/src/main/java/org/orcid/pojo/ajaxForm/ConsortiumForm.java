@@ -42,6 +42,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private List<Contact> contactsList;
     private List<SubMember> subMembers;
     private Map<String, String> roleMap;
+    private boolean isAllowedFullAccess;
 
     public String getAccountId() {
         return accountId;
@@ -125,6 +126,14 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         this.roleMap = roleMap;
     }
 
+    public boolean isAllowedFullAccess() {
+        return isAllowedFullAccess;
+    }
+
+    public void setAllowedFullAccess(boolean isAllowedFullAccess) {
+        this.isAllowedFullAccess = isAllowedFullAccess;
+    }
+
     public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
         ConsortiumForm form = new ConsortiumForm();
         Member member = memberDetails.getMember();
@@ -154,7 +163,10 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         }
         member.setPublicDisplayEmail(getEmail().getValue());
         member.setDescription(getDescription().getValue());
-        member.setResearchCommunity(CommunityType.valueOf(getCommunity().getValue()));
+        Text communityText = getCommunity();
+        if (communityText != null) {
+            member.setResearchCommunity(CommunityType.valueOf(communityText.getValue()));
+        }
         return memberDetails;
     }
 
