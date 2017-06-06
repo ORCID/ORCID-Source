@@ -103,8 +103,8 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         String scapedEmail = StringEscapeUtils.escapeHtml4(this.getUser1UserName());
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
-        getUrlAndWait(url);    
-        switchToRegisterForm();
+        getUrlAndWait(url);
+        
         By element = By.xpath("//input[@name='email']");
         waitForElementVisibility(element);
         assertTrue(findElement(element).getAttribute("value").equals("non_existent@test.com"));

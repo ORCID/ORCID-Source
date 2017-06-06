@@ -405,6 +405,9 @@ function checkOrcidLoggedIn() {
                 console.log("error with loggin check on :"
                         + window.location.href);
                 logAjaxError(e);
+                if(checkOrcidLoggedInIntervalId != null) {                	
+                	clearInterval(checkOrcidLoggedInIntervalId);
+                }
                 window.location = window.location.href;
             });
 }
@@ -459,7 +462,7 @@ function addShibbolethGa(oauthGaString){
         }
     );
 }
-
+var checkOrcidLoggedInIntervalId = null;
 // jquery ready
 $(function() {
     
@@ -472,7 +475,7 @@ $(function() {
     // foo)
     if (location == parent.location) {
         checkOrcidLoggedIn();
-        setInterval(checkOrcidLoggedIn, 15000);
+        checkOrcidLoggedInIntervalId = setInterval(checkOrcidLoggedIn, 15000);
     }
 
     // if not iframed check if not orcid.org

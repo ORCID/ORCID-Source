@@ -41,10 +41,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  */
 public class BaseWorkspaceController extends BaseController {
 
-    protected static final String WORKS_RESULTS_ATTRIBUTE = "works_results_attribute";
-
-    protected static final String PUBLIC_WORKS_RESULTS_ATTRIBUTE = "public_works_results_attribute";
-
     protected static final String ORCID_ID_HASH = "orcid_hash";
 
     @Resource

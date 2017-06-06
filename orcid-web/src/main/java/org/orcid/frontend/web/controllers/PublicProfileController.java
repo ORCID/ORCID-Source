@@ -33,7 +33,6 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -249,11 +248,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("lastModifiedTime", lastModifiedTime);
 
         boolean isProfileEmtpy = true;
-
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
-        }
 
         PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
 

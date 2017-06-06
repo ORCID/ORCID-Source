@@ -23,7 +23,10 @@
     "zone.js": "^0.7.6",
     "angular-recaptcha": "~4.1.0",
     "intl": "~1.2.5",
-    "mdn-polyfills": "~3.4.0"
+    "mdn-polyfills": "~3.4.0",
+    "angular-cookies": "~1.6.4",
+    "angular-sanitize": "~1.6.4",
+    "angular-ui-bootstrap": "~2.5.0"
   },
   "description": "Angular 1.5 Orcid App",
   "devDependencies": {

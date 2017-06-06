@@ -21,20 +21,24 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
-    @Label("New footer")
-    NEW_FOOTER,
+    
+    @Label("Affiliation search")
+    AFFILIATION_SEARCH,
     
     @Label("Last modified")
     LAST_MOD,
     
+    @Label("New footer")
+    NEW_FOOTER,
+    
     @Label("Split oauth in 2 screens")
     OAUTH_2SCREENS,
     
-    @Label("Affiliation search")
-    AFFILIATION_SEARCH,
-
     @Label("Two factor authentication")
-    TWO_FACTOR_AUTHENTICATION;
+    TWO_FACTOR_AUTHENTICATION,
+    
+    @Label("Survey link")
+    SURVEY;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
