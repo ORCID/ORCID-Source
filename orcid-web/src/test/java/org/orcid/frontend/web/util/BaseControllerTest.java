@@ -29,6 +29,7 @@ import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.test.DBUnitTest;
@@ -48,7 +49,8 @@ public class BaseControllerTest extends DBUnitTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+                "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml"));
     }
 
     @Before
@@ -65,34 +67,35 @@ public class BaseControllerTest extends DBUnitTest {
     protected Authentication getAuthentication() {
         return getAuthentication("4444-4444-4444-4446");
     }
-    
+
     protected Authentication getAuthentication(String orcid) {
         if (orcidProfile == null) {
             orcidProfile = getOrcidProfile();
         }
 
         OrcidProfileUserDetails details = null;
-        if(orcidProfile.getType() != null){        	
-        	details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getGroupType());
+        if (orcidProfile.getType() != null) {
+            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
         } else {
-        	details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, details.getPassword(), Arrays.asList(OrcidWebRole.ROLE_USER));
         auth.setDetails(details);
         return auth;
     }
 
-    
-    
     protected static OrcidProfile getOrcidProfile() {
         try {
             JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(BaseControllerTest.class.getResourceAsStream(
 
-            "/orcid-internal-full-message-latest.xml"));
+                    "/orcid-internal-full-message-latest.xml"));
             return orcidMessage.getOrcidProfile();
         } catch (JAXBException e) {
             throw new RuntimeException(e);

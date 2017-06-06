@@ -46,6 +46,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -72,9 +73,9 @@ import com.google.common.collect.Lists;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class FundingsControllerTest extends BaseControllerTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
-            "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/RecordNameEntityData.xml");
 
     @Mock
     private LocaleManager localeManager;
@@ -94,14 +95,17 @@ public class FundingsControllerTest extends BaseControllerTest {
 
         OrcidProfileUserDetails details = null;
         if (orcidProfile.getType() != null) {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
-                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(),
-                    orcidProfile.getGroupType());
+            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
         } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
-                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4443", details.getPassword(), Arrays.asList(OrcidWebRole.ROLE_USER));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4443", details.getPassword(),
+                Arrays.asList(OrcidWebRole.ROLE_USER));
         auth.setDetails(details);
         return auth;
     }
@@ -214,7 +218,7 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     /**
      * Validate amounts of form ###,###,###.##
-     * */
+     */
     @Test
     public void validateBigDecimalConversionLocaleUS_EN() {
         when(localeManager.getLocale()).thenReturn(new Locale("en", "US"));
@@ -266,7 +270,7 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     /**
      * Validate amounts of form ###'###'###.##
-     * */
+     */
     @Test
     public void validateBigDecimalConversionLocaleDE_CH() {
         when(localeManager.getLocale()).thenReturn(new Locale("de", "CH"));
@@ -318,7 +322,7 @@ public class FundingsControllerTest extends BaseControllerTest {
 
     /**
      * Validate amounts of form ### ### ###,##
-     * */
+     */
     @Test
     public void validateBigDecimalConversionLocaleRU() {
         when(localeManager.getLocale()).thenReturn(new Locale("ru"));
@@ -381,21 +385,21 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertTrue(fundingIds.contains("2"));
         assertTrue(fundingIds.contains("3"));
     }
-    
+
     @Test
     public void testGetFundingsJson() {
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
-        request.addPreferredLocale(new Locale("us","EN"));
+        request.addPreferredLocale(new Locale("us", "EN"));
         List<FundingForm> fundings = fundingController.getFundingsJson(request, "1");
         assertNotNull(fundings);
         assertEquals(1, fundings.size());
-        
+
         FundingForm funding = fundings.get(0);
         List<Contributor> contributors = funding.getContributors();
-        
+
         Contributor contributor = contributors.get(0);
         assertNull(contributor.getEmail());
         assertEquals("Jaylen Kessler", contributor.getCreditName().getValue());
@@ -407,7 +411,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         contributor = contributors.get(2);
         assertNull(contributor.getEmail());
         assertEquals("Credit Name", contributor.getCreditName().getValue());
-        
+
         // contributor is an ORCID user with private name
         contributor = contributors.get(3);
         assertNull(contributor.getEmail());
@@ -419,7 +423,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     public void testAddFundingWithoutAmount() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
         FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
@@ -430,15 +434,15 @@ public class FundingsControllerTest extends BaseControllerTest {
         funding.setRegion(Text.valueOf("SJ"));
         funding.setFundingName(Text.valueOf("OrgName"));
 
-            FundingForm result = fundingController.postFunding(funding);
-            assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
-            assertEquals(funding.getFundingType(), result.getFundingType());
-            assertEquals(funding.getCountry(), result.getCountry());
-            assertEquals(funding.getCity(), result.getCity());
-            assertEquals(funding.getRegion(), result.getRegion());
-            assertEquals(funding.getCountry(), result.getCountry());
-            assertNotNull(funding.getErrors());
-            assertEquals(0, funding.getErrors().size());
+        FundingForm result = fundingController.postFunding(funding);
+        assertEquals(funding.getFundingTitle().getTitle(), result.getFundingTitle().getTitle());
+        assertEquals(funding.getFundingType(), result.getFundingType());
+        assertEquals(funding.getCountry(), result.getCountry());
+        assertEquals(funding.getCity(), result.getCity());
+        assertEquals(funding.getRegion(), result.getRegion());
+        assertEquals(funding.getCountry(), result.getCountry());
+        assertNotNull(funding.getErrors());
+        assertEquals(0, funding.getErrors().size());
     }
 
     @Test
@@ -446,7 +450,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     public void testAddFunding() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
         FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
@@ -476,7 +480,7 @@ public class FundingsControllerTest extends BaseControllerTest {
     public void testAddAmountWithoutCurrencyCode() throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        when(localeManager.getLocale()).thenReturn(new Locale("us","EN"));
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
         FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));
         FundingTitleForm title = new FundingTitleForm();
@@ -526,12 +530,11 @@ public class FundingsControllerTest extends BaseControllerTest {
         try {
             fundingController.postFunding(funding);
         } catch (Exception e) {
-            throwsError  = true;
+            throwsError = true;
         }
         assertEquals(throwsError, true);
     }
 
-    
     @Test
     @Rollback(true)
     public void testEditFunding() throws Exception {
@@ -588,12 +591,12 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertEquals("San Jose", funding.getCity().getValue());
         assertEquals("CR", funding.getCountry().getValue());
     }
-    
+
     @Test
     public void testAddFundingWithInvalidDates() throws Exception {
         FundingForm funding = getFundingForm();
-                
-        //Check valid start date
+
+        // Check valid start date
         Date startDate = new Date();
         startDate.setMonth("01");
         funding.setStartDate(startDate);
@@ -602,8 +605,8 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
         assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
-        
-        //Check valid end date
+
+        // Check valid end date
         funding = getFundingForm();
         Date endDate = new Date();
         endDate.setMonth("01");
@@ -613,29 +616,28 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
         assertEquals(fundingController.getMessage("common.dates.invalid"), funding.getErrors().get(0));
-        
-        
-        //Check end date is after start date
+
+        // Check end date is after start date
         funding = getFundingForm();
-        
+
         startDate = new Date();
         startDate.setMonth("01");
         startDate.setYear("2015");
-        
+
         endDate = new Date();
         endDate.setMonth("01");
         endDate.setYear("2014");
-        
+
         funding.setStartDate(startDate);
         funding.setEndDate(endDate);
-        
+
         funding = fundingController.postFunding(funding);
         assertNotNull(funding);
         assertNotNull(funding.getErrors());
         assertEquals(1, funding.getErrors().size());
         assertEquals(fundingController.getMessage("fundings.endDate.after"), funding.getErrors().get(0));
     }
-    
+
     private FundingForm getFundingForm() {
         FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));

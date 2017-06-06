@@ -62,6 +62,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -145,9 +146,10 @@ public class AdminControllerTest extends BaseControllerTest {
 
         OrcidProfileUserDetails details = null;
         if (orcidProfile.getType() != null) {
+            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
             details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
                     orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
-                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getGroupType());
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
         } else {
             details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
                     orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),

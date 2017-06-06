@@ -176,8 +176,7 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            org.orcid.jaxb.model.message.OrcidType legacyOrcidType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType(); 
-                            OrcidType sourceUserType = legacyOrcidType == null ? null : OrcidType.fromValue(legacyOrcidType.value());
+                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType(); 
                             return OrcidType.ADMIN.equals(sourceUserType);
                         }
                     }

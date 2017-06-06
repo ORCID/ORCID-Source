@@ -94,7 +94,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         
         for (EmailEntity email : emails) {
             if (email.getPrimary()) {
-                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword());
+                return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), profileEntity.getOrcidType());
             }
         }
         return null;
