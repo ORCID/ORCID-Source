@@ -122,8 +122,8 @@ public class OpenIDConnectKeyService {
      * 
      * @return a JWK.  use .toString() to generate JSON representation.
      */
-    public JWK getPublicJWK(){
-        return publicJWK;
+    public JWKSet getPublicJWK(){
+        return new JWKSet(publicJWK);
     }
     
 }

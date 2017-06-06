@@ -46,7 +46,7 @@ public class OpenIDConnectKeyServiceTest {
         map.put("test", "abcd1234");
         JWTClaimsSet claims = new JWTClaimsSet.Builder().issuer("me").build();
         SignedJWT signed = service.sign(claims);
-        JWSVerifier verifier = new RSASSAVerifier(((RSAKey)service.getPublicJWK()));
+        JWSVerifier verifier = new RSASSAVerifier(((RSAKey)service.getPublicJWK().getKeyByKeyId(signed.getHeader().getKeyID())));
         Assert.assertTrue(signed.verify(verifier));        
     }
 }
