@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -40,9 +41,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
  * @author rcpeters
  * 
  */
-public class OAuthAuthorizeNotSignedInFilter implements Filter {
-
-    private static final String OAUTH2_TWO_SCREENS_FEATURE_FLAG = "OAUTH_2SCREENS";
+public class OAuthAuthorizeNotSignedInFilter implements Filter {    
     
     BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
@@ -67,7 +66,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
                 
-                if(!PojoUtil.isEmpty(queryString) && queryString.contains(OAUTH2_TWO_SCREENS_FEATURE_FLAG)) {
+                if(!PojoUtil.isEmpty(queryString) && queryString.contains(OrcidOauth2Constants.OAUTH2_SCREENS)) {
                     response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);
                 } else {
                     response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + queryString);

@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -204,9 +205,18 @@ public class OauthRegistrationController extends OauthControllerBase {
                     LOGGER.info("OauthRegisterController being sent to client browser: " + requestInfoForm.getRedirectUrl());
                     return requestInfoForm;
                 }
-                // Approve
-                RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-                requestInfoForm.setRedirectUrl(view.getUrl());
+                
+                Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH2_SCREENS);
+                if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+                    // Just redirect to the authorization screen
+                    String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+                    requestInfoForm.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString);
+                    request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH2_SCREENS);
+                } else {
+                    // Approve
+                    RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                    requestInfoForm.setRedirectUrl(view.getUrl());
+                }                              
             }
         } else {
             requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), requestInfoForm.getStateParam()));

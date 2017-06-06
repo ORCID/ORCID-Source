@@ -57,9 +57,6 @@ public class OrcidUrlManager {
 
     @Value("${org.orcid.core.internalApiBaseUri}")
     private String internalApiBaseUrl;
-
-    @Value("${org.orcid.core.oauth.authorizeUri:/oauth/authorize}")
-    private String oauthAuthorizationPath;
     
     @Autowired(required = false)
     private ServletContext servletContext;
@@ -248,9 +245,5 @@ public class OrcidUrlManager {
             }
         }
         return url;
-    }
-
-    public String getOauthAuthorizationUrl() {
-        return baseUrl + oauthAuthorizationPath;
     }
 }
