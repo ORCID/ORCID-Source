@@ -102,7 +102,7 @@ public class LoginController extends OauthControllerBase {
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new 
-        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH2_SCREENS, true);
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
         
        // Redirect URI
        redirectUri = requestInfoForm.getRedirectUrl();

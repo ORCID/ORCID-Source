@@ -206,12 +206,12 @@ public class OauthRegistrationController extends OauthControllerBase {
                     return requestInfoForm;
                 }
                 
-                Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH2_SCREENS);
+                Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
                 if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
                     // Just redirect to the authorization screen
                     String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
                     requestInfoForm.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString);
-                    request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH2_SCREENS);
+                    request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
                 } else {
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);

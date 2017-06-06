@@ -51,6 +51,6 @@ public class OrcidOauth2Constants {
     public static final String AUTH_TIME = "auth_time";
 
     //OAuth 2 screens
-    public static final String OAUTH2_SCREENS = "OAUTH_2SCREENS";
+    public static final String OAUTH_2SCREENS = "OAUTH_2SCREENS";
     public static final String OAUTH_QUERY_STRING = "queryString";
 }
