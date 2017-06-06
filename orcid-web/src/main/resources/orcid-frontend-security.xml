@@ -461,4 +461,5 @@
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>        
+    
 </beans>
