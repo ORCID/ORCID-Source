@@ -23,7 +23,7 @@
 	<@spring.bind "loginForm" />
 	<@spring.showErrors "<br/>" "error" />
 				
-	<div class="login">		
+	<div>		
 		<div class="row">						
 			<@orcid.checkFeatureStatus featureName='OAUTH_2SCREENS' enabled=false>
 				<div class="login" ng-controller="LoginLayoutController">
