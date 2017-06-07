@@ -13,7 +13,7 @@
     "@angular/upgrade": "^2.4.4",
     "angular": "^1.6.4",
     "angular-in-memory-web-api": "~0.2.4",
-    "angular-route": "^1.6.4",
+    "angular-route": "^1.6.1",
     "core-js": "^2.4.1",
     "node-sass": "^4.3.0",
     "reflect-metadata": "^0.1.9",
