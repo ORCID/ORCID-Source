@@ -462,7 +462,7 @@ function addShibbolethGa(oauthGaString){
         }
     );
 }
-var checkOrcidLoggedInIntervalId = null;
+
 // jquery ready
 $(function() {
     
@@ -475,7 +475,7 @@ $(function() {
     // foo)
     if (location == parent.location) {
         checkOrcidLoggedIn();
-        checkOrcidLoggedInIntervalId = setInterval(checkOrcidLoggedIn, 15000);
+        setInterval(checkOrcidLoggedIn, 15000);
     }
 
     // if not iframed check if not orcid.org
