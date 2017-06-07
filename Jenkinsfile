@@ -53,11 +53,6 @@ node {
         sh "sleep 120"
     }
     
-    stage('Build orcid_generated.js'){
-        do_maven("clean install -f orcid-nodejs/pom.xml -Dnodejs.workingDirectory=${WORKSPACE}/orcid-web/src/main/webapp/static/javascript/ng1Orcid -DwebpackConfig=ci")
-        
-    }
-    
     stage('Setup Clients and Users'){
         // or try postgres@ci-3:~$ psql -f ~/orcid.setup.db
         def setup_users = false
