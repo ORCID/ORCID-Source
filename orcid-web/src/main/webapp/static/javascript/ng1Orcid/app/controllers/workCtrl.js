@@ -553,23 +553,26 @@ angular.module('orcidApp').controller(
             };
 
             $scope.validateCitation = function() {
-                if ($scope.editWork.citation
-                        && $scope.editWork.citation.citation.value
-                        && $scope.editWork.citation.citation.value.length > 0
-                        && $scope.editWork.citation.citationType.value == 'bibtex') {
-                    try {
-                        var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
-                        var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
-                        if (parsed.length == 0){
-                            throw "bibtex parse return nothing";
-                        } 
-                        if (index > -1) {
-                            $scope.editWork.citation.citation.errors.splice(index, 1);
-                        }
-                    } catch (err) {
-                        $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
+                if ( $scope.editWork.citation ){
+                    if ($scope.editWork.citation.citation
+                            && $scope.editWork.citation.citation.value
+                            && $scope.editWork.citation.citation.value.length > 0
+                            && $scope.editWork.citation.citationType.value == 'bibtex') {
+                        try {
+                            var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
+                            var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
+                            if (parsed.length == 0){
+                                throw "bibtex parse return nothing";
+                            } 
+                            if (index > -1) {
+                                $scope.editWork.citation.citation.errors.splice(index, 1);
+                            }
+                        } catch (err) {
+                            $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
+                        };
                     };
-                };
+                    
+                }
             };
 
             $scope.renderTranslatedTitleInfo = function(putCode) {
