@@ -236,7 +236,7 @@ public class BBBUtil {
                         + "   angular.element(document.documentElement).scope().$root.$apply(" + "      function(){" + "        setTimeout(function(){ "
                         + "            if ($.active > 0)" + "               _seleniumAngularDone();" + "            else"
                         + "               window._selenium_angular_done = true;" + "         }, 0);" + "   });" + "};"
-                        + "try { _seleniumAngularDone(); } catch(err) { /* do nothing */ }");
+                        + "try { _seleniumAngularDone(); } catch(err) { console.log(err) }");
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_angular_done;").toString());
             }
         };
