@@ -17,9 +17,9 @@
 console.log("angular wait script starting");
 window._selenium_angular_done = false;
 function _seleniumAngularDone() { 
-    angular.element(document.documentElement).scope().$root.$apply(
+    angular.element(
         function(){
-            console.log("applying root for angular wait script");
+            console.log("dom ready in angular wait script");
             setTimeout(function(){
                 if ($.active > 0){
                     console.log("number of connections to wait for: " + $.active);
