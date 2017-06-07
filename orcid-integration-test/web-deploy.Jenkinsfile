@@ -77,33 +77,6 @@ node {
             do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -DfailIfNoTests=false -Dorg.orcid.config.file='$setup_properties_file'")
         }
     }
-    
-    stage('Execute Black-Box Tests'){
-        try {
-            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.config.file=$test_properties_file -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home -Dwebdriver.gecko.driver=$gecko_home")
-            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
-        } catch(Exception err) {
-            def err_msg = err.getMessage()
-            echo "Tests problem: $err_msg"
-            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            throw err
-        } finally {
-            echo "Saving tests results"
-            junit '**/target/surefire-reports/*.xml'
-            build([
-                job: 'ORCID-tomcat',
-                parameters: [
-                    string(name: 'tomcat_task', value: 'shutdown')
-                ],
-                wait: false
-            ])
-        }
-    }
-    
-    stage('Clean up'){
-        echo "pkill firefox"
-        echo "pkill Xvfb"
-    }
 
 }
 def do_maven(mvn_task){
