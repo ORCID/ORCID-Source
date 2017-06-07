@@ -633,7 +633,7 @@ $(function() {
                                                     orcidGA
                                                             .windowLocationHrefDelay(data.url
                                                                     + window.location.hash);
-                                                } else if (data.verificationCodeRequired) {
+                                                } else if (data.verificationCodeRequired && !data.badVerificationCode) {
                                                     show2FA();
                                                 } else {
                                                     var message;
@@ -671,6 +671,7 @@ $(function() {
                                                     } else if (data.badVerificationCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_verification_code');
+                                                        show2FA();
                                                     } else if (data.badRecoveryCode) {
                                                         message = om
                                                         .get('orcid.frontend.security.2fa.bad_recovery_code');

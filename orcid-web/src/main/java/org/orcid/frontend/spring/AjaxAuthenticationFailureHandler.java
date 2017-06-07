@@ -65,6 +65,8 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         } else if (exception instanceof Bad2FAVerificationCodeException) {
             writer.println(",");
             writer.println("\"badVerificationCode\": true");
+            writer.println(",");
+            writer.println("\"verificationCodeRequired\": true");
         } else if (exception instanceof Bad2FARecoveryCodeException) {
             writer.println(",");
             writer.println("\"badRecoveryCode\": true");
