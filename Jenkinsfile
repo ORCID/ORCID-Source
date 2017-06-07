@@ -54,7 +54,7 @@ node {
     }
     
     stage('Build orcid_generated.js'){
-        do_maven("clean install -f orcid-nodejs/pom.xml -Dnodejs.workingDirectory=/var/lib/jenkins/workspace/ORCID-bb-tests/orcid-web/src/main/webapp/static/javascript/ng1Orcid -DwebpackConf=localhost")
+        do_maven("clean install -f orcid-nodejs/pom.xml -Dnodejs.workingDirectory=${WORKSPACE}/orcid-web/src/main/webapp/static/javascript/ng1Orcid -DwebpackConfig=ci")
         
     }
     
