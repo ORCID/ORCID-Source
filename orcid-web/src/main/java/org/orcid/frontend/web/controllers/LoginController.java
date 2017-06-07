@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
@@ -99,9 +100,9 @@ public class LoginController extends OauthControllerBase {
         RequestInfoForm requestInfoForm = generateRequestInfoForm(queryString);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
-        request.getSession().setAttribute("queryString", queryString);
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new 
-        request.getSession().setAttribute("OAUTH_2SCREENS", true);
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
         
        // Redirect URI
        redirectUri = requestInfoForm.getRedirectUrl();
