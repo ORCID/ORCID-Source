@@ -18,10 +18,12 @@ package org.orcid.integration.blackbox.api;
 
 import static org.orcid.integration.blackbox.api.BlackBoxWebDriver.getWebDriver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
@@ -41,6 +43,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BBBUtil {
+    
+    private static String angularWaitScript;
+    static {
+        try {
+            angularWaitScript = IOUtils.toString(BBBUtil.class.getResourceAsStream("angularWait.js"));
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading angular wait script", e);
+        }
+    }
 
     public static String getProperty(String key) {
         Properties prop = SystemPropertiesHelper.getProperties();
@@ -232,11 +243,7 @@ public class BBBUtil {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                ((JavascriptExecutor) driver).executeScript("" + "window._selenium_angular_done = false;" + "function _seleniumAngularDone() { "
-                        + "   angular.element(document.documentElement).scope().$root.$apply(" + "      function(){" + "        setTimeout(function(){ "
-                        + "            if ($.active > 0)" + "               _seleniumAngularDone();" + "            else"
-                        + "               window._selenium_angular_done = true;" + "         }, 0);" + "   });" + "};"
-                        + "try { _seleniumAngularDone(); } catch(err) { /* do nothing */ }");
+                ((JavascriptExecutor) driver).executeScript(angularWaitScript);
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_angular_done;").toString());
             }
         };
