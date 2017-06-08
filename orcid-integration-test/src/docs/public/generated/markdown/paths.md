@@ -1051,7 +1051,7 @@ Valid statistic types can be inferred from the /statistics resource.  e.g. 'work
 #### Parameters
 |Type|Name|Description|Required|Schema|Default|
 |----|----|----|----|----|----|
-|PathParameter|type||true|enum (liveIds, idsWithVerifiedEmail, idsWithWorks, works, worksWithDois, uniqueDois, employment, employmentUniqueOrg, education, educationUniqueOrg, funding, fundingUniqueOrg)||
+|PathParameter|type||true|enum (liveIds, idsWithEducation, idsWithEmployment, idsWithExternalId, idsWithFunding, idsWithPeerReview, idsWithPersonId, idsWithVerifiedEmail, idsWithWorks, works, worksWithDois, uniqueDois, employment, employmentUniqueOrg, education, educationUniqueOrg, funding, fundingUniqueOrg, peerReview, personId)||
 
 
 #### Responses
@@ -1070,1996 +1070,9 @@ Valid statistic types can be inferred from the /statistics resource.  e.g. 'work
 
 * Statistics API v2.0_rc1
 
-### Check the server status
-```
-GET /v2.0_rc1/status
-```
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|string|
-
-
-#### Produces
-
-* text/plain
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch all Activities
-```
-GET /v2.0_rc1/{orcid}/activities
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|ActivitiesSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch an Education Summary
-```
-GET /v2.0_rc1/{orcid}/education/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EducationSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch an Education
-```
-GET /v2.0_rc1/{orcid}/education/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Education|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch an Employment Summary
-```
-GET /v2.0_rc1/{orcid}/employment/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EmploymentSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch an Employment
-```
-GET /v2.0_rc1/{orcid}/employment/{putCode}
-```
-
-#### Description
-
-Retrive a specific education representation
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|Employment found|Employment|
-|404|Employment not found|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Funding Summary
-```
-GET /v2.0_rc1/{orcid}/funding/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|FundingSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Funding
-```
-GET /v2.0_rc1/{orcid}/funding/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Funding|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Peer Review Summary
-```
-GET /v2.0_rc1/{orcid}/peer-review/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReviewSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Peer Review
-```
-GET /v2.0_rc1/{orcid}/peer-review/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReview|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Work Summary
-```
-GET /v2.0_rc1/{orcid}/work/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|WorkSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Fetch a Work
-```
-GET /v2.0_rc1/{orcid}/work/{putCode}
-```
-
-#### Description
-
-More notes about this method
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Work|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-* application/vnd.citationstyles.csl+json
-
-#### Tags
-
-* Public API v2.0_rc1
-
-### Check the server status
-```
-GET /v2.0_rc2/status
-```
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|string|
-
-
-#### Produces
-
-* text/plain
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch all Activities
-```
-GET /v2.0_rc2/{orcid}/activities
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|ActivitiesSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch all addresses
-```
-GET /v2.0_rc2/{orcid}/address
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch an address
-```
-GET /v2.0_rc2/{orcid}/address/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Get biography details
-```
-GET /v2.0_rc2/{orcid}/biography
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch an Education Summary
-```
-GET /v2.0_rc2/{orcid}/education/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EducationSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch an Education
-```
-GET /v2.0_rc2/{orcid}/education/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Education|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch all emails for an ORCID ID
-```
-GET /v2.0_rc2/{orcid}/email
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch an Employment Summary
-```
-GET /v2.0_rc2/{orcid}/employment/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EmploymentSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch an Employment
-```
-GET /v2.0_rc2/{orcid}/employment/{putCode}
-```
-
-#### Description
-
-Retrive a specific education representation
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|Employment found|Employment|
-|404|Employment not found|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch external identifiers
-```
-GET /v2.0_rc2/{orcid}/external-identifiers
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch external identifier
-```
-GET /v2.0_rc2/{orcid}/external-identifiers/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Funding Summary
-```
-GET /v2.0_rc2/{orcid}/funding/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|FundingSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Funding
-```
-GET /v2.0_rc2/{orcid}/funding/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Funding|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch keywords
-```
-GET /v2.0_rc2/{orcid}/keywords
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch keyword
-```
-GET /v2.0_rc2/{orcid}/keywords/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch Other names
-```
-GET /v2.0_rc2/{orcid}/other-names
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch Other name
-```
-GET /v2.0_rc2/{orcid}/other-names/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Peer Review Summary
-```
-GET /v2.0_rc2/{orcid}/peer-review/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReviewSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Peer Review
-```
-GET /v2.0_rc2/{orcid}/peer-review/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReview|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch person details
-```
-GET /v2.0_rc2/{orcid}/person
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch personal details for an ORCID ID
-```
-GET /v2.0_rc2/{orcid}/personal-details
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch all researcher urls for an ORCID ID
-```
-GET /v2.0_rc2/{orcid}/researcher-urls
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch one researcher url for an ORCID ID
-```
-GET /v2.0_rc2/{orcid}/researcher-urls/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Work Summary
-```
-GET /v2.0_rc2/{orcid}/work/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|WorkSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch a Work
-```
-GET /v2.0_rc2/{orcid}/work/{putCode}
-```
-
-#### Description
-
-More notes about this method
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Work|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-* application/vnd.citationstyles.csl+json
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Fetch record details
-```
-GET /v2.0_rc2/{orcid}{ignore}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc2
-
-### Check the server status
-```
-GET /v2.0_rc3/status
-```
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|string|
-
-
-#### Produces
-
-* text/plain
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all Activities
-```
-GET /v2.0_rc3/{orcid}/activities
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|ActivitiesSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all addresses
-```
-GET /v2.0_rc3/{orcid}/address
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch an address
-```
-GET /v2.0_rc3/{orcid}/address/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Get biography details
-```
-GET /v2.0_rc3/{orcid}/biography
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch an Education Summary
-```
-GET /v2.0_rc3/{orcid}/education/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EducationSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch an Education
-```
-GET /v2.0_rc3/{orcid}/education/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Education|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all educations
-```
-GET /v2.0_rc3/{orcid}/educations
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Educations|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all emails for an ORCID ID
-```
-GET /v2.0_rc3/{orcid}/email
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch an Employment Summary
-```
-GET /v2.0_rc3/{orcid}/employment/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|EmploymentSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch an Employment
-```
-GET /v2.0_rc3/{orcid}/employment/{putCode}
-```
-
-#### Description
-
-Retrive a specific education representation
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|Employment found|Employment|
-|404|Employment not found|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all employments
-```
-GET /v2.0_rc3/{orcid}/employments
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Fundings|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch external identifiers
-```
-GET /v2.0_rc3/{orcid}/external-identifiers
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch external identifier
-```
-GET /v2.0_rc3/{orcid}/external-identifiers/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Funding Summary
-```
-GET /v2.0_rc3/{orcid}/funding/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|FundingSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Funding
-```
-GET /v2.0_rc3/{orcid}/funding/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Funding|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all fundings
-```
-GET /v2.0_rc3/{orcid}/fundings
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Fundings|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch keywords
-```
-GET /v2.0_rc3/{orcid}/keywords
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch keyword
-```
-GET /v2.0_rc3/{orcid}/keywords/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch Other names
-```
-GET /v2.0_rc3/{orcid}/other-names
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch Other name
-```
-GET /v2.0_rc3/{orcid}/other-names/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Peer Review Summary
-```
-GET /v2.0_rc3/{orcid}/peer-review/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReviewSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Peer Review
-```
-GET /v2.0_rc3/{orcid}/peer-review/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReview|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all peer reviews
-```
-GET /v2.0_rc3/{orcid}/peer-reviews
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|PeerReviews|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch person details
-```
-GET /v2.0_rc3/{orcid}/person
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch personal details for an ORCID ID
-```
-GET /v2.0_rc3/{orcid}/personal-details
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all researcher urls for an ORCID ID
-```
-GET /v2.0_rc3/{orcid}/researcher-urls
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch one researcher url for an ORCID ID
-```
-GET /v2.0_rc3/{orcid}/researcher-urls/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Work Summary
-```
-GET /v2.0_rc3/{orcid}/work/summary/{putCode}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|WorkSummary|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch a Work
-```
-GET /v2.0_rc3/{orcid}/work/{putCode}
-```
-
-#### Description
-
-More notes about this method
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-|PathParameter|putCode||true|integer (int64)||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Work|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-* application/vnd.citationstyles.csl+json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch all works
-```
-GET /v2.0_rc3/{orcid}/works
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|200|successful operation|Works|
-
-
-#### Produces
-
-* application/vnd.orcid+xml; qs=5
-* application/orcid+xml; qs=3
-* application/xml
-* application/vnd.orcid+json; qs=4
-* application/orcid+json; qs=2
-* application/json
-
-#### Tags
-
-* Public API v2.0_rc3
-
-### Fetch record details
-```
-GET /v2.0_rc3/{orcid}{ignore}
-```
-
-#### Parameters
-|Type|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|----|
-|PathParameter|orcid||true|string||
-
-
-#### Responses
-|HTTP Code|Description|Schema|
-|----|----|----|
-|default|successful operation|No Content|
-
-
-#### Tags
-
-* Public API v2.0_rc3
-
 ### Fetch client details
 ```
-GET /v2.0_rc4/client/{client_id}
+GET /v2.1/client/{client_id}
 ```
 
 #### Parameters
@@ -3085,11 +1098,11 @@ GET /v2.0_rc4/client/{client_id}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Search records
 ```
-GET /v2.0_rc4/search
+GET /v2.1/search
 ```
 
 #### Parameters
@@ -3112,11 +1125,11 @@ GET /v2.0_rc4/search
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Check the server status
 ```
-GET /v2.0_rc4/status
+GET /v2.1/status
 ```
 
 #### Responses
@@ -3131,11 +1144,11 @@ GET /v2.0_rc4/status
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all Activities
 ```
-GET /v2.0_rc4/{orcid}/activities
+GET /v2.1/{orcid}/activities
 ```
 
 #### Parameters
@@ -3161,11 +1174,11 @@ GET /v2.0_rc4/{orcid}/activities
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all addresses
 ```
-GET /v2.0_rc4/{orcid}/address
+GET /v2.1/{orcid}/address
 ```
 
 #### Parameters
@@ -3182,11 +1195,11 @@ GET /v2.0_rc4/{orcid}/address
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch an address
 ```
-GET /v2.0_rc4/{orcid}/address/{putCode}
+GET /v2.1/{orcid}/address/{putCode}
 ```
 
 #### Parameters
@@ -3204,11 +1217,11 @@ GET /v2.0_rc4/{orcid}/address/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Get biography details
 ```
-GET /v2.0_rc4/{orcid}/biography
+GET /v2.1/{orcid}/biography
 ```
 
 #### Parameters
@@ -3234,11 +1247,11 @@ GET /v2.0_rc4/{orcid}/biography
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch an Education Summary
 ```
-GET /v2.0_rc4/{orcid}/education/summary/{putCode}
+GET /v2.1/{orcid}/education/summary/{putCode}
 ```
 
 #### Parameters
@@ -3265,11 +1278,11 @@ GET /v2.0_rc4/{orcid}/education/summary/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch an Education
 ```
-GET /v2.0_rc4/{orcid}/education/{putCode}
+GET /v2.1/{orcid}/education/{putCode}
 ```
 
 #### Parameters
@@ -3296,11 +1309,11 @@ GET /v2.0_rc4/{orcid}/education/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all educations
 ```
-GET /v2.0_rc4/{orcid}/educations
+GET /v2.1/{orcid}/educations
 ```
 
 #### Parameters
@@ -3326,11 +1339,11 @@ GET /v2.0_rc4/{orcid}/educations
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all emails for an ORCID ID
 ```
-GET /v2.0_rc4/{orcid}/email
+GET /v2.1/{orcid}/email
 ```
 
 #### Parameters
@@ -3356,11 +1369,11 @@ GET /v2.0_rc4/{orcid}/email
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch an Employment Summary
 ```
-GET /v2.0_rc4/{orcid}/employment/summary/{putCode}
+GET /v2.1/{orcid}/employment/summary/{putCode}
 ```
 
 #### Parameters
@@ -3387,11 +1400,11 @@ GET /v2.0_rc4/{orcid}/employment/summary/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch an Employment
 ```
-GET /v2.0_rc4/{orcid}/employment/{putCode}
+GET /v2.1/{orcid}/employment/{putCode}
 ```
 
 #### Description
@@ -3423,11 +1436,11 @@ Retrive a specific education representation
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all employments
 ```
-GET /v2.0_rc4/{orcid}/employments
+GET /v2.1/{orcid}/employments
 ```
 
 #### Parameters
@@ -3453,11 +1466,11 @@ GET /v2.0_rc4/{orcid}/employments
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch external identifiers
 ```
-GET /v2.0_rc4/{orcid}/external-identifiers
+GET /v2.1/{orcid}/external-identifiers
 ```
 
 #### Parameters
@@ -3474,11 +1487,11 @@ GET /v2.0_rc4/{orcid}/external-identifiers
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch external identifier
 ```
-GET /v2.0_rc4/{orcid}/external-identifiers/{putCode}
+GET /v2.1/{orcid}/external-identifiers/{putCode}
 ```
 
 #### Parameters
@@ -3496,11 +1509,11 @@ GET /v2.0_rc4/{orcid}/external-identifiers/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Funding Summary
 ```
-GET /v2.0_rc4/{orcid}/funding/summary/{putCode}
+GET /v2.1/{orcid}/funding/summary/{putCode}
 ```
 
 #### Parameters
@@ -3527,11 +1540,11 @@ GET /v2.0_rc4/{orcid}/funding/summary/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Funding
 ```
-GET /v2.0_rc4/{orcid}/funding/{putCode}
+GET /v2.1/{orcid}/funding/{putCode}
 ```
 
 #### Parameters
@@ -3558,11 +1571,11 @@ GET /v2.0_rc4/{orcid}/funding/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all fundings
 ```
-GET /v2.0_rc4/{orcid}/fundings
+GET /v2.1/{orcid}/fundings
 ```
 
 #### Parameters
@@ -3588,11 +1601,11 @@ GET /v2.0_rc4/{orcid}/fundings
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch keywords
 ```
-GET /v2.0_rc4/{orcid}/keywords
+GET /v2.1/{orcid}/keywords
 ```
 
 #### Parameters
@@ -3609,11 +1622,11 @@ GET /v2.0_rc4/{orcid}/keywords
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch keyword
 ```
-GET /v2.0_rc4/{orcid}/keywords/{putCode}
+GET /v2.1/{orcid}/keywords/{putCode}
 ```
 
 #### Parameters
@@ -3631,11 +1644,11 @@ GET /v2.0_rc4/{orcid}/keywords/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch Other names
 ```
-GET /v2.0_rc4/{orcid}/other-names
+GET /v2.1/{orcid}/other-names
 ```
 
 #### Parameters
@@ -3652,11 +1665,11 @@ GET /v2.0_rc4/{orcid}/other-names
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch Other name
 ```
-GET /v2.0_rc4/{orcid}/other-names/{putCode}
+GET /v2.1/{orcid}/other-names/{putCode}
 ```
 
 #### Parameters
@@ -3674,11 +1687,11 @@ GET /v2.0_rc4/{orcid}/other-names/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Peer Review Summary
 ```
-GET /v2.0_rc4/{orcid}/peer-review/summary/{putCode}
+GET /v2.1/{orcid}/peer-review/summary/{putCode}
 ```
 
 #### Parameters
@@ -3705,11 +1718,11 @@ GET /v2.0_rc4/{orcid}/peer-review/summary/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Peer Review
 ```
-GET /v2.0_rc4/{orcid}/peer-review/{putCode}
+GET /v2.1/{orcid}/peer-review/{putCode}
 ```
 
 #### Parameters
@@ -3736,11 +1749,11 @@ GET /v2.0_rc4/{orcid}/peer-review/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all peer reviews
 ```
-GET /v2.0_rc4/{orcid}/peer-reviews
+GET /v2.1/{orcid}/peer-reviews
 ```
 
 #### Parameters
@@ -3766,11 +1779,11 @@ GET /v2.0_rc4/{orcid}/peer-reviews
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch person details
 ```
-GET /v2.0_rc4/{orcid}/person
+GET /v2.1/{orcid}/person
 ```
 
 #### Parameters
@@ -3787,11 +1800,11 @@ GET /v2.0_rc4/{orcid}/person
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch personal details for an ORCID ID
 ```
-GET /v2.0_rc4/{orcid}/personal-details
+GET /v2.1/{orcid}/personal-details
 ```
 
 #### Parameters
@@ -3817,11 +1830,11 @@ GET /v2.0_rc4/{orcid}/personal-details
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all researcher urls for an ORCID ID
 ```
-GET /v2.0_rc4/{orcid}/researcher-urls
+GET /v2.1/{orcid}/researcher-urls
 ```
 
 #### Parameters
@@ -3847,11 +1860,11 @@ GET /v2.0_rc4/{orcid}/researcher-urls
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch one researcher url for an ORCID ID
 ```
-GET /v2.0_rc4/{orcid}/researcher-urls/{putCode}
+GET /v2.1/{orcid}/researcher-urls/{putCode}
 ```
 
 #### Parameters
@@ -3878,11 +1891,11 @@ GET /v2.0_rc4/{orcid}/researcher-urls/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Work Summary
 ```
-GET /v2.0_rc4/{orcid}/work/summary/{putCode}
+GET /v2.1/{orcid}/work/summary/{putCode}
 ```
 
 #### Parameters
@@ -3909,11 +1922,11 @@ GET /v2.0_rc4/{orcid}/work/summary/{putCode}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch a Work
 ```
-GET /v2.0_rc4/{orcid}/work/{putCode}
+GET /v2.1/{orcid}/work/{putCode}
 ```
 
 #### Description
@@ -3945,11 +1958,11 @@ More notes about this method
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 
 ### Fetch all works
 ```
-GET /v2.0_rc4/{orcid}/works
+GET /v2.1/{orcid}/works
 ```
 
 #### Parameters
@@ -3975,11 +1988,42 @@ GET /v2.0_rc4/{orcid}/works
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
+
+### Fetch specified works
+```
+GET /v2.1/{orcid}/works/{putCodes}
+```
+
+#### Parameters
+|Type|Name|Description|Required|Schema|Default|
+|----|----|----|----|----|----|
+|PathParameter|orcid||true|string||
+|PathParameter|putCodes||true|string||
+
+
+#### Responses
+|HTTP Code|Description|Schema|
+|----|----|----|
+|200|successful operation|WorkBulk|
+
+
+#### Produces
+
+* application/vnd.orcid+xml; qs=5
+* application/orcid+xml; qs=3
+* application/xml
+* application/vnd.orcid+json; qs=4
+* application/orcid+json; qs=2
+* application/json
+
+#### Tags
+
+* Public API v2.1
 
 ### Fetch record details
 ```
-GET /v2.0_rc4/{orcid}{ignore}
+GET /v2.1/{orcid}{ignore}
 ```
 
 #### Parameters
@@ -3996,5 +2040,5 @@ GET /v2.0_rc4/{orcid}{ignore}
 
 #### Tags
 
-* Public API v2.0_rc4
+* Public API v2.1
 

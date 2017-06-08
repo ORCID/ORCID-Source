@@ -92,6 +92,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |department-name||false|string||
 |role-title||false|string||
@@ -131,6 +132,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |department-name||false|string||
 |role-title||false|string||
@@ -185,6 +187,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |type||true|enum (GRANT, CONTRACT, AWARD, SALARY_AWARD)||
 |organization-defined-type||false|OrganizationDefinedFundingSubType||
@@ -221,27 +224,12 @@
 |contributor||false|FundingContributor array||
 
 
-### FundingExternalIdentifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||false|enum (GRANT_NUMBER)||
-|external-identifier-value||false|string||
-|relationship||false|enum (PART_OF, SELF)||
-|external-identifier-url||false|Url||
-
-
-### FundingExternalIdentifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|externalIdentifier||false|FundingExternalIdentifier array||
-
-
 ### FundingGroup
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |external-ids||false|ExternalIDs||
-|summary||false|FundingSummary array||
+|funding-summary||false|FundingSummary array||
 
 
 ### FundingSummary
@@ -283,19 +271,6 @@
 |year||true|Year||
 |month||false|Month||
 |day||false|Day||
-
-
-### Identifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||false|string||
-|external-identifier-id||false|string||
-
-
-### Identifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|identifier||false|Identifier array||
 
 
 ### LastModifiedDate
@@ -351,6 +326,7 @@
 |subject-url||false|Url||
 |convening-organization||true|Organization||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
+|put-code||false|integer (int64)||
 |path||false|string||
 
 
@@ -359,7 +335,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |external-ids||false|ExternalIDs||
-|summary||false|PeerReviewSummary array||
+|peer-review-summary||false|PeerReviewSummary array||
 
 
 ### PeerReviewSummary
@@ -476,6 +452,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |title||false|WorkTitle||
 |journal-title||false|Title||
@@ -501,27 +478,6 @@
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |contributor||false|Contributor array||
-
-
-### WorkExternalIdentifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||true|enum (OTHER_ID, ASIN, ASIN_TLD, ARXIV, BIBCODE, DOI, EID, ISBN, ISSN, JFM, JSTOR, LCCN, MR, OCLC, OL, OSTI, PMC, PMID, RFC, SSRN, ZBL, AGR, CBA, CIT, CTX, ETHOS, HANDLE, HIR, PAT, SOURCE_WORK_ID, URI, URN, WOSUID)||
-|external-identifier-id||true|WorkExternalIdentifierId||
-|relationship||false|enum (PART_OF, SELF)||
-|external-identifier-url||false|Url||
-
-
-### WorkExternalIdentifierId
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|value||false|string||
-
-
-### WorkExternalIdentifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|work-external-identifier||false|WorkExternalIdentifier array||
 
 
 ### WorkGroup

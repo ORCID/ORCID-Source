@@ -10,11 +10,8 @@ BasePath: /orcid-api-web
 
 ### Tags
 
-* Member API v2.0_rc4
+* Member API v2.1
 * Member API v2.0
 * resources
-* Member API v2.0_rc3
-* Member API v2.0_rc1
-* Member API v2.0_rc2
 
 

@@ -154,4 +154,15 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         }catch(Exception e){
         }
     }
+    
+    @Test
+    public void checkDiscovery() throws JSONException{
+        Client client = Client.create();        
+        WebResource dWebResource = client.resource(baseUri+".well-known/openid-configuration");
+        ClientResponse d = dWebResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        Assert.assertEquals(200,d.getStatus());
+        JSONObject dObj = d.getEntity(JSONObject.class);
+        assertEquals(dObj.get("issuer").toString(),"https://orcid.org");
+
+    }
 }

@@ -8,6 +8,7 @@
 |fundings||false|Fundings||
 |peer-reviews||false|PeerReviews||
 |works||false|Works||
+|path||false|string||
 
 
 ### Address
@@ -19,6 +20,7 @@
 |country||true|Country||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |path||false|string||
+|put-code||false|integer (int64)||
 |display-index||false|integer (int64)||
 
 
@@ -78,7 +80,6 @@
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |value||false|enum (AF, AX, AL, DZ, AS, AD, AO, AI, AQ, AG, AR, AM, AW, AU, AT, AZ, BS, BH, BD, BB, BY, BE, BZ, BJ, BM, BT, BO, BQ, BA, BW, BV, BR, IO, BN, BG, BF, BI, KH, CM, CA, CV, KY, CF, TD, CL, CN, CX, CC, CO, KM, CG, CD, CK, CR, CI, HR, CU, CW, CY, CZ, DK, DJ, DM, DO, EC, EG, SV, GQ, ER, EE, ET, FK, FO, FJ, FI, FR, GF, PF, TF, GA, GM, GE, DE, GH, GI, GR, GL, GD, GP, GU, GT, GG, GN, GW, GY, HT, HM, VA, HN, HK, HU, IS, IN, ID, IR, IQ, IE, IM, IL, IT, JM, JP, JE, JO, KZ, KE, KI, KP, KR, KW, KG, LA, LV, LB, LS, LR, LY, LI, LT, LU, MO, MK, MG, MW, MY, MV, ML, MT, MH, MQ, MR, MU, YT, MX, FM, MD, MC, MN, ME, MS, MA, MZ, MM, NA, NR, NP, NL, NC, NZ, NI, NE, NG, NU, NF, MP, NO, OM, PK, PW, PS, PA, PG, PY, PE, PH, PN, PL, PT, PR, QA, RE, RO, RU, RW, BL, SH, KN, LC, MF, PM, VC, WS, SM, ST, SA, SN, RS, SC, SL, SG, SX, SK, SI, SB, SO, ZA, GS, SS, ES, LK, SD, SR, SJ, SZ, SE, CH, SY, TJ, TZ, TH, TL, TG, TK, TO, TT, TN, TR, TM, TC, TV, UG, UA, AE, GB, US, UM, UY, UZ, VU, VE, VN, VG, VI, WF, EH, YE, ZM, ZW, TW, XK)||
-|visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 
 
 ### CreatedDate
@@ -91,7 +92,6 @@
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |value||false|string||
-|visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 
 
 ### Day
@@ -113,6 +113,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |department-name||false|string||
 |role-title||false|string||
@@ -143,6 +144,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |education-summary||false|EducationSummary array||
+|path||false|string||
 
 
 ### Employment
@@ -151,6 +153,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |department-name||false|string||
 |role-title||false|string||
@@ -181,6 +184,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |employment-summary||false|EmploymentSummary array||
+|path||false|string||
 
 
 ### ExternalID
@@ -198,19 +202,13 @@
 |external-id||false|ExternalID array||
 
 
-### ExternalIdentifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||true|string||
-|external-identifier-id||true|string||
-
-
 ### Funding
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |type||true|enum (GRANT, CONTRACT, AWARD, SALARY_AWARD)||
 |organization-defined-type||false|OrganizationDefinedFundingSubType||
@@ -247,27 +245,12 @@
 |contributor||false|FundingContributor array||
 
 
-### FundingExternalIdentifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||false|enum (GRANT_NUMBER)||
-|external-identifier-value||false|string||
-|relationship||false|enum (PART_OF, SELF)||
-|external-identifier-url||false|Url||
-
-
-### FundingExternalIdentifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|externalIdentifier||false|FundingExternalIdentifier array||
-
-
 ### FundingGroup
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |external-ids||false|ExternalIDs||
-|summary||false|FundingSummary array||
+|funding-summary||false|FundingSummary array||
 
 
 ### FundingSummary
@@ -281,6 +264,7 @@
 |type||true|enum (GRANT, CONTRACT, AWARD, SALARY_AWARD)||
 |start-date||false|FuzzyDate||
 |end-date||false|FuzzyDate||
+|organization||true|Organization||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |put-code||false|integer (int64)||
 |path||false|string||
@@ -299,6 +283,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |group||false|FundingGroup array||
+|path||false|string||
 
 
 ### FuzzyDate
@@ -328,19 +313,6 @@
 |group-id-record||false|GroupIdRecord array||
 
 
-### Identifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||false|string||
-|external-identifier-id||false|string||
-
-
-### Identifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|identifier||false|Identifier array||
-
-
 ### Item
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
@@ -365,6 +337,7 @@
 |content||false|string||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |path||false|string||
+|put-code||false|integer (int64)||
 |display-index||false|integer (int64)||
 
 
@@ -384,6 +357,7 @@
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |source||false|Source||
+|put-code||false|integer (int64)||
 |notification-type||true|enum (CUSTOM, INSTITUTIONAL_CONNECTION, PERMISSION, AMENDED)||
 |created-date||false|string (date-time)||
 |sent-date||false|string (date-time)||
@@ -394,6 +368,7 @@
 ### NotificationPermission
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
+|put-code||false|integer (int64)||
 |notification-type||true|enum (CUSTOM, INSTITUTIONAL_CONNECTION, PERMISSION, AMENDED)||
 |authorization-url||true|AuthorizationUrl||
 |notification-subject||false|string||
@@ -438,6 +413,7 @@
 |content||false|string||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |path||false|string||
+|put-code||false|integer (int64)||
 |display-index||false|integer (int64)||
 
 
@@ -460,6 +436,7 @@
 |subject-url||false|Url||
 |convening-organization||true|Organization||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
+|put-code||false|integer (int64)||
 |path||false|string||
 
 
@@ -468,7 +445,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |external-ids||false|ExternalIDs||
-|summary||false|PeerReviewSummary array||
+|peer-review-summary||false|PeerReviewSummary array||
 
 
 ### PeerReviewSummary
@@ -492,6 +469,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |group||false|PeerReviewGroup array||
+|path||false|string||
 
 
 ### PersonExternalIdentifier
@@ -506,6 +484,7 @@
 |external-id-relationship||false|enum (PART_OF, SELF)||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |path||false|string||
+|put-code||false|integer (int64)||
 |display-index||false|integer (int64)||
 
 
@@ -528,6 +507,7 @@
 |url||false|Url||
 |visibility||false|enum (LIMITED, REGISTERED_ONLY, PUBLIC)||
 |path||false|string||
+|put-code||false|integer (int64)||
 |display-index||false|integer (int64)||
 
 
@@ -592,6 +572,7 @@
 |created-date||false|CreatedDate||
 |last-modified-date||false|LastModifiedDate||
 |source||false|Source||
+|put-code||false|integer (int64)||
 |path||false|string||
 |title||false|WorkTitle||
 |journal-title||false|Title||
@@ -617,27 +598,6 @@
 |Name|Description|Required|Schema|Default|
 |----|----|----|----|----|
 |contributor||false|Contributor array||
-
-
-### WorkExternalIdentifier
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|external-identifier-type||true|enum (OTHER_ID, ASIN, ASIN_TLD, ARXIV, BIBCODE, DOI, EID, ISBN, ISSN, JFM, JSTOR, LCCN, MR, OCLC, OL, OSTI, PMC, PMID, RFC, SSRN, ZBL, AGR, CBA, CIT, CTX, ETHOS, HANDLE, HIR, PAT, SOURCE_WORK_ID, URI, URN, WOSUID)||
-|external-identifier-id||true|WorkExternalIdentifierId||
-|relationship||false|enum (PART_OF, SELF)||
-|external-identifier-url||false|Url||
-
-
-### WorkExternalIdentifierId
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|value||false|string||
-
-
-### WorkExternalIdentifiers
-|Name|Description|Required|Schema|Default|
-|----|----|----|----|----|
-|work-external-identifier||false|WorkExternalIdentifier array||
 
 
 ### WorkGroup
@@ -677,6 +637,7 @@
 |----|----|----|----|----|
 |last-modified-date||false|LastModifiedDate||
 |group||false|WorkGroup array||
+|path||false|string||
 
 
 ### Year

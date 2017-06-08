@@ -131,6 +131,7 @@
 	<sec:http pattern="/static/**" security="none" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
+	<sec:http pattern="/.well-known/**" security="none" />
 	
 	<sec:http pattern="/togglz/.*" 
 		use-expressions="false" 

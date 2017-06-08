@@ -10,12 +10,9 @@ BasePath: /orcid-pub-web
 
 ### Tags
 
-* Public API v2.0_rc1
-* Public API v2.0_rc2
-* Public API v2.0_rc3
+* Public API v2.1
+* Public API v2.0
 * Identifier API v2.0
 * Statistics API v2.0_rc1
-* Public API v2.0
-* Public API v2.0_rc4
 
 
