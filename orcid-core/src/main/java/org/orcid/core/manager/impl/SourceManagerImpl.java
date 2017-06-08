@@ -146,8 +146,8 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)
-                                && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcid();
+                                && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcid();
                         }
                     }
                 }
@@ -175,8 +175,8 @@ public class SourceManagerImpl implements SourceManager {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType(); 
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
+                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcidType(); 
                             return OrcidType.ADMIN.equals(sourceUserType);
                         }
                     }
