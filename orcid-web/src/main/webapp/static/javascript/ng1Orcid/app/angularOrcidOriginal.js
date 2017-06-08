@@ -4712,18 +4712,15 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
 
     document.onkeydown = function(e) {
         e = e || window.event;
-        if (e.keyCode == 13) {          
-            if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ // There
-                                                                                    // is
-                                                                                    // no
-                                                                                    // clientID
-                                                                                    // information
+        if (e.keyCode == 13) {      
+        	if (location.pathname.indexOf('/oauth/signin') != -1){ 
                 if ($scope.showRegisterForm == true){
                     $scope.registerAndAuthorize();                  
                 } else{
                     $scope.loginAndAuthorize();                 
                 }               
             } else{
+            	console.log(window.event)
                 $scope.authorize();
             }
         }
