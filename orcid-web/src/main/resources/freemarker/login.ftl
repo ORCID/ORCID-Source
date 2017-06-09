@@ -483,13 +483,10 @@
 					               </div>
 					            </div>
 					            <!-- Buttons  -->
-					            <div class="row col-md-12 oauth-buttons">                                                               
-					               <a id="register-form-deny" class="oauth-deny" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="registerAndDeny()">
-					               <@orcid.msg 'confirm-oauth-access.Deny' />
-					               </a>
-					               <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
-					               <@orcid.msg 'confirm-oauth-access.Authorize' />
-					               </button>   
+					            <div class="row col-md-12 oauth-buttons">
+									<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+										<@orcid.msg 'header.register' />
+									</button>   
 					            </div>
 					         </div>
 					      </div>
