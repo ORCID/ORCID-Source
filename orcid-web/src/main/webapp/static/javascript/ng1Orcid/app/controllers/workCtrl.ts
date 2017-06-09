@@ -1,3 +1,20 @@
+declare var $: any;
+declare var om: any;
+declare var ActSortState: any;
+declare var GroupedActivities: any;
+declare var colorbox: any;
+declare var orcidVar: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var workIdLinkJs: any;
+
+declare var bibtexParse: any;
+declare var populateWorkAjaxForm: any;
+declare var index: any;
+declare var ajax: any;
+declare var openImportWizardUrl: any;
+declare var blobObject: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -75,7 +92,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
             
             // Check for the various File API support.
-            if (window.File && window.FileReader && window.FileList && window.Blob) {
+            if (window.File != undefined && window.FileReader != undefined  && window.FileList != undefined  && window.Blob) {
                 $scope.canReadFiles = true;
             };
 
@@ -182,7 +199,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
                 $scope.bulkDeleteCount = 0;
                 $scope.bulkDeleteSubmit = false;        
                 $scope.delCountVerify = 0;
-                for (var idx in worksSrvc.groups){
+                for (var idx: any in worksSrvc.groups){
                     if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
                         $scope.bulkDeleteCount++;
                     }
@@ -305,9 +322,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };    
 
             $scope.toggleClickPrivacyHelp = function(key) {
-                if (!document.documentElement.className.contains('no-touch')){
+                /*if (!document.documentElement.className.contains('no-touch')){
                     $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-                }
+                }*/
             };
 
             $scope.addExternalIdentifier = function () {
@@ -706,20 +723,20 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             // remove once grouping is live
             $scope.moreInfoClick = function(work, $event) {
-                if (!document.documentElement.className.contains('no-touch')){
+                /*if (!document.documentElement.className.contains('no-touch')){
                     $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }
+                }*/
             };
 
             // remove once grouping is live
             $scope.moreInfoMouseEnter = function(work, $event) {
                 $event.stopPropagation();
-                if (document.documentElement.className.contains('no-touch')){
+                /*if (document.documentElement.className.contains('no-touch')){
                     $scope.loadWorkInfo(work.putCode.value, $event);
                 }
                 else{
                     $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }
+                }*/
             };
 
             $scope.showDetailsMouseClick = function(group, $event) {
