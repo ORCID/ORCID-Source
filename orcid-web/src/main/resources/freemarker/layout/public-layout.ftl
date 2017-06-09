@@ -40,13 +40,11 @@
 <#if (RequestParameters['oauth'])??>
     <div class="container top-green-border oneStepWidth">
         <div class="row top-header">
-            <div class="col-md-4 col-sm-12 col-xs-12">
-                <div class="logo centered topBuffer">
-                    <a href="https://orcid.org" alt="ORCID logo">
-                        <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
-                    </a>
-                </div>      
-            </div>    
+            <div class="logo centered topBuffer">
+                <a href="https://orcid.org" alt="ORCID logo">
+                    <img src="${staticCdn}/img/orcid-logo.svg" width="200" alt="ORCID logo">
+                </a>
+            </div>       
         </div> 
         <div id="main" role="main">
 </#if>
