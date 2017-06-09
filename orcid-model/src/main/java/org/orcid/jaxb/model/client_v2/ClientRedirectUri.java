@@ -14,16 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter;
+package org.orcid.jaxb.model.client_v2;
 
-import org.orcid.jaxb.model.client_v2.Client;
-import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+public class ClientRedirectUri {
 
-public interface JpaJaxbClientAdapter {
-
-    Client toClient(ClientDetailsEntity entity);
-    
-    ClientSummary toClientSummary(ClientDetailsEntity entity);
-    
 }

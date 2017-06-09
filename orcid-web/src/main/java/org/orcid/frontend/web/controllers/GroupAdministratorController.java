@@ -93,36 +93,13 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("member_developer_tools");
-        OrcidProfile profile = getEffectiveProfile();
-
-        if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
-            LOGGER.warn("Trying to access group/developer-tools page with user {} which is not a group", profile.getOrcidIdentifier().getPath());
-            return new ModelAndView("redirect:/my-orcid");
-        }
-
-        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(profile.getOrcidIdentifier().getPath());
+        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(getCurrentUserOrcid());
         mav.addObject("group", group);
-        switch (profile.getGroupType()) {
-        case BASIC:
-            mav.addObject("clientType", "UPDATER");
-            break;
-        case PREMIUM:
-            mav.addObject("clientType", "PREMIUM_UPDATER");
-            break;
-        case BASIC_INSTITUTION:
-            mav.addObject("clientType", "CREATOR");
-            break;
-        case PREMIUM_INSTITUTION:
-            mav.addObject("clientType", "PREMIUM_CREATOR");
-            break;
-        }
-
         return mav;
     }
 
     @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
-    public @ResponseBody
-    RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
+    public @ResponseBody RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
         RedirectUri result = new RedirectUri();
         result.setValue(new Text());
         result.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
@@ -130,10 +107,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         result.setGeoArea(Text.valueOf(""));
         return result;
     }
-    
+
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
-    public @ResponseBody
-    Client getClient() {
+    public @ResponseBody Client getClient() {
         Client emptyClient = new Client();
         emptyClient.setDisplayName(new Text());
         emptyClient.setWebsite(new Text());
@@ -153,14 +129,14 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return emptyClient;
     }
 
-   private boolean validateUrl(String url, boolean checkProtocol) {
+    private boolean validateUrl(String url, boolean checkProtocol) {
         String urlToCheck = null;
         if (PojoUtil.isEmpty(url))
             return false;
         // To validate the URL we need a string with a protocol, so, check if it
         // have it, if it doesn't, add it.
         // Check if the URL begins with the protocol
-        if(checkProtocol) {
+        if (checkProtocol) {
             urlToCheck = url;
         } else {
             if (url.startsWith("http://") || url.startsWith("https://")) {
@@ -186,7 +162,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         } else if (client.getDisplayName().getValue().length() > 150) {
             setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.150");
         } else {
-            if(OrcidStringUtils.hasHtml(client.getDisplayName().getValue())) 
+            if (OrcidStringUtils.hasHtml(client.getDisplayName().getValue()))
                 setError(client.getDisplayName(), "manage.developer_tools.group.error.display_name.html");
         }
 
@@ -208,17 +184,17 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(client.getShortDescription()))
             setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.empty");
         else {
-            if(OrcidStringUtils.hasHtml(client.getShortDescription().getValue()))
+            if (OrcidStringUtils.hasHtml(client.getShortDescription().getValue()))
                 setError(client.getShortDescription(), "manage.developer_tools.group.error.short_description.html");
         }
-        
+
         return client;
     }
 
     public Client validateRedirectUris(Client client) {
         return validateRedirectUris(client, false);
     }
-    
+
     public Client validateRedirectUris(Client client, boolean checkProtocol) {
         if (client.getRedirectUris() != null && client.getRedirectUris().size() > 0) {
             for (RedirectUri redirectUri : client.getRedirectUris()) {
@@ -234,7 +210,8 @@ public class GroupAdministratorController extends BaseWorkspaceController {
                     }
                 } else {
                     if (redirectUri.getScopes() != null && redirectUri.getScopes().isEmpty()) {
-                        //If the redirect type is not default, the scopes must not be emtpy
+                        // If the redirect type is not default, the scopes must
+                        // not be emtpy
                         setError(redirectUri, "manage.developer_tools.group.error.empty_scopes");
                     }
                 }
@@ -245,8 +222,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody
-    Client createClient(@RequestBody Client client) {
+    public @ResponseBody Client createClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields

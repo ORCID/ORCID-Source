@@ -28,6 +28,7 @@ import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
@@ -215,5 +216,12 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
         Date lastModified = clientDetailsDao.getLastModified(clientId);
         ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
         return jpaJaxbClientAdapter.toClient(clientDetailsEntity);
+    }
+    
+    @Override
+    public ClientSummary getClientSummary(String clientId) {
+        Date lastModified = clientDetailsDao.getLastModified(clientId);
+        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
+        return jpaJaxbClientAdapter.toClientSummary(clientDetailsEntity);
     }
 }

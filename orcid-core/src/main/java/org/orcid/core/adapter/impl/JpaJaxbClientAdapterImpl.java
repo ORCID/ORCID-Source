@@ -16,11 +16,12 @@
  */
 package org.orcid.core.adapter.impl;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+
+import ma.glasnost.orika.MapperFacade;
 
 public class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
 
@@ -35,5 +36,9 @@ public class JpaJaxbClientAdapterImpl implements JpaJaxbClientAdapter {
         return mapperFacade.map(entity, Client.class);
     }
 
+    @Override
+    public ClientSummary toClientSummary(ClientDetailsEntity entity) {
+        return mapperFacade.map(entity, ClientSummary.class);
+    }
 
 }

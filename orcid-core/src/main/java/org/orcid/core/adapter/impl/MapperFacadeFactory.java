@@ -34,6 +34,7 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
+import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -656,11 +657,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getClientMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
+        clientSummaryClassMap.field("name", "clientName");
+        clientSummaryClassMap.field("description", "clientDescription");
+        clientSummaryClassMap.byDefault();
+        clientSummaryClassMap.register();        
+                
         ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
         clientClassMap.field("name", "clientName");
         clientClassMap.field("description", "clientDescription");
+        
         clientClassMap.byDefault();
         clientClassMap.register();        
+        
         return mapperFactory.getMapperFacade();
     }
 
