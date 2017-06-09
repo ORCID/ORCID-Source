@@ -15,7 +15,7 @@
  * =============================================================================
  */
 console.log("jquery wait script starting");
-window._selenium_angular_done = false;
+window._selenium_jquery_done = false;
 function _seleniumAngularDone() { 
     angular.element(
         function(){
@@ -25,7 +25,7 @@ function _seleniumAngularDone() {
                     console.log("number of connections to wait for: " + $.active);
                     _seleniumAngularDone();
                 } else {
-                    window._selenium_angular_done = true;
+                    window._selenium_jquery_done = true;
                 }
             }, 0);
         }

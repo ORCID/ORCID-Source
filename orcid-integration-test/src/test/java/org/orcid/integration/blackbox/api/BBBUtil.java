@@ -246,8 +246,11 @@ public class BBBUtil {
             @Override
             public Boolean apply(WebDriver driver) {
                 ((JavascriptExecutor) driver).executeScript(jQueryWaitScript);
-                new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
-                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_angular_done;").toString());
+                Boolean jqueryDone = Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_jquery_done;").toString());
+                if (jqueryDone) {
+                    new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
+                }
+                return jqueryDone;
             }
         };
     }
