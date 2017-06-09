@@ -41,6 +41,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.SignedJWT;
 import com.sun.jersey.api.client.Client;
@@ -93,7 +94,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
         WebResource webResource = client.resource(baseUri+"/oauth/jwks");
         ClientResponse jwksResponse = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         String jwkString = jwksResponse.getEntity(String.class);
-        RSAKey jwk = (RSAKey) JWK.parse(jwkString);
+        RSAKey jwk = (RSAKey) JWKSet.parse(jwkString).getKeyByKeyId(signedJWT.getHeader().getKeyID());
         
         //check sig
         JWSVerifier verifier = new RSASSAVerifier(jwk);
@@ -158,7 +159,7 @@ public class OpenIDConnectTest extends BlackBoxBaseV2Release{
     @Test
     public void checkDiscovery() throws JSONException{
         Client client = Client.create();        
-        WebResource dWebResource = client.resource(baseUri+".well-known/openid-configuration");
+        WebResource dWebResource = client.resource(baseUri+"/.well-known/openid-configuration");
         ClientResponse d = dWebResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         Assert.assertEquals(200,d.getStatus());
         JSONObject dObj = d.getEntity(JSONObject.class);
