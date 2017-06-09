@@ -41,6 +41,8 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.paulhammant.ngwebdriver.NgWebDriver;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BBBUtil {
     
@@ -243,6 +245,7 @@ public class BBBUtil {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
+                new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
                 ((JavascriptExecutor) driver).executeScript(angularWaitScript);
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_angular_done;").toString());
             }
