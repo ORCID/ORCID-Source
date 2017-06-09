@@ -14,12 +14,12 @@
  *
  * =============================================================================
  */
-console.log("angular wait script starting");
+console.log("jquery wait script starting");
 window._selenium_angular_done = false;
 function _seleniumAngularDone() { 
     angular.element(
         function(){
-            console.log("dom ready in angular wait script");
+            console.log("dom ready in jquery wait script");
             setTimeout(function(){
                 if ($.active > 0){
                     console.log("number of connections to wait for: " + $.active);
