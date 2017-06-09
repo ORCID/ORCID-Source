@@ -4713,7 +4713,7 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
     document.onkeydown = function(e) {
         e = e || window.event;
         if (e.keyCode == 13) {      
-        	if (location.pathname.indexOf('/oauth/signin') != -1){ 
+        	if (location.pathname.indexOf('/oauth/signin') !== -1){ 
                 if ($scope.showRegisterForm == true){
                     $scope.registerAndAuthorize();                  
                 } else{
