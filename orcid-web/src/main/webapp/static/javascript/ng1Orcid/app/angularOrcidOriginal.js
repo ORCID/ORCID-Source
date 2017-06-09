@@ -3384,8 +3384,12 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[CLIENT_SECRET]', selectedClientSecret);
             $scope.playgroundExample = example;
+        }else if($scope.swaggerUri == selectedRedirectUriValue) {
+            $scope.playgroundExample = $scope.swaggerUri;
+        }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
+            $scope.playgroundExample = $scope.swaggerMemberUri;
         }
-
+        
         var example = $scope.authorizeURLTemplate;
         example = example.replace('BASE_URI]', orcidVar.baseUri);
         example = example.replace('[CLIENT_ID]', clientId);
@@ -3814,6 +3818,10 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
                 if(scope != '')
                     example = example.replace('[SCOPES]', scope);
                 $scope.playgroundExample = example.replace(/,/g,'%20');
+            }else if($scope.swaggerUri == selectedRedirectUriValue) {
+                $scope.playgroundExample = $scope.swaggerUri;
+            }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
+                $scope.playgroundExample = $scope.swaggerMemberUri;
             }
 
             var example = $scope.authorizeURLTemplate;

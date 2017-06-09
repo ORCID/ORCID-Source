@@ -309,7 +309,10 @@
 					<div ng-hide="playgroundExample == ''">
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span>
-							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="_blank"><@orcid.msg 'manage.developer_tools.view.example.google'/></a></span>
+							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="_blank">
+								<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
+								<span ng-show="selectedRedirectUri.value.value != googleUri">{{playgroundExample}}</span>
+							</a></span>
 						</div>
 					</div>
 				</div>
