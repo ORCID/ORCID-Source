@@ -272,10 +272,11 @@
 							<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 								<a href="" class="icon-href-bg" ng-click="addRedirectURI()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
 								<div class="add-options margin-bottom-box">								
-									<div ng-show="!hideGoogleUri">
+									<div>
 										<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 										<ul class="pullleft-list">
-											<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
+											<li ng-show="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>
+											<li ng-show="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('swagger')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>										
 										</ul>								
 									</div>
 								</div>						
@@ -361,10 +362,11 @@
 							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<div class="add-options">								
-										<div ng-show="!hideGoogleUri">
+										<div>
 											<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 											<ul class="pullleft-list">
-												<li id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
+												<li ng-show="!hideGoogleUri "id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
+												<li ng-show="!hideSwaggerUri" id="swagger-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('swagger')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.swagger'/></a></li>
 											</ul>								
 										</div>
 									</div>
