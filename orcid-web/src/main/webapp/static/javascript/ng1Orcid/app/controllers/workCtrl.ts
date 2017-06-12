@@ -92,7 +92,7 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };
             
             // Check for the various File API support.
-            if (window.File != undefined && window.FileReader != undefined  && window.FileList != undefined  && window.Blob) {
+            if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
                 $scope.canReadFiles = true;
             };
 
@@ -196,10 +196,11 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
 
             $scope.deleteBulkConfirm = function(idx) {
+                var idx: any;
                 $scope.bulkDeleteCount = 0;
                 $scope.bulkDeleteSubmit = false;        
                 $scope.delCountVerify = 0;
-                for (var idx: any in worksSrvc.groups){
+                for (idx in worksSrvc.groups){
                     if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
                         $scope.bulkDeleteCount++;
                     }
@@ -322,9 +323,9 @@ export const WorkCtrl = angular.module('orcidApp').controller(
             };    
 
             $scope.toggleClickPrivacyHelp = function(key) {
-                /*if (!document.documentElement.className.contains('no-touch')){
+                if ( document.documentElement.className.indexOf('no-touch') == -1 ){
                     $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-                }*/
+                }
             };
 
             $scope.addExternalIdentifier = function () {
@@ -723,20 +724,20 @@ export const WorkCtrl = angular.module('orcidApp').controller(
 
             // remove once grouping is live
             $scope.moreInfoClick = function(work, $event) {
-                /*if (!document.documentElement.className.contains('no-touch')){
+                if (document.documentElement.className.indexOf('no-touch') == -1){
                     $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }*/
+                }
             };
 
             // remove once grouping is live
             $scope.moreInfoMouseEnter = function(work, $event) {
                 $event.stopPropagation();
-                /*if (document.documentElement.className.contains('no-touch')){
+                if (document.documentElement.className.indexOf('no-touch') > -1){
                     $scope.loadWorkInfo(work.putCode.value, $event);
                 }
                 else{
                     $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
-                }*/
+                }
             };
 
             $scope.showDetailsMouseClick = function(group, $event) {
