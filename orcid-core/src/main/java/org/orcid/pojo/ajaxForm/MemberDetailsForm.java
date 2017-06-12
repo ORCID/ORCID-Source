@@ -29,7 +29,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SubMember;
 
-public class ConsortiumForm implements ErrorsInterface, Serializable {
+public class MemberDetailsForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String accountId;
@@ -134,8 +134,8 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         this.isAllowedFullAccess = isAllowedFullAccess;
     }
 
-    public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
-        ConsortiumForm form = new ConsortiumForm();
+    public static MemberDetailsForm fromMemberDetails(MemberDetails memberDetails) {
+        MemberDetailsForm form = new MemberDetailsForm();
         Member member = memberDetails.getMember();
         form.setAccountId(member.getId());
         form.setName(Text.valueOf(member.getPublicDisplayName()));

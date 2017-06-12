@@ -34,7 +34,7 @@ import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.ConsortiumForm;
+import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
 import org.springframework.stereotype.Controller;
@@ -53,8 +53,8 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping(value = { "/manage-consortium" })
-public class ManageConsortiumController extends BaseController {
+@RequestMapping(value = { "/self-service", "/manage-consortium", })
+public class SelfServiceController extends BaseController {
 
     private static final String NOT_PUBLIC = "not public";
 
@@ -91,26 +91,26 @@ public class ManageConsortiumController extends BaseController {
 
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
-        return new ModelAndView("redirect:/manage-consortium/" + salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid()));
+        return new ModelAndView("redirect:/self-service/" + salesForceManager.retrieveAccountIdByOrcid(getCurrentUserOrcid()));
     }
 
     @RequestMapping("/{accountId}")
     public ModelAndView getManageConsortiumPage(@PathVariable(required = false) String accountId) {
-        ModelAndView mav = new ModelAndView("manage_consortium");
+        ModelAndView mav = new ModelAndView("self_service");
         return mav;
     }
 
-    @RequestMapping(value = "/get-consortium.json", method = RequestMethod.GET)
-    public @ResponseBody ConsortiumForm getConsortium(@RequestParam("accountId") String accountId) {
+    @RequestMapping(value = "/get-member-details.json", method = RequestMethod.GET)
+    public @ResponseBody MemberDetailsForm getConsortium(@RequestParam("accountId") String accountId) {
         checkAccess(accountId);
         MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
-        ConsortiumForm consortiumForm = ConsortiumForm.fromMemberDetails(memberDetails);
+        MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
         consortiumForm.setAllowedFullAccess(isAllowedFullAccess(accountId));
         return consortiumForm;
     }
 
-    @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
-    public @ResponseBody ConsortiumForm updateConsortium(@RequestBody ConsortiumForm consortium) {
+    @RequestMapping(value = "/update-member-details.json", method = RequestMethod.POST)
+    public @ResponseBody MemberDetailsForm updateMemberDetails(@RequestBody MemberDetailsForm consortium) {
         MemberDetails memberDetails = consortium.toMemberDetails();
         Member member = memberDetails.getMember();
         checkAccess(member.getId());

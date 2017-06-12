@@ -16,20 +16,20 @@
     =============================================================================
 
 -->
-<@public nav="manage-consortium">
+<@public nav="self-service">
     <div class="row" ng-controller="externalConsortiumCtrl">
         <div class="col-md-3 lhs col-sm-12 col-xs-12 padding-fix">
             <#include "includes/id_banner.ftl"/>
         </div>
-        <div class="col-md-9 col-sm-12 col-xs-12 manage-consortium">
-            <h1 id="manage-consortium-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
+        <div class="col-md-9 col-sm-12 col-xs-12 self-service">
+            <h1 id="self-service-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
             <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
             	<a href="<@orcid.rootPath '/members'/>" target="_blank"><@spring.message "manage_consortium.member_list_link"/></a>
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="consortium != null" ng-cloak>
                 <div class="topBuffer">
-                	<h2 id="manage-consortium-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
+                	<h2 id="self-service-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
                     <h3 class="topBuffer"><@spring.message "manage_consortium.public_display"/></h3>
                     <!-- Name -->
                     <div class="row">
@@ -90,8 +90,8 @@
                     <!-- Buttons -->
 	                <div class="row">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
-	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateConsortiumShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
-	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="updateConsortium()" ng-disabled="updateConsortiumDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
+	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateMemberDetailsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
+	                        <button id="bottom-confirm-update-consortium" class="btn btn-primary" ng-click="updateMemberDetails()" ng-disabled="updateMemberDetailsDisabled"><@orcid.msg 'manage_consortium.save_public_info'/></button>
 	                        <a href="" class="cancel-right" ng-click="closeModalReload()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div> 
