@@ -86,7 +86,7 @@ sub {
 .bottomBuffer {
     margin-bottom: 1em;
 }
-
+ƒ
 .topBuffer {
     margin-top: 1em;
 }
@@ -5939,6 +5939,7 @@ ul.oauth-scopes li {
 }
 
 .oauth-registration .form-group div.col-sm-9,
+.oauth-registration .form-group label.col-sm-6,
 .oauth-registration .form-group label.col-sm-3 {
     padding: 0;
 }
