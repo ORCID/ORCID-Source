@@ -23,7 +23,7 @@
 	<@spring.bind "loginForm" />
 	<@spring.showErrors "<br/>" "error" />
 				
-	<div class="login">		
+	<div>		
 		<div class="row">						
 			<@orcid.checkFeatureStatus featureName='OAUTH_2SCREENS' enabled=false>
 				<div class="login" ng-controller="LoginLayoutController">
@@ -198,22 +198,22 @@
 				      <p class="title" ng-show="!showRegisterForm" ng-cloak>Sign into ORCID or <a href="#" id="switch-to-register-form" ng-click="switchForm()">Register now</a></p>
 				      <p class="title" ng-show="showRegisterForm" ng-cloak>Already have an ORCID iD? <a href="#" id = "switch-to-login-form" ng-click="switchForm()">Sign In</a></p>
 				   </div>
-				   <div ng-show="personalLogin && !showRegisterForm">
+				   <div ng-show="!showRegisterForm">
 				      <#if shibbolethEnabled>
-				      <div class="row">
-				         <div class="col-md-12">
-				            <p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>
-				         </div>
-				      </div>
+					      <div class="row">
+					         <div class="col-md-12">
+					            <p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>
+					         </div>
+					      </div>
 				      </#if>  		
 				      <div class="row personal-login" ng-cloak>
 				         <#if shibbolethEnabled>
-				         <div class="btn-group btn-group-justified" role="group">
-				            <a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-				            <a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-				         </div>
-				         </#if>	
-				         <div class="col-md-12">
+					         <div class="btn-group btn-group-justified" role="group">
+					            <a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+					            <a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+					         </div>
+					         </#if>	
+				         <div class="col-md-12" ng-show="personalLogin == true">
 				            <div class="login-box">
 				               <!-- ORCID ACCOUNT LOGIN -->
 				               <div class="personal-account-login">
@@ -316,7 +316,7 @@
 				               </div>
 				            </div>
 				         </div>
-				      </div>
+				      </div>				      
 				      <!-- SHIBBOLETH -->
 				      <div class="row institution-login" ng-show="personalLogin == false"  ng-cloak>
 				         <div class="col-md-12">

@@ -62,7 +62,7 @@ if (typeof jQuery == 'undefined') {
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
 
-
+<!--
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-cookies.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-sanitize.min.js"></script>
@@ -74,10 +74,15 @@ if (typeof angular == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.2/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
 }
 </script>
+-->
+
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
-<script type="text/javascript" src="${staticCdn}/javascript/angular-ui/typeahead/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
+<script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
+<!--
+<script type="text/javascript" src="${staticCdn}/javascript/angular-ui/typeahead/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
+-->
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
     var script = document.createElement("script");
@@ -86,7 +91,6 @@ if (typeof angular == 'undefined') {
     document.body.appendChild(script);
 </script>
 
-<script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
 <script type="text/javascript">
    var script = document.createElement("script");
@@ -94,9 +98,9 @@ if (typeof angular == 'undefined') {
    script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
    document.body.appendChild(script);
 </script>
-
+<!--
 <script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
-
+-->
 
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>

@@ -21,7 +21,7 @@
 
 var enableRightToLeft = function(){
     var rightToLeftLang = ["rl", "ar"];
-    var currentLanguage = locale_v3;
+    var currentLanguage = lang;
 
     document.getElementsByTagName('html')[0].setAttribute('lang', currentLanguage); //Update the lang attribute on the html tag, this was missing.
 
@@ -382,8 +382,8 @@ function myTest() {
 }
 
 function checkOrcidLoggedIn() {	
-    if (OrcidCookie.checkIfCookiesEnabled())
-        if ($("meta[name='_csrf']").attr("content") != '')
+    if (OrcidCookie.checkIfCookiesEnabled()) {    
+        if ($("meta[name='_csrf']").attr("content") != ''){
             $.ajax({
                 url : orcidVar.baseUri + '/userStatus.json?callback=?',
                 type : 'POST',
@@ -405,8 +405,11 @@ function checkOrcidLoggedIn() {
                 console.log("error with loggin check on :"
                         + window.location.href);
                 logAjaxError(e);
-                window.location = window.location.href;
+                window.location.reload(true);
             });
+            
+        }
+    }
 }
 
 var OM = OrcidMessage;

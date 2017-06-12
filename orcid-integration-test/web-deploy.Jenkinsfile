@@ -11,9 +11,9 @@ node {
             string(defaultValue: 'classpath:test-client.properties,classpath:test-web.properties', description: 'Persistence properties file', name: 'test_properties_file')
         ]),
         disableConcurrentBuilds(),
-        pipelineTriggers([
-            cron('0 H/4 * * *')
-        ])
+        //pipelineTriggers([
+        //    cron('0 H/4 * * 1-5')
+        //])
     ])
     
     git url: 'https://github.com/ORCID/ORCID-Source.git', branch: "${branch_to_build}"
@@ -25,6 +25,10 @@ node {
     def firefox_home = '/usr/bin/firefox'
     
     def gecko_home = '/usr/local/bin/geckodriver'
+
+    stage('Clean up test data'){
+        sh "psql -U jenkins -d orcid -f ~/clean_all_tables.sql"
+    }
     
     stage('Build and Pack'){
         echo "Packaging..."
@@ -50,15 +54,15 @@ node {
     }
     
     stage('Build orcid_generated.js'){
-        do_maven("clean install -f orcid-nodejs/pom.xml -Dnodejs.workingDirectory=${WORKSPACE}/orcid-web/src/main/webapp/static/javascript/ng1Orcid -DwebpackConfig=ci")
+        do_maven("clean install -f orcid-nodejs/pom.xml -Dnodejs.workingDirectory=${WORKSPACE}/orcid-web/src/main/webapp/static/javascript/ng1Orcid -DwebpackConfig=localhost")
         
-    }    
+    }
     
     stage('Setup Clients and Users'){
         // or try postgres@ci-3:~$ psql -f ~/orcid.setup.db
         def setup_users = false
         try {
-            timeout(time:30,unit:'SECONDS'){
+            timeout(time:10,unit:'SECONDS'){
                 setup_users = input message: 'Would you like to STOP setup clients and users ?', 
                                          ok: 'Skip',
                                  parameters: [booleanParam(defaultValue: false, description: '', name: 'Skip ?')]
@@ -73,31 +77,7 @@ node {
             do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -DfailIfNoTests=false -Dorg.orcid.config.file='$setup_properties_file'")
         }
     }
-    
-    stage('Execute Black-Box Tests'){
-        try {
-            do_maven("test -f orcid-integration-test/pom.xml -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.config.file=$test_properties_file -DfailIfNoTests=false -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.persistence.db.dataSource=simpleDataSource -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=$firefox_home -Dwebdriver.gecko.driver=$gecko_home")
-            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER OK [${JOB_URL}]", 'SUCCESS')
-        } catch(Exception err) {
-            def err_msg = err.getMessage()
-            echo "Tests problem: $err_msg"
-            orcid_notify("BlackBoxTestSuite ${branch_to_build}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
-            throw err
-        } finally {
-            echo "Saving tests results"
-            junit '**/target/surefire-reports/*.xml'
-            build([
-                job: 'ORCID-tomcat',
-                parameters: [
-                    string(name: 'tomcat_task', value: 'shutdown')
-                ],
-                wait: false
-            ])
-        }
-    }
-    stage('Clean up test data'){
-        sh "psql -U jenkins -d orcid -f ~/clean_all_tables.sql"
-    }
+
 }
 def do_maven(mvn_task){
     def MAVEN = tool 'ORCID_MAVEN'
