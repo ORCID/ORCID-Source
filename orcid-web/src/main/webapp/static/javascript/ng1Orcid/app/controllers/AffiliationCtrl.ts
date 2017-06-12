@@ -1,4 +1,15 @@
-angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
+declare var $: any;
+declare var ActSortState: any;
+declare var colorbox: any;
+declare var formColorBoxResize: any;
+declare var getBaseUri: any;
+declare var GroupedActivities: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const AffiliationCtrl = angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', 'emailSrvc', 'initialConfigService', function ($scope, $rootScope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc, emailSrvc, initialConfigService){
     $scope.affiliationsSrvc = affiliationsSrvc;
     $scope.editAffiliation;
     $scope.emailSrvc = emailSrvc;
@@ -35,7 +46,7 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     };
 
     $scope.toggleClickPrivacyHelp = function(key) {
-        if (!document.documentElement.className.contains('no-touch')) {
+        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if ($scope.privacyHelpCurKey != null
                     && $scope.privacyHelpCurKey != key) {
                 $scope.privacyHelp[$scope.privacyHelpCurKey]=false;
@@ -48,7 +59,7 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
 
     // remove once grouping is live
     $scope.toggleClickMoreInfo = function(key) {
-        if (!document.documentElement.className.contains('no-touch')) {
+        if ( document.documentElement.className.indexOf('no-touch') == -1 ) {
             if ($scope.moreInfoCurKey != null
                     && $scope.moreInfoCurKey != key) {
                 $scope.moreInfo[$scope.moreInfoCurKey]=false;
@@ -61,7 +72,7 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
     // remove once grouping is live
     $scope.moreInfoMouseEnter = function(key, $event) {
         $event.stopPropagation();
-        if (document.documentElement.className.contains('no-touch')) {
+        if (document.documentElement.className.indexOf('no-touch') > -1) {
             if ($scope.moreInfoCurKey != null
                     && $scope.moreInfoCurKey != key) {
                 $scope.privacyHelp[$scope.moreInfoCurKey]=false;
@@ -189,8 +200,8 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
                             $scope.showAddModal();
                         });
                     }
-                }).fail(function() {
-                    console.log("Error fetching affiliation: " + value);
+                }).fail(function(e) {
+                    console.log("Error fetching affiliation: ", $scope.editAffiliation.affiliationType.value,  e);
                 });
             } else {
                 $scope.editAffiliation = affiliation;
@@ -316,3 +327,7 @@ angular.module('orcidApp').controller('AffiliationCtrl', ['$scope', '$rootScope'
         $scope.showElement[element] = false;
     };
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class AffiliationCtrlNg2Module {}
