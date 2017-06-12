@@ -311,7 +311,8 @@
 							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span>
 							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="_blank">
 								<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
-								<span ng-show="selectedRedirectUri.value.value != googleUri">{{playgroundExample}}</span>
+								<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
+								<span ng-show="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>
 							</a></span>
 						</div>
 					</div>
@@ -427,7 +428,7 @@
 					<div class="col-md-9 col-sm-9 col-xs-9 add-options">
 						<a href="" class="icon-href-bg" ng-click="addUriToExistingClientTable()"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
 						<div class="add-options margin-bottom-box">								
-							<div ng-show="!hideGoogleUri">
+							<div>
 								<h4><@orcid.msg 'manage.developer_tools.test_redirect_uris.title' /></h4>
 								<ul class="pullleft-list">
 									<li ng-show="!hideGoogleUri" id="google-ruir"><a href="" class="icon-href" ng-click="addTestRedirectUri('google','true')"><span class="glyphicon glyphicon-plus"></span><@orcid.msg 'manage.developer_tools.edit.google'/></a></li>										
