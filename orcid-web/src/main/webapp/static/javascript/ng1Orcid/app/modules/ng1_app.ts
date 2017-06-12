@@ -7,7 +7,7 @@ import * as angular from 'angular'
 import * as vcRecaptcha from 'angular-recaptcha'
 import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
-import typeahead from 'angular-ui-bootstrap/src/typeahead/index-nocss.js';
+import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
 
 //import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
@@ -20,8 +20,10 @@ export const orcidApp = angular.module(
         ngCookies,
         ngSanitize, 
         vcRecaptcha,
+        //typeahead
+        uibootstraptypeahead
         //'ui.multiselect', 
-        //typeahead//,
+        //'ui.bootstrap'//,
         //'EmailFrequencyCtrl'
         //EmailFrequencyModule.name
     ]

@@ -41,15 +41,17 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.paulhammant.ngwebdriver.NgWebDriver;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BBBUtil {
     
-    private static String angularWaitScript;
+    private static String jQueryWaitScript;
     static {
         try {
-            angularWaitScript = IOUtils.toString(BBBUtil.class.getResourceAsStream("angularWait.js"));
+            jQueryWaitScript = IOUtils.toString(BBBUtil.class.getResourceAsStream("jqueryWait.js"));
         } catch (IOException e) {
-            throw new RuntimeException("Error reading angular wait script", e);
+            throw new RuntimeException("Error reading jquery wait script", e);
         }
     }
 
@@ -243,8 +245,12 @@ public class BBBUtil {
         return new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(WebDriver driver) {
-                ((JavascriptExecutor) driver).executeScript(angularWaitScript);
-                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_angular_done;").toString());
+                ((JavascriptExecutor) driver).executeScript(jQueryWaitScript);
+                Boolean jqueryDone = Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window._selenium_jquery_done;").toString());
+                if (jqueryDone) {
+                    new NgWebDriver((JavascriptExecutor) driver).waitForAngularRequestsToFinish();
+                }
+                return jqueryDone;
             }
         };
     }
