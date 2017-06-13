@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
@@ -183,6 +184,21 @@ public class ActivityUtils {
         }
     }
     
+    /**
+     * Set the path attribute to all works in the workBulk element
+     * 
+     * @param workBulk
+     */
+    public static void setPathToBulk(WorkBulk workBulk, String orcid) {
+        if (workBulk != null && workBulk.getBulk() != null) {
+            workBulk.getBulk().forEach(b -> {
+                if (b instanceof Work) {
+                    setPathToActivity((Work) b, orcid);
+                }
+            });
+        }
+    }
+    
     public static void cleanEmptyFields(ActivitiesSummary summaries) {
         if(summaries != null) {
             if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
@@ -261,4 +277,13 @@ public class ActivityUtils {
         }
     }
 
+    public static void cleanEmptyFields(Funding funding) {
+        if(funding != null && funding.getContributors() != null && !funding.getContributors().getContributor().isEmpty()) {
+            for(FundingContributor c : funding.getContributors().getContributor()) {
+                if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+                    c.setCreditName(null);
+                }
+            }
+        }
+    }
 }

@@ -365,6 +365,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
+        ActivityUtils.cleanEmptyFields(f);
         sourceUtils.setSourceName(f);
         contributorUtils.filterContributorPrivateData(f);
         return Response.ok(f).build();

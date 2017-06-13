@@ -42,6 +42,10 @@ import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Citation;
+import org.orcid.jaxb.model.record_v2.CitationType;
+import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
+import org.orcid.jaxb.model.record_v2.FundingContributors;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
@@ -114,6 +118,7 @@ public class ActivityUtilsTest {
 
     @Test
     public void cleanEmptyActivitiesSummaryTest() {
+        // Test it cleans empty fields
         WorkSummary s = getEmptyWorkSummary();
         ActivitiesSummary x = new ActivitiesSummary();
         Works w = new Works();
@@ -124,10 +129,27 @@ public class ActivityUtilsTest {
         assertNotNull(x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
         ActivityUtils.cleanEmptyFields(x);
         assertNull(x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
+
+        // Test it doesn't remove non empty fields
+        s = getEmptyWorkSummary();
+        s.getTitle().getTranslatedTitle().setContent("test");
+        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");
+        x = new ActivitiesSummary();
+        w = new Works();
+        g = new WorkGroup();
+        g.getWorkSummary().add(s);
+        w.getWorkGroup().add(g);
+        x.setWorks(w);
+        assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        ActivityUtils.cleanEmptyFields(x);
+        assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
     }
 
     @Test
     public void cleanWorksTest() {
+        // Test it cleans empty fields
         WorkSummary s = getEmptyWorkSummary();
         Works w = new Works();
         WorkGroup g = new WorkGroup();
@@ -136,18 +158,44 @@ public class ActivityUtilsTest {
         assertNotNull(w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
         ActivityUtils.cleanEmptyFields(w);
         assertNull(w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
+        
+        // Test it doesn't remove non empty fields
+        s = getEmptyWorkSummary();
+        s.getTitle().getTranslatedTitle().setContent("test");
+        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");        
+        w = new Works();
+        g = new WorkGroup();
+        g.getWorkSummary().add(s);
+        w.getWorkGroup().add(g);
+        assertEquals("test", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        ActivityUtils.cleanEmptyFields(w);
+        assertEquals("test", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", w.getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());                        
     }
 
     @Test
     public void cleanWorkSummaryTest() {
+        // Test it cleans empty fields
         WorkSummary s = getEmptyWorkSummary();
         assertNotNull(s.getTitle().getTranslatedTitle());
         ActivityUtils.cleanEmptyFields(s);
         assertNull(s.getTitle().getTranslatedTitle());
+        
+        // Test it doesn't remove non empty fields
+        s = getEmptyWorkSummary();
+        s.getTitle().getTranslatedTitle().setContent("test");
+        s.getTitle().getTranslatedTitle().setLanguageCode("en_us");        
+        assertEquals("test", s.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", s.getTitle().getTranslatedTitle().getLanguageCode());
+        ActivityUtils.cleanEmptyFields(s);
+        assertEquals("test", s.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", s.getTitle().getTranslatedTitle().getLanguageCode());
     }
 
     @Test
     public void cleanWorkTest() {
+        // Test it cleans empty fields
         Work w = getEmptyWork();
         assertNotNull(w.getWorkTitle().getTranslatedTitle());
         assertNotNull(w.getWorkCitation());
@@ -156,10 +204,30 @@ public class ActivityUtilsTest {
         assertNull(w.getWorkTitle().getTranslatedTitle());
         assertNull(w.getWorkCitation());
         assertNull(w.getWorkContributors().getContributor().get(0).getCreditName());
+        
+        // Test it doesn't remove non empty fields
+        w = getEmptyWork();
+        w.getWorkTitle().getTranslatedTitle().setContent("translated_title");
+        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        w.getWorkCitation().setCitation("citation");
+        w.getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
+        w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");        
+        assertEquals("translated_title", w.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", w.getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, w.getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", w.getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        ActivityUtils.cleanEmptyFields(w);
+        assertEquals("translated_title", w.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", w.getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, w.getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", w.getWorkContributors().getContributor().get(0).getCreditName().getContent());
     }
 
     @Test
     public void cleanBulkElementTest() {
+        // Test it cleans empty fields
         BulkElement b = getEmptyWork();
         assertNotNull(((Work) b).getWorkTitle().getTranslatedTitle());
         assertNotNull(((Work) b).getWorkCitation());
@@ -168,10 +236,30 @@ public class ActivityUtilsTest {
         assertNull(((Work) b).getWorkTitle().getTranslatedTitle());
         assertNull(((Work) b).getWorkCitation());
         assertNull(((Work) b).getWorkContributors().getContributor().get(0).getCreditName());
+        
+        // Test it doesn't remove non empty fields
+        b = getEmptyWork();
+        ((Work) b).getWorkTitle().getTranslatedTitle().setContent("translated_title");
+        ((Work) b).getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        ((Work) b).getWorkCitation().setCitation("citation");
+        ((Work) b).getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
+        ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");       
+        assertEquals("translated_title", ((Work) b).getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", ((Work) b).getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, ((Work) b).getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        ActivityUtils.cleanEmptyFields(b);
+        assertEquals("translated_title", ((Work) b).getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", ((Work) b).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", ((Work) b).getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, ((Work) b).getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", ((Work) b).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
     }
 
     @Test
     public void cleanBulkWorkTest() {
+        // Test it cleans empty fields
         WorkBulk bulk = new WorkBulk();
         Work w = getEmptyWork();
         bulk.getBulk().add(w);
@@ -182,6 +270,46 @@ public class ActivityUtilsTest {
         assertNull(((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle());
         assertNull(((Work) bulk.getBulk().get(0)).getWorkCitation());
         assertNull(((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName());
+        
+        // Test it doesn't remove non empty fields
+        bulk = new WorkBulk();
+        w = getEmptyWork();        
+        w.getWorkTitle().getTranslatedTitle().setContent("translated_title");
+        w.getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
+        w.getWorkCitation().setCitation("citation");
+        w.getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
+        w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");        
+        bulk.getBulk().add(w);
+        assertEquals("translated_title", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", ((Work) bulk.getBulk().get(0)).getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, ((Work) bulk.getBulk().get(0)).getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", ((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        ActivityUtils.cleanEmptyFields(bulk);
+        assertEquals("translated_title", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en_us", ((Work) bulk.getBulk().get(0)).getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("citation", ((Work) bulk.getBulk().get(0)).getWorkCitation().getCitation());
+        assertEquals(CitationType.BIBTEX, ((Work) bulk.getBulk().get(0)).getWorkCitation().getWorkCitationType());
+        assertEquals("credit_name", ((Work) bulk.getBulk().get(0)).getWorkContributors().getContributor().get(0).getCreditName().getContent());        
+    }
+    
+    @Test
+    public void cleanFundingTest() {
+        // Test it cleans empty fields
+        Funding f = getEmptyFunding();
+        assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
+        assertNotNull(f.getContributors().getContributor().get(0).getCreditName().getContent());
+        ActivityUtils.cleanEmptyFields(f);
+        assertNull(f.getContributors().getContributor().get(0).getCreditName());
+        
+        // Test it doesn't remove non empty fields
+        f = getEmptyFunding();
+        f.getContributors().getContributor().get(0).getCreditName().setContent("test");
+        assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
+        assertEquals("test", f.getContributors().getContributor().get(0).getCreditName().getContent());
+        ActivityUtils.cleanEmptyFields(f);
+        assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
+        assertEquals("test", f.getContributors().getContributor().get(0).getCreditName().getContent());        
     }
 
     private Educations getEducations() {
@@ -257,5 +385,15 @@ public class ActivityUtilsTest {
         wc.getContributor().add(c);
         w.setWorkContributors(wc);
         return w;
+    }
+    
+    private Funding getEmptyFunding() {
+        Funding f = new Funding();
+        FundingContributors fcs = new FundingContributors();
+        FundingContributor fc = new FundingContributor();
+        fc.setCreditName(new CreditName(""));
+        fcs.getContributor().add(fc);
+        f.setContributors(fcs);
+        return f;
     }
 }

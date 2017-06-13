@@ -300,6 +300,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
+        ActivityUtils.cleanEmptyFields(f);
         sourceUtilsReadOnly.setSourceName(f);
         contributorUtilsReadOnly.filterContributorPrivateData(f);
         return Response.ok(f).build();
@@ -606,6 +607,7 @@ public class PublicV2ApiServiceDelegatorImpl
         publicAPISecurityManagerV2.filter(workBulk);
         contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);
+        ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
     }
