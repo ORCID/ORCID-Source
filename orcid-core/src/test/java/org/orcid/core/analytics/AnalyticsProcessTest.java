@@ -89,6 +89,7 @@ public class AnalyticsProcessTest {
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(true);
         process.setIp("37.14.150.83");
+        process.setScheme("https");
 
         Thread t = new Thread(process);
         t.start();
@@ -111,6 +112,38 @@ public class AnalyticsProcessTest {
     }
     
     @Test
+    public void testSchemeCorrection() throws InterruptedException {
+        String clientDetailsId = "some-client-details-id";
+        Mockito.when(clientDetailsEntityCacheManager.retrieve(Mockito.eq(clientDetailsId))).thenReturn(getPublicClient());
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getRequestWithHttpScheme();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setClientDetailsId(clientDetailsId);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("37.14.150.83");
+        process.setScheme("https");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
+    }
+    
+    @Test
     public void testAnalyticsProcessForIPv6() throws InterruptedException {
         String clientDetailsId = "some-client-details-id";
         Mockito.when(clientDetailsEntityCacheManager.retrieve(Mockito.eq(clientDetailsId))).thenReturn(getPublicClient());
@@ -128,6 +161,7 @@ public class AnalyticsProcessTest {
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(true);
         process.setIp("0:0:0:0:0:0:0:1");
+        process.setScheme("https");
 
         Thread t = new Thread(process);
         t.start();
@@ -167,6 +201,7 @@ public class AnalyticsProcessTest {
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(false);
         process.setIp("37.14.150.83");
+        process.setScheme("https");
 
         Thread t = new Thread(process);
         t.start();
@@ -203,6 +238,7 @@ public class AnalyticsProcessTest {
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setPublicApi(true);
         process.setIp("37.14.150.83");
+        process.setScheme("https");
 
         Thread t = new Thread(process);
         t.start();
@@ -249,6 +285,14 @@ public class AnalyticsProcessTest {
         ContainerResponse response = new ContainerResponse(new WebApplicationImpl(), request, null);
         response.setStatus(200);
         return response;
+    }
+    
+    private ContainerRequest getRequestWithHttpScheme() {
+        InBoundHeaders headers = new InBoundHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
+        headers.add(HttpHeaders.USER_AGENT, "blah");
+        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
+                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
     }
 
     private ContainerRequest getRequest() {

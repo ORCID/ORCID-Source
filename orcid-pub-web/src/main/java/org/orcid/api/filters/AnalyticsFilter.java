@@ -25,6 +25,7 @@ import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.utils.OrcidRequestUtil;
 
 import com.sun.jersey.api.core.InjectParam;
@@ -66,6 +67,7 @@ public class AnalyticsFilter implements ContainerResponseFilter {
         process.setPublicApi(true);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setIp(OrcidRequestUtil.getIpAddress(httpServletRequest));
+        process.setScheme(OrcidUrlManager.getscheme(httpServletRequest));
         return process;
     }
 
