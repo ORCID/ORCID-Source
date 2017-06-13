@@ -3169,15 +3169,15 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
     $scope.userCredentials = null;
     $scope.editing = false;
     $scope.hideGoogleUri = false;
-    $scope.hideRunscopeUri = false;
+    $scope.hideSwaggerUri = false;
+    $scope.hideSwaggerMemberUri = false;
     $scope.googleUri = 'https://developers.google.com/oauthplayground';
-    $scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
+    $scope.swaggerUri = orcidVar.pubBaseUri +"/v2.0/";
+    $scope.swaggerMemberUri = $scope.swaggerUri.replace("pub","api");
     $scope.playgroundExample = '';
     $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
     $scope.sampleAuthCurl = '';
     $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
-    $scope.runscopeExample = '';
-    $scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
     $scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
     $scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&scope=/authenticate&redirect_uri=[REDIRECT_URI]';
     $scope.tokenURL = orcidVar.pubBaseUri + '/oauth/token';
@@ -3280,11 +3280,17 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
                     if(data != null && data.clientSecret != null) {
                         $scope.playgroundExample = '';
                         $scope.userCredentials = data;
-                        $scope.hideGoogleUri = false;                        
+                        $scope.hideGoogleUri = false;
+                        $scope.hideSwaggerUri = false;
+                        $scope.hideSwaggerMemberUri = false;
                         $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
                         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
                             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                                 $scope.hideGoogleUri = true;
+                            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerUri = true;
+                            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerMemberUri = true;
                             }
 
                             if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
@@ -3314,6 +3320,8 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
             success: function(data) {
                 $scope.$apply(function(){
                     $scope.hideGoogleUri = false;
+                    $scope.hideSwaggerUri = false;
+                    $scope.hideSwaggerMemberUri = false;
                     $scope.creating = true;
                     $scope.userCredentials = data;
                 });
@@ -3326,9 +3334,15 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
     $scope.addRedirectURI = function() {
         $scope.userCredentials.redirectUris.push({value: '',type: 'default'});
         $scope.hideGoogleUri = false;
+        $scope.hideSwaggerUri = false;
+        $scope.hideSwaggerMemberUri = false;
         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                 $scope.hideGoogleUri = true;
+            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerUri = true;
+            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerMemberUri = true;
             }
         }
     };
@@ -3348,10 +3362,16 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
                         // SHOW ERROR
                     } else {
                         $scope.hideGoogleUri = false;
+                        $scope.hideSwaggerUri = false;
+                        $scope.hideSwaggerMemberUri = false;
                         $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
                         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
                             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                                 $scope.hideGoogleUri = true;
+                            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerUri = true;
+                            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerMemberUri = true;
                             }
 
                             if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
@@ -3405,9 +3425,11 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                 $scope.hideGoogleUri=true;
-            } else if($scope.runscopeUri == $scope.userCredentials.redirectUris[i].value.value) {
-                $scope.hideRunscopeUri=true;
-            }
+            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerUri = true;
+            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerMemberUri = true;
+            } 
         }
         $scope.editing = true;
         $('.developer-tools .slidebox').slideDown();
@@ -3439,10 +3461,16 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
                     } else {
                         $scope.editing = false;
                         $scope.hideGoogleUri = false;
+                        $scope.hideSwaggerUri = false;
+                        $scope.hideSwaggerMemberUri = false;
                         $scope.selectedRedirectUri = $scope.userCredentials.redirectUris[0];
                         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
                             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                                 $scope.hideGoogleUri = true;
+                            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerUri = true;
+                            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                                $scope.hideSwaggerMemberUri = true;
                             }
 
                             if($scope.userCredentials.redirectUris[i].value.value < $scope.selectedRedirectUri.value.value) {
@@ -3464,17 +3492,28 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
     $scope.deleteRedirectUri = function(idx) {
         $scope.userCredentials.redirectUris.splice(idx, 1);
         $scope.hideGoogleUri = false;
+        $scope.hideSwaggerUri = false;
+        $scope.hideSwaggerMemberUri = false;
         for(var i = 0; i < $scope.userCredentials.redirectUris.length; i++) {
             if($scope.googleUri == $scope.userCredentials.redirectUris[i].value.value) {
                 $scope.hideGoogleUri = true;
+            }else if ($scope.swaggerUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerUri = true;
+            }else if ($scope.swaggerMemberUri == $scope.userCredentials.redirectUris[i].value.value){
+                $scope.hideSwaggerMemberUri = true;
             }
         }
     };
 
     $scope.addTestRedirectUri = function(type) {
-        var rUri = $scope.runscopeUri;
         if(type == 'google'){
             rUri = $scope.googleUri;
+        }
+        if(type == 'swagger'){
+            rUri = $scope.swaggerUri;
+        }
+        if(type == 'swagger-member'){
+            rUri = $scope.swaggerMemberUri;
         }
 
         $.ajax({
@@ -3490,6 +3529,12 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
                     }
                     if(type == 'google') {
                         $scope.hideGoogleUri = true;
+                    }
+                    if(type == 'swagger'){
+                        $scope.hideSwaggerUri = true;
+                    }
+                    if(type == 'swagger-member'){
+                        $scope.hideSwaggerMemberUri = true;
                     }
                 });
             }
@@ -3512,8 +3557,12 @@ angular.module('orcidApp').controller('SSOPreferencesCtrl',['$scope', '$compile'
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[CLIENT_SECRET]', selectedClientSecret);
             $scope.playgroundExample = example;
+        }else if($scope.swaggerUri == selectedRedirectUriValue) {
+            $scope.playgroundExample = $scope.swaggerUri;
+        }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
+            $scope.playgroundExample = $scope.swaggerMemberUri;
         }
-
+        
         var example = $scope.authorizeURLTemplate;
         example = example.replace('BASE_URI]', orcidVar.baseUri);
         example = example.replace('[CLIENT_ID]', clientId);
@@ -3611,10 +3660,14 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
     $scope.viewing = false;
     $scope.listing = true;
     $scope.hideGoogleUri = true;
+    $scope.hideSwaggerUri = true;
+    $scope.hideSwaggerMemberUri = true;
     $scope.selectedRedirectUri = "";
     $scope.selectedScope = "";
     // Google example
     $scope.googleUri = 'https://developers.google.com/oauthplayground';
+    $scope.swaggerUri = orcidVar.pubBaseUri+ '/v2.0/';
+    $scope.swaggerMemberUri = $scope.swaggerUri.replace("pub","api");
     $scope.playgroundExample = '';
     $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
     // Curl example
@@ -3640,6 +3693,9 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
                     $scope.viewing = false;
                     $scope.listing = true;
                     $scope.hideGoogleUri = false;
+                    $scope.hideSwaggerUri = false;
+                    $scope.hideSwaggerMemberUri = false;
+
                 });
             }
         }).fail(function() {
@@ -3661,6 +3717,8 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
                     $scope.editing = false;
                     $scope.viewing = false;
                     $scope.hideGoogleUri = false;
+                    $scope.hideSwaggerUri = false;
+                    $scope.hideSwaggerMemberUri = false;
                 });
             }
         }).fail(function() {
@@ -3682,11 +3740,16 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
     $scope.deleteUriOnNewClient = function(idx){
         $scope.newClient.redirectUris.splice(idx, 1);
         $scope.hideGoogleUri = false;
+        $scope.hideSwaggerUri = false;
+        $scope.hideSwaggerMemberUri = false;
         if($scope.newClient.redirectUris != null && $scope.newClient.redirectUris.length > 0) {
             for(var i = 0; i < $scope.newClient.redirectUris.length; i++) {
                 if($scope.newClient.redirectUris[i].value.value == $scope.googleUri) {
                     $scope.hideGoogleUri = true;
-                    break;
+                }else if ($scope.swaggerUri == $scope.newClient.redirectUris[i].value.value){
+                    $scope.hideSwaggerUri = true;
+                }else if ($scope.swaggerMemberUri == $scope.newClient.redirectUris[i].value.value){
+                    $scope.hideSwaggerMemberUri = true;
                 }
             }
         }
@@ -3696,11 +3759,16 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
     $scope.deleteUriOnExistingClient = function(idx){
         $scope.clientToEdit.redirectUris.splice(idx, 1);
         $scope.hideGoogleUri = false;
+        $scope.hideSwaggerUri = false;
+        $scope.hideSwaggerMemberUri = false;
         if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
             for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
                 if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
                     $scope.hideGoogleUri = true;
-                    break;
+                }else if ($scope.swaggerUri == $scope.clientToEdit.redirectUris[i].value.value){
+                    $scope.hideSwaggerUri = true;
+                }else if ($scope.swaggerMemberUri == $scope.clientToEdit.redirectUris[i].value.value){
+                    $scope.hideSwaggerMemberUri = true;
                 }
             }
         }
@@ -3710,6 +3778,12 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
         var rUri = '';
         if(type == 'google'){
             rUri = $scope.googleUri;
+        }
+        if(type == 'swagger'){
+            rUri = $scope.swaggerUri;
+        }
+        if(type == 'swagger-member'){
+            rUri = $scope.swaggerMemberUri;
         }
 
         $.ajax({
@@ -3735,6 +3809,13 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
                     if(type == 'google') {
                         $scope.hideGoogleUri = true;
                     }
+                    if(type == 'swagger'){
+                        $scope.hideSwaggerUri = true;
+                    }
+                    if(type == 'swagger-member'){
+                        $scope.hideSwaggerMemberUri = true;
+                    }
+
                 });
             }
         }).fail(function() {
@@ -3751,12 +3832,17 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
         $scope.listing = false;
         $scope.viewing = false;
         $scope.hideGoogleUri = false;
+        $scope.hideSwaggerUri = false;
+        $scope.hideSwaggerMemberUri = false;
 
         if($scope.clientToEdit.redirectUris != null && $scope.clientToEdit.redirectUris.length > 0) {
             for(var i = 0; i < $scope.clientToEdit.redirectUris.length; i++) {
                 if($scope.clientToEdit.redirectUris[i].value.value == $scope.googleUri) {
                     $scope.hideGoogleUri = true;
-                    break;
+                }else if ($scope.swaggerUri == $scope.clientToEdit.redirectUris[i].value.value){
+                    $scope.hideSwaggerUri = true;
+                }else if ($scope.swaggerMemberUri == $scope.clientToEdit.redirectUris[i].value.value){
+                    $scope.hideSwaggerMemberUri = true;
                 }
             }
         }
@@ -3905,6 +3991,10 @@ angular.module('orcidApp').controller('ClientEditCtrl',['$scope', '$compile', fu
                 if(scope != '')
                     example = example.replace('[SCOPES]', scope);
                 $scope.playgroundExample = example.replace(/,/g,'%20');
+            }else if($scope.swaggerUri == selectedRedirectUriValue) {
+                $scope.playgroundExample = $scope.swaggerUri;
+            }else if($scope.swaggerMemberUri == selectedRedirectUriValue) {
+                $scope.playgroundExample = $scope.swaggerMemberUri;
             }
 
             var example = $scope.authorizeURLTemplate;
@@ -4883,20 +4973,17 @@ angular.module('orcidApp').controller('OauthAuthorizationController',['$scope', 
         $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
     };
 
-    document.onkeydown = function(e) {
+    window.onkeydown = function(e) {
         e = e || window.event;
-        if (e.keyCode == 13) {          
-            if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ // There
-                                                                                    // is
-                                                                                    // no
-                                                                                    // clientID
-                                                                                    // information
+        if (e.keyCode == 13) {      
+        	if (location.pathname.indexOf('/oauth/signin') !== -1){ 
                 if ($scope.showRegisterForm == true){
                     $scope.registerAndAuthorize();                  
                 } else{
                     $scope.loginAndAuthorize();                 
                 }               
             } else{
+            	console.log(window.event)
                 $scope.authorize();
             }
         }

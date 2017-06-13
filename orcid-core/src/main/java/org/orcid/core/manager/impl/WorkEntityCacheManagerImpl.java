@@ -83,11 +83,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
         Object key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key));
+        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key, orcid));
         if (workLastModifiedList == null) {
             try {
                 synchronized (lockers.obtainLock(orcid)) {
-                    workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key));
+                    workLastModifiedList = toWorkLastModifiedList(getFromWorkLastModifiedCache(key, orcid));
                     if (workLastModifiedList == null) {
                         workLastModifiedList = workDao.getWorkLastModifiedList(orcid);
                         workLastModifiedCache.put(new Element(key, workLastModifiedList));
@@ -103,11 +103,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified) {
         Object key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
-        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key));
+        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key, orcid));
         if (workLastModifiedList == null) {
             try {
                 synchronized (publicWorkLastModifiedListLockers.obtainLock(orcid)) {
-                    workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key));
+                    workLastModifiedList = toWorkLastModifiedList(getFromPublicWorkLastModifiedCache(key, orcid));
                     if (workLastModifiedList == null) {
                         workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
                         publicWorkLastModifiedCache.put(new Element(key, workLastModifiedList));
@@ -150,11 +150,11 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
-        WorkEntity workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key));
+        WorkEntity workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key, orcid));
         if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
             try {
                 synchronized (lockerFullWork.obtainLock(Long.toString(workId))) {
-                    workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key));
+                    workEntity = (WorkEntity) toWorkBaseEntity(getFromFullWorkEntityCache(key, orcid));
                     if (workEntity == null || workEntity.getLastModified().getTime() < workLastModified) {
                         workEntity = workDao.getWork(orcid, workId);
                         workDao.detach(workEntity);                        
@@ -279,23 +279,23 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         return (List<WorkLastModifiedEntity>) (element != null ? element.getObjectValue() : null);
     }
 
-    private Element getFromWorkLastModifiedCache(Object key) {
+    private Element getFromWorkLastModifiedCache(Object key, String orcid) {
         try {
             return workLastModifiedCache.get(key);
         } catch(Exception e) {
-            String message = String.format("Exception fetching element: '%s' from workLasModifiedCache", key);
-            LOGGER.info(message);
+            String message = String.format("Exception fetching element: '%s' that belongs to '%s'  from workLasModifiedCache.\n%s", key, orcid, e.getMessage());
+            LOGGER.error(message, e);
             slackManager.sendSystemAlert(message);
             throw e;
         }
     }
     
-    private Element getFromPublicWorkLastModifiedCache(Object key) {
+    private Element getFromPublicWorkLastModifiedCache(Object key, String orcid) {
         try {
             return publicWorkLastModifiedCache.get(key);
         } catch(Exception e) {
-            String message = String.format("Exception fetching element: '%s' from publicWorkLastModifiedCache", key);
-            LOGGER.info(message);
+            String message = String.format("Exception fetching element: '%s'that belongs to '%s'  from publicWorkLastModifiedCache.\n%s", key, orcid, e.getMessage());
+            LOGGER.error(message, e);
             slackManager.sendSystemAlert(message);
             throw e;
         }
@@ -305,19 +305,19 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         try {
             return minimizedWorkEntityCache.get(key);
         } catch(Exception e) {
-            String message = String.format("Exception fetching element: '%s' from minimizedWorkEntityCache", key);
-            LOGGER.info(message);
+            String message = String.format("Exception fetching element: '%s' from minimizedWorkEntityCache.\n%s", key, e.getMessage());
+            LOGGER.error(message, e);
             slackManager.sendSystemAlert(message);
             throw e;
         }
     }
     
-    private Element getFromFullWorkEntityCache(Object key) {
+    private Element getFromFullWorkEntityCache(Object key, String orcid) {
         try {
             return fullWorkEntityCache.get(key);
         } catch(Exception e) {
-            String message = String.format("Exception fetching element: '%s' from fullWorkEntityCache", key);
-            LOGGER.info(message);
+            String message = String.format("Exception fetching element: '%s' that belongs to '%s' from fullWorkEntityCache.\n%s", key, orcid, e.getMessage());
+            LOGGER.error(message, e);
             slackManager.sendSystemAlert(message);
             throw e;
         }

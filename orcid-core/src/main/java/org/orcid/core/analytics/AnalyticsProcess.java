@@ -54,6 +54,8 @@ public class AnalyticsProcess implements Runnable {
     public boolean publicApi;
 
     private String ip;
+    
+    private String scheme;
 
     @Override
     public void run() {
@@ -92,13 +94,21 @@ public class AnalyticsProcess implements Runnable {
     public void setIp(String ip) {
         this.ip = ip;
     }
+    
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
 
     private AnalyticsData getAnalyticsData() {
         ip = maskIp(ip);
+
         APIEndpointParser parser = new APIEndpointParser(request);
+        String url = request.getAbsolutePath().toString();
+        url = correctScheme(url);
+        url = getUrlWithHashedOrcidId(parser.getOrcidId(), url);
 
         AnalyticsData analyticsData = new AnalyticsData();
-        analyticsData.setUrl(getUrlWithHashedOrcidId(parser.getOrcidId(), request.getAbsolutePath().toString()));
+        analyticsData.setUrl(url);
         analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
         analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
@@ -109,6 +119,10 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
         analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String correctScheme(String url) {
+        return scheme + url.substring(url.indexOf(":"));
     }
 
     private String maskIp(String ip) {
@@ -164,4 +178,5 @@ public class AnalyticsProcess implements Runnable {
             return PUBLIC_API_USER;
         }
     }
+
 }
