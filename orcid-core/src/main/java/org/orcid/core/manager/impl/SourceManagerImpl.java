@@ -97,8 +97,8 @@ public class SourceManagerImpl implements SourceManager {
     }
 
     private String retrieveEffectiveOrcid(Authentication authentication) {
-        if (OrcidProfileUserDetails.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal()).getOrcid();
+        if (authentication.getDetails() != null && OrcidProfileUserDetails.class.isAssignableFrom(authentication.getDetails().getClass())) {
+            return ((OrcidProfileUserDetails) authentication.getDetails()).getOrcid();
         }
         return null;
     }
@@ -146,8 +146,8 @@ public class SourceManagerImpl implements SourceManager {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
                         if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)
-                                && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            return ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcid();
+                                && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
+                            return ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcid();
                         }
                     }
                 }
@@ -175,9 +175,8 @@ public class SourceManagerImpl implements SourceManager {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-                            org.orcid.jaxb.model.message.OrcidType legacyOrcidType = ((OrcidProfileUserDetails) sourceAuthentication.getPrincipal()).getOrcidType(); 
-                            OrcidType sourceUserType = legacyOrcidType == null ? null : OrcidType.fromValue(legacyOrcidType.value());
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof OrcidProfileUserDetails) {
+                            OrcidType sourceUserType = ((OrcidProfileUserDetails) sourceAuthentication.getDetails()).getOrcidType(); 
                             return OrcidType.ADMIN.equals(sourceUserType);
                         }
                     }

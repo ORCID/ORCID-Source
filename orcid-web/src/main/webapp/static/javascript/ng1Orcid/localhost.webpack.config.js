@@ -13,11 +13,7 @@ module.exports = {
     output: {
         path: __dirname,
         filename: "../angular_orcid_generated.js"
-    },/*
-    output: {
-        path: "/Users/tom/Documents/workspace-sts/.metadata/.plugins/org.eclipse.wst.server.core/tmp0",
-        filename: "angular_orcid_generated.js"
-    },*/
+    },
     plugins: [
     ],
     resolve: {

@@ -8828,3 +8828,7 @@ ul.comma li:last-child:after {
 .lang-rl .workspace-section-content {
     float: right;
 }
+
+#verificationCodeFor2FA {
+	display: none;
+}

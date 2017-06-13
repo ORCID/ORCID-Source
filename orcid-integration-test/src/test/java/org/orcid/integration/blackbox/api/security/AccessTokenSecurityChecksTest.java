@@ -261,10 +261,10 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true);
         assertNotNull(authorizationCode);
         ClientResponse tokenResponse = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, "invalid-authorization-code");
-        assertEquals(500, tokenResponse.getStatus());
+        assertEquals(400, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
-        assertEquals("server_error", jsonObject.get("error"));
+        assertEquals("invalid_grant", jsonObject.get("error"));
         assertEquals("Invalid authorization code: invalid-authorization-code", jsonObject.get("error_description"));
     }
 

@@ -39,6 +39,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -67,40 +68,43 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
-    
+
     @Before
     public void init() {
         assertNotNull(developerToolsController);
         assertNotNull(profileDao);
     }
-    
+
     @Override
     protected Authentication getAuthentication() {
         orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
 
         OrcidProfileUserDetails details = null;
-        if(orcidProfile.getType() != null){             
-                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(), orcidProfile.getGroupType());
+        if (orcidProfile.getType() != null) {
+            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
         } else {
-                details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
-                    .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4442", getRole());
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4442", details.getPassword(), getRole());
+        auth.setDetails(details);
         return auth;
     }
-    
+
     protected List<OrcidWebRole> getRole() {
         return Arrays.asList(OrcidWebRole.ROLE_USER);
     }
-    
-    
+
     @Test
     @Transactional("transactionManager")
     public void testCrossSiteScriptingOnClientName() throws Exception {
@@ -117,10 +121,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         SSOCredentials result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
         assertNotNull(result);
         assertEquals(1, result.getErrors().size());
-        assertEquals(developerToolsController.getMessage("manage.developer_tools.name.html"), result.getErrors().get(0));        
+        assertEquals(developerToolsController.getMessage("manage.developer_tools.name.html"), result.getErrors().get(0));
     }
 
-    
     @Test
     @Transactional("transactionManager")
     public void testCrossSiteScriptingOnClientDescription() throws Exception {
@@ -139,12 +142,12 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertEquals(1, result.getErrors().size());
         assertEquals(developerToolsController.getMessage("manage.developer_tools.description.html"), result.getErrors().get(0));
     }
-    
+
     @Test
     @Transactional("transactionManager")
-    public void testSSOCredentialsValidation() throws Exception{
-        //Test empty title
-        SSOCredentials ssoCredentials = new SSOCredentials();        
+    public void testSSOCredentialsValidation() throws Exception {
+        // Test empty title
+        SSOCredentials ssoCredentials = new SSOCredentials();
         ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         Set<RedirectUri> redirectUris = new HashSet<RedirectUri>();
@@ -158,9 +161,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.name_not_empty"));
 
-        //Test empty description
+        // Test empty description
         ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));        
+        ssoCredentials.setClientName(Text.valueOf("Client Name"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         redirectUris = new HashSet<RedirectUri>();
         rUri = new RedirectUri();
@@ -172,11 +175,11 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.description_not_empty"));
-                
-        //Test empty website
+
+        // Test empty website
         ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));   
-        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));        
+        ssoCredentials.setClientName(Text.valueOf("Client Name"));
+        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
         redirectUris = new HashSet<RedirectUri>();
         rUri = new RedirectUri();
         rUri.setType(Text.valueOf("default"));
@@ -187,18 +190,18 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.website_not_empty"));
-        
-        //Test empty redirect uris
+
+        // Test empty redirect uris
         ssoCredentials = new SSOCredentials();
-        ssoCredentials.setClientName(Text.valueOf("Client Name"));   
-        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));  
-        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));        
+        ssoCredentials.setClientName(Text.valueOf("Client Name"));
+        ssoCredentials.setClientDescription(Text.valueOf("This is a description"));
+        ssoCredentials.setClientWebsite(Text.valueOf("http://client.com"));
         result = developerToolsController.generateSSOCredentialsJson(ssoCredentials);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.at_least_one"));
     }
-    
+
     @Test
     @Transactional("transactionManager")
     public void testGenerateSSOCredentials() throws Exception {
@@ -220,7 +223,7 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertFalse(PojoUtil.isEmpty(result.getClientSecret()));
         assertFalse(PojoUtil.isEmpty(result.getClientOrcid()));
     }
-    
+
     @Test
     @Transactional("transactionManager")
     public void testUpdateSSOCredentials() throws Exception {
@@ -238,9 +241,9 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result);
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
-        Text clientSecret = result.getClientSecret();                        
-                
-        //Update values
+        Text clientSecret = result.getClientSecret();
+
+        // Update values
         ssoCredentials.setClientName(Text.valueOf("Updated client name"));
         ssoCredentials.setClientDescription(Text.valueOf("Updated client description"));
         ssoCredentials.setClientWebsite(Text.valueOf("http://updated.com"));
@@ -253,18 +256,18 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(updatedResult);
         assertNotNull(updatedResult.getErrors());
         assertEquals(updatedResult.getErrors().size(), 0);
-        
+
         Text updatedClientSecret = updatedResult.getClientSecret();
-        
+
         assertEquals(updatedClientSecret.toString(), clientSecret.toString());
         assertEquals(updatedResult.getClientName().getValue(), "Updated client name");
         assertEquals(updatedResult.getClientDescription().getValue(), "Updated client description");
         assertEquals(updatedResult.getClientWebsite().getValue(), "http://updated.com");
         assertNotNull(updatedResult.getRedirectUris());
         assertEquals(updatedResult.getRedirectUris().size(), 2);
-    }    
-    
-    @Test 
+    }
+
+    @Test
     public void testResetClientSecret() throws Exception {
         SSOCredentials ssoCredentials = new SSOCredentials();
         ssoCredentials.setClientName(Text.valueOf("Client Name"));
@@ -281,24 +284,24 @@ public class DeveloperToolsControllerTest extends BaseControllerTest {
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 0);
         Text clientSecret = result.getClientSecret();
-        
+
         assertTrue(developerToolsController.resetClientSecret(result.getClientOrcid().getValue()));
-        
+
         ClientDetailsEntity clientDetails = clientDetailsDao.findByClientId(result.getClientOrcid().getValue(), System.currentTimeMillis());
-        
+
         assertEquals(result.getClientName().getValue(), clientDetails.getClientName());
         assertEquals(result.getClientDescription().getValue(), clientDetails.getClientDescription());
         assertEquals(result.getClientOrcid().getValue(), clientDetails.getClientId());
-        assertEquals(result.getClientWebsite().getValue(), clientDetails.getClientWebsite());        
+        assertEquals(result.getClientWebsite().getValue(), clientDetails.getClientWebsite());
         Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
         assertNotNull(clientSecrets);
         assertEquals(2, clientSecrets.size());
-        for(ClientSecretEntity clientSecretEntity : clientSecrets) {
-            String secret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());            
-            if(!clientSecretEntity.isPrimary())
+        for (ClientSecretEntity clientSecretEntity : clientSecrets) {
+            String secret = encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret());
+            if (!clientSecretEntity.isPrimary())
                 assertEquals(clientSecret.getValue(), secret);
             else
                 assertFalse(clientSecret.getValue().equals(secret));
-        }            
+        }
     }
 }

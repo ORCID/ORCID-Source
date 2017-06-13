@@ -82,6 +82,19 @@ angular.module('orcidApp').controller('EditTableCtrl', ['$scope', function ($sco
 
     $scope.showEditDeprecate = (window.location.hash === "#editDeprecate");
     $scope.deprecateUpdateToggleText();
+    
+    $scope.update2FAToggleText = function () {
+        if ($scope.showEdit2FA) $scope.twoFAToggleText = om.get("manage.editTable.hide");
+        else $scope.twoFAToggleText = om.get("manage.editTable.edit");
+    };
+
+    $scope.toggle2FAEdit = function() {
+        $scope.showEdit2FA = !$scope.showEdit2FA;
+        $scope.update2FAToggleText();
+    };
+
+    $scope.showEdit2FA = (window.location.hash === "#edit2FA");
+    $scope.update2FAToggleText();
 
     // privacy preferences edit row
     $scope.privacyPreferencesUpdateToggleText = function () {

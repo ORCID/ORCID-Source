@@ -102,6 +102,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
     <profile
@@ -186,6 +188,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
     <profile
@@ -213,6 +217,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 	
 	<profile
@@ -242,6 +248,8 @@
             enable_notifications="true"
             orcid_type="USER"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -269,6 +277,8 @@
             record_locked="false"     
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />            
 
 	<profile
@@ -296,6 +306,8 @@
             record_locked="false"     
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
             
 	<profile
@@ -325,6 +337,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
             
 	<profile
@@ -352,6 +366,8 @@
             record_locked="false"     
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -378,6 +394,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -408,6 +426,8 @@
             record_locked="false"
             enable_notifications="false"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
             
 	<profile
@@ -439,6 +459,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -472,6 +494,8 @@
             record_locked="false"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -503,6 +527,8 @@
             client_source_id="APP-5555555555555555"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
 
 	<profile
@@ -536,6 +562,8 @@
             client_source_id="APP-5555555555555556"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
             />
             
     <profile
@@ -567,6 +595,40 @@
             record_locked="false"            
             enable_notifications="true"
             send_email_frequency_days = "0.0"
+            using_2fa="false"
+            secret_for_2fa="secret"
+            />
+            
+    <profile
+            orcid="2000-0000-0000-0002"
+            creation_method="API"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Erm..."
+            family_name="Errrrr......"
+            credit_name="ORCID"
+            biography_visibility="LIMITED"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_administrative_change_notifications = "false"
+            send_change_notifications="false"
+            send_member_update_requests = "false"
+            send_orcid_news="false"
+            activities_visibility_default="PUBLIC"
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="true"
+            reviewed="true"
+            record_locked="false"            
+            enable_notifications="true"
+            send_email_frequency_days = "0.0"
+            using_2fa="true"
             />
 
     <granted_authority

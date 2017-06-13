@@ -21,6 +21,7 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+    
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
     
@@ -32,6 +33,9 @@ public enum Features implements Feature {
     
     @Label("Split oauth in 2 screens")
     OAUTH_2SCREENS,
+    
+    @Label("Two factor authentication")
+    TWO_FACTOR_AUTHENTICATION,
     
     @Label("Survey link")
     SURVEY;

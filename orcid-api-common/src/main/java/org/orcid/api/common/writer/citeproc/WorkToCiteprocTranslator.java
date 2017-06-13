@@ -18,6 +18,7 @@ package org.orcid.api.common.writer.citeproc;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +80,9 @@ public class WorkToCiteprocTranslator {
     private CSLItemData translateFromBibtexCitation(Work work, boolean abreviate) {
         try {
             BibTeXConverter conv = new BibTeXConverter();
-            BibTeXDatabase db = conv.loadDatabase(IOUtils.toInputStream(StringUtils.stripAccents(work.getWorkCitation().getCitation())));
+            String ascii = Normalizer.normalize(work.getWorkCitation().getCitation(), Normalizer.Form.NFKD);
+            ascii = ascii.replaceAll("[^\\x00-\\x7F]", "");            
+            BibTeXDatabase db = conv.loadDatabase(IOUtils.toInputStream(ascii));
             Map<String, CSLItemData> cids = conv.toItemData(db);
             if (cids.size() == 1) {
                 CSLItemData item = cids.values().iterator().next();
