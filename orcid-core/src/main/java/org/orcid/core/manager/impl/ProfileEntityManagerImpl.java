@@ -91,7 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -125,40 +125,40 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private ResearcherUrlManager researcherUrlManager;
-    
+
     @Resource
     private EmailManager emailManager;
-    
+
     @Resource
-    private OrgAffiliationRelationDao orgAffiliationRelationDao;    
-    
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
+
     @Resource
-    private OtherNameManager otherNamesManager;        
-    
+    private OtherNameManager otherNamesManager;
+
     @Resource
     private BiographyManager biographyManager;
-    
+
     @Resource
     private UserConnectionDao userConnectionDao;
-    
+
     @Resource
     private NotificationManager notificationManager;
-    
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource
     private OrcidUrlManager orcidUrlManager;
-    
+
     @Resource
     private LocaleManager localeManager;
-    
+
     @Resource
-    private RecordNameManager recordNameManager;            
-    
+    private RecordNameManager recordNameManager;
+
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -172,17 +172,17 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
         return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
-    }    
+    }
 
     @Override
     public String findByCreditName(String creditName) {
         Name name = recordNameManager.findByCreditName(creditName);
-        if(name == null) {
+        if (name == null) {
             return null;
         }
         return name.getPath();
     }
-    
+
     /**
      * Deprecates a profile
      * 
@@ -193,31 +193,31 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was successfully deprecated, false otherwise
      */
     @Override
-    @Transactional 
+    @Transactional
     public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
-        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);        
+        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid);
         // If it was successfully deprecated
         if (wasDeprecated) {
             LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-            ProfileEntity deprecated = profileDao.find(deprecatedOrcid);                        
-            
+            ProfileEntity deprecated = profileDao.find(deprecatedOrcid);
+
             // Remove works
             workManager.removeAllWorks(deprecatedOrcid);
-            
+
             // Remove funding
             if (deprecated.getProfileFunding() != null) {
-                for(ProfileFundingEntity funding : deprecated.getProfileFunding()) {
+                for (ProfileFundingEntity funding : deprecated.getProfileFunding()) {
                     fundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId());
                 }
             }
-            
+
             // Remove affiliations
             if (deprecated.getOrgAffiliationRelations() != null) {
-                for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
+                for (OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {
                     orgAffiliationRelationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
                 }
             }
-            
+
             // Remove external identifiers
             if (deprecated.getExternalIdentifiers() != null) {
                 for (ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()) {
@@ -226,63 +226,63 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             }
 
             // Remove researcher urls
-            if(deprecated.getResearcherUrls() != null) {
-                for(ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
+            if (deprecated.getResearcherUrls() != null) {
+                for (ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
                     researcherUrlManager.deleteResearcherUrl(deprecatedOrcid, rUrl.getId(), false);
                 }
             }
-            
+
             // Remove other names
-            if(deprecated.getOtherNames() != null) {
-                for(OtherNameEntity otherName : deprecated.getOtherNames()) {
+            if (deprecated.getOtherNames() != null) {
+                for (OtherNameEntity otherName : deprecated.getOtherNames()) {
                     otherNamesManager.deleteOtherName(deprecatedOrcid, otherName.getId(), false);
-                }                            
+                }
             }
-            
+
             // Remove keywords
-            if(deprecated.getKeywords() != null) {
-                for(ProfileKeywordEntity keyword : deprecated.getKeywords()) {
+            if (deprecated.getKeywords() != null) {
+                for (ProfileKeywordEntity keyword : deprecated.getKeywords()) {
                     profileKeywordManager.deleteKeyword(deprecatedOrcid, keyword.getId(), false);
-                }                                                        
+                }
             }
-            
-            //Remove biography                        
-            if(biographyManager.exists(deprecatedOrcid)) {
+
+            // Remove biography
+            if (biographyManager.exists(deprecatedOrcid)) {
                 Biography deprecatedBio = new Biography();
                 deprecatedBio.setContent(null);
                 deprecatedBio.setVisibility(Visibility.PRIVATE);
                 biographyManager.updateBiography(deprecatedOrcid, deprecatedBio);
-            } 
-                        
-            //Set the deactivated names
-            if(recordNameManager.exists(deprecatedOrcid)) {
+            }
+
+            // Set the deactivated names
+            if (recordNameManager.exists(deprecatedOrcid)) {
                 Name name = new Name();
                 name.setCreditName(new CreditName());
                 name.setGivenNames(new GivenNames("Given Names Deactivated"));
                 name.setFamilyName(new FamilyName("Family Name Deactivated"));
                 name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
                 name.setPath(deprecatedOrcid);
-                recordNameManager.updateRecordName(deprecatedOrcid, name);                
-            } 
-            
-            userConnectionDao.deleteByOrcid(deprecatedOrcid);  
-                                                        
+                recordNameManager.updateRecordName(deprecatedOrcid, name);
+            }
+
+            userConnectionDao.deleteByOrcid(deprecatedOrcid);
+
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
             if (deprecatedAccountEmails != null) {
-                // For each email in the deprecated profile                            
+                // For each email in the deprecated profile
                 for (EmailEntity email : deprecatedAccountEmails) {
                     // Delete each email from the deprecated
                     // profile
-                    LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] {email.getId(), deprecatedOrcid, primaryOrcid });
+                    LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] { email.getId(), deprecatedOrcid, primaryOrcid });
                     emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
                 }
             }
-            
+
             return true;
         }
-        
-        return false; 
+
+        return false;
     }
 
     /**
@@ -314,7 +314,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public boolean isProfileClaimed(String orcid) {
         return profileDao.getClaimedStatus(orcid);
-    }    
+    }
 
     /**
      * Get the group type of a profile
@@ -328,7 +328,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getGroupType(orcid);
     }
 
-    /** 
+    /**
      * Updates the DB and the cached value in the request scope.
      * 
      */
@@ -351,38 +351,39 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public boolean unreviewProfile(String orcid) {
         return profileDao.unreviewProfile(orcid);
     }
-   
+
     @Override
     public void disableApplication(Long tokenId, String userOrcid) {
         orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
-    }    
-    
+    }
+
     @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
         List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
         Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications = new HashMap<Pair<String, Set<ScopePathType>>, ApplicationSummary>();
-        if(tokenDetails != null && !tokenDetails.isEmpty()) {
-            for(OrcidOauth2TokenDetail token : tokenDetails) {
+        if (tokenDetails != null && !tokenDetails.isEmpty()) {
+            for (OrcidOauth2TokenDetail token : tokenDetails) {
                 if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
                     ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(token.getClientDetailsId());
-                    if(client != null) {
+                    if (client != null) {
                         ApplicationSummary applicationSummary = new ApplicationSummary();
                         // Check the scopes
                         Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
                         Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
                         String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {        
+                        for (ScopePathType tempScope : scopesGrantedToClient) {
                             try {
                                 scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
                             } catch (NoSuchMessageException e) {
                                 LOGGER.warn("No message to display for scope " + tempScope.toString());
                             }
                         }
-                        //If there is at least one scope in this token, fill the application summary element
-                        if(!scopePathMap.isEmpty()) {
+                        // If there is at least one scope in this token, fill
+                        // the application summary element
+                        if (!scopePathMap.isEmpty()) {
                             applicationSummary.setScopePaths(scopePathMap);
-                            applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());                        
+                            applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
                             applicationSummary.setOrcidUri(orcidUrlManager.getBaseUriHttp() + "/" + client.getId());
                             applicationSummary.setOrcidPath(client.getId());
                             applicationSummary.setName(client.getClientName());
@@ -395,70 +396,71 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                                 applicationSummary.setGroupOrcidPath(member.getId());
                                 applicationSummary.setGroupName(getMemberDisplayName(member));
                             }
-                            
-                            if(shouldBeAddedToTheApplicationsList(applicationSummary, scopesGrantedToClient, existingApplications)) {
+
+                            if (shouldBeAddedToTheApplicationsList(applicationSummary, scopesGrantedToClient, existingApplications)) {
                                 applications.add(applicationSummary);
                             }
                         }
                     }
                 }
             }
-        }        
-        
+        }
+
         return applications;
     }
-    
-    private boolean shouldBeAddedToTheApplicationsList(ApplicationSummary application , Set<ScopePathType> scopes, Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications) {
+
+    private boolean shouldBeAddedToTheApplicationsList(ApplicationSummary application, Set<ScopePathType> scopes,
+            Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications) {
         boolean result = false;
         Pair<String, Set<ScopePathType>> key = Pair.of(application.getOrcidPath(), scopes);
-        if(!existingApplications.containsKey(key)) {
+        if (!existingApplications.containsKey(key)) {
             result = true;
         } else {
             Date existingAppCreatedDate = existingApplications.get(key).getApprovalDate();
-            
-            //This case should never happen
-            if(existingAppCreatedDate == null) {
+
+            // This case should never happen
+            if (existingAppCreatedDate == null) {
                 result = true;
             }
-            
-            if(application.getApprovalDate().before(existingAppCreatedDate)) {
+
+            if (application.getApprovalDate().before(existingAppCreatedDate)) {
                 result = true;
             }
         }
-         
-        if(result) {
+
+        if (result) {
             existingApplications.put(key, application);
-        }                                        
+        }
         return result;
     }
-                    
-    private String getMemberDisplayName(ProfileEntity member) {   
-        RecordNameEntity recordName = member.getRecordNameEntity(); 
-        if(recordName == null) {
+
+    private String getMemberDisplayName(ProfileEntity member) {
+        RecordNameEntity recordName = member.getRecordNameEntity();
+        if (recordName == null) {
             return StringUtils.EMPTY;
         }
-        
-        //If it is a member, return the credit name
-        if(OrcidType.GROUP.equals(member.getOrcidType())) {
-            return recordName.getCreditName();                    
+
+        // If it is a member, return the credit name
+        if (OrcidType.GROUP.equals(member.getOrcidType())) {
+            return recordName.getCreditName();
         }
-        
-        Visibility namesVisibilty = recordName.getVisibility();   
-        if(Visibility.PUBLIC.equals(namesVisibilty)) {
-            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
+
+        Visibility namesVisibilty = recordName.getVisibility();
+        if (Visibility.PUBLIC.equals(namesVisibilty)) {
+            if (!PojoUtil.isEmpty(recordName.getCreditName())) {
                 return recordName.getCreditName();
             } else {
                 String displayName = recordName.getGivenNames();
                 String familyName = recordName.getFamilyName();
                 if (StringUtils.isNotBlank(familyName)) {
                     displayName += " " + familyName;
-                }                
+                }
                 return displayName;
             }
         }
-        
+
         return StringUtils.EMPTY;
-    }   
+    }
 
     @Override
     public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {
@@ -474,7 +476,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
             RecordNameEntity recordName = profile.getRecordNameEntity();
-            if(recordName != null) {
+            if (recordName != null) {
                 Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility().value())
                         : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
                 if (Visibility.PUBLIC.equals(namesVisibility)) {
@@ -485,7 +487,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
                     }
                 }
-            } 
+            }
         }
         return publicName;
     }
@@ -493,64 +495,66 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
-        //Verify the email
+        // Verify the email
         boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
-        if(!emailVerified) {
+        if (!emailVerified) {
             throw new InvalidParameterException("Unable to claim and verify email: " + email + " for user: " + orcid);
         }
-        
-        //Update the profile entity fields
+
+        // Update the profile entity fields
         ProfileEntity profile = profileDao.find(orcid);
         profile.setLastModified(new Date());
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
-        if(locale != null) {
+        if (locale != null) {
             profile.setLocale(org.orcid.jaxb.model.common_v2.Locale.fromValue(locale.value()));
         }
-        if(claim != null) {
+        if (claim != null) {
             profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
             profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
             profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility());
         }
-                
-        //Update the visibility for every bio element to the visibility selected by the user
-        //Update the bio
-        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
-        if(profile.getBiographyEntity() != null) {
+
+        // Update the visibility for every bio element to the visibility
+        // selected by the user
+        // Update the bio
+        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
+                .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        if (profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
-        //Update address
-        if(profile.getAddresses() != null) {
-            for(AddressEntity a : profile.getAddresses()) {
+        // Update address
+        if (profile.getAddresses() != null) {
+            for (AddressEntity a : profile.getAddresses()) {
                 a.setVisibility(defaultVisibility);
             }
         }
-        
-        //Update the keywords
-        if(profile.getKeywords() != null) {
-            for(ProfileKeywordEntity k : profile.getKeywords()) {
+
+        // Update the keywords
+        if (profile.getKeywords() != null) {
+            for (ProfileKeywordEntity k : profile.getKeywords()) {
                 k.setVisibility(defaultVisibility);
             }
         }
-        
-        //Update the other names
-        if(profile.getOtherNames() != null) {
-            for(OtherNameEntity o : profile.getOtherNames()) {
+
+        // Update the other names
+        if (profile.getOtherNames() != null) {
+            for (OtherNameEntity o : profile.getOtherNames()) {
                 o.setVisibility(defaultVisibility);
             }
         }
-        
-        //Update the researcher urls
-        if(profile.getResearcherUrls() != null) {
-            for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
+
+        // Update the researcher urls
+        if (profile.getResearcherUrls() != null) {
+            for (ResearcherUrlEntity r : profile.getResearcherUrls()) {
                 r.setVisibility(defaultVisibility);
             }
         }
-        
-        //Update the external identifiers
-        if(profile.getExternalIdentifiers() != null) {
-            for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
+
+        // Update the external identifiers
+        if (profile.getExternalIdentifiers() != null) {
+            for (ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
                 e.setVisibility(defaultVisibility);
             }
         }
@@ -562,84 +566,84 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public boolean deactivateRecord(String orcid) {
-        //Clear the record
+        // Clear the record
         ProfileEntity toClear = profileDao.find(orcid);
         toClear.setLastModified(new Date());
         toClear.setDeactivationDate(new Date());
         toClear.setActivitiesVisibilityDefault(Visibility.PRIVATE);
         toClear.setIndexingStatus(IndexingStatus.REINDEX);
-        
+
         // Remove works
         workManager.removeAllWorks(orcid);
-        
+
         // Remove funding
         if (toClear.getProfileFunding() != null) {
             toClear.getProfileFunding().clear();
         }
-        
+
         // Remove affiliations
         if (toClear.getOrgAffiliationRelations() != null) {
             toClear.getOrgAffiliationRelations().clear();
         }
-        
+
         // Remove external identifiers
         if (toClear.getExternalIdentifiers() != null) {
             toClear.getExternalIdentifiers().clear();
         }
 
         // Remove researcher urls
-        if(toClear.getResearcherUrls() != null) {
+        if (toClear.getResearcherUrls() != null) {
             toClear.getResearcherUrls().clear();
         }
-        
+
         // Remove other names
-        if(toClear.getOtherNames() != null) {
-            toClear.getOtherNames().clear();      
+        if (toClear.getOtherNames() != null) {
+            toClear.getOtherNames().clear();
         }
-        
+
         // Remove keywords
-        if(toClear.getKeywords() != null) {
-            toClear.getKeywords().clear();                                                        
-        }        
-        
+        if (toClear.getKeywords() != null) {
+            toClear.getKeywords().clear();
+        }
+
         // Remove address
-        if(toClear.getAddresses() != null) {
+        if (toClear.getAddresses() != null) {
             toClear.getAddresses().clear();
         }
-        
+
         BiographyEntity bioEntity = toClear.getBiographyEntity();
-        if(bioEntity != null) {
+        if (bioEntity != null) {
             bioEntity.setBiography("");
             bioEntity.setVisibility(Visibility.PRIVATE);
-        } 
-                
-        //Set the deactivated names
+        }
+
+        // Set the deactivated names
         RecordNameEntity recordName = toClear.getRecordNameEntity();
-        if(recordName != null) {
+        if (recordName != null) {
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
         }
-        
+
         Set<EmailEntity> emails = toClear.getEmails();
         if (emails != null) {
-            // For each email in the deprecated profile                            
+            // For each email in the deprecated profile
             for (EmailEntity email : emails) {
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE);
-            }        
+            }
         }
-        
+
         profileDao.merge(toClear);
         profileDao.flush();
-        
-        //Delete all connections
-        userConnectionDao.deleteByOrcid(orcid);                
-        
+
+        // Delete all connections
+        userConnectionDao.deleteByOrcid(orcid);
+
         notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
         return true;
     }
-    
+
     @Override
     @Transactional
     public boolean reactivateRecord(String orcid) {
@@ -648,7 +652,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         toReactivate.setDeactivationDate(null);
         profileDao.merge(toReactivate);
         profileDao.flush();
-        
+
         notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
         return true;
     }
@@ -719,7 +723,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         return wasLocked;
     }
-    
+
     /**
      * Set the locked status of an account to false
      * 
@@ -735,5 +739,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public Date getLastLogin(String orcid) {
         return profileDao.getLastLogin(orcid);
-    }   
+    }
+
+    @Override
+    public void disable2FA(String orcid) {
+        profileDao.disable2FA(orcid);
+    }
+
+    @Override
+    public void enable2FA(String orcid) {
+        profileDao.enable2FA(orcid);
+    }
+
+    @Override
+    public void update2FASecret(String orcid, String secret) {
+        profileDao.update2FASecret(orcid, secret);
+    }
 }

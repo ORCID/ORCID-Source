@@ -137,7 +137,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         detail.setId(code);
         detail.setApproved(authentication.getOAuth2Request().isApproved());
         Authentication userAuthentication = authentication.getUserAuthentication();
-        Object principal = userAuthentication.getPrincipal();
+        Object principal = userAuthentication.getDetails();
 
         ProfileEntity entity = null;
 

@@ -135,6 +135,179 @@ angular.module('orcidApp').controller('DeprecateAccountCtrl', ['$scope', '$compi
     
 }]);
 
+angular.module('orcidApp').controller('2FAStateCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    
+    $scope.check2FAState = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/status.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.update2FAStatus(data);
+            }
+        }).fail(function() {
+            console.log("An error occurred checking user's 2FA state");
+        });
+    };
+    
+    $scope.enable2FA = function() {
+        window.location.href = getBaseUri() + '/2FA/setup';
+    }
+    
+    $scope.disable2FA = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/disable.json',
+            dataType: 'json',
+            type: 'POST',
+            success: function(data) {               
+                $scope.update2FAStatus(data);
+            }
+        }).fail(function() {
+            console.log("An error occurred disabling user's 2FA");
+        });
+    }
+    
+    $scope.update2FAStatus = function(status) {
+        $scope.showEnabled2FA = status.enabled;
+        $scope.showDisabled2FA = !status.enabled;
+        $scope.$apply();
+    }
+}]);
+
+angular.module('orcidApp').controller('2FASetupCtrl', ['$scope', '$compile', function ($scope, $compile) {
+    
+    $scope.startSetup = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/QRCode.json',
+            dataType: 'json',
+            success: function(data) {
+                $("#2FA-QR-code").attr("src", data.url);
+                $scope.showSetup2FA = true;
+                $scope.showQRCode = true;
+                $scope.showTextCode = false;
+                $scope.show2FARecoveryCodes = false;
+                
+                $.ajax({
+                    url: getBaseUri() + '/2FA/register.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $scope.twoFactorAuthRegistration = data;
+                        $scope.$apply();
+                    }
+                }).fail(function(err) {
+                    console.log("An error occurred getting 2FA registration object");
+                });
+            }
+        }).fail(function(err) {
+            console.log("An error occurred getting user's 2FA QR code");
+        });
+        
+    };
+    
+    $scope.cancel2FASetup = function() {
+        window.location.href = getBaseUri() + "/account";
+    }
+    
+    $scope.done = function() {
+        window.location.href = getBaseUri() + "/account";
+    }
+    
+    $scope.sendVerificationCode = function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/register.json',
+            dataType: 'json',
+            data: angular.toJson($scope.twoFactorAuthRegistration),
+            contentType: 'application/json;charset=UTF-8',
+            type: 'POST',
+            success: function(data) {               
+                if (data.valid) {
+                    $scope.showSetup2FA = false;
+                    $scope.show2FARecoveryCodes = true;
+                    $scope.recoveryCodes = data.backupCodes;
+                    $scope.showInvalidCodeError=false;
+                } else {
+                    $scope.showInvalidCodeError=true;
+                }
+                $scope.$apply();
+            }
+        }).fail(function(xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            alert(err.Message);
+        });
+    }
+    
+    $('#getTextCode').click(function() {
+        $.ajax({
+            url: getBaseUri() + '/2FA/secret.json',
+            dataType: 'json',
+            success: function(data) {
+                $scope.textCodeFor2FA = data.secret;
+                $scope.showTextCode = true;
+                $scope.showQRCode = false;
+                $scope.$apply();
+            }
+        }).fail(function(err) {
+            console.log("An error occurred getting 2FA secret");
+        });
+    });
+    
+    $scope.copyRecoveryCodes = function() {
+        var recoveryCodesString = getRecoveryCodesString();
+        
+        if (window.clipboardData) { // for IE
+            window.clipboardData.setData("Text", recoveryCodesString);        
+        } else {
+            var temp = $('<div />');
+            temp.text(recoveryCodesString);
+            temp.css({
+                position: "absolute",
+                left:     "-1000px",
+                top:      "-1000px",
+            });
+            
+            $('body').append(temp);
+            
+            var range = document.createRange();
+            range.selectNodeContents(temp.get(0));
+            
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            var copied = document.execCommand('copy', false, null);
+            alert(recoveryCodesString);
+            if (!copied) {
+                console.log("An error occurred copying recovery codes");
+            }
+            
+            temp.remove();
+        }
+    }   
+    
+    $scope.downloadRecoveryCodes = function() {
+        var recoveryCodesString = getRecoveryCodesString();
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(recoveryCodesString));
+        element.setAttribute('download', 'recovery-codes.txt');
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+    }
+    
+    function getRecoveryCodesString() {
+        var recoveryCodesString = "";
+        for (var i = 0; i < $scope.recoveryCodes.length; i++) {
+            recoveryCodesString += $scope.recoveryCodes[i] + "\n";
+        }
+        return recoveryCodesString;
+    }
+    
+}]);
+
+
 angular.module('orcidApp').controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.errors = null;
     $scope.password = null;

@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.security.DeprecatedProfileException;
 import org.orcid.core.security.UnclaimedProfileExistsException;
+import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
+import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
+import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -56,6 +59,17 @@ public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         } else if(exception.getCause() instanceof DisabledException){
             writer.println(",");
             writer.println("\"disabled\": true");
+        } else if (exception instanceof VerificationCodeFor2FARequiredException) {
+            writer.println(",");
+            writer.println("\"verificationCodeRequired\": true");
+        } else if (exception instanceof Bad2FAVerificationCodeException) {
+            writer.println(",");
+            writer.println("\"badVerificationCode\": true");
+            writer.println(",");
+            writer.println("\"verificationCodeRequired\": true");
+        } else if (exception instanceof Bad2FARecoveryCodeException) {
+            writer.println(",");
+            writer.println("\"badRecoveryCode\": true");
         }
         writer.println("}");
     }

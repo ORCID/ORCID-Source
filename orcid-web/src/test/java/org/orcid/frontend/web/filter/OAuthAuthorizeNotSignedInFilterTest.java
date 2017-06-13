@@ -130,11 +130,11 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
-        when(usernamePasswordAuthenticationToken.getPrincipal()).thenReturn(new OrcidProfileUserDetails());
+        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(new OrcidProfileUserDetails());
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getPrincipal()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
