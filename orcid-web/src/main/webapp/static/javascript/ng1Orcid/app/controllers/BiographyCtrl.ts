@@ -26,6 +26,8 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
             $scope.showEdit = false;
             $scope.showElement = {};
 
+            $scope.getBiographyForm();
+
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();;
             var emails = {};
@@ -44,18 +46,6 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 }
             );
             /////////////////////// End of verified email logic for work
-
-            $scope.toggleEdit = function() {
-                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
-                    $scope.showEdit = !$scope.showEdit;
-                }else{
-                    showEmailVerificationModal();
-                }
-            };
-
-            $scope.close = function() {
-                $scope.showEdit = false;
-            };
 
             $scope.cancel = function() {
                 $scope.getBiographyForm();
@@ -77,6 +67,9 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 return $scope.lengthError;
             };
 
+            $scope.close = function() {
+                $scope.showEdit = false;
+            };
 
             $scope.getBiographyForm = function(){
                 $.ajax({
@@ -93,16 +86,20 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 });
             };
 
+            $scope.hideTooltip = function(tp){
+                $scope.showElement[tp] = false;
+            };
+
             $scope.setBiographyForm = function(){
                 if( $scope.checkLength() ){    
                     return; // do nothing if there is a length error
                 } 
                 $.ajax({
-                    url: getBaseUri() + '/account/biographyForm.json',
-                    type: 'POST',
-                    data:  angular.toJson($scope.biographyForm),
                     contentType: 'application/json;charset=UTF-8',
+                    data:  angular.toJson($scope.biographyForm),
                     dataType: 'json',
+                    type: 'POST',
+                    url: getBaseUri() + '/account/biographyForm.json',
                     success: function(data) {
                         $scope.biographyForm = data;
                         if(data.errors.length == 0){
@@ -121,17 +118,18 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                 $scope.biographyForm.visiblity.visibility = priv;
                 $scope.setBiographyForm();        
             };
-            
+
             $scope.showTooltip = function(tp){
                 $scope.showElement[tp] = true;
             };
             
-            $scope.hideTooltip = function(tp){
-                $scope.showElement[tp] = false;
+            $scope.toggleEdit = function() {
+                if(emailVerified === true || configuration.showModalManualEditVerificationEnabled == false){
+                    $scope.showEdit = !$scope.showEdit;
+                }else{
+                    showEmailVerificationModal();
+                }
             };
-
-            $scope.getBiographyForm();
-
         }
     ]
 );
