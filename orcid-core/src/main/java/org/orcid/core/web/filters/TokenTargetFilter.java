@@ -64,7 +64,7 @@ public class TokenTargetFilter implements ContainerRequestFilter {
                     if (principal instanceof ProfileEntity) {
                         ProfileEntity tokenOwner = (ProfileEntity) principal;
                         if (!targetOrcid.equals(tokenOwner.getId())) {
-                            throwException(request);                            
+                            throwException();                            
                         }
                     }
                 }
@@ -72,7 +72,7 @@ public class TokenTargetFilter implements ContainerRequestFilter {
         }
     }
     
-    private void throwException(ContainerRequest request) {        
+    private void throwException() {        
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         if(apiVersion.equals("1.2")) {
