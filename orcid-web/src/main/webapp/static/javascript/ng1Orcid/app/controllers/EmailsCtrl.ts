@@ -20,12 +20,13 @@ export const EmailsCtrl = angular.module('orcidApp').controller(
             emailSrvc, 
             prefsSrvc
         ){    
-            emailSrvc.getEmails();
 
             $scope.emailSrvc = emailSrvc;
             $scope.showEdit = false;
             $scope.showElement = {};
 
+            $scope.emailSrvc.getEmails();
+            
             $scope.close = function(){      
                 $scope.showEdit = false;
                 prefsSrvc.saved = false;

@@ -26,8 +26,6 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
             $scope.showEdit = false;
             $scope.showElement = {};
 
-            $scope.getBiographyForm();
-
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();;
             var emails = {};
@@ -130,6 +128,8 @@ export const BiographyCtrl = angular.module('orcidApp').controller(
                     showEmailVerificationModal();
                 }
             };
+
+            $scope.getBiographyForm();
         }
     ]
 );

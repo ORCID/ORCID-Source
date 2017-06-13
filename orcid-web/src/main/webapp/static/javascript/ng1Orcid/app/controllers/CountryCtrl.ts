@@ -44,8 +44,6 @@ export const CountryCtrl = angular.module('orcidApp').controller(
             $scope.showEdit = false;
             $scope.showElement = {};
 
-            $scope.getCountryForm();
-
             /////////////////////// Begin of verified email logic for work
             var configuration = initialConfigService.getInitialConfiguration();
             var emailVerified = false;
@@ -292,6 +290,8 @@ export const CountryCtrl = angular.module('orcidApp').controller(
                     $scope.countryForm.addresses[idx]['displayIndex'] = displayIndex;
                 }
             };
+
+            $scope.getCountryForm();
 
         }
     ]
