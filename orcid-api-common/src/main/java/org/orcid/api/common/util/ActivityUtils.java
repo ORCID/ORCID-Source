@@ -17,6 +17,7 @@
 package org.orcid.api.common.util;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
@@ -246,6 +247,14 @@ public class ActivityUtils {
                 if(work.getWorkTitle().getTranslatedTitle() != null) {
                     if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
                         work.getWorkTitle().setTranslatedTitle(null);
+                    }
+                }
+            }
+            
+            if(work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+                for(Contributor c : work.getWorkContributors().getContributor()) {
+                    if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+                        c.setCreditName(null);
                     }
                 }
             }
