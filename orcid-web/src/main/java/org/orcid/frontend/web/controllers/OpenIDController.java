@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
+import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -34,6 +35,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import net.minidev.json.JSONObject;
 
@@ -48,6 +53,8 @@ public class OpenIDController {
     
     @Resource(name="orcidTokenStore")
     private TokenStore tokenStore;
+    
+    @Resource OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
     
     /** Expose the public key as JSON
      * 
@@ -86,5 +93,18 @@ public class OpenIDController {
             }            
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+    
+    /** Expose the openid discovery information
+     * 
+     * @param request
+     * @return
+     * @throws JsonProcessingException 
+     */
+    @RequestMapping(value = "/.well-known/openid-configuration", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody String getOpenIDDiscovery(HttpServletRequest request) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(openIDConnectDiscoveryService.getConfig());
+        return json;     
     }
 }
