@@ -5938,9 +5938,12 @@ ul.oauth-scopes li {
     margin-right: 10px;
 }
 
+.oauth-registration div.col-sm-3,
+.oauth-registration div.col-sm-12,
+.oauth-registration .form-group div.col-sm-6,
 .oauth-registration .form-group div.col-sm-9,
-.oauth-registration .form-group label.col-sm-6,
-.oauth-registration .form-group label.col-sm-3 {
+.oauth-registration .form-group label.col-sm-3,
+.oauth-registration .form-group label.col-sm-6 {
     padding: 0;
 }
 
