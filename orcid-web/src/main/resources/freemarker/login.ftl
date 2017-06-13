@@ -362,7 +362,6 @@
 				   	<!-- REGISTRATION FORM-->
 					<div class="personal-account-login col-md-12" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
 						<div id="register" class="oauth-registration col-">
-							<p>${springMacroRequestContext.getMessage("register.labelORCIDprovides")}</p>
 							<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 							<!-- First name -->
 							<div class="form-group clear-fix">
