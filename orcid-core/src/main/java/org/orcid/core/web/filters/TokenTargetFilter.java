@@ -30,6 +30,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
@@ -71,7 +73,8 @@ public class TokenTargetFilter implements ContainerRequestFilter {
     }
     
     private void throwException(ContainerRequest request) {        
-        String apiVersion = request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME);
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         if(apiVersion.equals("1.2")) {
             throw new AccessControlException("You do not have the required permissions.");
         } else {
