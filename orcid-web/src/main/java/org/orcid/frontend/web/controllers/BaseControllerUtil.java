@@ -29,8 +29,8 @@ public class BaseControllerUtil {
             return null;
         Authentication authentication = context.getAuthentication();
         if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)
-                && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal());
+                && authentication.getDetails() instanceof OrcidProfileUserDetails) {
+            return ((OrcidProfileUserDetails) authentication.getDetails());
         } else {
             return null;
         }

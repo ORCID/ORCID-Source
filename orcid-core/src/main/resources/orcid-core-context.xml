@@ -645,7 +645,11 @@
     <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
     
     <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
+    
+    <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
+    <bean id="backupCodeManager" class="org.orcid.core.manager.impl.BackupCodeManagerImpl" />
+    
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/notranslate" />

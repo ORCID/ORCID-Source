@@ -43,6 +43,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.pojo.ajaxForm.Date;
@@ -83,14 +84,17 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
         OrcidProfileUserDetails details = null;
         if (orcidProfile.getType() != null) {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
-                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidProfile.getType(),
-                    orcidProfile.getGroupType());
+            OrcidType orcidType = OrcidType.fromValue(orcidProfile.getType().value());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent(), orcidType, orcidProfile.getGroupType());
         } else {
-            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0)
-                    .getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
+            details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(),
+                    orcidProfile.getOrcidBio().getContactDetails().getEmail().get(0).getValue(),
+                    orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4446", Arrays.asList(OrcidWebRole.ROLE_USER));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4446", null, Arrays.asList(OrcidWebRole.ROLE_USER));
+        auth.setDetails(details);
         return auth;
     }
 
@@ -98,9 +102,9 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
     public void init() {
         orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
     }
-    
+
     @BeforeClass
-    public static void beforeClass() throws Exception {        
+    public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
     }
 
@@ -119,9 +123,9 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         existingIds.add("3");
         existingIds.add("4");
         existingIds.add("5");
-        
+
         assertNotNull(ids);
-        
+
         assertTrue(ids.containsAll(existingIds));
     }
 
@@ -183,8 +187,8 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         assertTrue(PojoUtil.isEmpty(newForm.getPutCode()));
         assertTrue(form.getErrors().contains(peerReviewsController.getMessage("peer_review.group_id.not_valid")));
     }
-    
-    @Test    
+
+    @Test
     public void testDeletePeerReview() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -198,11 +202,10 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         try {
             peerReviewsController.getPeerReviewJson(Long.valueOf(putCode));
             fail();
-        } catch(NoResultException nre) {
-            
+        } catch (NoResultException nre) {
+
         }
-        
-        
+
     }
 
     private PeerReviewForm getForm() {
@@ -229,18 +232,18 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         wei.setUrl(Text.valueOf("http://myurl.com"));
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();
         extIds.add(wei);
-        form.setExternalIdentifiers(extIds);        
+        form.setExternalIdentifiers(extIds);
         form.setSubjectContainerName(Text.valueOf("Journal Title"));
-        form.setSubjectName(Text.valueOf("Title"));        
+        form.setSubjectName(Text.valueOf("Title"));
         TranslatedTitleForm translated = new TranslatedTitleForm();
         translated.setContent("Translated title");
         translated.setLanguageCode("es");
         form.setTranslatedSubjectName(translated);
         form.setSubjectUrl(Text.valueOf("http://subject.com"));
         form.setSubjectExternalIdentifier(wei);
-        form.setSubjectType(Text.valueOf("book-review"));        
+        form.setSubjectType(Text.valueOf("book-review"));
         form.setGroupId(Text.valueOf("issn:0000001"));
-        
+
         return form;
     }
 }
