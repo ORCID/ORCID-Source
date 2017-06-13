@@ -41,21 +41,7 @@ public class Swagger2Markup {
     @Test
     public void convertMemberSwaggerToMarkdown() throws IOException {
         Swagger2MarkupConverter.from("https://localhost:8443/orcid-api-web/resources/swagger.json")
-            .withMarkupLanguage(MarkupLanguage.MARKDOWN).build()
-            .intoFolder("src/docs/member/generated/markdown");
-        // Then validate that three Markdown files have been created
-        String[] files = new File("src/docs/member/generated/markdown").list();
-        assertEquals(files.length,3);
-    }
-
-    @Test
-    public void convertPublicSwaggerToMarkdown() throws IOException {
-        Swagger2MarkupConverter.from("https://localhost:8443/orcid-pub-web/resources/swagger.json")
-            .withMarkupLanguage(MarkupLanguage.MARKDOWN).build()
-            .intoFolder("src/docs/public/generated/markdown");
-        // Then validate that three Markdown files have been created
-        String[] files = new File("src/docs/public/generated/markdown").list();
-        assertEquals(files.length,3);
+            .withMarkupLanguage(MarkupLanguage.MARKDOWN).build();
     }
 
 }
