@@ -471,8 +471,8 @@
 								<span class="orcid-error" ng-bind-html="generalRegistrationError"></span>
 							</div>
 							<!-- Buttons  -->
-							<div class="bottomBuffer">
-								<button id="register-authorize-button" class="btn btn-primary col-sm-6" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+							<div class="bottomBuffer col-xs-12 col-sm-3">
+								<button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 									<@orcid.msg 'header.register' />
 								</button>   
 							</div><!--buttons-->
