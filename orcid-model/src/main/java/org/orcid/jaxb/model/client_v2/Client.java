@@ -18,14 +18,14 @@ package org.orcid.jaxb.model.client_v2;
 
 import java.io.Serializable;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 
 public class Client implements Serializable {
-    private static final long serialVersionUID = -8570136307981439796L;
+    private static final long serialVersionUID = 5085242454098119135L;
     private String name;
     private String description;
+    private String clientId;
     private ClientType clientType;
     private String clientWebsite;
     private String groupProfileId;
@@ -41,164 +41,114 @@ public class Client implements Serializable {
     private Set<CustomEmail> customEmails;
     private Set<ClientSecret> clientSecrets;
     private Set<ClientRedirectUri> clientRedirectUris;
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
+    public String getClientId() {
+        return clientId;
+    }
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
     public ClientType getClientType() {
         return clientType;
     }
-
     public void setClientType(ClientType clientType) {
         this.clientType = clientType;
     }
-
     public String getClientWebsite() {
         return clientWebsite;
     }
-
     public void setClientWebsite(String clientWebsite) {
         this.clientWebsite = clientWebsite;
     }
-
     public String getGroupProfileId() {
         return groupProfileId;
     }
-
     public void setGroupProfileId(String groupProfileId) {
         this.groupProfileId = groupProfileId;
     }
-
     public String getAuthenticationProviderId() {
         return authenticationProviderId;
     }
-
     public void setAuthenticationProviderId(String authenticationProviderId) {
         this.authenticationProviderId = authenticationProviderId;
     }
-
     public String getEmailAccessReason() {
         return emailAccessReason;
     }
-
     public void setEmailAccessReason(String emailAccessReason) {
         this.emailAccessReason = emailAccessReason;
     }
-
     public int getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
-
     public void setAccessTokenValiditySeconds(int accessTokenValiditySeconds) {
         this.accessTokenValiditySeconds = accessTokenValiditySeconds;
     }
-
     public boolean isPersistentTokensEnabled() {
         return persistentTokensEnabled;
     }
-
     public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
         this.persistentTokensEnabled = persistentTokensEnabled;
     }
-
     public boolean isAllowAutoDeprecate() {
         return allowAutoDeprecate;
     }
-
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
-
     public Set<String> getClientScopes() {
-        if (this.clientScopes == null) {
-            this.clientScopes = new TreeSet<String>();
-        }
         return clientScopes;
     }
-
     public void setClientScopes(Set<String> clientScopes) {
         this.clientScopes = clientScopes;
     }
-
     public Set<String> getResourceId() {
-        if (this.resourceId == null) {
-            this.resourceId = new TreeSet<String>();
-        }
         return resourceId;
     }
-
     public void setResourceId(Set<String> resourceId) {
         this.resourceId = resourceId;
     }
-
     public Set<String> getAuthorizedGrantTypes() {
-        if (this.authorizedGrantTypes == null) {
-            this.authorizedGrantTypes = new TreeSet<String>();
-        }
         return authorizedGrantTypes;
     }
-
     public void setAuthorizedGrantTypes(Set<String> authorizedGrantTypes) {
         this.authorizedGrantTypes = authorizedGrantTypes;
     }
-
     public Set<String> getGrantedAuthorities() {
-        if (this.grantedAuthorities == null) {
-            this.grantedAuthorities = new TreeSet<String>();
-        }
         return grantedAuthorities;
     }
-
     public void setGrantedAuthorities(Set<String> grantedAuthorities) {
         this.grantedAuthorities = grantedAuthorities;
     }
-
     public Set<CustomEmail> getCustomEmails() {
-        if (this.customEmails == null) {
-            this.customEmails = new TreeSet<CustomEmail>();
-        }
         return customEmails;
     }
-
     public void setCustomEmails(Set<CustomEmail> customEmails) {
         this.customEmails = customEmails;
     }
-
     public Set<ClientSecret> getClientSecrets() {
-        if (this.clientSecrets == null) {
-            this.clientSecrets = new TreeSet<ClientSecret>();
-        }
         return clientSecrets;
     }
-
     public void setClientSecrets(Set<ClientSecret> clientSecrets) {
         this.clientSecrets = clientSecrets;
     }
-
     public Set<ClientRedirectUri> getClientRedirectUris() {
-        if (this.clientRedirectUris == null) {
-            this.clientRedirectUris = new TreeSet<ClientRedirectUri>();
-        }
         return clientRedirectUris;
     }
-
     public void setClientRedirectUris(Set<ClientRedirectUri> clientRedirectUris) {
         this.clientRedirectUris = clientRedirectUris;
     }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -207,6 +157,7 @@ public class Client implements Serializable {
         result = prime * result + (allowAutoDeprecate ? 1231 : 1237);
         result = prime * result + ((authenticationProviderId == null) ? 0 : authenticationProviderId.hashCode());
         result = prime * result + ((authorizedGrantTypes == null) ? 0 : authorizedGrantTypes.hashCode());
+        result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
         result = prime * result + ((clientRedirectUris == null) ? 0 : clientRedirectUris.hashCode());
         result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
         result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
@@ -222,7 +173,6 @@ public class Client implements Serializable {
         result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
         return result;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -245,6 +195,11 @@ public class Client implements Serializable {
             if (other.authorizedGrantTypes != null)
                 return false;
         } else if (!authorizedGrantTypes.equals(other.authorizedGrantTypes))
+            return false;
+        if (clientId == null) {
+            if (other.clientId != null)
+                return false;
+        } else if (!clientId.equals(other.clientId))
             return false;
         if (clientRedirectUris == null) {
             if (other.clientRedirectUris != null)
@@ -306,6 +261,5 @@ public class Client implements Serializable {
         } else if (!resourceId.equals(other.resourceId))
             return false;
         return true;
-    }
-
+    }    
 }
