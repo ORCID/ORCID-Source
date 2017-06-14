@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -30,7 +29,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.SourceManager;
@@ -74,14 +72,14 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
 
     @Resource
     private InternalSSOManager internalSSOManager;
-
+    
+    @Resource
+    private ProfileDao profileDao;
+    
     private UserDetailsService orcidUserDetailsService;
 
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
     
-    @Resource
-    private ProfileDao profileDao;
-
     public void setOrcidUserDetailsService(UserDetailsService userDetailsService) {
         this.orcidUserDetailsService = userDetailsService;        
         super.setUserDetailsService(userDetailsService);
@@ -172,11 +170,9 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         List<GrantedAuthority> newAuths = new ArrayList<GrantedAuthority>(orig);
         newAuths.add(switchAuthority);
 
-        // create the new authentication token
-        ProfileEntity profile = getProfileEntity(targetUser.getUsername());
+        // create the new authentication token       
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser.getUsername(), null, newAuths);
-        authentication.setDetails(toOrcidProfileUserDetails(profile));
-
+        authentication.setDetails(generateOrcidProfileUserDetails(targetUser.getUsername()));
         return authentication;
     }
 
@@ -186,19 +182,9 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         return targetUserOrcid.equals(realUser);
     }
     
-    private ProfileEntity getProfileEntity(String username) {
-        ProfileEntity profile = null;
-        if (!StringUtils.isEmpty(username)) {
-            profile = profileDao.find(username);            
-        }
-        return profile;
-    }
-    
-    private OrcidProfileUserDetails toOrcidProfileUserDetails(ProfileEntity profileEntity) {
-        String orcid = profileEntity.getId();
-        Set<EmailEntity> emails = profileEntity.getEmails();
-        
-        for (EmailEntity email : emails) {
+    private OrcidProfileUserDetails generateOrcidProfileUserDetails(String orcid) {
+        ProfileEntity profileEntity = profileDao.find(orcid);
+        for (EmailEntity email : profileEntity.getEmails()) {
             if (email.getPrimary()) {
                 return new OrcidProfileUserDetails(orcid, email.getId(), profileEntity.getPassword(), profileEntity.getOrcidType());
             }
