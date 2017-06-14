@@ -827,6 +827,17 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         }
         assertEquals("Put code of original work should not have changed", originalPutCode, works.get(2).getPutCode());
     }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testHashedOrcidColumnInitialised() {
+        OrcidProfile profile = createBasicProfile();
+        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
+        
+        ProfileEntity persisted = profileDao.find(profile.getOrcidIdentifier().getPath());
+        assertNotNull(persisted.getHashedOrcid());
+    }
 
     @Test
     @Transactional

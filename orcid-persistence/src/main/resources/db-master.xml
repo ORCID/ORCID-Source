@@ -236,8 +236,10 @@
 	<include file="/db/updates/remove_keyword_view.xml" />
 	<include file="/db/updates/varchar_to_text.xml" />
 	<include file="/db/updates/notifications_indexes.xml" />
-	<include file="/db/updates/identifier-types/identifier-type-39-rrid.xml" />	
+	<include file="/db/updates/add_2fa_columns_to_profile.xml" />
+	<include file="/db/updates/identifier-types/identifier-type-39-rrid.xml" />
 	<include file="/db/updates/add_column_last_login_to_profile.xml" />
 	<include file="/db/updates/add_column_nonce_to_oauth_detail.xml" />
 	<include file="/db/updates/fix_orgs_missing_disambiguated_org.xml" />
+	<include file="/db/updates/backup_codes.xml" />
 </databaseChangeLog>

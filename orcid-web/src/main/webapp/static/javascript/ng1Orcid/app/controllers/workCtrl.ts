@@ -1,4 +1,25 @@
-angular.module('orcidApp').controller(
+declare var $: any;
+declare var om: any;
+declare var ActSortState: any;
+declare var GroupedActivities: any;
+declare var colorbox: any;
+declare var orcidVar: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var workIdLinkJs: any;
+
+declare var bibtexParse: any;
+declare var populateWorkAjaxForm: any;
+declare var index: any;
+declare var ajax: any;
+declare var openImportWizardUrl: any;
+declare var blobObject: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+export const WorkCtrl = angular.module('orcidApp').controller(
     'WorkCtrl', 
     [
         '$scope', 
@@ -71,7 +92,7 @@ angular.module('orcidApp').controller(
             };
             
             // Check for the various File API support.
-            if (window.File && window.FileReader && window.FileList && window.Blob) {
+            if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
                 $scope.canReadFiles = true;
             };
 
@@ -175,10 +196,11 @@ angular.module('orcidApp').controller(
 
 
             $scope.deleteBulkConfirm = function(idx) {
+                var idx: any;
                 $scope.bulkDeleteCount = 0;
                 $scope.bulkDeleteSubmit = false;        
                 $scope.delCountVerify = 0;
-                for (var idx in worksSrvc.groups){
+                for (idx in worksSrvc.groups){
                     if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]){
                         $scope.bulkDeleteCount++;
                     }
@@ -301,7 +323,7 @@ angular.module('orcidApp').controller(
             };    
 
             $scope.toggleClickPrivacyHelp = function(key) {
-                if (!document.documentElement.className.contains('no-touch')){
+                if ( document.documentElement.className.indexOf('no-touch') == -1 ){
                     $scope.privacyHelp[key]=!$scope.privacyHelp[key];
                 }
             };
@@ -553,23 +575,26 @@ angular.module('orcidApp').controller(
             };
 
             $scope.validateCitation = function() {
-                if ($scope.editWork.citation
-                        && $scope.editWork.citation.citation.value
-                        && $scope.editWork.citation.citation.value.length > 0
-                        && $scope.editWork.citation.citationType.value == 'bibtex') {
-                    try {
-                        var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
-                        var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
-                        if (parsed.length == 0){
-                            throw "bibtex parse return nothing";
-                        } 
-                        if (index > -1) {
-                            $scope.editWork.citation.citation.errors.splice(index, 1);
-                        }
-                    } catch (err) {
-                        $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
+                if ( $scope.editWork.citation ){
+                    if ($scope.editWork.citation.citation
+                            && $scope.editWork.citation.citation.value
+                            && $scope.editWork.citation.citation.value.length > 0
+                            && $scope.editWork.citation.citationType.value == 'bibtex') {
+                        try {
+                            var parsed = bibtexParse.toJSON($scope.editWork.citation.citation.value);
+                            var index = $scope.editWork.citation.citation.errors.indexOf(om.get('manualWork.bibtext.notValid'));
+                            if (parsed.length == 0){
+                                throw "bibtex parse return nothing";
+                            } 
+                            if (index > -1) {
+                                $scope.editWork.citation.citation.errors.splice(index, 1);
+                            }
+                        } catch (err) {
+                            $scope.editWork.citation.citation.errors.push(om.get('manualWork.bibtext.notValid'));
+                        };
                     };
-                };
+                    
+                }
             };
 
             $scope.renderTranslatedTitleInfo = function(putCode) {
@@ -699,7 +724,7 @@ angular.module('orcidApp').controller(
 
             // remove once grouping is live
             $scope.moreInfoClick = function(work, $event) {
-                if (!document.documentElement.className.contains('no-touch')){
+                if (document.documentElement.className.indexOf('no-touch') == -1){
                     $scope.moreInfoOpen?$scope.closePopover():$scope.loadWorkInfo(work.putCode.value, $event);
                 }
             };
@@ -707,7 +732,7 @@ angular.module('orcidApp').controller(
             // remove once grouping is live
             $scope.moreInfoMouseEnter = function(work, $event) {
                 $event.stopPropagation();
-                if (document.documentElement.className.contains('no-touch')){
+                if (document.documentElement.className.indexOf('no-touch') > -1){
                     $scope.loadWorkInfo(work.putCode.value, $event);
                 }
                 else{
@@ -950,3 +975,7 @@ angular.module('orcidApp').controller(
         }
     ]
 );
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class WorkCtrlNg2Module {}

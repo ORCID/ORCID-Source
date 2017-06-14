@@ -805,4 +805,29 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Date result = query.getSingleResult();
         return result;
     }
+    
+    @Override
+    @Transactional
+    public void disable2FA(String orcid) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = false, secretFor2FA = null where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void enable2FA(String orcid) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = true where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public void update2FASecret(String orcid, String secret) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), secretFor2FA = :secret where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("secret", secret);
+        query.executeUpdate();
+    }
 }

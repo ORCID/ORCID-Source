@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -43,6 +44,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
@@ -158,7 +160,7 @@ import net.sf.ehcache.Element;
 public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl implements OrcidProfileManager {
 
     private static final int INDEXING_BATCH_SIZE = 100;
-    
+
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
 
@@ -167,7 +169,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private ProfileDao profileDaoReadOnly;
-    
+
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
@@ -212,10 +214,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private OrgManager orgManager;
-    
+
     @Resource
     private UserConnectionDao userConnectionDao;
-    
+
     @Resource
     private RecordNameManager recordNameManager;
 
@@ -224,13 +226,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private JmsMessageSender messaging;
-    
+
     private int claimReminderAfterDays = 8;
 
     private int verifyReminderAfterDays = 7;
-    
+
     @Value("${org.orcid.core.activities.max:10000}")
     private long maxNumOfActivities;
+
+    @Resource
+    private EncryptionManager encryptionManager;
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -269,17 +274,24 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(orcidProfile, amenderOrcid);
 
         Visibility defaultVisibility = null;
-        if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null){
-            defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
+        if (orcidProfile.getOrcidInternal() != null && orcidProfile.getOrcidInternal().getPreferences() != null
+                && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null) {
+            defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
-        //If it is created by member, it is not claimed
+        // If it is created by member, it is not claimed
         addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility, !createdByMember);
-        
+
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
         profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
         setDefaultVisibility(profileEntity, createdByMember, defaultVisibility);
+
+        try {
+            profileEntity.setHashedOrcid(encryptionManager.sha256Hash(orcidProfile.getOrcidIdentifier().getPath()));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
 
         profileDao.persist(profileEntity);
         profileDao.flush();
@@ -292,10 +304,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             defaultActivityVis = Visibility.PRIVATE;
         }
 
-        if(isClaimed == null) {
+        if (isClaimed == null) {
             isClaimed = false;
         }
-        
+
         if (orcidProfile.getOrcidBio() != null) {
             if (orcidProfile.getOrcidBio().getBiography() != null) {
                 if (isClaimed) {
@@ -365,7 +377,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
         return createdOrcidProfile;
     }
-    
+
     @Override
     @Transactional
     public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
@@ -379,10 +391,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
         Visibility defaultVisibility = Visibility.fromValue(existingProfileEntity.getActivitiesVisibilityDefault().value());
-        
+
         if (existingProfileEntity != null) {
-            //Dont delete the existing elements anymore
-            //profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
+            // Dont delete the existing elements anymore
+            // profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, defaultVisibility);
             setAffiliationPrivacy(orcidProfile, defaultVisibility);
             setFundingPrivacy(orcidProfile, defaultVisibility);
@@ -391,19 +403,20 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
-        
+
         Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
-                
-        if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
+
+        if (orcidProfile.getOrcidInternal() != null && orcidProfile.getOrcidInternal().getPreferences() != null
+                && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null) {
             defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
         addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility, claimed);
-        
+
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity, updateOptions);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         profileDao.flush();
-        ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);        
+        ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
 
@@ -457,50 +470,50 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param amenderOrcid
      *            The orcid of the user or client that add the email to the
      *            profile user
-     * */
+     */
     private void addSourceToBioElements(OrcidProfile orcidProfile, String amenderOrcid) {
         Source source = createSource(amenderOrcid);
-        if(orcidProfile != null && orcidProfile.getOrcidBio() != null) {
+        if (orcidProfile != null && orcidProfile.getOrcidBio() != null) {
             OrcidBio bio = orcidProfile.getOrcidBio();
-            //Other names
+            // Other names
             if (bio.getPersonalDetails() != null && bio.getPersonalDetails().getOtherNames() != null && bio.getPersonalDetails().getOtherNames().getOtherName() != null
                     && !bio.getPersonalDetails().getOtherNames().getOtherName().isEmpty()) {
-                for(OtherName otherName : bio.getPersonalDetails().getOtherNames().getOtherName()) {
-                    if(otherName.getSource() == null || PojoUtil.isEmpty(otherName.getSource().retrieveSourcePath())) {
+                for (OtherName otherName : bio.getPersonalDetails().getOtherNames().getOtherName()) {
+                    if (otherName.getSource() == null || PojoUtil.isEmpty(otherName.getSource().retrieveSourcePath())) {
                         otherName.setSource(source);
                     }
                 }
             }
-                        
-            //Address
-            if(bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null && bio.getContactDetails().getAddress().getCountry() != null) {
-                Country country = bio.getContactDetails().getAddress().getCountry(); 
-                if(country.getSource() == null || PojoUtil.isEmpty(country.getSource().retrieveSourcePath())) {
+
+            // Address
+            if (bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null && bio.getContactDetails().getAddress().getCountry() != null) {
+                Country country = bio.getContactDetails().getAddress().getCountry();
+                if (country.getSource() == null || PojoUtil.isEmpty(country.getSource().retrieveSourcePath())) {
                     country.setSource(source);
                 }
-            }            
-            
-            //Keywords
-            if(bio.getKeywords() != null && bio.getKeywords().getKeyword() != null && !bio.getKeywords().getKeyword().isEmpty()) {
+            }
+
+            // Keywords
+            if (bio.getKeywords() != null && bio.getKeywords().getKeyword() != null && !bio.getKeywords().getKeyword().isEmpty()) {
                 Keywords keywords = bio.getKeywords();
-                for(Keyword keyword : keywords.getKeyword()) {
+                for (Keyword keyword : keywords.getKeyword()) {
                     if (keyword.getSource() == null || PojoUtil.isEmpty(keyword.getSource().retrieveSourcePath())) {
                         keyword.setSource(source);
                     }
                 }
             }
-            
-            //Researcher urls
-            if(bio.getResearcherUrls() != null && bio.getResearcherUrls().getResearcherUrl() != null && !bio.getResearcherUrls().getResearcherUrl().isEmpty()) {
+
+            // Researcher urls
+            if (bio.getResearcherUrls() != null && bio.getResearcherUrls().getResearcherUrl() != null && !bio.getResearcherUrls().getResearcherUrl().isEmpty()) {
                 ResearcherUrls rUrls = bio.getResearcherUrls();
-                for(ResearcherUrl rUrl : rUrls.getResearcherUrl()) {
-                    if(rUrl.getSource() == null || PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath())) {
+                for (ResearcherUrl rUrl : rUrls.getResearcherUrl()) {
+                    if (rUrl.getSource() == null || PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath())) {
                         rUrl.setSource(source);
                     }
-                }                
+                }
             }
-                        
-            //External identifiers
+
+            // External identifiers
             if (bio.getExternalIdentifiers() != null && bio.getExternalIdentifiers().getExternalIdentifier() != null
                     && !bio.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 for (ExternalIdentifier extId : bio.getExternalIdentifiers().getExternalIdentifier()) {
@@ -511,7 +524,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
         }
     }
-    
+
     /**
      * Add source to the profile emails
      * 
@@ -520,7 +533,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param amenderOrcid
      *            The orcid of the user or client that add the email to the
      *            profile user
-     * */
+     */
     private void addSourceToEmails(OrcidProfile orcidProfile, String amenderOrcid) {
         if (orcidProfile != null && orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getContactDetails() != null
                 && orcidProfile.getOrcidBio().getContactDetails().getEmail() != null) {
@@ -542,7 +555,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param amenderOrcid
      *            The orcid of the user or client that add the work to the
      *            profile user
-     * */
+     */
     private void addSourceToWorks(OrcidProfile orcidProfile, String amenderOrcid) {
         OrcidWorks orcidWorks = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getOrcidWorks();
         addSourceToWorks(orcidWorks, amenderOrcid);
@@ -577,7 +590,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param amenderOrcid
      *            The orcid of the user or client that is adding the affiliation
      *            to the profile user
-     * */
+     */
     private void addSourceToAffiliations(OrcidProfile orcidProfile, String amenderOrcid) {
         Affiliations affiliations = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getAffiliations();
 
@@ -603,7 +616,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param amenderOrcid
      *            The orcid of the user or client that is adding the fundings to
      *            the profile user
-     * */
+     */
     private void addSourceToFundings(OrcidProfile orcidProfile, String amenderOrcid) {
         FundingList fundings = orcidProfile.getOrcidActivities() == null ? null : orcidProfile.getOrcidActivities().getFundings();
 
@@ -639,7 +652,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (isClaimed)
             act.setVisibility(defaultWorkVisibility);
         else
-            act.setVisibility(act.getVisibility() !=null ? act.getVisibility():Visibility.PRIVATE);
+            act.setVisibility(act.getVisibility() != null ? act.getVisibility() : Visibility.PRIVATE);
     }
 
     @Override
@@ -664,7 +677,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             return null;
         }
     }
-    
+
     /**
      * Updates the ORCID works only
      * 
@@ -705,36 +718,36 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void checkUserCanHoldMoreElement(ActivitiesContainer existingActivities, ActivitiesContainer updatedActivities) {
         long activitiesCount = 0;
-        
-        if(existingActivities != null) {
-            if(existingActivities.retrieveActivities() != null) {
+
+        if (existingActivities != null) {
+            if (existingActivities.retrieveActivities() != null) {
                 activitiesCount = existingActivities.retrieveActivities().size();
-            }            
+            }
         }
-        
-        if(activitiesCount > maxNumOfActivities) {
+
+        if (activitiesCount > maxNumOfActivities) {
             throw new ExceedMaxNumberOfElementsException();
         }
-        
-        if(updatedActivities != null) {
-            if(updatedActivities.retrieveActivities() != null) {
+
+        if (updatedActivities != null) {
+            if (updatedActivities.retrieveActivities() != null) {
                 Collection<? extends Activity> elements = updatedActivities.retrieveActivities();
                 Iterator<? extends Activity> elementsIt = elements.iterator();
-                if(elementsIt != null) {
-                    while(elementsIt.hasNext()) {
+                if (elementsIt != null) {
+                    while (elementsIt.hasNext()) {
                         Activity activity = elementsIt.next();
-                        if(activity != null && PojoUtil.isEmpty(activity.getPutCode())) {
+                        if (activity != null && PojoUtil.isEmpty(activity.getPutCode())) {
                             activitiesCount += 1;
-                            if(activitiesCount > maxNumOfActivities) {
+                            if (activitiesCount > maxNumOfActivities) {
                                 throw new ExceedMaxNumberOfElementsException();
                             }
                         }
                     }
-                }                
+                }
             }
         }
     }
-    
+
     /**
      * Add new external identifiers to an existing profile
      * 
@@ -743,7 +756,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {        
+    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
@@ -781,8 +794,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Deprecated
     @Override
     @Transactional
-    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
-        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid()); 
+    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
+        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid());
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
@@ -910,23 +923,25 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
             orcidProfileCacheManager.put(cachedProfile);
         }
-    }    
+    }
 
     @Override
-    @Transactional    
+    @Transactional
     public void updatePreferences(String orcid, Preferences preferences) {
-        boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
-                .getSendChangeNotifications().isValue();
-        boolean sendAdministrativeChangeNotifications = preferences.getSendAdministrativeChangeNotifications() == null ? sendChangeNotifications : preferences
-                .getSendAdministrativeChangeNotifications().isValue();
+        boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT
+                : preferences.getSendChangeNotifications().isValue();
+        boolean sendAdministrativeChangeNotifications = preferences.getSendAdministrativeChangeNotifications() == null ? sendChangeNotifications
+                : preferences.getSendAdministrativeChangeNotifications().isValue();
         boolean sendOrcidNews = preferences.getSendOrcidNews() == null ? DefaultPreferences.SEND_ORCID_NEWS_DEFAULT : preferences.getSendOrcidNews().isValue();
-        boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS : preferences
-                .getSendMemberUpdateRequests();
-        org.orcid.jaxb.model.common_v2.Visibility activitiesVisibilityDefault = (preferences.getActivitiesVisibilityDefault().getValue() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE : org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value());
-        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT : preferences
-                .getDeveloperToolsEnabled().isValue();
-        float sendEmailFrequencyDays = Float.valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences
-                .getSendEmailFrequencyDays());
+        boolean sendMemberUpdateRequests = preferences.getSendMemberUpdateRequests() == null ? DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS
+                : preferences.getSendMemberUpdateRequests();
+        org.orcid.jaxb.model.common_v2.Visibility activitiesVisibilityDefault = (preferences.getActivitiesVisibilityDefault().getValue() == null)
+                ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE
+                : org.orcid.jaxb.model.common_v2.Visibility.fromValue(preferences.getActivitiesVisibilityDefault().getValue().value());
+        boolean developerToolsEnabled = preferences.getDeveloperToolsEnabled() == null ? DefaultPreferences.DEVELOPER_TOOLS_ENABLED_DEFAULT
+                : preferences.getDeveloperToolsEnabled().isValue();
+        float sendEmailFrequencyDays = Float
+                .valueOf(preferences.getSendEmailFrequencyDays() == null ? DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS : preferences.getSendEmailFrequencyDays());
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests,
                 activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
     }
@@ -964,7 +979,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
 
         checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        
+
         if (compareWorksUsingScopusWay) {
             checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
             if (existingOrcidWorks != null)
@@ -974,8 +989,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         } else {
             checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
         }
-        
-        //workDao.increaseDisplayIndexOnAllElements(orcid);
+
+        // workDao.increaseDisplayIndexOnAllElements(orcid);
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
@@ -996,7 +1011,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     /**
      * Legacy mode to check if works are duplicated TODO: This must be removed
      * in a near future
-     * */
+     */
     private void checkForAlreadyExistingWorksLegacyMode(OrcidWorks existingOrcidWorks, List<OrcidWork> updatedOrcidWorksList) {
         if (existingOrcidWorks != null) {
             Set<OrcidWork> existingOrcidWorksSet = new HashSet<>();
@@ -1050,7 +1065,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      *            the deduped list of works
      * @throws IllegalArgumentException
      *             if there is a duplicated external identifier
-     * */
+     */
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList) {
         // Rules to define if two works have the same id:
         // 1) If the source is the same and
@@ -1082,13 +1097,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                     for (WorkExternalIdentifier workExtIdToCompare : newWorkToCompare.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
                                         // If the ext ids are the same
                                         if (workExtId.equals(workExtIdToCompare)) {
-                                            Title title = (newWork.getWorkTitle() == null || newWork.getWorkTitle().getTitle() == null) ? null : newWork.getWorkTitle()
-                                                    .getTitle();
+                                            Title title = (newWork.getWorkTitle() == null || newWork.getWorkTitle().getTitle() == null) ? null
+                                                    : newWork.getWorkTitle().getTitle();
                                             Title titleToCompare = (newWorkToCompare.getWorkTitle() == null || newWorkToCompare.getWorkTitle().getTitle() == null) ? null
                                                     : newWorkToCompare.getWorkTitle().getTitle();
                                             if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(newWork.getWorkType(), workExtId, workExtIdToCompare)) {
-                                                String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId
-                                                        .getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent();
+                                                String extIdContent = (workExtId.getWorkExternalIdentifierId() == null
+                                                        || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? ""
+                                                                : workExtId.getWorkExternalIdentifierId().getContent();
                                                 String title1 = (title == null) ? "" : title.getContent();
                                                 String title2 = (titleToCompare == null) ? "" : titleToCompare.getContent();
                                                 String errorMessage = String.format("Works \"%s\" and \"%s\" have the same external id \"%s\"", title1, title2,
@@ -1137,13 +1153,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                 // duplicated
                                                 Title title = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null
                                                         : existingWork.getWorkTitle().getTitle();
-                                                Title titleToCompare = (existingWorkToCompare.getWorkTitle() == null || existingWorkToCompare.getWorkTitle().getTitle() == null) ? null
-                                                        : existingWorkToCompare.getWorkTitle().getTitle();
+                                                Title titleToCompare = (existingWorkToCompare.getWorkTitle() == null
+                                                        || existingWorkToCompare.getWorkTitle().getTitle() == null) ? null
+                                                                : existingWorkToCompare.getWorkTitle().getTitle();
                                                 if (!isTheSameTitle(title, titleToCompare)) {
-                                                    String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId
-                                                            .getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent();
-                                                    LOG.error("Works {} and {} have the same external identifier {}", new Object[] { existingWork.getPutCode(),
-                                                            existingWorkToCompare.getPutCode(), extIdContent });
+                                                    String extIdContent = (workExtId.getWorkExternalIdentifierId() == null
+                                                            || PojoUtil.isEmpty(workExtId.getWorkExternalIdentifierId().getContent())) ? ""
+                                                                    : workExtId.getWorkExternalIdentifierId().getContent();
+                                                    LOG.error("Works {} and {} have the same external identifier {}",
+                                                            new Object[] { existingWork.getPutCode(), existingWorkToCompare.getPutCode(), extIdContent });
                                                 }
                                             }
                                         }
@@ -1168,8 +1186,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                     && !orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
                                 // For each external identifier in the new work
                                 for (WorkExternalIdentifier newExternalIdentifier : orcidWork.getWorkExternalIdentifiers().getWorkExternalIdentifier()) {
-                                    if (existingWork.getWorkExternalIdentifiers() != null
-                                            && existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
+                                    if (existingWork.getWorkExternalIdentifiers() != null && existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier() != null
                                             && !existingWork.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
                                         // Compare them against the existing
                                         // identifiers
@@ -1179,18 +1196,19 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                 // Compare the titles, if they
                                                 // are different, set it as
                                                 // duplicated
-                                                Title title = (orcidWork.getWorkTitle() == null || orcidWork.getWorkTitle().getTitle() == null) ? null : orcidWork
-                                                        .getWorkTitle().getTitle();
+                                                Title title = (orcidWork.getWorkTitle() == null || orcidWork.getWorkTitle().getTitle() == null) ? null
+                                                        : orcidWork.getWorkTitle().getTitle();
                                                 Title titleToCompare = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null
                                                         : existingWork.getWorkTitle().getTitle();
-                                                if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(orcidWork.getWorkType(), existingExternalIdentifier, newExternalIdentifier)) {
-                                                    String extIdContent = (existingExternalIdentifier.getWorkExternalIdentifierId() == null || PojoUtil
-                                                            .isEmpty(existingExternalIdentifier.getWorkExternalIdentifierId().getContent())) ? ""
-                                                            : existingExternalIdentifier.getWorkExternalIdentifierId().getContent();
+                                                if (!isTheSameTitle(title, titleToCompare)
+                                                        && !areBothExtIdsPartOf(orcidWork.getWorkType(), existingExternalIdentifier, newExternalIdentifier)) {
+                                                    String extIdContent = (existingExternalIdentifier.getWorkExternalIdentifierId() == null
+                                                            || PojoUtil.isEmpty(existingExternalIdentifier.getWorkExternalIdentifierId().getContent())) ? ""
+                                                                    : existingExternalIdentifier.getWorkExternalIdentifierId().getContent();
                                                     String title1 = (title == null) ? "" : title.getContent();
                                                     String title2 = (titleToCompare == null) ? "" : titleToCompare.getContent();
-                                                    String errorMessage = String.format("Works \"%s\" and \"%s\"(put-code '%s') have the same external id \"%s\"",
-                                                            title1, title2, existingWork.getPutCode(), extIdContent);
+                                                    String errorMessage = String.format("Works \"%s\" and \"%s\"(put-code '%s') have the same external id \"%s\"", title1,
+                                                            title2, existingWork.getPutCode(), extIdContent);
                                                     throw new IllegalArgumentException(errorMessage);
                                                 }
                                             }
@@ -1204,28 +1222,28 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
         }
     }
-    
+
     private boolean areBothExtIdsPartOf(WorkType workType, WorkExternalIdentifier existing, WorkExternalIdentifier newer) {
         boolean isExistingPartOf = false;
         boolean isNewPartOf = false;
-        if(WorkType.BOOK_CHAPTER.equals(workType)) {
-            if(WorkExternalIdentifierType.ISBN.equals(existing.getWorkExternalIdentifierType())) {        
+        if (WorkType.BOOK_CHAPTER.equals(workType)) {
+            if (WorkExternalIdentifierType.ISBN.equals(existing.getWorkExternalIdentifierType())) {
                 isExistingPartOf = true;
             }
-            
-            if(WorkExternalIdentifierType.ISBN.equals(newer.getWorkExternalIdentifierType())) {
+
+            if (WorkExternalIdentifierType.ISBN.equals(newer.getWorkExternalIdentifierType())) {
                 isNewPartOf = true;
             }
-        } else if(WorkType.JOURNAL_ARTICLE.equals(workType)) {
-            if(WorkExternalIdentifierType.ISSN.equals(existing.getWorkExternalIdentifierType())) {
+        } else if (WorkType.JOURNAL_ARTICLE.equals(workType)) {
+            if (WorkExternalIdentifierType.ISSN.equals(existing.getWorkExternalIdentifierType())) {
                 isExistingPartOf = true;
             }
-            
-            if(WorkExternalIdentifierType.ISSN.equals(newer.getWorkExternalIdentifierType())) {
+
+            if (WorkExternalIdentifierType.ISSN.equals(newer.getWorkExternalIdentifierType())) {
                 isNewPartOf = true;
             }
         }
-        
+
         return (isExistingPartOf && isNewPartOf);
     }
 
@@ -1235,7 +1253,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param source1
      * @param source2
      * @return true if source1 is equals to source2
-     * */
+     */
     private boolean isTheSameSource(Source source1, Source source2) {
         if (source1 == null) {
             if (source2 == null)
@@ -1256,7 +1274,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param title1
      * @param title2
      * @return true if title1 is equals to title2
-     * */
+     */
     private boolean isTheSameTitle(Title title1, Title title2) {
         if (title1 == null) {
             if (title2 == null)
@@ -1273,7 +1291,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        Set<String> titles = new HashSet<String>();        
+        Set<String> titles = new HashSet<String>();
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
@@ -1284,8 +1302,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             if (updatedOrcidWork.getWorkTitle() != null && updatedOrcidWork.getWorkTitle().getTitle() != null) {
                 String title = updatedOrcidWork.getWorkTitle().getTitle().getContent();
                 if (titles.contains(title)) {
-                    LOG.warn("Request from {} contains dupplicated works on title '{}' and put-code '{}' \n {}", new Object[] { sourceManager.retrieveSourceOrcid(),
-                            title, workEntity.getId(), updatedOrcidWork });
+                    LOG.warn("Request from {} contains dupplicated works on title '{}' and put-code '{}' \n {}",
+                            new Object[] { sourceManager.retrieveSourceOrcid(), title, workEntity.getId(), updatedOrcidWork });
                 } else {
                     titles.add(title);
                 }
@@ -1307,11 +1325,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 if (contributor.getContributorOrcid() != null) {
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
-                        if(profile.getRecordNameEntity() != null) {
+                        if (profile.getRecordNameEntity() != null) {
                             if (org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
                                 contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
                             }
-                        }                         
+                        }
                     }
                 } else if (contributor.getContributorEmail() != null) {
                     // Else, if email is available, get the profile
@@ -1322,7 +1340,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                        if(profileEntity.getRecordNameEntity() != null && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
+                        if (profileEntity.getRecordNameEntity() != null
+                                && org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
                         } else {
                             contributor.setCreditName(null);
@@ -1390,9 +1409,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             setVisibilityToPrivate(email);
         }
         setVisibilityToPrivate(minimalPersonalDetails.getOtherNames());
-        if (minimalPersonalDetails.getOtherNames() != null && minimalPersonalDetails.getOtherNames().getOtherName() != null){
+        if (minimalPersonalDetails.getOtherNames() != null && minimalPersonalDetails.getOtherNames().getOtherName() != null) {
             for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName())
-                setVisibilityToPrivate(name);            
+                setVisibilityToPrivate(name);
         }
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
@@ -1403,13 +1422,13 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
         OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
-        
+
         userConnectionDao.deleteByOrcid(existingOrcidProfile.getOrcidIdentifier().getPath());
-        
+
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
-    
+
     /**
      * Set the locked status of an account to true
      * 
@@ -1425,7 +1444,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
         return wasLocked;
     }
-    
+
     /**
      * Set the locked status of an account to false
      * 
@@ -1454,7 +1473,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     /**
      * Reactivate an inactive profile
-     * */
+     */
     public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile) {
         OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
         deactivatedOrcidHistory.setDeactivationDate(null);
@@ -1468,12 +1487,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             visibilityType.setVisibility(Visibility.PRIVATE);
         }
     }
-    
+
     private void setVisibilityToPrivate(OtherNames visibilityType) {
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);
         }
-    }        
+    }
 
     /**
      * Checks that the email is not already being used
@@ -1582,7 +1601,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * 
      * @param updatedOrcidProfile
      *            The profile containing the new funding
-     * */
+     */
     private void setFundingAmountsWithTheCorrectFormat(OrcidProfile updatedOrcidProfile) throws IllegalArgumentException {
         FundingList fundings = updatedOrcidProfile.retrieveFundings();
 
@@ -1598,7 +1617,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                  * When spaces are allowed, the grouping separator is the
                  * character 160, which is a non-breaking space So, lets change
                  * it so it uses the default space as a separator
-                 * */
+                 */
                 if (symbols.getGroupingSeparator() == 160) {
                     symbols.setGroupingSeparator(' ');
                 }
@@ -1608,8 +1627,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 if (parsePosition.getIndex() != amount.length()) {
                     double example = 1234567.89;
                     NumberFormat numberFormatExample = NumberFormat.getNumberInstance(localeManager.getLocale());
-                    throw new IllegalArgumentException("The amount: " + amount + " doesn'n have the right format, it should use the format: "
-                            + numberFormatExample.format(example));
+                    throw new IllegalArgumentException(
+                            "The amount: " + amount + " doesn'n have the right format, it should use the format: " + numberFormatExample.format(example));
                 }
                 funding.getAmount().setContent(formattedAmount);
             }
@@ -1643,7 +1662,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultVisibility, boolean isClaimed) {
         for (Affiliation incomingAffiliation : incomingAffiliations.getAffiliation()) {
             if (StringUtils.isBlank(incomingAffiliation.getPutCode())) {
-               choosePrivacy(incomingAffiliation, defaultVisibility, isClaimed);
+                choosePrivacy(incomingAffiliation, defaultVisibility, isClaimed);
             }
         }
     }
@@ -1651,7 +1670,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private void setFundingPrivacy(FundingList incomingFundings, Visibility defaultVisibility, boolean isClaimed) {
         for (Funding incomingFunding : incomingFundings.getFundings()) {
             if (StringUtils.isBlank(incomingFunding.getPutCode())) {
-               choosePrivacy(incomingFunding, defaultVisibility, isClaimed);
+                choosePrivacy(incomingFunding, defaultVisibility, isClaimed);
             }
         }
     }
@@ -1798,60 +1817,64 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     static ExecutorService executorService = null;
     static Object executorServiceLock = new Object();
-    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();    
-    
-    /** Simple method to be called by scheduler.
-     * Looks for profiles with REINDEX flag and adds LastModifiedMessages to the REINDEX queue
-     * Then sets indexing flag to DONE (although there is no guarantee it will be done!)
+    static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
+
+    /**
+     * Simple method to be called by scheduler. Looks for profiles with REINDEX
+     * flag and adds LastModifiedMessages to the REINDEX queue Then sets
+     * indexing flag to DONE (although there is no guarantee it will be done!)
      * 
      */
-    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination){
-        LOG.info("processing profiles with "+status.name()+" flag. sending to "+destination.name());
+    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination) {
+        LOG.info("processing profiles with " + status.name() + " flag. sending to " + destination.name());
         List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
         indexingStatuses.add(status);
         boolean connectionIssue = false;
-        do{
+        do {
             orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
-            LOG.info("processing batch of "+orcidsForIndexing.size());
-            for (Pair<String, IndexingStatus> p : orcidsForIndexing){
+            LOG.info("processing batch of " + orcidsForIndexing.size());
+            for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
                 String orcid = p.getLeft();
                 Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
-                LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-                if (messaging.send(mess,destination))
+                LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
+                if (messaging.send(mess, destination))
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 else
                     connectionIssue = true;
             }
-        }while (!connectionIssue && !orcidsForIndexing.isEmpty());
+        } while (!connectionIssue && !orcidsForIndexing.isEmpty());
         if (connectionIssue)
-            LOG.warn("ABORTED processing profiles with "+status.name()+" flag. sending to "+destination.name());
+            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + destination.name());
     }
-    
+
     /**
-     * TODO: Disabled until we get move our solr indexing to the message listener 
-     * */
+     * TODO: Disabled until we get move our solr indexing to the message
+     * listener
+     */
     @Override
-    public void processProfilesWithPendingFlagAndAddToMessageQueue(){
+    public void processProfilesWithPendingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, JmsDestination.UPDATED_ORCIDS);
     }
-    
+
     /**
-     * TODO: Disabled until we get move our solr indexing to the message listener 
-     * */
+     * TODO: Disabled until we get move our solr indexing to the message
+     * listener
+     */
     @Override
-    public void processProfilesWithReindexFlagAndAddToMessageQueue(){
+    public void processProfilesWithReindexFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
     }
-    
+
     /**
-     * TODO: Disabled until we get move our solr indexing to the message listener 
-     * */
+     * TODO: Disabled until we get move our solr indexing to the message
+     * listener
+     */
     @Override
-    public void processProfilesWithFailedFlagAndAddToMessageQueue(){
+    public void processProfilesWithFailedFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
     }
-        
+
     public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
@@ -1865,15 +1888,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
-                
-                //TODO: This code exists so we can run old indexing and S3 updating in parallel
-                // IF you just want MQ driven indexing, you need to disable the old calls in the 
+
+                // TODO: This code exists so we can run old indexing and S3
+                // updating in parallel
+                // IF you just want MQ driven indexing, you need to disable the
+                // old calls in the
                 // context and enable the new ones.
-                if(messaging.isEnabled()) {
+                if (messaging.isEnabled()) {
                     Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
                     LastModifiedMessage mess = new LastModifiedMessage(orcid, lastModifiedFromDb);
                     JmsDestination jmsDestination = JmsDestination.REINDEX;
-                    if(IndexingStatus.PENDING.equals(indexingStatus)){
+                    if (IndexingStatus.PENDING.equals(indexingStatus)) {
                         jmsDestination = JmsDestination.UPDATED_ORCIDS;
                     }
                     if (messaging.send(mess, jmsDestination)) {
@@ -1885,7 +1910,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         });
-    }    
+    }
 
     @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
@@ -2029,39 +2054,44 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * orcidProfile object
      * 
      * @param orcidProfile
-     * */
+     */
     private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults, Visibility defaultVisibility) {
         if (profileEntity != null) {
-            //Names should be public by default
+            // Names should be public by default
             if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() == null) {
-                profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                profileEntity.getRecordNameEntity()
+                        .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
             }
-            
+
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
-                if(useMemberDefaults) {
-                    profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value()));
+                if (useMemberDefaults) {
+                    profileEntity.setActivitiesVisibilityDefault(
+                            org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility().value()));
                 } else {
-                    if(defaultVisibility != null) {
+                    if (defaultVisibility != null) {
                         profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
                     } else {
-                        profileEntity.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().value()));
+                        profileEntity.setActivitiesVisibilityDefault(
+                                org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility().value()));
                     }
-                }                
-            }
-            
-            if(profileEntity.getRecordNameEntity() != null) {
-                if(profileEntity.getRecordNameEntity().getVisibility() == null) {
-                    profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
                 }
             }
-            
-            if(profileEntity.getBiographyEntity() != null) {                
-                if(profileEntity.getBiographyEntity().getVisibility() == null) {
-                    if(defaultVisibility != null) {
+
+            if (profileEntity.getRecordNameEntity() != null) {
+                if (profileEntity.getRecordNameEntity().getVisibility() == null) {
+                    profileEntity.getRecordNameEntity()
+                            .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                }
+            }
+
+            if (profileEntity.getBiographyEntity() != null) {
+                if (profileEntity.getBiographyEntity().getVisibility() == null) {
+                    if (defaultVisibility != null) {
                         profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility.value()));
                     } else {
-                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
-                    }                    
+                        profileEntity.getBiographyEntity()
+                                .setVisibility(org.orcid.jaxb.model.common_v2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                    }
                 }
             }
         }

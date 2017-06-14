@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -40,6 +41,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Locale;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -349,6 +351,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertTrue(applications.isEmpty());
+    }
+    
+    public void testDisable2FA() {
+        ProfileDao profileDao = Mockito.mock(ProfileDao.class);
+        Mockito.doNothing().when(profileDao).disable2FA(Mockito.eq("some-orcid"));
+        profileEntityManager.disable2FA("some-orcid");
+        Mockito.verify(profileDao).disable2FA(Mockito.eq("some-orcid"));
     }
     
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {

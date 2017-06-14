@@ -67,7 +67,7 @@ public class BaseControllerUtilTest {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = mock(UsernamePasswordAuthenticationToken.class);
         OrcidProfileUserDetails orcidProfileUserDetails = mock(OrcidProfileUserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getPrincipal()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
     
@@ -77,7 +77,7 @@ public class BaseControllerUtilTest {
         PreAuthenticatedAuthenticationToken usernamePasswordAuthenticationToken = mock(PreAuthenticatedAuthenticationToken.class);
         OrcidProfileUserDetails orcidProfileUserDetails = mock(OrcidProfileUserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getPrincipal()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
 

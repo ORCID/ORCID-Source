@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.common_v2.Filterable;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
@@ -121,9 +121,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     public boolean isAdmin() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof OrcidProfileUserDetails) {
-                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
+            Object details = authentication.getDetails();
+            if (details instanceof OrcidProfileUserDetails) {
+                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
                 return OrcidType.ADMIN.equals(userDetails.getOrcidType());
             }
         }
