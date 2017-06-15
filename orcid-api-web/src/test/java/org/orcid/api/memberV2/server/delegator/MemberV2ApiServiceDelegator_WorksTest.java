@@ -125,10 +125,26 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testViewWorkReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewWork(ORCID, 11L);
-        Work element = (Work) r.getEntity();
-        assertNotNull(element);
-        assertEquals("/0000-0000-0000-0003/work/11", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        Work work = (Work) r.getEntity();
+        assertNotNull(work);
+        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+        assertNotNull(work);
+        assertNotNull(work.getLastModifiedDate());
+        assertNotNull(work.getLastModifiedDate().getValue());
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("PUBLIC", work.getWorkTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+        assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+        assertNotNull(work.getWorkContributors());
+        assertNotNull(work.getWorkContributors().getContributor());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertNotNull(work.getWorkContributors().getContributor().get(0).getContributorOrcid());
+        assertEquals("0000-0000-0000-0000", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(work.getWorkContributors().getContributor().get(0).getCreditName());
+        Utils.assertIsPublicOrSource(work, "APP-5555555555555555");
     }
 
     @Test
