@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -38,6 +40,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 
@@ -65,8 +70,12 @@ public class TokenTargetFilterTest {
     public void tokenUsedOnTheWrongUser12ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
         ContainerRequest request = Mockito.mock(ContainerRequest.class);
-        Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v1.2/" + ORCID2);
-        Mockito.when(request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME)).thenReturn("1.2");
+        Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v1.2/" + ORCID2);        
+
+        RequestAttributes sra = Mockito.mock(RequestAttributes.class);
+        Mockito.when(sra.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST)).thenReturn("1.2");
+        RequestContextHolder.setRequestAttributes(sra);
+        
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);
         fail();
@@ -74,10 +83,14 @@ public class TokenTargetFilterTest {
     
     @Test(expected = OrcidUnauthorizedException.class)
     public void tokenUsedOnTheWrongUser20ApiTest() {
-        setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
+        setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);        
         ContainerRequest request = Mockito.mock(ContainerRequest.class);
-        Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);
-        Mockito.when(request.getHeaderValue(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME)).thenReturn("2.0");
+        Mockito.when(request.getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);        
+                
+        RequestAttributes sra = Mockito.mock(RequestAttributes.class);
+        Mockito.when(sra.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST)).thenReturn("2.0");
+        RequestContextHolder.setRequestAttributes(sra);
+        
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);
         fail();
