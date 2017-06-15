@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.security.aop.LockedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 
@@ -46,6 +47,9 @@ public class OAuthErrorUtils {
             error.setResponseStatus(Status.UNAUTHORIZED);
         } else if (IllegalArgumentException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.INVALID_REQUEST);
+            error.setResponseStatus(Status.BAD_REQUEST);
+        } else if (InvalidGrantException.class.isAssignableFrom(t.getClass())) {
+            error.setError(OAuthError.INVALID_GRANT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else {
             error.setError(OAuthError.SERVER_ERROR);
