@@ -22,7 +22,7 @@ import java.util.Set;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 
 public class Client implements Serializable {
-    private static final long serialVersionUID = 5085242454098119135L;
+    private static final long serialVersionUID = 8955977340245174988L;
     private String id;
     private String name;
     private String description;
@@ -30,6 +30,7 @@ public class Client implements Serializable {
     private String groupProfileId;
     private String authenticationProviderId;
     private String emailAccessReason;
+    private String decryptedSecret;
     private ClientType clientType;
     private boolean allowAutoDeprecate = false;
     private boolean persistentTokensEnabled = false;
@@ -37,8 +38,6 @@ public class Client implements Serializable {
     private Set<String> resourceId;
     private Set<String> authorizedGrantTypes;
     private Set<String> grantedAuthorities;
-    private Set<CustomEmail> customEmails;
-    private Set<ClientSecret> clientSecrets;
     private Set<ClientRedirectUri> clientRedirectUris;
 
     public String getId() {
@@ -97,6 +96,14 @@ public class Client implements Serializable {
         this.emailAccessReason = emailAccessReason;
     }
 
+    public String getDecryptedSecret() {
+        return decryptedSecret;
+    }
+
+    public void setDecryptedSecret(String decryptedSecret) {
+        this.decryptedSecret = decryptedSecret;
+    }
+
     public ClientType getClientType() {
         return clientType;
     }
@@ -153,32 +160,12 @@ public class Client implements Serializable {
         this.grantedAuthorities = grantedAuthorities;
     }
 
-    public Set<CustomEmail> getCustomEmails() {
-        return customEmails;
-    }
-
-    public void setCustomEmails(Set<CustomEmail> customEmails) {
-        this.customEmails = customEmails;
-    }
-
-    public Set<ClientSecret> getClientSecrets() {
-        return clientSecrets;
-    }
-
-    public void setClientSecrets(Set<ClientSecret> clientSecrets) {
-        this.clientSecrets = clientSecrets;
-    }
-
     public Set<ClientRedirectUri> getClientRedirectUris() {
         return clientRedirectUris;
     }
 
     public void setClientRedirectUris(Set<ClientRedirectUri> clientRedirectUris) {
         this.clientRedirectUris = clientRedirectUris;
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
     }
 
     @Override
@@ -190,9 +177,8 @@ public class Client implements Serializable {
         result = prime * result + ((authorizedGrantTypes == null) ? 0 : authorizedGrantTypes.hashCode());
         result = prime * result + ((clientRedirectUris == null) ? 0 : clientRedirectUris.hashCode());
         result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
-        result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
-        result = prime * result + ((customEmails == null) ? 0 : customEmails.hashCode());
+        result = prime * result + ((decryptedSecret == null) ? 0 : decryptedSecret.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
         result = prime * result + ((grantedAuthorities == null) ? 0 : grantedAuthorities.hashCode());
@@ -236,17 +222,12 @@ public class Client implements Serializable {
                 return false;
         } else if (!clientScopes.equals(other.clientScopes))
             return false;
-        if (clientSecrets == null) {
-            if (other.clientSecrets != null)
-                return false;
-        } else if (!clientSecrets.equals(other.clientSecrets))
-            return false;
         if (clientType != other.clientType)
             return false;
-        if (customEmails == null) {
-            if (other.customEmails != null)
+        if (decryptedSecret == null) {
+            if (other.decryptedSecret != null)
                 return false;
-        } else if (!customEmails.equals(other.customEmails))
+        } else if (!decryptedSecret.equals(other.decryptedSecret))
             return false;
         if (description == null) {
             if (other.description != null)

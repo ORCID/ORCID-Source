@@ -217,11 +217,5 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
         ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
         return jpaJaxbClientAdapter.toClient(clientDetailsEntity);
     }
-    
-    @Override
-    public ClientSummary getClientSummary(String clientId) {
-        Date lastModified = clientDetailsDao.getLastModified(clientId);
-        ClientDetailsEntity clientDetailsEntity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
-        return jpaJaxbClientAdapter.toClientSummary(clientDetailsEntity);
-    }
+        
 }

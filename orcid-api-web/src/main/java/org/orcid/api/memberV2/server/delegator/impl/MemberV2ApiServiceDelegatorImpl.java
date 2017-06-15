@@ -57,6 +57,7 @@ import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
@@ -232,6 +233,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
 
     private long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
@@ -1120,7 +1124,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewClient(String clientId) {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
-        ClientSummary client = clientDetailsManagerReadOnly.getClientSummary(clientId);
+        ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
     }
     

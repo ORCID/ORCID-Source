@@ -675,7 +675,7 @@ public class SetUpClientsAndUsers {
         if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
             scopes = new HashSet<String>(Arrays.asList(ScopePathType.AUTHENTICATE.value(), ScopePathType.READ_PUBLIC.value()));
         } else {
-            scopes = orcidClientGroupManager.premiumCreatorScopes();
+            scopes = ClientType.premiumCreatorScopes();
             if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
                 scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
             }

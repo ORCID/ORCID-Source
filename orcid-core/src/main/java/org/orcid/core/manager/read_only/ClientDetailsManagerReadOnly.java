@@ -61,5 +61,4 @@ public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
 
     Client getClient(String clientId);
     
-    ClientSummary getClientSummary(String clientId);
 }
