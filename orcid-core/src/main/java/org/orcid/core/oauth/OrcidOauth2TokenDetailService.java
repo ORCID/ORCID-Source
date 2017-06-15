@@ -91,4 +91,6 @@ public interface OrcidOauth2TokenDetailService {
     
     int findCountByUserName(String userName, long lastModified);
 
+    int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID);
+
 }

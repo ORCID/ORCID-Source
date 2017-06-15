@@ -17,6 +17,7 @@
 package org.orcid.core.oauth;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
     
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
+    
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
         super(tokenServices, clientDetailsService, oAuth2RequestFactory, GRANT_TYPE);
@@ -96,7 +100,13 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
-            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
+            //check to see if this is being re-used.  If it is, remove the token associated with the code.
+            int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId());
+            if (numDisabled >0){
+                throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
+            }else{
+                throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
+            }
         } else {
             // Check auth code expiration
             Date tokenCreationDate = codeDetails.getDateCreated();
@@ -125,18 +135,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         OAuth2Authentication storedAuth;
         try{
             storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);            
-        }catch(InvalidGrantException e){
-            //TODO: check to see if this is being re-used.  If it is, remove the token associated with the code.
-                //note, we need to store codes in the code_detail table to do this.
-            //use OrcidTokenStoreServiceImpl to read/write tokens.
-            //need new OrcidTokenStoreServiceImpl.lookup() method to look up OAuth2AccessToken by code/client/user, 
-            //then use OrcidTokenStoreServiceImpl.removeAccessToken(OAuth2AccessToken accessToken)
-            //otherwise, re-throw the exception.
+        }catch(InvalidGrantException e){            
             throw e;
-        }/*
-        if (storedAuth == null) { 
-            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
-        }*/                
+        }               
 
         OAuth2Request pendingAuthorizationRequest = storedAuth.getOAuth2Request();
         //Regenerate the authorization request but now with the request parameters
