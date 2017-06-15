@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -120,11 +121,22 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             
         }        
         
-        //Consume code        
-        OAuth2Authentication storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
-        if (storedAuth == null) {
+        //Consume code
+        OAuth2Authentication storedAuth;
+        try{
+            storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);            
+        }catch(InvalidGrantException e){
+            //TODO: check to see if this is being re-used.  If it is, remove the token associated with the code.
+                //note, we need to store codes in the code_detail table to do this.
+            //use OrcidTokenStoreServiceImpl to read/write tokens.
+            //need new OrcidTokenStoreServiceImpl.lookup() method to look up OAuth2AccessToken by code/client/user, 
+            //then use OrcidTokenStoreServiceImpl.removeAccessToken(OAuth2AccessToken accessToken)
+            //otherwise, re-throw the exception.
+            throw e;
+        }/*
+        if (storedAuth == null) { 
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
-        }                
+        }*/                
 
         OAuth2Request pendingAuthorizationRequest = storedAuth.getOAuth2Request();
         //Regenerate the authorization request but now with the request parameters

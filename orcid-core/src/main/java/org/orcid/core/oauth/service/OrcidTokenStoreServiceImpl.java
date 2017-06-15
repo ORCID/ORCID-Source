@@ -345,6 +345,12 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         if (detail == null) {
             detail = new OrcidOauth2TokenDetail();
         }
+        
+        //Update to put auth code in token detail so it can be revoked based on code if needed.
+        if (authentication.getOAuth2Request().getRequestParameters().get("code") != null){
+            detail.setAuthorizationCode(authentication.getOAuth2Request().getRequestParameters().get("code").toString());
+        }
+        
         String clientId = authorizationRequest.getClientId();
         String authKey = authenticationKeyGenerator.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
