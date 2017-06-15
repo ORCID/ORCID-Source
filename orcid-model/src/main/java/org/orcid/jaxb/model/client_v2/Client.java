@@ -23,17 +23,16 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 
 public class Client implements Serializable {
     private static final long serialVersionUID = 5085242454098119135L;
+    private String id;
     private String name;
     private String description;
-    private String clientId;
-    private ClientType clientType;
-    private String clientWebsite;
+    private String website;
     private String groupProfileId;
     private String authenticationProviderId;
     private String emailAccessReason;
-    private int accessTokenValiditySeconds;
-    private boolean persistentTokensEnabled = false;
+    private ClientType clientType;
     private boolean allowAutoDeprecate = false;
+    private boolean persistentTokensEnabled = false;
     private Set<String> clientScopes;
     private Set<String> resourceId;
     private Set<String> authorizedGrantTypes;
@@ -41,138 +40,171 @@ public class Client implements Serializable {
     private Set<CustomEmail> customEmails;
     private Set<ClientSecret> clientSecrets;
     private Set<ClientRedirectUri> clientRedirectUris;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
-    public String getClientId() {
-        return clientId;
+
+    public String getWebsite() {
+        return website;
     }
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
-    public ClientType getClientType() {
-        return clientType;
-    }
-    public void setClientType(ClientType clientType) {
-        this.clientType = clientType;
-    }
-    public String getClientWebsite() {
-        return clientWebsite;
-    }
-    public void setClientWebsite(String clientWebsite) {
-        this.clientWebsite = clientWebsite;
-    }
+
     public String getGroupProfileId() {
         return groupProfileId;
     }
+
     public void setGroupProfileId(String groupProfileId) {
         this.groupProfileId = groupProfileId;
     }
+
     public String getAuthenticationProviderId() {
         return authenticationProviderId;
     }
+
     public void setAuthenticationProviderId(String authenticationProviderId) {
         this.authenticationProviderId = authenticationProviderId;
     }
+
     public String getEmailAccessReason() {
         return emailAccessReason;
     }
+
     public void setEmailAccessReason(String emailAccessReason) {
         this.emailAccessReason = emailAccessReason;
     }
-    public int getAccessTokenValiditySeconds() {
-        return accessTokenValiditySeconds;
+
+    public ClientType getClientType() {
+        return clientType;
     }
-    public void setAccessTokenValiditySeconds(int accessTokenValiditySeconds) {
-        this.accessTokenValiditySeconds = accessTokenValiditySeconds;
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
     }
-    public boolean isPersistentTokensEnabled() {
-        return persistentTokensEnabled;
-    }
-    public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
-        this.persistentTokensEnabled = persistentTokensEnabled;
-    }
+
     public boolean isAllowAutoDeprecate() {
         return allowAutoDeprecate;
     }
+
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
+
+    public boolean isPersistentTokensEnabled() {
+        return persistentTokensEnabled;
+    }
+
+    public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
+        this.persistentTokensEnabled = persistentTokensEnabled;
+    }
+
     public Set<String> getClientScopes() {
         return clientScopes;
     }
+
     public void setClientScopes(Set<String> clientScopes) {
         this.clientScopes = clientScopes;
     }
+
     public Set<String> getResourceId() {
         return resourceId;
     }
+
     public void setResourceId(Set<String> resourceId) {
         this.resourceId = resourceId;
     }
+
     public Set<String> getAuthorizedGrantTypes() {
         return authorizedGrantTypes;
     }
+
     public void setAuthorizedGrantTypes(Set<String> authorizedGrantTypes) {
         this.authorizedGrantTypes = authorizedGrantTypes;
     }
+
     public Set<String> getGrantedAuthorities() {
         return grantedAuthorities;
     }
+
     public void setGrantedAuthorities(Set<String> grantedAuthorities) {
         this.grantedAuthorities = grantedAuthorities;
     }
+
     public Set<CustomEmail> getCustomEmails() {
         return customEmails;
     }
+
     public void setCustomEmails(Set<CustomEmail> customEmails) {
         this.customEmails = customEmails;
     }
+
     public Set<ClientSecret> getClientSecrets() {
         return clientSecrets;
     }
+
     public void setClientSecrets(Set<ClientSecret> clientSecrets) {
         this.clientSecrets = clientSecrets;
     }
+
     public Set<ClientRedirectUri> getClientRedirectUris() {
         return clientRedirectUris;
     }
+
     public void setClientRedirectUris(Set<ClientRedirectUri> clientRedirectUris) {
         this.clientRedirectUris = clientRedirectUris;
     }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + accessTokenValiditySeconds;
         result = prime * result + (allowAutoDeprecate ? 1231 : 1237);
         result = prime * result + ((authenticationProviderId == null) ? 0 : authenticationProviderId.hashCode());
         result = prime * result + ((authorizedGrantTypes == null) ? 0 : authorizedGrantTypes.hashCode());
-        result = prime * result + ((clientId == null) ? 0 : clientId.hashCode());
         result = prime * result + ((clientRedirectUris == null) ? 0 : clientRedirectUris.hashCode());
         result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
         result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
-        result = prime * result + ((clientWebsite == null) ? 0 : clientWebsite.hashCode());
         result = prime * result + ((customEmails == null) ? 0 : customEmails.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
         result = prime * result + ((grantedAuthorities == null) ? 0 : grantedAuthorities.hashCode());
         result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + (persistentTokensEnabled ? 1231 : 1237);
         result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
+        result = prime * result + ((website == null) ? 0 : website.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -182,8 +214,6 @@ public class Client implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Client other = (Client) obj;
-        if (accessTokenValiditySeconds != other.accessTokenValiditySeconds)
-            return false;
         if (allowAutoDeprecate != other.allowAutoDeprecate)
             return false;
         if (authenticationProviderId == null) {
@@ -195,11 +225,6 @@ public class Client implements Serializable {
             if (other.authorizedGrantTypes != null)
                 return false;
         } else if (!authorizedGrantTypes.equals(other.authorizedGrantTypes))
-            return false;
-        if (clientId == null) {
-            if (other.clientId != null)
-                return false;
-        } else if (!clientId.equals(other.clientId))
             return false;
         if (clientRedirectUris == null) {
             if (other.clientRedirectUris != null)
@@ -217,11 +242,6 @@ public class Client implements Serializable {
         } else if (!clientSecrets.equals(other.clientSecrets))
             return false;
         if (clientType != other.clientType)
-            return false;
-        if (clientWebsite == null) {
-            if (other.clientWebsite != null)
-                return false;
-        } else if (!clientWebsite.equals(other.clientWebsite))
             return false;
         if (customEmails == null) {
             if (other.customEmails != null)
@@ -248,6 +268,11 @@ public class Client implements Serializable {
                 return false;
         } else if (!groupProfileId.equals(other.groupProfileId))
             return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
         if (name == null) {
             if (other.name != null)
                 return false;
@@ -260,6 +285,11 @@ public class Client implements Serializable {
                 return false;
         } else if (!resourceId.equals(other.resourceId))
             return false;
+        if (website == null) {
+            if (other.website != null)
+                return false;
+        } else if (!website.equals(other.website))
+            return false;
         return true;
-    }    
+    }
 }

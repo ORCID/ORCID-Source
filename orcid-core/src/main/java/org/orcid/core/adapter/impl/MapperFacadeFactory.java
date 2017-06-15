@@ -72,6 +72,7 @@ import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -656,6 +657,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
     
     public MapperFacade getClientMapperFacade() {
+        //TODO
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
         clientSummaryClassMap.field("name", "clientName");
@@ -674,6 +676,33 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientClassMap.field("emailAccessReason", "emailAccessReason");
         clientClassMap.field("persistentTokensEnabled", "persistentTokensEnabled");
         clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
+        
+        clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
+            /**
+             * On the way in, from client to ClientDetailsEntity, we just need to care about the following fields:
+             * 
+             * - id
+             * - name
+             * - description
+             * - website
+             * - redirect uris
+             * - 
+             * - 
+             * 
+             * 
+             * */
+            @Override
+            public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {
+                if(a.getClientScopes() != null) {
+                    a.getClientScopes()
+                }
+            }
+
+            @Override
+            public void mapBtoA(ClientDetailsEntity b, Client a, MappingContext context) {
+                
+            }
+        });
         
         clientClassMap.byDefault();
         clientClassMap.register();        
