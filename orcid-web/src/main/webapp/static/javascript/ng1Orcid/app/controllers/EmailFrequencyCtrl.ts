@@ -15,8 +15,8 @@ export const EmailFrequencyCtrl = angular.module('orcidApp').controller(
             emailSrvc, 
             prefsSrvc
         ) {
-            $scope.prefsSrvc = prefsSrvc;
             $scope.emailSrvc = emailSrvc;
+            $scope.prefsSrvc = prefsSrvc;
         }
     ]
 );
