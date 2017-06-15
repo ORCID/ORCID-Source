@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
+import org.orcid.persistence.dao.ClientScopeDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -78,6 +79,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ClientScopeDao clientScopeDao;
     
     /**
      * Creates a new client without any knowledge of the client id or secret.
@@ -369,5 +373,14 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             LOGGER.warn("There is no client with the IdP: " + idp);
         }
         return null;
+    }
+
+    @Override
+    public void addScopesToClient(Set<String> scopes, ClientDetailsEntity clientDetails) {
+        for (String scope : scopes) {
+            if (!clientDetails.getScope().contains(scope)) {
+                clientScopeDao.insertClientScope(clientDetails.getId(), scope);
+            }
+        }
     }
 }
