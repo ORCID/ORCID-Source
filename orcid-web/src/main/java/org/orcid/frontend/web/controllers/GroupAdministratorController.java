@@ -263,9 +263,9 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             org.orcid.jaxb.model.client_v2.Client newClient = client.toModelObject();             
             try {
                 newClient = clientManager.create(newClient);
-            } catch (OrcidClientGroupManagementException e) {
+            } catch (Exception e) {
                 LOGGER.error(e.getMessage());
-                String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client");
+                String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
                 client.setErrors(new ArrayList<String>());
                 client.getErrors().add(errorDesciption);
                 return client;

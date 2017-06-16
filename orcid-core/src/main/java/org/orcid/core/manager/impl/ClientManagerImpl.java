@@ -32,6 +32,7 @@ import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -55,16 +56,16 @@ public class ClientManagerImpl implements ClientManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientManagerImpl.class);
 
     @Resource
-    protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
+    private JpaJaxbClientAdapter jpaJaxbClientAdapter;
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
     @Resource
-    protected ClientSecretDao clientSecretDao;
+    private ClientSecretDao clientSecretDao;
 
     @Resource
-    protected ClientRedirectDao clientRedirectDao;
+    private ClientRedirectDao clientRedirectDao;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -73,19 +74,25 @@ public class ClientManagerImpl implements ClientManager {
     private AppIdGenerationManager appIdGenerationManager;
 
     @Resource
-    protected SourceManager sourceManager;
+    private SourceManager sourceManager;
 
     @Resource
-    protected ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
 
     @Override
-    public Client create(Client newClient) {
+    public Client create(Client newClient) throws IllegalArgumentException {
         String memberId = sourceManager.retrieveSourceOrcid();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
+        //Verify if the member type allow him to create another client
+        validateCreateClientRequest(memberId);
+        
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
@@ -148,23 +155,11 @@ public class ClientManagerImpl implements ClientManager {
 
     @Override
     public Client edit(Client existingClient) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private ClientType getClientType(MemberType memberType) {
-        switch (memberType) {
-        case BASIC:
-            return ClientType.UPDATER;
-        case BASIC_INSTITUTION:
-            return ClientType.CREATOR;
-        case PREMIUM:
-            return ClientType.PREMIUM_UPDATER;
-        case PREMIUM_INSTITUTION:
-            return ClientType.PREMIUM_CREATOR;
-        default:
-            throw new IllegalArgumentException("Invalid member type: " + memberType);
-        }
+        ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
+        jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
+        clientDetails.setLastModified(new Date());
+        clientDetails = clientDetailsDao.merge(clientDetails);
+        return jpaJaxbClientAdapter.toClient(clientDetails);
     }
 
     @Override
@@ -192,4 +187,38 @@ public class ClientManagerImpl implements ClientManager {
             }
         });
     }
+    
+    private void validateCreateClientRequest(String memberId) throws IllegalArgumentException {
+        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
+        if(member == null || member.getGroupType() == null) {
+            throw new IllegalArgumentException("Illegal member id: " + memberId);            
+        }
+        switch (member.getGroupType()){
+        case BASIC:
+        case BASIC_INSTITUTION:
+            Set<Client> clients = clientManagerReadOnly.getClients(memberId);
+            if(clients != null && !clients.isEmpty()) {
+                throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
+            }
+            break;
+        case PREMIUM:
+        case PREMIUM_INSTITUTION:
+            break;
+        }                        
+    }
+    
+    private ClientType getClientType(MemberType memberType) {
+        switch (memberType) {
+        case BASIC:
+            return ClientType.UPDATER;
+        case BASIC_INSTITUTION:
+            return ClientType.CREATOR;
+        case PREMIUM:
+            return ClientType.PREMIUM_UPDATER;
+        case PREMIUM_INSTITUTION:
+            return ClientType.PREMIUM_CREATOR;
+        default:
+            throw new IllegalArgumentException("Invalid member type: " + memberType);
+        }
+    }    
 }
