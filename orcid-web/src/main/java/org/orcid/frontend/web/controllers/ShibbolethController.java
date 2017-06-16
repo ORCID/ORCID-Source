@@ -27,9 +27,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.HeaderCheckResult;
@@ -40,7 +45,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -70,6 +74,12 @@ public class ShibbolethController extends BaseController {
 
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
@@ -112,7 +122,7 @@ public class ShibbolethController extends BaseController {
                 }
 
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
-                token.setDetails(new WebAuthenticationDetails(request));
+                token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 userConnectionEntity.setLastLogin(new Date());
@@ -131,6 +141,12 @@ public class ShibbolethController extends BaseController {
             mav.addObject("lastName", (headers.get(InstitutionalSignInManager.SN_HEADER) == null) ? "" : headers.get(InstitutionalSignInManager.SN_HEADER));
         }
         return mav;
+    }
+
+    private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
+        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), profileEntity.getOrcidType());
     }
 
     private Map<String, String> parseOriginalHeaders(String originalHeadersJson) {
