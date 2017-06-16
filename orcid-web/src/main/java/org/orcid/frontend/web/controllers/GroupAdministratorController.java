@@ -372,17 +372,17 @@ public class GroupAdministratorController extends BaseWorkspaceController {
      * Reset client secret
      * */
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
-    public @ResponseBody
-    boolean resetClientSecret(@RequestBody String clientId) {
+    public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         //Verify this client belongs to the member
-        ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
-        if(clientDetails == null)
+        org.orcid.jaxb.model.client_v2.Client client = clientManagerReadOnly.get(clientId);
+        if(client == null) {
             return false;
-        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-        if(groupProfile == null)
+        }
+        
+        if(!client.getGroupProfileId().equals(getCurrentUserOrcid())) {
             return false;
-        if(!groupProfile.getId().equals(getCurrentUserOrcid()))
-            return false;
-        return orcidSSOManager.resetClientSecret(clientId);
+        }
+        
+        return clientManager.resetClientSecret(clientId);
     }
 }
