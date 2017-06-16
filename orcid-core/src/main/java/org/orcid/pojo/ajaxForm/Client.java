@@ -232,10 +232,6 @@ public class Client implements ErrorsInterface, Serializable {
             modelObject.setDescription(this.getShortDescription().getValue());
         }
 
-        if (this.getType() != null) {
-            modelObject.setClientType(ClientType.fromValue(this.getType().getValue()));
-        }
-
         if (this.getWebsite() != null) {
             modelObject.setWebsite(this.getWebsite().getValue());
         }

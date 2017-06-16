@@ -19,8 +19,10 @@ package org.orcid.core.adapter.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
@@ -692,8 +694,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              * */
             @Override
             public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {
-                Map<String, ClientRedirectUriEntity> existingRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(b.getClientRegisteredRedirectUris());
-                b.getClientRegisteredRedirectUris().clear();
+                Map<String, ClientRedirectUriEntity> existingRedirectUriEntitiesMap = new HashMap<String, ClientRedirectUriEntity>();
+                if(b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
+                    existingRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(b.getClientRegisteredRedirectUris());
+                }                        
+                if(b.getClientRegisteredRedirectUris() != null) {
+                    b.getClientRegisteredRedirectUris().clear();
+                } else {
+                    b.setClientRegisteredRedirectUris(new TreeSet<ClientRedirectUriEntity>());
+                }
+                
                 if(a.getClientRedirectUris() != null) {
                     for(ClientRedirectUri cru : a.getClientRedirectUris()) {
                         String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru);

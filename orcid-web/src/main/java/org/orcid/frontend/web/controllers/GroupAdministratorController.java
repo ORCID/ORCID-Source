@@ -45,7 +45,6 @@ import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Client;
@@ -261,28 +260,18 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         }
 
         if (client.getErrors().size() == 0) {
-            OrcidProfile profile = getEffectiveProfile();
-            String groupOrcid = profile.getOrcidIdentifier().getPath();
-
-            if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
-                LOGGER.warn("Trying to create client with non group user {}", profile.getOrcidIdentifier().getPath());
-                throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
-            }
-
-            OrcidClient result = null;
-
+            org.orcid.jaxb.model.client_v2.Client newClient = client.toModelObject();             
             try {
-                result = orcidClientGroupManager.createAndPersistClientProfile(groupOrcid, client.toOrcidClient());
+                newClient = clientManager.create(newClient);
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
-                result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.cannot_create_client")));
+                String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client");
+                client.setErrors(new ArrayList<String>());
+                client.getErrors().add(errorDesciption);
+                return client;
             }
-
-            client = Client.valueOf(result);
-
+            client = Client.fromModelObject(newClient);
         }
-
         return client;
     }
 
