@@ -675,11 +675,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientSummaryClassMap.register();        
                 
         ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
-        clientClassMap.field("clientId", "clientId");
+        clientClassMap.field("id", "clientId");
         clientClassMap.field("name", "clientName");
         clientClassMap.field("description", "clientDescription");
         clientClassMap.field("clientType", "clientType");
-        clientClassMap.field("clientWebsite", "clientWebsite");
+        clientClassMap.field("website", "clientWebsite");
         clientClassMap.field("groupProfileId", "groupProfileId");
         clientClassMap.field("authenticationProviderId", "authenticationProviderId");
         clientClassMap.field("emailAccessReason", "emailAccessReason");

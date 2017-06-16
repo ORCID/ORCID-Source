@@ -93,8 +93,10 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("member_developer_tools");
-        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(getCurrentUserOrcid());
-        mav.addObject("group", group);
+        String memberId = getCurrentUserOrcid();
+        ProfileEntity entity = profileEntityCacheManager.retrieve(memberId);
+        mav.addObject("member_id", memberId);
+        mav.addObject("member_type", entity.getGroupType());
         return mav;
     }
 

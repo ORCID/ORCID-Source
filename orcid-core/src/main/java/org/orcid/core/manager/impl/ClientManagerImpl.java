@@ -44,9 +44,13 @@ import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientManagerImpl implements ClientManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientManagerImpl.class);    
+    
     @Resource
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
     
@@ -83,6 +87,9 @@ public class ClientManagerImpl implements ClientManager {
         newEntity.setId(appIdGenerationManager.createNewAppId());        
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
+        
+        // Set persistent tokens enabled by default
+        newEntity.setPersistentTokensEnabled(true);
         
         // Set ClientType
         newEntity.setClientType(getClientType(memberEntity.getGroupType()));
@@ -123,7 +130,14 @@ public class ClientManagerImpl implements ClientManager {
         }
         newEntity.setClientScopes(clientScopeEntities);
         
-        return null;
+        try {
+            clientDetailsDao.persist(newEntity);
+        } catch(Exception e) {
+            LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
+            throw e;
+        }
+        
+        return jpaJaxbClientAdapter.toClient(newEntity);        
     }
 
     @Override
@@ -131,8 +145,6 @@ public class ClientManagerImpl implements ClientManager {
         // TODO Auto-generated method stub
         return null;
     }
-
-    
     
     private ClientType getClientType(MemberType memberType) {
         switch (memberType) {
