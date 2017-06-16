@@ -9,7 +9,6 @@ import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
 import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
-
 //import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
 
 export const orcidApp = angular.module(
@@ -18,7 +17,7 @@ export const orcidApp = angular.module(
         ngCookies,
         ngSanitize, 
         vcRecaptcha,
-        uibootstraptypeahead
+        uibootstraptypeahead,
         //'EmailFrequencyCtrl'
         //EmailFrequencyModule.name
     ]

@@ -38,8 +38,8 @@ export const FundingCtrl = angular.module('orcidApp').controller(
             emailSrvc, 
             fundingSrvc, 
             initialConfigService, 
-            utilsService
-            workspaceSrvc, 
+            utilsService,
+            workspaceSrvc 
         ) {
             $scope.addingFunding = false;
             $scope.disambiguatedFunding = null;
@@ -410,7 +410,7 @@ export const FundingCtrl = angular.module('orcidApp').controller(
                     if(datum.city){
                         $scope.editFunding.city.errors = [];
                     }
-                    
+
                     $scope.editFunding.region.value = datum.region;
 
                     if(datum.country != undefined && datum.country != null) {
