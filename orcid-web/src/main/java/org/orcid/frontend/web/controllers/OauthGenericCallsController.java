@@ -41,6 +41,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -69,14 +70,8 @@ public class OauthGenericCallsController extends OauthControllerBase {
             formParams.add(paramName, request.getParameter(paramName));
         }
                         
-        try {
-            Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
-            return ResponseEntity.ok(response.getEntity());
-        } catch(Exception e) {
-            OAuthError error = OAuthErrorUtils.getOAuthError(e);
-            HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
-            return ResponseEntity.status(status).body(error);
-        }
+        Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+        return ResponseEntity.status(response.getStatus()).body(response.getEntity());
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)

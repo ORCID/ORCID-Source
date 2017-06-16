@@ -294,4 +294,36 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         assertNotNull(orcidMessage.getErrorDesc());
         assertEquals("Security problem : You do not have the required permissions.", orcidMessage.getErrorDesc().getContent());
     }
+    
+    @Test
+    public void resusedAuthorizationCodesFailTest() throws InterruptedException, JSONException {
+        String clientId = getClient1ClientId();
+        String clientRedirectUri = getClient1RedirectUri();
+        String clientSecret = getClient1ClientSecret();
+        String userId = getUser1OrcidId();
+        String password = getUser1Password();
+        String scope = "/orcid-works/create";
+        String authorizationCode = getAuthorizationCode(clientId, clientRedirectUri, scope, userId, password, true);
+        assertNotNull(authorizationCode);
+        ClientResponse tokenResponse = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
+        assertEquals(200, tokenResponse.getStatus());
+        String token = new JSONObject(tokenResponse.getEntity(String.class)).getString("access_token");
+        
+        ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), token);
+        assertNotNull(response);
+        assertEquals(200, response.getStatus());        
+        
+        ClientResponse tokenResponse2 = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
+        assertEquals(400, tokenResponse2.getStatus());
+        String body = tokenResponse2.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        assertEquals("invalid_grant", jsonObject.get("error"));
+        assertEquals("Reused authorization code: "+authorizationCode, jsonObject.get("error_description"));
+        
+        //check token has been revoked
+        ClientResponse response2 = memberV2ApiClient.viewPerson(getUser1OrcidId(), token);
+        assertNotNull(response2);
+        assertEquals(401, response2.getStatus()); 
+    }
+    
 }
