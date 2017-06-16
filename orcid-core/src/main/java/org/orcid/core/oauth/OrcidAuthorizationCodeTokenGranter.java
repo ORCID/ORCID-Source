@@ -17,7 +17,6 @@
 package org.orcid.core.oauth;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -60,6 +58,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")    
     private int authorizationCodeExpiration;
+
+    @Value("${org.orcid.core.oauth.auth_code.revoke_token_on_reuse:true}")    
+    private boolean revokeTokenOnReuse;
     
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
@@ -100,13 +101,13 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
-            //check to see if this is being re-used.  If it is, remove the token associated with the code.
-            int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId());
-            if (numDisabled >0){
-                throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
-            }else{
-                throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
+            if (revokeTokenOnReuse){
+                int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId());
+                if (numDisabled >0){
+                    throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
+                }                
             }
+            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
         } else {
             // Check auth code expiration
             Date tokenCreationDate = codeDetails.getDateCreated();
