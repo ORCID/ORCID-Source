@@ -23,21 +23,19 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
-
     private static final String PUBLIC_API_USER = "Public API user";
 
     private static final String PUBLIC_API = "Public API";
 
     private static final String MEMBER_API = "Member API";
+    
+    private static final String PROFILE_NOT_FOUND = "not-found";
 
     private ContainerRequest request;
 
@@ -153,8 +151,7 @@ public class AnalyticsProcess implements Runnable {
                 return url;
             }
         } catch (IllegalArgumentException e) {
-            LOG.warn("Invalid ORCID iD supplied in API call, original URL will be posted to GA");
-            return url;
+            return url.replace(orcidId, PROFILE_NOT_FOUND);
         }
     }
 
