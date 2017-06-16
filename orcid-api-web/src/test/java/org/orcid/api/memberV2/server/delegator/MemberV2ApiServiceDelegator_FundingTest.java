@@ -18,6 +18,7 @@ package org.orcid.api.memberV2.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -113,6 +114,9 @@ public class MemberV2ApiServiceDelegator_FundingTest extends DBUnitTest {
         Funding element = (Funding) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/funding/10", element.getPath());
+        assertNotNull(element.getContributors().getContributor().get(0).getContributorOrcid());
+        assertEquals("0000-0000-0000-0000", element.getContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertNull(element.getContributors().getContributor().get(0).getCreditName());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 

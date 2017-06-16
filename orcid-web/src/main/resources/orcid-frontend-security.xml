@@ -416,7 +416,7 @@
     <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
 	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
-		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="orcidUserDetailsService" ref="userDetailsService" />
 		<property name="switchUserUrl" value="/switch-user" />
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid" />

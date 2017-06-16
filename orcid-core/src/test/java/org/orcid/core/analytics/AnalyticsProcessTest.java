@@ -259,6 +259,43 @@ public class AnalyticsProcessTest {
         assertEquals("blah", data.getUserAgent());
         assertEquals("application/xml", data.getContentType());
     }
+    
+    @Test
+    public void testAnalyticsProcessForNoSpecifiedCategory() throws InterruptedException {
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("1234-4321-1234-4321"))).thenReturn(getProfileEntity());
+
+        ContainerRequest request = getRequestWithNoCategory();
+        ContainerResponse response = getResponse(request);
+
+        AnalyticsProcess process = new AnalyticsProcess();
+        process.setRequest(request);
+        process.setResponse(response);
+        process.setAnalyticsClient(analyticsClient);
+        process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
+        process.setProfileEntityCacheManager(profileEntityCacheManager);
+        process.setPublicApi(true);
+        process.setIp("37.14.150.83");
+        process.setScheme("https");
+
+        Thread t = new Thread(process);
+        t.start();
+        t.join();
+
+        ArgumentCaptor<AnalyticsData> captor = ArgumentCaptor.forClass(AnalyticsData.class);
+        Mockito.verify(analyticsClient).sendAnalyticsData(captor.capture());
+
+        AnalyticsData data = captor.getValue();
+        assertNotNull(data);
+        assertEquals("POST", data.getMethod());
+        assertEquals("record", data.getCategory());
+        assertEquals("Public API v2.0", data.getApiVersion());
+        assertEquals("Public API user", data.getClientDetailsString());
+        assertEquals("37.14.150.0", data.getIpAddress());
+        assertEquals(Integer.valueOf(200), data.getResponseCode());
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid, data.getUrl());
+        assertEquals("blah", data.getUserAgent());
+        assertEquals("application/xml", data.getContentType());
+    }
 
     private ClientDetailsEntity getMemberClient() {
         ClientDetailsEntity client = new ClientDetailsEntity();
@@ -301,6 +338,14 @@ public class AnalyticsProcessTest {
         headers.add(HttpHeaders.USER_AGENT, "blah");
         return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
                 URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+    }
+    
+    private ContainerRequest getRequestWithNoCategory() {
+        InBoundHeaders headers = new InBoundHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
+        headers.add(HttpHeaders.USER_AGENT, "blah");
+        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
+                URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321"), headers, null);
     }
 
 }

@@ -277,10 +277,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode, getLastModifiedTime(orcid));
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        sourceUtils.setSourceName(w);
-        contributorUtils.filterContributorPrivateData(w);
+        sourceUtils.setSourceName(w);        
         return Response.ok(w).build();
     }
 
@@ -369,6 +369,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, f, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(f, orcid);
+        ActivityUtils.cleanEmptyFields(f);
         sourceUtils.setSourceName(f);
         contributorUtils.filterContributorPrivateData(f);
         return Response.ok(f).build();
@@ -1097,6 +1098,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes, profileEntity.getLastModified().getTime());
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        contributorUtils.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();

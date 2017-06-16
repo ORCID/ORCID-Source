@@ -171,6 +171,7 @@
 			client_source_id="APP-5555555555555555"
 			display_index="0"
 			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;1&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/1.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			contributors_json="{ &quot;contributor&quot;: [{ &quot;contributorOrcid&quot;: { &quot;path&quot;: &quot;0000-0000-0000-0000&quot; }, &quot;creditName&quot;: { &quot;content&quot;: null }, &quot;contributorEmail&quot;: null, &quot;contributorAttributes&quot;: null }] }"			
 			/>
 			
 	<profile_funding 
