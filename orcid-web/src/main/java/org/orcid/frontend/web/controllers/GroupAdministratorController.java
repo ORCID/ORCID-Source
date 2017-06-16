@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +32,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
+import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
-import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -89,6 +91,12 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientManager clientManager;
+    
+    @Resource
+    private ClientManagerReadOnly clientManagerReadOnly;
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -222,6 +230,17 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         return client;
     }
 
+    @RequestMapping(value = "/get-clients.json", method = RequestMethod.GET)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody List<Client> getClients() {
+        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(getEffectiveUserOrcid());
+        List<Client> clients = new ArrayList<Client>();
+        for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
+            clients.add(Client.fromModelObject(existingClient));
+        }
+        return clients;
+    }
+    
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client createClient(@RequestBody Client client) {
@@ -310,29 +329,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
             client = Client.valueOf(result);
         }
         return client;
-    }
-
-    @RequestMapping(value = "/get-clients.json", method = RequestMethod.GET)
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody
-    List<Client> getClients() {
-        OrcidProfile profile = getEffectiveProfile();
-        String groupOrcid = profile.getOrcidIdentifier().getPath();
-
-        if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
-            LOGGER.warn("Trying to get clients of non group user {}", profile.getOrcidIdentifier().getPath());
-            throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
-        }
-
-        OrcidClientGroup group = orcidClientGroupManager.retrieveOrcidClientGroup(groupOrcid);
-        List<Client> clients = new ArrayList<Client>();
-
-        for (OrcidClient orcidClient : group.getOrcidClient()) {
-            clients.add(Client.valueOf(orcidClient));
-        }
-
-        return clients;
-    }
+    }    
 
     @ModelAttribute("redirectUriTypes")
     public Map<String, String> getRedirectUriTypes() {

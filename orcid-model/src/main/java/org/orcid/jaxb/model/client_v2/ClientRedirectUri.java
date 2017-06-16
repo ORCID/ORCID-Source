@@ -69,10 +69,6 @@ public class ClientRedirectUri implements Serializable {
         this.predefinedClientScopes = predefinedClientScopes;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

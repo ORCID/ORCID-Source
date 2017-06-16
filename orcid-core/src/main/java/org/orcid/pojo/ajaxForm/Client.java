@@ -18,12 +18,15 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
@@ -46,6 +49,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Set<String> scopes;
     private Checkbox allowAutoDeprecate;
 
+    @Deprecated
     public static Client valueOf(ClientDetailsEntity clientDetails) {
         Client client = new Client();
         if (clientDetails != null) {
@@ -77,6 +81,7 @@ public class Client implements ErrorsInterface, Serializable {
         return client;
     }
     
+    @Deprecated
     public static List<Client> valueOf(List<ClientDetailsEntity> clientDetails) {
         List<Client> clients = new ArrayList<Client>();
         for(ClientDetailsEntity entity : clientDetails) {
@@ -85,6 +90,7 @@ public class Client implements ErrorsInterface, Serializable {
         return clients;
     }
 
+    @Deprecated
     public static Client valueOf(OrcidClient orcidClient) {
         Client client = new Client();
         client.setClientId(Text.valueOf(orcidClient.getClientId()));
@@ -116,6 +122,7 @@ public class Client implements ErrorsInterface, Serializable {
         return client;
     }
 
+    @Deprecated
     public OrcidClient toOrcidClient() {
         OrcidClient orcidClient = new OrcidClient();
         orcidClient.setDisplayName(this.displayName.getValue());
@@ -146,6 +153,95 @@ public class Client implements ErrorsInterface, Serializable {
         return orcidClient;
     }
 
+    public static Client fromModelObject(org.orcid.jaxb.model.client_v2.Client modelObject) {
+        Client client = new Client();
+
+        client.setClientId(Text.valueOf(modelObject.getId()));
+
+        client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
+        
+        if (modelObject.getAuthenticationProviderId() != null) {
+            client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));
+        }
+
+        List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
+        for (ClientRedirectUri element : modelObject.getClientRedirectUris()) {
+            RedirectUri rUri = RedirectUri.fromModelObject(element);
+            redirectUris.add(rUri);
+        }
+        client.setRedirectUris(redirectUris);
+        client.setScopes(modelObject.getClientScopes());
+        client.setType(Text.valueOf(modelObject.getClientType().value()));
+        client.setClientSecret(Text.valueOf(modelObject.getDecryptedSecret()));
+        client.setShortDescription(Text.valueOf(modelObject.getDescription()));
+        client.setMemberId(Text.valueOf(modelObject.getGroupProfileId()));
+        client.setDisplayName(Text.valueOf(modelObject.getName()));
+        client.setWebsite(Text.valueOf(modelObject.getWebsite()));
+
+        return client;
+    }
+    
+    public org.orcid.jaxb.model.client_v2.Client toModelObject() {
+        org.orcid.jaxb.model.client_v2.Client modelObject = new org.orcid.jaxb.model.client_v2.Client();
+
+        if (this.getAllowAutoDeprecate() != null) {
+            modelObject.setAllowAutoDeprecate(this.getAllowAutoDeprecate().getValue());
+        }
+        
+        if (this.getAuthenticationProviderId() != null) {
+            modelObject.setAuthenticationProviderId(this.getAuthenticationProviderId().getValue());
+        }
+
+        if (this.getClientId() != null) {
+            modelObject.setId(this.getClientId().getValue());
+        }
+
+        if (this.getDisplayName() != null) {
+            modelObject.setName(this.getDisplayName().getValue());
+        }
+
+        if (this.getMemberId() != null) {
+            modelObject.setGroupProfileId(this.getMemberId().getValue());
+        }
+
+        if (this.getPersistentTokenEnabled() != null) {
+            modelObject.setPersistentTokensEnabled(this.getPersistentTokenEnabled().getValue());
+        }
+
+        if (this.getRedirectUris() != null) {
+            Set<ClientRedirectUri> redirectUriSet = new HashSet<ClientRedirectUri>();
+            for(RedirectUri rUri : this.getRedirectUris()) {
+                ClientRedirectUri redirectUri = new ClientRedirectUri();
+                if(rUri.getScopes() != null) {
+                    Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+                    for(String scope : rUri.getScopes()) {
+                        scopes.add(ScopePathType.fromValue(scope));
+                    }
+                    redirectUri.setPredefinedClientScopes(scopes);
+                }
+                redirectUri.setRedirectUri(rUri.getValue().getValue());
+                redirectUri.setRedirectUriType(rUri.getType().getValue());
+                redirectUri.setUriActType(rUri.getActType().getValue());
+                redirectUri.setUriGeoArea(rUri.getGeoArea().getValue());
+                redirectUriSet.add(redirectUri);
+            }
+            modelObject.setClientRedirectUris(redirectUriSet);
+        }
+
+        if (this.getShortDescription() != null) {
+            modelObject.setDescription(this.getShortDescription().getValue());
+        }
+
+        if (this.getType() != null) {
+            modelObject.setClientType(ClientType.fromValue(this.getType().getValue()));
+        }
+
+        if (this.getWebsite() != null) {
+            modelObject.setWebsite(this.getWebsite().getValue());
+        }
+        return modelObject;
+    }
+    
     public List<String> getErrors() {
         return errors;
     }

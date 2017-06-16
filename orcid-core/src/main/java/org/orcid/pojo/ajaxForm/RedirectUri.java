@@ -18,8 +18,11 @@ package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -35,6 +38,7 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     private Text actType;
     private Text geoArea;
     
+    @Deprecated
     public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setValue(Text.valueOf(rUri.getRedirectUri()));
@@ -51,6 +55,7 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
         return redirectUri;
     }
     
+    @Deprecated
     public static RedirectUri toRedirectUri(org.orcid.jaxb.model.clientgroup.RedirectUri orcidRedirectUri){
         RedirectUri redirectUri = new RedirectUri();
         redirectUri.setType(Text.valueOf(orcidRedirectUri.getType().value()));
@@ -66,6 +71,7 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
         return redirectUri;
     }
     
+    @Deprecated
     public org.orcid.jaxb.model.clientgroup.RedirectUri toRedirectUri(){
         org.orcid.jaxb.model.clientgroup.RedirectUri orcidRedirectUri = new org.orcid.jaxb.model.clientgroup.RedirectUri();
         orcidRedirectUri.setValue(this.value.getValue());
@@ -86,6 +92,53 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
         	orcidRedirectUri.setGeoArea(this.geoArea.getValue());
         }
         return orcidRedirectUri;
+    }
+    
+    public static RedirectUri fromModelObject(ClientRedirectUri modelObject) {
+        RedirectUri redirectUri = new RedirectUri();
+        if(modelObject.getPredefinedClientScopes() != null) {
+            for(ScopePathType scope : modelObject.getPredefinedClientScopes()) {
+                redirectUri.getScopes().add(scope.value());
+            }
+        }
+        
+        redirectUri.setValue(Text.valueOf(modelObject.getRedirectUri()));
+        
+        redirectUri.setType(Text.valueOf(modelObject.getRedirectUriType()));
+        
+        redirectUri.setActType(Text.valueOf(modelObject.getUriActType()));
+        
+        redirectUri.setGeoArea(Text.valueOf(modelObject.getUriGeoArea()));
+        return redirectUri;
+    }
+    
+    public ClientRedirectUri toModelObject() {
+        ClientRedirectUri element = new ClientRedirectUri();
+        if(this.scopes != null) {
+            Set<ScopePathType> scopesSet = new HashSet<ScopePathType>();
+            for(String scope : this.scopes) {
+                scopesSet.add(ScopePathType.fromValue(scope));
+            }
+            element.setPredefinedClientScopes(scopesSet);
+        }
+        
+        if(!PojoUtil.isEmpty(this.value)) {
+            element.setRedirectUri(this.value.getValue());
+        }        
+        
+        if(!PojoUtil.isEmpty(this.type)) {
+            element.setRedirectUriType(this.type.getValue());
+        }        
+        
+        if(!PojoUtil.isEmpty(this.actType)) {
+            element.setUriActType(this.actType.getValue());
+        }        
+        
+        if(!PojoUtil.isEmpty(this.geoArea)) {
+            element.setUriGeoArea(this.geoArea.getValue());
+        }
+        
+        return element;
     }
     
     public List<String> getErrors() {

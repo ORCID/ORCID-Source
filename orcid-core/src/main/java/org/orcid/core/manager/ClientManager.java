@@ -23,4 +23,6 @@ public interface ClientManager {
     Client create(Client newClient);
 
     Client edit(Client existingClient);
+    
+    Boolean resetClientSecret(String clientId);
 }

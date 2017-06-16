@@ -46,14 +46,17 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class ClientManagerImpl implements ClientManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientManagerImpl.class);    
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientManagerImpl.class);
+
     @Resource
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
@@ -62,38 +65,41 @@ public class ClientManagerImpl implements ClientManager {
 
     @Resource
     protected ClientRedirectDao clientRedirectDao;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private AppIdGenerationManager appIdGenerationManager;
-    
+
     @Resource
     protected SourceManager sourceManager;
-    
+
     @Resource
     protected ProfileEntityCacheManager profileEntityCacheManager;
-    
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
     @Override
     public Client create(Client newClient) {
         String memberId = sourceManager.retrieveSourceOrcid();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
-        
-        ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);        
+
+        ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
         newEntity.setLastModified(now);
-        newEntity.setId(appIdGenerationManager.createNewAppId());        
+        newEntity.setId(appIdGenerationManager.createNewAppId());
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
-        
+
         // Set persistent tokens enabled by default
         newEntity.setPersistentTokensEnabled(true);
-        
+
         // Set ClientType
         newEntity.setClientType(getClientType(memberEntity.getGroupType()));
-        
+
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
@@ -101,7 +107,7 @@ public class ClientManagerImpl implements ClientManager {
         clientResourceIdEntity.setResourceId("orcid");
         clientResourceIdEntities.add(clientResourceIdEntity);
         newEntity.setClientResourceIds(clientResourceIdEntities);
-        
+
         // Set ClientAuthorisedGrantTypeEntity
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token")) {
@@ -111,15 +117,15 @@ public class ClientManagerImpl implements ClientManager {
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
         newEntity.setClientAuthorizedGrantTypes(clientAuthorisedGrantTypeEntities);
-        
+
         // Set ClientGrantedAuthorityEntity
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
         clientGrantedAuthorityEntity.setClientDetailsEntity(newEntity);
         clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
-        newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);                
-        
+        newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);
+
         // Set ClientScopeEntity
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>();
         for (String clientScope : ClientType.getScopes(newEntity.getClientType())) {
@@ -129,15 +135,15 @@ public class ClientManagerImpl implements ClientManager {
             clientScopeEntities.add(clientScopeEntity);
         }
         newEntity.setClientScopes(clientScopeEntities);
-        
+
         try {
             clientDetailsDao.persist(newEntity);
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
             throw e;
         }
-        
-        return jpaJaxbClientAdapter.toClient(newEntity);        
+
+        return jpaJaxbClientAdapter.toClient(newEntity);
     }
 
     @Override
@@ -145,19 +151,45 @@ public class ClientManagerImpl implements ClientManager {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     private ClientType getClientType(MemberType memberType) {
         switch (memberType) {
         case BASIC:
-            return ClientType.UPDATER;            
+            return ClientType.UPDATER;
         case BASIC_INSTITUTION:
-            return ClientType.CREATOR;            
+            return ClientType.CREATOR;
         case PREMIUM:
             return ClientType.PREMIUM_UPDATER;
         case PREMIUM_INSTITUTION:
             return ClientType.PREMIUM_CREATOR;
-            default:
-                throw new IllegalArgumentException("Invalid member type: " + memberType );
+        default:
+            throw new IllegalArgumentException("Invalid member type: " + memberType);
         }
+    }
+
+    @Override
+    public Boolean resetClientSecret(String clientId) {
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                try {
+                    // Generate new secret
+                    String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+                    // Set all existing secrets as non primary
+                    clientSecretDao.revokeAllKeys(clientId);
+                    // #2 Create the new client secret as primary
+                    boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
+                    // #3 if it was created, update the last modified for the
+                    // client
+                    // details
+                    if (result)
+                        clientDetailsDao.updateLastModified(clientId);
+                    return result;
+                } catch (Exception e) {
+                    LOGGER.error("Unable to reset client secret for client {}", clientId, e);
+                    throw e;
+                }
+            }
+        });
     }
 }
