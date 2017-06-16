@@ -791,7 +791,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateHashedOrcid(String orcid, String hashedOrcid) {
+    public void hashOrcidIds(String orcid, String hashedOrcid) {
         Query query = entityManager.createNativeQuery("update profile set hashed_orcid = :hashedOrcid where orcid = :orcid");
         query.setParameter("hashedOrcid", hashedOrcid);
         query.setParameter("orcid", orcid);
