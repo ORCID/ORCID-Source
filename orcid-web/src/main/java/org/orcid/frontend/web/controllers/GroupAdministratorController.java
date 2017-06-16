@@ -39,11 +39,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
-import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -277,8 +273,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody
-    Client editClient(@RequestBody Client client) {
+    public @ResponseBody Client editClient(@RequestBody Client client) {
         // Clean the error list
         client.setErrors(new ArrayList<String>());
         // Validate fields
@@ -296,26 +291,19 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         }
 
         if (client.getErrors().size() == 0) {            
-            OrcidProfile profile = getEffectiveProfile();
-            String groupOrcid = profile.getOrcidIdentifier().getPath();
-
-            if (profile.getType() == null || !profile.getType().equals(OrcidType.GROUP)) {
-                LOGGER.warn("Trying to edit client with non group user {}", profile.getOrcidIdentifier().getPath());
-                throw new OrcidClientGroupManagementException(getMessage("web.orcid.privilege.exception"));
-            }
-
-            OrcidClient result = null;
-
-            try {
-                result = orcidClientGroupManager.updateClient(groupOrcid, client.toOrcidClient());
+            org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject(); 
+            try {                
+                clientManager.edit(clientToEdit);
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
-                result = new OrcidClient();
-                result.setErrors(new ErrorDesc(getMessage("manage.developer_tools.group.unable_to_update")));
+                String errorDesciption = getMessage("manage.developer_tools.group.unable_to_update") + " " + e.getMessage();
+                client.setErrors(new ArrayList<String>());
+                client.getErrors().add(errorDesciption);  
+                return client;
             }
 
-            client = Client.valueOf(result);
+            client = Client.fromModelObject(clientToEdit);
         }
         return client;
     }    
