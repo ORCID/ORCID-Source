@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -58,7 +59,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
 
     @Value("${org.orcid.core.oauth.auth_code.expiration_minutes:1440}")    
     private int authorizationCodeExpiration;
-    
+
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
@@ -67,6 +68,9 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
     
     @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
     
     public OrcidAuthorizationCodeTokenGranter(AuthorizationServerTokenServices tokenServices, AuthorizationCodeServices authorizationCodeServices,
             ClientDetailsService clientDetailsService, OAuth2RequestFactory oAuth2RequestFactory) {
@@ -95,7 +99,13 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
-            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
+            if (Features.REVOKE_TOKEN_ON_CODE_REUSE.isActive()){
+                int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId());
+                if (numDisabled >0){
+                    throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
+                }                
+            }
+            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
         } else {
             // Check auth code expiration
             Date tokenCreationDate = codeDetails.getDateCreated();
@@ -120,11 +130,13 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             
         }        
         
-        //Consume code        
-        OAuth2Authentication storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);
-        if (storedAuth == null) {
-            throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);
-        }                
+        //Consume code
+        OAuth2Authentication storedAuth;
+        try{
+            storedAuth = authorizationCodeServices.consumeAuthorizationCode(authorizationCode);            
+        }catch(InvalidGrantException e){            
+            throw e;
+        }               
 
         OAuth2Request pendingAuthorizationRequest = storedAuth.getOAuth2Request();
         //Regenerate the authorization request but now with the request parameters

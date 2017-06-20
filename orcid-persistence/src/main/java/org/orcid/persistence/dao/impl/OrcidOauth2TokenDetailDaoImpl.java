@@ -227,4 +227,17 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         int count = ((java.math.BigInteger)query.getSingleResult()).intValue();
         return count;
     }
+
+
+    /** Disable all tokens with this code/clientID pair.  Should never be more than one.
+     * 
+     */
+    @Override
+    public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientId) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where clientDetailsId = :clientId and authorizationCode = :authorizationCode");
+        query.setParameter("authorizationCode", authorizationCode);
+        query.setParameter("clientId", clientId);
+        int count = query.executeUpdate();
+        return count;
+    }
 }
