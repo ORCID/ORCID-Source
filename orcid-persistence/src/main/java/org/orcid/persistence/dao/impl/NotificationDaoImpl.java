@@ -83,19 +83,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
                 Long.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult().intValue();
-    }
-
-    @Override
-    public List<String> findOrcidsWithNotificationsToSend() {
-        return findOrcidsWithNotificationsToSend(new Date());
-    }
-
-    @Override
-    public List<String> findOrcidsWithNotificationsToSend(Date effectiveNow) {
-        TypedQuery<String> query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND, String.class);
-        query.setParameter("effectiveNow", effectiveNow);
-        return query.getResultList();
-    }
+    }    
 
     @Override
     public NotificationEntity findByOricdAndId(String orcid, Long id) {
@@ -164,6 +152,35 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("client", client);
         query.setParameter("notificationType", NotificationType.PERMISSION);
         return query.getResultList();
+    }
+
+    @Override
+    public List<Object[]> findRecordsWithUnsentNotifications() {
+        Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
+        
+        
+        String queryString = "SELECT * FROM notification WHERE id IN "
+                + " (SELECT n.id FROM notification n, (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid) x "
+                + " WHERE n.orcid=:orcid "
+                + " AND "
+                + " ((n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(x.max_sent_date) + (:record_email_frequency * 24 * 60 * 60))) "
+                + " OR "
+                + " (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60)))))";
+        
+        
+        
+        
+        Query query = entityManager.createNativeQuery(queryString, NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("effective_date", effectiveDate);
+        query.setParameter("record_email_frequency", emailFrequency);
+        query.setParameter("record_active_date", recordActiveDate);
+        return (List<NotificationEntity>) query.getResultList();
     }
 
 }

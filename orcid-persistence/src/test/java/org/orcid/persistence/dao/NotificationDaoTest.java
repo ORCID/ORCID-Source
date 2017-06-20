@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,8 +45,6 @@ import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateUtils;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,21 +92,14 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals(2, acts.size());
     }
 
-    @Test
-    @Rollback(true)
-    public void testFindOrcidsWithNotificationsToSend() {
-        List<String> orcids = notificationDao.findOrcidsWithNotificationsToSend();
-        assertNotNull(orcids);
-        assertEquals(1, orcids.size());
-        assertEquals("4444-4444-4444-4441", orcids.get(0));
+    @Test    
+    public void testFindRecordsWithUnsentNotifications() {
+        fail();
     }
 
     @Test
-    @Rollback(true)
-    public void testFindOrcidsWithNotificationsToSendWhenTooSoon() {
-        List<String> orcids = notificationDao.findOrcidsWithNotificationsToSend(DateUtils.convertToDate("2014-07-16T12:00:00"));
-        assertNotNull(orcids);
-        assertEquals(0, orcids.size());
+    public void testFindNotificationsToSend() {
+        fail();
     }
     
     @Test

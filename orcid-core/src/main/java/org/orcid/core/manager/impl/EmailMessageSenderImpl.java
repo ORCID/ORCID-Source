@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -180,11 +181,17 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        List<String> orcidsWithMessagesToSend = notificationDaoReadOnly.findOrcidsWithNotificationsToSend();
-        for (final String orcid : orcidsWithMessagesToSend) {
+        ////------------------------------------------------------
+        //TODO!!!! dont sent to guys that dont want to get messages
+        ////------------------------------------------------------
+        List<Object[]>orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+        for (final Object[] element : orcidsWithUnsentNotifications) {
+            String orcid = (String) element[0];                        
             try {
+                Float emailFrequencyDays = Float.valueOf((float) element[1]);
+                Date recordActiveDate = (Date) element[2];
                 LOGGER.info("Sending messages for orcid: {}", orcid);
-                List<Notification> notifications = notificationManager.findUnsentByOrcid(orcid);
+                List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
                 LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                 EmailMessage digestMessage = createDigest(orcid, notifications);
                 digestMessage.setFrom(DIGEST_FROM_ADDRESS);
