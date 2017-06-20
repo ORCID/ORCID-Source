@@ -169,7 +169,7 @@ public class OrcidOauth2UserAuthentication implements Authentication {
             return StringUtils.EMPTY;
         }
         
-        if(Visibility.PUBLIC.value().equals(recordName.getVisibility())) {
+        if(recordName.getVisibility() == Visibility.PUBLIC) {
             if(!PojoUtil.isEmpty(recordName.getCreditName())) {
                 return recordName.getCreditName();
             } else {

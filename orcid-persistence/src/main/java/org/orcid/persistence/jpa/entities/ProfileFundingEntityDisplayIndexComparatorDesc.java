@@ -36,7 +36,7 @@ public class ProfileFundingEntityDisplayIndexComparatorDesc<T> implements Compar
     public int compare(ProfileFundingEntity o1, ProfileFundingEntity o2) {
         Long index = o1.getDisplayIndex();
         Long otherIndex = o2.getDisplayIndex();
-        if (index == otherIndex) return o2.compareTo(o1);
+        if (index == null? otherIndex == null : index.equals(otherIndex)) return o2.compareTo(o1);
         if (index == null) return 1;
         if (otherIndex == null) return -1;
         return otherIndex.compareTo(index);
