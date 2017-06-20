@@ -58,7 +58,11 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
         if (dbRepo == null){
             synchronized(lock){
                 if (dbRepo == null){
-                    dbRepo = new CachingStateRepository(new JDBCStateRepository(dataSource),cacheTTL);
+                    if (cacheTTL == 0l){
+                        dbRepo = new JDBCStateRepository(dataSource);  
+                    }else{
+                        dbRepo = new CachingStateRepository(new JDBCStateRepository(dataSource),cacheTTL);                        
+                    }
                 }
             }
         }
