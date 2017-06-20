@@ -248,6 +248,17 @@
             <version>1.0.0</version>
         </dependency>
         
+   		<!-- Togglz -->
+		<dependency>
+			<groupId>org.togglz</groupId>
+			<artifactId>togglz-core</artifactId>
+			<version>2.4.1.Final</version>
+		</dependency>
+   		<dependency>
+			<groupId>org.togglz</groupId>
+			<artifactId>togglz-spring-web</artifactId>
+			<version>2.4.1.Final</version>
+		</dependency>  
         <!-- Test dependencies -->
 
     </dependencies>
