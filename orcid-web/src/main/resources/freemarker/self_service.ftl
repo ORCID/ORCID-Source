@@ -22,22 +22,22 @@
             <#include "includes/id_banner.ftl"/>
         </div>
         <div class="col-md-9 col-sm-12 col-xs-12 self-service">
-            <h1 id="self-service-lead"><@spring.message "manage_consortium.manage_consortium"/></h1>
+            <h1 id="self-service-lead" ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_consortium"/></h1>
+            <h1 id="self-service-lead" ng-show="!memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_member"/></h1>
             <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
             	<a href="<@orcid.rootPath '/members'/>" target="_blank"><@spring.message "manage_consortium.member_list_link"/></a>
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
-            <div ng-show="consortium != null" ng-cloak>
+            <div ng-show="memberDetails != null" ng-cloak>
                 <div class="topBuffer">
-                	<h2 id="self-service-lead"><@spring.message "manage_consortium.consortium_lead"/></h2>
                     <h3 class="topBuffer"><@spring.message "manage_consortium.public_display"/></h3>
                     <!-- Name -->
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.org_name'/></label>
-                            <input type="text" ng-model="consortium.name.value" class="full-width-input" />
-                            <span class="orcid-error" ng-show="consortium.name.errors.length > 0">
-                                <div ng-repeat='error in consortium.name.errors' ng-bind-html="error"></div>
+                            <input type="text" ng-model="memberDetails.name.value" class="full-width-input" />
+                            <span class="orcid-error" ng-show="memberDetails.name.errors.length > 0">
+                                <div ng-repeat='error in memberDetails.name.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
@@ -45,9 +45,9 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.website'/></label>
-                            <input type="text" ng-model="consortium.website.value" class="full-width-input" />
-                            <span class="orcid-error" ng-show="consortium.website.errors.length > 0">
-                                <div ng-repeat='error in consortium.website.errors' ng-bind-html="error"></div>
+                            <input type="text" ng-model="memberDetails.website.value" class="full-width-input" />
+                            <span class="orcid-error" ng-show="memberDetails.website.errors.length > 0">
+                                <div ng-repeat='error in memberDetails.website.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
@@ -55,9 +55,9 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.email'/></label>
-                            <input type="text" ng-model="consortium.email.value" class="full-width-input" />
-                            <span class="orcid-error" ng-show="consortium.email.errors.length > 0">
-                                <div ng-repeat='error in consortium.email.errors' ng-bind-html="error"></div>
+                            <input type="text" ng-model="memberDetails.email.value" class="full-width-input" />
+                            <span class="orcid-error" ng-show="memberDetails.email.errors.length > 0">
+                                <div ng-repeat='error in memberDetails.email.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
@@ -65,9 +65,9 @@
                     <div class="row">
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <label><@orcid.msg 'manage_consortium.description'/></label>
-                            <textarea ng-model="consortium.description.value" class="full-width-input" ></textarea>
-                            <span class="orcid-error" ng-show="consortium.description.errors.length > 0">
-                                <div ng-repeat='error in consortium.description.errors' ng-bind-html="error"></div>
+                            <textarea ng-model="memberDetails.description.value" class="full-width-input" ></textarea>
+                            <span class="orcid-error" ng-show="memberDetails.description.errors.length > 0">
+                                <div ng-repeat='error in memberDetails.description.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
@@ -77,13 +77,13 @@
                             <label><@orcid.msg 'manage_consortium.community'/></label>
                              <select id="communities" name="communities"
 								    	class="input-xlarge"
-								     	ng-model="consortium.community.value">
+								     	ng-model="memberDetails.community.value">
 										<#list communityTypes?keys as key>
 											<option value="${key}" ng-selected="contact.community.value === '${key}'">${communityTypes[key]}</option>
 										</#list>
 								    </select>            
-                            <span class="orcid-error" ng-show="consortium.community.errors.length > 0">
-                                <div ng-repeat='error in consortium.community.errors' ng-bind-html="error"></div>
+                            <span class="orcid-error" ng-show="memberDetails.community.errors.length > 0">
+                                <div ng-repeat='error in memberDetails.community.errors' ng-bind-html="error"></div>
                             </span>
                         </div>
                     </div>
@@ -118,19 +118,19 @@
                                 <td>{{contact.name}}</td>
                                 <td>{{contact.email}}</td>
                                 <td><a href="{{buildOrcidUri(contact.orcid)}}">{{contact.orcid}}</a></td>
-                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!consortium.allowedFullAccess"></input></td>
+                                <td><input type="checkbox" ng-model="contact.role.votingContact" ng-change="validateContacts()" ng-disabled="!memberDetails.allowedFullAccess"></input></td>
                                 <td>
 								    <select class="input-md" id="contactRoles" name="contactRoles"
 								     	ng-model="contact.role.roleType"
 								     	ng-change="validateContacts()"
-								     	ng-disabled="!consortium.allowedFullAccess">
+								     	ng-disabled="!memberDetails.allowedFullAccess">
 										<#list contactRoleTypes?keys as key>
 											<option value="${key}" ng-selected="contact.role.roleType === '${key}'">${contactRoleTypes[key]}</option>
 										</#list>
 								    </select>
                                 </td>
                                 <td class="tooltip-container">
-                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="consortium.allowedFullAccess"
+                                    <a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRevoke(contact)" ng-show="memberDetails.allowedFullAccess"
                                         class="glyphicon glyphicon-trash grey">
                                         <div class="popover popover-tooltip top">
                                             <div class="arrow"></div>
@@ -145,14 +145,14 @@
                         </tbody>
                     </table>
                     <!-- Buttons -->
-	                <div class="row" ng-show="consortium.allowedFullAccess">
+	                <div class="row" ng-show="memberDetails.allowedFullAccess">
 	                    <div class="controls bottomBuffer col-md-12 col-sm-12 col-xs-12">
 	                    	<span id="ajax-loader" class="ng-cloak" ng-show="updateContactsShowLoader"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span><br>
 	                        <button id="bottom-confirm-update-contacts" class="btn btn-primary" ng-click="updateContacts()" ng-disabled="updateContactsDisabled"><@orcid.msg 'manage_consortium.save_contacts'/></button>
 	                        <a href="" class="cancel-right" ng-click="getContacts()"><@orcid.msg 'manage_consortium.clear_changes' /></a>
 	                    </div>
 	                </div>
-                    <div class="bottomBuffer" ng-show="consortium.allowedFullAccess">
+                    <div class="bottomBuffer" ng-show="memberDetails.allowedFullAccess">
                     	<h3>
                         	<@spring.message "manage_consortium.add_contacts_heading"/>
                     	</h3>
@@ -167,13 +167,13 @@
                 <div id="invalid-email-alert" class="orcid-hide orcid-error"><@spring.message "Email.resetPasswordForm.invalidEmail"/></div>
                 </div>
             </div>
-            <div class="topBuffer">
+            <div class="topBuffer" ng-show="memberDetails.consortiumLead">
                 <h2>Consortium Members</h2>
                 <hr></hr>
-            	<div ng-repeat="subMember in consortium.subMembers | orderBy : 'opportunity.accountName'">
+            	<div ng-repeat="subMember in memberDetails.subMembers | orderBy : 'opportunity.accountName'">
 					<span><a ng-href="{{subMember.opportunity.targetAccountId}}">{{subMember.opportunity.accountName}}</a></span>
 					<span class="tooltip-container">
-						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="consortium.allowedFullAccess"
+						<a id="revokeAppBtn" name="{{contact.email}}" ng-click="confirmRemoveSubMember(subMember)" ng-show="memberDetails.allowedFullAccess"
 	                        class="glyphicon glyphicon-trash grey">
 	                        <div class="popover popover-tooltip top">
 	                            <div class="arrow"></div>
@@ -185,11 +185,11 @@
                     </span>
 					<hr></hr>
             	</div>
-                <div ng-hide="consortium.subMembers.length"> 
+                <div ng-hide="memberDetails.subMembers.length"> 
 					<p>This consortium does not have any members yet.</p>
 					<hr></hr>
                 </div>
-                <div ng-show="consortium.allowedFullAccess"
+                <div ng-show="memberDetails.allowedFullAccess"
 	                <h3>New consortium member</h3>
 	                <form>
 	                    <label for="new-sub-member-name">Name</label><input id="new-sub-member-name" type="text" placeholder="Name" class="input-xlarge inline-input" ng-model="newSubMember.name"></input>

@@ -6,7 +6,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.addSubMemberDisabled = false;
     $scope.addSubMemberShowLoader = false;
     $scope.membersListSrvc = membersListSrvc;
-    $scope.consortium = null;
+    $scope.memberDetails = null;
     $scope.contacts = null;
     $scope.input = {};
     $scope.showInitLoader = true;
@@ -35,7 +35,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
               type: 'GET',
               dataType: 'json',
               success: function(data){
-                    $scope.consortium = data;
+                    $scope.memberDetails = data;
                     $scope.$apply();
               }
          }).fail(function(error) {
@@ -52,7 +52,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
               contentType: 'application/json;charset=UTF-8',
               type: 'POST',
               dataType: 'json',
-              data: angular.toJson($scope.consortium),
+              data: angular.toJson($scope.memberDetails),
               success: function(data){
                     $scope.updateMemberDetailsShowLoader = false;
                     $scope.updateMemberDetailsDisabled = false;
@@ -60,7 +60,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
                          } else {
-                              $scope.consortium = data;
+                              $scope.memberDetails = data;
                          }
                     });
               }
@@ -242,8 +242,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.update = function (contact) {
         var done = false;
         if(contact.mainContact){
-            for(var i in $scope.consortium.contactsList){
-                var other = $scope.consortium.contactsList[i];
+            for(var i in $scope.memberDetails.contactsList){
+                var other = $scope.memberDetails.contactsList[i];
                 if(other.id !== contact.id && other.mainContact){
                     other.mainContact = false;
                     other.role = null;
@@ -289,6 +289,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 if(data.errors.length === 0){
+                    $scope.getMemberDetails();
                     $scope.addSubMemberShowLoader = false;
                     $scope.addSubMemberDisabled = false;
                     $scope.newSubMember.name = "";
