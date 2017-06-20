@@ -157,7 +157,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         try{
             OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn);
             return getResponse(token);
-        } catch (InvalidGrantException e){
+        } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
             Status status = Status.fromStatusCode(error.getResponseStatus().getStatusCode());
             return Response.status(status).entity(error).build();
