@@ -17,7 +17,9 @@
 package org.orcid.core.oauth.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -38,7 +40,9 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,6 +60,9 @@ public class ClientDetailsManagerTest extends DBUnitTest {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
+
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
 
     private static String CLIENT_NAME = "the name";
     private static String CLIENT_DESCRIPTION = "the description";
@@ -86,7 +93,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
                 checkClientDetails(clientDetails);
             }
         }
-    }    
+    }
 
     @Test
     @Rollback
@@ -131,20 +138,48 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
                 clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities, true);
     }
-    
+
     @Test(expected = NoResultException.class)
     public void testGetClientNonExistent() {
         clientDetailsManager.getClient("some-nonexistent-client");
         fail();
     }
-    
+
     @Test
     public void testGetClient() {
         Client client = clientDetailsManager.getClient("APP-6666666666666666");
         assertNotNull(client);
         assertEquals("Source Client 2", client.getName());
         assertEquals("A test source client", client.getDescription());
+
+    }
+
+    @Test
+    public void testAddScopesToClient() {
+        ClientDetailsEntity clientDetails = clientDetailsDao.find("APP-6666666666666666");
         
+        Set<String> scopes = new HashSet<>();
+        scopes.add("some-scope");
+        scopes.add("another-scope");
+        clientDetailsManager.addScopesToClient(scopes, clientDetails);
+        
+        ClientDetailsEntity updated = clientDetailsDao.find("APP-6666666666666666");
+        
+        assertFalse(clientDetails.getClientScopes().size() == updated.getClientScopes().size());
+        assertTrue(clientDetails.getClientScopes().size() == updated.getClientScopes().size() - 2);
+
+        boolean foundFirstScope = false;
+        boolean foundSecondScope = false;
+        for (ClientScopeEntity clientScope : updated.getClientScopes()) {
+            if ("some-scope".equals(clientScope.getScopeType())) {
+                foundFirstScope = true;
+            } else if ("another-scope".equals(clientScope.getScopeType())) {
+                foundSecondScope = true;
+            } 
+        }
+        
+        assertTrue(foundFirstScope);
+        assertTrue(foundSecondScope);
     }
 
     private void checkClientDetails(ClientDetailsEntity clientDetails) {
