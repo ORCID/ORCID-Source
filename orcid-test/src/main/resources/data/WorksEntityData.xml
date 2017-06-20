@@ -184,6 +184,7 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="PUBLIC"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;1&quot;}}],&quot;scope&quot;:null}"
+          contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:{&quot;path&quot;:&quot;0000-0000-0000-0000&quot;},&quot;creditName&quot;:{&quot;content&quot;:null},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           display_index="0"
             />                                
     

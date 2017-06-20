@@ -93,13 +93,16 @@
     
     <bean id="ajaxAuthenticationFailureHandlerSocial"
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
+        
+    <bean id="authenticationDetailsSource" 
+        class="org.orcid.frontend.spring.OrcidAuthenticationDetailsSource" />
 
 	<sec:authentication-manager id="authenticationManager">
 		<sec:authentication-provider ref="authenticationProvider" />
 		<sec:authentication-provider ref="preauthAuthProvider" />
 	</sec:authentication-manager>
 	
-	<bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+	<bean id="authenticationProvider" class="org.orcid.frontend.spring.OrcidAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService"/>
 		<property name="authoritiesMapper" ref="authoritiesMapper"/>
 		<property name="passwordEncoder" ref="encryptionManager"/>
@@ -131,6 +134,7 @@
 	<sec:http pattern="/static/**" security="none" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
+	<sec:http pattern="/.well-known/**" security="none" />
 	
 	<sec:http pattern="/togglz/.*" 
 		use-expressions="false" 
@@ -146,7 +150,6 @@
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />     
 	</sec:http>
-
 
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -384,13 +387,15 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/togglz/*" 
+			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
 			login-processing-url="/signin/auth" -->
 		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
 
-		<sec:form-login login-processing-url="/signin/auth.json" 
+		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
 			username-parameter="userId" password-parameter="password" />
@@ -411,7 +416,7 @@
     <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
 	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
-		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="orcidUserDetailsService" ref="userDetailsService" />
 		<property name="switchUserUrl" value="/switch-user" />
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid" />

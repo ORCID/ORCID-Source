@@ -166,7 +166,13 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> getProfilesWithNoHashedOrcid(int limit);
     
-    void updateHashedOrcid(String orcid, String hashedOrcid);
+    void hashOrcidIds(String orcid, String hashedOrcid);
     
     public Date getLastLogin(String orcid);
+
+    void disable2FA(String orcid);
+
+    void enable2FA(String orcid);
+    
+    void update2FASecret(String orcid, String secret);
 }

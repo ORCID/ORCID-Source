@@ -23,21 +23,19 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AnalyticsProcess.class);
-
     private static final String PUBLIC_API_USER = "Public API user";
 
     private static final String PUBLIC_API = "Public API";
 
     private static final String MEMBER_API = "Member API";
+    
+    private static final String PROFILE_NOT_FOUND = "not-found";
 
     private ContainerRequest request;
 
@@ -54,6 +52,8 @@ public class AnalyticsProcess implements Runnable {
     public boolean publicApi;
 
     private String ip;
+    
+    private String scheme;
 
     @Override
     public void run() {
@@ -92,13 +92,21 @@ public class AnalyticsProcess implements Runnable {
     public void setIp(String ip) {
         this.ip = ip;
     }
+    
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
 
     private AnalyticsData getAnalyticsData() {
         ip = maskIp(ip);
+
         APIEndpointParser parser = new APIEndpointParser(request);
+        String url = request.getAbsolutePath().toString();
+        url = correctScheme(url);
+        url = getUrlWithHashedOrcidId(parser.getOrcidId(), url);
 
         AnalyticsData analyticsData = new AnalyticsData();
-        analyticsData.setUrl(getUrlWithHashedOrcidId(parser.getOrcidId(), request.getAbsolutePath().toString()));
+        analyticsData.setUrl(url);
         analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
         analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
@@ -109,6 +117,10 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
         analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+
+    private String correctScheme(String url) {
+        return scheme + url.substring(url.indexOf(":"));
     }
 
     private String maskIp(String ip) {
@@ -139,8 +151,7 @@ public class AnalyticsProcess implements Runnable {
                 return url;
             }
         } catch (IllegalArgumentException e) {
-            LOG.warn("Invalid ORCID iD supplied in API call, original URL will be posted to GA");
-            return url;
+            return url.replace(orcidId, PROFILE_NOT_FOUND);
         }
     }
 
@@ -164,4 +175,5 @@ public class AnalyticsProcess implements Runnable {
             return PUBLIC_API_USER;
         }
     }
+
 }

@@ -1,0 +1,29 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="George Nash" id="ADD-2FA-COLUMNS-TO-PROFILE-TABLE">
+        <addColumn tableName="profile">
+                <column name="secret_for_2fa" type="VARCHAR(255)" />
+                <column name="using_2fa" type="boolean" defaultValueBoolean="false" />
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>    

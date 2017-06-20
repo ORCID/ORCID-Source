@@ -18,14 +18,21 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +40,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
@@ -62,6 +68,12 @@ public class SocialController extends BaseController {
 
     @Resource
     private UserConnectionManager userConnectionManager;
+    
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
@@ -79,7 +91,7 @@ public class SocialController extends BaseController {
                     userConnectionManager.updateLoginInformation(pk);
                     String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
                     PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
-                    token.setDetails(new WebAuthenticationDetails(request));
+                    token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
                     Authentication authentication = authenticationManager.authenticate(token);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
@@ -100,6 +112,12 @@ public class SocialController extends BaseController {
         } else {
             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
+    }
+
+    private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
+        return new OrcidProfileUserDetails(orcid, email.getEmail(), profileEntity.getPassword(), profileEntity.getOrcidType());
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {

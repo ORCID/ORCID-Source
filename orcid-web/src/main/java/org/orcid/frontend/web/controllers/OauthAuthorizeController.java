@@ -116,11 +116,11 @@ public class OauthAuthorizeController extends OauthControllerBase {
             String maxAge = request.getParameter(OrcidOauth2Constants.MAX_AGE);
             String orcid = getEffectiveUserOrcid();
             if (maxAge!=null){
-                //if maxAge+lastlogin > now, force login
+                //if maxAge+lastlogin > now, force login.  max_age is in seconds.
                 java.util.Date authTime = profileEntityManager.getLastLogin(orcid); //is also on the entity.
                 try{
                     long max = Long.parseLong(maxAge);        
-                    if (authTime == null || ((authTime.getTime() + max) < (new java.util.Date()).getTime())){
+                    if (authTime == null || ((authTime.getTime() + (max*1000)) < (new java.util.Date()).getTime())){
                         return oauthLoginController.loginGetHandler(request,response,new ModelAndView());                    
                     }                    
                 }catch(NumberFormatException e){
