@@ -1,4 +1,9 @@
-angular.module('orcidApp').controller('WorkspaceSummaryCtrl', ['$scope', '$compile', 'affiliationsSrvc', 'fundingSrvc', 'worksSrvc', 'peerReviewSrvc', 'workspaceSrvc',function ($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, peerReviewSrvc, workspaceSrvc){
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+
+export const WorkspaceSummaryCtrl = angular.module('orcidApp').controller('WorkspaceSummaryCtrl', ['$scope', '$compile', 'affiliationsSrvc', 'fundingSrvc', 'worksSrvc', 'peerReviewSrvc', 'workspaceSrvc',function ($scope, $compile, affiliationsSrvc, fundingSrvc, worksSrvc, peerReviewSrvc, workspaceSrvc){
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.worksSrvc = worksSrvc;
     $scope.affiliationsSrvc = affiliationsSrvc;
@@ -15,3 +20,7 @@ angular.module('orcidApp').controller('WorkspaceSummaryCtrl', ['$scope', '$compi
         return false;
     };
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class WorkspaceSummaryCtrlNg2Module {}
