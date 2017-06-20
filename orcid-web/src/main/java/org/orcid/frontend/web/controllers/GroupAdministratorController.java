@@ -293,7 +293,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         if (client.getErrors().size() == 0) {            
             org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject(); 
             try {                
-                clientManager.edit(clientToEdit);
+                clientToEdit = clientManager.edit(clientToEdit);
                 clearCache();
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());

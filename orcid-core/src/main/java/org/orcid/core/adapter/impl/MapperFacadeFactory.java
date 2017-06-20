@@ -677,17 +677,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientSummaryClassMap.register();        
                 
         ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
-        clientClassMap.field("id", "clientId");
         clientClassMap.field("name", "clientName");
-        clientClassMap.field("description", "clientDescription");
-        clientClassMap.field("clientType", "clientType");
-        clientClassMap.field("website", "clientWebsite");
-        clientClassMap.field("groupProfileId", "groupProfileId");
-        clientClassMap.field("authenticationProviderId", "authenticationProviderId");
-        clientClassMap.field("emailAccessReason", "emailAccessReason");
-        clientClassMap.field("persistentTokensEnabled", "persistentTokensEnabled");
+        clientClassMap.field("description", "clientDescription");        
+        clientClassMap.field("website", "clientWebsite");        
         clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
         
+        clientClassMap.fieldBToA("clientId", "id");
+        clientClassMap.fieldBToA("clientType", "clientType");                
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");
+        clientClassMap.fieldBToA("emailAccessReason", "emailAccessReason");
+        clientClassMap.fieldBToA("authenticationProviderId", "authenticationProviderId");
+        clientClassMap.fieldBToA("persistentTokensEnabled", "persistentTokensEnabled");
+        
+        clientClassMap.exclude("clientScopes");
+        clientClassMap.exclude("resourceId");
+        clientClassMap.exclude("authorizedGrantTypes");
+        clientClassMap.exclude("grantedAuthorities");        
+                
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
              * On the way in, from Client to ClientDetailsEntity, we just need to care about mapping the redirect uri's, since all config features will not change from UI requests             
@@ -755,11 +761,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     }
                 }
             }
-        });
-        
+        });                
         clientClassMap.byDefault();
-        clientClassMap.register();        
-        
+        clientClassMap.register();                
         return mapperFactory.getMapperFacade();
     }
 
