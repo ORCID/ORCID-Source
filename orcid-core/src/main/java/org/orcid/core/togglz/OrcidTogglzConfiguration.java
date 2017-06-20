@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.togglz;
+package org.orcid.core.togglz;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;

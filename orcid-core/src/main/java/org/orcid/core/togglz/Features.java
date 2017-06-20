@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.togglz;
+package org.orcid.core.togglz;
 
 import org.togglz.core.Feature;
 import org.togglz.core.annotation.Label;

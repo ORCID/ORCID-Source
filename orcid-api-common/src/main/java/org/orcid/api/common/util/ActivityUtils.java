@@ -17,6 +17,7 @@
 package org.orcid.api.common.util;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
@@ -36,6 +37,7 @@ import org.orcid.jaxb.model.record_v2.BulkElement;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
+import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
@@ -182,6 +184,21 @@ public class ActivityUtils {
         }
     }
     
+    /**
+     * Set the path attribute to all works in the workBulk element
+     * 
+     * @param workBulk
+     */
+    public static void setPathToBulk(WorkBulk workBulk, String orcid) {
+        if (workBulk != null && workBulk.getBulk() != null) {
+            workBulk.getBulk().forEach(b -> {
+                if (b instanceof Work) {
+                    setPathToActivity((Work) b, orcid);
+                }
+            });
+        }
+    }
+    
     public static void cleanEmptyFields(ActivitiesSummary summaries) {
         if(summaries != null) {
             if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
@@ -249,7 +266,24 @@ public class ActivityUtils {
                     }
                 }
             }
+            
+            if(work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+                for(Contributor c : work.getWorkContributors().getContributor()) {
+                    if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+                        c.setCreditName(null);
+                    }
+                }
+            }
         }
     }
 
+    public static void cleanEmptyFields(Funding funding) {
+        if(funding != null && funding.getContributors() != null && !funding.getContributors().getContributor().isEmpty()) {
+            for(FundingContributor c : funding.getContributors().getContributor()) {
+                if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+                    c.setCreditName(null);
+                }
+            }
+        }
+    }
 }
