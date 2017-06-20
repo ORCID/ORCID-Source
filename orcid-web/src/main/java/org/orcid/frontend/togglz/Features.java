@@ -38,7 +38,10 @@ public enum Features implements Feature {
     TWO_FACTOR_AUTHENTICATION,
     
     @Label("Survey link")
-    SURVEY;
+    SURVEY,
+    
+    @Label("Revoke access token if authorization code is reused")
+    REVOKE_TOKEN_ON_CODE_REUSE;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
