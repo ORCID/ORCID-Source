@@ -27,6 +27,7 @@ public class ContactsForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
+    private String accountId;
     private List<Contact> contactsList;
     private Map<String, String> roleMap;
 
@@ -38,6 +39,14 @@ public class ContactsForm implements ErrorsInterface, Serializable {
     @Override
     public void setErrors(List<String> errors) {
         this.errors = errors;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public List<Contact> getContactsList() {
