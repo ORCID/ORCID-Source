@@ -23,6 +23,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -154,33 +155,22 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
+        query.setParameter("never", SendEmailFrequency.NEVER);
         return query.getResultList();
     }
 
     @Override
     public List<NotificationEntity> findNotificationsToSend(Date effectiveDate, String orcid, Float emailFrequency, Date recordActiveDate) {
-        
-        
-        String queryString = "SELECT * FROM notification WHERE id IN "
-                + " (SELECT n.id FROM notification n, (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid) x "
-                + " WHERE n.orcid=:orcid "
-                + " AND "
-                + " ((n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(x.max_sent_date) + (:record_email_frequency * 24 * 60 * 60))) "
-                + " OR "
-                + " (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60)))))";
-        
-        
-        
-        
-        Query query = entityManager.createNativeQuery(queryString, NotificationEntity.class);
+        TypedQuery<NotificationEntity> query = entityManager.createNamedQuery(NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID, NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("effective_date", effectiveDate);
         query.setParameter("record_email_frequency", emailFrequency);
         query.setParameter("record_active_date", recordActiveDate);
-        return (List<NotificationEntity>) query.getResultList();
+        return query.getResultList();
     }
 
 }

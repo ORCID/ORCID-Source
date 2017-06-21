@@ -48,19 +48,26 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
 @DiscriminatorColumn(name = "notification_type")
 // @formatter:off
 @NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS, 
-        query = "SELECT DISTINCT(n.orcid), p.send_email_frequency_days, COALESCE(p.completed_date, p.date_created) "
-                + " FROM notification n, profile p "
-                + " WHERE n.sent_date IS NULL "
-                + " AND n.orcid = p.orcid "
-                + " AND p.claimed = true "
-                + " AND p.profile_deactivation_date IS NULL "
-                + " AND NOT p.record_locked"),
+        query = "SELECT DISTINCT(n.orcid), p.send_email_frequency_days, COALESCE(p.completed_date, p.date_created) " + 
+                " FROM notification n, profile p " +
+                " WHERE n.sent_date IS NULL " +
+                " AND n.orcid = p.orcid " +
+                " AND p.send_email_frequency_days < :never " +
+                " AND p.claimed = true " +
+                " AND p.profile_deactivation_date IS NULL " +
+                " AND NOT p.record_locked;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
-        query = "SELECT n.* FROM notification n, (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid) x "
-                + " WHERE n.orcid=:orcid "
-                + " AND ((n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(x.max_sent_date) + (:record_email_frequency * 24 * 60 * 60))) "
-                + " OR "
-                + " (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60))))"
+        query = "SELECT * FROM notification " + 
+        " WHERE id IN " +
+        " ( " +
+        "       SELECT n.id FROM notification n, (SELECT MAX(sent_date) AS max_sent_date FROM notification WHERE orcid=:orcid) x " +
+        "       WHERE n.orcid=:orcid  " +
+        "       AND ( " +
+        "       (n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(x.max_sent_date) + (:record_email_frequency * 24 * 60 * 60))) " +
+        "       OR " +
+        "       (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60))) " +
+        "       ) " + 
+        " );"
     )})
 // @formatter:on
 abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {
