@@ -159,7 +159,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS);
-        query.setParameter("never", SendEmailFrequency.NEVER);
+        query.setParameter("never", Float.valueOf(SendEmailFrequency.NEVER.value()));
         return query.getResultList();
     }
 

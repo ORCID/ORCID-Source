@@ -67,7 +67,7 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
         "       OR " +
         "       (x.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (:record_email_frequency * 24 * 60 * 60))) " +
         "       ) " + 
-        " );"
+        " );", resultClass = NotificationEntity.class
     )})
 // @formatter:on
 abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {

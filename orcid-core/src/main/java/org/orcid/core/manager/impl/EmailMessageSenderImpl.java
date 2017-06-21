@@ -181,9 +181,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         LOGGER.info("About to send email messages");
-        ////------------------------------------------------------
-        //TODO!!!! dont sent to guys that dont want to get messages
-        ////------------------------------------------------------
         List<Object[]>orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];                        
@@ -192,19 +189,23 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 Date recordActiveDate = (Date) element[2];
                 LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
-                LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                EmailMessage digestMessage = createDigest(orcid, notifications);
-                digestMessage.setFrom(DIGEST_FROM_ADDRESS);
-                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                if (primaryEmail == null) {
-                    LOGGER.info("No primary email for orcid: " + orcid);
-                    return;
-                }
-                digestMessage.setTo(primaryEmail.getId());
-                boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                        digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                if (successfullySent) {
-                    flagAsSent(notifications);
+                if(!notifications.isEmpty()) {
+                    LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
+                    EmailMessage digestMessage = createDigest(orcid, notifications);
+                    digestMessage.setFrom(DIGEST_FROM_ADDRESS);
+                    EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
+                    if (primaryEmail == null) {
+                        LOGGER.info("No primary email for orcid: " + orcid);
+                        return;
+                    }
+                    digestMessage.setTo(primaryEmail.getId());
+                    boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
+                            digestMessage.getBodyText(), digestMessage.getBodyHtml());
+                    if (successfullySent) {
+                        flagAsSent(notifications);
+                    }
+                } else {
+                    LOGGER.info("There are no notifications to send for orcid: {}", orcid);
                 }
             } catch (RuntimeException e) {
                 LOGGER.warn("Problem sending email message to user: " + orcid, e);
