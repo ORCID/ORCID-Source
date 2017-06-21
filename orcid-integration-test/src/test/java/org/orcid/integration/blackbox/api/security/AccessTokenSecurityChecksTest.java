@@ -36,6 +36,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
@@ -57,6 +59,8 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.togglz.core.context.FeatureContext;
+import org.togglz.core.repository.FeatureState;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
@@ -297,6 +301,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
     
     @Test
     public void resusedAuthorizationCodesFailTest() throws InterruptedException, JSONException {
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REVOKE_TOKEN_ON_CODE_REUSE, true);
         String clientId = getClient1ClientId();
         String clientRedirectUri = getClient1RedirectUri();
         String clientSecret = getClient1ClientSecret();
@@ -324,6 +329,15 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         ClientResponse response2 = memberV2ApiClient.viewPerson(getUser1OrcidId(), token);
         assertNotNull(response2);
         assertEquals(401, response2.getStatus()); 
+        
+        //check we get the old message if feature is off
+        toggleFeature(getAdminUserName(), getAdminPassword(), Features.REVOKE_TOKEN_ON_CODE_REUSE, false);
+        ClientResponse tokenResponse3 = getAccessTokenResponse(clientId, clientSecret, clientRedirectUri, authorizationCode);
+        assertEquals(400, tokenResponse3.getStatus());
+        String body3 = tokenResponse3.getEntity(String.class);
+        JSONObject jsonObject3 = new JSONObject(body3);
+        assertEquals("invalid_grant", jsonObject3.get("error"));
+        assertEquals("Invalid authorization code: "+authorizationCode, jsonObject3.get("error_description"));
     }
     
 }
