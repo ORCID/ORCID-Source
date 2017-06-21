@@ -108,7 +108,7 @@ public class SalesForceAdapter {
     public List<Contact> createContactsWithRolesFromJson(JSONObject object) {
         try {
             JSONObject firstRecord = extractFirstRecord(object);
-            JSONObject contactRoles = firstRecord.getJSONObject("Membership_Contact_Roles__r");
+            JSONObject contactRoles = firstRecord.optJSONObject("Membership_Contact_Roles__r");
             List<JSONObject> objectsList = extractObjectListFromRecords(contactRoles);
             return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
         } catch (JSONException e) {
@@ -245,9 +245,11 @@ public class SalesForceAdapter {
 
     private List<JSONObject> extractObjectListFromRecords(JSONObject object) throws JSONException {
         List<JSONObject> objects = new ArrayList<>();
-        JSONArray records = object.getJSONArray("records");
-        for (int i = 0; i < records.length(); i++) {
-            objects.add(records.getJSONObject(i));
+        if (object != null) {
+            JSONArray records = object.getJSONArray("records");
+            for (int i = 0; i < records.length(); i++) {
+                objects.add(records.getJSONObject(i));
+            }
         }
         return objects;
     }

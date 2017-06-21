@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.frontend.togglz;
+package org.orcid.core.togglz;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -44,6 +44,10 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
     @Value("${org.orcid.persistence.togglz.cache.ttl:60000}")
     private Long cacheTTL;
     
+    private StateRepository dbRepo;
+    
+    private Object lock = new Object();
+    
     @Override
     public Class<? extends Feature> getFeatureClass() {
         return Features.class;
@@ -51,8 +55,18 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
 
     @Override
     public StateRepository getStateRepository() {
-        StateRepository dbRepo = new JDBCStateRepository(dataSource);
-        return new CachingStateRepository(dbRepo, cacheTTL);
+        if (dbRepo == null){
+            synchronized(lock){
+                if (dbRepo == null){
+                    if (cacheTTL == 0l){
+                        dbRepo = new JDBCStateRepository(dataSource);  
+                    }else{
+                        dbRepo = new CachingStateRepository(new JDBCStateRepository(dataSource),cacheTTL);                        
+                    }
+                }
+            }
+        }
+        return dbRepo;
     }
 
     @Override

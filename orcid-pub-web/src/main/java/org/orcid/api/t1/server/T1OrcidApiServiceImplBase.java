@@ -61,10 +61,14 @@ import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
+import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012
@@ -566,7 +570,13 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, @FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+        try {
+            return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+        } catch(Exception e) {
+            OAuthError error = OAuthErrorUtils.getOAuthError(e);
+            HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
+            return Response.status(status.value()).entity(error).build();
+        }
     }
 
 }

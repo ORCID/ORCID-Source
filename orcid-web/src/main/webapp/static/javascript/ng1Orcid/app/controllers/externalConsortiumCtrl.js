@@ -6,12 +6,12 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.addSubMemberDisabled = false;
     $scope.addSubMemberShowLoader = false;
     $scope.membersListSrvc = membersListSrvc;
-    $scope.consortium = null;
+    $scope.memberDetails = null;
     $scope.contacts = null;
     $scope.input = {};
     $scope.showInitLoader = true;
-    $scope.updateConsortiumDisabled = false;
-    $scope.updateConsortiumShowLoader = false;
+    $scope.updateMemberDetailsDisabled = false;
+    $scope.updateMemberDetailsShowLoader = false;
     $scope.updateContactsDisabled = false;
     $scope.updateContactsShowLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
@@ -20,41 +20,47 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
          $scope.showFindModal = !$scope.showFindModal;
     };
     
+    $scope.getAccountIdFromPath = function(){
+        var pathname = window.location.pathname;
+        var basepath = '/self-service/';
+        return pathname.substring(pathname.indexOf(basepath) + basepath.length);
+    }
+    
     /**
      * GET
      * */
-    $scope.getConsortium = function() {
+    $scope.getMemberDetails = function() {
          $.ajax({
-              url: getBaseUri()+'/manage-consortium/get-consortium.json',
+              url: getBaseUri()+'/self-service/get-member-details.json?accountId=' + $scope.accountId,
               type: 'GET',
               dataType: 'json',
               success: function(data){
-                    $scope.consortium = data;
+                    $scope.memberDetails = data;
                     $scope.$apply();
               }
          }).fail(function(error) {
               // something bad is happening!
-              console.log("Error getting the consortium");
+              console.log("Error getting the member details");
          });
     };
     
-    $scope.updateConsortium = function() {
-        $scope.updateConsortiumShowLoader = true;
-        $scope.updateConsortiumDisabled = true;
+    $scope.updateMemberDetails = function() {
+        $scope.updateMemberDetailsShowLoader = true;
+        $scope.updateMemberDetailsDisabled = true;
          $.ajax({
-              url: getBaseUri()+'/manage-consortium/update-consortium.json',
+              url: getBaseUri()+'/self-service/update-member-details.json',
               contentType: 'application/json;charset=UTF-8',
               type: 'POST',
               dataType: 'json',
-              data: angular.toJson($scope.consortium),
+              data: angular.toJson($scope.memberDetails),
               success: function(data){
-                    $scope.updateConsortiumShowLoader = false;
-                    $scope.updateConsortiumDisabled = false;
+                    $scope.updateMemberDetailsShowLoader = false;
+                    $scope.updateMemberDetailsDisabled = false;
                     $scope.$apply(function(){
                          if(data.errors.length == 0){
                               $scope.success_edit_member_message = om.get('manage_member.edit_member.success');
                          } else {
-                              $scope.consortium = data;
+                              $scope.memberDetails = data;
                          }
                     });
               }
@@ -78,7 +84,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
      * */
     $scope.getContacts = function() {
          $.ajax({
-              url: getBaseUri()+'/manage-consortium/get-contacts.json',
+              url: getBaseUri()+'/self-service/get-contacts.json?accountId=' + $scope.accountId,
               type: 'GET',
               dataType: 'json',
               success: function(data){
@@ -93,7 +99,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     
     $scope.validateContacts = function() {
          $.ajax({
-              url: getBaseUri()+'/manage-consortium/validate-contacts.json',
+              url: getBaseUri()+'/self-service/validate-contacts.json',
               contentType: 'application/json;charset=UTF-8',
               type: 'POST',
               dataType: 'json',
@@ -112,8 +118,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.updateContacts = function() {
         $scope.updateContactsShowLoader = true;
         $scope.updateContactsDisabled = true;
+        $scope.contacts.accountId = $scope.accountId;
          $.ajax({
-              url: getBaseUri()+'/manage-consortium/update-contacts.json',
+              url: getBaseUri()+'/self-service/update-contacts.json',
               contentType: 'application/json;charset=UTF-8',
               type: 'POST',
               dataType: 'json',
@@ -180,8 +187,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
         $scope.errors = [];
         var addContact = {};
         addContact.email = $scope.input.text;
+        addContact.accountId = $scope.accountId;
         $.ajax({
-            url: getBaseUri() + '/manage-consortium/add-contact-by-email.json',
+            url: getBaseUri() + '/self-service/add-contact-by-email.json',
             type: 'POST',
             data: angular.toJson(addContact),
             contentType: 'application/json;charset=UTF-8',
@@ -214,8 +222,9 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
     
     $scope.revoke = function () {
+        $scope.contactToRevoke.accountId = $scope.accountId;
         $.ajax({
-            url: getBaseUri() + '/manage-consortium/remove-contact.json',
+            url: getBaseUri() + '/self-service/remove-contact.json',
             type: 'POST',
             data:  angular.toJson($scope.contactToRevoke),
             contentType: 'application/json;charset=UTF-8',
@@ -233,8 +242,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.update = function (contact) {
         var done = false;
         if(contact.mainContact){
-            for(var i in $scope.consortium.contactsList){
-                var other = $scope.consortium.contactsList[i];
+            for(var i in $scope.memberDetails.contactsList){
+                var other = $scope.memberDetails.contactsList[i];
                 if(other.id !== contact.id && other.mainContact){
                     other.mainContact = false;
                     other.role = null;
@@ -252,7 +261,7 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     
     $scope.updateCall = function(contact, nextFunction){
         $.ajax({
-            url: getBaseUri() + '/manage-consortium/update-contact.json',
+            url: getBaseUri() + '/self-service/update-contact.json',
             type: 'POST',
             data:  angular.toJson(contact),
             contentType: 'application/json;charset=UTF-8',
@@ -272,14 +281,15 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     $scope.addSubMember = function() {
         $scope.addSubMemberDisabled = true;
         $scope.addSubMemberShowLoader = true;
+        $scope.newSubMember.parentAccountId = $scope.accountId;
         $.ajax({
-            url: getBaseUri() + '/manage-consortium/add-sub-member.json',
+            url: getBaseUri() + '/self-service/add-sub-member.json',
             type: 'POST',
             data: angular.toJson($scope.newSubMember),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
                 if(data.errors.length === 0){
-                    $scope.getConsortium();
+                    $scope.getMemberDetails();
                     $scope.addSubMemberShowLoader = false;
                     $scope.addSubMemberDisabled = false;
                     $scope.newSubMember.name = "";
@@ -313,13 +323,14 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     };
     
     $scope.removeSubMember = function () {
+        $scope.subMemberToRemove.parentAccountId = $scope.accountId;
         $.ajax({
-            url: getBaseUri() + '/manage-consortium/remove-sub-member.json',
+            url: getBaseUri() + '/self-service/remove-sub-member.json',
             type: 'POST',
             data:  angular.toJson($scope.subMemberToRemove),
             contentType: 'application/json;charset=UTF-8',
             success: function(data) {
-                $scope.getConsortium();
+                $scope.getMemberDetails();
                 $scope.$apply();
                 $scope.closeModal();
             }
@@ -334,7 +345,8 @@ angular.module('orcidApp').controller('externalConsortiumCtrl',['$scope', '$comp
     }
     
     // Init
-    $scope.getConsortium();
+    $scope.accountId =  $scope.getAccountIdFromPath();
+    $scope.getMemberDetails();
     $scope.getContacts();
     
 }]);

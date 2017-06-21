@@ -62,6 +62,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
     private Boolean tokenDisabled;
     private boolean isPersistent;
     private long version;
+    private String authorizationCode;
 
     /**
      * This should be implemented by all entity classes to return the id of the
@@ -259,6 +260,16 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
             }
         }
         return tokenValue.compareTo(other.tokenValue);
+    }
+
+    
+    @Column(name = "authorization_code")
+    public String getAuthorizationCode() {
+        return this.authorizationCode;
+    }
+
+    public void setAuthorizationCode(String code) {
+        this.authorizationCode = code;
     }
 
 }
