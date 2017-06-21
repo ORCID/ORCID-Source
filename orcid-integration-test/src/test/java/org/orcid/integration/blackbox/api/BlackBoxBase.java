@@ -52,6 +52,7 @@ import org.openqa.selenium.support.ui.Quotes;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.core.togglz.Features;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.api.v2.release.MemberV2ApiClientImpl;
@@ -191,6 +192,24 @@ public class BlackBoxBase {
         webDriver.get(this.getWebBaseUrl() + "/admin-actions");
         SigninTest.signIn(webDriver, adminUserName, adminPassword);
         SigninTest.dismissVerifyEmailModal(webDriver);
+    }
+    
+    /** Used to change a togglz feature flag.
+     * example: toggleFeature(getAdminUserName(), getAdminPassword(), Features.REVOKE_TOKEN_ON_CODE_REUSE, false); 
+     * 
+     * @param adminUserName
+     * @param adminPassword
+     * @param f
+     * @param value
+     */
+    public void toggleFeature(String adminUserName, String adminPassword, Features f, boolean value){
+        adminSignIn(adminUserName, adminPassword);
+        webDriver.get(this.getWebBaseUrl() + "/togglz/edit?f="+f.name());
+        boolean state = webDriver.findElement(By.id("enabled")).isSelected();
+        if (state == value)
+            return;
+        webDriver.findElement(By.id("enabled")).click();
+        webDriver.findElement(By.id("enabled")).submit();
     }
 
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
