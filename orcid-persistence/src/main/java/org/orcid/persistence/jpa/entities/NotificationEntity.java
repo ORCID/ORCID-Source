@@ -55,7 +55,7 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
                 " AND p.send_email_frequency_days < :never " +
                 " AND p.claimed = true " +
                 " AND p.profile_deactivation_date IS NULL " +
-                " AND NOT p.record_locked;"),
+                " AND NOT p.record_locked ORDER BY n.orcid;"),
     @NamedNativeQuery(name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
         query = "SELECT * FROM notification " + 
         " WHERE id IN " +

@@ -20,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,12 +94,59 @@ public class NotificationDaoTest extends DBUnitTest {
 
     @Test    
     public void testFindRecordsWithUnsentNotifications() {
-        fail();
+        List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
+        assertEquals(2, recordsWithNotificationsToSend.size());
+        Object[] e0 = recordsWithNotificationsToSend.get(0);
+        Object[] e1 = recordsWithNotificationsToSend.get(1);        
+        
+        assertEquals("0000-0000-0000-0002", e0[0]);
+        assertEquals("0.0", String.valueOf(e0[1]));
+        Timestamp e0TS = (Timestamp) e0[2];
+        assertEquals(1459287060000L, e0TS.getTime());
+                
+        assertEquals("4444-4444-4444-4441", e1[0]);        
+        assertEquals("7.0", String.valueOf(e1[1]));
+        Timestamp e1TS = (Timestamp) e1[2];
+        assertEquals(1309642260000L, e1TS.getTime());
     }
 
     @Test
-    public void testFindNotificationsToSend() {
-        fail();
+    public void testFindNotificationsToSend() {   
+        String orcid1 = "0000-0000-0000-0004";
+        ArrayList<Long> idsToDelete = new ArrayList<Long>();
+        //Setup notifications
+        idsToDelete.add(createNotifiation(orcid1, null));
+        idsToDelete.add(createNotifiation(orcid1, null));
+        idsToDelete.add(createNotifiation(orcid1, null));        
+        
+        //Delete notifications
+        List<NotificationEntity> notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, 0.0f, new Date(1459287060000L));
+        assertNotNull(notificationsToSend);
+        assertEquals(3, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(idsToDelete.contains(e.getId()));
+        }
+        
+        for(Long id: idsToDelete) {
+            notificationDao.remove(id);
+        }    
+        
+        //TODO: Create some more notifications to test the query is doing his job
+    }
+    
+    private Long createNotifiation(String orcid, Date sentDate) {
+        NotificationEntity entity = new NotificationAddItemsEntity();
+        entity.setDateCreated(new Date());
+        entity.setNotificationIntro("intro");
+        entity.setNotificationSubject("subject");
+        entity.setNotificationType(NotificationType.AMENDED);
+        entity.setProfile(new ProfileEntity(orcid));
+        if(sentDate != null){
+            entity.setSentDate(sentDate);
+        }
+        notificationDao.persist(entity);
+        notificationDao.flush();
+        return entity.getId();
     }
     
     @Test
