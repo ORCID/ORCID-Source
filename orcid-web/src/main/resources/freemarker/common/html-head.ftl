@@ -33,11 +33,8 @@
     <!-- hack in json3 to allow angular js to work in IE7 -->
     <!-- we also need this JSON parser for orcidVar -->
     <!--[if IE 7]>
-    	<script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.2.4/json3.min.js" type="text/javascript"></script>
+    	<script src="${staticCdn}/javascript/json3/3.2.4/json3.min.js" type="text/javascript"></script>
     	<script type="text/javascript">
-			if (typeof JSON == 'undefined') {
-    			document.write(unescape("%3Cscript src='${staticCdn}/javascript/json3/3.2.4/json3.min.js' type='text/javascript'%3E%3C/script%3E"));
-			}
 		</script>
     <![endif]-->
     
@@ -82,10 +79,10 @@
       </#if>
     </script>
 
-    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
+    <link rel="stylesheet" href="${staticCdn}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+    <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css?v=${ver}"/>$
+    <link rel="stylesheet" href="${staticCdn}/css/social.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/filetypes.css?v=${ver}"/>    
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css?v=${ver}"/>
@@ -96,10 +93,10 @@
     <#if locale?? && (locale == 'rl' || locale == 'ar' )>
         <!-- just a prototype to show what RTL, expect to switch the cdn to ours -->
         <!-- Load Bootstrap RTL theme from RawGit -->
-        <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
+        <link rel="stylesheet" href="${staticCdn}/css/bootstrap-rtl.min.css?v=${ver}"> <!-- Src: //cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css -->
     </#if>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
-    <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
+    <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     <#if springMacroRequestContext.requestUri?contains("/print")>
     <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
     </#if>
@@ -113,8 +110,8 @@
     
     <!-- Respond.js proxy on external server -->
     <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-    <link href="${staticLoc}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
-    <script src="${staticLoc}/javascript/respond.proxy.js"></script>
+    <link href="${staticCdn}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
+    <script src="${staticCdn}/javascript/respond.proxy.js"></script>
         
 	<style type="text/css">
 		/* 
