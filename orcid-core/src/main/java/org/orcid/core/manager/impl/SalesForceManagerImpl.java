@@ -150,10 +150,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public void addOrcidsToContacts(List<Contact> contacts) {
         List<String> emails = contacts.stream().map(c -> c.getEmail()).collect(Collectors.toList());
-        Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
-        contacts.stream().forEach(c -> {
-            c.setOrcid(emailsToOrcids.get(c.getEmail()));
-        });
+        if (!emails.isEmpty()) {
+            Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
+            contacts.stream().forEach(c -> {
+                c.setOrcid(emailsToOrcids.get(c.getEmail()));
+            });
+        }
     }
 
     @Override

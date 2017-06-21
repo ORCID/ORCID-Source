@@ -1,4 +1,15 @@
-angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var orcidVar: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+
+export const OtherNamesCtrl = angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', 'utilsService', function ($scope, $compile ,bioBulkSrvc, commonSrvc, utilsService) {
  
     bioBulkSrvc.initScope($scope);  
  
@@ -25,7 +36,8 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
     };
 
     $scope.updateDisplayIndex = function(){
-        for (var idx in $scope.otherNamesForm.otherNames) {         
+        let idx: any;
+        for (idx in $scope.otherNamesForm.otherNames) {         
             $scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
         }
     };
@@ -223,3 +235,7 @@ angular.module('orcidApp').controller('OtherNamesCtrl',['$scope', '$compile', 'b
            
     $scope.getOtherNamesForm();
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class OtherNamesCtrlNg2Module {}

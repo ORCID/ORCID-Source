@@ -137,13 +137,14 @@
     .id-banner-header,
     .keywords-edit,
     .mini-orcid-icon,
+    .more-info,
     .names-edit,
     .orcid-id-options,
     .other-names-edit,
     .popover-help-container,
     .print-orcid-record,
     .qrcode-container,
-    .source-line,
+    .source-line div,
     .websites-edit,
     .workspace-private-toolbar,
     .workspace-profile span.glyphicon-pencil,
@@ -290,12 +291,17 @@
     }
     
     .workspace-peer-review .title::before {
-    content: "• ";
+        content: "• ";
 	}
+
+    .workspace-peer-review .peer-review-title :first-child:after {
+        content: " ";
+    }
     
     #workspace-peer-review .peer-review-title {
     	font-size: 14px;
     	font-weight: bold;
+        cursor: text;
     }
     
     .workspace-peer-review .title .glyphicon {
@@ -331,5 +337,9 @@
     
     .workspace-top{
     	border: none;
+    }
+
+    .source-line div:first-child{
+        display: inherit;
     }
 }

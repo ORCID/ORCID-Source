@@ -89,4 +89,6 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities, Boolean allowAutoDeprecate);
     
     ClientDetailsEntity findByIdP(String idp);    
+    
+    void addScopesToClient(Set<String> clientScopeStrings, ClientDetailsEntity clientDetails);
 }

@@ -29,7 +29,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SubMember;
 
-public class ConsortiumForm implements ErrorsInterface, Serializable {
+public class MemberDetailsForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String accountId;
@@ -42,6 +42,8 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
     private List<Contact> contactsList;
     private List<SubMember> subMembers;
     private Map<String, String> roleMap;
+    private boolean isConsortiumLead;
+    private boolean isAllowedFullAccess;
 
     public String getAccountId() {
         return accountId;
@@ -125,8 +127,24 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         this.roleMap = roleMap;
     }
 
-    public static ConsortiumForm fromMemberDetails(MemberDetails memberDetails) {
-        ConsortiumForm form = new ConsortiumForm();
+    public boolean isConsortiumLead() {
+        return isConsortiumLead;
+    }
+
+    public void setConsortiumLead(boolean isConsortiumLead) {
+        this.isConsortiumLead = isConsortiumLead;
+    }
+
+    public boolean isAllowedFullAccess() {
+        return isAllowedFullAccess;
+    }
+
+    public void setAllowedFullAccess(boolean isAllowedFullAccess) {
+        this.isAllowedFullAccess = isAllowedFullAccess;
+    }
+
+    public static MemberDetailsForm fromMemberDetails(MemberDetails memberDetails) {
+        MemberDetailsForm form = new MemberDetailsForm();
         Member member = memberDetails.getMember();
         form.setAccountId(member.getId());
         form.setName(Text.valueOf(member.getPublicDisplayName()));
@@ -138,6 +156,7 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
             form.setCommunity(Text.valueOf(researchCommunity.name()));
         }
         form.setSubMembers(memberDetails.getSubMembers());
+        form.setConsortiumLead(member.getConsortiumLeadId() == null);
         return form;
     }
 
@@ -154,7 +173,10 @@ public class ConsortiumForm implements ErrorsInterface, Serializable {
         }
         member.setPublicDisplayEmail(getEmail().getValue());
         member.setDescription(getDescription().getValue());
-        member.setResearchCommunity(CommunityType.valueOf(getCommunity().getValue()));
+        Text communityText = getCommunity();
+        if (communityText != null) {
+            member.setResearchCommunity(CommunityType.valueOf(communityText.getValue()));
+        }
         return memberDetails;
     }
 

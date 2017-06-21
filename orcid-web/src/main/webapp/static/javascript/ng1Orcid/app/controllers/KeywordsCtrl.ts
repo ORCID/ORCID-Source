@@ -1,4 +1,14 @@
-angular.module('orcidApp').controller(
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var orcidVar: any;
+
+import * as angular from 'angular';
+import {NgModule} from '@angular/core';
+
+// This is the Angular 1 part of the module
+
+export const KeywordsCtrl = angular.module('orcidApp').controller(
     'KeywordsCtrl', 
     [
     '$scope', 
@@ -55,7 +65,8 @@ angular.module('orcidApp').controller(
     };
 
     $scope.updateDisplayIndex = function(){
-        for (var idx in $scope.keywordsForm.keywords)
+        let idx: any;
+        for (idx in $scope.keywordsForm.keywords)
             $scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
     };
     
@@ -239,3 +250,7 @@ angular.module('orcidApp').controller(
     
     $scope.getKeywordsForm();
 }]);
+
+// This is the Angular 2 part of the module
+@NgModule({})
+export class KeywordsCtrlNg2Module {}

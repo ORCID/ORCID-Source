@@ -9,21 +9,15 @@ import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
 import * as uibootstraptypeahead from 'angular-ui-bootstrap'
 
-
 //import { EmailFrequencyCtrl } from './../controllers/EmailFrequencyCtrl.ts' 
 
-
-//need to import ui.bootstrap and ui.multiselect correctly
 export const orcidApp = angular.module(
     'orcidApp', 
     [
         ngCookies,
         ngSanitize, 
         vcRecaptcha,
-        //typeahead
-        uibootstraptypeahead
-        //'ui.multiselect', 
-        //'ui.bootstrap'//,
+        uibootstraptypeahead,
         //'EmailFrequencyCtrl'
         //EmailFrequencyModule.name
     ]
