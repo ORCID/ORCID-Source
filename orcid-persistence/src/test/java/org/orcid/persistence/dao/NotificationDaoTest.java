@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -31,10 +32,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.hsqldb.types.NumberType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
@@ -113,25 +116,140 @@ public class NotificationDaoTest extends DBUnitTest {
     @Test
     public void testFindNotificationsToSend() {   
         String orcid1 = "0000-0000-0000-0004";
-        ArrayList<Long> idsToDelete = new ArrayList<Long>();
-        //Setup notifications
-        idsToDelete.add(createNotifiation(orcid1, null));
-        idsToDelete.add(createNotifiation(orcid1, null));
-        idsToDelete.add(createNotifiation(orcid1, null));        
+        Date date = new Date(1459287060000L);
+        // On HSQLDB this is the max value that a float can hold without throwing an exception 
+        Float HSQLDB_MAX_FLOAT = Float.valueOf(NumberType.MAX_INT.intValue() - 64);
+        ArrayList<Long> ids = new ArrayList<Long>();
+        // Setup notifications: never sent any
+        ids.add(createNotifiation(orcid1, null));
+        ids.add(createNotifiation(orcid1, null));
+        ids.add(createNotifiation(orcid1, null));        
         
-        //Delete notifications
-        List<NotificationEntity> notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, 0.0f, new Date(1459287060000L));
+        List<NotificationEntity> notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
         assertNotNull(notificationsToSend);
         assertEquals(3, notificationsToSend.size());
         for(NotificationEntity e : notificationsToSend) {
-            assertTrue(idsToDelete.contains(e.getId()));
+            assertTrue(ids.contains(e.getId()));
         }
         
-        for(Long id: idsToDelete) {
-            notificationDao.remove(id);
-        }    
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(3, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
         
-        //TODO: Create some more notifications to test the query is doing his job
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(3, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(3, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        // Never should return an empty list
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, HSQLDB_MAX_FLOAT, date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty()); 
+        
+        for(Long id: ids) {
+            notificationDao.remove(id);
+        }
+        
+        // Setup notifications: last sent a month ago
+        ids.clear();
+        
+        // Setup notifications
+        Calendar calendar = Calendar.getInstance(); // this would default to now
+        calendar.add(Calendar.MONTH, -1);
+        ids.add(createNotifiation(orcid1, calendar.getTime()));
+        ids.add(createNotifiation(orcid1, null));
+        ids.add(createNotifiation(orcid1, null));
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(2, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(2, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(2, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        // Quarterly should be empty since the last time we sent was a month ago
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty());
+        
+        // Never should return an empty list
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, HSQLDB_MAX_FLOAT, date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty()); 
+        
+        for(Long id: ids) {
+            notificationDao.remove(id);
+        }
+        
+        // Setup notifications: last sent 6 days ago
+        ids.clear();
+        
+        // Setup notifications
+        calendar = Calendar.getInstance(); // this would default to now
+        calendar.add(Calendar.DAY_OF_YEAR, -6);
+        ids.add(createNotifiation(orcid1, calendar.getTime()));
+        ids.add(createNotifiation(orcid1, null));
+        ids.add(createNotifiation(orcid1, null));
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.IMMEDIATELY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(2, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.DAILY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertEquals(2, notificationsToSend.size());
+        for(NotificationEntity e : notificationsToSend) {
+            assertTrue(ids.contains(e.getId()));
+        }
+        
+        // Weekly should be empty since the last time we sent was 6 days ago
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.WEEKLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty());
+        
+        // Quarterly should be empty since the last time we sent was 6 days ago
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, Float.valueOf(SendEmailFrequency.QUARTERLY.value()), date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty());
+        
+        // Never should return an empty list
+        notificationsToSend = notificationDao.findNotificationsToSend(new Date(), orcid1, HSQLDB_MAX_FLOAT, date);
+        assertNotNull(notificationsToSend);
+        assertTrue(notificationsToSend.isEmpty()); 
+        
+        for(Long id: ids) {
+            notificationDao.remove(id);
+        }
+        
     }
     
     private Long createNotifiation(String orcid, Date sentDate) {
