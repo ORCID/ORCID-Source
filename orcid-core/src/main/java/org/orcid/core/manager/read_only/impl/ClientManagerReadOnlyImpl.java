@@ -33,7 +33,7 @@ public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
     @Resource
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
-    
+
     private ClientDetailsDao clientDetailsDao;
 
     public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
@@ -42,7 +42,8 @@ public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
     @Override
     public Client get(String clientId) {
-        ClientDetailsEntity entity = clientDetailsDao.find(clientId);
+        Date lastModified = clientDetailsDao.getLastModified(clientId);
+        ClientDetailsEntity entity = clientDetailsDao.findByClientId(clientId, lastModified.getTime());
         return jpaJaxbClientAdapter.toClient(entity);
     }
 

@@ -81,6 +81,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -690,9 +691,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientClassMap.fieldBToA("persistentTokensEnabled", "persistentTokensEnabled");
         
         clientClassMap.exclude("clientScopes");
-        clientClassMap.exclude("resourceId");
-        clientClassMap.exclude("authorizedGrantTypes");
-        clientClassMap.exclude("grantedAuthorities");        
                 
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
@@ -758,6 +756,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         element.setUriGeoArea(entity.getUriGeoArea());
                         element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));
                         a.getClientRedirectUris().add(element);
+                    }
+                }                
+                if(b.getClientScopes() != null) {
+                    a.setClientScopes(new HashSet<String>());
+                    for(ClientScopeEntity scope : b.getClientScopes()) {
+                        a.getClientScopes().add(scope.getScopeType());
                     }
                 }
             }

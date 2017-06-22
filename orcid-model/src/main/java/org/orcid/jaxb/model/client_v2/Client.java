@@ -35,9 +35,6 @@ public class Client implements Serializable {
     private boolean allowAutoDeprecate = false;
     private boolean persistentTokensEnabled = false;
     private Set<String> clientScopes;
-    private Set<String> resourceId;
-    private Set<String> authorizedGrantTypes;
-    private Set<String> grantedAuthorities;
     private Set<ClientRedirectUri> clientRedirectUris;
 
     public String getId() {
@@ -136,30 +133,6 @@ public class Client implements Serializable {
         this.clientScopes = clientScopes;
     }
 
-    public Set<String> getResourceId() {
-        return resourceId;
-    }
-
-    public void setResourceId(Set<String> resourceId) {
-        this.resourceId = resourceId;
-    }
-
-    public Set<String> getAuthorizedGrantTypes() {
-        return authorizedGrantTypes;
-    }
-
-    public void setAuthorizedGrantTypes(Set<String> authorizedGrantTypes) {
-        this.authorizedGrantTypes = authorizedGrantTypes;
-    }
-
-    public Set<String> getGrantedAuthorities() {
-        return grantedAuthorities;
-    }
-
-    public void setGrantedAuthorities(Set<String> grantedAuthorities) {
-        this.grantedAuthorities = grantedAuthorities;
-    }
-
     public Set<ClientRedirectUri> getClientRedirectUris() {
         return clientRedirectUris;
     }
@@ -174,19 +147,16 @@ public class Client implements Serializable {
         int result = 1;
         result = prime * result + (allowAutoDeprecate ? 1231 : 1237);
         result = prime * result + ((authenticationProviderId == null) ? 0 : authenticationProviderId.hashCode());
-        result = prime * result + ((authorizedGrantTypes == null) ? 0 : authorizedGrantTypes.hashCode());
         result = prime * result + ((clientRedirectUris == null) ? 0 : clientRedirectUris.hashCode());
         result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((decryptedSecret == null) ? 0 : decryptedSecret.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
-        result = prime * result + ((grantedAuthorities == null) ? 0 : grantedAuthorities.hashCode());
         result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + (persistentTokensEnabled ? 1231 : 1237);
-        result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
         result = prime * result + ((website == null) ? 0 : website.hashCode());
         return result;
     }
@@ -206,11 +176,6 @@ public class Client implements Serializable {
             if (other.authenticationProviderId != null)
                 return false;
         } else if (!authenticationProviderId.equals(other.authenticationProviderId))
-            return false;
-        if (authorizedGrantTypes == null) {
-            if (other.authorizedGrantTypes != null)
-                return false;
-        } else if (!authorizedGrantTypes.equals(other.authorizedGrantTypes))
             return false;
         if (clientRedirectUris == null) {
             if (other.clientRedirectUris != null)
@@ -239,11 +204,6 @@ public class Client implements Serializable {
                 return false;
         } else if (!emailAccessReason.equals(other.emailAccessReason))
             return false;
-        if (grantedAuthorities == null) {
-            if (other.grantedAuthorities != null)
-                return false;
-        } else if (!grantedAuthorities.equals(other.grantedAuthorities))
-            return false;
         if (groupProfileId == null) {
             if (other.groupProfileId != null)
                 return false;
@@ -260,11 +220,6 @@ public class Client implements Serializable {
         } else if (!name.equals(other.name))
             return false;
         if (persistentTokensEnabled != other.persistentTokensEnabled)
-            return false;
-        if (resourceId == null) {
-            if (other.resourceId != null)
-                return false;
-        } else if (!resourceId.equals(other.resourceId))
             return false;
         if (website == null) {
             if (other.website != null)
