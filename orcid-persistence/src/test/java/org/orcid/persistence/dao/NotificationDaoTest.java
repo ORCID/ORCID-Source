@@ -58,6 +58,9 @@ public class NotificationDaoTest extends DBUnitTest {
 
     @Resource
     private NotificationDao notificationDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
@@ -97,6 +100,9 @@ public class NotificationDaoTest extends DBUnitTest {
 
     @Test    
     public void testFindRecordsWithUnsentNotifications() {
+        ProfileEntity p1 = profileDao.find("0000-0000-0000-0002");
+        ProfileEntity p2 = profileDao.find("4444-4444-4444-4441");
+        
         List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotifications();
         assertEquals(2, recordsWithNotificationsToSend.size());
         Object[] e0 = recordsWithNotificationsToSend.get(0);
@@ -105,18 +111,19 @@ public class NotificationDaoTest extends DBUnitTest {
         assertEquals("0000-0000-0000-0002", e0[0]);
         assertEquals("0.0", String.valueOf(e0[1]));
         Timestamp e0TS = (Timestamp) e0[2];
-        assertEquals(1459287060000L, e0TS.getTime());
+        assertEquals(p1.getCompletedDate().getTime(), e0TS.getTime());
                 
         assertEquals("4444-4444-4444-4441", e1[0]);        
         assertEquals("7.0", String.valueOf(e1[1]));
         Timestamp e1TS = (Timestamp) e1[2];
-        assertEquals(1309642260000L, e1TS.getTime());
+        assertEquals(p2.getCompletedDate().getTime(), e1TS.getTime());
     }
 
     @Test
     public void testFindNotificationsToSend() {   
         String orcid1 = "0000-0000-0000-0004";
-        Date date = new Date(1459287060000L);
+        ProfileEntity p1 = profileDao.find("0000-0000-0000-0004");
+        Date date = new Date(p1.getCompletedDate().getTime());
         // On HSQLDB this is the max value that a float can hold without throwing an exception 
         Float HSQLDB_MAX_FLOAT = Float.valueOf(NumberType.MAX_INT.intValue() - 64);
         ArrayList<Long> ids = new ArrayList<Long>();
