@@ -264,6 +264,9 @@ public class ManageMembersController extends BaseController {
         Map<String, String> groupTypesMap = new TreeMap<String, String>();
 
         for (MemberType groupType : groupTypes) {
+            if( MemberType.BASIC_INSTITUTION.equals(groupType) || MemberType.PREMIUM_INSTITUTION.equals(groupType) ){
+                continue;
+            }
             String key = groupType.value();
             String value = key.replace('-', ' ');
             groupTypesMap.put(key, value);

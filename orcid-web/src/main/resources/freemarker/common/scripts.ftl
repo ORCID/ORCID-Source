@@ -19,8 +19,7 @@
 <root-cmp></root-cmp>
 <script type="text/javascript" src="${staticCdn}/javascript/jquery/2.2.3/jquery.min.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js"></script>
-<script type="text/javascript" src="${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate.min.js"></script>
-
+<script type="text/javascript" src="${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js"></script>
 
 <script type="text/javascript" >
     // CSRF
@@ -50,9 +49,6 @@
 
 <script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
-<!--
-<script type="text/javascript" src="${staticCdn}/javascript/angular-ui/typeahead/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
--->
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
     var script = document.createElement("script");
@@ -68,9 +64,6 @@
    script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
    document.body.appendChild(script);
 </script>
-<!--
-<script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
--->
 
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
