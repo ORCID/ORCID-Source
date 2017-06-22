@@ -289,7 +289,7 @@ public class NotificationDaoTest extends DBUnitTest {
     
     @Test
     public void testFindLatestByOrcid() {
-        NotificationEntity entity = notificationDao.findLatestByOrcid("0000-0000-0000-0003");
+        NotificationEntity entity = notificationDao.findLatestByOrcid("0000-0000-0000-0004");
         assertNull(entity);
         Long lastId = null;
         for(int i = 0; i < 5; i++) {
@@ -302,11 +302,11 @@ public class NotificationDaoTest extends DBUnitTest {
             newEntity.setNotificationIntro("Intro");
             newEntity.setNotificationSubject("Subject");
             newEntity.setNotificationType(NotificationType.AMENDED);
-            newEntity.setProfile(new ProfileEntity("0000-0000-0000-0003"));
+            newEntity.setProfile(new ProfileEntity("0000-0000-0000-0004"));
             newEntity.setSendable(true);
             notificationDao.persist(newEntity);
             
-            NotificationEntity freshFromDB = notificationDao.findLatestByOrcid("0000-0000-0000-0003");
+            NotificationEntity freshFromDB = notificationDao.findLatestByOrcid("0000-0000-0000-0004");
             assertNotNull(freshFromDB);
             if(lastId == null) {
                 lastId = freshFromDB.getId();
