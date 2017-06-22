@@ -235,6 +235,7 @@ the software.
                         	<exclude>**/.externalToolBuilders/**</exclude>
                         	<exclude>**/src/main/webapp/static/css/jquery-*.css</exclude>
                         	<exclude>**/src/main/webapp/static/css/bootstrap*</exclude>
+                            <exclude>**/src/main/webapp/static/css/noto-sans-googlefonts.css</exclude>
                         	<exclude>**/src/main/webapp/static/twitter-bootstrap/**</exclude>
                         	<exclude>**/src/main/webapp/static/html/respond-proxy.html</exclude>
                             <exclude>**/src/main/java/org/orcid/core/cli/TransformFundRefDataIntoCSV.java</exclude>
