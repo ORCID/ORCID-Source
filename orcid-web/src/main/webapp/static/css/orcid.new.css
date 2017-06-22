@@ -7351,47 +7351,47 @@ ul.comma li:last-child:after {
 }
 
 /*Consortia self service*/
-.manage-consortium #ajax-loader i{
+.self-service #ajax-loader i{
     margin: 10px 0 10px 0;
 }
 
-.manage-consortium .alert{
+.self-service .alert{
     margin: 10px 0;
 }
 
-.manage-consortium label,
-.manage-consortium h3 {
+.self-service label,
+.self-service h3 {
     display: block;
     font-weight: bold;
     margin: .2em 0 .2em 0;
 }
 
-.manage-consortium h3 {
+.self-service h3 {
     font-size: 20px;
     margin-top: 1em;
 }
 
-.manage-consortium h2 {
+.self-service h2 {
     font-size: 27px;
 }
 
-.manage-consortium .input-md  {
+.self-service .input-md  {
     width: 160px;
 }
 
-.manage-consortium table{
+.self-service table{
     margin-bottom: 20px;
 }
 
-.manage-consortium td,
-.manage-consortium th {
+.self-service td,
+.self-service th {
     padding: 3px 4px;
     vertical-align: top;
     font-size: 12px;
     width: 25%;
 }
 
-.manage-consortium #communities{
+.self-service #communities{
     margin: 0;
 }
 

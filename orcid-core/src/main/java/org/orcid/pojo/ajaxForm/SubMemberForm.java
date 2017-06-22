@@ -34,6 +34,7 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String accountId;
+    private String parentAccountId;
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
@@ -44,6 +45,14 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+    }
+
+    public String getParentAccountId() {
+        return parentAccountId;
+    }
+
+    public void setParentAccountId(String parentAccountId) {
+        this.parentAccountId = parentAccountId;
     }
 
     @Override
@@ -71,7 +80,6 @@ public class SubMemberForm implements ErrorsInterface, Serializable {
     public void setWebsite(Text website) {
         this.website = website;
     }
-
 
     public static SubMemberForm fromMemberDetails(MemberDetails memberDetails) {
         SubMemberForm form = new SubMemberForm();

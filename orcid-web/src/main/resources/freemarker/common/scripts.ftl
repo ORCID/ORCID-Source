@@ -17,26 +17,9 @@
 
 -->
 <root-cmp></root-cmp>
-<script type="text/javascript" src="//code.jquery.com/jquery-2.2.3.min.js"></script>
-<script type="text/javascript">
-if (typeof jQuery == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/2.2.3/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
-}
-</script>
-
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
-<script type="text/javascript">
-if (typeof jQuery.ui == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js' type='text/javascript'%3E%3C/script%3E"));
-}
-</script>
-
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.3.0/jquery-migrate.min.js"></script>
-<script type="text/javascript">
-if (typeof jQuery == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate.min.js' type='text/javascript'%3E%3C/script%3E"));
-}
-</script>
+<script type="text/javascript" src="${staticCdn}/javascript/jquery/2.2.3/jquery.min.js"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js"></script>
+<script type="text/javascript" src="${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js"></script>
 
 <script type="text/javascript" >
     // CSRF
@@ -62,27 +45,10 @@ if (typeof jQuery == 'undefined') {
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
 
-<!--
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-cookies.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular-sanitize.min.js"></script>
-
-<script type="text/javascript">
-if (typeof angular == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.2/angular.min.js' type='text/javascript'%3E%3C/script%3E"));
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.2/angular-cookies.min.js' type='text/javascript'%3E%3C/script%3E"));
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.2/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
-}
-</script>
--->
-
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
 
 <script src="${staticCdn}/javascript/angular_orcid_generated.js?v=${ver}"></script>
 
-<!--
-<script type="text/javascript" src="${staticCdn}/javascript/angular-ui/typeahead/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
--->
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');
     var script = document.createElement("script");
@@ -98,9 +64,6 @@ if (typeof angular == 'undefined') {
    script.src = "https://badges.mozillascience.org/widgets/paper-badger-widget.js";
    document.body.appendChild(script);
 </script>
-<!--
-<script src="${staticCdn}/javascript/angular-recaptcha.min.js"></script>
--->
 
 <!-- Shibboleth -->
 <#if request.requestURI?ends_with("signin") && (RequestParameters['newlogin'] )??>
