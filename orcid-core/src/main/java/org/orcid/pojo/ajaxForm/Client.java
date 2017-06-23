@@ -76,7 +76,7 @@ public class Client implements ErrorsInterface, Serializable {
             if(!PojoUtil.isEmpty(clientDetails.getAuthenticationProviderId())) {
                 client.setAuthenticationProviderId(Text.valueOf(clientDetails.getAuthenticationProviderId()));
             }
-            client.setAllowAutoDeprecate(Checkbox.valueOf(clientDetails.getAllowAutoDeprecate()));
+            client.setAllowAutoDeprecate(Checkbox.valueOf(clientDetails.isAllowAutoDeprecate()));
         }
         return client;
     }

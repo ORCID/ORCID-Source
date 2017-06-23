@@ -16,15 +16,17 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,11 +44,17 @@ import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientRedirectUri;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
+import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.TargetProxyHelper;
 
 public class ClientManagerTest extends BaseTest {
@@ -60,15 +68,12 @@ public class ClientManagerTest extends BaseTest {
     @Resource
     private ClientDetailsDao clientDetailsDao;
     
-    @Mock
-    private SourceManager sourceManager;
-    
-    @Mock
-    private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Mock
+    @Resource
     private EncryptionManager encryptionManager;
     
+    @Mock
+    private SourceManager sourceManager;
+        
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -85,35 +90,205 @@ public class ClientManagerTest extends BaseTest {
     public void before() {        
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(clientManager, "sourceManager", sourceManager);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn(MEMBER_ID);
-        
-        TargetProxyHelper.injectIntoProxy(clientManager, "profileEntityCacheManager", profileEntityCacheManager);
-        ProfileEntity member = new ProfileEntity(MEMBER_ID);
-        member.setGroupType(MemberType.PREMIUM);
-        when(profileEntityCacheManager.retrieve(MEMBER_ID)).thenReturn(member);        
-        
-        TargetProxyHelper.injectIntoProxy(clientManager, "encryptionManager", encryptionManager);
-        when(encryptionManager.encryptForInternalUse(anyString())).thenReturn("encrypted-value");
+        when(sourceManager.retrieveSourceOrcid()).thenReturn(MEMBER_ID);        
     }
     
     @Test
     public void createClientTest() {
-        String seed = RandomStringUtils.randomAlphanumeric(30);
+        String seed = RandomStringUtils.randomAlphanumeric(15);
         Client client = getClient(seed, MEMBER_ID);
         assertFalse(client.getId().startsWith("APP-"));
         client = clientManager.create(client);
         assertTrue(client.getId().startsWith("APP-"));
         ClientDetailsEntity newEntity = clientDetailsDao.find(client.getId());
         assertNotNull(newEntity);
+        assertNotNull(newEntity.getDateCreated());
+        assertNotNull(newEntity.getLastModified());
+        assertEquals(client.getId(), newEntity.getId());
+        assertEquals(MEMBER_ID, newEntity.getGroupProfileId());
+                
+        assertNotNull(newEntity.getAccessTokenValiditySeconds());
+        assertTrue(newEntity.isAllowAutoDeprecate());
+        assertEquals("authentication-provider-id " + seed, newEntity.getAuthenticationProviderId());
+        assertEquals("description " + seed, newEntity.getClientDescription());        
+        assertEquals("client-name " + seed, newEntity.getClientName());
+        assertEquals(ClientType.PREMIUM_CREATOR, newEntity.getClientType());
+        assertEquals("client-website " + seed, newEntity.getClientWebsite());        
+        assertEquals("email-access-reason " + seed, newEntity.getEmailAccessReason());                
         
+        assertNotNull(newEntity.getClientRegisteredRedirectUris());   
+        assertEquals(3, newEntity.getClientRegisteredRedirectUris().size());
+        boolean found1 = false, found2 = false, found3 = false;
+        for(ClientRedirectUriEntity rUri : newEntity.getClientRegisteredRedirectUris()) {
+            assertNotNull(rUri.getRedirectUri());
+            assertNotNull(rUri.getDateCreated());
+            assertNotNull(rUri.getLastModified());            
+            if(rUri.getRedirectUri().equals("redirect-uri-1 " + seed)) {
+                assertEquals(ScopePathType.ACTIVITIES_READ_LIMITED.value(), rUri.getPredefinedClientScope());
+                assertEquals("type-1 " + seed, rUri.getRedirectUriType());
+                assertEquals("uri-act-type-1 " + seed, rUri.getUriActType());
+                assertEquals("uri-geo-area-1 " + seed, rUri.getUriGeoArea());
+                found1 = true;
+            } else if(rUri.getRedirectUri().equals("redirect-uri-2 " + seed)) {
+                assertEquals(ScopePathType.ACTIVITIES_UPDATE.value(), rUri.getPredefinedClientScope());
+                assertEquals("type-2 " + seed, rUri.getRedirectUriType());
+                assertEquals("uri-act-type-2 " + seed, rUri.getUriActType());
+                assertEquals("uri-geo-area-2 " + seed, rUri.getUriGeoArea());
+                found2 = true;
+            } else if(rUri.getRedirectUri().equals("redirect-uri-3 " + seed)) {
+                assertEquals(ScopePathType.AFFILIATIONS_CREATE.value(), rUri.getPredefinedClientScope());
+                assertEquals("type-3 " + seed, rUri.getRedirectUriType());
+                assertEquals("uri-act-type-3 " + seed, rUri.getUriActType());
+                assertEquals("uri-geo-area-3 " + seed, rUri.getUriGeoArea());
+                found3 = true;
+            } else {
+                fail("Invalid redirect uri: " + rUri.getRedirectUri());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        validateClientConfigSettings(newEntity, null);
     }
 
     @Test
     public void edit() {
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client client = getClient(seed, MEMBER_ID);
+        assertFalse(client.getId().startsWith("APP-"));
+        // Create the client
+        client = clientManager.create(client);
+        String initialClientSecret = client.getDecryptedSecret();
+        
+        //Update some fields
+        client.setAllowAutoDeprecate(false);
+        client.setAuthenticationProviderId("updated-authentication-provider-id");
+        client.setDescription("updated-desciption");
+        client.setEmailAccessReason("updated-email-access-reason");
+        client.setName("updated-client-name");
+        client.setPersistentTokensEnabled(false);
+        client.setWebsite("updated-website");        
+        
+        // Change group id, which should not be persisted
+        client.setGroupProfileId("0000-0000-0000-0000");
+        // Change client type, which should not be persisted
+        client.setClientType(ClientType.UPDATER);
+        
+        // Add a new redirect uri
+        ClientRedirectUri rUri = new ClientRedirectUri();
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+        scopes.add(ScopePathType.READ_LIMITED);
+        scopes.add(ScopePathType.ACTIVITIES_UPDATE);
+        rUri.setPredefinedClientScopes(scopes);
+        rUri.setRedirectUri("new-redirect-uri");
+        rUri.setRedirectUriType(RedirectUriType.IMPORT_WORKS_WIZARD.value());
+        rUri.setUriActType("updated-uri-act-type");
+        rUri.setUriGeoArea("updated-geo-area");
+        client.getClientRedirectUris().add(rUri);
+        // Clear the scopes, which should not be persisted
+        client.setClientScopes(new HashSet<String>());
+        
+        //Edit the client
+        Date editTime = new Date();
+        clientManager.edit(client);
+        
+        //Verify new data is there
+        ClientDetailsEntity entityClient = clientDetailsDao.find(client.getId());
+        assertEquals(MEMBER_ID, entityClient.getGroupProfileId());
+        assertEquals("updated-authentication-provider-id", entityClient.getAuthenticationProviderId());
+        assertEquals("updated-desciption", entityClient.getClientDescription());
+        assertEquals("updated-email-access-reason", entityClient.getEmailAccessReason());
+        assertEquals("updated-client-name", entityClient.getClientName());
+        assertEquals("updated-website", entityClient.getClientWebsite());
+        assertEquals(initialClientSecret, encryptionManager.decryptForInternalUse(entityClient.getClientSecretForJpa()));
+        assertFalse(entityClient.isAllowAutoDeprecate());
+        assertFalse(entityClient.isPersistentTokensEnabled());
+        
+        //Verify config data doesn't changed
+        validateClientConfigSettings(entityClient, editTime);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void editWithInvalidClientId() {
+        Client client = new Client();
+        client.setId("APP-0");
+        clientManager.edit(client);
+        fail();
     }
 
     @Test
     public void resetClientSecret() {
+        
+    }
+
+    private void validateClientConfigSettings(ClientDetailsEntity entity, Date lastTimeEntityWasModified) {
+        assertNotNull(entity.getAuthorizedGrantTypes());
+        assertEquals(3, entity.getClientAuthorizedGrantTypes().size());
+        boolean found1 = false, found2 = false, found3 = false;
+        for(ClientAuthorisedGrantTypeEntity cagt : entity.getClientAuthorizedGrantTypes()) {
+            assertNotNull(cagt.getDateCreated());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cagt.getDateCreated()));
+            assertNotNull(cagt.getLastModified());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cagt.getLastModified()));
+            if(cagt.getGrantType().equals("authorization_code")) {
+                found1 = true;
+            } else if(cagt.getGrantType().equals("client_credentials")) {
+                found2 = true;
+            } else if (cagt.getGrantType().equals("refresh_token")) {
+                found3 = true;
+            } else {
+                fail("Invalid authorized grant type: " + cagt.getGrantType());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);        
+        
+        assertNotNull(entity.getClientGrantedAuthorities());        
+        for(ClientGrantedAuthorityEntity cga : entity.getClientGrantedAuthorities()) {
+            assertNotNull(cga.getDateCreated());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cga.getDateCreated()));
+            assertNotNull(cga.getLastModified());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cga.getLastModified()));
+            assertEquals("ROLE_CLIENT", cga.getAuthority());
+        }        
+        
+        assertNotNull(entity.getClientResourceIds());
+        assertEquals(1, entity.getClientResourceIds().size());
+        for(ClientResourceIdEntity cri : entity.getClientResourceIds()) {
+            assertNotNull(cri.getDateCreated());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cri.getLastModified()));
+            assertNotNull(cri.getLastModified());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cri.getLastModified()));
+            assertEquals("orcid", cri.getResourceId());
+        }
+        
+        Set<String> scopes = ClientType.getScopes(entity.getClientType());
+        assertFalse(scopes.isEmpty());
+        assertNotNull(entity.getClientScopes());
+        for(ClientScopeEntity cs : entity.getClientScopes()) {
+            assertNotNull(cs.getDateCreated());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
+            assertNotNull(cs.getLastModified());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
+            assertTrue(scopes.contains(cs.getScopeType()));
+            // Remove it after finding it so we check there are no duplicates as well
+            scopes.remove(cs.getScopeType());
+        }
+        assertTrue(scopes.isEmpty());
+        
+        assertNotNull(entity.getClientSecrets());
+        assertEquals(1, entity.getClientSecrets().size());
+        for(ClientSecretEntity cs : entity.getClientSecrets()) {
+            assertNotNull(cs.getDateCreated());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
+            assertNotNull(cs.getLastModified());
+            assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
+            assertTrue(cs.isPrimary());
+            assertFalse(PojoUtil.isEmpty(cs.getClientSecret()));
+        }
+        
+        assertNotNull(entity.getCustomEmails());       
     }
     
     private Client getClient(String randomString, String memberId) {

@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
@@ -86,6 +87,7 @@ public class ClientManagerImpl implements ClientManager {
     private ClientManagerReadOnly clientManagerReadOnly;
 
     @Override
+    @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
         String memberId = sourceManager.retrieveSourceOrcid();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
@@ -144,7 +146,7 @@ public class ClientManagerImpl implements ClientManager {
         newEntity.setClientScopes(clientScopeEntities);
 
         try {
-            clientDetailsDao.persist(newEntity);
+            clientDetailsDao.persist(newEntity);            
         } catch (Exception e) {
             LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
             throw e;
@@ -152,13 +154,17 @@ public class ClientManagerImpl implements ClientManager {
 
         return jpaJaxbClientAdapter.toClient(newEntity);
     }
-
-    @Override
+    
+    @Override    
+    @Transactional
     public Client edit(Client existingClient) {
+        if(!clientDetailsDao.exists(existingClient.getId())) {
+            throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
+        }
         ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
         clientDetails.setLastModified(new Date());
-        clientDetails = clientDetailsDao.merge(clientDetails);
+        clientDetails = clientDetailsDao.merge(clientDetails);        
         return jpaJaxbClientAdapter.toClient(clientDetails);
     }
 

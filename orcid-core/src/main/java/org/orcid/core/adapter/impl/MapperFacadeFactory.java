@@ -682,13 +682,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientClassMap.field("description", "clientDescription");        
         clientClassMap.field("website", "clientWebsite");        
         clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
+        clientClassMap.field("authenticationProviderId", "authenticationProviderId");
+        clientClassMap.field("emailAccessReason", "emailAccessReason");
+        clientClassMap.field("persistentTokensEnabled", "persistentTokensEnabled");
         
         clientClassMap.fieldBToA("clientId", "id");
         clientClassMap.fieldBToA("clientType", "clientType");                
-        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");
-        clientClassMap.fieldBToA("emailAccessReason", "emailAccessReason");
-        clientClassMap.fieldBToA("authenticationProviderId", "authenticationProviderId");
-        clientClassMap.fieldBToA("persistentTokensEnabled", "persistentTokensEnabled");
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
         
         clientClassMap.exclude("clientScopes");
                 
