@@ -33,10 +33,7 @@ import javax.ws.rs.core.MediaType;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ClientManager;
-import org.orcid.core.manager.OrcidClientGroupManager;
-import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -65,24 +62,14 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/group/developer-tools")
 @PreAuthorize("!@sourceManager.isInDelegationMode() OR @sourceManager.isDelegatedByAnAdmin()")
-public class GroupAdministratorController extends BaseWorkspaceController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupAdministratorController.class);
-
-    @Resource
-    OrcidClientGroupManager orcidClientGroupManager;
-    
-    @Resource
-    private OrcidSSOManager orcidSSOManager;
+public class ClientsController extends BaseWorkspaceController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientsController.class);
 
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private ProfileEntityManager profileEntityManager;
     
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -114,7 +101,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
-    public @ResponseBody Client getClient() {
+    public @ResponseBody Client getEmptyClient() {
         Client emptyClient = new Client();
         emptyClient.setDisplayName(new Text());
         emptyClient.setWebsite(new Text());
@@ -233,6 +220,7 @@ public class GroupAdministratorController extends BaseWorkspaceController {
         for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));
         }
+        Collections.sort(clients);
         return clients;
     }
     

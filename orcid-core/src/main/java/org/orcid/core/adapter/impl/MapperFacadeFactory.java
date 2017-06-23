@@ -694,7 +694,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
-             * On the way in, from Client to ClientDetailsEntity, we just need to care about mapping the redirect uri's, since all config features will not change from UI requests             
+             * On the way in, from Client to ClientDetailsEntity, we need to care about mapping the redirect uri's, since all config features will not change from UI requests             
              * */
             @Override
             public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {

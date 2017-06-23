@@ -62,7 +62,7 @@ public class ManageMembersController extends BaseController {
     ClientDetailsManager clientDetailsManager;
 
     @Resource
-    private GroupAdministratorController groupAdministratorController;
+    private ClientsController groupAdministratorController;
     
     @Resource
     private SalesForceManager salesForceManager;

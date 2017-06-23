@@ -30,7 +30,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
-public class Client implements ErrorsInterface, Serializable {
+public class Client implements ErrorsInterface, Serializable, Comparable<Client> {
 
     private static final long serialVersionUID = 2L;
 
@@ -165,9 +165,11 @@ public class Client implements ErrorsInterface, Serializable {
         }
 
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();
-        for (ClientRedirectUri element : modelObject.getClientRedirectUris()) {
-            RedirectUri rUri = RedirectUri.fromModelObject(element);
-            redirectUris.add(rUri);
+        if(modelObject.getClientRedirectUris() != null) {
+            for (ClientRedirectUri element : modelObject.getClientRedirectUris()) {
+                RedirectUri rUri = RedirectUri.fromModelObject(element);
+                redirectUris.add(rUri);
+            }
         }
         client.setRedirectUris(redirectUris);
         client.setScopes(modelObject.getClientScopes());
@@ -221,8 +223,12 @@ public class Client implements ErrorsInterface, Serializable {
                 }
                 redirectUri.setRedirectUri(rUri.getValue().getValue());
                 redirectUri.setRedirectUriType(rUri.getType().getValue());
-                redirectUri.setUriActType(rUri.getActType().getValue());
-                redirectUri.setUriGeoArea(rUri.getGeoArea().getValue());
+                if(rUri.getActType() != null) {
+                    redirectUri.setUriActType(rUri.getActType().getValue());
+                }
+                if(rUri.getGeoArea() != null) {
+                    redirectUri.setUriGeoArea(rUri.getGeoArea().getValue());
+                }                
                 redirectUriSet.add(redirectUri);
             }
             modelObject.setClientRedirectUris(redirectUriSet);
@@ -348,5 +354,43 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setAllowAutoDeprecate(Checkbox allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
+    }
+
+    @Override
+    public int compareTo(Client other) {
+        if (other == null) {
+            return 1;
+        } else {
+            if (PojoUtil.isEmpty(this.displayName)) {
+                if (!PojoUtil.isEmpty(other.getDisplayName())) {
+                    return -1;
+                }
+            } else {
+                if (PojoUtil.isEmpty(other.getDisplayName())) {
+                    return 1;
+                } else {
+                    int compare = this.getDisplayName().compareTo(other.getDisplayName());
+                    if (compare != 0) {
+                        return compare;
+                    }
+                }
+            }
+
+            if (PojoUtil.isEmpty(this.shortDescription)) {
+                if (!PojoUtil.isEmpty(other.getShortDescription())) {
+                    return -1;
+                }
+            } else {
+                if (PojoUtil.isEmpty(other.getShortDescription())) {
+                    return 1;
+                } else {
+                    int compare = this.getShortDescription().compareTo(other.getShortDescription());
+                    if (compare != 0) {
+                        return compare;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 }
