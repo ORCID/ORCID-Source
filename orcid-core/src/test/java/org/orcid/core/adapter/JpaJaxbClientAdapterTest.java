@@ -55,7 +55,7 @@ public class JpaJaxbClientAdapterTest {
     @Test
     public void toClientTest() {
         ClientDetailsEntity entity = getClientDetailsEntity();
-        Client client = adapter.toClient(entity);
+        Client client = adapter.toClient(entity);        
         assertEquals(getClient(), client);
     }
 

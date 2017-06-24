@@ -32,8 +32,8 @@ public class Client implements Serializable {
     private String emailAccessReason;
     private String decryptedSecret;
     private ClientType clientType;
-    private boolean allowAutoDeprecate = false;
-    private boolean persistentTokensEnabled = false;
+    private boolean allowAutoDeprecate;
+    private boolean persistentTokensEnabled;
     private Set<String> clientScopes;
     private Set<ClientRedirectUri> clientRedirectUris;
 

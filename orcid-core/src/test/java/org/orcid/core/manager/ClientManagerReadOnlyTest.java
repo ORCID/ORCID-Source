@@ -77,7 +77,7 @@ public class ClientManagerReadOnlyTest {
     @Test
     public void getClientTest() {
         String seed = RandomStringUtils.randomAlphanumeric(30);
-        when(dao.find(anyString())).thenReturn(getClientDetailsEntity(seed));
+        when(dao.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
         Client client = clientManagerReadOnly.get(seed);
         assertEquals(getClient(seed), client);
     }

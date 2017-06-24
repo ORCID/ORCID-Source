@@ -482,7 +482,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     }
 
     @Column(name = "allow_auto_deprecate")
-    public Boolean isAllowAutoDeprecate() {
+    public boolean isAllowAutoDeprecate() {
         return allowAutoDeprecate;
     }
 
