@@ -24,6 +24,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,12 @@ public class OrcidSecurityManagerTest {
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
     
+    @Resource
+    private SourceManager sourceManager;
+    
+    @Resource 
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Mock
     protected ProfileEntityCacheManager profileEntityCacheManagerMock;
 
@@ -75,6 +82,13 @@ public class OrcidSecurityManagerTest {
         when(sourceManagerMock.retrieveSourceEntity()).thenReturn(source);        
     }
    
+    @After
+    public void after() {
+        //Restore the original beans
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
+    }
+    
     @Test(expected = NoResultException.class)
     public void checkProfile_InvalidOrcidTest() {
         when(profileEntityCacheManagerMock.retrieve(ORCID)).thenThrow(NoResultException.class);
