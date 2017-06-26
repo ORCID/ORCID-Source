@@ -5,16 +5,31 @@ import {NgModule} from '@angular/core';
 
 // This is the Angular 1 part of the module
 
-export const PersonalInfoCtrl = angular.module('orcidApp').controller('PersonalInfoCtrl', ['$scope', '$compile', 'workspaceSrvc', 'utilsService', function ($scope, $compile, workspaceSrvc, utilsService){
-    $scope.displayInfo = workspaceSrvc.displayPersonalInfo;
+export const PersonalInfoCtrl = angular.module('orcidApp').controller(
+    'PersonalInfoCtrl', 
+    [
+        '$compile', 
+        '$scope', 
+        'utilsService', 
+        'workspaceSrvc', 
+        function (
+            $compile, 
+            $scope, 
+            utilsService,
+            workspaceSrvc 
+        ){
+            var lastModifiedTimeString = orcidVar.lastModified.replace(/,/g , "");
 
-    $scope.toggleDisplayInfo = function () {
-        $scope.displayInfo = !$scope.displayInfo;
-    };
+            $scope.displayInfo = workspaceSrvc.displayPersonalInfo;
+            $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedTimeString));
 
-    var lastModifiedTimeString = orcidVar.lastModified.replace(/,/g , "");
-    $scope.lastModifiedDate = utilsService.formatTime(Number(lastModifiedTimeString));
-}]);
+            $scope.toggleDisplayInfo = function () {
+                $scope.displayInfo = !$scope.displayInfo;
+            };
+
+        }
+    ]
+);
 
 // This is the Angular 2 part of the module
 @NgModule({})
