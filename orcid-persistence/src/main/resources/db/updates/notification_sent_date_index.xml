@@ -21,6 +21,6 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet author="George Nash" id="ADD-INDEX-TO-NOTIFICATION-SENT-DATE" runInTransaction="false">
-        <sql>CREATE INDEX CONCURRENTLY notification_sent_date_index ON notification (sent_date);</sql>
+        <sql>CREATE INDEX CONCURRENTLY IF NOT EXISTS notification_sent_date_index ON notification (sent_date);</sql>
     </changeSet>
 </databaseChangeLog>    
