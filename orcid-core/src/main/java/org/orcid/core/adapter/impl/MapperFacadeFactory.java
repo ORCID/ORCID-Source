@@ -81,7 +81,6 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -688,8 +687,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         clientClassMap.fieldBToA("clientType", "clientType");                
         clientClassMap.fieldBToA("groupProfileId", "groupProfileId");                       
         
-        clientClassMap.exclude("clientScopes");
-                
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
              * On the way in, from Client to ClientDetailsEntity, we need to care about mapping the redirect uri's, since all config features will not change from UI requests             
@@ -756,12 +753,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         a.getClientRedirectUris().add(element);
                     }
                 }                
-                if(b.getClientScopes() != null) {
-                    a.setClientScopes(new HashSet<String>());
-                    for(ClientScopeEntity scope : b.getClientScopes()) {
-                        a.getClientScopes().add(scope.getScopeType());
-                    }
-                }
             }
         });                  
         clientClassMap.byDefault();

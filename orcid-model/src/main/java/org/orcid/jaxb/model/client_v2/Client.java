@@ -22,7 +22,7 @@ import java.util.Set;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 
 public class Client implements Serializable {
-    private static final long serialVersionUID = 8955977340245174988L;
+    private static final long serialVersionUID = 1413862819486892949L;
     private String id;
     private String name;
     private String description;
@@ -34,7 +34,6 @@ public class Client implements Serializable {
     private ClientType clientType;
     private boolean allowAutoDeprecate;
     private boolean persistentTokensEnabled;
-    private Set<String> clientScopes;
     private Set<ClientRedirectUri> clientRedirectUris;
 
     public String getId() {
@@ -125,14 +124,6 @@ public class Client implements Serializable {
         this.persistentTokensEnabled = persistentTokensEnabled;
     }
 
-    public Set<String> getClientScopes() {
-        return clientScopes;
-    }
-
-    public void setClientScopes(Set<String> clientScopes) {
-        this.clientScopes = clientScopes;
-    }
-
     public Set<ClientRedirectUri> getClientRedirectUris() {
         return clientRedirectUris;
     }
@@ -148,7 +139,6 @@ public class Client implements Serializable {
         result = prime * result + (allowAutoDeprecate ? 1231 : 1237);
         result = prime * result + ((authenticationProviderId == null) ? 0 : authenticationProviderId.hashCode());
         result = prime * result + ((clientRedirectUris == null) ? 0 : clientRedirectUris.hashCode());
-        result = prime * result + ((clientScopes == null) ? 0 : clientScopes.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((decryptedSecret == null) ? 0 : decryptedSecret.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -181,11 +171,6 @@ public class Client implements Serializable {
             if (other.clientRedirectUris != null)
                 return false;
         } else if (!clientRedirectUris.equals(other.clientRedirectUris))
-            return false;
-        if (clientScopes == null) {
-            if (other.clientScopes != null)
-                return false;
-        } else if (!clientScopes.equals(other.clientScopes))
             return false;
         if (clientType != other.clientType)
             return false;

@@ -92,7 +92,7 @@ public class ClientManagerReadOnlyTest {
         clients.add(getClientDetailsEntity(seed2));
         clients.add(getClientDetailsEntity(seed3));
         when(dao.findByGroupId(anyString())).thenReturn(clients);
-        Set<Client> results = clientManagerReadOnly.getClients("anything");
+        Set<Client> results = clientManagerReadOnly.getClients("anything", 0L);
         assertEquals(3, results.size());
         for (Client client : results) {
             if (client.getId().equals(seed1)) {
@@ -164,11 +164,6 @@ public class ClientManagerReadOnlyTest {
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
         client.setClientRedirectUris(clientRedirectUris);
-        Set<String> scopes = new HashSet<String>();
-        scopes.add("scope-type-1 " + randomString);
-        scopes.add("scope-type-2 " + randomString);
-        scopes.add("scope-type-3 " + randomString);
-        client.setClientScopes(scopes);
         return client;
     }
 

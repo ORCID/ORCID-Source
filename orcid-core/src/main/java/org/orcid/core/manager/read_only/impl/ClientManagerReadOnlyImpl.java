@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.springframework.cache.annotation.Cacheable;
 
 public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
@@ -48,7 +49,8 @@ public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
     }
 
     @Override
-    public Set<Client> getClients(String memberId) {
+    @Cacheable(value = "clients-per-member", key = "#memberId.concat('-').concat(#lastModified)")
+    public Set<Client> getClients(String memberId, Long lastModified) {
         List<ClientDetailsEntity> clients = clientDetailsDao.findByGroupId(memberId);
         return jpaJaxbClientAdapter.toClientList(clients);
     }

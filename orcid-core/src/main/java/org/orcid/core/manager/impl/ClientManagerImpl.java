@@ -196,13 +196,14 @@ public class ClientManagerImpl implements ClientManager {
     
     private void validateCreateClientRequest(String memberId) throws IllegalArgumentException {
         ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
+        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
         if(member == null || member.getGroupType() == null) {
             throw new IllegalArgumentException("Illegal member id: " + memberId);            
         }
         switch (member.getGroupType()){
         case BASIC:
         case BASIC_INSTITUTION:
-            Set<Client> clients = clientManagerReadOnly.getClients(memberId);
+            Set<Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
             if(clients != null && !clients.isEmpty()) {
                 throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
             }

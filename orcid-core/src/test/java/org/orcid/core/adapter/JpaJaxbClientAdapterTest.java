@@ -148,12 +148,7 @@ public class JpaJaxbClientAdapterTest {
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
-        client.setClientRedirectUris(clientRedirectUris);
-        Set<String> scopes = new HashSet<String>();
-        scopes.add("scope-type-1");
-        scopes.add("scope-type-2");
-        scopes.add("scope-type-3");
-        client.setClientScopes(scopes);
+        client.setClientRedirectUris(clientRedirectUris);        
         return client;
     }
 

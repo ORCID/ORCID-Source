@@ -185,8 +185,6 @@ public class ClientManagerTest extends BaseTest {
         rUri.setUriActType("updated-uri-act-type");
         rUri.setUriGeoArea("updated-geo-area");
         client.getClientRedirectUris().add(rUri);
-        // Clear the scopes, which should not be persisted
-        client.setClientScopes(new HashSet<String>());
         
         //Edit the client
         Date editTime = new Date();
@@ -332,12 +330,7 @@ public class ClientManagerTest extends BaseTest {
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
-        client.setClientRedirectUris(clientRedirectUris);
-        Set<String> scopes = new HashSet<String>();
-        scopes.add("scope-type-1 " + randomString);
-        scopes.add("scope-type-2 " + randomString);
-        scopes.add("scope-type-3 " + randomString);
-        client.setClientScopes(scopes);
+        client.setClientRedirectUris(clientRedirectUris);        
         return client;
     }
 }

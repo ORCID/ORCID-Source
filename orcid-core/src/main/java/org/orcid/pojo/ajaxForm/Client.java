@@ -45,7 +45,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Text memberName;
     private Text authenticationProviderId;
     private Checkbox persistentTokenEnabled;
-    private List<RedirectUri> redirectUris;
+    private List<RedirectUri> redirectUris;    
     private Set<String> scopes;
     private Checkbox allowAutoDeprecate;
 
@@ -171,8 +171,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
                 redirectUris.add(rUri);
             }
         }
-        client.setRedirectUris(redirectUris);
-        client.setScopes(modelObject.getClientScopes());
+        client.setRedirectUris(redirectUris);        
         client.setType(Text.valueOf(modelObject.getClientType().value()));
         client.setClientSecret(Text.valueOf(modelObject.getDecryptedSecret()));
         client.setShortDescription(Text.valueOf(modelObject.getDescription()));

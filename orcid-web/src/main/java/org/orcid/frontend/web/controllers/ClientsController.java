@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -36,6 +35,7 @@ import org.orcid.core.manager.ClientManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.read_only.ClientManagerReadOnly;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -85,19 +85,22 @@ public class ClientsController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("member_developer_tools");
         String memberId = getCurrentUserOrcid();
         ProfileEntity entity = profileEntityCacheManager.retrieve(memberId);
+        MemberType memberType = entity.getGroupType();
         mav.addObject("member_id", memberId);
-        mav.addObject("member_type", entity.getGroupType());
+        mav.addObject("member_type", memberType);
+        
+        Long lastModified = entity.getLastModified() == null ? 0 : entity.getLastModified().getTime();
+        Set<org.orcid.jaxb.model.client_v2.Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
+        if(clients.isEmpty()) {
+            mav.addObject("allow_more_clients", true);
+        } else if(MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
+            mav.addObject("is_premium", true);
+            mav.addObject("allow_more_clients", true);
+        } else {
+            mav.addObject("allow_more_clients", false);
+        }                
+        
         return mav;
-    }
-
-    @RequestMapping(value = "/get-empty-redirect-uri.json", method = RequestMethod.GET)
-    public @ResponseBody RedirectUri getEmptyRedirectUri(HttpServletRequest request) {
-        RedirectUri result = new RedirectUri();
-        result.setValue(new Text());
-        result.setType(Text.valueOf(RedirectUriType.DEFAULT.value()));
-        result.setActType(Text.valueOf(""));
-        result.setGeoArea(Text.valueOf(""));
-        return result;
     }
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)
@@ -215,7 +218,10 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-clients.json", method = RequestMethod.GET)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients() {
-        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(getEffectiveUserOrcid());
+        String memberId = getEffectiveUserOrcid();
+        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
+        Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();       
+        Set<org.orcid.jaxb.model.client_v2.Client> existingClients = clientManagerReadOnly.getClients(memberId, lastModified);
         List<Client> clients = new ArrayList<Client>();
         for (org.orcid.jaxb.model.client_v2.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));
@@ -227,21 +233,7 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client createClient(@RequestBody Client client) {
-        // Clean the error list
-        client.setErrors(new ArrayList<String>());
-        // Validate fields
-        validateDisplayName(client);
-        validateWebsite(client);
-        validateShortDescription(client);
-        validateRedirectUris(client);
-
-        copyErrors(client.getDisplayName(), client);
-        copyErrors(client.getWebsite(), client);
-        copyErrors(client.getShortDescription(), client);
-
-        for (RedirectUri redirectUri : client.getRedirectUris()) {
-            copyErrors(redirectUri, client);
-        }
+        validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
             org.orcid.jaxb.model.client_v2.Client newClient = client.toModelObject();             
@@ -262,22 +254,8 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/edit-client.json", method = RequestMethod.POST)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client editClient(@RequestBody Client client) {
-        // Clean the error list
-        client.setErrors(new ArrayList<String>());
-        // Validate fields
-        validateDisplayName(client);
-        validateWebsite(client);
-        validateShortDescription(client);
-        validateRedirectUris(client);
-
-        copyErrors(client.getDisplayName(), client);
-        copyErrors(client.getWebsite(), client);
-        copyErrors(client.getShortDescription(), client);
-
-        for (RedirectUri redirectUri : client.getRedirectUris()) {
-            copyErrors(redirectUri, client);
-        }
-
+        validateIncomingElement(client);
+        
         if (client.getErrors().size() == 0) {            
             org.orcid.jaxb.model.client_v2.Client clientToEdit = client.toModelObject(); 
             try {                
@@ -306,21 +284,9 @@ public class ClientsController extends BaseWorkspaceController {
         return redirectUriTypes;
     }
 
-    /**
-     * Since the groups have changed, the cache version must be updated on
-     * database and all caches have to be evicted.
-     * */
-    public void clearCache() {
-        // Updates cache database version
-        thirdPartyLinkManager.updateDatabaseCacheVersion();
-        // Evict current cache
-        thirdPartyLinkManager.evictAll();
-    }
-
     @RequestMapping(value = "/get-available-scopes.json", method = RequestMethod.GET)
     @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody
-    List<String> getAvailableRedirectUriScopes() {
+    public @ResponseBody List<String> getAvailableRedirectUriScopes() {
         List<String> scopes = new ArrayList<String>();
         // Ignore these scopes
         List<ScopePathType> ignoreScopes = new ArrayList<ScopePathType>(Arrays.asList(ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
@@ -349,5 +315,34 @@ public class ClientsController extends BaseWorkspaceController {
         }
         
         return clientManager.resetClientSecret(clientId);
+    }
+    
+    private void validateIncomingElement(Client client) {
+        // Clean the error list
+        client.setErrors(new ArrayList<String>());
+        // Validate fields
+        validateDisplayName(client);
+        validateWebsite(client);
+        validateShortDescription(client);
+        validateRedirectUris(client);
+
+        copyErrors(client.getDisplayName(), client);
+        copyErrors(client.getWebsite(), client);
+        copyErrors(client.getShortDescription(), client);
+
+        for (RedirectUri redirectUri : client.getRedirectUris()) {
+            copyErrors(redirectUri, client);
+        }        
+    }
+    
+    /**
+     * Since the groups have changed, the cache version must be updated on
+     * database and all caches have to be evicted.
+     * */
+    public void clearCache() {
+        // Updates cache database version
+        thirdPartyLinkManager.updateDatabaseCacheVersion();
+        // Evict current cache
+        thirdPartyLinkManager.evictAll();
     }
 }
