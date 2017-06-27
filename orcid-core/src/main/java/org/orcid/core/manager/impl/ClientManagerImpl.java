@@ -82,7 +82,7 @@ public class ClientManagerImpl implements ClientManager {
 
     @Resource
     private TransactionTemplate transactionTemplate;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
@@ -92,9 +92,9 @@ public class ClientManagerImpl implements ClientManager {
         String memberId = sourceManager.retrieveSourceOrcid();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
-        //Verify if the member type allow him to create another client
+        // Verify if the member type allow him to create another client
         validateCreateClientRequest(memberId);
-        
+
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
@@ -146,7 +146,7 @@ public class ClientManagerImpl implements ClientManager {
         newEntity.setClientScopes(clientScopeEntities);
 
         try {
-            clientDetailsDao.persist(newEntity);            
+            clientDetailsDao.persist(newEntity);
         } catch (Exception e) {
             LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
             throw e;
@@ -154,17 +154,17 @@ public class ClientManagerImpl implements ClientManager {
 
         return jpaJaxbClientAdapter.toClient(newEntity);
     }
-    
-    @Override    
+
+    @Override
     @Transactional
     public Client edit(Client existingClient) {
-        if(!clientDetailsDao.exists(existingClient.getId())) {
+        if (!clientDetailsDao.exists(existingClient.getId())) {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
         }
         ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
         clientDetails.setLastModified(new Date());
-        clientDetails = clientDetailsDao.merge(clientDetails);        
+        clientDetails = clientDetailsDao.merge(clientDetails);
         return jpaJaxbClientAdapter.toClient(clientDetails);
     }
 
@@ -181,8 +181,7 @@ public class ClientManagerImpl implements ClientManager {
                     // #2 Create the new client secret as primary
                     boolean result = clientSecretDao.createClientSecret(clientId, clientSecret);
                     // #3 if it was created, update the last modified for the
-                    // client
-                    // details
+                    // client details
                     if (result)
                         clientDetailsDao.updateLastModified(clientId);
                     return result;
@@ -193,27 +192,27 @@ public class ClientManagerImpl implements ClientManager {
             }
         });
     }
-    
+
     private void validateCreateClientRequest(String memberId) throws IllegalArgumentException {
         ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
         Long lastModified = member.getLastModified() == null ? 0 : member.getLastModified().getTime();
-        if(member == null || member.getGroupType() == null) {
-            throw new IllegalArgumentException("Illegal member id: " + memberId);            
+        if (member == null || member.getGroupType() == null) {
+            throw new IllegalArgumentException("Illegal member id: " + memberId);
         }
-        switch (member.getGroupType()){
+        switch (member.getGroupType()) {
         case BASIC:
         case BASIC_INSTITUTION:
             Set<Client> clients = clientManagerReadOnly.getClients(memberId, lastModified);
-            if(clients != null && !clients.isEmpty()) {
+            if (clients != null && !clients.isEmpty()) {
                 throw new IllegalArgumentException("Your membership doesn't allow you to have more clients");
             }
             break;
         case PREMIUM:
         case PREMIUM_INSTITUTION:
             break;
-        }                        
+        }
     }
-    
+
     private ClientType getClientType(MemberType memberType) {
         switch (memberType) {
         case BASIC:
@@ -227,5 +226,5 @@ public class ClientManagerImpl implements ClientManager {
         default:
             throw new IllegalArgumentException("Invalid member type: " + memberType);
         }
-    }    
+    }
 }
