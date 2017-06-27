@@ -79,9 +79,9 @@
       </#if>
     </script>
 
-    <link rel="stylesheet" href="${staticCdn}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
-    <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css?v=${ver}"/>$
-    <link rel="stylesheet" href="${staticCdn}/css/social.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css?v=${ver}"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/filetypes.css?v=${ver}"/>    
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
