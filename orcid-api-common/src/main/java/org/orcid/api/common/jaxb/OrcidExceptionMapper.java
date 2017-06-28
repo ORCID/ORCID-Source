@@ -161,7 +161,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
         } else if (NotFoundException.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("Please specify a version number (1.2 or higher) : ", t);
+            OrcidMessage entity = getLegacyOrcidEntity("Resource not found: ", t);
             return Response.status(OrcidCoreExceptionMapper.getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
@@ -247,7 +247,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response newStyleErrorResponse(Throwable t, String version) {
-        if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
+        if(NotFoundException.class.isAssignableFrom(t.getClass())) {
+            return getOrcidErrorResponse(t, version);
+        } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             return getOrcidErrorResponse((WebApplicationException) t, version);
         } else {
             return getOrcidErrorResponse(t, version);

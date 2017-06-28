@@ -16,7 +16,22 @@
  */
 package org.orcid.integration.blackbox.api.v12;
 
-import static org.orcid.core.api.OrcidApiConstants.*;
+import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
+import static org.orcid.core.api.OrcidApiConstants.BIO_PATH_NO_REGEX;
+import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_POST_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.WEBHOOKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,14 +48,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
+import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidProfile;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-
-import org.orcid.api.common.OrcidClientHelper;
 
 public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientResponse> {
 
@@ -475,6 +490,58 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     public ClientResponse viewExternalIdentifiersJson(String orcid, String accessToken) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /**
+     * Send a GET request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    public ClientResponse getInvalidEndpoint(String orcid, String token) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_JSON, token);
+    }
+    
+    /**
+     * Send a PUT request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    public ClientResponse putInvalidEndpoint(String orcid, String token) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_JSON, new OrcidProfile(), token);
+    }
+    
+    /**
+     * Send a POST request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    public ClientResponse postInvalidEndpoint(String orcid, String token) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_JSON, new OrcidProfile(), token);
+    }
+    
+    /**
+     * Send a DELETE request to an invalid endpoint /{orcid}/invalid
+     * 
+     * @param orcid
+     *          the ORCID that corresponds to the user's record
+     * @param token
+     *          the access token        
+     */
+    public ClientResponse deleteInvalidEndpoint(String orcid, String token) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return orcidClientHelper.deleteClientResponseWithToken(uri, VND_ORCID_JSON, token);
     }
     
 }
