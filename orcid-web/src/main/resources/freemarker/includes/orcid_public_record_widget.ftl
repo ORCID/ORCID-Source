@@ -35,7 +35,7 @@
 			<textarea id="widget-code-nd" name="widget-code" class="form-control widget-code" ng-model="widgetURLND" ng-click="inputTextAreaSelectAll($event)" readonly="readonly"></textarea>
 			<p class="bold"><@orcid.msg 'orcid_widget.widget_preview'/></p>
 			<div class="orcid-summary-widget">
-                    <a id="widget-sample" href="${baseUri}/${(effectiveUserOrcid)!}" target="_blank"  rel="noopener noreferrer" style="vertical-align:top;">
+                    <a id="widget-sample" href="${baseUri}/${(effectiveUserOrcid)!}"   rel="noopener noreferrer" style="vertical-align:top;">
                         <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</a>
 			</div>
             <p><small class="italic"><@orcid.msg 'orcid_widget.widget_preview_text'/></small></p>

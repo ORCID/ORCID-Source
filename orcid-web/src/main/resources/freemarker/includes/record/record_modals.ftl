@@ -301,7 +301,7 @@
                                     <div class="aka">                                       
                                         <input type="text" ng-model="website.urlName" ng-show="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
                                         <input type="text" ng-model="website.url" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
-                                        <a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>                                     
+                                        <a href="{{website.url}}"  rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>                                     
                                     </div>
                                     <div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null">{{orcidId}}</span></div>                                                                            
                                 </div>
@@ -391,7 +391,7 @@
                                     <div class="aka">                                       
                                         <p>
                                             <span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-                                            <span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+                                            <span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" >{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
                                         </p>                                        
                                     </div>
                                     <div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span ng-if="externalIdentifier.sourceName == null">{{orcidId}}</span></div>                                                                            

@@ -66,7 +66,7 @@
 				</tr>
 				<tr ng-repeat="profile in profileList">
 					<td>{{profile.email}}</td>
-					<td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{profile.orcid}}" target="_blank">{{profile.orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{profile.orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
+					<td><a href="<@orcid.msg 'admin.public_view.click.link'/>{{profile.orcid}}" >{{profile.orcid}}</a>&nbsp;(<@orcid.msg 'admin.switch.click.1'/>&nbsp;<a href="<@orcid.msg 'admin.switch.click.link'/>{{profile.orcid}}"><@orcid.msg 'admin.switch.click.here'/></a>&nbsp;<@orcid.msg 'admin.switch.click.2'/>)</td>
 					<td>{{profile.status}}</td>
 				</tr>
 			</table>

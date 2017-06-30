@@ -77,7 +77,7 @@
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<#if authorizationUrl??>
-    	    <p><@orcid.msg 'email.institutional_connection.1' /> ${notification.idpName} <@orcid.msg 'email.institutional_connection.2' /><a href="<@orcid.rootPath '/inbox'/>/${notification.putCode?c}/action?target=${notification.authorizationUrl.uri?url}" target="_blank"><@orcid.msg 'email.institutional_connection.here' /></a><@orcid.msg 'email.institutional_connection.3' /> ${notification.source.sourceName.content} <@orcid.msg 'email.institutional_connection.4' /></p>
+    	    <p><@orcid.msg 'email.institutional_connection.1' /> ${notification.idpName} <@orcid.msg 'email.institutional_connection.2' /><a href="<@orcid.rootPath '/inbox'/>/${notification.putCode?c}/action?target=${notification.authorizationUrl.uri?url}" ><@orcid.msg 'email.institutional_connection.here' /></a><@orcid.msg 'email.institutional_connection.3' /> ${notification.source.sourceName.content} <@orcid.msg 'email.institutional_connection.4' /></p>
     	<#else>
     	    <@orcid.msg 'email.institutional_connection.disabled.1' /> ${notification.idpName}<@orcid.msg 'email.institutional_connection.disabled.2' />
     	</#if>                

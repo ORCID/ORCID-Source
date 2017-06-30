@@ -27,7 +27,7 @@
 		<div class="pull-right">
 			<a ng-click="notificationsSrvc.archive(notification.putCode); alert['$index'] = !alert['$index']" class="cancel"><@orcid.msg 'notifications.archive'/></a>
 			<a ng-click="notificationsSrvc.suppressAlert(notification.putCode); alert['$index'] = !alert['$index']" class="cancel"><@orcid.msg 'notifications.alert_close'/></a>
-			<a ng-href="<@orcid.rootPath '/inbox'/>/{{notification.putCode}}/action?target={{notification.authorizationUrl.uri | uri}}" ng-click="notificationsSrvc.archive(notification.putCode); alert['$index'] = !alert['$index']" target="_blank" class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
+			<a ng-href="<@orcid.rootPath '/inbox'/>/{{notification.putCode}}/action?target={{notification.authorizationUrl.uri | uri}}" ng-click="notificationsSrvc.archive(notification.putCode); alert['$index'] = !alert['$index']"  class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
 		</div>	
 	</div>
 </div>

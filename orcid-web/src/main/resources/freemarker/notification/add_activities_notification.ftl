@@ -213,7 +213,7 @@
 					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission'/>
 				</div>
 				<div class="margin-top">
-					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${fPutCode?c}/action?target=${fUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
+					<a href="" ng-click="archive('${fPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${fPutCode?c}/action?target=${fUrl?url}" ><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
 				</div>
 			</#if>
 		</#if>
@@ -228,7 +228,7 @@
 					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission' />
 				</div>
 				<div class="margin-top">
-					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${pPutCode?c}/action?target=${pUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a> 
+					<a href="" ng-click="archive('${pPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a>  <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${pPutCode?c}/action?target=${pUrl?url}" ><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a> 
 				</div>								
 			</#if>
 		</#if>
@@ -243,7 +243,7 @@
 					<strong>${notification.source.sourceName.content}</strong> <@orcid.msg 'notifications.would_permission' />
 				</div>
 				<div class="margin-top pull-right">
-					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${wPutCode?c}/action?target=${wUrl?url}" target="_blank"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
+					<a href="" ng-click="archive('${wPutCode?c}')" type="reset" ng-hide="archivedDate"><@orcid.msg 'notifications.archivewithoutgranting' /></a><a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/${wPutCode?c}/action?target=${wUrl?url}" ><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>  
 				</div>		
 			</#if>
 		</#if>
@@ -257,7 +257,7 @@
         </div>
     </#if>
     <div class="margin-top">
-    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="${knowledgeBaseUri}/articles/665437" target="_blank"><@orcid.msg 'notifications.learn_more'/></a></small>
+    	<small><@orcid.msg 'notifications.agreement_advice'/> <a href="${knowledgeBaseUri}/articles/665437" ><@orcid.msg 'notifications.learn_more'/></a></small>
     </div>
 </body>
 </html>

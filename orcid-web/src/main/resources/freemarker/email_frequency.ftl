@@ -33,7 +33,7 @@
                             ${springMacroRequestContext.getMessage('unsubscribe.email_sent_to_primary')}
                             ${primaryEmail}<br>
                             ${springMacroRequestContext.getMessage('unsubscribe.email_to_edit')}<a href="<@orcid.rootPath'/account'/>" 
-                            target="_blank">
+                            >
                             ${springMacroRequestContext.getMessage('unsubscribe.text.sign_into_account')}</a>
                         </div>
                         <br>

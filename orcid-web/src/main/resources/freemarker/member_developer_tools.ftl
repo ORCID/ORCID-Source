@@ -44,7 +44,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">				
-					<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.header_1' /><a href="<@orcid.msg 'manage.developer_tools.header_url' />" target="_blank"><@orcid.msg 'manage.developer_tools.header_link' /></a><@orcid.msg 'manage.developer_tools.header_2' /></p>
+					<p class="developer-tools-instructions"><@orcid.msg 'manage.developer_tools.header_1' /><a href="<@orcid.msg 'manage.developer_tools.header_url' />" ><@orcid.msg 'manage.developer_tools.header_link' /></a><@orcid.msg 'manage.developer_tools.header_2' /></p>
 				</div>
 			</div>		
 			<!-- View existing credentials -->
@@ -66,7 +66,7 @@
 									</tr>	
 									<tr ng-repeat="client in clients">
 										<td colspan="8">
-											{{client.displayName.value}} (<a href="{{getClientUrl(client)}}" target="_blank">{{client.website.value}}</a>)
+											{{client.displayName.value}} (<a href="{{getClientUrl(client)}}" >{{client.website.value}}</a>)
 										</td>												
 										<td colspan="4" class="pull-right">										
 											<ul class="client-options">
@@ -231,7 +231,7 @@
 						<span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
 					</div>
 					<div class="col-md-9 col-sm-9 col-xs-12 dt-website">
-						<p><a href="{{getClientUrl(clientDetails)}}" target="_blank">{{clientDetails.website.value}}</a></p>														
+						<p><a href="{{getClientUrl(clientDetails)}}" >{{clientDetails.website.value}}</a></p>														
 					</div>							
 				</div>
 				<div class="row bottomBuffer">
@@ -261,7 +261,7 @@
 							<span><strong><@orcid.msg 'manage.developer_tools.group.custom_emails.th'/></strong></span>
 						</div>
 						<div class="col-md-9 col-sm-9 col-xs-12 dt-description">
-							<p><a href="<@orcid.rootPath "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" target="_blank">Edit custom emails</a></p>
+							<p><a href="<@orcid.rootPath "/group/custom-emails" />?clientId={{clientDetails.clientId.value}}" >Edit custom emails</a></p>
 						</div>
 					</div>	
 				</@security.authorize>
@@ -309,7 +309,7 @@
 					<div ng-hide="playgroundExample == ''">
 						<div class="row">
 							<span class="col-md-3 col-sm-3 col-xs-12"><strong><@orcid.msg 'manage.developer_tools.view.example.title'/></strong></span>
-							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" target="_blank">
+							<span class="col-md-9 col-sm-9 col-xs-12"><a href="{{playgroundExample}}" >
 								<span ng-show="selectedRedirectUri.value.value == googleUri"><@orcid.msg 'manage.developer_tools.view.example.google'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerUri"><@orcid.msg 'manage.developer_tools.view.example.swagger'/></span>
 								<span ng-show="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>

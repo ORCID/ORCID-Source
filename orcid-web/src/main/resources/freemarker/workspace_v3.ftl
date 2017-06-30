@@ -59,7 +59,7 @@
       <modal-email-un-verified></modal-email-un-verified>
 
       <div class="qrcode-container">
-        <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+        <a href="http://qrcode.orcid.org" ><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
           <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div id="qrcode-help" class="popover bottom">
@@ -163,7 +163,7 @@
         </div>  
         <div class="workspace-section-content">
           <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-            <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
+            <a href="{{website.url}}"  rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@
         <div class="workspace-section-content">
           <div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
             <span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
-            <span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>              
+            <span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" >{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>              
           </div>
         </div>
       </div>          
@@ -408,7 +408,7 @@
               <div class="row full-height-row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                   <p>
-                  <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="${knowledgeBaseUri}/articles/390530#2import" target="_blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
+                  <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="${knowledgeBaseUri}/articles/390530#2import" ><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
                   </p> 
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4">
@@ -464,13 +464,13 @@
                         </li>
 
                         <li ng-if="work.url.value" class="url-popover url-work">
-                          <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                          <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" >{{work.url.value}}</a>
                           <div class="popover-pos">                                   
                             <div class="popover-help-container">
                               <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                  <a href="{{work.url.value}}" target="_blank">{{work.url.value}}</a>
+                                  <a href="{{work.url.value}}" >{{work.url.value}}</a>
                                 </div>                
                               </div>                              
                             </div>
@@ -516,7 +516,7 @@
         <h4><@orcid.msg 'workspace.your_primary_email_new'/></h4>
         <p><@orcid.msg 'workspace.ensure_future_access1'/></p>
         <p><@orcid.msg 'workspace.ensure_future_access2'/> <strong>{{emailsPojo.emails[0].value}}</strong></p>
-        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a target="_blank" href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a target="_blank" href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
+        <p><@orcid.msg 'workspace.ensure_future_access3'/> <a  href="<@orcid.msg 'workspace.link.url.knowledgebase'/>"><@orcid.msg 'workspace.ensure_future_access4'/></a> <@orcid.msg 'workspace.ensure_future_access5'/> <a  href="mailto:<@orcid.msg 'workspace.link.email.support'/>"><@orcid.msg 'workspace.link.email.support'/></a>.</p>
         <div class="topBuffer">
           <button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification_new'/></button>        
           <a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>

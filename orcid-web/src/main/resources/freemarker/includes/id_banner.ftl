@@ -72,7 +72,7 @@
                  arrowStyle="left: 48px;"                            
             />
             <div style="float: left">
-                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+                <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" ><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
             </div>
             <ul class="workspace-section-toolbar">
                 <li class="pull-right">
@@ -95,7 +95,7 @@
                 <span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
             </div>
             <div class="orcid-id-options">
-                <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" target="_blank"><@orcid.msg 'id_banner.viewpublicprofile'/>
+                <a href="${baseUriHttp}/${(effectiveUserOrcid)!}" class="gray-button" ><@orcid.msg 'id_banner.viewpublicprofile'/>
             </div>
         </div>
     </div>

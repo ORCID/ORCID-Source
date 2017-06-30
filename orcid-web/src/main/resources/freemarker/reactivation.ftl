@@ -38,7 +38,7 @@
                                     <p><@orcid.msg ''/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
                                     <p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="_blank"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+                                    <a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" ><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +94,7 @@
                         <div class="checkbox">
                             <label class="checkbox dark-label">            
                                 <input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-                                ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="_blank">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
+                                ${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" >${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" >${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
                             </label>
                     </div>
                     <span class="orcid-error" ng-show="register.termsOfUse.errors.length > 0">
