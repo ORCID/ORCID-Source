@@ -29,7 +29,7 @@ import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
-    private static final String PUBLIC_API_USER = "Public API user";
+    private static final String UNKNOWN_CLIENT = "Unknown";
 
     private static final String PUBLIC_API = "Public API";
 
@@ -172,7 +172,7 @@ public class AnalyticsProcess implements Runnable {
             clientDetails.append(clientDetailsId);
             return clientDetails.toString();
         } else {
-            return PUBLIC_API_USER;
+            return UNKNOWN_CLIENT;
         }
     }
 

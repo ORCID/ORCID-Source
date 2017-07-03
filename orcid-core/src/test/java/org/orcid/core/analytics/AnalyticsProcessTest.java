@@ -252,7 +252,7 @@ public class AnalyticsProcessTest {
         assertEquals("POST", data.getMethod());
         assertEquals("works", data.getCategory());
         assertEquals("Public API v2.0", data.getApiVersion());
-        assertEquals("Public API user", data.getClientDetailsString());
+        assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid + "/works", data.getUrl());
@@ -289,7 +289,7 @@ public class AnalyticsProcessTest {
         assertEquals("POST", data.getMethod());
         assertEquals("record", data.getCategory());
         assertEquals("Public API v2.0", data.getApiVersion());
-        assertEquals("Public API user", data.getClientDetailsString());
+        assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
         assertEquals(Integer.valueOf(200), data.getResponseCode());
         assertEquals("https://localhost:8443/orcid-api-web/v2.0/" + hashedOrcid, data.getUrl());
