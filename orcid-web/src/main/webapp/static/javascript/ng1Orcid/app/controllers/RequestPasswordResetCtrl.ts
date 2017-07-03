@@ -1,3 +1,7 @@
+declare var logAjaxError: any;
+declare var getBaseUri: any;
+declare var om: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 

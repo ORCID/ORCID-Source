@@ -1,3 +1,5 @@
+declare var getWindowWidth: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -31,12 +33,13 @@ export const headerCtrl = angular.module('orcidApp').controller(
                 $event.preventDefault();
                 
                 if( w > 767) {               
-                    window.location = $event.target.getAttribute('href');
+                    window.location.href = $event.target.getAttribute('href');
                 }
             };
 
             $scope.hideSearchFilter = function(){
-                var searchInputValue = document.getElementById("search-input").value;
+                var inputValue = document.getElementById('input1') as HTMLInputElement;
+                var searchInputValue = inputValue.value;
                 if (searchInputValue === ""){
                     setTimeout(function() {
                         if ($scope.searchFilterChanged === false) {

@@ -1,3 +1,7 @@
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -60,7 +64,7 @@ export const VerifyEmailCtrl = angular.module('orcidApp').controller(
                         };
 
                         if ( primeVerified 
-                            && !getBaseUri().indexOf("sandbox") == -1 
+                            && getBaseUri().indexOf("sandbox") == -1 
                         ) {
                             colorboxHtml = $compile($('#verify-email-modal').html())($scope);
                             $scope.$apply();

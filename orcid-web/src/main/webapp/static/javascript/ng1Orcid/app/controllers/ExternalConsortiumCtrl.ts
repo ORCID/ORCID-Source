@@ -1,3 +1,9 @@
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var om: any;
+declare var orcidVar: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -32,7 +38,7 @@ export const externalConsortiumCtrl = angular.module('orcidApp').controller(
             $scope.updateMemberDetailsShowLoader = false;
             
             $scope.addContactByEmail = function(contactEmail) {
-                var addContact = {};
+                let addContact = <any>{};
                 
                 $scope.addContactDisabled = true;
                 $scope.errors = [];

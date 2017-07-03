@@ -1,3 +1,9 @@
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var orcidVar: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -306,7 +312,9 @@ export const WebsitesCtrl = angular.module('orcidApp').controller(
             };
 
             $scope.updateDisplayIndex = function() {
-                for (var idx in $scope.websitesForm.websites){
+                let idx: any;
+                idx = null;
+                for (idx in $scope.websitesForm.websites){
                     $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
                 }
             };

@@ -1,3 +1,6 @@
+declare var getBaseUri: any;
+declare var locale_v3: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -137,6 +140,7 @@ export const languageCtrl = angular.module('orcidApp').controller(
 
             //Load Language that is set in the cookie or set default language to english
             $scope.getCurrentLanguage = function(){
+                let locale_v3: any;
 
                 $scope.language = $scope.languages[0]; //Default
                 typeof($cookies.get('locale_v3')) !== 'undefined' ? locale_v3 = $cookies.get('locale_v3') : locale_v3 = "en"; //If cookie exists we get the language value from it        

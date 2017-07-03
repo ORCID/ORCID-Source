@@ -1,3 +1,9 @@
+declare var $: any;
+declare var colorbox: any;
+declare var getBaseUri: any;
+declare var logAjaxError: any;
+declare var om: any;
+
 import * as angular from 'angular';
 import {NgModule} from '@angular/core';
 
@@ -24,15 +30,18 @@ export const resetPasswordCtrlModal = angular.module('orcidApp').controller(
             };
 
             $scope.confirmResetPassword = function(){
-                if($scope.params.orcidOrEmail != '' && $scope.params.password != '') {
-                    $.colorbox({
-                        html : $compile($('#confirm-reset-password').html())($scope),
+                if($scope.params.orcidOrEmail != '' 
+                    && $scope.params.password != ''
+                ) {
+                    $.colorbox(
+                        {
+                            html : $compile($('#confirm-reset-password').html())($scope),
                             scrolling: true,
                             onLoad: function() {
-                            $('#cboxClose').remove();
-                        },
-                        scrolling: true
-                    });
+                                $('#cboxClose').remove();
+                            }
+                        }
+                    );
 
                     $.colorbox.resize({width:"450px" , height:"150px"});
                 }
