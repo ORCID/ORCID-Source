@@ -19,11 +19,13 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.reset_password.sorry" />
+<@emailMacros.msg "email.reset_password.sorry" /> ${baseUri}/${orcid}
 
 <@emailMacros.msg "email.reset_password.to_reset" />
 
 ${passwordResetUrl}
+
+<@emailMacros.msg "email.reset_password.note" />
 
 <@emailMacros.msg "email.reset_password.after" />
 
