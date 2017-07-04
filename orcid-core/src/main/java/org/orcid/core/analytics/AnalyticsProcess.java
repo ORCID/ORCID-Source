@@ -23,6 +23,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.http.HttpMethod;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
@@ -36,6 +37,12 @@ public class AnalyticsProcess implements Runnable {
     private static final String MEMBER_API = "Member API";
     
     private static final String PROFILE_NOT_FOUND = "not-found";
+    
+    private static final String DEFAULT_CONTENT_TYPE = "default";
+    
+    private static final String XML_CONTENT_TYPE = "xml";
+    
+    private static final String JSON_CONTENT_TYPE = "json";
 
     private ContainerRequest request;
 
@@ -109,14 +116,44 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setUrl(url);
         analyticsData.setClientDetailsString(getClientDetailsString());
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
-        analyticsData.setContentType(request.getHeaderValue(HttpHeaders.CONTENT_TYPE));
+        analyticsData.setMethod(request.getMethod());
+        analyticsData.setContentType(getContentType());
         analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
         analyticsData.setIpAddress(ip);
         analyticsData.setCategory(parser.getCategory());
         analyticsData.setApiVersion(getApiString(parser.getApiVersion()));
-        analyticsData.setMethod(request.getMethod());
         return analyticsData;
+    }
+    
+    private String getContentType() {
+        if (HttpMethod.GET.name().equals(request.getMethod())) {
+            String accept = request.getHeaderValue(HttpHeaders.ACCEPT);
+            if (accept != null && !accept.isEmpty()) {
+                return getSimplifiedContentType(accept);
+            }
+        }
+            
+        // If accept header not set for GETs content type will be used - see AcceptFilter.
+        // For other methods content type will be used anyway
+        String contentType = request.getHeaderValue(HttpHeaders.CONTENT_TYPE);
+        if (contentType != null && !contentType.isEmpty()) {
+            return getSimplifiedContentType(contentType);
+        }
+        
+        return DEFAULT_CONTENT_TYPE;
+    }
+    
+    private String getSimplifiedContentType(String contentType) {
+        if (contentType.contains(XML_CONTENT_TYPE)) {
+            return XML_CONTENT_TYPE;
+        }
+        
+        if (contentType.contains(JSON_CONTENT_TYPE)) {
+            return JSON_CONTENT_TYPE;
+        }
+        
+        return contentType;
     }
 
     private String correctScheme(String url) {
