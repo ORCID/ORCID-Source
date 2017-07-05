@@ -61,8 +61,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticCdn}/css/fonts.css?v=${ver}"/>
-    <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <style> 
 		body, html{			

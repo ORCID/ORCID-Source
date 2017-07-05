@@ -702,7 +702,7 @@
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
 	<bean id="coreCacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean">
 		<property name="configLocation" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
 		<property name="shared" value="true" />
 		<property name="cacheManagerName" value="coreCacheManager" />
