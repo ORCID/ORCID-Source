@@ -275,7 +275,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             contact.setEmail(primaryEmail.getEmail());
         }
         List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
-        Optional<Contact> existingContact = existingContacts.stream().filter(c -> contact.getOrcid().equals(c.getOrcid())).findFirst();
+        Optional<Contact> existingContact = existingContacts.stream().filter(c -> 
+        {
+            if((contact.getOrcid() != null && contact.getOrcid().equals(c.getOrcid())) || (contact.getEmail() != null && contact.getEmail().equals(c.getEmail()))) {
+                return true;
+            }
+            return false;
+        }).findFirst();
         String contactId = existingContact.isPresent() ? existingContact.get().getId() : salesForceDao.createContact(contact);
         ContactRole contactRole = new ContactRole();
         contactRole.setContactId(contactId);

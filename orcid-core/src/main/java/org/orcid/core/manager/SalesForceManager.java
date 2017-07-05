@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.Collection;
 import java.util.List;
 
+import org.orcid.core.manager.read_only.ManagerReadOnlyBase;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
@@ -30,7 +31,7 @@ import org.orcid.core.salesforce.model.Opportunity;
  * @author Will Simpson
  *
  */
-public interface SalesForceManager {
+public interface SalesForceManager extends ManagerReadOnlyBase {
 
     List<Member> retrieveMembers();
 
