@@ -62,12 +62,12 @@
 			</div>
 			<div class="idpSelectContainerFooterBar">
 				<ul>
-					<li><a href="http://orcid.org/help/contact-us" >About ORCID</a></li>
+					<li><a href="http://orcid.org/help/contact-us" target="About ORCID">About ORCID</a></li>
 					<li>|</li>
-					<li><a href="http://orcid.org/footer/privacy-policy" >Privacy Policy</a></li>
+					<li><a href="http://orcid.org/footer/privacy-policy" target="Privacy Policy">Privacy Policy</a></li>
 					<li>|</li>
-					<li><a href="http://orcid.org/content/orcid-terms-use" >Terms of use</a></li>
-					<li class="orcid-link"><a href="http://orcid.org/" >orcid.org</a></li>
+					<li><a href="http://orcid.org/content/orcid-terms-use" target="Terms of use">Terms of use</a></li>
+					<li class="orcid-link"><a href="http://orcid.org/" target="orcid.org">orcid.org</a></li>
 				</ul>
 			</div>
 		</div>		

@@ -159,13 +159,13 @@
                                     </span>
                                 </li>
                                 <li ng-if="group.getActive().url.value" class="url-popover">
-                                    <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value"  ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                       
+                                    <@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="funding.putCode.value" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>
                                     <div class="popover-pos">
                                         <div class="popover-help-container">
                                            <div class="popover bottom" ng-class="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
                                                 <div class="arrow"></div>
                                                 <div class="popover-content">
-                                                    <a href="{{group.getActive().url.value}}"  >{{group.getActive().url.value}}</a>
+                                                    <a href="{{group.getActive().url.value}}" target="url.value" >{{group.getActive().url.value}}</a>
                                                 </div>                
                                             </div>                              
                                         </div>

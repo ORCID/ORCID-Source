@@ -80,7 +80,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" >{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="dup.orcid">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>

@@ -25,7 +25,7 @@
             <h1 id="self-service-lead" ng-show="memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_consortium"/></h1>
             <h1 id="self-service-lead" ng-show="!memberDetails.consortiumLead"><@spring.message "manage_consortium.manage_member"/></h1>
             <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
-            	<a href="<@orcid.rootPath '/members'/>" ><@spring.message "manage_consortium.member_list_link"/></a>
+            	<a href="<@orcid.rootPath '/members'/>" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a>
             	<@spring.message "manage_consortium.manage_consortium_text_2"/>
             	<a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
             <div ng-show="memberDetails != null" ng-cloak>

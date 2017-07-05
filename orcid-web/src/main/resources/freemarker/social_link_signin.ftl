@@ -27,7 +27,7 @@
                     ${springMacroRequestContext.getMessage("social.link.unsupported.why_cant_i")}
                 </p>
                 <p>
-                    ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="${knowledgeBaseUri}/articles/892920" >${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
+                    ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="${knowledgeBaseUri}/articles/892920" target="social.link.unsupported.you_can_find_out.2">${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
                 </p>
             </div>
         <#elseif headerCheckFailed??>
@@ -52,7 +52,7 @@
         			        	${springMacroRequestContext.getMessage("social.link.to_finish")} <span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
         		            </p>
         		            <p>
-        		            	<i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920"  >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+        		            	<i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="${knowledgeBaseUri}/articles/892920" target="social.link.visit_knowledgebase_link" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
         		            </p>
         	            </div>
                     </div>

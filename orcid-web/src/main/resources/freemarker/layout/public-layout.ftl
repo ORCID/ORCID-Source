@@ -503,7 +503,7 @@
             </p>
             <@orcid.checkFeatureStatus featureName='SURVEY'>
                 <p class="see-more">
-                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd"  rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
+                  <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="public-layout.survey_please_take" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
                   <@orcid.msg 'public-layout.survey_to_tell_us'/>
                 </p>
             </@orcid.checkFeatureStatus>
@@ -534,10 +534,10 @@
                 </p>
                 <nav>
                     <ul class="inline-list">
-                        <li><a class="social-button" href="https://www.facebook.com/orcid.org" ><span class="social social-facebook"></span></a></li>
-                        <li><a class="social-button" href="https://twitter.com/orcid_org" ><span class="social social-twitter"></span></a></li>
-                        <li><a class="social-button" href="http://orcid.org/blog/feed" ><span class="social social-rss"></span></a></li>
-                        <li><a class="social-button" href="https://github.com/ORCID" ><span class="social social-github"></span></a></li>
+                        <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="social-facebook"><span class="social social-facebook"></span></a></li>
+                        <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
+                        <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
+                        <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>
                     </ul>
                 </nav>
             </div>

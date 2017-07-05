@@ -66,7 +66,7 @@
                                         <span class="glyphicons collapse_top"></span>                                       
                                         <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                     </a> | 
-                                    <a href="{{peerReview.url.value}}" ng-if="peerReview.url != null" ><span><@orcid.msg 'peer_review.view' /></span></a><span ng-if="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
+                                    <a href="{{peerReview.url.value}}" ng-if="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span ng-if="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                                      <#if !(isPublicProfile??)>
                                         <div ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
                                             <div class="popover popover-tooltip top">

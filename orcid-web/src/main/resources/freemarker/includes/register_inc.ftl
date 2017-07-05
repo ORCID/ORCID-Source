@@ -47,7 +47,7 @@
 			            <p><@orcid.msg ''/></p>
 						<p><@orcid.msg 'orcid.frontend.register.help.last_name'/></p>
 						<p><@orcid.msg 'orcid.frontend.register.help.update_names'/></p>
-						<a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" ><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
+						<a href="${knowledgeBaseUri}/articles/142948-names-in-the-orcid-registry" target="orcid.frontend.register.help.more_info.link.text"><@orcid.msg 'orcid.frontend.register.help.more_info.link.text'/></a>
 			        </div>
 			    </div>
             </div>
@@ -148,7 +148,7 @@
             <div class="checkbox">
 	            <label class="checkbox dark-label">            
 	            	<input type="checkbox" tabindex="9" name="acceptTermsAndConditions" ng-model="register.termsOfUse.value" ng-change="serverValidate('TermsOfUse')" />
-	            	${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" >${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" >${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
+	            	${springMacroRequestContext.getMessage("register.labelconsent")} <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy">${springMacroRequestContext.getMessage("register.labelprivacypolicy")}</a> ${springMacroRequestContext.getMessage("register.labeland")}  ${springMacroRequestContext.getMessage("common.termsandconditions1")}<a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2">${springMacroRequestContext.getMessage("common.termsandconditions2")}</a> ${springMacroRequestContext.getMessage("common.termsandconditions3")}
 	            </label>
 	        </div>
             
@@ -206,7 +206,7 @@
 						</thead>
 						<tbody>
 						 	<tr ng-repeat='dup in duplicates'>
-					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" >{{dup.orcid}}</a></td>
+					 			<td><a href="<@orcid.rootPath '/'/>{{dup.orcid}}" target="dup.orcid">{{dup.orcid}}</a></td>
         						<td>{{dup.email}}</td>
         						<td>{{dup.givenNames}}</td>
         						<td>{{dup.familyNames}}</td>

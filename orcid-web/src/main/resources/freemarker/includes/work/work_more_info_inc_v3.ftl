@@ -56,7 +56,7 @@
 						'common.url'/>
 					</strong>
 					<div>
-						<a href="{{worksSrvc.details[work.putCode.value].url.value | urlProtocol}}" >{{worksSrvc.details[work.putCode.value].url.value}}</a>					
+						<a href="{{worksSrvc.details[work.putCode.value].url.value | urlProtocol}}" target="url.value">{{worksSrvc.details[work.putCode.value].url.value}}</a>
 					</div>				
 				</div>
 			</div>			
