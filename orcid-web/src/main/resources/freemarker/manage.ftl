@@ -393,7 +393,7 @@
         <p>
             ${springMacroRequestContext.getMessage("manage.youcanallowpermission")}<br />
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedOrganizations.url")}"
-                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="revokeApplicationFormCtrl" >
         	<div ng-show="applicationSummaryList.length > 0" ng-cloak>
@@ -442,7 +442,7 @@
         <p>
             ${springMacroRequestContext.getMessage("settings.tdallowpermission")}<br />
             <a href="${springMacroRequestContext.getMessage("manage.findoutmore.trustedIndividual.url")}"
-                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+                target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
             <div class="ng-hide" ng-show="showInitLoader == true;">
@@ -536,7 +536,7 @@
             	<@orcid.msg 'manage_signin_subtitle' />
             	<br>
             	<a href="${knowledgeBaseUri}/articles/892920"
-            target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+            target="manage.findoutmore">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
             </p>
             <div>
                 <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
