@@ -282,17 +282,28 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         contactRole.setRoleType(ContactRoleType.OTHER_CONTACT);
         contactRole.setAccountId(contact.getAccountId());
         salesForceDao.createContactRole(contactRole);
+        if (salesForceConnectionDao.findByOrcidAndAccountId(contact.getOrcid(), accountId) == null) {
+            salesForceConnectionDao.persist(new SalesForceConnectionEntity(contact.getOrcid(), contact.getEmail(), accountId));
+        }
         // Need to make more granular!
         evictAll();
     }
 
     @Override
     public void removeContact(Contact contact) {
+        removeContactRole(contact);
+        removeContactAccess(contact);
+    }
+
+    private void removeContactAccess(Contact contact) {
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
-        List<ContactRole> contactRoles = salesForceDao.retrieveContactRolesByContactIdAndAccountId(contact.getId(), accountId);
-        contactRoles.forEach(r -> salesForceDao.removeContactRole(r.getId()));
-        // Need to make more granular!
-        evictAll();
+        String contactOrcid = contact.getOrcid();
+        if (contactOrcid != null) {
+            SalesForceConnectionEntity connection = salesForceConnectionDao.findByOrcidAndAccountId(contactOrcid, accountId);
+            if (connection != null) {
+                salesForceConnectionDao.remove(connection);
+            }
+        }
     }
 
     @Override
@@ -321,14 +332,27 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Override
     public void updateContacts(Collection<Contact> contacts) {
-        // Need to remove roles with validation rules in SF first
         String accountId = retrieveAccountIdByOrcid(sourceManager.retrieveRealUserOrcid());
         List<Contact> existingContacts = salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        // Need to remove roles with validation rules in SF first
         existingContacts.stream().filter(c -> {
             return ContactRoleType.MAIN_CONTACT.equals(c.getRole().getRoleType()) || ContactRoleType.AGREEMENT_SIGNATORY.equals(c.getRole().getRoleType())
                     || c.getRole().isVotingContact();
         }).forEach(c -> removeContactRole(c));
         contacts.stream().forEach(c -> updateContact(c));
+        // Update access control list for self-service
+        updateAccessControl(contacts, accountId);
+    }
+
+    private void updateAccessControl(Collection<Contact> contacts, String accountId) {
+        List<SalesForceConnectionEntity> existingConnections = salesForceConnectionDao.findByAccountId(accountId);
+        List<String> contactOrcids = contacts.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
+        // Remove any connections no longer in the contacts list
+        existingConnections.stream().filter(c -> !contactOrcids.contains(c.getOrcid())).forEach(c -> salesForceConnectionDao.remove(c));
+        // Give access to any contacts that do not already have access
+        List<String> existingConnectionsOrcids = existingConnections.stream().map(c -> c.getOrcid()).collect(Collectors.toList());
+        contacts.stream().filter(c -> c.getOrcid() != null && !existingConnectionsOrcids.contains(c.getOrcid()))
+                .forEach(c -> salesForceConnectionDao.persist(new SalesForceConnectionEntity(c.getOrcid(), c.getEmail(), accountId)));
     }
 
     @Override
