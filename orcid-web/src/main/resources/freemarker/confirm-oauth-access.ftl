@@ -51,7 +51,7 @@
                     <#include "includes/oauth/scopes.ftl"/>
                 </div>
                 <div>
-                    <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
+                    <p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="public-layout.privacy_policy"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
                 </div>          
                 <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                     <div class="row">
