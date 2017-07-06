@@ -586,6 +586,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             toClear.getOrgAffiliationRelations().clear();
         }
 
+        // Remove peer reviews
+        if (toClear.getPeerReviews() != null) {
+            toClear.getPeerReviews().clear();
+        }
+        
         // Remove external identifiers
         if (toClear.getExternalIdentifiers() != null) {
             toClear.getExternalIdentifiers().clear();
