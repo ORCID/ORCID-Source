@@ -137,13 +137,8 @@
         </dependency>
         <dependency>
            <groupId>net.sf.ehcache</groupId>
-           <artifactId>ehcache-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-web</artifactId>
-            <version>2.0.4</version>
-        </dependency>
+           <artifactId>ehcache</artifactId>
+        </dependency>        
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
