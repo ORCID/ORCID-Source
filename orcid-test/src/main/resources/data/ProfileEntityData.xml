@@ -373,7 +373,7 @@
 	<profile
             orcid="0000-0000-0000-0001"
             creation_method="API"
-            completed_date="2016-01-01 15:31:00.00"
+            completed_date="2016-12-12 00:00:00.00"
             date_created="2016-01-01 15:31:00.00"
             submission_date="2016-01-01 15:31:00.00"
             last_indexed_date="2016-01-01 15:31:00.00"
@@ -393,7 +393,7 @@
             client_source_id="APP-5555555555555555"
             record_locked="false"
             enable_notifications="true"
-            send_email_frequency_days = "0.0"
+            send_email_frequency_days = "1.0"
             using_2fa="false"
             secret_for_2fa="secret"
             />
@@ -458,7 +458,7 @@
             client_source_id="APP-5555555555555555"
             record_locked="false"
             enable_notifications="true"
-            send_email_frequency_days = "0.0"
+            send_email_frequency_days = "3.4028235E38"
             using_2fa="false"
             secret_for_2fa="secret"
             />
