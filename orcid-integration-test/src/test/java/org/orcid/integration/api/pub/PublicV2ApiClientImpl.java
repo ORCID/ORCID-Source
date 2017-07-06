@@ -244,6 +244,11 @@ public class PublicV2ApiClientImpl {
         return getClientReponse(uri, null);
     }
     
+    public ClientResponse viewInvalidEndpoint(String orcid) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH + "/invalid").build(orcid);
+        return getClientReponse(uri, null);
+    }
+    
     private ClientResponse getClientReponse(URI uri, String token) {
         return getClientReponse(uri, token, VND_ORCID_XML);
     }
