@@ -1,27 +1,40 @@
 @font-face {
-  font-family: 'Noto Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../fonts/NotoSans-Regular.ttf') format('truetype') /* Safari, Android, iOS */
+    font-family: 'Noto Sans';
+    src: url('../fonts/NotoSans-Regular-webfont.eot');
+    src: url('../fonts/NotoSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/NotoSans-Regular-webfont.woff') format('woff'),
+         url('../fonts/NotoSans-Regular-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: 'Noto Sans';
-  font-style: normal;
-  font-weight: 700;
-  src: url('../fonts/NotoSans-Bold.ttf') format('truetype') /* Safari, Android, iOS */
+    font-family: 'Noto Sans';
+    src: url('../fonts/NotoSans-Italic-webfont.eot');
+    src: url('../fonts/NotoSans-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/NotoSans-Italic-webfont.woff') format('woff'),
+         url('../fonts/NotoSans-Italic-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('../fonts/NotoSans-BoldItalic-webfont.eot');
+    src: url('../fonts/NotoSans-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/NotoSans-BoldItalic-webfont.woff') format('woff'),
+         url('../fonts/NotoSans-BoldItalic-webfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
 }
 
 @font-face {
-  font-family: 'Noto Sans';
-  font-style: italic;
-  font-weight: 400;
-  src: url('../fonts/NotoSans-Italic.ttf') format('truetype') /* Safari, Android, iOS */
-}
-
-@font-face {
-  font-family: 'Noto Sans';
-  font-style: italic;
-  font-weight: 700;
-  src: url('../fonts/NotoSans-BoldItalic.ttf') format('truetype') /* Safari, Android, iOS */
+    font-family: 'Noto Sans';
+    src: url('../fonts/NotoSans-Bold-webfont.eot');
+    src: url('../fonts/NotoSans-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/NotoSans-Bold-webfont.woff') format('woff'),
+         url('../fonts/NotoSans-Bold-webfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
 }
