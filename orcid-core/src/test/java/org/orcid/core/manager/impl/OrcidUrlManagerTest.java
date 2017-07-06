@@ -50,6 +50,9 @@ public class OrcidUrlManagerTest extends BaseTest {
         checkSame("https://orcid.org/my-orcid");
         checkSame("https://orcid.org/account");
         checkSame("https://orcid.org/account?newlogin");
+        checkSame("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd");
+        checkSame("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd?lang=en");
+        checkSame("https://orcid.org/account/confirm-deactivate-orcid/clpkT3kwbVpwY2pDM1VYVjZ6ZXV6ejBjMEliVTFNQ1Q0WDRJZDJ4TTBhanVUa2U3VWdubjllTnpwckZYUk0vWQ?lang=en");
         checkSame(
                 "https://orcid.org/oauth/authorize?client_id=APP-5AYWFGEWVKRWQFS3&response_type=code&scope=/orcid-profile/read-limited&redirect_uri=http://localhost:8080/orcid-web/oauth/playground");
         checkSame("https://orcid.org/verify-email/a1VGWGpmdTlPdjBHbCtCNHIxUkhST3NPUUpRQ3Q2QXpMTTVIVVl0YnFseE1OZHNLQXg2SFFRUDVHOHZMZTZRLw?lang=en");
@@ -57,6 +60,9 @@ public class OrcidUrlManagerTest extends BaseTest {
         assertNull(determineTargetUrl("https://orcid.org/blank.gif"));
         assertNull(determineTargetUrl("https://orcid.org/oauth/custom/login.json"));
         assertNull(determineTargetUrl("https://orcid.org/shibboleth/signin/auth.json"));
+        assertNull(determineTargetUrl("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd/"));
+        assertNull(determineTargetUrl("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd/other"));
+        assertNull(determineTargetUrl("https://orcid.org/account/confirm-deactivate-orcid/AnYR4Nd0MStrIN6YVjZ6ZXV6ejX0Iu8jXklrv24PLoXfd/other/1"));
     }
 
     private void checkSame(String savedUrl) throws URISyntaxException {
