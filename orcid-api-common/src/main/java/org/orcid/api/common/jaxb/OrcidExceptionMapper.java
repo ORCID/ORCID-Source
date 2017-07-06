@@ -32,11 +32,13 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -221,6 +223,12 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity(
                     "This version of the API does not support adding more than 10,000 works to a record. Please consider using the 2.0 API.", null);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } else if(DeactivatedException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Account deactivated : ", t);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } else if(OrcidNotClaimedException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Account non claimed : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);

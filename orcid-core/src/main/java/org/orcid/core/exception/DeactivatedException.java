@@ -16,27 +16,30 @@
  */
 package org.orcid.core.exception;
 
-import java.util.Map;
+import org.orcid.core.exception.ApplicationException;
 
-/**
- * 
- * @author Angel Montenegro
- * 
- */
-public class OrcidNotClaimedException extends ApplicationException {
-    private static final long serialVersionUID = 1L;
+public class DeactivatedException extends ApplicationException {
+    private static final long serialVersionUID = 5900106949403162953L;
+    private String orcid;
 
-    public static final String ORCID = "orcid";
-
-    public OrcidNotClaimedException() {
-        super();
-    }
-
-    public OrcidNotClaimedException(String message) {
-        super(message);
+    public DeactivatedException() {
+        
     }
     
-    public OrcidNotClaimedException(Map<String, String> params) {
-        super(params);
+    public DeactivatedException(String msg) {
+        super(msg);
+    }
+
+    public DeactivatedException(String msg, String orcid) {
+        super(msg);
+        this.orcid=orcid;
+    }
+
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 }

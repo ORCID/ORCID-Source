@@ -21,6 +21,8 @@ import static org.junit.Assert.assertEquals;
 import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.security.aop.LockedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -74,5 +76,20 @@ public class OAuthErrorUtilsTest {
         assertEquals(OAuthError.SERVER_ERROR, error.getError());
         assertEquals(Status.INTERNAL_SERVER_ERROR, error.getResponseStatus());
         assertEquals("message here", error.getErrorDescription());
+    }
+    
+    @Test
+    public void testGetOAuthErrorForDeactivatedException() {
+        OAuthError error = OAuthErrorUtils.getOAuthError(new DeactivatedException("message here"));
+        assertEquals(OAuthError.UNAUTHORIZED_CLIENT, error.getError());
+        assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
+        assertEquals("message here", error.getErrorDescription());
+    }
+    
+    @Test
+    public void testGetOAuthErrorForOrcidDeprecatedException() {
+        OAuthError error = OAuthErrorUtils.getOAuthError(new OrcidDeprecatedException());
+        assertEquals(OAuthError.UNAUTHORIZED_CLIENT, error.getError());
+        assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
     }
 }

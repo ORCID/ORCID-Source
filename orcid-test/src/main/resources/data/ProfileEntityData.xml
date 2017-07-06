@@ -523,7 +523,7 @@
             orcid_type="USER" 
             claimed="true"
             reviewed="true"
-            record_locked="true"            
+            record_locked="false"            
             client_source_id="APP-5555555555555555"
             enable_notifications="true"
             send_email_frequency_days = "0.0"
